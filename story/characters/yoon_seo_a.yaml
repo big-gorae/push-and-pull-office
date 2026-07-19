@@ -1,0 +1,86 @@
+schema_version: 1
+id: yoon_seo_a
+display_name: 윤서아
+age: 24
+role: 상품기획팀 계약직 사원
+narrative_role: main_heroine
+summary: 갈등 상황에서 얼어붙지만 안전한 관계에서는 유머가 많고 기획자로서의 꿈이 뚜렷한 인물.
+immutable_facts:
+  - 한도윤에게 연애 감정을 느끼지 않는다.
+  - 사회적 미소와 짧은 대답은 동결 반응이지 호감 신호가 아니다.
+  - 의심도가 내려가도 이미 누적된 비호감은 쉽게 사라지지 않는다.
+voice:
+  register: 조심스러운 존댓말
+  habits:
+    - 문장 앞에 아 또는 저기를 붙인다.
+    - 긴장하면 필요 이상으로 일정과 이유를 설명한다.
+  safe_context: 동료 앞에서는 말이 빨라지고 장난이 많아진다.
+visual:
+  concept_art: assets/concept-art/yoon-seo-a.png
+  palette: [ivory, pale_blue, navy]
+  silhouette: 160cm의 작고 가벼운 성인 체형, 긴 흑갈색 머리와 부드러운 눈매.
+  props: [고양이 스티커 수첩, 휴대전화, 텀블러]
+expressions:
+  subjective_shy:
+    layer: perceived
+    emotion: romantic_shyness
+    description: 볼이 붉고 눈을 마주치지 못하는 호감 표현처럼 보인다.
+  subjective_relieved_smile:
+    layer: perceived
+    emotion: attraction
+    description: 주인공이 물러나자 다시 다가오는 미소처럼 보인다.
+  actual_social_smile:
+    layer: reality
+    emotion: appeasement
+    description: 갈등을 빨리 끝내기 위한 얇고 짧은 미소.
+  actual_tense:
+    layer: reality
+    emotion: fear
+    description: 어깨가 올라가고 시선이 출입문과 휴대전화를 확인한다.
+  actual_relief:
+    layer: reality
+    emotion: relief
+    description: 접근이 멈춘 뒤 호흡과 어깨가 잠시 풀린다.
+  actual_exhausted:
+    layer: reality
+    emotion: exhaustion
+    description: 수면 부족과 반복되는 주변 확인으로 눈빛이 흐려진다.
+emotion_rules:
+  - id: high_fear
+    priority: 30
+    conditions:
+      - stat: suspicion
+        op: gte
+        value: 65
+    emotion: fear
+    behavior: seeks_witness
+    default_expression: actual_tense
+  - id: self_doubt
+    priority: 20
+    conditions:
+      - stat: suspicion
+        op: gte
+        value: 20
+    emotion: anxiety
+    behavior: avoids_being_alone
+    default_expression: actual_social_smile
+  - id: baseline
+    priority: 0
+    conditions: []
+    emotion: cautious
+    behavior: work_normally
+    default_expression: actual_social_smile
+reporting_rules:
+  - id: supported_report
+    conditions:
+      - stat: evidence_count
+        op: gte
+        value: 3
+      - stat: dislike
+        op: gte
+        value: 70
+    action: seek_support_then_report
+relationships:
+  han_do_yoon: 평가권을 가진 상사라 직접 대립하기 어렵다.
+  cha_min_kyung: 존경하는 선배지만 폐를 끼칠까 봐 처음에는 숨긴다.
+  kang_yoo_jin: 단호함을 부러워하면서 자신과 비교해 움츠러든다.

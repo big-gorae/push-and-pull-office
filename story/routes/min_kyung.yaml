@@ -1,0 +1,16 @@
+schema_version: 1
+id: min_kyung
+title: 명확한 선
+heroine: cha_min_kyung
+mode: base
+summary: 분명한 거절조차 도전적인 밀당으로 번역되는 두 번째 루트.
+unlock_conditions: []
+entry_scene: min_kyung.explicit_boundary
+scene_order:
+  - min_kyung.explicit_boundary
+  - min_kyung.witness_meeting
+endings:
+  - scene: ending.min_kyung.coverup
+    outcome: dark
+  - scene: ending.min_kyung.report
+    outcome: survivor

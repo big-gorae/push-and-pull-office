@@ -1,0 +1,117 @@
+schema_version: 1
+id: min_kyung.witness_meeting
+title: 둘만 남지 않는 회의
+route: min_kyung
+chapter: 1
+sequence: 20
+location: glass_meeting_room
+time: afternoon
+purpose: 민경이 목격자를 배석시키는 행동을 주인공이 질투 유발로 오해한다.
+cast: [han_do_yoon, cha_min_kyung, yoon_seo_a]
+entry_conditions: []
+state_contract:
+  reads:
+    - hidden.heroines.cha_min_kyung.suspicion
+    - hidden.heroines.cha_min_kyung.dislike
+    - hidden.heroines.cha_min_kyung.evidence_count
+  writes:
+    - visible.heroines.cha_min_kyung.affection
+    - visible.heroines.cha_min_kyung.initiative
+    - visible.heroines.cha_min_kyung.perceived_state
+    - hidden.heroines.cha_min_kyung.suspicion
+    - hidden.heroines.cha_min_kyung.dislike
+    - hidden.heroines.cha_min_kyung.evidence_count
+start_node: posture_gate
+nodes:
+  - id: posture_gate
+    kind: state_gate
+    transitions:
+      - conditions:
+          - {path: hidden.heroines.cha_min_kyung.suspicion, op: gte, value: 30}
+        node: protective
+      - default: true
+        node: skeptical
+
+  - id: protective
+    kind: dual_dialogue
+    speaker: cha_min_kyung
+    perceived:
+      atmosphere: playful_tension
+      expression: subjective_jealous
+      line: "서아 씨도 같이 들어오라고 했어요."
+      protagonist_interpretation: 다른 여성을 앞세워 자신의 반응을 떠본다.
+    reality:
+      atmosphere: guarded_office
+      expression: actual_protective
+      line: "서아 씨가 회의록을 함께 작성할 겁니다."
+      inner_thought: 단둘이 있는 상황을 만들지 않는다.
+      intent: self_protection
+    next: choose
+
+  - id: skeptical
+    kind: dual_dialogue
+    speaker: cha_min_kyung
+    perceived:
+      atmosphere: playful_tension
+      expression: subjective_challenging
+      line: "오늘은 서아 씨도 함께예요."
+      protagonist_interpretation: 자신의 질투를 유도하려는 가벼운 밀기다.
+    reality:
+      atmosphere: cold_office
+      expression: actual_skeptical
+      line: "회의록 담당으로 서아 씨가 배석합니다."
+      inner_thought: 업무 형식을 분명히 해 두면 불필요한 말을 줄일 수 있다.
+      intent: documentation
+    next: choose
+
+  - id: choose
+    kind: choice
+    prompt: 제삼자를 끌어들인 민경에게 어떻게 반응할까?
+    options:
+      - id: public_tease
+        label: 여유 있게 질투를 받아준다
+        interpretation: 공개된 자리에서 은근한 관계를 확인시킨다.
+        action: 두 사람 앞에서 민경과의 사적 연락을 암시한다.
+        conditions: []
+        effects:
+          - {path: visible.heroines.cha_min_kyung.affection, op: add, value: 10}
+          - {path: visible.heroines.cha_min_kyung.initiative, op: add, value: 10}
+          - {path: visible.heroines.cha_min_kyung.perceived_state, op: set, value: pull}
+          - {path: hidden.heroines.cha_min_kyung.suspicion, op: add, value: 20}
+          - {path: hidden.heroines.cha_min_kyung.dislike, op: add, value: 18}
+          - {path: hidden.heroines.cha_min_kyung.evidence_count, op: add, value: 1}
+        next: leave
+      - id: retaliatory_push
+        label: 더 강하게 밀어낸다
+        interpretation: 주도권을 되찾기 위해 관심을 완전히 거둔다.
+        action: 민경을 다음 비공식 프로젝트 논의에서 제외한다.
+        conditions: []
+        effects:
+          - {path: visible.heroines.cha_min_kyung.affection, op: add, value: 12}
+          - {path: visible.heroines.cha_min_kyung.initiative, op: add, value: 15}
+          - {path: visible.heroines.cha_min_kyung.perceived_state, op: set, value: push}
+          - {path: hidden.heroines.cha_min_kyung.suspicion, op: add, value: 25}
+          - {path: hidden.heroines.cha_min_kyung.dislike, op: add, value: 25}
+          - {path: hidden.heroines.cha_min_kyung.evidence_count, op: add, value: 1}
+        next: leave
+      - id: work_only
+        label: 회의에만 집중한다
+        interpretation: 오늘의 밀당을 쉬고 업무를 끝낸다.
+        action: 사적인 언급 없이 안건만 논의한다.
+        conditions: []
+        effects:
+          - {path: visible.heroines.cha_min_kyung.affection, op: add, value: -8}
+          - {path: visible.heroines.cha_min_kyung.initiative, op: add, value: -5}
+          - {path: visible.heroines.cha_min_kyung.perceived_state, op: set, value: neutral}
+          - {path: hidden.heroines.cha_min_kyung.suspicion, op: add, value: -3}
+        next: leave
+
+  - id: leave
+    kind: exit
+    transitions:
+      - conditions:
+          - {path: hidden.heroines.cha_min_kyung.evidence_count, op: gte, value: 2}
+          - {path: hidden.heroines.cha_min_kyung.dislike, op: gte, value: 40}
+        scene: ending.min_kyung.report
+      - default: true
+        scene: ending.min_kyung.coverup

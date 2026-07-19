@@ -1,0 +1,51 @@
+schema_version: 1
+id: ending.seo_a.ambiguous
+title: 완벽한 간격
+route: seo_a
+chapter: 1
+sequence: 90
+location: empty_desk
+time: morning
+purpose: 서아가 자신의 판단을 의심한 채 회사를 떠나고 주인공은 밀당 성공으로 기억한다.
+cast: [han_do_yoon, yoon_seo_a]
+entry_conditions: []
+state_contract:
+  reads:
+    - progress.cleared_routes
+  writes:
+    - progress.cleared_routes
+    - progress.unlocked_modes
+start_node: complete
+nodes:
+  - id: complete
+    kind: effect
+    effects:
+      - {path: progress.cleared_routes, op: append_unique, value: seo_a}
+      - {path: progress.unlocked_modes, op: append_unique, value: truth_view}
+      - path: progress.unlocked_modes
+        op: append_unique
+        value: collapse
+        conditions:
+          - {path: progress.cleared_routes, op: contains, value: seo_a}
+          - {path: progress.cleared_routes, op: contains, value: min_kyung}
+    next: aftermath
+
+  - id: aftermath
+    kind: dual_narration
+    perceived:
+      atmosphere: warm_romance
+      line: "서아의 자리는 비어 있었다. 그녀에게도 생각할 시간이 필요했을 것이다."
+      protagonist_interpretation: 자신이 완벽한 간격으로 밀어 주었기 때문에 그녀가 미래를 고민하러 떠났다고 믿는다.
+    reality:
+      atmosphere: cold_office
+      line: "서아는 정규직 전환 심사를 포기하고 사원증을 반납했다."
+      inner_thought: 가족에게는 자신이 회사에 적응하지 못했다고 말했다.
+      intent: self_protection
+    next: end
+
+  - id: end
+    kind: exit
+    transitions:
+      - default: true
+        ending: true
+        ending_id: seo_a.ambiguous

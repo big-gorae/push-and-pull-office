@@ -1,0 +1,46 @@
+schema_version: 1
+id: han_do_yoon
+display_name: 한도윤
+age: 42
+role: 영업기획팀 과장
+narrative_role: unreliable_protagonist
+summary: 타인의 거절과 경계를 밀당으로 번역해 자신의 연애 서사를 유지하는 주인공.
+immutable_facts:
+  - 임수연과 실제로 연애한 적이 없다.
+  - 불리한 사실을 완전히 잊은 것이 아니라 의미와 순서를 바꿔 기억한다.
+  - 외모가 아니라 반복적인 경계 침범과 권력 사용이 공포의 원인이다.
+voice:
+  register: 친절한 존댓말을 가장한 단정적 화법
+  habits:
+    - 편하게 해요
+    - 부담 갖지 말고
+    - 내가 다 이해해요
+  forbidden:
+    - 자신의 행동을 스토킹이라고 자발적으로 정확히 명명하기
+visual:
+  concept_art: assets/concept-art/han-do-yoon.png
+  palette: [charcoal, muted_navy, wine]
+  subjective: 키가 크고 날렵하며 여유 있는 중년 미남으로 인식한다.
+  reality: 166cm의 무거운 체형, 자기관리가 부족하고 상대 쪽으로 상체를 기울인다.
+expressions:
+  subjective_confident:
+    layer: perceived
+    emotion: confidence
+    description: 넉넉하고 다정하다고 믿는 미소.
+  actual_waiting_smile:
+    layer: reality
+    emotion: control
+    description: 상대가 원하는 반응을 할 때까지 사라지지 않는 미소.
+  subjective_wounded:
+    layer: perceived
+    emotion: romantic_pain
+    description: 사랑 때문에 상처받은 남자의 표정.
+  actual_irritated:
+    layer: reality
+    emotion: irritation
+    description: 거절을 자신의 권리에 대한 모욕으로 받아들인 표정.
+relationships:
+  yoon_seo_a: 보호해야 할 수줍은 연하라고 규정한다.
+  cha_min_kyung: 자신과 대등하게 긴장감을 즐기는 상대로 규정한다.
+  kang_yoo_jin: 자신의 매력을 시험하는 최종 난관으로 규정한다.
+  im_soo_yeon: 세상이 빼앗아 간 첫사랑으로 재구성한다.

@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>밀당 오피스 · 스토리 상태 에디터</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">PUSH &amp; PULL OFFICE</p>
+        <h1>스토리 상태 에디터</h1>
+      </div>
+      <div class="runtime-status" id="runtime-status" role="status">데이터 불러오는 중…</div>
+    </header>
+
+    <section class="toolbar" aria-label="장면 선택">
+      <label>
+        <span>루트</span>
+        <select id="route-select"></select>
+      </label>
+      <label>
+        <span>장면</span>
+        <select id="scene-select"></select>
+      </label>
+      <div class="mode-switch" role="group" aria-label="표시 관점">
+        <button type="button" id="mode-perceived" class="active" aria-pressed="true">본편 화면</button>
+        <button type="button" id="mode-reality" aria-pressed="false">실제 원문</button>
+      </div>
+    </section>
+
+    <div class="workspace">
+      <aside class="state-editor" aria-labelledby="state-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">STATE INPUT</p>
+            <h2 id="state-title">판정 수치</h2>
+          </div>
+          <button type="button" class="quiet-button" id="reset-state">초기화</button>
+        </div>
+
+        <div class="state-group">
+          <h3>주인공에게 보이는 값</h3>
+          <label class="range-field">
+            <span><span>호감도</span><output id="affection-output">0</output></span>
+            <input id="affection-input" type="range" min="0" max="100" value="0">
+          </label>
+          <label class="range-field">
+            <span><span>밀당 주도권</span><output id="initiative-output">0</output></span>
+            <input id="initiative-input" type="range" min="0" max="100" value="0">
+          </label>
+          <label>
+            <span>현재 해석</span>
+            <select id="perceived-state-input">
+              <option value="push">밀기</option>
+              <option value="pull">당기기</option>
+              <option value="neutral">중립</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="state-group hidden-values">
+          <h3>내부 판정값</h3>
+          <label class="range-field">
+            <span><span>의심도</span><output id="suspicion-output">0</output></span>
+            <input id="suspicion-input" type="range" min="0" max="100" value="0">
+          </label>
+          <label class="range-field">
+            <span><span>비호감</span><output id="dislike-output">0</output></span>
+            <input id="dislike-input" type="range" min="0" max="100" value="0">
+          </label>
+          <label class="range-field">
+            <span><span>물리적 증거</span><output id="evidence-output">0</output></span>
+            <input id="evidence-input" type="range" min="0" max="10" value="0">
+          </label>
+        </div>
+
+        <div class="emotion-result" id="emotion-result"></div>
+      </aside>
+
+      <section class="preview-column" aria-labelledby="preview-title">
+        <div class="preview-meta">
+          <div>
+            <p class="eyebrow" id="scene-location">SCENE</p>
+            <h2 id="preview-title">장면 미리보기</h2>
+            <p id="scene-purpose" class="muted"></p>
+          </div>
+          <span class="node-badge" id="node-kind">NODE</span>
+        </div>
+
+        <article class="game-preview" id="game-preview">
+          <div class="character-pane">
+            <img id="character-image" alt="">
+            <div class="character-caption">
+              <strong id="speaker-name">―</strong>
+              <span id="expression-name">expression</span>
+            </div>
+          </div>
+
+          <div class="dialogue-pane">
+            <div class="hud" id="visible-tools" aria-label="현재 화면에 보이는 도구"></div>
+            <div class="dialogue-content">
+              <p class="atmosphere" id="atmosphere">ATMOSPHERE</p>
+              <blockquote id="dialogue-line">장면을 불러오는 중입니다.</blockquote>
+              <div class="interpretation" id="interpretation"></div>
+            </div>
+            <div class="presentation-flags" id="presentation-flags"></div>
+          </div>
+        </article>
+
+        <section class="choice-area" id="choice-area" aria-live="polite"></section>
+
+        <div class="preview-actions">
+          <p id="step-status" class="muted"></p>
+          <button type="button" class="primary-button" id="next-node">다음 노드</button>
+        </div>
+      </section>
+    </div>
+
+    <section class="flow-section" aria-labelledby="flow-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">BRANCH TRACE</p>
+          <h2 id="flow-title">장면 흐름</h2>
+        </div>
+        <p class="muted" id="branch-summary"></p>
+      </div>
+      <div class="node-flow" id="node-flow"></div>
+      <div class="condition-list" id="condition-list"></div>
+    </section>
+  </main>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+schema_version: 1
+id: min_kyung.explicit_boundary
+title: 업무 외 연락
+route: min_kyung
+chapter: 1
+sequence: 10
+location: meeting_room
+time: evening
+purpose: 민경의 명시적 거절을 주인공이 도전적인 밀기로 바꿔 듣는다.
+cast: [han_do_yoon, cha_min_kyung]
+entry_conditions: []
+state_contract:
+  reads: []
+  writes:
+    - visible.heroines.cha_min_kyung.affection
+    - visible.heroines.cha_min_kyung.initiative
+    - visible.heroines.cha_min_kyung.perceived_state
+    - hidden.heroines.cha_min_kyung.suspicion
+    - hidden.heroines.cha_min_kyung.dislike
+    - hidden.heroines.cha_min_kyung.evidence_count
+start_node: boundary
+nodes:
+  - id: boundary
+    kind: dual_dialogue
+    speaker: cha_min_kyung
+    perceived:
+      atmosphere: playful_tension
+      expression: subjective_challenging
+      line: "업무 외 연락은 당분간 참아 주세요."
+      protagonist_interpretation: 쉽게 넘을 수 없는 선을 보여 주며 자신을 시험한다.
+    reality:
+      atmosphere: guarded_office
+      expression: actual_disgust
+      line: "업무 외 연락은 하지 말아 주세요."
+      inner_thought: 이번에는 애매하게 말하지 않았다. 다시 연락하면 기록을 남긴다.
+      intent: boundary
+    next: respond
+
+  - id: respond
+    kind: choice
+    prompt: 강하게 미는 민경에게 어떻게 대응할까?
+    options:
+      - id: mirror_push
+        label: 나도 밀어낸다
+        interpretation: 연락을 끊어 그녀가 먼저 아쉬움을 느끼게 한다.
+        action: 일주일간 업무 외 연락을 중단한다.
+        conditions: []
+        effects:
+          - {path: visible.heroines.cha_min_kyung.affection, op: add, value: 8}
+          - {path: visible.heroines.cha_min_kyung.initiative, op: add, value: 6}
+          - {path: visible.heroines.cha_min_kyung.perceived_state, op: set, value: push}
+          - {path: hidden.heroines.cha_min_kyung.suspicion, op: add, value: -2}
+          - {path: hidden.heroines.cha_min_kyung.dislike, op: add, value: 2}
+        next: leave
+      - id: challenge_boundary
+        label: 진심으로 당긴다
+        interpretation: 확신 있는 태도로 시험을 통과한다.
+        action: 그날 밤 거절의 의미를 다시 묻는 개인 메시지를 보낸다.
+        conditions: []
+        effects:
+          - {path: visible.heroines.cha_min_kyung.affection, op: add, value: 12}
+          - {path: visible.heroines.cha_min_kyung.initiative, op: add, value: 10}
+          - {path: visible.heroines.cha_min_kyung.perceived_state, op: set, value: pull}
+          - {path: hidden.heroines.cha_min_kyung.suspicion, op: add, value: 18}
+          - {path: hidden.heroines.cha_min_kyung.dislike, op: add, value: 20}
+          - {path: hidden.heroines.cha_min_kyung.evidence_count, op: add, value: 1}
+        next: leave
+      - id: accept_boundary
+        label: 선을 그대로 인정한다
+        interpretation: 이번 상대와는 연애 게임을 중단한다.
+        action: 업무 채널 이외의 연락을 하지 않는다.
+        conditions: []
+        effects:
+          - {path: visible.heroines.cha_min_kyung.affection, op: add, value: -8}
+          - {path: visible.heroines.cha_min_kyung.initiative, op: add, value: -10}
+          - {path: visible.heroines.cha_min_kyung.perceived_state, op: set, value: neutral}
+          - {path: hidden.heroines.cha_min_kyung.suspicion, op: add, value: -5}
+        next: leave
+
+  - id: leave
+    kind: exit
+    transitions:
+      - default: true
+        scene: min_kyung.witness_meeting

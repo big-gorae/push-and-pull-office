@@ -1,0 +1,54 @@
+schema_version: 1
+id: route_id.scene_id
+title: 장면 제목
+route: route_id
+chapter: 1
+sequence: 10
+location: office
+time: day
+purpose: 이 장면이 바꾸는 관계와 정보를 한 문장으로 작성한다.
+cast: [han_do_yoon, heroine_id]
+entry_conditions: []
+state_contract:
+  reads:
+    - hidden.heroines.heroine_id.suspicion
+  writes:
+    - visible.heroines.heroine_id.affection
+start_node: opening
+nodes:
+  - id: opening
+    kind: dual_dialogue
+    speaker: heroine_id
+    perceived:
+      atmosphere: warm_romance
+      expression: subjective_expression_id
+      line: "주인공이 듣거나 기억하는 대사"
+      protagonist_interpretation: "한도윤의 해석"
+    reality:
+      atmosphere: cold_office
+      expression: actual_expression_id
+      line: "실제로 한 대사"
+      inner_thought: "실제 속마음"
+      intent: boundary
+    next: choice_01
+
+  - id: choice_01
+    kind: choice
+    prompt: 상대의 현재 상태를 어떻게 판단할까?
+    options:
+      - id: option_id
+        label: "플레이어가 보는 선택지"
+        interpretation: "한도윤이 믿는 의미"
+        action: "객관적으로 발생하는 행동"
+        conditions: []
+        effects:
+          - path: visible.heroines.heroine_id.affection
+            op: add
+            value: 5
+        next: leave
+
+  - id: leave
+    kind: exit
+    transitions:
+      - default: true
+        scene: next_scene_id

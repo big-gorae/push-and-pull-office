@@ -1,0 +1,87 @@
+schema_version: 1
+id: cha_min_kyung
+display_name: 차민경
+age: 28
+role: 마케팅팀 대리 겸 프로젝트 실무 책임자
+narrative_role: main_heroine
+summary: 직접 선을 긋고 후배를 보호하지만 과거 회사의 신고 축소를 목격해 기록을 우선하는 인물.
+immutable_facts:
+  - 한도윤의 접근을 고난도 밀당으로 즐기지 않는다.
+  - 도전적인 표정은 유혹이 아니라 불쾌함과 사실 확인이다.
+  - 섹시한 외형과 피해 사이에는 인과관계가 없다.
+voice:
+  register: 짧고 정확한 존댓말
+  habits:
+    - 직급과 이름을 정확히 부른다.
+    - 감정이 높아질수록 목소리보다 단어가 더 정확해진다.
+  forbidden:
+    - 명확한 거절 뒤 장난처럼 웃어 넘기기
+visual:
+  concept_art: assets/concept-art/cha-min-kyung.png
+  palette: [burgundy, charcoal, black]
+  silhouette: 169cm의 길고 균형 잡힌 체형, 각진 얼굴과 검은 단발.
+  props: [얇은 노트북, 금속 볼펜, 버건디 립스틱]
+expressions:
+  subjective_challenging:
+    layer: perceived
+    emotion: attraction
+    description: 쉽게 넘어오지 않는 상대의 도발적인 눈빛처럼 보인다.
+  subjective_jealous:
+    layer: perceived
+    emotion: jealousy
+    description: 다른 히로인을 보는 굳은 표정이 질투처럼 보인다.
+  actual_skeptical:
+    layer: reality
+    emotion: disbelief
+    description: 눈썹을 올리고 발언의 부적절함을 확인한다.
+  actual_disgust:
+    layer: reality
+    emotion: disgust
+    description: 턱이 굳고 시선이 차가워지지만 자세는 무너지지 않는다.
+  actual_protective:
+    layer: reality
+    emotion: resolve
+    description: 서아와 한도윤 사이에 서서 주변 목격자를 확인한다.
+  actual_exhausted:
+    layer: reality
+    emotion: exhaustion
+    description: 혼자 남은 뒤에만 굳은 어깨와 피로가 드러난다.
+emotion_rules:
+  - id: confrontation
+    priority: 30
+    conditions:
+      - stat: suspicion
+        op: gte
+        value: 60
+    emotion: anger
+    behavior: document_with_witness
+    default_expression: actual_disgust
+  - id: guarded
+    priority: 20
+    conditions:
+      - stat: suspicion
+        op: gte
+        value: 30
+    emotion: disgust
+    behavior: set_explicit_boundary
+    default_expression: actual_skeptical
+  - id: baseline
+    priority: 0
+    conditions: []
+    emotion: professional
+    behavior: work_only
+    default_expression: actual_skeptical
+reporting_rules:
+  - id: documented_report
+    conditions:
+      - stat: evidence_count
+        op: gte
+        value: 3
+      - stat: dislike
+        op: gte
+        value: 60
+    action: internal_report
+relationships:
+  han_do_yoon: 업무 관계를 유지하되 사적 접근은 명확히 거절한다.
+  yoon_seo_a: 이상 징후를 발견한 뒤 단둘이 남지 않도록 돕는다.
+  kang_yoo_jin: 빠른 신고를 지지하지만 회사의 반격 가능성을 경고한다.

@@ -1,0 +1,16 @@
+schema_version: 1
+id: seo_a
+title: 말하지 못한 거절
+heroine: yoon_seo_a
+mode: base
+summary: 사회적 미소와 동결 반응을 수줍은 밀당으로 오해하는 첫 번째 루트.
+unlock_conditions: []
+entry_scene: seo_a.email_request
+scene_order:
+  - seo_a.email_request
+  - seo_a.relief_smile
+endings:
+  - scene: ending.seo_a.ambiguous
+    outcome: dark
+  - scene: ending.seo_a.report
+    outcome: survivor

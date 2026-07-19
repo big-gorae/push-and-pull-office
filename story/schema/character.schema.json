@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "character.schema.json",
+  "title": "Love Office Character",
+  "type": "object",
+  "required": ["schema_version", "id", "display_name", "age", "role", "narrative_role", "summary", "voice", "visual", "expressions"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
+    "display_name": {"type": "string", "minLength": 1},
+    "age": {"type": "integer", "minimum": 18},
+    "role": {"type": "string"},
+    "narrative_role": {"type": "string"},
+    "summary": {"type": "string"},
+    "immutable_facts": {"type": "array", "items": {"type": "string"}},
+    "voice": {"type": "object"},
+    "visual": {"type": "object"},
+    "expressions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["layer", "emotion", "description"],
+        "properties": {
+          "layer": {"enum": ["perceived", "reality"]},
+          "emotion": {"type": "string"},
+          "description": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "emotion_rules": {"type": "array"},
+    "reporting_rules": {"type": "array"},
+    "relationships": {"type": "object"}
+  },
+  "additionalProperties": false
+}

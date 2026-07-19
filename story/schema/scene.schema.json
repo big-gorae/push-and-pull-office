@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scene.schema.json",
+  "title": "Love Office Scene",
+  "type": "object",
+  "required": ["schema_version", "id", "title", "route", "purpose", "cast", "state_contract", "start_node", "nodes"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
+    "title": {"type": "string", "minLength": 1},
+    "route": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
+    "chapter": {"type": "integer", "minimum": 0},
+    "sequence": {"type": "integer", "minimum": 0},
+    "location": {"type": "string"},
+    "time": {"type": "string"},
+    "purpose": {"type": "string", "minLength": 1},
+    "cast": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "entry_conditions": {"type": "array", "items": {"$ref": "#/$defs/condition"}},
+    "state_contract": {
+      "type": "object",
+      "required": ["reads", "writes"],
+      "properties": {
+        "reads": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "writes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      },
+      "additionalProperties": false
+    },
+    "start_node": {"type": "string"},
+    "nodes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/node"}}
+  },
+  "$defs": {
+    "condition": {
+      "type": "object",
+      "required": ["path", "op"],
+      "properties": {
+        "path": {"type": "string"},
+        "op": {"enum": ["eq", "ne", "gt", "gte", "lt", "lte", "contains", "not_contains", "exists", "not_exists"]},
+        "value": {}
+      },
+      "additionalProperties": false
+    },
+    "effect": {
+      "type": "object",
+      "required": ["path", "op", "value"],
+      "properties": {
+        "path": {"type": "string"},
+        "op": {"enum": ["set", "add", "append_unique", "remove"]},
+        "value": {},
+        "conditions": {"type": "array", "items": {"$ref": "#/$defs/condition"}}
+      },
+      "additionalProperties": false
+    },
+    "perceived": {
+      "type": "object",
+      "required": ["atmosphere", "line", "protagonist_interpretation"],
+      "properties": {
+        "atmosphere": {"type": "string"},
+        "expression": {"type": "string"},
+        "line": {"type": "string", "minLength": 1},
+        "protagonist_interpretation": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "reality": {
+      "type": "object",
+      "required": ["atmosphere", "line", "inner_thought", "intent"],
+      "properties": {
+        "atmosphere": {"type": "string"},
+        "expression": {"type": "string"},
+        "line": {"type": "string", "minLength": 1},
+        "inner_thought": {"type": "string", "minLength": 1},
+        "intent": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "option": {
+      "type": "object",
+      "required": ["id", "label", "interpretation", "action", "conditions", "effects", "next"],
+      "properties": {
+        "id": {"type": "string"},
+        "label": {"type": "string"},
+        "interpretation": {"type": "string"},
+        "action": {"type": "string"},
+        "conditions": {"type": "array", "items": {"$ref": "#/$defs/condition"}},
+        "effects": {"type": "array", "items": {"$ref": "#/$defs/effect"}},
+        "next": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "transition": {
+      "type": "object",
+      "properties": {
+        "conditions": {"type": "array", "items": {"$ref": "#/$defs/condition"}},
+        "default": {"type": "boolean"},
+        "node": {"type": "string"},
+        "scene": {"type": "string"},
+        "ending": {"type": "boolean"},
+        "ending_id": {"type": "string"}
+      }
+    },
+    "node": {
+      "type": "object",
+      "required": ["id", "kind"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
+        "kind": {"enum": ["dual_dialogue", "dual_narration", "choice", "state_gate", "effect", "exit"]},
+        "speaker": {"type": "string"},
+        "presentation_flags": {"type": "array", "items": {"type": "string"}},
+        "perceived": {"$ref": "#/$defs/perceived"},
+        "reality": {"$ref": "#/$defs/reality"},
+        "prompt": {"type": "string"},
+        "options": {"type": "array", "items": {"$ref": "#/$defs/option"}},
+        "effects": {"type": "array", "items": {"$ref": "#/$defs/effect"}},
+        "transitions": {"type": "array", "items": {"$ref": "#/$defs/transition"}},
+        "next": {"type": "string"}
+      },
+      "allOf": [
+        {"if": {"properties": {"kind": {"const": "dual_dialogue"}}}, "then": {"required": ["speaker", "perceived", "reality", "next"]}},
+        {"if": {"properties": {"kind": {"const": "dual_narration"}}}, "then": {"required": ["perceived", "reality", "next"]}},
+        {"if": {"properties": {"kind": {"const": "choice"}}}, "then": {"required": ["prompt", "options"]}},
+        {"if": {"properties": {"kind": {"const": "state_gate"}}}, "then": {"required": ["transitions"]}},
+        {"if": {"properties": {"kind": {"const": "effect"}}}, "then": {"required": ["effects", "next"]}},
+        {"if": {"properties": {"kind": {"const": "exit"}}}, "then": {"required": ["transitions"]}}
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

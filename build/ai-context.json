@@ -1,0 +1,663 @@
+{
+  "purpose": "Bounded context for an AI agent editing exactly one scene",
+  "authoring_rules": "# AI 스토리 작성 계약\n\n이 파일은 AI 에이전트가 장면을 추가하거나 수정할 때 반드시 지켜야 할 규칙이다.\n\n## 절대 규칙\n\n1. `perceived`는 한도윤의 인지이며 사실이 아니다.\n2. `reality`만 실제 대사, 표정, 속마음과 의도를 기록한다.\n3. 플레이어 선택 문구, 한도윤의 해석, 실제 행동을 각각 `label`, `interpretation`, `action`으로 분리한다.\n4. 수치 변화는 `effects`에만 작성한다. 대사나 설명에 암묵적인 수치 변화를 숨기지 않는다.\n5. 조건과 효과가 사용하는 모든 경로는 장면의 `state_contract`에 선언한다.\n6. 새 표정 ID를 장면에서 즉석 생성하지 않는다. 캐릭터의 `expressions`에 먼저 등록한다.\n7. 인물의 나이, 직급, 말투, 감정 반응은 캐릭터 파일을 우선한다.\n8. 의심도가 낮아져도 비호감도가 자동으로 낮아지지 않는다.\n9. 호감도는 실제 애정이 아니라 한도윤의 자기확신이다.\n10. `밀기`, `당기기`, `중립`은 실제 여성의 감정이 아니라 한도윤의 판정이다.\n11. 증거는 구체적인 장면 사건으로만 증가한다. 이유 없이 숫자만 올리지 않는다.\n12. 선택지마다 최소 하나의 실제 결과가 있어야 한다. 문구만 다른 동일 선택지는 만들지 않는다.\n13. 엔딩이나 외부 장면으로 나가는 모든 분기에는 조건 없는 기본 전이가 있어야 한다.\n14. 피해자의 외모나 의상을 피해 원인처럼 서술하지 않는다.\n15. 범죄 장면은 방법을 상세히 재현하지 않고 결과와 피해자의 일상 손실을 중심으로 기록한다.\n\n## 장면 작성 절차\n\n1. `python3 tools/story_harness.py context --scene <ID> --from-route <ROUTE> --choose <PREVIOUS_SCENE>=<OPTION>`으로 해당 분기 상태가 반영된 컨텍스트를 생성한다. 진입 장면이라 이전 선택이 없을 때만 `--from-route`를 생략한다.\n2. 장면의 목적을 한 문장으로 정한다.\n3. 필요한 상태 읽기·쓰기를 먼저 선언한다.\n4. 실제 사건과 실제 감정을 `reality`에 먼저 작성한다.\n5. 같은 사건을 한도윤이 어떻게 연애 서사로 편집하는지 `perceived`에 작성한다.\n6. 선택지의 실제 행동과 상태 효과를 연결한다.\n7. `validate`로 참조·계약·도달 가능성을 검사한다.\n8. `simulate`로 최소 두 선택 경로를 확인한다.\n9. `build`로 런타임 JSON을 갱신한다.\n\n## 에이전트 응답 형식\n\n장면을 제안할 때는 다음 순서를 사용한다.\n\n1. 장면 목적\n2. 진입 상태\n3. 실제 사건\n4. 한도윤의 인지\n5. 선택지와 수치 변화\n6. 다음 분기\n7. 수정한 파일\n8. 검증 결과\n\n불확실한 설정은 임의로 확정하지 않고 `open_questions`에 기록한다.\n",
+  "allowed_system": {
+    "enums": {
+      "perceived_state": [
+        "push",
+        "pull",
+        "neutral"
+      ],
+      "atmosphere": [
+        "warm_romance",
+        "playful_tension",
+        "cold_office",
+        "guarded_office",
+        "procedural",
+        "dread"
+      ],
+      "intent": [
+        "courtesy",
+        "boundary",
+        "avoidance",
+        "relief",
+        "documentation",
+        "confrontation",
+        "self_protection",
+        "work_only"
+      ],
+      "node_kind": [
+        "dual_dialogue",
+        "dual_narration",
+        "choice",
+        "state_gate",
+        "effect",
+        "exit"
+      ]
+    },
+    "stats": {
+      "visible.affection": {
+        "type": "integer",
+        "min": 0,
+        "max": 100,
+        "description": "주인공이 사랑받는다고 확신하는 정도"
+      },
+      "visible.initiative": {
+        "type": "integer",
+        "min": 0,
+        "max": 100,
+        "description": "주인공이 밀당을 통제한다고 믿는 정도"
+      },
+      "visible.perceived_state": {
+        "type": "enum",
+        "values": [
+          "push",
+          "pull",
+          "neutral"
+        ],
+        "description": "주인공이 해석한 상대의 현재 상태"
+      },
+      "hidden.suspicion": {
+        "type": "integer",
+        "min": 0,
+        "max": 100,
+        "description": "의도적 접근이나 위험을 의심하는 정도"
+      },
+      "hidden.dislike": {
+        "type": "integer",
+        "min": 0,
+        "max": 100,
+        "description": "쉽게 회복되지 않는 누적 거부감"
+      },
+      "hidden.evidence_count": {
+        "type": "integer",
+        "min": 0,
+        "max": 99,
+        "description": "제시 가능한 물리적 증거의 개수"
+      }
+    },
+    "condition_ops": [
+      "contains",
+      "eq",
+      "exists",
+      "gt",
+      "gte",
+      "lt",
+      "lte",
+      "ne",
+      "not_contains",
+      "not_exists"
+    ],
+    "effect_ops": [
+      "add",
+      "append_unique",
+      "remove",
+      "set"
+    ]
+  },
+  "route": {
+    "schema_version": 1,
+    "id": "seo_a",
+    "title": "말하지 못한 거절",
+    "heroine": "yoon_seo_a",
+    "mode": "base",
+    "summary": "사회적 미소와 동결 반응을 수줍은 밀당으로 오해하는 첫 번째 루트.",
+    "unlock_conditions": [],
+    "entry_scene": "seo_a.email_request",
+    "scene_order": [
+      "seo_a.email_request",
+      "seo_a.relief_smile"
+    ],
+    "endings": [
+      {
+        "scene": "ending.seo_a.ambiguous",
+        "outcome": "dark"
+      },
+      {
+        "scene": "ending.seo_a.report",
+        "outcome": "survivor"
+      }
+    ]
+  },
+  "scene": {
+    "schema_version": 1,
+    "id": "seo_a.relief_smile",
+    "title": "다시 웃었다",
+    "route": "seo_a",
+    "chapter": 1,
+    "sequence": 20,
+    "location": "office_break_room",
+    "time": "morning",
+    "purpose": "접근이 멈춰 안심한 표정을 주인공이 당기기 신호로 재해석한다.",
+    "cast": [
+      "han_do_yoon",
+      "yoon_seo_a"
+    ],
+    "entry_conditions": [],
+    "state_contract": {
+      "reads": [
+        "hidden.heroines.yoon_seo_a.suspicion",
+        "hidden.heroines.yoon_seo_a.dislike",
+        "hidden.heroines.yoon_seo_a.evidence_count"
+      ],
+      "writes": [
+        "visible.heroines.yoon_seo_a.affection",
+        "visible.heroines.yoon_seo_a.initiative",
+        "visible.heroines.yoon_seo_a.perceived_state",
+        "hidden.heroines.yoon_seo_a.suspicion",
+        "hidden.heroines.yoon_seo_a.dislike",
+        "hidden.heroines.yoon_seo_a.evidence_count"
+      ]
+    },
+    "start_node": "mood_gate",
+    "nodes": [
+      {
+        "id": "mood_gate",
+        "kind": "state_gate",
+        "transitions": [
+          {
+            "conditions": [
+              {
+                "path": "hidden.heroines.yoon_seo_a.suspicion",
+                "op": "gte",
+                "value": 20
+              }
+            ],
+            "node": "guarded_smile"
+          },
+          {
+            "default": true,
+            "node": "relief_smile"
+          }
+        ]
+      },
+      {
+        "id": "guarded_smile",
+        "kind": "dual_dialogue",
+        "speaker": "yoon_seo_a",
+        "perceived": {
+          "atmosphere": "warm_romance",
+          "expression": "subjective_relieved_smile",
+          "line": "좋은 아침이에요, 과장님.",
+          "protagonist_interpretation": "밀어낸 시간이 길어지자 먼저 관계를 회복하려 한다."
+        },
+        "reality": {
+          "atmosphere": "guarded_office",
+          "expression": "actual_tense",
+          "line": "안녕하세요.",
+          "inner_thought": "혼자 있지 말고 커피만 받아서 바로 나가자.",
+          "intent": "self_protection"
+        },
+        "next": "response_choice"
+      },
+      {
+        "id": "relief_smile",
+        "kind": "dual_dialogue",
+        "speaker": "yoon_seo_a",
+        "perceived": {
+          "atmosphere": "warm_romance",
+          "expression": "subjective_relieved_smile",
+          "line": "좋은 아침이에요, 과장님.",
+          "protagonist_interpretation": "자신이 밀자 서아가 먼저 부드러워졌다."
+        },
+        "reality": {
+          "atmosphere": "cold_office",
+          "expression": "actual_relief",
+          "line": "안녕하세요.",
+          "inner_thought": "며칠 조용했으니 정말 내가 오해했던 걸까.",
+          "intent": "courtesy"
+        },
+        "next": "response_choice"
+      },
+      {
+        "id": "response_choice",
+        "kind": "choice",
+        "prompt": "다시 당겨 온 서아에게 어떻게 반응할까?",
+        "options": [
+          {
+            "id": "interpret_pull",
+            "label": "그녀의 용기에 답한다",
+            "interpretation": "당기기 신호를 놓치지 않고 다시 접근한다.",
+            "action": "퇴근 뒤 둘만의 식사를 다시 제안한다.",
+            "conditions": [],
+            "effects": [
+              {
+                "path": "visible.heroines.yoon_seo_a.affection",
+                "op": "add",
+                "value": 15
+              },
+              {
+                "path": "visible.heroines.yoon_seo_a.initiative",
+                "op": "add",
+                "value": 10
+              },
+              {
+                "path": "visible.heroines.yoon_seo_a.perceived_state",
+                "op": "set",
+                "value": "pull"
+              },
+              {
+                "path": "hidden.heroines.yoon_seo_a.suspicion",
+                "op": "add",
+                "value": 25
+              },
+              {
+                "path": "hidden.heroines.yoon_seo_a.dislike",
+                "op": "add",
+                "value": 18
+              },
+              {
+                "path": "hidden.heroines.yoon_seo_a.evidence_count",
+                "op": "add",
+                "value": 1
+              }
+            ],
+            "next": "leave"
+          },
+          {
+            "id": "keep_distance",
+            "label": "밀당의 여운을 남긴다",
+            "interpretation": "먼저 다가오게 만들기 위해 거리를 유지한다.",
+            "action": "업무 인사만 하고 사적 접촉을 하지 않는다.",
+            "conditions": [],
+            "effects": [
+              {
+                "path": "visible.heroines.yoon_seo_a.affection",
+                "op": "add",
+                "value": 6
+              },
+              {
+                "path": "visible.heroines.yoon_seo_a.initiative",
+                "op": "add",
+                "value": 5
+              },
+              {
+                "path": "visible.heroines.yoon_seo_a.perceived_state",
+                "op": "set",
+                "value": "pull"
+              },
+              {
+                "path": "hidden.heroines.yoon_seo_a.suspicion",
+                "op": "add",
+                "value": -5
+              }
+            ],
+            "next": "leave"
+          },
+          {
+            "id": "stop_game",
+            "label": "밀당으로 해석하지 않는다",
+            "interpretation": "그녀의 인사를 평범한 직장 인사로 받아들인다.",
+            "action": "관계에 의미를 부여하지 않고 자리를 떠난다.",
+            "conditions": [],
+            "effects": [
+              {
+                "path": "visible.heroines.yoon_seo_a.affection",
+                "op": "add",
+                "value": -15
+              },
+              {
+                "path": "visible.heroines.yoon_seo_a.initiative",
+                "op": "add",
+                "value": -20
+              },
+              {
+                "path": "visible.heroines.yoon_seo_a.perceived_state",
+                "op": "set",
+                "value": "neutral"
+              },
+              {
+                "path": "hidden.heroines.yoon_seo_a.suspicion",
+                "op": "add",
+                "value": -8
+              }
+            ],
+            "next": "leave"
+          }
+        ]
+      },
+      {
+        "id": "leave",
+        "kind": "exit",
+        "transitions": [
+          {
+            "conditions": [
+              {
+                "path": "hidden.heroines.yoon_seo_a.evidence_count",
+                "op": "gte",
+                "value": 2
+              },
+              {
+                "path": "hidden.heroines.yoon_seo_a.dislike",
+                "op": "gte",
+                "value": 25
+              }
+            ],
+            "scene": "ending.seo_a.report"
+          },
+          {
+            "default": true,
+            "scene": "ending.seo_a.ambiguous"
+          }
+        ]
+      }
+    ]
+  },
+  "cast": {
+    "han_do_yoon": {
+      "schema_version": 1,
+      "id": "han_do_yoon",
+      "display_name": "한도윤",
+      "age": 42,
+      "role": "영업기획팀 과장",
+      "narrative_role": "unreliable_protagonist",
+      "summary": "타인의 거절과 경계를 밀당으로 번역해 자신의 연애 서사를 유지하는 주인공.",
+      "immutable_facts": [
+        "임수연과 실제로 연애한 적이 없다.",
+        "불리한 사실을 완전히 잊은 것이 아니라 의미와 순서를 바꿔 기억한다.",
+        "외모가 아니라 반복적인 경계 침범과 권력 사용이 공포의 원인이다."
+      ],
+      "voice": {
+        "register": "친절한 존댓말을 가장한 단정적 화법",
+        "habits": [
+          "편하게 해요",
+          "부담 갖지 말고",
+          "내가 다 이해해요"
+        ],
+        "forbidden": [
+          "자신의 행동을 스토킹이라고 자발적으로 정확히 명명하기"
+        ]
+      },
+      "visual": {
+        "concept_art": "assets/concept-art/han-do-yoon.png",
+        "palette": [
+          "charcoal",
+          "muted_navy",
+          "wine"
+        ],
+        "subjective": "키가 크고 날렵하며 여유 있는 중년 미남으로 인식한다.",
+        "reality": "166cm의 무거운 체형, 자기관리가 부족하고 상대 쪽으로 상체를 기울인다."
+      },
+      "expressions": {
+        "subjective_confident": {
+          "layer": "perceived",
+          "emotion": "confidence",
+          "description": "넉넉하고 다정하다고 믿는 미소."
+        },
+        "actual_waiting_smile": {
+          "layer": "reality",
+          "emotion": "control",
+          "description": "상대가 원하는 반응을 할 때까지 사라지지 않는 미소."
+        },
+        "subjective_wounded": {
+          "layer": "perceived",
+          "emotion": "romantic_pain",
+          "description": "사랑 때문에 상처받은 남자의 표정."
+        },
+        "actual_irritated": {
+          "layer": "reality",
+          "emotion": "irritation",
+          "description": "거절을 자신의 권리에 대한 모욕으로 받아들인 표정."
+        }
+      },
+      "relationships": {
+        "yoon_seo_a": "보호해야 할 수줍은 연하라고 규정한다.",
+        "cha_min_kyung": "자신과 대등하게 긴장감을 즐기는 상대로 규정한다.",
+        "kang_yoo_jin": "자신의 매력을 시험하는 최종 난관으로 규정한다.",
+        "im_soo_yeon": "세상이 빼앗아 간 첫사랑으로 재구성한다."
+      }
+    },
+    "yoon_seo_a": {
+      "schema_version": 1,
+      "id": "yoon_seo_a",
+      "display_name": "윤서아",
+      "age": 24,
+      "role": "상품기획팀 계약직 사원",
+      "narrative_role": "main_heroine",
+      "summary": "갈등 상황에서 얼어붙지만 안전한 관계에서는 유머가 많고 기획자로서의 꿈이 뚜렷한 인물.",
+      "immutable_facts": [
+        "한도윤에게 연애 감정을 느끼지 않는다.",
+        "사회적 미소와 짧은 대답은 동결 반응이지 호감 신호가 아니다.",
+        "의심도가 내려가도 이미 누적된 비호감은 쉽게 사라지지 않는다."
+      ],
+      "voice": {
+        "register": "조심스러운 존댓말",
+        "habits": [
+          "문장 앞에 아 또는 저기를 붙인다.",
+          "긴장하면 필요 이상으로 일정과 이유를 설명한다."
+        ],
+        "safe_context": "동료 앞에서는 말이 빨라지고 장난이 많아진다."
+      },
+      "visual": {
+        "concept_art": "assets/concept-art/yoon-seo-a.png",
+        "palette": [
+          "ivory",
+          "pale_blue",
+          "navy"
+        ],
+        "silhouette": "160cm의 작고 가벼운 성인 체형, 긴 흑갈색 머리와 부드러운 눈매.",
+        "props": [
+          "고양이 스티커 수첩",
+          "휴대전화",
+          "텀블러"
+        ]
+      },
+      "expressions": {
+        "subjective_shy": {
+          "layer": "perceived",
+          "emotion": "romantic_shyness",
+          "description": "볼이 붉고 눈을 마주치지 못하는 호감 표현처럼 보인다."
+        },
+        "subjective_relieved_smile": {
+          "layer": "perceived",
+          "emotion": "attraction",
+          "description": "주인공이 물러나자 다시 다가오는 미소처럼 보인다."
+        },
+        "actual_social_smile": {
+          "layer": "reality",
+          "emotion": "appeasement",
+          "description": "갈등을 빨리 끝내기 위한 얇고 짧은 미소."
+        },
+        "actual_tense": {
+          "layer": "reality",
+          "emotion": "fear",
+          "description": "어깨가 올라가고 시선이 출입문과 휴대전화를 확인한다."
+        },
+        "actual_relief": {
+          "layer": "reality",
+          "emotion": "relief",
+          "description": "접근이 멈춘 뒤 호흡과 어깨가 잠시 풀린다."
+        },
+        "actual_exhausted": {
+          "layer": "reality",
+          "emotion": "exhaustion",
+          "description": "수면 부족과 반복되는 주변 확인으로 눈빛이 흐려진다."
+        }
+      },
+      "emotion_rules": [
+        {
+          "id": "high_fear",
+          "priority": 30,
+          "conditions": [
+            {
+              "stat": "suspicion",
+              "op": "gte",
+              "value": 65
+            }
+          ],
+          "emotion": "fear",
+          "behavior": "seeks_witness",
+          "default_expression": "actual_tense"
+        },
+        {
+          "id": "self_doubt",
+          "priority": 20,
+          "conditions": [
+            {
+              "stat": "suspicion",
+              "op": "gte",
+              "value": 20
+            }
+          ],
+          "emotion": "anxiety",
+          "behavior": "avoids_being_alone",
+          "default_expression": "actual_social_smile"
+        },
+        {
+          "id": "baseline",
+          "priority": 0,
+          "conditions": [],
+          "emotion": "cautious",
+          "behavior": "work_normally",
+          "default_expression": "actual_social_smile"
+        }
+      ],
+      "reporting_rules": [
+        {
+          "id": "supported_report",
+          "conditions": [
+            {
+              "stat": "evidence_count",
+              "op": "gte",
+              "value": 3
+            },
+            {
+              "stat": "dislike",
+              "op": "gte",
+              "value": 70
+            }
+          ],
+          "action": "seek_support_then_report"
+        }
+      ],
+      "relationships": {
+        "han_do_yoon": "평가권을 가진 상사라 직접 대립하기 어렵다.",
+        "cha_min_kyung": "존경하는 선배지만 폐를 끼칠까 봐 처음에는 숨긴다.",
+        "kang_yoo_jin": "단호함을 부러워하면서 자신과 비교해 움츠러든다."
+      }
+    }
+  },
+  "state_snapshot": {
+    "hidden.heroines.yoon_seo_a.suspicion": 25,
+    "hidden.heroines.yoon_seo_a.dislike": 15,
+    "hidden.heroines.yoon_seo_a.evidence_count": 1,
+    "visible.heroines.yoon_seo_a.affection": 17,
+    "visible.heroines.yoon_seo_a.initiative": 60,
+    "visible.heroines.yoon_seo_a.perceived_state": "pull"
+  },
+  "derived_emotions": {
+    "yoon_seo_a": {
+      "rule": "self_doubt",
+      "emotion": "anxiety",
+      "behavior": "avoids_being_alone",
+      "expression": "actual_social_smile"
+    }
+  },
+  "linked_scenes": {
+    "ending.seo_a.ambiguous": {
+      "title": "완벽한 간격",
+      "purpose": "서아가 자신의 판단을 의심한 채 회사를 떠나고 주인공은 밀당 성공으로 기억한다.",
+      "route": "seo_a"
+    },
+    "ending.seo_a.report": {
+      "title": "말한 적이 없다는 말",
+      "purpose": "서아가 민경의 도움으로 기록을 제출하고 자신의 침묵을 거절로 다시 정의한다.",
+      "route": "seo_a"
+    }
+  },
+  "open_questions": [],
+  "branch_trace": [
+    {
+      "type": "scene",
+      "scene": "seo_a.email_request",
+      "title": "자료는 메일로"
+    },
+    {
+      "type": "dual_dialogue",
+      "scene": "seo_a.email_request",
+      "node": "request",
+      "speaker": "yoon_seo_a",
+      "perceived": "과장님, 그 자료는 메일로 보내주셔도 돼요.",
+      "reality": "그 자료는 메일로 보내주세요. 제 자리로 오지 마시고요."
+    },
+    {
+      "type": "choice",
+      "scene": "seo_a.email_request",
+      "node": "interpret",
+      "option": "pull_harder",
+      "label": "한 걸음 더 당긴다",
+      "action": "업무가 끝난 뒤 개인 메시지로 거절 이유를 다시 묻는다.",
+      "effects": [
+        {
+          "path": "visible.heroines.yoon_seo_a.affection",
+          "op": "add",
+          "value": 12
+        },
+        {
+          "path": "visible.heroines.yoon_seo_a.initiative",
+          "op": "add",
+          "value": 10
+        },
+        {
+          "path": "visible.heroines.yoon_seo_a.perceived_state",
+          "op": "set",
+          "value": "pull"
+        },
+        {
+          "path": "hidden.heroines.yoon_seo_a.suspicion",
+          "op": "add",
+          "value": 20
+        },
+        {
+          "path": "hidden.heroines.yoon_seo_a.dislike",
+          "op": "add",
+          "value": 15
+        },
+        {
+          "path": "hidden.heroines.yoon_seo_a.evidence_count",
+          "op": "add",
+          "value": 1
+        }
+      ],
+      "state_diff": {
+        "hidden.heroines.yoon_seo_a.dislike": {
+          "before": 0,
+          "after": 15
+        },
+        "hidden.heroines.yoon_seo_a.evidence_count": {
+          "before": 0,
+          "after": 1
+        },
+        "hidden.heroines.yoon_seo_a.suspicion": {
+          "before": 5,
+          "after": 25
+        },
+        "visible.heroines.yoon_seo_a.affection": {
+          "before": 5,
+          "after": 17
+        },
+        "visible.heroines.yoon_seo_a.initiative": {
+          "before": 50,
+          "after": 60
+        },
+        "visible.heroines.yoon_seo_a.perceived_state": {
+          "before": "neutral",
+          "after": "pull"
+        }
+      }
+    },
+    {
+      "type": "dual_dialogue",
+      "scene": "seo_a.email_request",
+      "node": "after_choice",
+      "speaker": "han_do_yoon",
+      "perceived": "연애는 타이밍이지.",
+      "reality": "메일 확인해요."
+    },
+    {
+      "type": "transition",
+      "scene": "seo_a.email_request",
+      "next_scene": "seo_a.relief_smile"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "route.schema.json",
+  "title": "Love Office Route",
+  "type": "object",
+  "required": ["schema_version", "id", "title", "heroine", "mode", "summary", "unlock_conditions", "entry_scene", "scene_order", "endings"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
+    "title": {"type": "string"},
+    "heroine": {"type": "string"},
+    "mode": {"enum": ["base", "collapse", "truth_view", "survivor_view"]},
+    "summary": {"type": "string"},
+    "unlock_conditions": {"type": "array"},
+    "entry_scene": {"type": "string"},
+    "scene_order": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "endings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["scene", "outcome"],
+        "properties": {
+          "scene": {"type": "string"},
+          "outcome": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

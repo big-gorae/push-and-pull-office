@@ -1,0 +1,119 @@
+schema_version: 1
+project:
+  id: love_office_story_1
+  title: 호의의 해석
+  default_language: ko
+
+id_pattern: "^[a-z][a-z0-9_.]*$"
+
+enums:
+  perceived_state: [push, pull, neutral]
+  atmosphere:
+    - warm_romance
+    - playful_tension
+    - cold_office
+    - guarded_office
+    - procedural
+    - dread
+  intent:
+    - courtesy
+    - boundary
+    - avoidance
+    - relief
+    - documentation
+    - confrontation
+    - self_protection
+    - work_only
+  node_kind:
+    - dual_dialogue
+    - dual_narration
+    - choice
+    - state_gate
+    - effect
+    - exit
+
+stats:
+  visible.affection:
+    type: integer
+    min: 0
+    max: 100
+    description: 주인공이 사랑받는다고 확신하는 정도
+  visible.initiative:
+    type: integer
+    min: 0
+    max: 100
+    description: 주인공이 밀당을 통제한다고 믿는 정도
+  visible.perceived_state:
+    type: enum
+    values: [push, pull, neutral]
+    description: 주인공이 해석한 상대의 현재 상태
+  hidden.suspicion:
+    type: integer
+    min: 0
+    max: 100
+    description: 의도적 접근이나 위험을 의심하는 정도
+  hidden.dislike:
+    type: integer
+    min: 0
+    max: 100
+    description: 쉽게 회복되지 않는 누적 거부감
+  hidden.evidence_count:
+    type: integer
+    min: 0
+    max: 99
+    description: 제시 가능한 물리적 증거의 개수
+
+state_path_patterns:
+  - pattern: "^visible\\.heroines\\.[a-z][a-z0-9_]*\\.(affection|initiative|perceived_state)$"
+    stat_from_suffix: true
+  - pattern: "^hidden\\.heroines\\.[a-z][a-z0-9_]*\\.(suspicion|dislike|evidence_count)$"
+    stat_from_suffix: true
+  - pattern: "^progress\\.(cleared_routes|unlocked_modes)$"
+    type: array
+  - pattern: "^progress\\.flags$"
+    type: map
+  - pattern: "^progress\\.flags\\.[a-z][a-z0-9_.]*$"
+    type: any
+
+initial_state:
+  visible:
+    heroines:
+      yoon_seo_a:
+        affection: 5
+        initiative: 50
+        perceived_state: neutral
+      cha_min_kyung:
+        affection: 5
+        initiative: 50
+        perceived_state: neutral
+      kang_yoo_jin:
+        affection: 0
+        initiative: 30
+        perceived_state: neutral
+  hidden:
+    heroines:
+      yoon_seo_a:
+        suspicion: 5
+        dislike: 0
+        evidence_count: 0
+      cha_min_kyung:
+        suspicion: 20
+        dislike: 10
+        evidence_count: 0
+      kang_yoo_jin:
+        suspicion: 35
+        dislike: 15
+        evidence_count: 0
+  progress:
+    cleared_routes: []
+    unlocked_modes: [base]
+    flags: {}
+
+files:
+  characters: characters/*.yaml
+  routes: routes/*.yaml
+  scenes: scenes/**/*.yaml
+
+build:
+  runtime_output: build/story-runtime.json
+  context_output: build/ai-context.json

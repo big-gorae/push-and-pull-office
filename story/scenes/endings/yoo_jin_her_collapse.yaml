@@ -1,0 +1,44 @@
+schema_version: 1
+id: ending.yoo_jin.her_collapse
+title: 접수할 수 없는 문장
+route: yoo_jin
+chapter: 1
+sequence: 90
+location: empty_design_desk
+time: night
+purpose: 기록 가능한 단일 사건이 부족한 사이 회사가 유진의 호소를 소모시키는 가장 어두운 결말.
+cast: [han_do_yoon, kang_yoo_jin]
+entry_conditions: []
+state_contract:
+  reads: []
+  writes:
+    - progress.cleared_routes
+    - progress.unlocked_modes
+start_node: complete
+nodes:
+  - id: complete
+    kind: effect
+    effects:
+      - {path: progress.cleared_routes, op: append_unique, value: yoo_jin}
+      - {path: progress.unlocked_modes, op: append_unique, value: survivor_view}
+    next: aftermath
+
+  - id: aftermath
+    kind: dual_narration
+    perceived:
+      atmosphere: warm_romance
+      line: "유진의 태블릿과 사원증은 사라져 있었다. 그녀도 결국 먼저 밀어낼 수밖에 없었던 것이다."
+      protagonist_interpretation: 증거를 남기지 않은 자신의 밀당이 완벽했다고 믿는다.
+    reality:
+      atmosphere: dread
+      line: "유진은 새 회사에서 시작하려던 계획을 접고 빈 책상만 남겼다."
+      inner_thought: 자신의 판단이 틀렸다고 믿지는 않지만 더는 조직이 기록을 지켜 줄 것이라 믿지 못한다.
+      intent: self_protection
+    next: end
+
+  - id: end
+    kind: exit
+    transitions:
+      - default: true
+        ending: true
+        ending_id: yoo_jin.her_collapse

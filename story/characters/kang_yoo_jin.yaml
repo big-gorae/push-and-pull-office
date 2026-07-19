@@ -1,0 +1,70 @@
+schema_version: 1
+id: kang_yoo_jin
+display_name: 강유진
+age: 29
+role: 브랜드디자인팀 경력직 대리
+narrative_role: collapse_mode_heroine
+summary: 사실관계를 즉시 고정하고 낮은 문턱으로 기록과 신고를 시작해 주인공의 해석 시스템을 거부하는 인물.
+immutable_facts:
+  - 서아와 민경의 주요 루트를 완료한 뒤 붕괴 모드에서만 공략 대상으로 등장한다.
+  - 한도윤을 특별한 연애 상대가 아니라 중단시켜야 할 반복 행동의 주체로 본다.
+  - 신고가 묵살되어도 자신의 거절이 잘못이었다고 생각하지 않는다.
+voice:
+  register: 사실관계 중심의 단정한 존댓말
+  habits:
+    - 날짜, 장소, 참석자를 포함해 말한다.
+    - 했습니다와 하지 않았습니다를 사용한다.
+    - 왜곡된 해석에 같은 원문을 반복한다.
+visual:
+  concept_art: assets/concept-art/kang-yoo-jin.png
+  palette: [cobalt, emerald, light_gray]
+  silhouette: 164cm의 활동적인 체형, 높은 포니테일과 똑바른 자세.
+  props: [태블릿, 스타일러스, 코발트색 사원증 줄]
+expressions:
+  subjective_bold_flirt:
+    layer: perceived
+    emotion: attraction
+    description: 자신과 대등하게 맞서는 당돌한 호감처럼 보인다.
+  actual_fact_check:
+    layer: reality
+    emotion: skepticism
+    description: 한쪽 눈썹을 올리고 사실관계 오류를 짚는다.
+  actual_warning:
+    layer: reality
+    emotion: resolve
+    description: 정면을 보고 경고 문장을 분명하게 전달한다.
+  actual_procedural:
+    layer: reality
+    emotion: focus
+    description: 감정 표현보다 기록과 접수 절차에 집중한다.
+  actual_worn_down:
+    layer: reality
+    emotion: exhaustion
+    description: 자신감은 남아 있지만 반복된 묵살로 표정이 지쳐 있다.
+emotion_rules:
+  - id: formal_action
+    priority: 30
+    conditions:
+      - stat: suspicion
+        op: gte
+        value: 45
+    emotion: resolve
+    behavior: record_and_report
+    default_expression: actual_warning
+  - id: observe
+    priority: 0
+    conditions: []
+    emotion: skeptical
+    behavior: fact_check
+    default_expression: actual_fact_check
+reporting_rules:
+  - id: immediate_record
+    conditions:
+      - stat: evidence_count
+        op: gte
+        value: 1
+    action: formal_record
+relationships:
+  han_do_yoon: 연애적 의미를 부여하지 않고 신고 대상으로 본다.
+  yoon_seo_a: 진술을 재촉하지 않고 스스로 말할 때까지 기다린다.
+  cha_min_kyung: 대응 속도를 두고 충돌하지만 조직 경험을 인정한다.

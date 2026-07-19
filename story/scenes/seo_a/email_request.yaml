@@ -1,0 +1,100 @@
+schema_version: 1
+id: seo_a.email_request
+title: 자료는 메일로
+route: seo_a
+chapter: 1
+sequence: 10
+location: open_office
+time: late_afternoon
+purpose: 서아의 업무상 경계를 주인공이 첫 밀기 신호로 번역한다.
+cast: [han_do_yoon, yoon_seo_a]
+entry_conditions: []
+state_contract:
+  reads: []
+  writes:
+    - visible.heroines.yoon_seo_a.affection
+    - visible.heroines.yoon_seo_a.initiative
+    - visible.heroines.yoon_seo_a.perceived_state
+    - hidden.heroines.yoon_seo_a.suspicion
+    - hidden.heroines.yoon_seo_a.dislike
+    - hidden.heroines.yoon_seo_a.evidence_count
+start_node: request
+nodes:
+  - id: request
+    kind: dual_dialogue
+    speaker: yoon_seo_a
+    perceived:
+      atmosphere: warm_romance
+      expression: subjective_shy
+      line: "과장님, 그 자료는 메일로 보내주셔도 돼요."
+      protagonist_interpretation: 직접 찾아올 핑계가 사라지는 것이 아쉬워 눈을 피한다.
+    reality:
+      atmosphere: guarded_office
+      expression: actual_tense
+      line: "그 자료는 메일로 보내주세요. 제 자리로 오지 마시고요."
+      inner_thought: 또 내 자리로 오면 민경 선배에게 말해야 한다.
+      intent: boundary
+    next: interpret
+
+  - id: interpret
+    kind: choice
+    prompt: 서아는 지금 밀고 있을까, 당기고 있을까?
+    options:
+      - id: match_push
+        label: 나도 며칠 밀어낸다
+        interpretation: 그녀의 밀기에 맞춰 긴장감을 유지한다.
+        action: 사적인 접근을 사흘 동안 중단한다.
+        conditions: []
+        effects:
+          - {path: visible.heroines.yoon_seo_a.affection, op: add, value: 10}
+          - {path: visible.heroines.yoon_seo_a.initiative, op: add, value: 8}
+          - {path: visible.heroines.yoon_seo_a.perceived_state, op: set, value: push}
+          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -3}
+          - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 2}
+        next: after_choice
+      - id: pull_harder
+        label: 한 걸음 더 당긴다
+        interpretation: 밀어낼수록 확신을 보여 주어야 한다.
+        action: 업무가 끝난 뒤 개인 메시지로 거절 이유를 다시 묻는다.
+        conditions: []
+        effects:
+          - {path: visible.heroines.yoon_seo_a.affection, op: add, value: 12}
+          - {path: visible.heroines.yoon_seo_a.initiative, op: add, value: 10}
+          - {path: visible.heroines.yoon_seo_a.perceived_state, op: set, value: pull}
+          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: 20}
+          - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 15}
+          - {path: hidden.heroines.yoon_seo_a.evidence_count, op: add, value: 1}
+        next: after_choice
+      - id: take_literally
+        label: 말한 그대로 받아들인다
+        interpretation: 오늘은 연애보다 업무를 우선한다.
+        action: 자료를 메일로 보내고 추가 접촉을 하지 않는다.
+        conditions: []
+        effects:
+          - {path: visible.heroines.yoon_seo_a.affection, op: add, value: -5}
+          - {path: visible.heroines.yoon_seo_a.initiative, op: add, value: -10}
+          - {path: visible.heroines.yoon_seo_a.perceived_state, op: set, value: neutral}
+          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -2}
+        next: after_choice
+
+  - id: after_choice
+    kind: dual_dialogue
+    speaker: han_do_yoon
+    perceived:
+      atmosphere: playful_tension
+      expression: subjective_confident
+      line: "연애는 타이밍이지."
+      protagonist_interpretation: 자신이 관계의 속도를 정확히 조절했다고 믿는다.
+    reality:
+      atmosphere: cold_office
+      expression: actual_waiting_smile
+      line: "메일 확인해요."
+      inner_thought: 그녀가 다시 편하게 웃는 순간을 호감의 증거로 삼으려 한다.
+      intent: work_only
+    next: leave
+
+  - id: leave
+    kind: exit
+    transitions:
+      - default: true
+        scene: seo_a.relief_smile

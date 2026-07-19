@@ -1,0 +1,54 @@
+schema_version: 1
+id: ending.seo_a.report
+title: 말한 적이 없다는 말
+route: seo_a
+chapter: 1
+sequence: 91
+location: hr_interview_room
+time: afternoon
+purpose: 서아가 민경의 도움으로 기록을 제출하고 자신의 침묵을 거절로 다시 정의한다.
+cast: [han_do_yoon, yoon_seo_a, cha_min_kyung]
+entry_conditions: []
+state_contract:
+  reads:
+    - progress.cleared_routes
+  writes:
+    - progress.cleared_routes
+    - progress.unlocked_modes
+start_node: complete
+nodes:
+  - id: complete
+    kind: effect
+    effects:
+      - {path: progress.cleared_routes, op: append_unique, value: seo_a}
+      - {path: progress.unlocked_modes, op: append_unique, value: truth_view}
+      - path: progress.unlocked_modes
+        op: append_unique
+        value: collapse
+        conditions:
+          - {path: progress.cleared_routes, op: contains, value: seo_a}
+          - {path: progress.cleared_routes, op: contains, value: min_kyung}
+    next: statement
+
+  - id: statement
+    kind: dual_dialogue
+    speaker: yoon_seo_a
+    perceived:
+      atmosphere: dread
+      expression: subjective_shy
+      line: "제가 너무 늦게 말했나 봐요."
+      protagonist_interpretation: 회사가 그녀의 혼란을 이용해 둘의 관계를 갈라놓았다고 믿는다.
+    reality:
+      atmosphere: procedural
+      expression: actual_exhausted
+      line: "제가 말하지 못했던 것도 거절이었습니다."
+      inner_thought: 목소리가 떨려도 기록은 사라지지 않는다.
+      intent: documentation
+    next: end
+
+  - id: end
+    kind: exit
+    transitions:
+      - default: true
+        ending: true
+        ending_id: seo_a.report

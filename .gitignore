@@ -1,0 +1,7 @@
+.DS_Store
+.tooling/
+.venv/
+node_modules/
+dist/
+src-tauri/target/
+*.log

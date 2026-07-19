@@ -1,0 +1,92 @@
+schema_version: 1
+id: yoo_jin.formal_record
+title: 기록하겠습니다
+route: yoo_jin
+chapter: 1
+sequence: 20
+location: design_team_desk
+time: morning
+purpose: 유진의 신고 절차를 연애적 도전으로 해석할지 원문으로 받아들일지 결정한다.
+cast: [han_do_yoon, kang_yoo_jin]
+entry_conditions: []
+state_contract:
+  reads:
+    - hidden.heroines.kang_yoo_jin.dislike
+    - hidden.heroines.kang_yoo_jin.evidence_count
+  writes:
+    - visible.heroines.kang_yoo_jin.affection
+    - visible.heroines.kang_yoo_jin.initiative
+    - visible.heroines.kang_yoo_jin.perceived_state
+    - hidden.heroines.kang_yoo_jin.suspicion
+    - hidden.heroines.kang_yoo_jin.dislike
+    - hidden.heroines.kang_yoo_jin.evidence_count
+start_node: warning
+nodes:
+  - id: warning
+    kind: dual_dialogue
+    speaker: kang_yoo_jin
+    presentation_flags: [original_text_lock, ui_glitch]
+    perceived:
+      atmosphere: dread
+      expression: subjective_bold_flirt
+      line: "그렇게 밀어내면 더 궁금해진다고요?"
+      protagonist_interpretation: 자신의 말을 되풀이할 정도로 감정이 커졌다.
+    reality:
+      atmosphere: procedural
+      expression: actual_warning
+      line: "그건 밀당이 아니라 경고를 무시하는 겁니다. 이 대화도 기록하겠습니다."
+      inner_thought: 오늘 안으로 이전 기록과 함께 정식 접수한다.
+      intent: confrontation
+    next: choose
+
+  - id: choose
+    kind: choice
+    prompt: 기록을 시작한 유진을 어떻게 상대할까?
+    options:
+      - id: intermittent_pressure
+        label: 흔적 없이 밀당을 이어간다
+        interpretation: 직접 표현을 줄이고 접근과 후퇴만으로 확신을 흔든다.
+        action: 명시적 메시지는 중단하지만 업무 공간에서 접근과 후퇴를 반복한다.
+        conditions:
+          - {path: hidden.heroines.kang_yoo_jin.evidence_count, op: eq, value: 0}
+        effects:
+          - {path: visible.heroines.kang_yoo_jin.affection, op: add, value: 20}
+          - {path: visible.heroines.kang_yoo_jin.initiative, op: add, value: 20}
+          - {path: visible.heroines.kang_yoo_jin.perceived_state, op: set, value: push}
+          - {path: hidden.heroines.kang_yoo_jin.suspicion, op: add, value: -4}
+          - {path: hidden.heroines.kang_yoo_jin.dislike, op: add, value: 55}
+        next: leave
+      - id: challenge_record
+        label: 감정을 숨기지 않는다
+        interpretation: 기록하겠다는 말도 자신을 시험하는 강한 밀기다.
+        action: 업무용 메신저에 자신의 관계 해석을 다시 남긴다.
+        conditions: []
+        effects:
+          - {path: visible.heroines.kang_yoo_jin.affection, op: add, value: 15}
+          - {path: visible.heroines.kang_yoo_jin.initiative, op: add, value: 10}
+          - {path: visible.heroines.kang_yoo_jin.perceived_state, op: set, value: pull}
+          - {path: hidden.heroines.kang_yoo_jin.suspicion, op: add, value: 20}
+          - {path: hidden.heroines.kang_yoo_jin.dislike, op: add, value: 25}
+          - {path: hidden.heroines.kang_yoo_jin.evidence_count, op: add, value: 1}
+        next: leave
+      - id: accept_warning
+        label: 경고를 원문 그대로 받아들인다
+        interpretation: 밀당이라는 해석을 중단한다.
+        action: 사과하고 모든 사적 접근을 중단한다.
+        conditions: []
+        effects:
+          - {path: visible.heroines.kang_yoo_jin.affection, op: add, value: -20}
+          - {path: visible.heroines.kang_yoo_jin.initiative, op: add, value: -25}
+          - {path: visible.heroines.kang_yoo_jin.perceived_state, op: set, value: neutral}
+          - {path: hidden.heroines.kang_yoo_jin.suspicion, op: add, value: -5}
+        next: leave
+
+  - id: leave
+    kind: exit
+    transitions:
+      - conditions:
+          - {path: hidden.heroines.kang_yoo_jin.evidence_count, op: eq, value: 0}
+          - {path: hidden.heroines.kang_yoo_jin.dislike, op: gte, value: 60}
+        scene: ending.yoo_jin.her_collapse
+      - default: true
+        scene: ending.yoo_jin.narrative_collapse

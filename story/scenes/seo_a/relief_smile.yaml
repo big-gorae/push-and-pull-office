@@ -1,0 +1,115 @@
+schema_version: 1
+id: seo_a.relief_smile
+title: 다시 웃었다
+route: seo_a
+chapter: 1
+sequence: 20
+location: office_break_room
+time: morning
+purpose: 접근이 멈춰 안심한 표정을 주인공이 당기기 신호로 재해석한다.
+cast: [han_do_yoon, yoon_seo_a]
+entry_conditions: []
+state_contract:
+  reads:
+    - hidden.heroines.yoon_seo_a.suspicion
+    - hidden.heroines.yoon_seo_a.dislike
+    - hidden.heroines.yoon_seo_a.evidence_count
+  writes:
+    - visible.heroines.yoon_seo_a.affection
+    - visible.heroines.yoon_seo_a.initiative
+    - visible.heroines.yoon_seo_a.perceived_state
+    - hidden.heroines.yoon_seo_a.suspicion
+    - hidden.heroines.yoon_seo_a.dislike
+    - hidden.heroines.yoon_seo_a.evidence_count
+start_node: mood_gate
+nodes:
+  - id: mood_gate
+    kind: state_gate
+    transitions:
+      - conditions:
+          - {path: hidden.heroines.yoon_seo_a.suspicion, op: gte, value: 20}
+        node: guarded_smile
+      - default: true
+        node: relief_smile
+
+  - id: guarded_smile
+    kind: dual_dialogue
+    speaker: yoon_seo_a
+    perceived:
+      atmosphere: warm_romance
+      expression: subjective_relieved_smile
+      line: "좋은 아침이에요, 과장님."
+      protagonist_interpretation: 밀어낸 시간이 길어지자 먼저 관계를 회복하려 한다.
+    reality:
+      atmosphere: guarded_office
+      expression: actual_tense
+      line: "안녕하세요."
+      inner_thought: 혼자 있지 말고 커피만 받아서 바로 나가자.
+      intent: self_protection
+    next: response_choice
+
+  - id: relief_smile
+    kind: dual_dialogue
+    speaker: yoon_seo_a
+    perceived:
+      atmosphere: warm_romance
+      expression: subjective_relieved_smile
+      line: "좋은 아침이에요, 과장님."
+      protagonist_interpretation: 자신이 밀자 서아가 먼저 부드러워졌다.
+    reality:
+      atmosphere: cold_office
+      expression: actual_relief
+      line: "안녕하세요."
+      inner_thought: 며칠 조용했으니 정말 내가 오해했던 걸까.
+      intent: courtesy
+    next: response_choice
+
+  - id: response_choice
+    kind: choice
+    prompt: 다시 당겨 온 서아에게 어떻게 반응할까?
+    options:
+      - id: interpret_pull
+        label: 그녀의 용기에 답한다
+        interpretation: 당기기 신호를 놓치지 않고 다시 접근한다.
+        action: 퇴근 뒤 둘만의 식사를 다시 제안한다.
+        conditions: []
+        effects:
+          - {path: visible.heroines.yoon_seo_a.affection, op: add, value: 15}
+          - {path: visible.heroines.yoon_seo_a.initiative, op: add, value: 10}
+          - {path: visible.heroines.yoon_seo_a.perceived_state, op: set, value: pull}
+          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: 25}
+          - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 18}
+          - {path: hidden.heroines.yoon_seo_a.evidence_count, op: add, value: 1}
+        next: leave
+      - id: keep_distance
+        label: 밀당의 여운을 남긴다
+        interpretation: 먼저 다가오게 만들기 위해 거리를 유지한다.
+        action: 업무 인사만 하고 사적 접촉을 하지 않는다.
+        conditions: []
+        effects:
+          - {path: visible.heroines.yoon_seo_a.affection, op: add, value: 6}
+          - {path: visible.heroines.yoon_seo_a.initiative, op: add, value: 5}
+          - {path: visible.heroines.yoon_seo_a.perceived_state, op: set, value: pull}
+          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -5}
+        next: leave
+      - id: stop_game
+        label: 밀당으로 해석하지 않는다
+        interpretation: 그녀의 인사를 평범한 직장 인사로 받아들인다.
+        action: 관계에 의미를 부여하지 않고 자리를 떠난다.
+        conditions: []
+        effects:
+          - {path: visible.heroines.yoon_seo_a.affection, op: add, value: -15}
+          - {path: visible.heroines.yoon_seo_a.initiative, op: add, value: -20}
+          - {path: visible.heroines.yoon_seo_a.perceived_state, op: set, value: neutral}
+          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -8}
+        next: leave
+
+  - id: leave
+    kind: exit
+    transitions:
+      - conditions:
+          - {path: hidden.heroines.yoon_seo_a.evidence_count, op: gte, value: 2}
+          - {path: hidden.heroines.yoon_seo_a.dislike, op: gte, value: 25}
+        scene: ending.seo_a.report
+      - default: true
+        scene: ending.seo_a.ambiguous
