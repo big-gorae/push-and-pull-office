@@ -1,0 +1,18 @@
+schema_version: 1
+id: background.office_corridor
+kind: background
+extends: archetype.background
+title_key: visual.background.office_corridor.title
+variants:
+  afternoon:
+    asset: assets/backgrounds/office-corridor-afternoon.png
+    match:
+      locations: [office_corridor, office_exit]
+      times: [morning, afternoon, late_afternoon]
+    priority: 70
+  default:
+    asset: assets/backgrounds/office-corridor-afternoon.png
+    match:
+      locations: [office_corridor, office_exit, subway_platform, public_archive]
+    priority: 35
+tags: [office, corridor, exposed]

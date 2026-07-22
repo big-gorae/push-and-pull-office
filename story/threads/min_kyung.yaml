@@ -1,0 +1,11 @@
+schema_version: 1
+id: min_kyung
+title: 차민경의 기록과 목격자
+lane: cha_min_kyung
+heroine: cha_min_kyung
+events:
+  - min_kyung.explicit_boundary
+  - min_kyung.witness_meeting
+  - min_kyung.ending_report
+  - min_kyung.ending_coverup
+

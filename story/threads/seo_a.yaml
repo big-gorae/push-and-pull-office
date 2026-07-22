@@ -1,0 +1,11 @@
+schema_version: 1
+id: seo_a
+title: 윤서아의 잃어버리는 일상
+lane: yoon_seo_a
+heroine: yoon_seo_a
+events:
+  - seo_a.email_request
+  - seo_a.relief_smile
+  - seo_a.ending_report
+  - seo_a.ending_ambiguous
+

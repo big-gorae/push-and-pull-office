@@ -1,0 +1,26 @@
+schema_version: 1
+id: min_kyung.explicit_boundary
+title: 업무 외 연락 금지
+type: heroine
+lane: cha_min_kyung
+thread: min_kyung
+sequence: 10
+window: {days: [3, 5], slots: [after_work], deadline_day: 5}
+duration: 1
+priority: 70
+availability: player
+completion: return_to_timeline
+participants: [han_do_yoon, cha_min_kyung]
+location: meeting_room
+scene: min_kyung.explicit_boundary
+requires: {events: [], conditions: []}
+on_seen: {effects: []}
+on_missed: {effects: []}
+presentation:
+  perceived:
+    title: 도전적인 밀기
+    summary: 민경이 쉽게 넘어오지 않는 상대로서 강한 규칙을 제시한다.
+  reality:
+    title: 명시적인 사적 연락 거부
+    summary: 민경은 모호함을 없애기 위해 업무 외 연락을 하지 말라고 분명히 말한다.
+

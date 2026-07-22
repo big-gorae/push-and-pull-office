@@ -1,0 +1,14 @@
+schema_version: 1
+id: character.cha_min_kyung
+kind: character
+extends: archetype.character_bust
+title_key: visual.character.cha_min_kyung.title
+character: cha_min_kyung
+fallback_asset: assets/concept-art/cha-min-kyung.png
+default_outfit: office
+default_pose: assertive
+poses:
+  neutral: {offset_x: 0, offset_y: 0, scale: 1.0}
+  assertive: {offset_x: 0, offset_y: -4, scale: 1.03}
+expression_assets: {}
+tags: [heroine, witness, assertive]

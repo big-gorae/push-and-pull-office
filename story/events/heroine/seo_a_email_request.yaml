@@ -1,0 +1,29 @@
+schema_version: 1
+id: seo_a.email_request
+title: 메일로 보내 주세요
+type: heroine
+lane: yoon_seo_a
+thread: seo_a
+sequence: 10
+window: {days: [2, 3], slots: [lunch], deadline_day: 3}
+duration: 1
+priority: 60
+availability: player
+completion: return_to_timeline
+participants: [han_do_yoon, yoon_seo_a]
+location: office_desk
+scene: seo_a.email_request
+requires: {events: [], conditions: []}
+on_seen: {effects: []}
+on_missed:
+  trigger_event: offscreen.seo_a_consults_min_kyung
+  effects:
+    - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -2}
+presentation:
+  perceived:
+    title: 서아가 거리를 재는 점심
+    summary: 직접 만나면 마음이 드러날까 봐 메일을 핑계로 한 번 밀어낸다.
+  reality:
+    title: 업무 전달 방식을 제한함
+    summary: 서아는 자리로 찾아오지 말고 메일로만 자료를 보내 달라고 요청한다.
+

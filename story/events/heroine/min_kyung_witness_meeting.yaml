@@ -1,0 +1,28 @@
+schema_version: 1
+id: min_kyung.witness_meeting
+title: 둘만 남지 않는 회의
+type: heroine
+lane: cha_min_kyung
+thread: min_kyung
+sequence: 20
+window: {days: [6, 9], slots: [afternoon], deadline_day: 9}
+duration: 1
+priority: 72
+availability: player
+completion: return_to_timeline
+participants: [han_do_yoon, cha_min_kyung, yoon_seo_a]
+location: glass_meeting_room
+scene: min_kyung.witness_meeting
+requires:
+  events: [min_kyung.explicit_boundary]
+  conditions: []
+on_seen: {effects: []}
+on_missed: {effects: []}
+presentation:
+  perceived:
+    title: 질투를 유도하는 배석
+    summary: 민경이 다른 여성을 회의에 부르며 반응을 떠본다고 해석한다.
+  reality:
+    title: 목격자를 둔 공식 회의
+    summary: 민경은 단둘이 남지 않고 대화 내용이 회의록에 남도록 준비한다.
+

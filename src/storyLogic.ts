@@ -3,6 +3,7 @@ import type {
   Condition,
   DecisionTrace,
   Effect,
+  EventVerdict,
   JsonValue,
   NodeKind,
   Runtime,
@@ -10,6 +11,9 @@ import type {
   Scene,
   StoryNode,
   Transition,
+  Campaign,
+  TimelineEvent,
+  TimeSlot,
 } from "./types";
 
 export const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
@@ -53,6 +57,52 @@ export function conditionMatches(state: RuntimeState, condition: Condition): boo
 
 export function conditionsMatch(state: RuntimeState, conditions: Condition[] = []): boolean {
   return conditions.every((condition) => conditionMatches(state, condition));
+}
+
+export function campaignAct(campaign: Campaign, day: number): number {
+  return campaign.acts.find((act) => day >= act.days[0] && day <= act.days[1])?.number || 1;
+}
+
+export function inspectTimelineEvent(
+  event: TimelineEvent,
+  state: RuntimeState,
+  day: number,
+  slot: TimeSlot,
+): EventVerdict {
+  if (state.progress.events.seen.includes(event.id)) {
+    return { event: event.id, status: "seen", eligible: false, reasons: [] };
+  }
+  if (state.progress.events.missed.includes(event.id) || state.progress.events.expired.includes(event.id) || day > event.window.deadline_day) {
+    return { event: event.id, status: "missed", eligible: false, reasons: [`마감 ${event.window.deadline_day}일 경과`] };
+  }
+  if (day < event.window.days[0]) {
+    return { event: event.id, status: "upcoming", eligible: false, reasons: [`${event.window.days[0]}일부터 가능`] };
+  }
+  if (day > event.window.days[1]) {
+    return { event: event.id, status: "missed", eligible: false, reasons: [`발생 기간 ${event.window.days.join("~")}일 종료`] };
+  }
+  const reasons: string[] = [];
+  if (!event.window.slots.includes(slot)) reasons.push("현재 시간대가 아님");
+  event.requires.events.forEach((required) => {
+    if (!state.progress.events.seen.includes(required)) reasons.push(`선행 사건 미완료: ${required}`);
+  });
+  event.requires.conditions.forEach((condition) => {
+    if (!conditionMatches(state, condition)) {
+      reasons.push(`조건 불충족: ${condition.path} ${condition.op} ${String(condition.value)} (현재 ${String(getPath(state, condition.path))})`);
+    }
+  });
+  return reasons.length
+    ? { event: event.id, status: "blocked", eligible: false, reasons }
+    : { event: event.id, status: "eligible", eligible: true, reasons: [] };
+}
+
+export function eventsForDay(events: Record<string, TimelineEvent>, day: number): TimelineEvent[] {
+  return Object.values(events)
+    .filter((event) => day >= event.window.days[0] && day <= event.window.days[1])
+    .sort((a, b) => {
+      const slotOrder: TimeSlot[] = ["morning", "lunch", "afternoon", "after_work"];
+      return slotOrder.indexOf(a.window.slots[0]) - slotOrder.indexOf(b.window.slots[0]) || b.priority - a.priority;
+    });
 }
 
 function statDefinition(runtime: Runtime, path: string) {
@@ -156,6 +206,10 @@ export function statePaths(runtime: Runtime): Array<{ value: string; label: stri
   result.push(
     { value: "progress.cleared_routes", label: "진행 / 클리어 루트", type: "array" },
     { value: "progress.unlocked_modes", label: "진행 / 해금 모드", type: "array" },
+    { value: "progress.events.seen", label: "진행 / 본 사건", type: "array" },
+    { value: "progress.events.missed", label: "진행 / 놓친 사건", type: "array" },
+    { value: "progress.events.expired", label: "진행 / 만료 사건", type: "array" },
+    { value: "progress.memories", label: "진행 / 회차 기억", type: "array" },
   );
   return result;
 }

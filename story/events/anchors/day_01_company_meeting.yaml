@@ -1,0 +1,20 @@
+schema_version: 1
+id: anchor.day_01_company_meeting
+title: 신규 프로젝트 킥오프
+type: anchor
+lane: company
+window: {days: [1, 1], slots: [morning], deadline_day: 1}
+duration: 1
+priority: 100
+availability: automatic
+completion: return_to_timeline
+requires: {events: [], conditions: []}
+on_seen: {effects: []}
+on_missed: {effects: []}
+presentation:
+  perceived:
+    title: 신부감을 찾는 새로운 프로젝트
+    summary: 부모의 결혼 독촉을 떠올리며 프로젝트에 합류한 여러 여성의 첫인상을 살펴본다.
+  reality:
+    title: 수요일 프로젝트 킥오프
+    summary: 서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 업무적으로 검토한다.

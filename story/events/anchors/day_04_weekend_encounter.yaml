@@ -1,0 +1,22 @@
+schema_version: 1
+id: anchor.day_04_weekend_encounter
+title: 주말의 우연
+type: anchor
+lane: personal
+window: {days: [4, 4], slots: [afternoon], deadline_day: 4}
+duration: 1
+priority: 100
+availability: automatic
+completion: return_to_timeline
+requires:
+  events: [anchor.day_03_business_trip_or_cafe]
+  conditions: []
+on_seen: {effects: []}
+on_missed: {effects: []}
+presentation:
+  perceived:
+    title: 우연을 기다리는 사람
+    summary: 회사에서 들은 주말 계획을 기억하고 장소를 선택한 뒤 서아나 민경과 마주치며, 이를 운명적인 호감의 시작으로 받아들인다.
+  reality:
+    title: 우연인지 의심하게 된 주말 조우
+    summary: 여성은 전날 자신이 장소를 말했는지 떠올리며 한도윤의 방문이 우연인지 처음으로 의심한다. 한 회차에서는 한 명과만 조우한다.

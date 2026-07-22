@@ -1,0 +1,11 @@
+schema_version: 1
+id: archetype.background
+kind: background_archetype
+abstract: true
+render_strategy: background
+defaults:
+  fit: cover
+  focal_point: center
+  transition: crossfade
+  dialogue_safe_area: bottom_30_percent
+tags: [environment, reusable]

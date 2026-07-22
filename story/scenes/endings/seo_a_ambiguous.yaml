@@ -10,8 +10,7 @@ purpose: 서아가 자신의 판단을 의심한 채 회사를 떠나고 주인�
 cast: [han_do_yoon, yoon_seo_a]
 entry_conditions: []
 state_contract:
-  reads:
-    - progress.cleared_routes
+  reads: []
   writes:
     - progress.cleared_routes
     - progress.unlocked_modes
@@ -22,12 +21,7 @@ nodes:
     effects:
       - {path: progress.cleared_routes, op: append_unique, value: seo_a}
       - {path: progress.unlocked_modes, op: append_unique, value: truth_view}
-      - path: progress.unlocked_modes
-        op: append_unique
-        value: collapse
-        conditions:
-          - {path: progress.cleared_routes, op: contains, value: seo_a}
-          - {path: progress.cleared_routes, op: contains, value: min_kyung}
+      - {path: progress.unlocked_modes, op: append_unique, value: survivor_view}
     next: aftermath
 
   - id: aftermath

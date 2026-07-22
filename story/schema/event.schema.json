@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "event.schema.json",
+  "title": "Love Office Timeline Event",
+  "type": "object",
+  "required": ["schema_version", "id", "title", "type", "lane", "window", "duration", "priority", "availability", "completion", "requires", "on_seen", "on_missed", "presentation"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_.]*$" },
+    "title": { "type": "string", "minLength": 1 },
+    "type": { "enum": ["anchor", "heroine", "company", "offscreen", "ending"] },
+    "lane": { "type": "string", "minLength": 1 },
+    "thread": { "type": "string" },
+    "scene": { "type": "string" },
+    "window": {
+      "type": "object",
+      "required": ["days", "slots", "deadline_day"],
+      "properties": {
+        "days": { "type": "array", "prefixItems": [{ "type": "integer" }, { "type": "integer" }], "minItems": 2, "maxItems": 2 },
+        "slots": { "type": "array", "items": { "enum": ["morning", "lunch", "afternoon", "after_work"] }, "minItems": 1, "uniqueItems": true },
+        "deadline_day": { "type": "integer" }
+      }
+    },
+    "duration": { "type": "integer", "minimum": 0 },
+    "priority": { "type": "integer" },
+    "availability": { "enum": ["automatic", "player", "hidden"] },
+    "completion": { "enum": ["return_to_timeline", "honor_scene_exit"] },
+    "requires": {
+      "type": "object",
+      "required": ["events", "conditions"],
+      "properties": { "events": { "type": "array", "items": { "type": "string" } }, "conditions": { "type": "array" } }
+    },
+    "on_seen": { "type": "object", "required": ["effects"], "properties": { "effects": { "type": "array" } } },
+    "on_missed": { "type": "object", "required": ["effects"], "properties": { "effects": { "type": "array" }, "trigger_event": { "type": "string" } } },
+    "presentation": {
+      "type": "object",
+      "required": ["perceived", "reality"],
+      "properties": {
+        "perceived": { "$ref": "#/$defs/presentation" },
+        "reality": { "$ref": "#/$defs/presentation" }
+      }
+    }
+  },
+  "$defs": {
+    "presentation": {
+      "type": "object",
+      "required": ["title", "summary"],
+      "properties": { "title": { "type": "string", "minLength": 1 }, "summary": { "type": "string", "minLength": 1 } }
+    }
+  }
+}
+

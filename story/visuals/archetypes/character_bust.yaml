@@ -1,0 +1,18 @@
+schema_version: 1
+id: archetype.character_bust
+kind: character_archetype
+abstract: true
+render_strategy: flat_portrait
+defaults:
+  position: center
+  anchor: bottom
+  scale: 1.0
+  mirror: false
+default_outfit: office
+default_pose: neutral
+outfits:
+  office: {label: office_default}
+poses:
+  neutral: {offset_x: 0, offset_y: 0, scale: 1.0}
+expression_assets: {}
+tags: [character, bust, fallback_ready]

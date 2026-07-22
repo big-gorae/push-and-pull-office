@@ -1,0 +1,22 @@
+schema_version: 1
+id: anchor.day_05_weekend_reflection
+title: 서로 다른 확신
+type: anchor
+lane: personal
+window: {days: [5, 5], slots: [after_work], deadline_day: 5}
+duration: 1
+priority: 100
+availability: automatic
+completion: return_to_timeline
+requires:
+  events: [anchor.day_04_weekend_encounter]
+  conditions: []
+on_seen: {effects: []}
+on_missed: {effects: []}
+presentation:
+  perceived:
+    title: 마음이 가는 사람
+    summary: 부모의 연락을 받고 주말에 만난 여성을 떠올리며, 둘 사이에 진짜 호감이 시작됐다고 확신한다.
+  reality:
+    title: 첫 의심의 여운
+    summary: 주말에 만난 여성은 동료에게 조우가 정말 우연인지 확인하고, 한도윤은 다음 주부터 본격적으로 공략할 상대를 정한다.

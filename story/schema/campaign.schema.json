@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "campaign.schema.json",
+  "title": "Love Office Campaign",
+  "type": "object",
+  "required": ["schema_version", "id", "title", "total_days", "slots", "choice_slots", "acts", "lanes"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_.]*$" },
+    "title": { "type": "string", "minLength": 1 },
+    "total_days": { "type": "integer", "minimum": 1 },
+    "slots": {
+      "type": "array",
+      "items": { "enum": ["morning", "lunch", "afternoon", "after_work"] },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "choice_slots": { "type": "array", "items": { "enum": ["morning", "lunch", "afternoon", "after_work"] }, "uniqueItems": true },
+    "calendar": {
+      "type": "object",
+      "required": ["start_weekday", "weekend_days"],
+      "properties": {
+        "start_weekday": { "enum": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] },
+        "weekend_days": { "type": "array", "items": { "type": "integer", "minimum": 1 }, "uniqueItems": true }
+      }
+    },
+    "acts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["number", "id", "title", "days", "purpose"],
+        "properties": {
+          "number": { "type": "integer", "minimum": 1 },
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "days": { "type": "array", "prefixItems": [{ "type": "integer" }, { "type": "integer" }], "minItems": 2, "maxItems": 2 },
+          "purpose": { "type": "string" }
+        }
+      }
+    },
+    "lanes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "kind"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "kind": { "enum": ["world", "character", "truth"] }
+        }
+      }
+    }
+  }
+}

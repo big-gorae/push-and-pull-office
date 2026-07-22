@@ -1,0 +1,14 @@
+schema_version: 1
+id: character.han_do_yoon
+kind: character
+extends: archetype.character_bust
+title_key: visual.character.han_do_yoon.title
+character: han_do_yoon
+fallback_asset: assets/concept-art/han-do-yoon.png
+default_outfit: office
+default_pose: neutral
+poses:
+  neutral: {offset_x: 0, offset_y: 0, scale: 1.0}
+  looming: {offset_x: 0, offset_y: -12, scale: 1.08}
+expression_assets: {}
+tags: [protagonist, unreliable_view]

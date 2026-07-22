@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "thread.schema.json",
+  "title": "Love Office Event Thread",
+  "type": "object",
+  "required": ["schema_version", "id", "title", "lane", "events"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_.]*$" },
+    "title": { "type": "string", "minLength": 1 },
+    "lane": { "type": "string", "minLength": 1 },
+    "heroine": { "type": "string" },
+    "events": { "type": "array", "items": { "type": "string" }, "minItems": 1, "uniqueItems": true }
+  }
+}
+

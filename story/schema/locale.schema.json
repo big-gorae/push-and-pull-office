@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "locale.schema.json",
+  "title": "Love Office Locale Catalog",
+  "type": "object",
+  "required": ["schema_version", "id", "name", "strings"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"},
+    "name": {"type": "string", "minLength": 1},
+    "fallback": {"type": ["string", "null"]},
+    "strings": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    }
+  },
+  "additionalProperties": false
+}

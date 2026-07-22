@@ -169,6 +169,54 @@ fn save_scene(
 }
 
 #[tauri::command]
+fn save_document(
+    state: tauri::State<'_, EditorState>,
+    root: String,
+    kind: String,
+    document: Value,
+    revision: String,
+) -> Result<Value, String> {
+    let root = allowed_root(&state, &root)?;
+    run_bridge(
+        &root,
+        "save-document",
+        Some(json!({ "kind": kind, "document": document, "revision": revision })),
+    )
+}
+
+#[tauri::command]
+fn duplicate_scene(
+    state: tauri::State<'_, EditorState>,
+    root: String,
+    source_id: String,
+    new_id: String,
+    title: String,
+) -> Result<Value, String> {
+    let root = allowed_root(&state, &root)?;
+    run_bridge(
+        &root,
+        "duplicate-scene",
+        Some(json!({ "source_id": source_id, "new_id": new_id, "title": title })),
+    )
+}
+
+#[tauri::command]
+fn duplicate_event(
+    state: tauri::State<'_, EditorState>,
+    root: String,
+    source_id: String,
+    new_id: String,
+    title: String,
+) -> Result<Value, String> {
+    let root = allowed_root(&state, &root)?;
+    run_bridge(
+        &root,
+        "duplicate-event",
+        Some(json!({ "source_id": source_id, "new_id": new_id, "title": title })),
+    )
+}
+
+#[tauri::command]
 fn build_runtime(state: tauri::State<'_, EditorState>, root: String) -> Result<Value, String> {
     let root = allowed_root(&state, &root)?;
     run_bridge(&root, "build", None)
@@ -206,6 +254,69 @@ fn read_asset(
     Ok(format!("data:{mime};base64,{}", STANDARD.encode(bytes)))
 }
 
+#[tauri::command]
+fn reveal_in_file_manager(
+    state: tauri::State<'_, EditorState>,
+    root: String,
+    relative_path: Option<String>,
+) -> Result<(), String> {
+    let root = allowed_root(&state, &root)?;
+    let target = match relative_path {
+        Some(relative) if !relative.is_empty() => {
+            let relative = PathBuf::from(relative);
+            if relative.is_absolute() {
+                return Err("프로젝트 안의 상대 경로만 열 수 있습니다.".into());
+            }
+            let target = root
+                .join(relative)
+                .canonicalize()
+                .map_err(|error| format!("파일 위치를 확인할 수 없습니다: {error}"))?;
+            if !target.starts_with(&root) {
+                return Err("프로젝트 밖의 파일은 열 수 없습니다.".into());
+            }
+            target
+        }
+        _ => root.clone(),
+    };
+
+    #[cfg(target_os = "macos")]
+    let mut command = {
+        let mut command = Command::new("open");
+        if target.is_file() {
+            command.arg("-R");
+        }
+        command.arg(&target);
+        command
+    };
+
+    #[cfg(target_os = "windows")]
+    let mut command = {
+        let mut command = Command::new("explorer");
+        if target.is_file() {
+            command.arg(format!("/select,{}", target.display()));
+        } else {
+            command.arg(&target);
+        }
+        command
+    };
+
+    #[cfg(all(not(target_os = "macos"), not(target_os = "windows")))]
+    let mut command = {
+        let mut command = Command::new("xdg-open");
+        command.arg(if target.is_file() {
+            target.parent().unwrap_or(&root)
+        } else {
+            &target
+        });
+        command
+    };
+
+    command
+        .spawn()
+        .map_err(|error| format!("파일 관리자를 열 수 없습니다: {error}"))?;
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -217,8 +328,12 @@ pub fn run() {
             validate_project,
             validate_scene,
             save_scene,
+            save_document,
+            duplicate_scene,
+            duplicate_event,
             build_runtime,
             read_asset,
+            reveal_in_file_manager,
         ])
         .run(tauri::generate_context!())
         .expect("error while running the story editor");

@@ -10,8 +10,7 @@ purpose: 회사가 민경의 문제 제기를 관계 오해로 축소하고 주�
 cast: [han_do_yoon, cha_min_kyung]
 entry_conditions: []
 state_contract:
-  reads:
-    - progress.cleared_routes
+  reads: []
   writes:
     - progress.cleared_routes
     - progress.unlocked_modes
@@ -22,12 +21,7 @@ nodes:
     effects:
       - {path: progress.cleared_routes, op: append_unique, value: min_kyung}
       - {path: progress.unlocked_modes, op: append_unique, value: truth_view}
-      - path: progress.unlocked_modes
-        op: append_unique
-        value: collapse
-        conditions:
-          - {path: progress.cleared_routes, op: contains, value: seo_a}
-          - {path: progress.cleared_routes, op: contains, value: min_kyung}
+      - {path: progress.unlocked_modes, op: append_unique, value: survivor_view}
     next: aftermath
 
   - id: aftermath
@@ -36,7 +30,7 @@ nodes:
     perceived:
       atmosphere: dread
       expression: subjective_jealous
-      line: "이 일은 여기서 끝내죠."
+      line: "회사가 끝냈다고 해서 없었던 일이 되는 건 아닙니다."
       protagonist_interpretation: 회사 앞에서는 관계를 부정해야 하는 그녀의 마지막 밀기다.
     reality:
       atmosphere: cold_office

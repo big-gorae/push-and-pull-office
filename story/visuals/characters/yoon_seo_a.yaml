@@ -1,0 +1,14 @@
+schema_version: 1
+id: character.yoon_seo_a
+kind: character
+extends: archetype.character_bust
+title_key: visual.character.yoon_seo_a.title
+character: yoon_seo_a
+fallback_asset: assets/concept-art/yoon-seo-a.png
+default_outfit: office
+default_pose: guarded
+poses:
+  neutral: {offset_x: 0, offset_y: 0, scale: 1.0}
+  guarded: {offset_x: 12, offset_y: 0, scale: 0.98}
+expression_assets: {}
+tags: [heroine, freeze_response]

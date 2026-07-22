@@ -1,0 +1,14 @@
+schema_version: 1
+id: character.kang_yoo_jin
+kind: character
+extends: archetype.character_bust
+title_key: visual.character.kang_yoo_jin.title
+character: kang_yoo_jin
+fallback_asset: assets/concept-art/kang-yoo-jin.png
+default_outfit: office
+default_pose: direct
+poses:
+  neutral: {offset_x: 0, offset_y: 0, scale: 1.0}
+  direct: {offset_x: 0, offset_y: -8, scale: 1.04}
+expression_assets: {}
+tags: [heroine, fact_checker, unlockable]

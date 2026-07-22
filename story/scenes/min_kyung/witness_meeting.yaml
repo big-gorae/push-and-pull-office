@@ -38,7 +38,7 @@ nodes:
     perceived:
       atmosphere: playful_tension
       expression: subjective_jealous
-      line: "서아 씨도 같이 들어오라고 했어요."
+      line: "서아 씨가 회의록을 함께 작성할 겁니다."
       protagonist_interpretation: 다른 여성을 앞세워 자신의 반응을 떠본다.
     reality:
       atmosphere: guarded_office
@@ -54,7 +54,7 @@ nodes:
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
-      line: "오늘은 서아 씨도 함께예요."
+      line: "회의록 담당으로 서아 씨가 배석합니다."
       protagonist_interpretation: 자신의 질투를 유도하려는 가벼운 밀기다.
     reality:
       atmosphere: cold_office

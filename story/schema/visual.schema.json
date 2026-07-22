@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "visual.schema.json",
+  "title": "Love Office Visual Object",
+  "type": "object",
+  "required": ["schema_version", "id", "kind"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
+    "kind": {"enum": ["background_archetype", "background", "character_archetype", "character"]},
+    "abstract": {"type": "boolean"},
+    "extends": {"type": "string"},
+    "title_key": {"type": "string"},
+    "render_strategy": {"enum": ["flat_portrait", "layered_sprite", "background"]},
+    "character": {"type": "string"},
+    "fallback_asset": {"type": "string"},
+    "default_outfit": {"type": "string"},
+    "default_pose": {"type": "string"},
+    "outfits": {"type": "object"},
+    "poses": {"type": "object"},
+    "expression_assets": {"type": "object"},
+    "variants": {"type": "object"},
+    "defaults": {"type": "object"},
+    "tags": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

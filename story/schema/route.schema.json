@@ -9,7 +9,7 @@
     "id": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
     "title": {"type": "string"},
     "heroine": {"type": "string"},
-    "mode": {"enum": ["base", "collapse", "truth_view", "survivor_view"]},
+    "mode": {"enum": ["base", "truth_view", "survivor_view"]},
     "summary": {"type": "string"},
     "unlock_conditions": {"type": "array"},
     "entry_scene": {"type": "string"},

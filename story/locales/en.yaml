@@ -1,0 +1,37 @@
+schema_version: 1
+id: en
+name: English
+fallback: ko
+strings:
+  locale.ko.name: Korean
+  locale.en.name: English
+  visual.background.office_open.title: Open-plan Office
+  visual.background.office_corridor.title: Office Corridor
+  visual.background.meeting_room.title: Glass Meeting Room
+  visual.background.office_pantry.title: Office Pantry
+  visual.background.empty_office.title: Empty Office
+  visual.character.han_do_yoon.title: Han Do-yoon — Default Bust
+  visual.character.yoon_seo_a.title: Yoon Seo-a — Default Bust
+  visual.character.cha_min_kyung.title: Cha Min-kyung — Default Bust
+  visual.character.kang_yoo_jin.title: Kang Yoo-jin — Default Bust
+  visual.character.im_soo_yeon.title: Im Soo-yeon — Default Bust
+  campaign.main.title: Fifteen Days of Push and Pull
+  campaign.main.acts.romantic_surface.title: The Face of a Romance Simulation
+  campaign.main.acts.collisions.title: Cracks in the Interpretation
+  campaign.main.acts.crisis.title: Records That Cannot Be Rewritten
+  characters.yoon_seo_a.display_name: Yoon Seo-a
+  characters.cha_min_kyung.display_name: Cha Min-kyung
+  characters.kang_yoo_jin.display_name: Kang Yoo-jin
+  characters.han_do_yoon.display_name: Han Do-yoon
+  characters.im_soo_yeon.display_name: Im Soo-yeon
+  events.seo_a.email_request.presentation.perceived.title: Seo-a Tests the Distance at Lunch
+  events.seo_a.email_request.presentation.reality.title: Restricting How Work Is Delivered
+  scenes.seo_a.email_request.title: Send It by Email
+  scenes.seo_a.email_request.nodes.request.perceived.line: "Please send those materials by email. Don't come to my desk."
+  scenes.seo_a.email_request.nodes.request.perceived.protagonist_interpretation: She avoids his eyes because she regrets losing an excuse for him to visit.
+  scenes.seo_a.email_request.nodes.request.reality.line: "Please send those materials by email. Don't come to my desk."
+  scenes.seo_a.email_request.nodes.request.reality.inner_thought: If he comes to my desk again, I need to tell Min-kyung.
+  scenes.seo_a.email_request.nodes.interpret.prompt: Is Seo-a pushing him away, or pulling him closer?
+  scenes.seo_a.email_request.nodes.interpret.options.match_push.label: Push her away for a few days too
+  scenes.seo_a.email_request.nodes.interpret.options.pull_harder.label: Pull one step harder
+  scenes.seo_a.email_request.nodes.interpret.options.take_literally.label: Take her words literally

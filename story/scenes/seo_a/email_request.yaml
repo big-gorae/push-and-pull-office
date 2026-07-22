@@ -26,7 +26,7 @@ nodes:
     perceived:
       atmosphere: warm_romance
       expression: subjective_shy
-      line: "과장님, 그 자료는 메일로 보내주셔도 돼요."
+      line: "그 자료는 메일로 보내주세요. 제 자리로 오지 마시고요."
       protagonist_interpretation: 직접 찾아올 핑계가 사라지는 것이 아쉬워 눈을 피한다.
     reality:
       atmosphere: guarded_office
@@ -80,6 +80,7 @@ nodes:
   - id: after_choice
     kind: dual_dialogue
     speaker: han_do_yoon
+    presentation_flags: [auditory_distortion]
     perceived:
       atmosphere: playful_tension
       expression: subjective_confident

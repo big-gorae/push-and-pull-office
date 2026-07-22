@@ -10,8 +10,7 @@ purpose: 민경이 여러 사람 앞에서 반복된 문장과 기록을 연결�
 cast: [han_do_yoon, cha_min_kyung, yoon_seo_a]
 entry_conditions: []
 state_contract:
-  reads:
-    - progress.cleared_routes
+  reads: []
   writes:
     - progress.cleared_routes
     - progress.unlocked_modes
@@ -22,12 +21,7 @@ nodes:
     effects:
       - {path: progress.cleared_routes, op: append_unique, value: min_kyung}
       - {path: progress.unlocked_modes, op: append_unique, value: truth_view}
-      - path: progress.unlocked_modes
-        op: append_unique
-        value: collapse
-        conditions:
-          - {path: progress.cleared_routes, op: contains, value: seo_a}
-          - {path: progress.cleared_routes, op: contains, value: min_kyung}
+      - {path: progress.unlocked_modes, op: append_unique, value: survivor_view}
     next: statement
 
   - id: statement
@@ -36,7 +30,7 @@ nodes:
     perceived:
       atmosphere: dread
       expression: subjective_challenging
-      line: "우리가 한 말을 전부 모았어요."
+      line: "같은 거절 뒤에 같은 행동이 반복됐습니다."
       protagonist_interpretation: 여러 여성이 자신을 중심으로 비밀을 공유해 왔다고 믿는다.
     reality:
       atmosphere: procedural

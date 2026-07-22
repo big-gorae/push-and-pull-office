@@ -26,7 +26,7 @@ nodes:
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
-      line: "업무 외 연락은 당분간 참아 주세요."
+      line: "업무 외 연락은 하지 말아 주세요."
       protagonist_interpretation: 쉽게 넘을 수 없는 선을 보여 주며 자신을 시험한다.
     reality:
       atmosphere: guarded_office

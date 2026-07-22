@@ -1,0 +1,21 @@
+schema_version: 1
+id: anchor.day_10_hr_notice
+title: 인사팀 상담 절차 안내
+type: company
+lane: company
+window: {days: [10, 10], slots: [morning], deadline_day: 10}
+duration: 1
+priority: 95
+availability: automatic
+completion: return_to_timeline
+requires: {events: [], conditions: []}
+on_seen: {effects: []}
+on_missed: {effects: []}
+presentation:
+  perceived:
+    title: 회사 분위기가 예민한 날
+    summary: 연애에 서툰 사람들이 사소한 호의를 오해해서 생긴 공지라고 생각한다.
+  reality:
+    title: 인사팀 상담 절차 안내
+    summary: 반복되는 비공식 상담 때문에 회사가 기록과 동행 원칙을 재공지한다.
+

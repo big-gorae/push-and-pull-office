@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "meta.schema.json",
+  "title": "Love Office Meta Progression",
+  "type": "object",
+  "required": ["schema_version", "id", "unlock_rules"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_.]*$" },
+    "unlock_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "mode", "reward", "conditions"],
+        "properties": {
+          "id": { "type": "string" },
+          "mode": { "type": "string" },
+          "reward": { "type": "string" },
+          "conditions": { "type": "array" }
+        }
+      }
+    },
+    "mode_teasers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "conditions", "reveals"],
+        "properties": {
+          "id": { "type": "string" },
+          "conditions": { "type": "array" },
+          "reveals": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["mode", "title", "teaser"],
+              "properties": {
+                "mode": { "type": "string" },
+                "title": { "type": "string" },
+                "teaser": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

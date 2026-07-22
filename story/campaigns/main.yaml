@@ -1,0 +1,33 @@
+schema_version: 1
+id: main
+title: 열닷 날의 밀당
+total_days: 15
+slots: [morning, lunch, afternoon, after_work]
+choice_slots: [lunch, after_work]
+calendar:
+  start_weekday: wednesday
+  weekend_days: [4, 5, 11, 12]
+acts:
+  - number: 1
+    id: romantic_surface
+    title: 연애 시뮬레이션의 얼굴
+    days: [1, 5]
+    purpose: 수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 주말 조우에서 주인공의 호감과 여성의 의심을 동시에 시작한다.
+  - number: 2
+    id: collisions
+    title: 시간 충돌과 의심
+    days: [6, 10]
+    purpose: 한 사람을 만나는 동안 다른 인물들의 정보가 연결되게 한다.
+  - number: 3
+    id: crisis
+    title: 수습이 침범이 되는 시간
+    days: [11, 15]
+    purpose: 관계를 회복한다는 행동이 증거와 공포를 누적시키고 결말로 수렴한다.
+lanes:
+  - {id: company, title: 회사와 고정 사건, kind: world}
+  - {id: personal, title: 가족과 사적 시간, kind: world}
+  - {id: yoon_seo_a, title: 윤서아, kind: character}
+  - {id: cha_min_kyung, title: 차민경, kind: character}
+  - {id: kang_yoo_jin, title: 강유진, kind: character}
+  - {id: offscreen, title: 보이지 않는 현재, kind: truth}
+  - {id: past_case, title: 과거 피해 사건, kind: truth}

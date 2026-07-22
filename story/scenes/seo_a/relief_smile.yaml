@@ -38,7 +38,7 @@ nodes:
     perceived:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
-      line: "좋은 아침이에요, 과장님."
+      line: "안녕하세요."
       protagonist_interpretation: 밀어낸 시간이 길어지자 먼저 관계를 회복하려 한다.
     reality:
       atmosphere: guarded_office
@@ -54,7 +54,7 @@ nodes:
     perceived:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
-      line: "좋은 아침이에요, 과장님."
+      line: "안녕하세요."
       protagonist_interpretation: 자신이 밀자 서아가 먼저 부드러워졌다.
     reality:
       atmosphere: cold_office

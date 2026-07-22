@@ -1,0 +1,19 @@
+schema_version: 1
+id: background.empty_office
+kind: background
+extends: archetype.background
+title_key: visual.background.empty_office.title
+variants:
+  night:
+    asset: assets/backgrounds/empty-office-night.png
+    match:
+      locations: [empty_office, empty_design_desk, open_office, design_team_desk, office_archive]
+      times: [evening, night]
+    priority: 100
+  dread:
+    asset: assets/backgrounds/empty-office-night.png
+    match:
+      atmospheres: [dread]
+      times: [evening, night]
+    priority: 90
+tags: [office, night, isolation]

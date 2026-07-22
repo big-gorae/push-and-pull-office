@@ -1,0 +1,18 @@
+schema_version: 1
+id: background.office_open
+kind: background
+extends: archetype.background
+title_key: visual.background.office_open.title
+variants:
+  late_afternoon:
+    asset: assets/backgrounds/open-office-late-afternoon.png
+    match:
+      locations: [open_office, office_desk, design_team_desk, empty_desk]
+      times: [afternoon, late_afternoon]
+    priority: 60
+  default:
+    asset: assets/backgrounds/open-office-late-afternoon.png
+    match:
+      locations: [open_office, office_desk, design_team_desk, empty_desk, office_archive]
+    priority: 30
+tags: [office, desk, daytime]

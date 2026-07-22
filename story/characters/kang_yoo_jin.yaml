@@ -3,10 +3,10 @@ id: kang_yoo_jin
 display_name: 강유진
 age: 29
 role: 브랜드디자인팀 경력직 대리
-narrative_role: collapse_mode_heroine
-summary: 사실관계를 즉시 고정하고 낮은 문턱으로 기록과 신고를 시작해 주인공의 해석 시스템을 거부하는 인물.
+narrative_role: supporting_witness_candidate
+summary: 사실관계를 즉시 고정하고 낮은 문턱으로 기록과 신고를 시작해 주인공의 해석 시스템을 거부하는 후보 인물. 생존 모드에서의 역할은 미확정이다.
 immutable_facts:
-  - 서아와 민경의 주요 루트를 완료한 뒤 붕괴 모드에서만 공략 대상으로 등장한다.
+  - 현재 확정된 전용 루트는 없으며 생존 모드의 역할은 후속 검토한다.
   - 한도윤을 특별한 연애 상대가 아니라 중단시켜야 할 반복 행동의 주체로 본다.
   - 신고가 묵살되어도 자신의 거절이 잘못이었다고 생각하지 않는다.
 voice:

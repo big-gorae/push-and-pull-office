@@ -1,0 +1,31 @@
+schema_version: 1
+id: min_kyung.ending_report
+title: 차민경 공동 신고 결말
+type: ending
+lane: cha_min_kyung
+thread: min_kyung
+sequence: 90
+exclusive_group: min_kyung_ending
+window: {days: [15, 15], slots: [after_work], deadline_day: 15}
+duration: 0
+priority: 90
+availability: automatic
+completion: honor_scene_exit
+participants: [han_do_yoon, cha_min_kyung, yoon_seo_a]
+location: hr_interview_room
+scene: ending.min_kyung.report
+requires:
+  events: [min_kyung.witness_meeting]
+  conditions:
+    - {path: hidden.heroines.cha_min_kyung.evidence_count, op: gte, value: 2}
+    - {path: hidden.heroines.cha_min_kyung.dislike, op: gte, value: 40}
+on_seen: {effects: []}
+on_missed: {effects: []}
+presentation:
+  perceived:
+    title: 공개적인 관계 선언
+    summary: 민경이 여러 사람 앞에서 자신과의 관계를 꺼낸다고 믿는다.
+  reality:
+    title: 목격 기록을 포함한 공동 신고
+    summary: 민경은 혼자 설득하려 하지 않고 동료들의 기록을 정식 절차에 제출한다.
+

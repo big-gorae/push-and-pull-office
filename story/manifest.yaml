@@ -3,11 +3,20 @@ project:
   id: love_office_story_1
   title: 호의의 해석
   default_language: ko
+  supported_languages: [ko, en]
 
 id_pattern: "^[a-z][a-z0-9_.]*$"
 
 enums:
   perceived_state: [push, pull, neutral]
+  time_slot: [morning, lunch, afternoon, after_work]
+  event_type: [anchor, heroine, company, offscreen, ending]
+  event_availability: [automatic, player, hidden]
+  event_completion: [return_to_timeline, honor_scene_exit]
+  presentation_flag: [original_text_lock, ui_glitch, ui_label_reveal, auditory_distortion]
+  visual_kind: [background_archetype, background, character_archetype, character]
+  render_strategy: [flat_portrait, layered_sprite, background]
+  stage_position: [far_left, left, center, right, far_right]
   atmosphere:
     - warm_romance
     - playful_tension
@@ -62,6 +71,20 @@ stats:
     min: 0
     max: 99
     description: 제시 가능한 물리적 증거의 개수
+  progress.time.day:
+    type: integer
+    min: 1
+    max: 15
+    description: 현재 캠페인 날짜
+  progress.time.act:
+    type: integer
+    min: 1
+    max: 3
+    description: 현재 이야기 막
+  progress.time.slot:
+    type: enum
+    values: [morning, lunch, afternoon, after_work]
+    description: 현재 시간대
 
 state_path_patterns:
   - pattern: "^visible\\.heroines\\.[a-z][a-z0-9_]*\\.(affection|initiative|perceived_state)$"
@@ -74,6 +97,12 @@ state_path_patterns:
     type: map
   - pattern: "^progress\\.flags\\.[a-z][a-z0-9_.]*$"
     type: any
+  - pattern: "^progress\\.time\\.(day|act|slot)$"
+    stat_from_path: true
+  - pattern: "^progress\\.events\\.(seen|missed|expired)$"
+    type: array
+  - pattern: "^progress\\.memories$"
+    type: array
 
 initial_state:
   visible:
@@ -105,12 +134,27 @@ initial_state:
         dislike: 15
         evidence_count: 0
   progress:
+    time:
+      day: 1
+      act: 1
+      slot: morning
+    events:
+      seen: []
+      missed: []
+      expired: []
+    memories: []
     cleared_routes: []
     unlocked_modes: [base]
     flags: {}
 
 files:
+  campaigns: campaigns/*.yaml
   characters: characters/*.yaml
+  events: events/**/*.yaml
+  locales: locales/*.yaml
+  visuals: visuals/**/*.yaml
+  threads: threads/*.yaml
+  meta: meta/*.yaml
   routes: routes/*.yaml
   scenes: scenes/**/*.yaml
 

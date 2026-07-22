@@ -1,0 +1,29 @@
+schema_version: 1
+id: min_kyung.ending_coverup
+title: 차민경 미해결 결말
+type: ending
+lane: cha_min_kyung
+thread: min_kyung
+sequence: 91
+exclusive_group: min_kyung_ending
+window: {days: [15, 15], slots: [after_work], deadline_day: 15}
+duration: 0
+priority: 10
+availability: automatic
+completion: honor_scene_exit
+participants: [han_do_yoon, cha_min_kyung]
+location: office_archive
+scene: ending.min_kyung.coverup
+requires:
+  events: [min_kyung.witness_meeting]
+  conditions: []
+on_seen: {effects: []}
+on_missed: {effects: []}
+presentation:
+  perceived:
+    title: 민경이 먼저 물러난 밤
+    summary: 자신이 밀당의 주도권을 되찾았다고 확신한다.
+  reality:
+    title: 조직 안에서 묻힌 문제 제기
+    summary: 민경의 기록은 남지만 회사는 당장 사건을 공식화하지 않는다.
+

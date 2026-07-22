@@ -1,0 +1,18 @@
+schema_version: 1
+id: background.office_pantry
+kind: background
+extends: archetype.background
+title_key: visual.background.office_pantry.title
+variants:
+  morning:
+    asset: assets/backgrounds/office-pantry-morning.png
+    match:
+      locations: [office_break_room, office_pantry, outside_cafe]
+      times: [morning, lunch]
+    priority: 75
+  default:
+    asset: assets/backgrounds/office-pantry-morning.png
+    match:
+      locations: [office_break_room, office_pantry, outside_cafe]
+    priority: 45
+tags: [office, break_room, temporary_safety]

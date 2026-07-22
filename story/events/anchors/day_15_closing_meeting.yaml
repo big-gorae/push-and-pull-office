@@ -1,0 +1,21 @@
+schema_version: 1
+id: anchor.day_15_closing_meeting
+title: 세 번째 금요일 결산 회의
+type: anchor
+lane: company
+window: {days: [15, 15], slots: [afternoon], deadline_day: 15}
+duration: 1
+priority: 110
+availability: automatic
+completion: return_to_timeline
+requires: {events: [], conditions: []}
+on_seen: {effects: []}
+on_missed: {effects: []}
+presentation:
+  perceived:
+    title: 관계를 정할 시간
+    summary: 길었던 밀당의 결론이 오늘 밤 드러날 것이라 확신한다.
+  reality:
+    title: 기록이 한자리에 모이는 회의
+    summary: 서로 따로 보관하던 날짜, 메시지와 목격 진술이 처음 연결된다.
+

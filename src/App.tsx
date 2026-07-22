@@ -1,6 +1,12 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import TimelineEditor from "./TimelineEditor";
+import PresentationEditor from "./PresentationEditor";
+import CharacterEditor from "./CharacterEditor";
+import ProjectSettingsEditor, { type SettingsKind, type SettingsRequest } from "./ProjectSettingsEditor";
+import QuickOpen, { type QuickOpenItem } from "./QuickOpen";
+import DuplicateDialog from "./DuplicateDialog";
 import {
   applyEffect,
   chooseTransition,
@@ -19,6 +25,7 @@ import type {
   ChoiceOption,
   Condition,
   DecisionTrace,
+  DocumentActivity,
   Effect,
   JsonValue,
   Layer,
@@ -45,6 +52,17 @@ const NODE_LABELS: Record<NodeKind, string> = {
 const STATE_LABELS: Record<string, string> = { push: "밀기", pull: "당기기", neutral: "중립" };
 
 type HistoryState = { past: Scene[]; future: Scene[] };
+type Workspace = "timeline" | "scene" | "character" | "presentation" | "settings";
+const WORKSPACES: Workspace[] = ["timeline", "scene", "character", "presentation", "settings"];
+
+function initialWorkspace(): Workspace {
+  try {
+    const stored = localStorage.getItem("love-office:last-workspace") as Workspace | null;
+    return stored && WORKSPACES.includes(stored) ? stored : "timeline";
+  } catch {
+    return "timeline";
+  }
+}
 
 function Field({ label, children, wide = false }: { label: string; children: ReactNode; wide?: boolean }) {
   return <label className={wide ? "field field-wide" : "field"}><span>{label}</span>{children}</label>;
@@ -68,6 +86,20 @@ function valueText(value: JsonValue | undefined): string {
   return JSON.stringify(value);
 }
 
+function nodePreview(node: StoryNode): string {
+  return node.perceived?.line || node.reality?.line || node.prompt
+    || (node.kind === "state_gate" ? "수치에 따라 다음 흐름을 결정" : node.kind === "effect" ? "수치를 변경" : node.kind === "exit" ? "다음 장면으로 이동" : node.id);
+}
+
+function storyRoutes(runtime: Runtime) {
+  const laneOrder = new Map(Object.values(runtime.campaigns)[0]?.lanes.map((lane, index) => [lane.id, index]) || []);
+  return Object.values(runtime.routes).sort((left, right) => {
+    const leftLane = Object.values(runtime.threads).find((thread) => thread.heroine === left.heroine)?.lane;
+    const rightLane = Object.values(runtime.threads).find((thread) => thread.heroine === right.heroine)?.lane;
+    return (laneOrder.get(leftLane || "") ?? 999) - (laneOrder.get(rightLane || "") ?? 999);
+  });
+}
+
 function conditionOperators(type: "number" | "enum" | "array") {
   if (type === "number") return [
     ["eq", "같다"], ["ne", "다르다"], ["gt", "초과"], ["gte", "이상"], ["lt", "미만"], ["lte", "이하"],
@@ -76,7 +108,7 @@ function conditionOperators(type: "number" | "enum" | "array") {
   return [["eq", "같다"], ["ne", "다르다"]];
 }
 
-function ConditionEditor({
+export function ConditionEditor({
   runtime,
   conditions,
   onChange,
@@ -141,7 +173,7 @@ function ConditionEditor({
   </div>;
 }
 
-function EffectEditor({ runtime, effects, onChange }: { runtime: Runtime; effects: Effect[]; onChange: (effects: Effect[]) => void }) {
+export function EffectEditor({ runtime, effects, onChange }: { runtime: Runtime; effects: Effect[]; onChange: (effects: Effect[]) => void }) {
   const paths = useMemo(() => statePaths(runtime), [runtime]);
 
   const update = (index: number, patch: Partial<Effect>) => {
@@ -398,7 +430,7 @@ function NodeEditor({
       <Field label="노드 ID"><TextInput value={node.id} readOnly /></Field>
       <Field label="노드 종류"><select value={node.kind} disabled>{Object.entries(NODE_LABELS).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></Field>
       {commonNext && <Field label="다음 노드"><select value={node.next || ""} onChange={(event) => onChange({ ...node, next: event.target.value })}><option value="">선택</option>{scene.node_order.filter((id) => id !== node.id).map((id) => <option value={id} key={id}>{id}</option>)}</select></Field>}
-      {(node.kind === "dual_dialogue" || node.kind === "dual_narration") && <Field label="연출 플래그"><TextInput placeholder="ui_glitch, original_text_lock" value={(node.presentation_flags || []).join(", ")} onChange={(event) => onChange({ ...node, presentation_flags: event.target.value.split(",").map((value) => value.trim()).filter(Boolean) })} /></Field>}
+      {(node.kind === "dual_dialogue" || node.kind === "dual_narration") && <Field label="연출 플래그"><TextInput placeholder="ui_glitch, original_text_lock, auditory_distortion" value={(node.presentation_flags || []).join(", ")} onChange={(event) => onChange({ ...node, presentation_flags: event.target.value.split(",").map((value) => value.trim()).filter(Boolean) })} /></Field>}
     </div>
 
     {node.kind === "dual_dialogue" && <>
@@ -538,6 +570,32 @@ export default function App() {
   const [newNodeId, setNewNodeId] = useState("");
   const [newNodeKind, setNewNodeKind] = useState<NodeKind>("dual_dialogue");
   const [imageCache, setImageCache] = useState<Record<string, string>>({});
+  const [workspace, setWorkspace] = useState<Workspace>(initialWorkspace);
+  const [locale, setLocale] = useState("ko");
+  const [documentActivity, setDocumentActivity] = useState<DocumentActivity>({ phase: "saved", label: "프로젝트", path: "" });
+  const [quickOpenVisible, setQuickOpenVisible] = useState(false);
+  const [timelineRequest, setTimelineRequest] = useState<{ id: string; token: number } | null>(null);
+  const [characterRequest, setCharacterRequest] = useState<{ id: string; token: number } | null>(null);
+  const [settingsRequest, setSettingsRequest] = useState<SettingsRequest | null>(null);
+  const [duplicateRequest, setDuplicateRequest] = useState<{ kind: "scene" | "event"; id: string; title: string } | null>(null);
+  const lastAutoSaveAttempt = useRef("");
+  const workspaceRef = useRef<Workspace>(workspace);
+  const [workspaceActivities, setWorkspaceActivities] = useState<Partial<Record<Workspace, DocumentActivity>>>({});
+
+  useEffect(() => {
+    workspaceRef.current = workspace;
+    try { localStorage.setItem("love-office:last-workspace", workspace); } catch { /* WebView storage can be unavailable in restricted sessions. */ }
+  }, [workspace]);
+
+  const reportActivity = useCallback((source: Workspace, activity: DocumentActivity) => {
+    setWorkspaceActivities((current) => ({ ...current, [source]: activity }));
+    if (workspaceRef.current === source) setDocumentActivity(activity);
+  }, []);
+  const reportSceneActivity = useCallback((activity: DocumentActivity) => reportActivity("scene", activity), [reportActivity]);
+  const reportTimelineActivity = useCallback((activity: DocumentActivity) => reportActivity("timeline", activity), [reportActivity]);
+  const reportCharacterActivity = useCallback((activity: DocumentActivity) => reportActivity("character", activity), [reportActivity]);
+  const reportPresentationActivity = useCallback((activity: DocumentActivity) => reportActivity("presentation", activity), [reportActivity]);
+  const reportSettingsActivity = useCallback((activity: DocumentActivity) => reportActivity("settings", activity), [reportActivity]);
 
   const runtime = payload?.runtime;
   const root = payload?.root;
@@ -583,6 +641,12 @@ export default function App() {
     setHistory({ past: [], future: [] });
     setTestState((current) => force ? clone(project.runtime.initial_state) : current || clone(project.runtime.initial_state));
     setEditorTab("node");
+    reportSceneActivity({
+      phase: recoveredDraft ? "dirty" : "saved",
+      label: sourceScene.title,
+      path: meta.path,
+      detail: recoveredDraft ? "복구한 초안 · 디스크 저장 대기" : "디스크와 동기화됨",
+    });
     return recoveredDraft;
   }, [dirty]);
 
@@ -591,9 +655,11 @@ export default function App() {
     setStatus("프로젝트를 검증하고 불러오는 중…");
     try {
       const project = await invoke<ProjectPayload>("load_project", { root: projectRoot });
+      setWorkspaceActivities({});
       setPayload(project);
+      setLocale(project.runtime.localization.default_locale);
       setIssues(project.issues);
-      const firstRoute = Object.values(project.runtime.routes)[0];
+      const firstRoute = storyRoutes(project.runtime)[0];
       const recoveredDraft = loadScene(project, firstRoute.entry_scene, true);
       if (!recoveredDraft) setStatus(`${Object.keys(project.runtime.scenes).length}개 장면을 불러왔습니다.`);
     } catch (error) {
@@ -612,12 +678,28 @@ export default function App() {
   }, [loadProject]);
 
   useEffect(() => {
-    if (!dirty || !draft || !root || !revision) return;
+    if (!draft || !root) return;
+    const key = `love-office-draft:${root}:${draft.id}`;
+    if (!dirty) {
+      localStorage.removeItem(key);
+      return;
+    }
+    if (!revision) return;
     const timer = window.setTimeout(() => {
-      localStorage.setItem(`love-office-draft:${root}:${draft.id}`, JSON.stringify({ revision, scene: draft }));
-      setStatus("초안을 로컬에 자동 저장했습니다.");
-    }, 500);
+      localStorage.setItem(key, JSON.stringify({ revision, scene: draft }));
+      setStatus("복구용 초안을 임시 보관했습니다. YAML 자동 저장 대기 중…");
+    }, 300);
     return () => window.clearTimeout(timer);
+  }, [dirty, draft, revision, root]);
+
+  useEffect(() => {
+    const preserveDraft = () => {
+      if (dirty && draft && root && revision) {
+        localStorage.setItem(`love-office-draft:${root}:${draft.id}`, JSON.stringify({ revision, scene: draft }));
+      }
+    };
+    window.addEventListener("beforeunload", preserveDraft);
+    return () => window.removeEventListener("beforeunload", preserveDraft);
   }, [dirty, draft, revision, root]);
 
   useEffect(() => {
@@ -644,7 +726,14 @@ export default function App() {
       updater(next);
       next.state_contract = deriveStateContract(next);
       setHistory((value) => ({ past: [...value.past, clone(current)].slice(-100), future: [] }));
-      setDirty(true);
+      const changed = JSON.stringify(next) !== JSON.stringify(payload?.runtime.scenes[next.id]);
+      setDirty(changed);
+      reportSceneActivity({
+        phase: changed ? "dirty" : "saved",
+        label: next.title,
+        path: payload?.documents.scenes[next.id]?.path || "",
+        detail: changed ? "자동 저장 대기" : "디스크 상태로 되돌아옴",
+      });
       return next;
     });
   };
@@ -654,21 +743,36 @@ export default function App() {
   const undo = () => {
     if (!draft || history.past.length === 0) return;
     const previous = history.past[history.past.length - 1];
+    const changed = JSON.stringify(previous) !== JSON.stringify(payload?.runtime.scenes[previous.id]);
     setHistory({ past: history.past.slice(0, -1), future: [clone(draft), ...history.future].slice(0, 100) });
     setDraft(previous);
-    setDirty(true);
+    setDirty(changed);
+    reportSceneActivity({
+      phase: changed ? "dirty" : "saved",
+      label: previous.title,
+      path: payload?.documents.scenes[previous.id]?.path || "",
+      detail: changed ? "실행 취소됨 · 자동 저장 대기" : "실행 취소됨 · 디스크 상태와 같음",
+    });
   };
 
   const redo = () => {
     if (!draft || history.future.length === 0) return;
     const next = history.future[0];
+    const changed = JSON.stringify(next) !== JSON.stringify(payload?.runtime.scenes[next.id]);
     setHistory({ past: [...history.past, clone(draft)].slice(-100), future: history.future.slice(1) });
     setDraft(next);
-    setDirty(true);
+    setDirty(changed);
+    reportSceneActivity({
+      phase: changed ? "dirty" : "saved",
+      label: next.title,
+      path: payload?.documents.scenes[next.id]?.path || "",
+      detail: changed ? "다시 실행됨 · 자동 저장 대기" : "다시 실행됨 · 디스크 상태와 같음",
+    });
   };
 
   const selectProject = async () => {
-    if (dirty && !window.confirm("저장하지 않은 변경을 버리고 다른 프로젝트를 열까요?")) return;
+    const pending = Object.values(workspaceActivities).filter((activity) => activity && activity.phase !== "saved");
+    if ((dirty || pending.length > 0) && !window.confirm("아직 저장 중이거나 확인이 필요한 문서가 있습니다. 복구 초안은 보관됩니다. 다른 프로젝트를 열까요?")) return;
     const result = await open({ directory: true, multiple: false, title: "스토리 프로젝트 폴더 선택" });
     if (typeof result === "string") await loadProject(result);
   };
@@ -677,7 +781,7 @@ export default function App() {
     if (!root) return;
     setBusy(true);
     try {
-      if (draft) {
+      if (draft && workspace === "scene") {
         const result = await invoke<{ issues: ValidationIssue[]; state_contract: Scene["state_contract"] }>("validate_scene", { root, scene: draft });
         setIssues(result.issues);
         setDraft((current) => current ? { ...current, state_contract: result.state_contract } : current);
@@ -685,6 +789,7 @@ export default function App() {
       } else {
         const result = await invoke<{ issues: ValidationIssue[] }>("validate_project", { root });
         setIssues(result.issues);
+        setStatus(result.issues.length ? `${result.issues.length}개 검증 항목이 있습니다.` : "전체 시간표와 장면에 오류가 없습니다.");
       }
     } catch (error) {
       setStatus(`검증 실패: ${String(error)}`);
@@ -693,10 +798,16 @@ export default function App() {
     }
   };
 
-  const save = async () => {
+  const save = useCallback(async () => {
     if (!root || !draft || !payload) return;
     setBusy(true);
     setStatus("전체 프로젝트를 검증하고 안전하게 저장하는 중…");
+    reportSceneActivity({
+      phase: "saving",
+      label: draft.title,
+      path: payload.documents.scenes[draft.id]?.path || "",
+      detail: "검증 후 디스크에 기록 중",
+    });
     try {
       const result = await invoke<{
         saved: boolean;
@@ -707,6 +818,12 @@ export default function App() {
       setIssues(result.issues);
       if (!result.saved || !result.runtime || !result.document) {
         setStatus("오류가 있어 원본에는 저장하지 않았습니다.");
+        reportSceneActivity({
+          phase: "error",
+          label: draft.title,
+          path: payload.documents.scenes[draft.id]?.path || "",
+          detail: "검증 오류 · 마지막 정상 파일은 보존됨",
+        });
         return;
       }
       const nextProject = clone(payload);
@@ -716,12 +833,243 @@ export default function App() {
       setRevision(result.document.revision);
       setDraft(clone(result.runtime.scenes[draft.id]));
       setDirty(false);
-      setHistory({ past: [], future: [] });
       localStorage.removeItem(`love-office-draft:${root}:${draft.id}`);
       setStatus("YAML과 런타임을 저장했습니다.");
+      reportSceneActivity({
+        phase: "saved",
+        label: result.runtime.scenes[draft.id].title,
+        path: result.document.path,
+        detail: "YAML + 런타임 저장 완료",
+        savedAt: Date.now(),
+      });
     } catch (error) {
       const message = String(error);
       setStatus(message.includes("REVISION_CONFLICT") ? "외부에서 파일이 변경되었습니다. 프로젝트를 다시 불러온 뒤 비교하세요." : `저장 실패: ${message}`);
+      reportSceneActivity({
+        phase: "error",
+        label: draft.title,
+        path: payload.documents.scenes[draft.id]?.path || "",
+        detail: message.includes("REVISION_CONFLICT") ? "외부 변경 충돌 · 원본 보존됨" : "저장 실패 · 원본 보존됨",
+      });
+    } finally {
+      setBusy(false);
+    }
+  }, [draft, payload, revision, root]);
+
+  useEffect(() => {
+    if (!dirty || !draft || !root || !revision) return;
+    const signature = JSON.stringify(draft);
+    if (signature === lastAutoSaveAttempt.current) return;
+    const timer = window.setTimeout(() => {
+      lastAutoSaveAttempt.current = signature;
+      void save();
+    }, 1000);
+    return () => window.clearTimeout(timer);
+  }, [dirty, draft, revision, root, save]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (!(event.metaKey || event.ctrlKey)) return;
+      if (event.key.toLocaleLowerCase() === "p") {
+        event.preventDefault();
+        setQuickOpenVisible(true);
+        return;
+      }
+      if (workspace !== "scene") return;
+      if (event.key.toLocaleLowerCase() === "s") {
+        event.preventDefault();
+        if (dirty) void save();
+      }
+      if (event.key.toLocaleLowerCase() === "z") {
+        event.preventDefault();
+        if (event.shiftKey) redo();
+        else undo();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [dirty, history, save, workspace]);
+
+  const quickOpenItems = useMemo<QuickOpenItem[]>(() => {
+    if (!payload || !runtime) return [];
+    const orderedSceneIds = storyRoutes(runtime).flatMap((route) => [...route.scene_order, ...route.endings.map((ending) => ending.scene)]);
+    const scenes = orderedSceneIds.map((sceneId) => runtime.scenes[sceneId]).filter(Boolean).map((scene) => {
+      const route = runtime.routes[scene.route];
+      const dialogue = scene.node_order.flatMap((id) => {
+        const node = scene.nodes[id];
+        return [node.prompt, node.perceived?.line, node.reality?.line, node.perceived?.protagonist_interpretation, node.reality?.inner_thought];
+      }).filter(Boolean).join(" ");
+      const context = `${route?.title || scene.route} · ${scene.location || "장소 미정"} · 노드 ${scene.node_order.length}개`;
+      return {
+        id: scene.id,
+        kind: "scene" as const,
+        title: scene.title,
+        context,
+        path: payload.documents.scenes[scene.id]?.path || "",
+        search: `${scene.id} ${scene.title} ${scene.purpose} ${context} ${dialogue}`.toLocaleLowerCase(),
+      };
+    });
+    const events = Object.values(runtime.events).map((event) => {
+      const lane = Object.values(runtime.campaigns)[0]?.lanes.find((item) => item.id === event.lane)?.title || event.lane;
+      const context = `${event.window.days[0]}~${event.window.days[1]}일 · ${lane}${event.scene ? ` · ${runtime.scenes[event.scene]?.title || event.scene}` : ""}`;
+      return {
+        id: event.id,
+        kind: "event" as const,
+        title: event.title,
+        context,
+        path: payload.documents.events[event.id]?.path || "",
+        search: `${event.id} ${event.title} ${event.presentation.perceived.title} ${event.presentation.perceived.summary} ${event.presentation.reality.title} ${event.presentation.reality.summary} ${context}`.toLocaleLowerCase(),
+      };
+    });
+    const characters = storyRoutes(runtime).map((route) => runtime.characters[route.heroine]).filter(Boolean);
+    const remainingCharacters = Object.values(runtime.characters).filter((character) => !characters.some((item) => item.id === character.id));
+    const characterItems = [...characters, ...remainingCharacters].map((character) => ({
+      id: character.id,
+      kind: "character" as const,
+      title: character.display_name,
+      context: `${character.age}세 · ${character.role}`,
+      path: payload.documents.characters[character.id]?.path || "",
+      search: `${character.id} ${character.display_name} ${character.role} ${character.narrative_role} ${character.summary} ${(character.immutable_facts || []).join(" ")}`.toLocaleLowerCase(),
+    }));
+    const routeItems = storyRoutes(runtime).map((route) => ({
+      id: route.id,
+      kind: "route" as const,
+      title: route.title,
+      context: `${runtime.characters[route.heroine]?.display_name || route.heroine} · 본편 ${route.scene_order.length} · 엔딩 ${route.endings.length}`,
+      path: payload.documents.routes[route.id]?.path || "",
+      search: `${route.id} ${route.title} ${route.summary} ${route.mode} ${route.scene_order.join(" ")} ${route.endings.map((ending) => `${ending.scene} ${ending.outcome}`).join(" ")}`.toLocaleLowerCase(),
+    }));
+    const visualItems = Object.values(runtime.visuals).map((visual) => {
+      const title = visual.character ? runtime.characters[visual.character]?.display_name || visual.id : runtime.localization.source_strings[visual.title_key || ""] || visual.title_key || visual.id;
+      const context = `${visual.kind}${visual.extends ? ` · ${visual.extends} 상속` : ""}`;
+      return {
+        id: visual.id,
+        kind: "visual" as const,
+        title,
+        context,
+        path: payload.documents.visuals[visual.id]?.path || "",
+        search: `${visual.id} ${title} ${context} ${(visual.tags || []).join(" ")} ${Object.keys(visual.variants || {}).join(" ")}`.toLocaleLowerCase(),
+      };
+    });
+    const campaignItems = Object.values(runtime.campaigns).map((campaign) => ({
+      id: campaign.id,
+      kind: "campaign" as const,
+      title: campaign.title,
+      context: `${campaign.total_days}일 · ${campaign.acts.length}막 · ${campaign.lanes.length}개 레인`,
+      path: payload.documents.campaigns[campaign.id]?.path || "",
+      search: `${campaign.id} ${campaign.title} ${campaign.total_days} ${(campaign.acts || []).map((act) => `${act.title} ${act.purpose}`).join(" ")} ${(campaign.lanes || []).map((lane) => lane.title).join(" ")}`.toLocaleLowerCase(),
+    }));
+    const threadItems = Object.values(runtime.threads).map((thread) => ({
+      id: thread.id,
+      kind: "thread" as const,
+      title: thread.title,
+      context: `${thread.events.length}개 사건 · ${thread.lane}`,
+      path: payload.documents.threads[thread.id]?.path || "",
+      search: `${thread.id} ${thread.title} ${thread.lane} ${thread.events.join(" ")}`.toLocaleLowerCase(),
+    }));
+    const metaItems = Object.values(runtime.meta).map((meta) => ({
+      id: meta.id,
+      kind: "meta" as const,
+      title: "모드 해금과 예고",
+      context: `${meta.unlock_rules.length}개 해금 · ${meta.mode_teasers?.length || 0}개 예고`,
+      path: payload.documents.meta[meta.id]?.path || "",
+      search: `${meta.id} ${meta.unlock_rules.map((rule) => `${rule.id} ${rule.mode} ${rule.reward}`).join(" ")} ${(meta.mode_teasers || []).flatMap((teaser) => teaser.reveals.map((reveal) => `${reveal.mode} ${reveal.title} ${reveal.teaser}`)).join(" ")}`.toLocaleLowerCase(),
+    }));
+    return [...scenes, ...events, ...characterItems, ...campaignItems, ...routeItems, ...threadItems, ...metaItems, ...visualItems];
+  }, [payload, runtime]);
+
+  const revealActiveDocument = async () => {
+    if (!root) return;
+    try {
+      await invoke("reveal_in_file_manager", { root, relativePath: documentActivity.path || null });
+      setStatus(documentActivity.path ? "현재 YAML을 Finder에서 표시했습니다." : "프로젝트 폴더를 Finder에서 열었습니다.");
+    } catch (error) {
+      setStatus(`Finder를 열 수 없습니다: ${String(error)}`);
+    }
+  };
+
+  const switchWorkspace = (next: Workspace) => {
+    workspaceRef.current = next;
+    if (next === "scene" && draft && payload) {
+      const activity: DocumentActivity = {
+        phase: dirty ? "dirty" : "saved",
+        label: draft.title,
+        path: payload.documents.scenes[draft.id]?.path || "",
+        detail: dirty ? "자동 저장 대기" : "디스크와 동기화됨",
+      };
+      reportSceneActivity(activity);
+    } else if (workspaceActivities[next]) setDocumentActivity(workspaceActivities[next]!);
+    setWorkspace(next);
+  };
+
+  const openQuickItem = (item: QuickOpenItem) => {
+    if (!payload) return;
+    setQuickOpenVisible(false);
+    if (item.kind === "scene") {
+      loadScene(payload, item.id);
+      setWorkspace("scene");
+      return;
+    }
+    if (item.kind === "event") {
+      setTimelineRequest((current) => ({ id: item.id, token: (current?.token || 0) + 1 }));
+      setWorkspace("timeline");
+      return;
+    }
+    if (item.kind === "character") {
+      setCharacterRequest((current) => ({ id: item.id, token: (current?.token || 0) + 1 }));
+      setWorkspace("character");
+      return;
+    }
+    if (["campaign", "route", "thread", "meta", "visual"].includes(item.kind)) {
+      setSettingsRequest((current) => ({ kind: item.kind as SettingsKind, id: item.id, token: (current?.token || 0) + 1 }));
+      setWorkspace("settings");
+    }
+  };
+
+  const requestDuplicate = (kind: "scene" | "event", id: string, title: string) => {
+    const pending = Object.values(workspaceActivities).some((activity) => activity && activity.phase !== "saved");
+    if (pending) {
+      setStatus("다른 문서의 자동 저장이 끝난 뒤 복제해 주세요. 모든 참조를 한 번에 안전하게 갱신하기 위한 대기입니다.");
+      return;
+    }
+    setDuplicateRequest({ kind, id, title });
+  };
+
+  const duplicateDocument = async (newId: string, title: string) => {
+    if (!root || !duplicateRequest) return;
+    setBusy(true);
+    setStatus(`${duplicateRequest.kind === "scene" ? "장면과 연결 일정" : "시간 사건"}을 복사 검증하는 중…`);
+    try {
+      const command = duplicateRequest.kind === "scene" ? "duplicate_scene" : "duplicate_event";
+      const result = await invoke<{ created: boolean; issues: ValidationIssue[] }>(command, {
+        root,
+        sourceId: duplicateRequest.id,
+        newId,
+        title,
+      });
+      setIssues(result.issues);
+      if (!result.created) {
+        setStatus("복제본이 전체 검증을 통과하지 못해 실제 파일은 만들지 않았습니다.");
+        return;
+      }
+      const project = await invoke<ProjectPayload>("load_project", { root });
+      setPayload(project);
+      setIssues(project.issues);
+      setWorkspaceActivities({});
+      if (duplicateRequest.kind === "scene") {
+        workspaceRef.current = "scene";
+        setWorkspace("scene");
+        loadScene(project, newId, true);
+        setStatus(`'${title}' 장면, 연결 일정과 루트 순서를 만들었습니다: ${project.documents.scenes[newId]?.path}`);
+      } else {
+        workspaceRef.current = "timeline";
+        setWorkspace("timeline");
+        setTimelineRequest((current) => ({ id: newId, token: (current?.token || 0) + 1 }));
+        setStatus(`'${title}' 사건과 스레드 순서를 만들었습니다: ${project.documents.events[newId]?.path}`);
+      }
+      setDuplicateRequest(null);
+    } catch (error) {
+      setStatus(`복제 실패 · 실제 파일은 변경하지 않았습니다: ${String(error)}`);
     } finally {
       setBusy(false);
     }
@@ -811,27 +1159,107 @@ export default function App() {
 
   const contract = deriveStateContract(draft);
   const errorCount = issues.filter((issue) => issue.severity === "error").length;
+  const saveStateLabel = documentActivity.phase === "saving" ? "저장 중…"
+    : documentActivity.phase === "dirty" ? "자동 저장 대기"
+      : documentActivity.phase === "error" ? "저장 확인 필요"
+        : documentActivity.savedAt ? `저장됨 ${new Date(documentActivity.savedAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}`
+          : "저장됨";
+  const hasPendingDocument = Object.values(workspaceActivities).some((activity) => activity && ["dirty", "saving", "error"].includes(activity.phase));
 
   return <main className="app-shell">
     <header className="topbar">
       <div className="brand"><p className="eyebrow">PUSH &amp; PULL OFFICE</p><h1>스토리 에디터</h1></div>
-      <div className="project-status"><strong>{runtime.project.title}</strong><span className={dirty ? "dirty" : ""}>{dirty ? "● 저장 안 됨" : "✓ 저장됨"}</span><span className={errorCount ? "error" : ""}>{errorCount} 오류</span></div>
+      <div className="workspace-switch" aria-label="편집 작업 공간">
+        <button type="button" className={workspace === "timeline" ? "active" : ""} onClick={() => switchWorkspace("timeline")}>시간 설계</button>
+        <button type="button" className={workspace === "scene" ? "active" : ""} onClick={() => switchWorkspace("scene")}>장면·대사</button>
+        <button type="button" className={workspace === "character" ? "active" : ""} onClick={() => switchWorkspace("character")}>인물 설정</button>
+        <button type="button" className={workspace === "presentation" ? "active" : ""} onClick={() => switchWorkspace("presentation")}>연출·번역</button>
+        <button type="button" className={workspace === "settings" ? "active" : ""} onClick={() => switchWorkspace("settings")}>구조·자산</button>
+      </div>
+      <div className="project-status"><strong>{runtime.project.title}</strong><span className={documentActivity.phase}>{documentActivity.phase === "saved" ? "✓" : "●"} {saveStateLabel}</span><span className={errorCount ? "error" : ""}>{errorCount} 오류</span></div>
       <div className="top-actions">
+        <button type="button" className="quick-open-button" onClick={() => setQuickOpenVisible(true)} title="모든 스토리 문서 빠른 열기 (⌘P)">⌕ 빠른 열기 <kbd>⌘P</kbd></button>
         <button type="button" onClick={selectProject} disabled={busy}>프로젝트 열기</button>
-        <button type="button" onClick={undo} disabled={!history.past.length || busy}>실행 취소</button>
-        <button type="button" onClick={redo} disabled={!history.future.length || busy}>다시 실행</button>
+        {workspace === "scene" && <button type="button" onClick={undo} disabled={!history.past.length || busy} title="실행 취소 (⌘Z)">↶</button>}
+        {workspace === "scene" && <button type="button" onClick={redo} disabled={!history.future.length || busy} title="다시 실행 (⇧⌘Z)">↷</button>}
         <button type="button" onClick={validate} disabled={busy}>검증</button>
-        <button type="button" onClick={build} disabled={busy || dirty}>런타임 빌드</button>
-        <button type="button" className="primary-button" onClick={save} disabled={busy || !dirty}>소스 저장</button>
+        <button type="button" onClick={build} disabled={busy || hasPendingDocument}>런타임 빌드</button>
+        {workspace === "scene" && <button type="button" className="primary-button" onClick={save} disabled={busy || !dirty}>지금 저장 <kbd>⌘S</kbd></button>}
       </div>
     </header>
 
-    <div className="status-line" role="status"><span>{busy ? "처리 중 · " : ""}{status}</span><code>{root}</code></div>
+    <div className={`status-line ${documentActivity.phase}`} role="status">
+      <span>{busy ? "처리 중 · " : ""}{status}</span>
+      <div className="active-document">
+        <span><strong>{documentActivity.label}</strong><code>{documentActivity.path ? `${root}/${documentActivity.path}` : root}</code><small>{documentActivity.detail}</small></span>
+        <button type="button" onClick={revealActiveDocument} title="Finder에서 현재 파일 표시">Finder에서 보기</button>
+      </div>
+    </div>
 
-    <div className="editor-layout">
+    <div className={workspace === "timeline" ? "workspace-pane active" : "workspace-pane"} aria-hidden={workspace !== "timeline"}>
+    <TimelineEditor
+      key={`${payload.root}:timeline`}
+      active={workspace === "timeline"}
+      payload={payload}
+      state={testState}
+      mode={mode}
+      onMode={setMode}
+      onState={setTestState}
+      onPayload={setPayload}
+      onIssues={setIssues}
+      onStatus={setStatus}
+      requestedEvent={timelineRequest}
+      onDocumentActivity={reportTimelineActivity}
+      onDuplicateEvent={(event) => requestDuplicate("event", event.id, event.title)}
+      onOpenScene={(sceneId) => {
+        loadScene(payload, sceneId);
+        setWorkspace("scene");
+      }}
+    />
+    </div>
+    <div className={workspace === "character" ? "workspace-pane active" : "workspace-pane"} aria-hidden={workspace !== "character"}>
+    <CharacterEditor
+      key={`${payload.root}:characters`}
+      active={workspace === "character"}
+      payload={payload}
+      onStatus={setStatus}
+      onPayload={setPayload}
+      onIssues={setIssues}
+      onDocumentActivity={reportCharacterActivity}
+      requestedCharacter={characterRequest}
+    />
+    </div>
+    <div className={workspace === "presentation" ? "workspace-pane active" : "workspace-pane"} aria-hidden={workspace !== "presentation"}>
+    <PresentationEditor
+      key={`${payload.root}:presentation`}
+      active={workspace === "presentation"}
+      payload={payload}
+      locale={locale}
+      onLocale={setLocale}
+      mode={mode}
+      onMode={setMode}
+      onStatus={setStatus}
+      onPayload={setPayload}
+      onIssues={setIssues}
+      onDocumentActivity={reportPresentationActivity}
+    />
+    </div>
+    <div className={workspace === "settings" ? "workspace-pane active" : "workspace-pane"} aria-hidden={workspace !== "settings"}>
+    <ProjectSettingsEditor
+      key={`${payload.root}:settings`}
+      active={workspace === "settings"}
+      payload={payload}
+      onStatus={setStatus}
+      onPayload={setPayload}
+      onIssues={setIssues}
+      onDocumentActivity={reportSettingsActivity}
+      requestedDocument={settingsRequest}
+    />
+    </div>
+    {workspace === "scene" && <div className="editor-layout">
       <nav className="explorer" aria-label="스토리 탐색기">
         <div className="panel-heading"><div><p className="eyebrow">STORY</p><h2>루트와 장면</h2></div></div>
-        <div className="route-tree">{Object.values(runtime.routes).map((route) => {
+        <div className="route-tree">{storyRoutes(runtime).map((route) => {
           const sceneIds = [...route.scene_order, ...route.endings.map((ending) => ending.scene)];
           return <section key={route.id} className={route.id === draft.route ? "route-group active" : "route-group"}>
             <h3>{route.title}<small>{runtime.characters[route.heroine]?.display_name}</small></h3>
@@ -845,7 +1273,7 @@ export default function App() {
       <section className="editor-panel">
         <div className="editor-title">
           <div><p className="eyebrow">{draft.id}</p><h2>{draft.title}</h2><p>{draft.purpose}</p></div>
-          <div className="contract-summary"><span>읽기 {contract.reads.length}</span><span>쓰기 {contract.writes.length}</span></div>
+          <div className="editor-title-tools"><div className="contract-summary"><span>읽기 {contract.reads.length}</span><span>쓰기 {contract.writes.length}</span></div><button type="button" onClick={() => requestDuplicate("scene", draft.id, draft.title)} disabled={hasPendingDocument || busy}>장면 복제</button></div>
         </div>
         <div className="tabs" role="tablist">
           <button type="button" role="tab" aria-selected={editorTab === "scene"} className={editorTab === "scene" ? "active" : ""} onClick={() => setEditorTab("scene")}>장면</button>
@@ -870,7 +1298,7 @@ export default function App() {
 
         {editorTab === "node" && <div className="node-workspace">
           <div className="node-flow-toolbar">
-            <div className="node-flow" role="list">{draft.node_order.map((id) => <button type="button" role="listitem" className={id === selectedNodeId ? "node-pill active" : "node-pill"} key={id} onClick={() => setSelectedNodeId(id)}><span>{id}</span><small>{NODE_LABELS[draft.nodes[id].kind]}</small></button>)}</div>
+            <div className="node-flow" role="list">{draft.node_order.map((id) => <button type="button" role="listitem" className={id === selectedNodeId ? "node-pill active" : "node-pill"} key={id} title={nodePreview(draft.nodes[id])} onClick={() => setSelectedNodeId(id)}><span>{nodePreview(draft.nodes[id])}</span><small>{id} · {NODE_LABELS[draft.nodes[id].kind]}</small></button>)}</div>
             <div className="node-actions"><button type="button" aria-label="노드를 앞으로" onClick={() => moveNode(-1)}>←</button><button type="button" aria-label="노드를 뒤로" onClick={() => moveNode(1)}>→</button><button type="button" className="danger" onClick={deleteNode}>노드 삭제</button></div>
           </div>
           <div className="new-node-row"><input placeholder="새 노드 ID" value={newNodeId} onChange={(event) => setNewNodeId(event.target.value)} /><select value={newNodeKind} onChange={(event) => setNewNodeKind(event.target.value as NodeKind)}>{Object.entries(NODE_LABELS).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select><button type="button" onClick={addNode}>노드 추가</button></div>
@@ -881,11 +1309,21 @@ export default function App() {
       </section>
 
       <Preview runtime={runtime} scene={draft} selectedNodeId={selectedNodeId} mode={mode} onMode={setMode} state={testState} initialState={runtime.initial_state} onState={setTestState} image={currentImage} />
-    </div>
+    </div>}
 
     <section className="validation-drawer">
       <div className="validation-heading"><div><p className="eyebrow">VALIDATION</p><h2>검증 결과</h2></div><span>{issues.length ? `${issues.length}개 항목` : "오류 없음"}</span></div>
       {issues.length === 0 ? <p className="validation-empty">현재 프로젝트에서 오류나 경고를 찾지 못했습니다.</p> : <div className="issue-list">{issues.map((issue, index) => <button type="button" className={`issue ${issue.severity}`} key={`${issue.location}-${index}`} onClick={() => selectIssue(issue)}><strong>{issue.severity.toUpperCase()}</strong><span>{issue.message}</span><small>{issue.location}</small></button>)}</div>}
     </section>
+    {quickOpenVisible && <QuickOpen items={quickOpenItems} onClose={() => setQuickOpenVisible(false)} onPick={openQuickItem} />}
+    {duplicateRequest && <DuplicateDialog
+      kind={duplicateRequest.kind}
+      sourceId={duplicateRequest.id}
+      sourceTitle={duplicateRequest.title}
+      existingIds={duplicateRequest.kind === "scene" ? Object.keys(runtime.scenes) : Object.keys(runtime.events)}
+      busy={busy}
+      onCancel={() => setDuplicateRequest(null)}
+      onSubmit={duplicateDocument}
+    />}
   </main>;
 }
