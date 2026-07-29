@@ -11,6 +11,6 @@ scene_order:
   - seo_a.relief_smile
 endings:
   - scene: ending.seo_a.ambiguous
-    outcome: dark
+    outcome: multiple_catastrophe
   - scene: ending.seo_a.report
-    outcome: survivor
+    outcome: evidence_booking

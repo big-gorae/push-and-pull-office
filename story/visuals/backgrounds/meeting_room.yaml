@@ -3,6 +3,7 @@ id: background.meeting_room
 kind: background
 extends: archetype.background
 title_key: visual.background.meeting_room.title
+title: 유리 회의실
 variants:
   procedural:
     asset: assets/backgrounds/glass-meeting-room-afternoon.png

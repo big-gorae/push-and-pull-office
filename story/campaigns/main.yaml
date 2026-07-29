@@ -1,7 +1,7 @@
 schema_version: 1
 id: main
-title: 열닷 날의 밀당
-total_days: 15
+title: 열일곱 날의 밀당
+total_days: 17
 slots: [morning, lunch, afternoon, after_work]
 choice_slots: [lunch, after_work]
 calendar:
@@ -21,8 +21,8 @@ acts:
   - number: 3
     id: crisis
     title: 수습이 침범이 되는 시간
-    days: [11, 15]
-    purpose: 관계를 회복한다는 행동이 증거와 공포를 누적시키고 결말로 수렴한다.
+    days: [11, 17]
+    purpose: 두 번째 주말의 확신이 비밀 연애, 삼각관계, 간병과 사내 소문으로 번역되다가 주거지 방문과 현장 신고로 수렴한다.
 lanes:
   - {id: company, title: 회사와 고정 사건, kind: world}
   - {id: personal, title: 가족과 사적 시간, kind: world}

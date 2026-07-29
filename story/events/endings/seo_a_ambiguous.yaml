@@ -1,29 +1,29 @@
 schema_version: 1
 id: seo_a.ending_ambiguous
-title: 윤서아 유예 결말
+title: 윤서아 파국 분기
 type: ending
 lane: yoon_seo_a
 thread: seo_a
 sequence: 91
 exclusive_group: seo_a_ending
-window: {days: [15, 15], slots: [after_work], deadline_day: 15}
+window: {days: [17, 17], slots: [after_work], deadline_day: 17}
 duration: 0
 priority: 10
 availability: automatic
 completion: honor_scene_exit
 participants: [han_do_yoon, yoon_seo_a]
-location: office_exit
+location: apartment_corridor
 scene: ending.seo_a.ambiguous
 requires:
-  events: [seo_a.relief_smile]
-  conditions: []
+  events: [seo_a.relief_smile, anchor.day_17_home_surprise]
+  conditions:
+    - {path: progress.flags.story_mode.target, op: eq, value: yoon_seo_a}
 on_seen: {effects: []}
 on_missed: {effects: []}
 presentation:
   perceived:
-    title: 아직 끝나지 않은 밀당
-    summary: 확실한 고백도 거절도 없었으므로 다음 기회가 남았다고 생각한다.
+    title: 마지막 밀당의 선택
+    summary: 신고마저 사랑의 시련이나 배신으로 번역하며 자신의 다음 행동을 정한다.
   reality:
-    title: 안전을 위해 미룬 대응
-    summary: 증거와 지원이 부족한 서아는 거리를 두며 다음 직장을 알아본다.
-
+    title: 증거가 부족한 현장 신고
+    summary: 경찰은 둘을 분리하지만 축적된 기록이 부족하고, 한도윤이 거절을 받아들이지 않아 여러 파국으로 갈라진다.

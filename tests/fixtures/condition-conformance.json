@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {"id": "eq-string", "state": {"value": "warm"}, "condition": {"path": "value", "op": "eq", "value": "warm"}, "expected": true},
+    {"id": "ne-string", "state": {"value": "cold"}, "condition": {"path": "value", "op": "ne", "value": "warm"}, "expected": true},
+    {"id": "gt-number", "state": {"value": 11}, "condition": {"path": "value", "op": "gt", "value": 10}, "expected": true},
+    {"id": "gte-boundary", "state": {"value": 10}, "condition": {"path": "value", "op": "gte", "value": 10}, "expected": true},
+    {"id": "lt-number", "state": {"value": 9}, "condition": {"path": "value", "op": "lt", "value": 10}, "expected": true},
+    {"id": "lte-boundary", "state": {"value": 10}, "condition": {"path": "value", "op": "lte", "value": 10}, "expected": true},
+    {"id": "contains-array", "state": {"value": ["a", "b"]}, "condition": {"path": "value", "op": "contains", "value": "b"}, "expected": true},
+    {"id": "not-contains-array", "state": {"value": ["a", "b"]}, "condition": {"path": "value", "op": "not_contains", "value": "c"}, "expected": true},
+    {"id": "exists-null", "state": {"value": null}, "condition": {"path": "value", "op": "exists"}, "expected": true},
+    {"id": "not-exists", "state": {}, "condition": {"path": "value", "op": "not_exists"}, "expected": true},
+    {"id": "missing-ne-is-false", "state": {}, "condition": {"path": "value", "op": "ne", "value": 1}, "expected": false},
+    {"id": "nested-false", "state": {"outer": {"value": 3}}, "condition": {"path": "outer.value", "op": "gte", "value": 4}, "expected": false}
+  ],
+  "entry_cases": [
+    {
+      "id": "day-gate-blocked",
+      "condition": {"path": "progress.time.day", "op": "gte", "value": 3},
+      "state_patch": {"path": "progress.time.day", "value": 1},
+      "expected_allowed": false,
+      "expected_transition": "fallback",
+      "expected_event_eligible": false
+    },
+    {
+      "id": "day-gate-allowed",
+      "condition": {"path": "progress.time.day", "op": "gte", "value": 3},
+      "state_patch": {"path": "progress.time.day", "value": 3},
+      "expected_allowed": true,
+      "expected_transition": "target",
+      "expected_event_eligible": true
+    }
+  ]
+}

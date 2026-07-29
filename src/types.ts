@@ -39,14 +39,30 @@ export type Layer = {
   intent?: string;
 };
 
+export type DialogueVariant = {
+  id: string;
+  priority?: number;
+  conditions?: Condition[];
+  default?: boolean;
+  perceived: Layer;
+  reality: Layer;
+};
+
 export type ChoiceOption = {
   id: string;
   label: string;
   interpretation: string;
   action: string;
+  push_pull: PushPullConfig;
   conditions: Condition[];
   effects: Effect[];
   next: string;
+};
+
+export type PushPullConfig = {
+  action: "approach" | "space" | "literal";
+  intensity: number;
+  base_score: number;
 };
 
 export type StoryNode = {
@@ -55,6 +71,7 @@ export type StoryNode = {
   speaker?: string;
   perceived?: Layer;
   reality?: Layer;
+  variants?: DialogueVariant[];
   prompt?: string;
   options?: ChoiceOption[];
   transitions?: Transition[];
@@ -101,6 +118,10 @@ export type Campaign = {
   total_days: number;
   slots: TimeSlot[];
   choice_slots: TimeSlot[];
+  calendar?: {
+    start_weekday: string;
+    weekend_days: number[];
+  };
   acts: Array<{ number: number; id: string; title: string; days: [number, number]; purpose: string }>;
   lanes: Array<{ id: string; title: string; kind: "world" | "character" | "truth" }>;
 };
@@ -186,13 +207,63 @@ export type Character = {
 };
 
 export type LocalizationBundle = {
+  schema_version?: number;
   default_locale: LocaleId;
   supported_locales: LocaleId[];
-  locale_names: Record<LocaleId, string>;
-  locales: Record<LocaleId, { schema_version: number; id: string; name: string; fallback: string | null; strings: Record<string, string> }>;
+  locale_names: Record<LocaleId, { name: string; native_name: string }>;
+  locales: Record<LocaleId, {
+    schema_version: number;
+    id: string;
+    name: string;
+    native_name?: string;
+    fallback: string | null;
+    strings: Record<string, string>;
+  }>;
+  entries?: Record<string, LocalizationEntry>;
   source_strings: Record<string, string>;
   catalogs: Record<LocaleId, Record<string, string>>;
-  coverage: Record<LocaleId, { translated: number; total: number; ratio: number; missing: string[] }>;
+  direct_catalogs?: Record<LocaleId, Record<string, string>>;
+  resolved_catalogs?: Record<LocaleId, Record<string, string>>;
+  coverage: Record<LocaleId, LocalizationCoverage>;
+};
+
+export type LocalizationEntry = {
+  key: string;
+  source: string;
+  domain: "ui" | "campaign" | "character" | "event" | "thread" | "route" | "scene" | "meta" | "visual" | "locale";
+  sourceDocument: {
+    kind: string;
+    id: string;
+    path: string;
+    fieldPath: string;
+  };
+  context: {
+    sceneId?: string;
+    nodeId?: string;
+    variantId?: string;
+    optionId?: string;
+    eventId?: string;
+    characterId?: string;
+    speakerId?: string;
+    layer?: ViewMode;
+  };
+  placeholders: string[];
+  maxLength?: number;
+  multiline: boolean;
+};
+
+export type LocalizationCoverage = {
+  direct: number;
+  resolved: number;
+  total: number;
+  ratio: number;
+  fallback_used: string[];
+  missing: string[];
+  unresolved?: string[];
+  orphan: string[];
+  invalid_placeholders: string[];
+  by_domain: Record<string, { direct: number; total: number }>;
+  translated: number;
 };
 
 export type VisualMatch = {
@@ -215,9 +286,11 @@ export type VisualObject = {
   abstract?: boolean;
   extends?: string;
   title_key?: string;
+  title?: string;
   render_strategy?: "flat_portrait" | "layered_sprite" | "background";
   character?: string;
   fallback_asset?: string;
+  default_reality_expression?: string;
   default_outfit?: string;
   default_pose?: string;
   outfits?: Record<string, Record<string, JsonValue>>;

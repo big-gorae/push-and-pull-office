@@ -1,0 +1,10 @@
+- main [ref=e2]:
+  - heading "You're almost in" [level=1] [ref=e4]
+  - paragraph [ref=e5]: This site uses ChatGPT to securely sign you in
+  - generic [ref=e6]:
+    - link "Continue with ChatGPT" [ref=e7] [cursor=pointer]:
+      - /url: https://love-office-game.dlwlsgh4687.chatgpt.site/signin-with-chatgpt?return_to=%2F
+    - generic [ref=e9]:
+      - text: You can review OpenAI's
+      - link "Privacy Policy" [ref=e10] [cursor=pointer]:
+        - /url: https://openai.com/policies/privacy-policy

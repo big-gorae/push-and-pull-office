@@ -3,6 +3,7 @@ id: background.empty_office
 kind: background
 extends: archetype.background
 title_key: visual.background.empty_office.title
+title: 빈 사무실
 variants:
   night:
     asset: assets/backgrounds/empty-office-night.png

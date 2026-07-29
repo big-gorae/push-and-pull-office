@@ -3,6 +3,7 @@ id: background.office_pantry
 kind: background
 extends: archetype.background
 title_key: visual.background.office_pantry.title
+title: 사내 휴게실
 variants:
   morning:
     asset: assets/backgrounds/office-pantry-morning.png

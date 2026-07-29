@@ -1,29 +1,29 @@
 schema_version: 1
 id: min_kyung.ending_coverup
-title: 차민경 미해결 결말
+title: 차민경 파국 분기
 type: ending
 lane: cha_min_kyung
 thread: min_kyung
 sequence: 91
 exclusive_group: min_kyung_ending
-window: {days: [15, 15], slots: [after_work], deadline_day: 15}
+window: {days: [17, 17], slots: [after_work], deadline_day: 17}
 duration: 0
 priority: 10
 availability: automatic
 completion: honor_scene_exit
 participants: [han_do_yoon, cha_min_kyung]
-location: office_archive
+location: apartment_corridor
 scene: ending.min_kyung.coverup
 requires:
-  events: [min_kyung.witness_meeting]
-  conditions: []
+  events: [min_kyung.witness_meeting, anchor.day_17_home_surprise]
+  conditions:
+    - {path: progress.flags.story_mode.target, op: eq, value: cha_min_kyung}
 on_seen: {effects: []}
 on_missed: {effects: []}
 presentation:
   perceived:
-    title: 민경이 먼저 물러난 밤
-    summary: 자신이 밀당의 주도권을 되찾았다고 확신한다.
+    title: 마지막 밀당의 선택
+    summary: 신고마저 사랑의 시련이나 배신으로 번역하며 자신의 다음 행동을 정한다.
   reality:
-    title: 조직 안에서 묻힌 문제 제기
-    summary: 민경의 기록은 남지만 회사는 당장 사건을 공식화하지 않는다.
-
+    title: 증거가 부족한 현장 신고
+    summary: 경찰은 둘을 분리하지만 축적된 기록이 부족하고, 한도윤이 거절을 받아들이지 않아 여러 파국으로 갈라진다.

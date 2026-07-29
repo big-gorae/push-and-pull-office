@@ -10,14 +10,14 @@ purpose: 서아의 업무상 경계를 주인공이 첫 밀기 신호로 번역�
 cast: [han_do_yoon, yoon_seo_a]
 entry_conditions: []
 state_contract:
-  reads: []
+  reads:
+    - progress.flags.push_pull
   writes:
-    - visible.heroines.yoon_seo_a.affection
     - visible.heroines.yoon_seo_a.initiative
-    - visible.heroines.yoon_seo_a.perceived_state
     - hidden.heroines.yoon_seo_a.suspicion
     - hidden.heroines.yoon_seo_a.dislike
     - hidden.heroines.yoon_seo_a.evidence_count
+    - progress.flags.push_pull
 start_node: request
 nodes:
   - id: request
@@ -44,11 +44,9 @@ nodes:
         label: 나도 며칠 밀어낸다
         interpretation: 그녀의 밀기에 맞춰 긴장감을 유지한다.
         action: 사적인 접근을 사흘 동안 중단한다.
+        push_pull: {action: space, intensity: 16, base_score: 4}
         conditions: []
         effects:
-          - {path: visible.heroines.yoon_seo_a.affection, op: add, value: 10}
-          - {path: visible.heroines.yoon_seo_a.initiative, op: add, value: 8}
-          - {path: visible.heroines.yoon_seo_a.perceived_state, op: set, value: push}
           - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -3}
           - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 2}
         next: after_choice
@@ -56,11 +54,9 @@ nodes:
         label: 한 걸음 더 당긴다
         interpretation: 밀어낼수록 확신을 보여 주어야 한다.
         action: 업무가 끝난 뒤 개인 메시지로 거절 이유를 다시 묻는다.
+        push_pull: {action: approach, intensity: 16, base_score: 4}
         conditions: []
         effects:
-          - {path: visible.heroines.yoon_seo_a.affection, op: add, value: 12}
-          - {path: visible.heroines.yoon_seo_a.initiative, op: add, value: 10}
-          - {path: visible.heroines.yoon_seo_a.perceived_state, op: set, value: pull}
           - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: 20}
           - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 15}
           - {path: hidden.heroines.yoon_seo_a.evidence_count, op: add, value: 1}
@@ -69,11 +65,9 @@ nodes:
         label: 말한 그대로 받아들인다
         interpretation: 오늘은 연애보다 업무를 우선한다.
         action: 자료를 메일로 보내고 추가 접촉을 하지 않는다.
+        push_pull: {action: literal, intensity: 12, base_score: 4}
         conditions: []
         effects:
-          - {path: visible.heroines.yoon_seo_a.affection, op: add, value: -5}
-          - {path: visible.heroines.yoon_seo_a.initiative, op: add, value: -10}
-          - {path: visible.heroines.yoon_seo_a.perceived_state, op: set, value: neutral}
           - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -2}
         next: after_choice
 

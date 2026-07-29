@@ -3,6 +3,7 @@ id: background.office_open
 kind: background
 extends: archetype.background
 title_key: visual.background.office_open.title
+title: 오픈 오피스
 variants:
   late_afternoon:
     asset: assets/backgrounds/open-office-late-afternoon.png

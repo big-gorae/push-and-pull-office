@@ -1,0 +1,73 @@
+schema_version: 1
+id: story_mode
+unlock_rules: []
+stable_mode_id: base
+display_name: 스토리 모드
+campaign: main
+ending_day: 17
+routeable_heroines: [yoon_seo_a, cha_min_kyung]
+unrouteable_heroine: kang_yoo_jin
+week_three:
+  - {day: 13, id: secret_romance, perceived: 비밀 사내연애, reality: 공략 대상이 업무 외 접촉을 피한다.}
+  - {day: 14, id: triangle, perceived: 강유진과의 삼각관계, reality: 유진은 사실관계를 관찰하지만 기본 결말에 개입하지 않는다.}
+  - {day: 15, id: care, perceived: 그녀의 간병, reality: 아픈 상사를 귀가시키는 최소한의 업무 대응이다.}
+  - {day: 16, id: office_rumor, perceived: 회사에 퍼진 둘의 관계, reality: 원치 않는 접근에 관한 수군거림이며 공식 면담은 없다.}
+  - {day: 17, id: home_surprise, perceived: 여자친구 집 서프라이즈 고백, reality: 주거지 방문과 퇴거 요구 뒤 처음으로 현장 신고가 발생한다.}
+report_trigger:
+  event: home_surprise_visit
+  preparation_is_reportable_event: false
+  report_after_actual_visit: true
+  sequence: [arrival, explicit_leave_request, refusal_to_accept_boundary, victim_report, police_separation, evidence_review]
+police_and_company_order:
+  - police_response_and_investigation
+  - formal_booking_when_supported
+  - company_temporary_exclusion
+  - company_internal_review
+  - later_termination
+appearance_reveal:
+  before_ending: idealized_only
+  primary_reveal: police_mugshot_after_formal_booking
+  other_endings: objective_record_such_as_scene_camera_or_prison_intake
+  moral_rule: 외모가 악의 원인이 아니라 자기 서사와 객관 기록의 차이를 드러낸다.
+ending_inputs:
+  existing_stats: [suspicion, dislike, evidence_count, initiative]
+  flags:
+    - progress.flags.story_mode.target
+    - progress.flags.story_mode.final_interpretation
+    - progress.flags.story_mode.home_incident
+    - progress.flags.story_mode.yoo_jin_intervention
+endings:
+  - id: grooms_face
+    title: 신랑의 얼굴
+    condition: evidence_sufficient_after_home_report
+    outcome: 정식 신병 처리 뒤 머그샷에서 실제 외형이 처음 완전히 드러나고 회사 처분은 후일담에 발생한다.
+  - id: betrayed_man
+    title: 배신당한 남자
+    condition: insufficient_evidence_and_betrayal_interpretation
+    outcome: 풀려난 한도윤이 연애 망상을 배신 서사로 바꾸어 보복 파국을 일으킨다.
+  - id: endless_romance
+    title: 끝나지 않은 연애
+    condition: insufficient_evidence_and_romance_interpretation
+    outcome: 풀려난 한도윤이 연애 망상을 유지하고 스토킹을 계속해 파국에 이른다.
+  - id: caught_in_act
+    title: 현행범
+    condition: line_crossed_before_police_arrival_and_caught
+    outcome: 현장에서 제지되어 수감되지만 끝까지 관계 망상을 유지한다.
+  - id: last_push
+    title: 마지막 밀기
+    condition: line_crossed_and_escape_selected
+    outcome: 달아나다 사망하며 마지막 순간까지 여주가 기다린다고 믿는다.
+  - id: unrouteable
+    title: 공략 불가
+    condition: yoo_jin_intervention_flag
+    outcome: 한도윤이 강유진을 직접 사건에 끌어들였을 때만 유진이 공식 대응한다.
+  - id: never_dated
+    title: 한 번도 연인이 아니었다
+    condition: both_routes_cleared_grooms_face_seen_and_past_record_connected
+    outcome: 임수연이 살아 있는 과거 피해자라는 원문과 현재 사건의 반복이 완전히 연결된다.
+rules:
+  - 강유진은 공략 불가능 히로인이며 기본 결말에서는 해결사나 구원자로 개입하지 않는다.
+  - 신고는 고백 준비가 아니라 실제 주거지 방문과 명백한 퇴거 요구 뒤 발생한다.
+  - 단순 조사에서는 머그샷을 사용하지 않고 정식 신병 처리 뒤 촬영한다.
+  - 회사 해고는 경찰 대응보다 뒤에 오는 행정 후일담이다.
+  - 범행과 도주 방법은 재현 가능하게 묘사하지 않는다.

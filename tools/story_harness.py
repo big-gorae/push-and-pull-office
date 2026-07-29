@@ -30,8 +30,41 @@ import yaml
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_STORY_ROOT = PROJECT_ROOT / "story"
 MISSING = object()
+NO_DEFAULT = object()
 VALID_CONDITION_OPS = {"eq", "ne", "gt", "gte", "lt", "lte", "contains", "not_contains", "exists", "not_exists"}
 VALID_EFFECT_OPS = {"set", "add", "append_unique", "remove"}
+VALID_PUSH_PULL_ACTIONS = {"approach", "space", "literal"}
+PUSH_PULL_LIMIT = 100
+PUSH_PULL_OPTIMAL_LIMIT = 40
+PUSH_PULL_CHECKPOINT = 32
+PUSH_PULL_TURN_BONUS = 6
+PUSH_PULL_MAX_COMBO = 5
+PLACEHOLDER_PATTERN = re.compile(r"\{\{\s*([a-zA-Z_][a-zA-Z0-9_.-]*)\s*\}\}")
+
+
+class UniqueKeyLoader(yaml.SafeLoader):
+    """YAML loader that rejects duplicate mapping keys instead of silently overwriting."""
+
+
+def _construct_unique_mapping(loader: UniqueKeyLoader, node: yaml.MappingNode, deep: bool = False) -> Dict[Any, Any]:
+    mapping: Dict[Any, Any] = {}
+    for key_node, value_node in node.value:
+        key = loader.construct_object(key_node, deep=deep)
+        if key in mapping:
+            raise yaml.constructor.ConstructorError(
+                "while constructing a mapping",
+                node.start_mark,
+                f"found duplicate key {key!r}",
+                key_node.start_mark,
+            )
+        mapping[key] = loader.construct_object(value_node, deep=deep)
+    return mapping
+
+
+UniqueKeyLoader.add_constructor(
+    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+    _construct_unique_mapping,
+)
 
 
 @dataclass(frozen=True)
@@ -49,6 +82,10 @@ class StoryProject:
         self.story_root = story_root.resolve()
         self.manifest_path = self.story_root / "manifest.yaml"
         self.manifest = self._load_yaml(self.manifest_path)
+        ui_pattern = self.manifest.get("files", {}).get("ui")
+        if not isinstance(ui_pattern, str):
+            raise RuntimeError("manifest files.ui is required")
+        self.ui = self._load_yaml(self.story_root / ui_pattern)
         self.campaigns = self._load_kind("campaigns")
         self.characters = self._load_kind("characters")
         self.events = self._load_kind("events")
@@ -63,7 +100,7 @@ class StoryProject:
     def _load_yaml(path: Path) -> Dict[str, Any]:
         try:
             with path.open("r", encoding="utf-8") as handle:
-                data = yaml.safe_load(handle)
+                data = yaml.load(handle, Loader=UniqueKeyLoader)
         except FileNotFoundError as exc:
             raise RuntimeError(f"missing YAML file: {path}") from exc
         except yaml.YAMLError as exc:
@@ -102,6 +139,8 @@ class StoryProject:
     def path_spec(self, path: str) -> Optional[Dict[str, Any]]:
         if not isinstance(path, str):
             return None
+        if re.fullmatch(r"derived\.characters\.[a-z][a-z0-9_]*\.(rule_id|emotion|behavior|default_expression)", path):
+            return {"type": "derived", "read_only": True}
         for spec in self.manifest.get("state_path_patterns", []):
             if re.fullmatch(spec.get("pattern", ""), path):
                 result = dict(spec)
@@ -118,13 +157,13 @@ class StoryProject:
                 return result
         return None
 
-    def validate(self) -> List[Issue]:
+    def validate(self, profile: str = "development") -> List[Issue]:
         issues: List[Issue] = []
         self._validate_manifest(issues)
         self._validate_campaigns(issues)
         self._validate_characters(issues)
         self._validate_events(issues)
-        self._validate_locales(issues)
+        self._validate_locales(issues, profile)
         self._validate_visuals(issues)
         self._validate_threads(issues)
         self._validate_meta(issues)
@@ -394,7 +433,7 @@ class StoryProject:
             for index, rule in enumerate(character.get("reporting_rules", [])):
                 self._validate_relative_conditions(issues, f"{location}#reporting_rules[{index}]", rule.get("conditions", []))
 
-    def _validate_locales(self, issues: List[Issue]) -> None:
+    def _validate_locales(self, issues: List[Issue], profile: str = "development") -> None:
         project = self.manifest.get("project", {})
         supported = project.get("supported_languages", [])
         default = project.get("default_language")
@@ -409,12 +448,36 @@ class StoryProject:
                 "story/locales",
                 f"locale files must exactly match supported_languages: expected {sorted(supported)}, got {sorted(self.locales)}",
             )
+        ui_strings = self.ui.get("strings")
+        if self.ui.get("id") != "game_ui":
+            self._error(issues, relative_source(self.ui.get("_source", "story/ui.yaml")), "UI document id must be game_ui")
+        if not isinstance(ui_strings, dict) or not ui_strings:
+            self._error(issues, relative_source(self.ui.get("_source", "story/ui.yaml")), "UI strings must be a non-empty mapping")
+        try:
+            entries = collect_localizable_entries(self)
+        except RuntimeError as error:
+            self._error(issues, "story/localization", str(error))
+            return
+        quality = self.manifest.get("localization_quality", {})
+        profile_rules = quality.get("profiles", {}).get(profile)
+        if not isinstance(profile_rules, dict):
+            self._error(issues, "story/manifest.yaml#localization_quality", f"unknown localization profile: {profile}")
+            profile_rules = {}
+        required_accessibility = quality.get("required_accessibility_keys", [])
+        for key in required_accessibility:
+            if key not in entries or entries[key].get("domain") != "ui":
+                self._error(issues, "story/ui.yaml", f"required accessibility UI key is missing: {key}")
         for locale_id, locale in self.locales.items():
             location = relative_source(locale.get("_source", locale_id))
+            filename_id = Path(str(locale.get("_source", ""))).stem
+            if locale.get("id") != filename_id:
+                self._error(issues, location, f"locale id must match filename: expected {filename_id!r}")
             if not re.fullmatch(r"^[a-z][a-z0-9_-]*$", locale_id):
                 self._error(issues, location, f"invalid locale id: {locale_id}")
             if not locale.get("name"):
                 self._error(issues, location, "locale name is required")
+            if not locale.get("native_name"):
+                self._error(issues, location, "locale native_name is required")
             fallback = locale.get("fallback")
             if fallback is not None and fallback not in self.locales:
                 self._error(issues, location, f"unknown locale fallback: {fallback}")
@@ -427,6 +490,24 @@ class StoryProject:
                     self._error(issues, location, "translation keys must be non-empty strings")
                 if not isinstance(value, str) or not value:
                     self._error(issues, f"{location}#strings.{key}", "translation value must be a non-empty string")
+                    continue
+                entry = entries.get(key)
+                if entry is None:
+                    self._error(issues, f"{location}#strings.{key}", "orphan translation key is not registered by any source document")
+                    continue
+                expected = set(entry["placeholders"])
+                actual = placeholders(value)
+                if actual != expected:
+                    self._error(
+                        issues,
+                        f"{location}#strings.{key}",
+                        f"placeholder mismatch: expected {sorted(expected)}, got {sorted(actual)}",
+                    )
+                if value == entry["source"] and profile_rules.get("identical_translation") == "warning":
+                    self._warning(issues, f"{location}#strings.{key}", "translation is identical to source")
+                maximum = entry.get("maxLength")
+                if isinstance(maximum, int) and len(value) > maximum and profile_rules.get("maximum_length") == "warning":
+                    self._warning(issues, f"{location}#strings.{key}", f"translation exceeds recommended length {maximum}")
 
         for locale_id in self.locales:
             seen: Set[str] = set()
@@ -437,6 +518,42 @@ class StoryProject:
                     break
                 seen.add(current)
                 current = self.locales.get(current, {}).get("fallback")
+
+        bundle = self.localization_bundle()
+        missing_rule = profile_rules.get("missing_translation")
+        for locale_id, coverage in bundle["coverage"].items():
+            if locale_id == default:
+                continue
+            for key in coverage["missing"]:
+                if missing_rule == "warning":
+                    self._warning(issues, f"story/locales/{locale_id}.yaml", f"translation uses fallback: {key}")
+                elif missing_rule == "error":
+                    self._error(issues, f"story/locales/{locale_id}.yaml", f"translation uses fallback: {key}")
+        required_locales = profile_rules.get("required_locales", {})
+        for locale_id, locale_rules in required_locales.items():
+            coverage = bundle["coverage"].get(locale_id)
+            if coverage is None:
+                self._error(issues, "story/manifest.yaml#localization_quality", f"release locale is not supported: {locale_id}")
+                continue
+            minimum = float(locale_rules.get("minimum_direct_ratio", 0))
+            for domain in locale_rules.get("required_domains", []):
+                domain_coverage = coverage["by_domain"].get(domain, {"direct": 0, "total": 0})
+                ratio = domain_coverage["direct"] / domain_coverage["total"] if domain_coverage["total"] else 1.0
+                if ratio < minimum:
+                    self._error(
+                        issues,
+                        f"story/locales/{locale_id}.yaml",
+                        f"{domain} direct translation ratio {ratio:.4f} is below release minimum {minimum:.4f}",
+                    )
+
+        for visual_id, visual in self.visuals.items():
+            title_key = visual.get("title_key")
+            if isinstance(title_key, str) and title_key not in entries:
+                self._error(
+                    issues,
+                    relative_source(visual.get("_source", visual_id)),
+                    f"visual title_key is not registered: {title_key}",
+                )
 
     def resolve_visuals(self) -> Dict[str, Dict[str, Any]]:
         resolved: Dict[str, Dict[str, Any]] = {}
@@ -490,6 +607,8 @@ class StoryProject:
                 self._error(issues, location, f"unknown render_strategy: {strategy}")
             if visual.get("abstract"):
                 continue
+            if not visual.get("title") or not visual.get("title_key"):
+                self._error(issues, location, "concrete visual requires title and title_key")
             if visual.get("kind") == "background":
                 variants = visual.get("variants")
                 if not isinstance(variants, dict) or not variants:
@@ -519,6 +638,11 @@ class StoryProject:
                 if visual.get("default_pose") not in poses:
                     self._error(issues, location, "default_pose is not declared in poses")
                 expressions = self.characters.get(character_id, {}).get("expressions", {})
+                default_reality_expression = visual.get("default_reality_expression")
+                if not isinstance(default_reality_expression, str) or default_reality_expression not in expressions:
+                    self._error(issues, location, "default_reality_expression must reference a declared character expression")
+                elif expressions[default_reality_expression].get("layer") != "reality":
+                    self._error(issues, location, "default_reality_expression must use a reality-layer expression")
                 for expression_id in visual.get("expression_assets", {}):
                     if expression_id not in expressions:
                         self._error(issues, location, f"unknown expression asset binding: {expression_id}")
@@ -531,11 +655,19 @@ class StoryProject:
         for scene_id, scene in self.scenes.items():
             for node in scene.get("nodes", []):
                 node_id = node.get("id")
-                for mode in ("perceived", "reality"):
-                    background = resolve_scene_background(resolved, scene, node_id, mode)
-                    if background is None:
-                        location = relative_source(scene.get("_source", scene_id))
-                        self._error(issues, f"{location}#nodes.{node_id}", f"no background resolves in {mode} mode")
+                variants = node.get("variants") if isinstance(node.get("variants"), list) else [None]
+                for variant in variants:
+                    candidate = node if variant is None else {
+                        **node,
+                        "perceived": variant.get("perceived"),
+                        "reality": variant.get("reality"),
+                    }
+                    variant_suffix = f".variants.{variant.get('id')}" if variant else ""
+                    for mode in ("perceived", "reality"):
+                        background = resolve_scene_background(resolved, scene, node_id, mode, candidate)
+                        if background is None:
+                            location = relative_source(scene.get("_source", scene_id))
+                            self._error(issues, f"{location}#nodes.{node_id}{variant_suffix}", f"no background resolves in {mode} mode")
 
     def _validate_relative_conditions(self, issues: List[Issue], location: str, conditions: Any) -> None:
         if not isinstance(conditions, list):
@@ -595,6 +727,9 @@ class StoryProject:
             for path in sorted(reads | writes):
                 if self.path_spec(path) is None:
                     self._error(issues, f"{location}#state_contract", f"undeclared state path: {path}")
+            for path in sorted(writes):
+                if path.startswith("derived."):
+                    self._error(issues, f"{location}#state_contract", f"derived state is read-only: {path}")
 
             self._validate_conditions(issues, f"{location}#entry_conditions", scene.get("entry_conditions", []), reads)
             nodes = scene.get("nodes", [])
@@ -637,7 +772,49 @@ class StoryProject:
     ) -> None:
         kind = node.get("kind")
         if kind in {"dual_dialogue", "dual_narration"}:
-            self._validate_dual_node(issues, scene, node, location)
+            variants = node.get("variants")
+            if variants is None:
+                self._validate_dual_node(issues, scene, node, location)
+            elif not isinstance(variants, list) or not variants:
+                self._error(issues, location, "variants must be a non-empty list")
+            else:
+                if "perceived" in node or "reality" in node:
+                    self._error(issues, location, "dual node must use either inline layers or variants, not both")
+                variant_ids: Set[str] = set()
+                condition_signatures: Dict[str, str] = {}
+                defaults = 0
+                for index, variant in enumerate(variants):
+                    variant_location = f"{location}.variants[{index}]"
+                    if not isinstance(variant, dict):
+                        self._error(issues, variant_location, "variant must be a mapping")
+                        continue
+                    variant_id = variant.get("id")
+                    if not self.id_is_valid(variant_id):
+                        self._error(issues, variant_location, f"invalid variant id: {variant_id}")
+                    if variant_id in variant_ids:
+                        self._error(issues, variant_location, f"duplicate variant id: {variant_id}")
+                    variant_ids.add(variant_id)
+                    if variant.get("default") is True:
+                        defaults += 1
+                    else:
+                        self._validate_conditions(issues, variant_location, variant.get("conditions", []), reads)
+                        signature = json.dumps(variant.get("conditions", []), ensure_ascii=False, sort_keys=True)
+                        if signature in condition_signatures:
+                            self._warning(
+                                issues,
+                                variant_location,
+                                f"variant conditions duplicate {condition_signatures[signature]}; this variant may be unreachable",
+                            )
+                        else:
+                            condition_signatures[signature] = str(variant_id)
+                    variant_node = {
+                        **node,
+                        "perceived": variant.get("perceived"),
+                        "reality": variant.get("reality"),
+                    }
+                    self._validate_dual_node(issues, scene, variant_node, variant_location)
+                if defaults != 1:
+                    self._error(issues, location, "variants require exactly one default")
             if not node.get("next"):
                 self._error(issues, location, "dual node requires next")
         elif kind == "choice":
@@ -657,6 +834,39 @@ class StoryProject:
                 for key in ("label", "interpretation", "action", "next"):
                     if not option.get(key):
                         self._error(issues, option_location, f"required key is missing: {key}")
+                push_pull = option.get("push_pull")
+                if not isinstance(push_pull, dict):
+                    self._error(issues, option_location, "push_pull mapping is required")
+                else:
+                    if push_pull.get("action") not in VALID_PUSH_PULL_ACTIONS:
+                        self._error(issues, option_location, f"invalid push_pull action: {push_pull.get('action')}")
+                    intensity = push_pull.get("intensity")
+                    if not isinstance(intensity, int) or not 8 <= intensity <= 16:
+                        self._error(issues, option_location, "push_pull intensity must be an integer from 8 to 16")
+                    base_score = push_pull.get("base_score")
+                    if not isinstance(base_score, int) or not 2 <= base_score <= 5:
+                        self._error(issues, option_location, "push_pull base_score must be an integer from 2 to 5")
+                    heroine = self.routes.get(scene.get("route"), {}).get("heroine")
+                    system_paths = [
+                        "progress.flags.push_pull",
+                        f"visible.heroines.{heroine}.initiative",
+                        f"hidden.heroines.{heroine}.suspicion",
+                        f"hidden.heroines.{heroine}.dislike",
+                        f"hidden.heroines.{heroine}.evidence_count",
+                    ]
+                    if "progress.flags.push_pull" not in reads:
+                        self._error(issues, option_location, "push_pull state is not declared in state_contract.reads")
+                    for path in system_paths:
+                        if path not in writes:
+                            self._error(issues, option_location, f"push_pull system path is not declared in state_contract.writes: {path}")
+                    forbidden = {
+                        f"visible.heroines.{heroine}.affection",
+                        f"visible.heroines.{heroine}.initiative",
+                        f"visible.heroines.{heroine}.perceived_state",
+                    }
+                    for effect in option.get("effects", []):
+                        if effect.get("path") in forbidden:
+                            self._error(issues, option_location, f"push_pull choice must not manually write compatibility stat: {effect.get('path')}")
                 self._validate_conditions(issues, option_location, option.get("conditions", []), reads)
                 self._validate_effects(issues, option_location, option.get("effects", []), reads, writes)
         elif kind == "state_gate":
@@ -709,6 +919,8 @@ class StoryProject:
             expressions = self.characters[speaker].get("expressions", {})
             for layer_name, layer in (("perceived", perceived), ("reality", reality)):
                 expression_id = layer.get("expression")
+                if layer_name == "reality" and not expression_id:
+                    continue
                 if expression_id not in expressions:
                     self._error(issues, location, f"unknown {layer_name} expression {expression_id} for {speaker}")
                 elif expressions[expression_id].get("layer") != layer_name:
@@ -785,6 +997,14 @@ class StoryProject:
                     self._error(issues, item_location, "ending transition requires ending_id")
             elif not transition.get(target_key):
                 self._error(issues, item_location, f"transition requires {target_key}")
+            elif target_key == "scene" and transition.get("default") is True:
+                target_scene = self.scenes.get(transition.get("scene"))
+                if target_scene and target_scene.get("entry_conditions"):
+                    self._error(
+                        issues,
+                        item_location,
+                        "default scene transition cannot target a conditionally enterable scene without an unconditional fallback",
+                    )
 
     def _validate_local_links(self, issues: List[Issue], location: str, node_map: Mapping[str, Mapping[str, Any]]) -> None:
         for node_id, node in node_map.items():
@@ -859,6 +1079,7 @@ class StoryProject:
 
     def build_bundle(self) -> Dict[str, Any]:
         source_paths = [self.manifest_path]
+        source_paths.append(Path(self.ui["_source"]))
         for collection in (
             self.campaigns,
             self.characters,
@@ -934,8 +1155,16 @@ class StoryProject:
             if character_id in current_state.get("hidden", {}).get("heroines", {}):
                 derived_emotions[character_id] = derive_emotion(self.characters[character_id], current_state)
         rules_path = self.story_root / "AI_AUTHORING_RULES.md"
+        preview_scene = clean_source(scene)
+        preview_nodes = []
+        selected_variant: Optional[str] = None
+        for preview_node in preview_scene.get("nodes", []):
+            if preview_node.get("id") == scene.get("start_node"):
+                selected_variant, preview_node = resolve_dialogue_variant(self, current_state, preview_node)
+            preview_nodes.append(preview_node)
+        preview_scene["nodes"] = preview_nodes
         visual_scene = {
-            mode: resolve_scene_stage(self.resolve_visuals(), clean_source(scene), scene.get("start_node"), mode)
+            mode: resolve_scene_stage(self.resolve_visuals(), preview_scene, scene.get("start_node"), mode)
             for mode in ("perceived", "reality")
         }
         return {
@@ -952,6 +1181,7 @@ class StoryProject:
             "cast": cast,
             "state_snapshot": state_snapshot,
             "derived_emotions": derived_emotions,
+            "selected_dialogue_variant": selected_variant,
             "localization": self.localization_bundle(),
             "visual_scene": visual_scene,
             "linked_scenes": linked_scenes,
@@ -959,7 +1189,8 @@ class StoryProject:
         }
 
     def localization_bundle(self) -> Dict[str, Any]:
-        source_strings = collect_localizable_strings(self)
+        entries = collect_localizable_entries(self)
+        source_strings = {key: entry["source"] for key, entry in entries.items()}
         raw_catalogs = {
             locale_id: clean_source(locale).get("strings", {})
             for locale_id, locale in self.locales.items()
@@ -978,7 +1209,7 @@ class StoryProject:
             chain.add(locale_id)
             locale = self.locales.get(locale_id, {})
             fallback = locale.get("fallback")
-            base = resolved_strings(fallback, chain) if isinstance(fallback, str) else dict(source_strings)
+            base = dict(resolved_strings(fallback, chain)) if isinstance(fallback, str) else dict(source_strings)
             base.update(raw_catalogs.get(locale_id, {}))
             catalogs[locale_id] = base
             return base
@@ -986,20 +1217,58 @@ class StoryProject:
         total = len(source_strings)
         for locale_id in supported:
             resolved_strings(locale_id)
-            translated = sum(1 for key in source_strings if key in raw_catalogs.get(locale_id, {}))
+            direct_keys = {key for key in source_strings if key in raw_catalogs.get(locale_id, {})}
+            if locale_id == default_locale:
+                direct_keys = set(source_strings)
+            missing = [key for key in source_strings if key not in direct_keys]
+            fallback_used = [key for key in missing if key in catalogs[locale_id]]
+            unresolved = [key for key in source_strings if key not in catalogs[locale_id]]
+            orphan = sorted(set(raw_catalogs.get(locale_id, {})) - set(source_strings))
+            invalid_placeholders = sorted(
+                key
+                for key in direct_keys
+                if key in raw_catalogs.get(locale_id, {})
+                and placeholders(raw_catalogs[locale_id][key]) != set(entries[key]["placeholders"])
+            )
+            by_domain: Dict[str, Dict[str, int]] = {}
+            for key, entry in entries.items():
+                domain = entry["domain"]
+                bucket = by_domain.setdefault(domain, {"direct": 0, "total": 0})
+                bucket["total"] += 1
+                if key in direct_keys:
+                    bucket["direct"] += 1
+            translated = len(direct_keys)
             coverage[locale_id] = {
+                "direct": translated,
+                "resolved": total - len(unresolved),
                 "translated": translated,
                 "total": total,
                 "ratio": round(translated / total, 4) if total else 1.0,
-                "missing": [key for key in source_strings if key not in raw_catalogs.get(locale_id, {})],
+                "fallback_used": fallback_used,
+                "missing": missing,
+                "unresolved": unresolved,
+                "orphan": orphan,
+                "invalid_placeholders": invalid_placeholders,
+                "by_domain": by_domain,
             }
         return {
+            "schema_version": 2,
             "default_locale": default_locale,
             "supported_locales": supported,
-            "locale_names": {locale_id: self.locales.get(locale_id, {}).get("name", locale_id) for locale_id in supported},
+            "locale_names": {
+                locale_id: {
+                    "name": self.locales.get(locale_id, {}).get("name", locale_id),
+                    "native_name": self.locales.get(locale_id, {}).get("native_name")
+                    or self.locales.get(locale_id, {}).get("name", locale_id),
+                }
+                for locale_id in supported
+            },
             "locales": {locale_id: clean_source(locale) for locale_id, locale in self.locales.items()},
+            "entries": entries,
             "source_strings": source_strings,
             "catalogs": catalogs,
+            "direct_catalogs": raw_catalogs,
+            "resolved_catalogs": catalogs,
             "coverage": coverage,
         }
 
@@ -1030,8 +1299,9 @@ def resolve_scene_background(
     scene: Mapping[str, Any],
     node_id: Optional[str],
     mode: str,
+    node_override: Optional[Mapping[str, Any]] = None,
 ) -> Optional[Dict[str, Any]]:
-    node = scene_node(scene, node_id)
+    node = node_override or scene_node(scene, node_id)
     layer = node.get(mode, {}) if isinstance(node, Mapping) else {}
     dimensions = {
         "locations": scene.get("location"),
@@ -1120,67 +1390,190 @@ def resolve_scene_stage(
     return {"background": background, "characters": characters, "mode": mode, "node": node_id}
 
 
-def collect_localizable_strings(project: StoryProject) -> Dict[str, str]:
-    """Create stable translation keys while keeping Korean YAML as authoring source."""
-    strings: Dict[str, str] = {}
+def placeholders(value: str) -> Set[str]:
+    return set(PLACEHOLDER_PATTERN.findall(value)) if isinstance(value, str) else set()
 
-    def add(key: str, value: Any) -> None:
-        if isinstance(value, str) and value:
-            strings[key] = value
+
+def collect_localizable_entries(project: StoryProject) -> Dict[str, Dict[str, Any]]:
+    """Create the authoritative localization registry with source and context metadata."""
+    entries: Dict[str, Dict[str, Any]] = {}
+
+    def add(
+        key: str,
+        value: Any,
+        *,
+        domain: str,
+        kind: str,
+        item_id: str,
+        source: Any,
+        field_path: str,
+        context: Optional[Mapping[str, str]] = None,
+        max_length: Optional[int] = None,
+    ) -> None:
+        if not isinstance(value, str) or not value:
+            return
+        entry = {
+            "key": key,
+            "source": value,
+            "domain": domain,
+            "sourceDocument": {
+                "kind": kind,
+                "id": item_id,
+                "path": relative_source(source),
+                "fieldPath": field_path,
+            },
+            "context": dict(context or {}),
+            "placeholders": sorted(placeholders(value)),
+            "multiline": "\n" in value,
+        }
+        if max_length is not None:
+            entry["maxLength"] = max_length
+        previous = entries.get(key)
+        if previous is not None and (
+            previous["source"] != value
+            or previous["sourceDocument"] != entry["sourceDocument"]
+        ):
+            raise RuntimeError(
+                f"localization key collision: {key}: "
+                f"{previous['sourceDocument']['path']} vs {entry['sourceDocument']['path']}"
+            )
+        entries[key] = entry
+
+    ui_source = project.ui.get("_source", "story/ui.yaml")
+    for key, value in project.ui.get("strings", {}).items():
+        add(
+            key,
+            value,
+            domain="ui",
+            kind="ui",
+            item_id=project.ui.get("id", "game_ui"),
+            source=ui_source,
+            field_path=f"strings.{key}",
+            max_length=160 if key == "app.title" else 100,
+        )
 
     for campaign_id, campaign in project.campaigns.items():
         base = f"campaign.{campaign_id}"
-        add(f"{base}.title", campaign.get("title"))
+        source = campaign.get("_source", campaign_id)
+        add(f"{base}.title", campaign.get("title"), domain="campaign", kind="campaign", item_id=campaign_id, source=source, field_path="title", max_length=100)
         for act in campaign.get("acts", []):
             act_id = act.get("id", act.get("number"))
-            add(f"{base}.acts.{act_id}.title", act.get("title"))
-            add(f"{base}.acts.{act_id}.purpose", act.get("purpose"))
+            add(f"{base}.acts.{act_id}.title", act.get("title"), domain="campaign", kind="campaign", item_id=campaign_id, source=source, field_path=f"acts.{act_id}.title", max_length=100)
+            add(f"{base}.acts.{act_id}.purpose", act.get("purpose"), domain="campaign", kind="campaign", item_id=campaign_id, source=source, field_path=f"acts.{act_id}.purpose", max_length=240)
         for lane in campaign.get("lanes", []):
-            add(f"{base}.lanes.{lane.get('id')}.title", lane.get("title"))
+            lane_id = lane.get("id")
+            add(f"{base}.lanes.{lane_id}.title", lane.get("title"), domain="campaign", kind="campaign", item_id=campaign_id, source=source, field_path=f"lanes.{lane_id}.title", max_length=80)
     for character_id, character in project.characters.items():
         base = f"characters.{character_id}"
+        source = character.get("_source", character_id)
         for field in ("display_name", "role", "summary"):
-            add(f"{base}.{field}", character.get(field))
+            add(f"{base}.{field}", character.get(field), domain="character", kind="character", item_id=character_id, source=source, field_path=field, context={"characterId": character_id}, max_length=240)
         for expression_id, expression in character.get("expressions", {}).items():
-            add(f"{base}.expressions.{expression_id}.description", expression.get("description"))
+            add(f"{base}.expressions.{expression_id}.description", expression.get("description"), domain="character", kind="character", item_id=character_id, source=source, field_path=f"expressions.{expression_id}.description", context={"characterId": character_id}, max_length=240)
     for event_id, event in project.events.items():
         base = f"events.{event_id}"
-        add(f"{base}.title", event.get("title"))
+        source = event.get("_source", event_id)
+        context = {"eventId": event_id}
+        if event.get("scene"):
+            context["sceneId"] = event["scene"]
+        add(f"{base}.title", event.get("title"), domain="event", kind="event", item_id=event_id, source=source, field_path="title", context=context, max_length=100)
         for mode in ("perceived", "reality"):
             presentation = event.get("presentation", {}).get(mode, {})
-            add(f"{base}.presentation.{mode}.title", presentation.get("title"))
-            add(f"{base}.presentation.{mode}.summary", presentation.get("summary"))
+            mode_context = {**context, "layer": mode}
+            add(f"{base}.presentation.{mode}.title", presentation.get("title"), domain="event", kind="event", item_id=event_id, source=source, field_path=f"presentation.{mode}.title", context=mode_context, max_length=100)
+            add(f"{base}.presentation.{mode}.summary", presentation.get("summary"), domain="event", kind="event", item_id=event_id, source=source, field_path=f"presentation.{mode}.summary", context=mode_context, max_length=240)
     for thread_id, thread in project.threads.items():
-        add(f"threads.{thread_id}.title", thread.get("title"))
+        add(f"threads.{thread_id}.title", thread.get("title"), domain="thread", kind="thread", item_id=thread_id, source=thread.get("_source", thread_id), field_path="title", max_length=100)
     for route_id, route in project.routes.items():
         base = f"routes.{route_id}"
-        add(f"{base}.title", route.get("title"))
-        add(f"{base}.summary", route.get("summary"))
+        source = route.get("_source", route_id)
+        add(f"{base}.title", route.get("title"), domain="route", kind="route", item_id=route_id, source=source, field_path="title", max_length=100)
+        add(f"{base}.summary", route.get("summary"), domain="route", kind="route", item_id=route_id, source=source, field_path="summary", max_length=240)
         for ending in route.get("endings", []):
-            add(f"{base}.endings.{ending.get('scene')}.outcome", ending.get("outcome"))
+            ending_scene = ending.get("scene")
+            add(f"{base}.endings.{ending_scene}.outcome", ending.get("outcome"), domain="route", kind="route", item_id=route_id, source=source, field_path=f"endings.{ending_scene}.outcome", context={"sceneId": ending_scene}, max_length=240)
     for scene_id, scene in project.scenes.items():
         base = f"scenes.{scene_id}"
-        add(f"{base}.title", scene.get("title"))
-        add(f"{base}.purpose", scene.get("purpose"))
+        source = scene.get("_source", scene_id)
+        scene_context = {"sceneId": scene_id}
+        add(f"{base}.title", scene.get("title"), domain="scene", kind="scene", item_id=scene_id, source=source, field_path="title", context=scene_context, max_length=100)
+        add(f"{base}.purpose", scene.get("purpose"), domain="scene", kind="scene", item_id=scene_id, source=source, field_path="purpose", context=scene_context, max_length=240)
         for node in scene.get("nodes", []):
             node_base = f"{base}.nodes.{node.get('id')}"
-            add(f"{node_base}.prompt", node.get("prompt"))
+            node_id = node.get("id")
+            node_context = {"sceneId": scene_id, "nodeId": node_id}
+            if node.get("speaker"):
+                node_context["speakerId"] = node["speaker"]
+            add(f"{node_base}.prompt", node.get("prompt"), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.prompt", context=node_context, max_length=160)
             for mode in ("perceived", "reality"):
                 layer = node.get(mode, {})
-                add(f"{node_base}.{mode}.line", layer.get("line"))
-                add(f"{node_base}.{mode}.protagonist_interpretation", layer.get("protagonist_interpretation"))
-                add(f"{node_base}.{mode}.inner_thought", layer.get("inner_thought"))
+                for field in ("line", "protagonist_interpretation", "inner_thought"):
+                    add(f"{node_base}.{mode}.{field}", layer.get(field), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.{mode}.{field}", context={**node_context, "layer": mode}, max_length=320)
+            for variant in node.get("variants", []):
+                variant_id = variant.get("id")
+                variant_context = {**node_context, "variantId": variant_id}
+                variant_base = f"{node_base}.variants.{variant_id}"
+                for mode in ("perceived", "reality"):
+                    layer = variant.get(mode, {})
+                    for field in ("line", "protagonist_interpretation", "inner_thought"):
+                        add(f"{variant_base}.{mode}.{field}", layer.get(field), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.variants.{variant_id}.{mode}.{field}", context={**variant_context, "layer": mode}, max_length=320)
             for option in node.get("options", []):
-                option_base = f"{node_base}.options.{option.get('id')}"
+                option_id = option.get("id")
+                option_base = f"{node_base}.options.{option_id}"
+                option_context = {**node_context, "optionId": option_id}
                 for field in ("label", "interpretation", "action"):
-                    add(f"{option_base}.{field}", option.get(field))
+                    add(f"{option_base}.{field}", option.get(field), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.options.{option_id}.{field}", context=option_context, max_length=240)
     for meta_id, meta in project.meta.items():
         for teaser in meta.get("mode_teasers", []):
             for reveal in teaser.get("reveals", []):
                 base = f"meta.{meta_id}.teasers.{teaser.get('id')}.{reveal.get('mode')}"
-                add(f"{base}.title", reveal.get("title"))
-                add(f"{base}.teaser", reveal.get("teaser"))
-    return dict(sorted(strings.items()))
+                source = meta.get("_source", meta_id)
+                add(f"{base}.title", reveal.get("title"), domain="meta", kind="meta", item_id=meta_id, source=source, field_path=f"mode_teasers.{teaser.get('id')}.{reveal.get('mode')}.title")
+                add(f"{base}.teaser", reveal.get("teaser"), domain="meta", kind="meta", item_id=meta_id, source=source, field_path=f"mode_teasers.{teaser.get('id')}.{reveal.get('mode')}.teaser")
+
+    for locale_id, locale in project.locales.items():
+        source = locale.get("_source", locale_id)
+        add(
+            f"locale.{locale_id}.name",
+            locale.get("name"),
+            domain="locale",
+            kind="locale",
+            item_id=locale_id,
+            source=source,
+            field_path="name",
+            context={},
+            max_length=80,
+        )
+        add(
+            f"locale.{locale_id}.native_name",
+            locale.get("native_name") or locale.get("name"),
+            domain="locale",
+            kind="locale",
+            item_id=locale_id,
+            source=source,
+            field_path="native_name",
+            context={},
+            max_length=80,
+        )
+    for visual_id, visual in project.visuals.items():
+        title_key = visual.get("title_key")
+        if isinstance(title_key, str):
+            add(
+                title_key,
+                visual.get("title"),
+                domain="visual",
+                kind="visual",
+                item_id=visual_id,
+                source=visual.get("_source", visual_id),
+                field_path="title",
+                max_length=100,
+            )
+    return dict(sorted(entries.items()))
+
+
+def collect_localizable_strings(project: StoryProject) -> Dict[str, str]:
+    """Compatibility view of the authoritative localization registry."""
+    return {key: entry["source"] for key, entry in collect_localizable_entries(project).items()}
 
 
 def clean_source(data: Mapping[str, Any]) -> Dict[str, Any]:
@@ -1205,11 +1598,11 @@ def walk_leaves(data: Any, prefix: str = "") -> Iterable[Tuple[str, Any]]:
         yield prefix, data
 
 
-def get_path(state: Mapping[str, Any], path: str, default: Any = MISSING) -> Any:
+def get_path(state: Mapping[str, Any], path: str, default: Any = NO_DEFAULT) -> Any:
     current: Any = state
     for part in path.split("."):
         if not isinstance(current, Mapping) or part not in current:
-            if default is MISSING:
+            if default is NO_DEFAULT:
                 raise KeyError(path)
             return default
         current = current[part]
@@ -1300,6 +1693,158 @@ def apply_effect(project: StoryProject, state: MutableMapping[str, Any], effect:
     return True
 
 
+def _bounded_number(value: Any, fallback: int, minimum: int, maximum: int) -> int:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return fallback
+    return max(minimum, min(maximum, int(value)))
+
+
+def push_pull_state(state: Mapping[str, Any]) -> Dict[str, Any]:
+    raw = get_path(state, "progress.flags.push_pull", {})
+    if not isinstance(raw, Mapping):
+        raw = {}
+    target = raw.get("target") if raw.get("target") in {"pull", "push", "none"} else "none"
+    last_action = raw.get("last_action") if raw.get("last_action") in VALID_PUSH_PULL_ACTIONS | {"none"} else "none"
+    return {
+        "combo": _bounded_number(raw.get("combo"), 0, 0, PUSH_PULL_MAX_COMBO),
+        "position": _bounded_number(raw.get("position"), 0, -PUSH_PULL_LIMIT, PUSH_PULL_LIMIT),
+        "target": target,
+        "last_action": last_action,
+        "heroine": raw.get("heroine") if isinstance(raw.get("heroine"), str) else "",
+    }
+
+
+def break_push_pull_flow(state: MutableMapping[str, Any], keep_position: bool = True) -> None:
+    current = push_pull_state(state)
+    current.update({
+        "combo": 0,
+        "position": current["position"] if keep_position else 0,
+        "target": "none",
+        "last_action": "none",
+        "heroine": "",
+    })
+    set_path(state, "progress.flags.push_pull", current)
+
+
+def _apply_pattern_effects(
+    project: StoryProject,
+    state: MutableMapping[str, Any],
+    heroine: str,
+    combo: int,
+    reached_checkpoint: bool,
+) -> Dict[str, int]:
+    delta = {"suspicion": 0, "dislike": 0, "evidence_count": 0}
+    if combo < 3:
+        return delta
+    if combo == 3:
+        delta["suspicion"] = 3
+    elif combo == 4:
+        delta["suspicion"] = 5
+        delta["dislike"] = 2
+    else:
+        delta["suspicion"] = 7
+        delta["dislike"] = 4
+        if reached_checkpoint:
+            delta["evidence_count"] = 1
+    for stat, amount in delta.items():
+        if amount:
+            apply_effect(project, state, {
+                "path": f"hidden.heroines.{heroine}.{stat}",
+                "op": "add",
+                "value": amount,
+            })
+    return delta
+
+
+def resolve_push_pull(
+    project: StoryProject,
+    state: MutableMapping[str, Any],
+    heroine: str,
+    config: Mapping[str, Any],
+) -> Dict[str, Any]:
+    current = push_pull_state(state)
+    heroine_changed = bool(current["heroine"] and current["heroine"] != heroine)
+    action = config.get("action")
+    if action not in VALID_PUSH_PULL_ACTIONS:
+        raise ValueError(f"unsupported push_pull action: {action}")
+    intensity = _bounded_number(config.get("intensity"), 12, 8, 16)
+    base_score = _bounded_number(config.get("base_score"), 4, 2, 5)
+    previous_position = current["position"]
+    initiative_path = f"visible.heroines.{heroine}.initiative"
+    previous_initiative = int(get_path(state, initiative_path, 0))
+    combo = 0 if heroine_changed else current["combo"]
+    target = "none" if heroine_changed else current["target"]
+    position = previous_position
+    gain = 0
+    reached_checkpoint = False
+
+    if action == "literal":
+        if position < 0:
+            position = min(0, position + intensity)
+        elif position > 0:
+            position = max(0, position - intensity)
+        combo = 0
+        target = "none"
+        kind = "literal"
+    else:
+        direction = "pull" if action == "approach" else "push"
+        if target == "none":
+            target = direction
+        movement = -intensity if direction == "pull" else intensity
+        position = max(-PUSH_PULL_LIMIT, min(PUSH_PULL_LIMIT, position + movement))
+        previous_inside = abs(previous_position) <= PUSH_PULL_OPTIMAL_LIMIT
+        inside = abs(position) <= PUSH_PULL_OPTIMAL_LIMIT
+        moving_toward_target = position < previous_position if target == "pull" else position > previous_position
+        reached_checkpoint = (
+            previous_position > -PUSH_PULL_CHECKPOINT and position <= -PUSH_PULL_CHECKPOINT
+            if target == "pull"
+            else previous_position < PUSH_PULL_CHECKPOINT and position >= PUSH_PULL_CHECKPOINT
+        )
+        if previous_inside and inside and moving_toward_target:
+            combo = min(PUSH_PULL_MAX_COMBO, combo + 1)
+            gain = base_score * combo
+            kind = "score"
+            if reached_checkpoint:
+                gain += PUSH_PULL_TURN_BONUS
+                target = "push" if target == "pull" else "pull"
+                kind = "turn"
+            apply_effect(project, state, {"path": initiative_path, "op": "add", "value": gain})
+        else:
+            combo = 0
+            kind = "wrong" if inside else "outside"
+            if not inside:
+                target = "push" if position < -PUSH_PULL_OPTIMAL_LIMIT else "pull"
+
+    hidden_delta = (
+        _apply_pattern_effects(project, state, heroine, combo, reached_checkpoint)
+        if kind in {"score", "turn"}
+        else {"suspicion": 0, "dislike": 0, "evidence_count": 0}
+    )
+    next_state = {
+        "combo": combo,
+        "position": position,
+        "target": target,
+        "last_action": action,
+        "heroine": heroine,
+    }
+    set_path(state, "progress.flags.push_pull", next_state)
+    return {
+        "kind": kind,
+        "action": action,
+        "previous_position": previous_position,
+        "position": position,
+        "previous_initiative": previous_initiative,
+        "initiative": int(get_path(state, initiative_path, previous_initiative)),
+        "combo": combo,
+        "gain": gain,
+        "target": target,
+        "reached_checkpoint": reached_checkpoint,
+        "inside_optimal_range": abs(position) <= PUSH_PULL_OPTIMAL_LIMIT,
+        "heroine_changed": heroine_changed,
+        "hidden_delta": hidden_delta,
+    }
+
+
 def local_targets(node: Mapping[str, Any]) -> Set[str]:
     targets: Set[str] = set()
     if node.get("next"):
@@ -1366,11 +1911,71 @@ def derive_emotion(character: Mapping[str, Any], state: Mapping[str, Any]) -> Op
         if matches:
             return {
                 "rule": rule.get("id"),
+                "rule_id": rule.get("id"),
                 "emotion": rule.get("emotion"),
                 "behavior": rule.get("behavior"),
                 "expression": rule.get("default_expression"),
+                "default_expression": rule.get("default_expression"),
             }
     return None
+
+
+def evaluation_state(project: StoryProject, state: Mapping[str, Any]) -> Dict[str, Any]:
+    result = copy.deepcopy(dict(state))
+    characters: Dict[str, Dict[str, Any]] = {}
+    for character_id, character in project.characters.items():
+        emotion = derive_emotion(character, state) or {}
+        characters[character_id] = {
+            "rule_id": emotion.get("rule_id"),
+            "emotion": emotion.get("emotion"),
+            "behavior": emotion.get("behavior"),
+            "default_expression": emotion.get("default_expression"),
+        }
+    result["derived"] = {"characters": characters}
+    return result
+
+
+def resolve_dialogue_variant(
+    project: StoryProject,
+    state: Mapping[str, Any],
+    node: Mapping[str, Any],
+) -> Tuple[str, Mapping[str, Any]]:
+    variants = node.get("variants")
+    if not isinstance(variants, list) or not variants:
+        selected_id = "default"
+        resolved = copy.deepcopy(dict(node))
+    else:
+        context = evaluation_state(project, state)
+        ordered = sorted(
+            enumerate(variants),
+            key=lambda item: (-int(item[1].get("priority", 0)), item[0]),
+        )
+        selected = next(
+            (variant for _, variant in ordered if variant.get("default") is not True and conditions_match(context, variant.get("conditions", []))),
+            None,
+        )
+        selected = selected or next((variant for _, variant in ordered if variant.get("default") is True), ordered[0][1])
+        resolved = dict(node)
+        resolved["perceived"] = selected.get("perceived", {})
+        resolved["reality"] = copy.deepcopy(selected.get("reality", {}))
+        selected_id = str(selected.get("id"))
+    context = evaluation_state(project, state)
+    speaker = node.get("speaker")
+    reality = resolved.get("reality")
+    if speaker and isinstance(reality, MutableMapping) and not reality.get("expression"):
+        expression = context.get("derived", {}).get("characters", {}).get(speaker, {}).get("default_expression")
+        if not expression:
+            visual = next(
+                (
+                    item for item in project.visuals.values()
+                    if item.get("kind") == "character" and not item.get("abstract") and item.get("character") == speaker
+                ),
+                {},
+            )
+            expression = visual.get("default_reality_expression")
+        if expression:
+            reality["expression"] = expression
+    return selected_id, resolved
 
 
 def campaign_act(campaign: Mapping[str, Any], day: int) -> int:
@@ -1379,6 +1984,22 @@ def campaign_act(campaign: Mapping[str, Any], day: int) -> int:
         if len(days) == 2 and days[0] <= day <= days[1]:
             return int(act.get("number", 1))
     return 1
+
+
+def can_enter_scene(project: StoryProject, state: Mapping[str, Any], scene_id: str) -> Dict[str, Any]:
+    scene = project.scenes.get(scene_id)
+    if scene is None:
+        return {"scene": scene_id, "allowed": False, "trace": [], "error": "unknown scene"}
+    context = evaluation_state(project, state)
+    trace = []
+    for condition in scene.get("entry_conditions", []):
+        actual = get_path(context, condition.get("path", ""), MISSING)
+        trace.append({
+            "condition": copy.deepcopy(condition),
+            "actual": None if actual is MISSING else actual,
+            "met": condition_matches(context, condition),
+        })
+    return {"scene": scene_id, "allowed": all(item["met"] for item in trace), "trace": trace}
 
 
 class TimelineScheduler:
@@ -1420,12 +2041,22 @@ class TimelineScheduler:
         for required_id in requires.get("events", []):
             if required_id not in seen:
                 reasons.append(f"선행 사건 미완료: {required_id}")
+        context = evaluation_state(self.project, self.state)
         for condition in requires.get("conditions", []):
-            if not condition_matches(self.state, condition):
-                current = get_path(self.state, condition.get("path", ""), None)
+            if not condition_matches(context, condition):
+                current = get_path(context, condition.get("path", ""), None)
                 reasons.append(
                     f"조건 불충족: {condition.get('path')} {condition.get('op')} "
                     f"{condition.get('value')!r} (현재 {current!r})"
+                )
+        scene_id = event.get("scene")
+        entry_decision = can_enter_scene(self.project, self.state, scene_id) if scene_id else None
+        for item in entry_decision["trace"] if entry_decision else []:
+            if not item["met"]:
+                condition = item["condition"]
+                reasons.append(
+                    f"장면 진입 조건 불충족: {condition.get('path')} {condition.get('op')} "
+                    f"{condition.get('value')!r} (현재 {item['actual']!r})"
                 )
         if reasons:
             return {"event": event_id, "status": "blocked", "reasons": reasons, "eligible": False}
@@ -1494,6 +2125,8 @@ class TimelineScheduler:
             }
             self.trace.append(entry)
             processed.append(entry)
+        if processed:
+            break_push_pull_flow(self.state)
         return processed
 
     def process_automatic(self, day: int, slot: str) -> List[Dict[str, Any]]:
@@ -1558,21 +2191,27 @@ class Simulator:
                         "trace": self.trace,
                         "final_state": self.state,
                     }
-                if not conditions_match(self.state, scene.get("entry_conditions", [])):
-                    raise RuntimeError(f"entry conditions failed: {scene_id}")
+                entry_decision = can_enter_scene(self.project, self.state, scene_id)
+                if not entry_decision["allowed"]:
+                    raise RuntimeError(
+                        f"entry conditions failed: {scene_id}: "
+                        f"{json.dumps(entry_decision['trace'], ensure_ascii=False)}"
+                    )
                 node_id = scene["start_node"]
                 self.trace.append({"type": "scene", "scene": scene_id, "title": scene.get("title")})
             node_map = {node["id"]: node for node in scene["nodes"]}
             node = node_map[node_id]
             kind = node["kind"]
             if kind in {"dual_dialogue", "dual_narration"}:
+                variant_id, resolved_node = resolve_dialogue_variant(self.project, self.state, node)
                 self.trace.append({
                     "type": kind,
                     "scene": scene_id,
                     "node": node_id,
                     "speaker": node.get("speaker"),
-                    "perceived": node["perceived"]["line"],
-                    "reality": node["reality"]["line"],
+                    "variant": variant_id,
+                    "perceived": resolved_node["perceived"]["line"],
+                    "reality": resolved_node["reality"]["line"],
                 })
                 node_id = node["next"]
             elif kind == "choice":
@@ -1593,6 +2232,12 @@ class Simulator:
                 for effect in selected.get("effects", []):
                     if apply_effect(self.project, self.state, effect):
                         applied.append(effect)
+                push_pull_result = resolve_push_pull(
+                    self.project,
+                    self.state,
+                    self.route["heroine"],
+                    selected["push_pull"],
+                )
                 self.trace.append({
                     "type": "choice",
                     "scene": scene_id,
@@ -1600,6 +2245,7 @@ class Simulator:
                     "option": selected["id"],
                     "label": selected["label"],
                     "action": selected["action"],
+                    "push_pull": push_pull_result,
                     "effects": applied,
                     "state_diff": state_diff(before, self.state),
                 })
@@ -1623,7 +2269,11 @@ class Simulator:
                 })
                 node_id = node["next"]
             elif kind == "exit":
-                transition = choose_transition(self.state, node["transitions"])
+                transition = choose_transition(
+                    self.state,
+                    node["transitions"],
+                    project=self.project,
+                )
                 if transition.get("ending") is True:
                     ending_id = transition["ending_id"]
                     self.trace.append({"type": "ending", "scene": scene_id, "ending": ending_id})
@@ -1639,11 +2289,20 @@ class Simulator:
         return {"route": self.route_id, "ending": ending_id, "stopped_at": None, "trace": self.trace, "final_state": self.state}
 
 
-def choose_transition(state: Mapping[str, Any], transitions: Sequence[Mapping[str, Any]]) -> Mapping[str, Any]:
+def choose_transition(
+    state: Mapping[str, Any],
+    transitions: Sequence[Mapping[str, Any]],
+    project: Optional[StoryProject] = None,
+) -> Mapping[str, Any]:
     for transition in transitions:
-        if transition.get("default") is True or conditions_match(state, transition.get("conditions", [])):
-            return transition
-    raise RuntimeError("no transition matched")
+        if transition.get("default") is not True and not conditions_match(state, transition.get("conditions", [])):
+            continue
+        scene_id = transition.get("scene")
+        if project and scene_id:
+            if not can_enter_scene(project, state, scene_id)["allowed"]:
+                continue
+        return transition
+    raise RuntimeError("scene-entry-rejected: no transition and target entry conditions matched")
 
 
 def state_diff(before: Mapping[str, Any], after: Mapping[str, Any]) -> Dict[str, Dict[str, Any]]:
@@ -1717,8 +2376,70 @@ def write_json(path: Path, data: Any) -> None:
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def write_localization_types(bundle: Mapping[str, Any]) -> None:
+    entries = bundle["localization"]["entries"]
+    all_keys = sorted(entries)
+    ui_keys = [key for key in all_keys if entries[key]["domain"] == "ui"]
+    lines = [
+        "/* Generated by tools/story_harness.py build. Do not edit. */",
+        f"export const LOCALIZATION_KEYS = {json.dumps(all_keys, ensure_ascii=False, indent=2)} as const;",
+        "export type LocalizationKey = (typeof LOCALIZATION_KEYS)[number];",
+        "",
+        f"export const UI_MESSAGE_KEYS = {json.dumps(ui_keys, ensure_ascii=False, indent=2)} as const;",
+        "export type UiMessageKey = (typeof UI_MESSAGE_KEYS)[number];",
+        "",
+    ]
+    path = PROJECT_ROOT / "src/generated/localizationKeys.ts"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def localization_report(bundle: Mapping[str, Any], issues: Sequence[Issue], profile: str) -> Dict[str, Any]:
+    localization = bundle["localization"]
+    entries = localization["entries"]
+    scene_ids = sorted({
+        entry.get("context", {}).get("sceneId")
+        for entry in entries.values()
+        if entry.get("context", {}).get("sceneId")
+    })
+    scene_coverage: Dict[str, Dict[str, Dict[str, int]]] = {}
+    for scene_id in scene_ids:
+        scene_keys = [
+            key for key, entry in entries.items()
+            if entry.get("context", {}).get("sceneId") == scene_id
+        ]
+        scene_coverage[scene_id] = {}
+        for locale_id in localization["supported_locales"]:
+            direct = localization["direct_catalogs"].get(locale_id, {})
+            resolved = localization["resolved_catalogs"].get(locale_id, {})
+            direct_count = len(scene_keys) if locale_id == localization["default_locale"] else sum(key in direct for key in scene_keys)
+            resolved_count = sum(key in resolved for key in scene_keys)
+            scene_coverage[scene_id][locale_id] = {
+                "total": len(scene_keys),
+                "direct": direct_count,
+                "fallback": max(0, resolved_count - direct_count),
+                "missing": len(scene_keys) - resolved_count,
+            }
+    return {
+        "schema_version": 2,
+        "generated_at": bundle["generated_at"],
+        "source_sha256": bundle["source_sha256"],
+        "profile": profile,
+        "default_locale": localization["default_locale"],
+        "supported_locales": localization["supported_locales"],
+        "total_entries": len(entries),
+        "coverage": localization["coverage"],
+        "scene_coverage": scene_coverage,
+        "issues": [
+            {"severity": issue.severity, "location": issue.location, "message": issue.message}
+            for issue in issues
+            if "locale" in issue.location or "localization" in issue.location or "translation" in issue.message
+        ],
+    }
+
+
 def command_validate(project: StoryProject, args: argparse.Namespace) -> int:
-    issues = project.validate()
+    issues = project.validate(args.profile)
     for issue in issues:
         print(issue.render())
     errors = [issue for issue in issues if issue.severity == "error"]
@@ -1730,11 +2451,14 @@ def command_validate(project: StoryProject, args: argparse.Namespace) -> int:
         f"{len(project.routes)} routes, {len(project.scenes)} scenes: "
         f"{len(errors)} errors, {len(warnings)} warnings"
     )
+    if not errors:
+        bundle = project.build_bundle()
+        write_json(PROJECT_ROOT / "build/localization-report.json", localization_report(bundle, issues, args.profile))
     return 1 if errors else 0
 
 
 def command_build(project: StoryProject, args: argparse.Namespace) -> int:
-    issues = project.validate()
+    issues = project.validate(args.profile)
     errors = [issue for issue in issues if issue.severity == "error"]
     if errors:
         for issue in issues:
@@ -1742,8 +2466,12 @@ def command_build(project: StoryProject, args: argparse.Namespace) -> int:
         print("Build aborted because validation failed.", file=sys.stderr)
         return 1
     output = Path(args.out) if args.out else PROJECT_ROOT / project.manifest["build"]["runtime_output"]
-    write_json(output, project.build_bundle())
+    bundle = project.build_bundle()
+    write_json(output, bundle)
+    write_localization_types(bundle)
+    write_json(PROJECT_ROOT / "build/localization-report.json", localization_report(bundle, issues, args.profile))
     print(f"Built runtime story: {output}")
+    print(f"Built localization report: {PROJECT_ROOT / 'build/localization-report.json'}")
     return 0
 
 
@@ -1876,10 +2604,12 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     validate_parser = subparsers.add_parser("validate", help="validate all story sources")
+    validate_parser.add_argument("--profile", default="development")
     validate_parser.set_defaults(func=command_validate)
 
     build_parser_ = subparsers.add_parser("build", help="compile runtime JSON")
     build_parser_.add_argument("--out")
+    build_parser_.add_argument("--profile", default="development")
     build_parser_.set_defaults(func=command_build)
 
     simulate_parser = subparsers.add_parser("simulate", help="simulate a route")

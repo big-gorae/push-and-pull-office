@@ -11,6 +11,6 @@ scene_order:
   - min_kyung.witness_meeting
 endings:
   - scene: ending.min_kyung.coverup
-    outcome: dark
+    outcome: multiple_catastrophe
   - scene: ending.min_kyung.report
-    outcome: survivor
+    outcome: evidence_booking

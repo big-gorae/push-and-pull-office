@@ -14,6 +14,7 @@ import type {
   Campaign,
   TimelineEvent,
   TimeSlot,
+  DialogueVariant,
 } from "./types";
 
 export const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
@@ -38,8 +39,35 @@ export function setPath(state: RuntimeState, path: string, value: unknown): void
   target[key] = value;
 }
 
-export function conditionMatches(state: RuntimeState, condition: Condition): boolean {
-  const current = getPath(state, condition.path);
+export type DerivedCharacterState = {
+  rule_id: string | null;
+  emotion: string | null;
+  behavior: string | null;
+  default_expression: string | null;
+};
+
+export type EvaluationContext = {
+  state: RuntimeState;
+  derived: { characters: Record<string, DerivedCharacterState> };
+};
+
+function evaluationValue(context: EvaluationContext, path: string): unknown {
+  if (!path.startsWith("derived.")) return getPath(context.state, path);
+  return path.split(".").reduce<unknown>((value, key) => {
+    if (value && typeof value === "object" && key in value) {
+      return (value as Record<string, unknown>)[key];
+    }
+    return undefined;
+  }, context as unknown);
+}
+
+export function conditionMatches(
+  state: RuntimeState,
+  condition: Condition,
+  derived: EvaluationContext["derived"] = { characters: {} },
+): boolean {
+  const current = evaluationValue({ state, derived }, condition.path);
+  if (current === undefined && condition.op !== "exists" && condition.op !== "not_exists") return false;
   switch (condition.op) {
     case "eq": return current === condition.value;
     case "ne": return current !== condition.value;
@@ -55,8 +83,28 @@ export function conditionMatches(state: RuntimeState, condition: Condition): boo
   }
 }
 
-export function conditionsMatch(state: RuntimeState, conditions: Condition[] = []): boolean {
-  return conditions.every((condition) => conditionMatches(state, condition));
+export function conditionsMatch(
+  state: RuntimeState,
+  conditions: Condition[] = [],
+  derived: EvaluationContext["derived"] = { characters: {} },
+): boolean {
+  return conditions.every((condition) => conditionMatches(state, condition, derived));
+}
+
+export function canEnterScene(
+  runtime: Runtime,
+  state: RuntimeState,
+  sceneId: string,
+): { allowed: boolean; trace: Array<{ condition: Condition; actual: unknown; met: boolean }> } {
+  const scene = runtime.scenes[sceneId];
+  if (!scene) return { allowed: false, trace: [] };
+  const context = evaluationContext(runtime, state);
+  const trace = (scene.entry_conditions || []).map((condition) => ({
+    condition,
+    actual: evaluationValue(context, condition.path),
+    met: conditionMatches(state, condition, context.derived),
+  }));
+  return { allowed: trace.every((item) => item.met), trace };
 }
 
 export function campaignAct(campaign: Campaign, day: number): number {
@@ -64,6 +112,7 @@ export function campaignAct(campaign: Campaign, day: number): number {
 }
 
 export function inspectTimelineEvent(
+  runtime: Runtime,
   event: TimelineEvent,
   state: RuntimeState,
   day: number,
@@ -87,10 +136,17 @@ export function inspectTimelineEvent(
     if (!state.progress.events.seen.includes(required)) reasons.push(`선행 사건 미완료: ${required}`);
   });
   event.requires.conditions.forEach((condition) => {
-    if (!conditionMatches(state, condition)) {
-      reasons.push(`조건 불충족: ${condition.path} ${condition.op} ${String(condition.value)} (현재 ${String(getPath(state, condition.path))})`);
+    const context = evaluationContext(runtime, state);
+    if (!conditionMatches(state, condition, context.derived)) {
+      reasons.push(`조건 불충족: ${condition.path} ${condition.op} ${String(condition.value)} (현재 ${String(evaluationValue(context, condition.path))})`);
     }
   });
+  if (event.scene) {
+    const decision = canEnterScene(runtime, state, event.scene);
+    decision.trace.filter((item) => !item.met).forEach((item) => {
+      reasons.push(`장면 진입 조건 불충족: ${item.condition.path} ${item.condition.op} ${String(item.condition.value)} (현재 ${String(item.actual)})`);
+    });
+  }
   return reasons.length
     ? { event: event.id, status: "blocked", eligible: false, reasons }
     : { event: event.id, status: "eligible", eligible: true, reasons: [] };
@@ -147,6 +203,23 @@ export function chooseTransition(state: RuntimeState, transitions: Transition[] 
   return { chosen: trace.find((item) => item.chosen)?.transition, trace };
 }
 
+export function chooseSceneTransition(
+  runtime: Runtime,
+  state: RuntimeState,
+  transitions: Transition[] = [],
+): { chosen?: Transition; trace: Array<DecisionTrace & { entryAllowed?: boolean }> } {
+  let selected = false;
+  const trace = transitions.map((transition) => {
+    const conditionMet = transition.default === true || conditionsMatch(state, transition.conditions || []);
+    const entryAllowed = transition.scene ? canEnterScene(runtime, state, transition.scene).allowed : true;
+    const met = conditionMet && entryAllowed;
+    const chosen = !selected && met;
+    if (chosen) selected = true;
+    return { transition, met, chosen, entryAllowed };
+  });
+  return { chosen: trace.find((item) => item.chosen)?.transition, trace };
+}
+
 export function resolveStart(scene: Scene, state: RuntimeState): {
   nodeId: string;
   trace: DecisionTrace[];
@@ -175,6 +248,102 @@ export function deriveEmotion(character: Character | undefined, hidden: Record<s
     if (condition.op === "eq") return current === condition.value;
     return false;
   }));
+}
+
+export function deriveCharacterState(
+  character: Character | undefined,
+  state: RuntimeState,
+): DerivedCharacterState {
+  const hidden = character ? state.hidden.heroines[character.id] : undefined;
+  const rule = hidden ? deriveEmotion(character, hidden) : undefined;
+  return {
+    rule_id: rule?.id || null,
+    emotion: rule?.emotion || null,
+    behavior: rule?.behavior || null,
+    default_expression: rule?.default_expression || null,
+  };
+}
+
+export function evaluationContext(runtime: Runtime, state: RuntimeState): EvaluationContext {
+  return {
+    state,
+    derived: {
+      characters: Object.fromEntries(
+        Object.values(runtime.characters).map((character) => [
+          character.id,
+          deriveCharacterState(character, state),
+        ]),
+      ),
+    },
+  };
+}
+
+export type ResolvedDialogueNode = {
+  node: StoryNode;
+  variantId: string;
+  trace: Array<{ variantId: string; priority: number; met: boolean; chosen: boolean }>;
+};
+
+function variantNode(node: StoryNode, variant: DialogueVariant): StoryNode {
+  return {
+    ...node,
+    perceived: clone(variant.perceived),
+    reality: clone(variant.reality),
+  };
+}
+
+function withRealityExpressionFallback(
+  runtime: Runtime,
+  state: RuntimeState,
+  node: StoryNode,
+): StoryNode {
+  if (node.reality?.expression || !node.speaker) return node;
+  const context = evaluationContext(runtime, state);
+  const derivedExpression = context.derived.characters[node.speaker]?.default_expression;
+  const visualExpression = Object.values(runtime.visuals).find((visual) =>
+    visual.kind === "character" && !visual.abstract && visual.character === node.speaker)?.default_reality_expression;
+  const expression = derivedExpression || visualExpression;
+  return expression ? { ...node, reality: { ...node.reality, expression } } : node;
+}
+
+export function resolveDialogueNode(
+  runtime: Runtime,
+  state: RuntimeState,
+  node: StoryNode,
+  forcedVariantId?: string,
+): ResolvedDialogueNode {
+  if (!node.variants?.length) {
+    return {
+      node: withRealityExpressionFallback(runtime, state, node),
+      variantId: "default",
+      trace: [{ variantId: "default", priority: 0, met: true, chosen: true }],
+    };
+  }
+  const context = evaluationContext(runtime, state);
+  const ordered = node.variants
+    .map((variant, index) => ({ variant, index }))
+    .sort((left, right) => (right.variant.priority || 0) - (left.variant.priority || 0) || left.index - right.index);
+  const forced = forcedVariantId
+    ? ordered.find(({ variant }) => variant.id === forcedVariantId)?.variant
+    : undefined;
+  let selected = forced;
+  if (!selected) {
+    selected = ordered.find(({ variant }) =>
+      variant.default !== true && conditionsMatch(state, variant.conditions || [], context.derived))?.variant;
+  }
+  selected ||= ordered.find(({ variant }) => variant.default === true)?.variant;
+  selected ||= ordered[0].variant;
+  const resolved = withRealityExpressionFallback(runtime, state, variantNode(node, selected));
+  return {
+    node: resolved,
+    variantId: selected.id,
+    trace: ordered.map(({ variant }) => ({
+      variantId: variant.id,
+      priority: variant.priority || 0,
+      met: variant.default === true || conditionsMatch(state, variant.conditions || [], context.derived),
+      chosen: variant.id === selected?.id,
+    })),
+  };
 }
 
 export function statePaths(runtime: Runtime): Array<{ value: string; label: string; type: "number" | "enum" | "array" }> {
@@ -242,11 +411,28 @@ function collectEffectPaths(value: unknown, result: string[]): void {
   }
 }
 
-export function deriveStateContract(scene: Scene): Scene["state_contract"] {
+export function deriveStateContract(scene: Scene, heroineId?: string): Scene["state_contract"] {
   const reads: string[] = [];
   const writes: string[] = [];
   collectConditionPaths({ entry_conditions: scene.entry_conditions, nodes: scene.nodes }, reads);
   collectEffectPaths(scene.nodes, writes);
+  const usesPushPull = Object.values(scene.nodes).some((node) =>
+    node.kind === "choice" && (node.options || []).some((option) => Boolean(option.push_pull)));
+  if (usesPushPull && heroineId) {
+    const pushPullPath = "progress.flags.push_pull";
+    const initiativePath = `visible.heroines.${heroineId}.initiative`;
+    const hiddenPrefix = `hidden.heroines.${heroineId}`;
+    if (!reads.includes(pushPullPath)) reads.push(pushPullPath);
+    [
+      pushPullPath,
+      initiativePath,
+      `${hiddenPrefix}.suspicion`,
+      `${hiddenPrefix}.dislike`,
+      `${hiddenPrefix}.evidence_count`,
+    ].forEach((path) => {
+      if (!writes.includes(path)) writes.push(path);
+    });
+  }
   return { reads, writes };
 }
 

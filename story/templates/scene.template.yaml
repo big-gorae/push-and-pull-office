@@ -12,8 +12,13 @@ entry_conditions: []
 state_contract:
   reads:
     - hidden.heroines.heroine_id.suspicion
+    - progress.flags.push_pull
   writes:
-    - visible.heroines.heroine_id.affection
+    - visible.heroines.heroine_id.initiative
+    - hidden.heroines.heroine_id.suspicion
+    - hidden.heroines.heroine_id.dislike
+    - hidden.heroines.heroine_id.evidence_count
+    - progress.flags.push_pull
 start_node: opening
 nodes:
   - id: opening
@@ -40,9 +45,10 @@ nodes:
         label: "플레이어가 보는 선택지"
         interpretation: "한도윤이 믿는 의미"
         action: "객관적으로 발생하는 행동"
+        push_pull: {action: approach, intensity: 12, base_score: 4}
         conditions: []
         effects:
-          - path: visible.heroines.heroine_id.affection
+          - path: hidden.heroines.heroine_id.suspicion
             op: add
             value: 5
         next: leave

@@ -16,7 +16,9 @@ scene: seo_a.relief_smile
 requires:
   events: [seo_a.email_request]
   conditions: []
-on_seen: {effects: []}
+on_seen:
+  effects:
+    - {path: progress.flags.story_mode.target, op: set, value: yoon_seo_a}
 on_missed: {effects: []}
 presentation:
   perceived:
@@ -25,4 +27,3 @@ presentation:
   reality:
     title: 잠시 경계를 푼 인사
     summary: 접근이 멈춘 며칠 동안 서아는 자신의 판단이 과민했는지 고민한다.
-

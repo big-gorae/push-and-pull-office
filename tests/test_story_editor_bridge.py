@@ -37,7 +37,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
         self.assertEqual(8, len(result["documents"]["scenes"]))
         self.assertEqual([], result["issues"])
         self.assertEqual(64, len(result["documents"]["scenes"]["seo_a.email_request"]["revision"]))
-        self.assertEqual(19, len(result["documents"]["events"]))
+        self.assertEqual(23, len(result["documents"]["events"]))
         self.assertIn("main", result["documents"]["campaigns"])
         self.assertEqual({"ko", "en"}, set(result["documents"]["locales"]))
         self.assertIn("background.office_open", result["documents"]["visuals"])
@@ -99,6 +99,39 @@ class StoryEditorBridgeTests(unittest.TestCase):
             scene["state_contract"]["reads"],
         )
         self.assertEqual(["hidden.heroines.yoon_seo_a.dislike"], scene["state_contract"]["writes"])
+
+    def test_state_contract_includes_push_pull_runtime_paths(self):
+        scene = {
+            "state_contract": {
+                "reads": [],
+                "writes": ["visible.heroines.yoon_seo_a.initiative"],
+            },
+            "entry_conditions": [],
+            "nodes": [{
+                "kind": "choice",
+                "options": [{
+                    "push_pull": {"action": "approach", "intensity": 12, "base_score": 4},
+                    "conditions": [],
+                    "effects": [{
+                        "path": "hidden.heroines.yoon_seo_a.suspicion",
+                        "op": "add",
+                        "value": 5,
+                    }],
+                }],
+            }],
+        }
+        derive_state_contract(scene)
+        self.assertEqual(["progress.flags.push_pull"], scene["state_contract"]["reads"])
+        self.assertEqual(
+            [
+                "hidden.heroines.yoon_seo_a.suspicion",
+                "progress.flags.push_pull",
+                "visible.heroines.yoon_seo_a.initiative",
+                "hidden.heroines.yoon_seo_a.dislike",
+                "hidden.heroines.yoon_seo_a.evidence_count",
+            ],
+            scene["state_contract"]["writes"],
+        )
 
     def test_validate_scene_does_not_modify_source(self):
         temporary, root = self.make_project_copy()
@@ -181,6 +214,53 @@ class StoryEditorBridgeTests(unittest.TestCase):
                 "Email Only",
                 result["runtime"]["localization"]["catalogs"]["en"]["scenes.seo_a.email_request.title"],
             )
+        finally:
+            temporary.cleanup()
+
+    def test_save_locale_commits_multiple_rows_in_one_transaction(self):
+        temporary, root = self.make_project_copy()
+        try:
+            project = StoryProject(root / "story")
+            locale = copy.deepcopy(project.locales["en"])
+            target = Path(locale.pop("_source"))
+            locale["strings"].update({
+                "scenes.seo_a.email_request.title": "Email Delivery Only",
+                "scenes.seo_a.email_request.nodes.request.perceived.line": "Send it by email and keep your distance.",
+                "scenes.seo_a.email_request.nodes.request.reality.line": "Send it by email and keep your distance.",
+            })
+            result = save_document(root, {
+                "kind": "locales",
+                "document": locale,
+                "revision": revision(target),
+            })
+            self.assertTrue(result["saved"])
+            catalog = result["runtime"]["localization"]["catalogs"]["en"]
+            self.assertEqual("Email Delivery Only", catalog["scenes.seo_a.email_request.title"])
+            self.assertEqual(
+                "Send it by email and keep your distance.",
+                catalog["scenes.seo_a.email_request.nodes.request.reality.line"],
+            )
+        finally:
+            temporary.cleanup()
+
+    def test_failed_locale_transaction_preserves_file_and_runtime(self):
+        temporary, root = self.make_project_copy()
+        try:
+            project = StoryProject(root / "story")
+            locale = copy.deepcopy(project.locales["en"])
+            target = Path(locale.pop("_source"))
+            before_file = target.read_text(encoding="utf-8")
+            runtime_path = root / "build" / "story-runtime.json"
+            locale["strings"]["deadline.days"] = "Deadline has no placeholder"
+            result = save_document(root, {
+                "kind": "locales",
+                "document": locale,
+                "revision": revision(target),
+            })
+            self.assertFalse(result["saved"])
+            self.assertTrue(any("placeholder mismatch" in issue["message"] for issue in result["issues"]))
+            self.assertEqual(before_file, target.read_text(encoding="utf-8"))
+            self.assertFalse(runtime_path.exists())
         finally:
             temporary.cleanup()
 
