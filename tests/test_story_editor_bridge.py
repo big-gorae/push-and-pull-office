@@ -33,11 +33,13 @@ class StoryEditorBridgeTests(unittest.TestCase):
 
     def test_load_project_includes_runtime_documents_and_revisions(self):
         result = load_project(ROOT)
-        self.assertEqual(8, len(result["runtime"]["scenes"]))
-        self.assertEqual(8, len(result["documents"]["scenes"]))
+        self.assertEqual(10, len(result["runtime"]["scenes"]))
+        self.assertEqual(10, len(result["documents"]["scenes"]))
         self.assertEqual([], result["issues"])
         self.assertEqual(64, len(result["documents"]["scenes"]["seo_a.email_request"]["revision"]))
         self.assertEqual(24, len(result["documents"]["events"]))
+        self.assertIn("common.day_01_company_meeting", result["documents"]["scenes"])
+        self.assertIn("common.day_01_parent_pressure", result["documents"]["scenes"])
         self.assertIn("anchor.day_01_parent_pressure", result["documents"]["events"])
         self.assertIn("main", result["documents"]["campaigns"])
         self.assertEqual({"ko", "en"}, set(result["documents"]["locales"]))

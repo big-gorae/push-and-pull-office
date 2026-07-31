@@ -5,7 +5,7 @@ type: heroine
 lane: cha_min_kyung
 thread: min_kyung
 sequence: 20
-window: {days: [6, 9], slots: [afternoon], deadline_day: 9}
+window: {days: [9, 10], slots: [afternoon], deadline_day: 10}
 duration: 1
 priority: 72
 availability: player

@@ -495,6 +495,10 @@ class StoryHarnessTests(unittest.TestCase):
             ["anchor.day_04_weekend_encounter"],
             second_weekend_encounter["requires"]["events"],
         )
+        self.assertEqual([7, 8], bundle["events"]["seo_a.email_request"]["window"]["days"])
+        self.assertEqual([7, 8], bundle["events"]["min_kyung.explicit_boundary"]["window"]["days"])
+        self.assertEqual([9, 10], bundle["events"]["seo_a.relief_smile"]["window"]["days"])
+        self.assertEqual([9, 10], bundle["events"]["min_kyung.witness_meeting"]["window"]["days"])
         self.assertEqual({"seo_a", "min_kyung"}, set(bundle["threads"]))
         self.assertIn("unlocks", bundle["meta"])
         reveals = bundle["meta"]["unlocks"]["mode_teasers"][0]["reveals"]
@@ -565,7 +569,7 @@ class StoryHarnessTests(unittest.TestCase):
 
     def test_missed_event_triggers_hidden_offscreen_progression(self):
         scheduler = TimelineScheduler(self.project)
-        applied = scheduler.process_automatic(5, "after_work")
+        applied = scheduler.process_automatic(9, "after_work")
         self.assertIn("seo_a.email_request", scheduler.state["progress"]["events"]["missed"])
         self.assertIn("offscreen.seo_a_consults_min_kyung", [item["event"] for item in applied])
         self.assertIn("present.seo_a_first_consult", scheduler.state["progress"]["memories"])

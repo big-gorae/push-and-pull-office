@@ -5,7 +5,7 @@ type: heroine
 lane: cha_min_kyung
 thread: min_kyung
 sequence: 10
-window: {days: [3, 5], slots: [after_work], deadline_day: 5}
+window: {days: [7, 8], slots: [after_work], deadline_day: 8}
 duration: 1
 priority: 70
 availability: player
@@ -23,4 +23,3 @@ presentation:
   reality:
     title: 명시적인 사적 연락 거부
     summary: 민경은 모호함을 없애기 위해 업무 외 연락을 하지 말라고 분명히 말한다.
-

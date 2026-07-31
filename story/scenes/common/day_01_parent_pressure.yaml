@@ -1,0 +1,189 @@
+schema_version: 1
+id: common.day_01_parent_pressure
+title: 올해는 사람 좀 만나
+route: seo_a
+chapter: 0
+sequence: 2
+location: office_exit
+time: late_afternoon
+purpose: 부모의 결혼 재촉을 계기로 한도윤이 오전에 만난 서아와 민경의 업무상 첫인상을 결혼 후보 평가로 다시 분류하기 시작한다.
+cast: [han_do_yoon]
+entry_conditions: []
+state_contract:
+  reads: []
+  writes: []
+start_node: phone_rings
+nodes:
+  - id: phone_rings
+    kind: dual_narration
+    perceived:
+      atmosphere: procedural
+      line: "퇴근하려던 순간 어머니에게 전화가 왔다. 새 프로젝트가 시작된 날이면 가족은 늘 그의 안부부터 궁금해했다."
+      protagonist_interpretation: 가족이 자신의 중요한 출발을 기억하고 먼저 챙긴다고 생각한다.
+    reality:
+      atmosphere: cold_office
+      line: "수요일 늦은 오후, 사무실을 나서던 한도윤에게 어머니의 전화가 걸려 왔다."
+      inner_thought: 부모는 최근 결혼 이야기를 꺼낼 때마다 그가 예민해지는 것을 알고 있다.
+      intent: courtesy
+    next: mother_opening
+
+  - id: mother_opening
+    kind: dual_narration
+    perceived:
+      atmosphere: warm_romance
+      line: "어머니가 웃으며 말했다. ‘너처럼 멀쩡한 애가 왜 아직 혼자니. 회사에 괜찮은 사람 없어?’"
+      protagonist_interpretation: 자신의 외모와 조건이면 마음만 먹을 때 좋은 사람을 만날 수 있다는 가족의 확신으로 듣는다.
+    reality:
+      atmosphere: procedural
+      line: "어머니는 먼저 칭찬을 붙인 뒤 물었다. ‘너처럼 멀쩡한 애가 왜 아직 혼자니. 회사에 괜찮은 사람 없어?’"
+      inner_thought: 또 상처를 건드렸다는 반응이 나오지 않도록 자존심을 세워 주며 말을 꺼낸다.
+      intent: courtesy
+    next: do_yoon_deflects
+
+  - id: do_yoon_deflects
+    kind: dual_dialogue
+    speaker: han_do_yoon
+    perceived:
+      atmosphere: warm_romance
+      expression: subjective_confident
+      line: "오늘 새 프로젝트 시작했어요. 첫날부터 그런 얘기예요?"
+      protagonist_interpretation: 결혼을 못 하는 것이 아니라 일 때문에 아직 선택하지 않았다는 여유를 보인다.
+    reality:
+      atmosphere: procedural
+      expression: actual_waiting_smile
+      line: "오늘 새 프로젝트 시작했어요. 첫날부터 그런 얘기예요?"
+      inner_thought: 구체적인 질문에는 답하지 않고 일 이야기를 앞세워 대화를 미룬다.
+      intent: avoidance
+    next: father_pressure
+
+  - id: father_pressure
+    kind: dual_narration
+    perceived:
+      atmosphere: warm_romance
+      line: "곁에서 듣던 아버지가 말했다. ‘언제까지 일만 할 거냐. 올해는 사람이라도 좀 만나봐.’"
+      protagonist_interpretation: 일에만 매달리기에는 자신의 조건이 아깝다는 현실적인 조언으로 받아들인다.
+    reality:
+      atmosphere: procedural
+      line: "아버지는 짧게 말을 보탰다. ‘언제까지 일만 할 거냐. 올해는 사람이라도 좀 만나봐.’"
+      inner_thought: 부모는 과거 이야기를 바로잡기보다 새로운 관계를 권하는 쪽이 다툼이 적다고 판단한다.
+      intent: confrontation
+    next: do_yoon_answers
+
+  - id: do_yoon_answers
+    kind: dual_dialogue
+    speaker: han_do_yoon
+    perceived:
+      atmosphere: warm_romance
+      expression: subjective_confident
+      line: "알겠어요. 올해도 일만 하겠다는 말은 안 할게요. 그래도 회사 사람 얘기는 천천히 해야죠."
+      protagonist_interpretation: 가족의 걱정을 받아 주면서도 관계를 신중하게 고르는 어른답게 대답했다고 생각한다.
+    reality:
+      atmosphere: procedural
+      expression: actual_waiting_smile
+      line: "알겠어요. 올해도 일만 하겠다는 말은 안 할게요. 그래도 회사 사람 얘기는 천천히 해야죠."
+      inner_thought: 아침에 만난 사람들을 떠올렸지만 아직 실제로 아는 것은 직급과 업무 태도뿐이다.
+      intent: self_protection
+    next: mother_softens
+
+  - id: mother_softens
+    kind: dual_narration
+    perceived:
+      atmosphere: warm_romance
+      line: "어머니가 한결 부드럽게 말했다. ‘서두르라는 건 아니야. 괜찮은 사람이 있으면 너도 마음을 좀 열어 보라는 거지.’"
+      protagonist_interpretation: 자신이 마음만 열면 관계가 자연스럽게 시작될 거라는 응원으로 듣는다.
+    reality:
+      atmosphere: procedural
+      line: "어머니는 더 밀어붙이지 않았다. ‘서두르라는 건 아니야. 괜찮은 사람이 있으면 너도 마음을 좀 열어 보라는 거지.’"
+      inner_thought: 오늘은 반박하지 않았으니 이 정도에서 대화를 끝내는 편이 낫다.
+      intent: relief
+    next: end_call
+
+  - id: end_call
+    kind: dual_dialogue
+    speaker: han_do_yoon
+    perceived:
+      atmosphere: warm_romance
+      expression: subjective_confident
+      line: "네. 주말에 다시 전화드릴게요. 두 분도 들어가세요."
+      protagonist_interpretation: 부모를 안심시키고 자신의 삶을 주도하는 다정한 아들로 통화를 끝낸다.
+    reality:
+      atmosphere: procedural
+      expression: actual_waiting_smile
+      line: "네. 주말에 다시 전화드릴게요. 두 분도 들어가세요."
+      inner_thought: 결혼 이야기가 더 길어지기 전에 통화를 마무리한다.
+      intent: avoidance
+    next: reframe_morning
+
+  - id: reframe_morning
+    kind: dual_narration
+    perceived:
+      atmosphere: warm_romance
+      line: "통화가 끝나자 오전 회의가 다시 떠올랐다. 조심스러운 서아와 빈틈없는 민경은 서로 전혀 다른 사람이었다."
+      protagonist_interpretation: 오전에는 동료였던 두 사람이 이제는 자신과 어울릴 가능성을 가진 서로 다른 선택지처럼 보이기 시작한다.
+    reality:
+      atmosphere: cold_office
+      line: "한도윤은 오전에 본 서아의 자료 대응과 민경의 일정 검증을 개인적인 궁합을 판단할 재료로 다시 분류하기 시작했다."
+      inner_thought: 두 사람은 업무상 행동만 했고 한도윤과 사적인 관계를 원한다는 뜻을 밝힌 적이 없다.
+      intent: self_protection
+    next: remember_seo_a
+
+  - id: remember_seo_a
+    kind: dual_narration
+    perceived:
+      atmosphere: warm_romance
+      line: "‘과장님, 이걸로 먼저 보세요.’ 서아가 자료를 내밀던 목소리는 생각보다 오래 기억에 남았다."
+      protagonist_interpretation: 작은 배려에서 자신을 편하게 해 줄 사람의 가능성을 본다.
+    reality:
+      atmosphere: cold_office
+      line: "서아는 배포 자료가 부족해지자 준비 담당자로서 자신의 여분을 건넸다."
+      inner_thought: 그 행동은 회의를 지연시키지 않기 위한 업무 대응이었다.
+      intent: courtesy
+    next: remember_min_kyung
+
+  - id: remember_min_kyung
+    kind: dual_narration
+    perceived:
+      atmosphere: warm_romance
+      line: "‘그 조건까지 확인하셨다면 괜찮겠네요.’ 민경의 짧은 인정도 나쁘지 않았다."
+      protagonist_interpretation: 자신의 능력을 알아볼 만큼 눈이 높고 대등한 사람의 가능성을 본다.
+    reality:
+      atmosphere: cold_office
+      line: "민경은 일정 근거를 확인한 뒤 해당 안건을 닫고 회의를 계속했다."
+      inner_thought: 그 발언은 한도윤 개인이 아니라 제출된 일정 근거에 대한 업무 판단이었다.
+      intent: work_only
+    next: decision
+
+  - id: decision
+    kind: dual_dialogue
+    speaker: han_do_yoon
+    perceived:
+      atmosphere: warm_romance
+      expression: subjective_confident
+      line: "결혼을 생각한다면 회사에도 괜찮은 사람은 있겠지. 서아 씨와 차 대리가 어떤 사람인지는 천천히 보면 되겠어."
+      protagonist_interpretation: 누구에게도 성급히 마음을 정하지 않고 가능성부터 살피는 신중한 출발이라고 생각한다.
+    reality:
+      atmosphere: cold_office
+      expression: actual_waiting_smile
+      line: "결혼을 생각한다면 회사에도 괜찮은 사람은 있겠지. 서아 씨와 차 대리가 어떤 사람인지는 천천히 보면 되겠어."
+      inner_thought: 두 사람의 의사나 사적인 관심을 확인하지 않은 채 업무상 첫인상을 결혼 후보 평가로 바꾸기 시작한다.
+      intent: self_protection
+    next: night_close
+
+  - id: night_close
+    kind: dual_narration
+    perceived:
+      atmosphere: procedural
+      line: "아직 마음이 가는 사람은 없었다. 다만 내일부터는 조금 더 자세히 봐도 좋을 것 같았다."
+      protagonist_interpretation: 연애를 서두르지 않되 좋은 가능성을 놓치지 않기로 한다.
+    reality:
+      atmosphere: cold_office
+      line: "첫날 밤, 한도윤은 두 동료의 이름을 자신의 결혼 가능성 목록에 올렸다."
+      inner_thought: 관계는 시작되지 않았고 두 사람은 그 평가가 시작됐다는 사실조차 모른다.
+      intent: self_protection
+    next: leave
+
+  - id: leave
+    kind: exit
+    transitions:
+      - default: true
+        scene: seo_a.email_request

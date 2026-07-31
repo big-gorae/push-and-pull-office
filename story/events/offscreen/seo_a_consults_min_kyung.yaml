@@ -3,7 +3,7 @@ id: offscreen.seo_a_consults_min_kyung
 title: 서아가 민경에게 처음 말한 날
 type: offscreen
 lane: offscreen
-window: {days: [5, 5], slots: [after_work], deadline_day: 5}
+window: {days: [9, 9], slots: [after_work], deadline_day: 9}
 duration: 0
 priority: 88
 availability: hidden
@@ -25,4 +25,3 @@ presentation:
   reality:
     title: 서아가 민경에게 상황을 설명함
     summary: 서아는 자신의 판단이 맞는지 확인하려고 처음으로 구체적인 날짜를 말한다.
-

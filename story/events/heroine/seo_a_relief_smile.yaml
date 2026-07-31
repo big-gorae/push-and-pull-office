@@ -5,7 +5,7 @@ type: heroine
 lane: yoon_seo_a
 thread: seo_a
 sequence: 20
-window: {days: [4, 6], slots: [morning], deadline_day: 6}
+window: {days: [9, 10], slots: [morning], deadline_day: 10}
 duration: 1
 priority: 65
 availability: player

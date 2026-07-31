@@ -37,23 +37,48 @@ function finishCurrentScene(value: PlayerSession): PlayerSession {
 describe("web player campaign runtime", () => {
   it("starts at day one and advances only to meaningful timeline moments", () => {
     let session = createCampaignSession(runtime);
-    expect(session.phase).toBe("timeline");
+    const initialHidden = structuredClone(session.state.hidden);
+    const initialVisible = structuredClone(session.state.visible);
+    expect(session.phase).toBe("scene");
+    expect(session.sceneId).toBe("common.day_01_company_meeting");
     expect(session.state.progress.time).toMatchObject({ day: 1, slot: "morning" });
     expect(session.state.progress.events.seen).toContain("anchor.day_01_company_meeting");
+
+    session = finishCurrentScene(session);
+    expect(session.phase).toBe("timeline");
+    session = advanceToNextMoment(runtime, session);
+    expect(session.phase).toBe("scene");
+    expect(session.sceneId).toBe("common.day_01_parent_pressure");
+    expect(session.state.progress.time).toMatchObject({ day: 1, slot: "after_work" });
+    expect(session.state.progress.events.seen).toContain("anchor.day_01_parent_pressure");
+    session = finishCurrentScene(session);
+    expect(session.phase).toBe("timeline");
+    expect(session.choices).toHaveLength(0);
+    expect(session.state.hidden).toEqual(initialHidden);
+    expect(session.state.visible).toEqual(initialVisible);
+    expect(session.state.progress.flags.story_mode).toMatchObject({ target: "none" });
+    expect(readPushPullState(session.state)).toMatchObject({ combo: 0, position: 0, target: "none", heroine: "" });
 
     session = advanceToNextMoment(runtime, session);
     expect(session.state.progress.time).toMatchObject({ day: 2, slot: "morning" });
     expect(session.state.progress.events.seen).toContain("anchor.day_02_practical_meeting");
 
     session = advanceToNextMoment(runtime, session);
-    expect(session.state.progress.time).toMatchObject({ day: 2, slot: "lunch" });
+    for (let index = 0; index < 20 && session.state.progress.time.day < 7; index += 1) {
+      session = advanceToNextMoment(runtime, session);
+    }
+    expect(session.state.progress.time).toMatchObject({ day: 7, slot: "lunch" });
     expect(availableTimelineEvents(runtime, session).map((event) => event.id)).toContain("seo_a.email_request");
   });
 
   it("returns to the timeline after a return_to_timeline event instead of chaining its route", () => {
     let session = createCampaignSession(runtime);
-    session = advanceToNextMoment(runtime, session);
-    session = advanceToNextMoment(runtime, session);
+    session = finishCurrentScene(session);
+    for (let index = 0; index < 24; index += 1) {
+      session = advanceToNextMoment(runtime, session);
+      if (session.phase === "scene") session = finishCurrentScene(session);
+      if (session.state.progress.time.day === 7 && session.state.progress.time.slot === "lunch") break;
+    }
     session = startTimelineEvent(runtime, session, "seo_a.email_request");
     expect(session.phase).toBe("scene");
     expect(session.version).toBe(3);
@@ -134,8 +159,10 @@ describe("web player campaign runtime", () => {
 
   it("expires a skipped event after its deadline and applies the missed record", () => {
     let session = createCampaignSession(runtime);
-    for (let index = 0; index < 12; index += 1) {
+    session = finishCurrentScene(session);
+    for (let index = 0; index < 40; index += 1) {
       session = advanceToNextMoment(runtime, session);
+      if (session.phase === "scene") session = finishCurrentScene(session);
       if (session.state.progress.events.missed.includes("seo_a.email_request")) break;
     }
     expect(session.state.progress.events.missed).toContain("seo_a.email_request");
@@ -147,7 +174,7 @@ describe("web player campaign runtime", () => {
     let session = createCampaignSession(runtime);
     session.phase = "timeline";
     session.preparedTimeKey = undefined;
-    session.state.progress.time = { day: 3, act: 1, slot: "after_work" };
+    session.state.progress.time = { day: 7, act: 2, slot: "after_work" };
     session.state.progress.flags.push_pull = {
       combo: 3,
       position: -24,

@@ -292,12 +292,12 @@ function TimelineHud({
   const targetId = targetFromStory && typeof targetFromStory === "object" && !Array.isArray(targetFromStory)
     ? String((targetFromStory as Record<string, unknown>).target || "")
     : "";
-  const heroineId = rhythm.heroine || (targetId !== "none" ? targetId : "") || Object.keys(session.state.visible.heroines)[0];
+  const heroineId = rhythm.heroine || (targetId !== "none" ? targetId : "");
   const initiative = session.state.visible.heroines[heroineId]?.initiative ?? 0;
   const reality = session.mode === "reality";
   return <header className="vn-timeline-hud">
     <div><span>{i18n.ui(reality ? "hud.original" : "hud.story")}</span><strong>{i18n.ui("app.shortTitle")}</strong></div>
-    <div className="vn-timeline-score"><span>{i18n.ui(reality ? "hud.control" : "hud.initiative")}</span><strong>{initiative}</strong><i><b style={{ width: `${initiative}%` }} /></i></div>
+    {heroineId && <div className="vn-timeline-score"><span>{i18n.ui(reality ? "hud.control" : "hud.initiative")}</span><strong>{initiative}</strong><i><b style={{ width: `${initiative}%` }} /></i></div>}
     {rhythm.combo > 0 && <div className="vn-timeline-combo"><span>{i18n.ui(reality ? "hud.controlCombo" : "hud.combo")}</span><strong>×{rhythm.combo}</strong></div>}
     <button type="button" className="vn-mode-button" onClick={onMode}><span>{i18n.ui(reality ? "hud.original" : "hud.story")}</span><small>{i18n.ui(reality ? "hud.reality" : "hud.subjective")}</small></button>
     <button type="button" className="vn-menu-button" onClick={onMenu} aria-label={i18n.ui("hud.gameMenu")}>☰</button>
@@ -404,19 +404,20 @@ function GameHud({ session, onMode, onMenu, i18n }: { session: PlayerSession; on
   const heroine = session.state.visible.heroines[route?.heroine];
   const rhythm = readPushPullState(session.state);
   const reality = session.mode === "reality";
+  const isCommonScene = scene?.id.startsWith("common.") ?? false;
   return <header className="vn-game-hud">
     <div className="vn-day">
       <span>DAY {String(session.state.progress.time.day).padStart(2, "0")}</span>
       <strong>{slotLabel(i18n, session.state.progress.time.slot)}</strong>
       <small>{scene ? sceneTitle(i18n, scene.id) : ""}</small>
     </div>
-    <div className="vn-stats">
+    {!isCommonScene && <div className="vn-stats">
       <div><span>{i18n.ui(reality ? "hud.control" : "hud.initiative")}</span><strong>{heroine?.initiative ?? 0}</strong><small>/ 100</small><i className="vn-initiative-line"><b style={{ width: `${heroine?.initiative ?? 0}%` }} /></i></div>
       {rhythm.combo > 0 && <div className={rhythm.combo >= 3 ? "hot" : ""}><span>{i18n.ui(reality ? "hud.controlCombo" : "hud.combo")}</span><strong>×{rhythm.combo}</strong></div>}
-    </div>
+    </div>}
     <button type="button" className="vn-mode-button" onClick={onMode}><span>{i18n.ui(reality ? "hud.original" : "hud.story")}</span><small>{i18n.ui(reality ? "hud.reality" : "hud.subjective")}</small></button>
     <button type="button" className="vn-menu-button" onClick={onMenu} aria-label={i18n.ui("hud.gameMenu")}>☰</button>
-    <RhythmGauge session={session} i18n={i18n} />
+    {!isCommonScene && <RhythmGauge session={session} i18n={i18n} />}
   </header>;
 }
 

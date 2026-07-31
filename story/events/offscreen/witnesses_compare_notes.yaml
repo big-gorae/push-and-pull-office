@@ -3,7 +3,7 @@ id: offscreen.witnesses_compare_notes
 title: 서로 다른 기록이 연결된 점심
 type: offscreen
 lane: offscreen
-window: {days: [9, 9], slots: [lunch], deadline_day: 9}
+window: {days: [10, 10], slots: [lunch], deadline_day: 10}
 duration: 0
 priority: 92
 availability: hidden
@@ -26,4 +26,3 @@ presentation:
   reality:
     title: 서아와 민경의 기록 대조
     summary: 두 사람은 비슷한 표현과 접근이 반복됐음을 처음 확인한다.
-
