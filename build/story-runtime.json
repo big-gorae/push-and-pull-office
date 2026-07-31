@@ -9,8 +9,8 @@
       "en"
     ]
   },
-  "generated_at": "2026-07-31T08:32:55.817636+00:00",
-  "source_sha256": "bc5ce0e47a9a1771b28f4d0797a8e5458e14333d83192b182e33e258245aab9b",
+  "generated_at": "2026-07-31T11:38:02.543184+00:00",
+  "source_sha256": "16329e42ba93bc6688abe6b02dc4268eeab60e2d3b63d27a6c85d9445dc454e4",
   "enums": {
     "perceived_state": [
       "push",
@@ -177,12 +177,12 @@
     "hidden": {
       "heroines": {
         "yoon_seo_a": {
-          "suspicion": 5,
+          "suspicion": 0,
           "dislike": 0,
           "evidence_count": 0
         },
         "cha_min_kyung": {
-          "suspicion": 20,
+          "suspicion": 0,
           "dislike": 10,
           "evidence_count": 0
         },
@@ -663,7 +663,7 @@
       },
       "campaign.main.acts.romantic_surface.purpose": {
         "key": "campaign.main.acts.romantic_surface.purpose",
-        "source": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 주말 조우에서 주인공의 호감과 여성의 의심을 동시에 시작한다.",
+        "source": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 토·일요일에 서아와 민경을 한 명씩 교차해 만나며 한도윤만 두 개의 운명적 신호로 확신한다.",
         "domain": "campaign",
         "sourceDocument": {
           "kind": "campaign",
@@ -1833,7 +1833,7 @@
       },
       "events.anchor.day_01_company_meeting.presentation.perceived.summary": {
         "key": "events.anchor.day_01_company_meeting.presentation.perceived.summary",
-        "source": "부모의 결혼 독촉을 떠올리며 프로젝트에 합류한 여러 여성의 첫인상을 살펴본다.",
+        "source": "프로젝트에 합류한 서아·민경·유진의 첫인상을 살펴보지만 아직 신부감을 고르겠다고 결심하지는 않는다.",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -1851,7 +1851,7 @@
       },
       "events.anchor.day_01_company_meeting.presentation.perceived.title": {
         "key": "events.anchor.day_01_company_meeting.presentation.perceived.title",
-        "source": "신부감을 찾는 새로운 프로젝트",
+        "source": "새로운 프로젝트와 세 사람",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -1920,9 +1920,98 @@
         "multiline": false,
         "maxLength": 100
       },
+      "events.anchor.day_01_parent_pressure.presentation.perceived.summary": {
+        "key": "events.anchor.day_01_parent_pressure.presentation.perceived.summary",
+        "source": "퇴근 후 부모의 결혼 재촉과 칭찬을 듣고, 오전 프로젝트에서 만난 서아와 민경을 연애 후보로 다시 떠올린다.",
+        "domain": "event",
+        "sourceDocument": {
+          "kind": "event",
+          "id": "anchor.day_01_parent_pressure",
+          "path": "story/events/anchors/day_01_parent_pressure.yaml",
+          "fieldPath": "presentation.perceived.summary"
+        },
+        "context": {
+          "eventId": "anchor.day_01_parent_pressure",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "events.anchor.day_01_parent_pressure.presentation.perceived.title": {
+        "key": "events.anchor.day_01_parent_pressure.presentation.perceived.title",
+        "source": "신부감을 찾아볼 때",
+        "domain": "event",
+        "sourceDocument": {
+          "kind": "event",
+          "id": "anchor.day_01_parent_pressure",
+          "path": "story/events/anchors/day_01_parent_pressure.yaml",
+          "fieldPath": "presentation.perceived.title"
+        },
+        "context": {
+          "eventId": "anchor.day_01_parent_pressure",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "events.anchor.day_01_parent_pressure.presentation.reality.summary": {
+        "key": "events.anchor.day_01_parent_pressure.presentation.reality.summary",
+        "source": "부모는 한도윤의 자존심을 다치지 않으려 외모와 조건을 칭찬하며 사람을 만나보라고 권한다.",
+        "domain": "event",
+        "sourceDocument": {
+          "kind": "event",
+          "id": "anchor.day_01_parent_pressure",
+          "path": "story/events/anchors/day_01_parent_pressure.yaml",
+          "fieldPath": "presentation.reality.summary"
+        },
+        "context": {
+          "eventId": "anchor.day_01_parent_pressure",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "events.anchor.day_01_parent_pressure.presentation.reality.title": {
+        "key": "events.anchor.day_01_parent_pressure.presentation.reality.title",
+        "source": "수요일 저녁의 가족 식사",
+        "domain": "event",
+        "sourceDocument": {
+          "kind": "event",
+          "id": "anchor.day_01_parent_pressure",
+          "path": "story/events/anchors/day_01_parent_pressure.yaml",
+          "fieldPath": "presentation.reality.title"
+        },
+        "context": {
+          "eventId": "anchor.day_01_parent_pressure",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "events.anchor.day_01_parent_pressure.title": {
+        "key": "events.anchor.day_01_parent_pressure.title",
+        "source": "올해는 사람 좀 만나",
+        "domain": "event",
+        "sourceDocument": {
+          "kind": "event",
+          "id": "anchor.day_01_parent_pressure",
+          "path": "story/events/anchors/day_01_parent_pressure.yaml",
+          "fieldPath": "title"
+        },
+        "context": {
+          "eventId": "anchor.day_01_parent_pressure"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
       "events.anchor.day_02_practical_meeting.presentation.perceived.summary": {
         "key": "events.anchor.day_02_practical_meeting.presentation.perceived.summary",
-        "source": "발표에서 말이 막힌 서아를 도우며 의존을 받고, 회의를 단호하게 이어 가는 민경에게도 매력을 느낀다.",
+        "source": "발표에서 말이 막힌 서아를 도우고 그녀의 실제 고마움을 연애적 의존으로 확대해 받아들이며, 회의를 단호하게 이어 가는 민경에게도 매력을 느낀다.",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -1958,7 +2047,7 @@
       },
       "events.anchor.day_02_practical_meeting.presentation.reality.summary": {
         "key": "events.anchor.day_02_practical_meeting.presentation.reality.summary",
-        "source": "서아는 발표 실수로 당황하고, 민경은 안건을 업무 문제로 돌리며, 유진은 잘못된 파일의 버전과 교체 시각을 기록한다.",
+        "source": "서아는 발표 실수를 도와준 한도윤에게 실제 고마움과 인간적 호감을 표현한다. 민경은 안건을 업무 문제로 돌리고, 유진은 파일 버전과 교체 시각을 기록한다.",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -2136,7 +2225,7 @@
       },
       "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": {
         "key": "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary",
-        "source": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 대화 중 주말 예정 장소에 관한 단서가 나온다.",
+        "source": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 주요 대화 상대와 회사 복귀 후 공용 대화에서 두 사람의 주말 예정 장소가 각각 자연스럽게 드러난다.",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -2189,7 +2278,7 @@
       },
       "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": {
         "key": "events.anchor.day_04_weekend_encounter.presentation.perceived.summary",
-        "source": "회사에서 들은 주말 계획을 기억하고 장소를 선택한 뒤 서아나 민경과 마주치며, 이를 운명적인 호감의 시작으로 받아들인다.",
+        "source": "현재 공략 우선 판정이 높은 한 사람과 주말 장소에서 마주치고, 작별 인사에 덧붙은 한 구절을 다시 만나고 싶다는 신호로 받아들인다.",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -2207,7 +2296,7 @@
       },
       "events.anchor.day_04_weekend_encounter.presentation.perceived.title": {
         "key": "events.anchor.day_04_weekend_encounter.presentation.perceived.title",
-        "source": "우연을 기다리는 사람",
+        "source": "첫 번째로 이어진 운명",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -2225,7 +2314,7 @@
       },
       "events.anchor.day_04_weekend_encounter.presentation.reality.summary": {
         "key": "events.anchor.day_04_weekend_encounter.presentation.reality.summary",
-        "source": "여성은 전날 자신이 장소를 말했는지 떠올리며 한도윤의 방문이 우연인지 처음으로 의심한다. 한 회차에서는 한 명과만 조우한다.",
+        "source": "토요일에는 서아와 민경 중 한 명과만 만난다. 상대는 공공장소에서 동료와 마주친 우연으로 받아들이며 아직 의도적 접근을 의심하지 않는다.",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -2243,7 +2332,7 @@
       },
       "events.anchor.day_04_weekend_encounter.presentation.reality.title": {
         "key": "events.anchor.day_04_weekend_encounter.presentation.reality.title",
-        "source": "우연인지 의심하게 된 주말 조우",
+        "source": "동료와 마주친 한 번의 우연",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -2261,7 +2350,7 @@
       },
       "events.anchor.day_04_weekend_encounter.title": {
         "key": "events.anchor.day_04_weekend_encounter.title",
-        "source": "주말의 우연",
+        "source": "첫 번째 주말의 우연",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -2278,7 +2367,7 @@
       },
       "events.anchor.day_05_weekend_reflection.presentation.perceived.summary": {
         "key": "events.anchor.day_05_weekend_reflection.presentation.perceived.summary",
-        "source": "부모의 연락을 받고 주말에 만난 여성을 떠올리며, 둘 사이에 진짜 호감이 시작됐다고 확신한다.",
+        "source": "토요일에 만나지 않은 다른 한 사람과 일요일에 마주치고, 서아와 민경 모두가 자신을 다시 보고 싶어 한다고 확신한다.",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -2296,7 +2385,7 @@
       },
       "events.anchor.day_05_weekend_reflection.presentation.perceived.title": {
         "key": "events.anchor.day_05_weekend_reflection.presentation.perceived.title",
-        "source": "마음이 가는 사람",
+        "source": "두 번째로 이어진 운명",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -2314,7 +2403,7 @@
       },
       "events.anchor.day_05_weekend_reflection.presentation.reality.summary": {
         "key": "events.anchor.day_05_weekend_reflection.presentation.reality.summary",
-        "source": "주말에 만난 여성은 동료에게 조우가 정말 우연인지 확인하고, 한도윤은 다음 주부터 본격적으로 공략할 상대를 정한다.",
+        "source": "토요일과 일요일에 서아와 민경이 한 명씩 한도윤과 마주친다. 두 사람은 각자의 조우를 평범한 우연으로 받아들이며 아직 서로의 경험을 연결하거나 한도윤을 의심하지 않는다.",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -2332,7 +2421,7 @@
       },
       "events.anchor.day_05_weekend_reflection.presentation.reality.title": {
         "key": "events.anchor.day_05_weekend_reflection.presentation.reality.title",
-        "source": "첫 의심의 여운",
+        "source": "서로 연결되지 않은 두 번의 우연",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -2350,7 +2439,7 @@
       },
       "events.anchor.day_05_weekend_reflection.title": {
         "key": "events.anchor.day_05_weekend_reflection.title",
-        "source": "서로 다른 확신",
+        "source": "두 번째 주말의 우연",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -10554,7 +10643,7 @@
       "campaign.main.acts.collisions.title": "시간 충돌과 의심",
       "campaign.main.acts.crisis.purpose": "두 번째 주말의 확신이 비밀 연애, 삼각관계, 간병과 사내 소문으로 번역되다가 주거지 방문과 현장 신고로 수렴한다.",
       "campaign.main.acts.crisis.title": "수습이 침범이 되는 시간",
-      "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 주말 조우에서 주인공의 호감과 여성의 의심을 동시에 시작한다.",
+      "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 토·일요일에 서아와 민경을 한 명씩 교차해 만나며 한도윤만 두 개의 운명적 신호로 확신한다.",
       "campaign.main.acts.romantic_surface.title": "연애 시뮬레이션의 얼굴",
       "campaign.main.lanes.cha_min_kyung.title": "차민경",
       "campaign.main.lanes.company.title": "회사와 고정 사건",
@@ -10626,14 +10715,19 @@
       "ending.unlockedCopy": "같은 날짜와 선택을 다른 인물의 마음으로 다시 읽을 수 있습니다.",
       "error.heading": "장면을 이어 갈 수 없습니다.",
       "error.recover": "캘린더로 복귀",
-      "events.anchor.day_01_company_meeting.presentation.perceived.summary": "부모의 결혼 독촉을 떠올리며 프로젝트에 합류한 여러 여성의 첫인상을 살펴본다.",
-      "events.anchor.day_01_company_meeting.presentation.perceived.title": "신부감을 찾는 새로운 프로젝트",
+      "events.anchor.day_01_company_meeting.presentation.perceived.summary": "프로젝트에 합류한 서아·민경·유진의 첫인상을 살펴보지만 아직 신부감을 고르겠다고 결심하지는 않는다.",
+      "events.anchor.day_01_company_meeting.presentation.perceived.title": "새로운 프로젝트와 세 사람",
       "events.anchor.day_01_company_meeting.presentation.reality.summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.",
       "events.anchor.day_01_company_meeting.presentation.reality.title": "수요일 프로젝트 킥오프",
       "events.anchor.day_01_company_meeting.title": "신규 프로젝트 킥오프",
-      "events.anchor.day_02_practical_meeting.presentation.perceived.summary": "발표에서 말이 막힌 서아를 도우며 의존을 받고, 회의를 단호하게 이어 가는 민경에게도 매력을 느낀다.",
+      "events.anchor.day_01_parent_pressure.presentation.perceived.summary": "퇴근 후 부모의 결혼 재촉과 칭찬을 듣고, 오전 프로젝트에서 만난 서아와 민경을 연애 후보로 다시 떠올린다.",
+      "events.anchor.day_01_parent_pressure.presentation.perceived.title": "신부감을 찾아볼 때",
+      "events.anchor.day_01_parent_pressure.presentation.reality.summary": "부모는 한도윤의 자존심을 다치지 않으려 외모와 조건을 칭찬하며 사람을 만나보라고 권한다.",
+      "events.anchor.day_01_parent_pressure.presentation.reality.title": "수요일 저녁의 가족 식사",
+      "events.anchor.day_01_parent_pressure.title": "올해는 사람 좀 만나",
+      "events.anchor.day_02_practical_meeting.presentation.perceived.summary": "발표에서 말이 막힌 서아를 도우고 그녀의 실제 고마움을 연애적 의존으로 확대해 받아들이며, 회의를 단호하게 이어 가는 민경에게도 매력을 느낀다.",
       "events.anchor.day_02_practical_meeting.presentation.perceived.title": "보호본능과 차가운 도발",
-      "events.anchor.day_02_practical_meeting.presentation.reality.summary": "서아는 발표 실수로 당황하고, 민경은 안건을 업무 문제로 돌리며, 유진은 잘못된 파일의 버전과 교체 시각을 기록한다.",
+      "events.anchor.day_02_practical_meeting.presentation.reality.summary": "서아는 발표 실수를 도와준 한도윤에게 실제 고마움과 인간적 호감을 표현한다. 민경은 안건을 업무 문제로 돌리고, 유진은 파일 버전과 교체 시각을 기록한다.",
       "events.anchor.day_02_practical_meeting.presentation.reality.title": "발표 파일 실수를 수습한 회의",
       "events.anchor.day_02_practical_meeting.title": "첫 실무 회의와 서아의 발표 실수",
       "events.anchor.day_02_project_dinner.presentation.perceived.summary": "조용한 서아에게는 귀가를 제안하고, 2차에서는 술이 올라 호탕해진 민경의 다른 모습을 볼 수 있다.",
@@ -10643,19 +10737,19 @@
       "events.anchor.day_02_project_dinner.title": "프로젝트 기념 회식",
       "events.anchor.day_03_business_trip_or_cafe.presentation.perceived.summary": "전날의 선택과 업무 담당에 따라 서아나 민경과 출장·점심·커피 시간을 가지며 사적인 라포가 생겼다고 느낀다.",
       "events.anchor.day_03_business_trip_or_cafe.presentation.perceived.title": "처음으로 단둘이 된 시간",
-      "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 대화 중 주말 예정 장소에 관한 단서가 나온다.",
+      "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 주요 대화 상대와 회사 복귀 후 공용 대화에서 두 사람의 주말 예정 장소가 각각 자연스럽게 드러난다.",
       "events.anchor.day_03_business_trip_or_cafe.presentation.reality.title": "업무 외출과 짧은 휴식",
       "events.anchor.day_03_business_trip_or_cafe.title": "출장 또는 단둘의 점심",
-      "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": "회사에서 들은 주말 계획을 기억하고 장소를 선택한 뒤 서아나 민경과 마주치며, 이를 운명적인 호감의 시작으로 받아들인다.",
-      "events.anchor.day_04_weekend_encounter.presentation.perceived.title": "우연을 기다리는 사람",
-      "events.anchor.day_04_weekend_encounter.presentation.reality.summary": "여성은 전날 자신이 장소를 말했는지 떠올리며 한도윤의 방문이 우연인지 처음으로 의심한다. 한 회차에서는 한 명과만 조우한다.",
-      "events.anchor.day_04_weekend_encounter.presentation.reality.title": "우연인지 의심하게 된 주말 조우",
-      "events.anchor.day_04_weekend_encounter.title": "주말의 우연",
-      "events.anchor.day_05_weekend_reflection.presentation.perceived.summary": "부모의 연락을 받고 주말에 만난 여성을 떠올리며, 둘 사이에 진짜 호감이 시작됐다고 확신한다.",
-      "events.anchor.day_05_weekend_reflection.presentation.perceived.title": "마음이 가는 사람",
-      "events.anchor.day_05_weekend_reflection.presentation.reality.summary": "주말에 만난 여성은 동료에게 조우가 정말 우연인지 확인하고, 한도윤은 다음 주부터 본격적으로 공략할 상대를 정한다.",
-      "events.anchor.day_05_weekend_reflection.presentation.reality.title": "첫 의심의 여운",
-      "events.anchor.day_05_weekend_reflection.title": "서로 다른 확신",
+      "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": "현재 공략 우선 판정이 높은 한 사람과 주말 장소에서 마주치고, 작별 인사에 덧붙은 한 구절을 다시 만나고 싶다는 신호로 받아들인다.",
+      "events.anchor.day_04_weekend_encounter.presentation.perceived.title": "첫 번째로 이어진 운명",
+      "events.anchor.day_04_weekend_encounter.presentation.reality.summary": "토요일에는 서아와 민경 중 한 명과만 만난다. 상대는 공공장소에서 동료와 마주친 우연으로 받아들이며 아직 의도적 접근을 의심하지 않는다.",
+      "events.anchor.day_04_weekend_encounter.presentation.reality.title": "동료와 마주친 한 번의 우연",
+      "events.anchor.day_04_weekend_encounter.title": "첫 번째 주말의 우연",
+      "events.anchor.day_05_weekend_reflection.presentation.perceived.summary": "토요일에 만나지 않은 다른 한 사람과 일요일에 마주치고, 서아와 민경 모두가 자신을 다시 보고 싶어 한다고 확신한다.",
+      "events.anchor.day_05_weekend_reflection.presentation.perceived.title": "두 번째로 이어진 운명",
+      "events.anchor.day_05_weekend_reflection.presentation.reality.summary": "토요일과 일요일에 서아와 민경이 한 명씩 한도윤과 마주친다. 두 사람은 각자의 조우를 평범한 우연으로 받아들이며 아직 서로의 경험을 연결하거나 한도윤을 의심하지 않는다.",
+      "events.anchor.day_05_weekend_reflection.presentation.reality.title": "서로 연결되지 않은 두 번의 우연",
+      "events.anchor.day_05_weekend_reflection.title": "두 번째 주말의 우연",
       "events.anchor.day_10_hr_notice.presentation.perceived.summary": "연애에 서툰 사람들이 사소한 호의를 오해해서 생긴 공지라고 생각한다.",
       "events.anchor.day_10_hr_notice.presentation.perceived.title": "회사 분위기가 예민한 날",
       "events.anchor.day_10_hr_notice.presentation.reality.summary": "반복되는 비공식 상담 때문에 회사가 기록과 동행 원칙을 재공지한다.",
@@ -11136,7 +11230,7 @@
         "campaign.main.acts.collisions.title": "시간 충돌과 의심",
         "campaign.main.acts.crisis.purpose": "두 번째 주말의 확신이 비밀 연애, 삼각관계, 간병과 사내 소문으로 번역되다가 주거지 방문과 현장 신고로 수렴한다.",
         "campaign.main.acts.crisis.title": "수습이 침범이 되는 시간",
-        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 주말 조우에서 주인공의 호감과 여성의 의심을 동시에 시작한다.",
+        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 토·일요일에 서아와 민경을 한 명씩 교차해 만나며 한도윤만 두 개의 운명적 신호로 확신한다.",
         "campaign.main.acts.romantic_surface.title": "연애 시뮬레이션의 얼굴",
         "campaign.main.lanes.cha_min_kyung.title": "차민경",
         "campaign.main.lanes.company.title": "회사와 고정 사건",
@@ -11208,14 +11302,19 @@
         "ending.unlockedCopy": "같은 날짜와 선택을 다른 인물의 마음으로 다시 읽을 수 있습니다.",
         "error.heading": "장면을 이어 갈 수 없습니다.",
         "error.recover": "캘린더로 복귀",
-        "events.anchor.day_01_company_meeting.presentation.perceived.summary": "부모의 결혼 독촉을 떠올리며 프로젝트에 합류한 여러 여성의 첫인상을 살펴본다.",
-        "events.anchor.day_01_company_meeting.presentation.perceived.title": "신부감을 찾는 새로운 프로젝트",
+        "events.anchor.day_01_company_meeting.presentation.perceived.summary": "프로젝트에 합류한 서아·민경·유진의 첫인상을 살펴보지만 아직 신부감을 고르겠다고 결심하지는 않는다.",
+        "events.anchor.day_01_company_meeting.presentation.perceived.title": "새로운 프로젝트와 세 사람",
         "events.anchor.day_01_company_meeting.presentation.reality.summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.",
         "events.anchor.day_01_company_meeting.presentation.reality.title": "수요일 프로젝트 킥오프",
         "events.anchor.day_01_company_meeting.title": "신규 프로젝트 킥오프",
-        "events.anchor.day_02_practical_meeting.presentation.perceived.summary": "발표에서 말이 막힌 서아를 도우며 의존을 받고, 회의를 단호하게 이어 가는 민경에게도 매력을 느낀다.",
+        "events.anchor.day_01_parent_pressure.presentation.perceived.summary": "퇴근 후 부모의 결혼 재촉과 칭찬을 듣고, 오전 프로젝트에서 만난 서아와 민경을 연애 후보로 다시 떠올린다.",
+        "events.anchor.day_01_parent_pressure.presentation.perceived.title": "신부감을 찾아볼 때",
+        "events.anchor.day_01_parent_pressure.presentation.reality.summary": "부모는 한도윤의 자존심을 다치지 않으려 외모와 조건을 칭찬하며 사람을 만나보라고 권한다.",
+        "events.anchor.day_01_parent_pressure.presentation.reality.title": "수요일 저녁의 가족 식사",
+        "events.anchor.day_01_parent_pressure.title": "올해는 사람 좀 만나",
+        "events.anchor.day_02_practical_meeting.presentation.perceived.summary": "발표에서 말이 막힌 서아를 도우고 그녀의 실제 고마움을 연애적 의존으로 확대해 받아들이며, 회의를 단호하게 이어 가는 민경에게도 매력을 느낀다.",
         "events.anchor.day_02_practical_meeting.presentation.perceived.title": "보호본능과 차가운 도발",
-        "events.anchor.day_02_practical_meeting.presentation.reality.summary": "서아는 발표 실수로 당황하고, 민경은 안건을 업무 문제로 돌리며, 유진은 잘못된 파일의 버전과 교체 시각을 기록한다.",
+        "events.anchor.day_02_practical_meeting.presentation.reality.summary": "서아는 발표 실수를 도와준 한도윤에게 실제 고마움과 인간적 호감을 표현한다. 민경은 안건을 업무 문제로 돌리고, 유진은 파일 버전과 교체 시각을 기록한다.",
         "events.anchor.day_02_practical_meeting.presentation.reality.title": "발표 파일 실수를 수습한 회의",
         "events.anchor.day_02_practical_meeting.title": "첫 실무 회의와 서아의 발표 실수",
         "events.anchor.day_02_project_dinner.presentation.perceived.summary": "조용한 서아에게는 귀가를 제안하고, 2차에서는 술이 올라 호탕해진 민경의 다른 모습을 볼 수 있다.",
@@ -11225,19 +11324,19 @@
         "events.anchor.day_02_project_dinner.title": "프로젝트 기념 회식",
         "events.anchor.day_03_business_trip_or_cafe.presentation.perceived.summary": "전날의 선택과 업무 담당에 따라 서아나 민경과 출장·점심·커피 시간을 가지며 사적인 라포가 생겼다고 느낀다.",
         "events.anchor.day_03_business_trip_or_cafe.presentation.perceived.title": "처음으로 단둘이 된 시간",
-        "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 대화 중 주말 예정 장소에 관한 단서가 나온다.",
+        "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 주요 대화 상대와 회사 복귀 후 공용 대화에서 두 사람의 주말 예정 장소가 각각 자연스럽게 드러난다.",
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.title": "업무 외출과 짧은 휴식",
         "events.anchor.day_03_business_trip_or_cafe.title": "출장 또는 단둘의 점심",
-        "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": "회사에서 들은 주말 계획을 기억하고 장소를 선택한 뒤 서아나 민경과 마주치며, 이를 운명적인 호감의 시작으로 받아들인다.",
-        "events.anchor.day_04_weekend_encounter.presentation.perceived.title": "우연을 기다리는 사람",
-        "events.anchor.day_04_weekend_encounter.presentation.reality.summary": "여성은 전날 자신이 장소를 말했는지 떠올리며 한도윤의 방문이 우연인지 처음으로 의심한다. 한 회차에서는 한 명과만 조우한다.",
-        "events.anchor.day_04_weekend_encounter.presentation.reality.title": "우연인지 의심하게 된 주말 조우",
-        "events.anchor.day_04_weekend_encounter.title": "주말의 우연",
-        "events.anchor.day_05_weekend_reflection.presentation.perceived.summary": "부모의 연락을 받고 주말에 만난 여성을 떠올리며, 둘 사이에 진짜 호감이 시작됐다고 확신한다.",
-        "events.anchor.day_05_weekend_reflection.presentation.perceived.title": "마음이 가는 사람",
-        "events.anchor.day_05_weekend_reflection.presentation.reality.summary": "주말에 만난 여성은 동료에게 조우가 정말 우연인지 확인하고, 한도윤은 다음 주부터 본격적으로 공략할 상대를 정한다.",
-        "events.anchor.day_05_weekend_reflection.presentation.reality.title": "첫 의심의 여운",
-        "events.anchor.day_05_weekend_reflection.title": "서로 다른 확신",
+        "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": "현재 공략 우선 판정이 높은 한 사람과 주말 장소에서 마주치고, 작별 인사에 덧붙은 한 구절을 다시 만나고 싶다는 신호로 받아들인다.",
+        "events.anchor.day_04_weekend_encounter.presentation.perceived.title": "첫 번째로 이어진 운명",
+        "events.anchor.day_04_weekend_encounter.presentation.reality.summary": "토요일에는 서아와 민경 중 한 명과만 만난다. 상대는 공공장소에서 동료와 마주친 우연으로 받아들이며 아직 의도적 접근을 의심하지 않는다.",
+        "events.anchor.day_04_weekend_encounter.presentation.reality.title": "동료와 마주친 한 번의 우연",
+        "events.anchor.day_04_weekend_encounter.title": "첫 번째 주말의 우연",
+        "events.anchor.day_05_weekend_reflection.presentation.perceived.summary": "토요일에 만나지 않은 다른 한 사람과 일요일에 마주치고, 서아와 민경 모두가 자신을 다시 보고 싶어 한다고 확신한다.",
+        "events.anchor.day_05_weekend_reflection.presentation.perceived.title": "두 번째로 이어진 운명",
+        "events.anchor.day_05_weekend_reflection.presentation.reality.summary": "토요일과 일요일에 서아와 민경이 한 명씩 한도윤과 마주친다. 두 사람은 각자의 조우를 평범한 우연으로 받아들이며 아직 서로의 경험을 연결하거나 한도윤을 의심하지 않는다.",
+        "events.anchor.day_05_weekend_reflection.presentation.reality.title": "서로 연결되지 않은 두 번의 우연",
+        "events.anchor.day_05_weekend_reflection.title": "두 번째 주말의 우연",
         "events.anchor.day_10_hr_notice.presentation.perceived.summary": "연애에 서툰 사람들이 사소한 호의를 오해해서 생긴 공지라고 생각한다.",
         "events.anchor.day_10_hr_notice.presentation.perceived.title": "회사 분위기가 예민한 날",
         "events.anchor.day_10_hr_notice.presentation.reality.summary": "반복되는 비공식 상담 때문에 회사가 기록과 동행 원칙을 재공지한다.",
@@ -11717,7 +11816,7 @@
         "campaign.main.acts.collisions.title": "Cracks in the Interpretation",
         "campaign.main.acts.crisis.purpose": "두 번째 주말의 확신이 비밀 연애, 삼각관계, 간병과 사내 소문으로 번역되다가 주거지 방문과 현장 신고로 수렴한다.",
         "campaign.main.acts.crisis.title": "Records That Cannot Be Rewritten",
-        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 주말 조우에서 주인공의 호감과 여성의 의심을 동시에 시작한다.",
+        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 토·일요일에 서아와 민경을 한 명씩 교차해 만나며 한도윤만 두 개의 운명적 신호로 확신한다.",
         "campaign.main.acts.romantic_surface.title": "The Face of a Romance Simulation",
         "campaign.main.lanes.cha_min_kyung.title": "차민경",
         "campaign.main.lanes.company.title": "회사와 고정 사건",
@@ -11789,14 +11888,19 @@
         "ending.unlockedCopy": "Replay the same dates and choices through another character's heart.",
         "error.heading": "The scene cannot continue.",
         "error.recover": "Return to Calendar",
-        "events.anchor.day_01_company_meeting.presentation.perceived.summary": "부모의 결혼 독촉을 떠올리며 프로젝트에 합류한 여러 여성의 첫인상을 살펴본다.",
-        "events.anchor.day_01_company_meeting.presentation.perceived.title": "신부감을 찾는 새로운 프로젝트",
+        "events.anchor.day_01_company_meeting.presentation.perceived.summary": "프로젝트에 합류한 서아·민경·유진의 첫인상을 살펴보지만 아직 신부감을 고르겠다고 결심하지는 않는다.",
+        "events.anchor.day_01_company_meeting.presentation.perceived.title": "새로운 프로젝트와 세 사람",
         "events.anchor.day_01_company_meeting.presentation.reality.summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.",
         "events.anchor.day_01_company_meeting.presentation.reality.title": "수요일 프로젝트 킥오프",
         "events.anchor.day_01_company_meeting.title": "신규 프로젝트 킥오프",
-        "events.anchor.day_02_practical_meeting.presentation.perceived.summary": "발표에서 말이 막힌 서아를 도우며 의존을 받고, 회의를 단호하게 이어 가는 민경에게도 매력을 느낀다.",
+        "events.anchor.day_01_parent_pressure.presentation.perceived.summary": "퇴근 후 부모의 결혼 재촉과 칭찬을 듣고, 오전 프로젝트에서 만난 서아와 민경을 연애 후보로 다시 떠올린다.",
+        "events.anchor.day_01_parent_pressure.presentation.perceived.title": "신부감을 찾아볼 때",
+        "events.anchor.day_01_parent_pressure.presentation.reality.summary": "부모는 한도윤의 자존심을 다치지 않으려 외모와 조건을 칭찬하며 사람을 만나보라고 권한다.",
+        "events.anchor.day_01_parent_pressure.presentation.reality.title": "수요일 저녁의 가족 식사",
+        "events.anchor.day_01_parent_pressure.title": "올해는 사람 좀 만나",
+        "events.anchor.day_02_practical_meeting.presentation.perceived.summary": "발표에서 말이 막힌 서아를 도우고 그녀의 실제 고마움을 연애적 의존으로 확대해 받아들이며, 회의를 단호하게 이어 가는 민경에게도 매력을 느낀다.",
         "events.anchor.day_02_practical_meeting.presentation.perceived.title": "보호본능과 차가운 도발",
-        "events.anchor.day_02_practical_meeting.presentation.reality.summary": "서아는 발표 실수로 당황하고, 민경은 안건을 업무 문제로 돌리며, 유진은 잘못된 파일의 버전과 교체 시각을 기록한다.",
+        "events.anchor.day_02_practical_meeting.presentation.reality.summary": "서아는 발표 실수를 도와준 한도윤에게 실제 고마움과 인간적 호감을 표현한다. 민경은 안건을 업무 문제로 돌리고, 유진은 파일 버전과 교체 시각을 기록한다.",
         "events.anchor.day_02_practical_meeting.presentation.reality.title": "발표 파일 실수를 수습한 회의",
         "events.anchor.day_02_practical_meeting.title": "첫 실무 회의와 서아의 발표 실수",
         "events.anchor.day_02_project_dinner.presentation.perceived.summary": "조용한 서아에게는 귀가를 제안하고, 2차에서는 술이 올라 호탕해진 민경의 다른 모습을 볼 수 있다.",
@@ -11806,19 +11910,19 @@
         "events.anchor.day_02_project_dinner.title": "프로젝트 기념 회식",
         "events.anchor.day_03_business_trip_or_cafe.presentation.perceived.summary": "전날의 선택과 업무 담당에 따라 서아나 민경과 출장·점심·커피 시간을 가지며 사적인 라포가 생겼다고 느낀다.",
         "events.anchor.day_03_business_trip_or_cafe.presentation.perceived.title": "처음으로 단둘이 된 시간",
-        "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 대화 중 주말 예정 장소에 관한 단서가 나온다.",
+        "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 주요 대화 상대와 회사 복귀 후 공용 대화에서 두 사람의 주말 예정 장소가 각각 자연스럽게 드러난다.",
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.title": "업무 외출과 짧은 휴식",
         "events.anchor.day_03_business_trip_or_cafe.title": "출장 또는 단둘의 점심",
-        "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": "회사에서 들은 주말 계획을 기억하고 장소를 선택한 뒤 서아나 민경과 마주치며, 이를 운명적인 호감의 시작으로 받아들인다.",
-        "events.anchor.day_04_weekend_encounter.presentation.perceived.title": "우연을 기다리는 사람",
-        "events.anchor.day_04_weekend_encounter.presentation.reality.summary": "여성은 전날 자신이 장소를 말했는지 떠올리며 한도윤의 방문이 우연인지 처음으로 의심한다. 한 회차에서는 한 명과만 조우한다.",
-        "events.anchor.day_04_weekend_encounter.presentation.reality.title": "우연인지 의심하게 된 주말 조우",
-        "events.anchor.day_04_weekend_encounter.title": "주말의 우연",
-        "events.anchor.day_05_weekend_reflection.presentation.perceived.summary": "부모의 연락을 받고 주말에 만난 여성을 떠올리며, 둘 사이에 진짜 호감이 시작됐다고 확신한다.",
-        "events.anchor.day_05_weekend_reflection.presentation.perceived.title": "마음이 가는 사람",
-        "events.anchor.day_05_weekend_reflection.presentation.reality.summary": "주말에 만난 여성은 동료에게 조우가 정말 우연인지 확인하고, 한도윤은 다음 주부터 본격적으로 공략할 상대를 정한다.",
-        "events.anchor.day_05_weekend_reflection.presentation.reality.title": "첫 의심의 여운",
-        "events.anchor.day_05_weekend_reflection.title": "서로 다른 확신",
+        "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": "현재 공략 우선 판정이 높은 한 사람과 주말 장소에서 마주치고, 작별 인사에 덧붙은 한 구절을 다시 만나고 싶다는 신호로 받아들인다.",
+        "events.anchor.day_04_weekend_encounter.presentation.perceived.title": "첫 번째로 이어진 운명",
+        "events.anchor.day_04_weekend_encounter.presentation.reality.summary": "토요일에는 서아와 민경 중 한 명과만 만난다. 상대는 공공장소에서 동료와 마주친 우연으로 받아들이며 아직 의도적 접근을 의심하지 않는다.",
+        "events.anchor.day_04_weekend_encounter.presentation.reality.title": "동료와 마주친 한 번의 우연",
+        "events.anchor.day_04_weekend_encounter.title": "첫 번째 주말의 우연",
+        "events.anchor.day_05_weekend_reflection.presentation.perceived.summary": "토요일에 만나지 않은 다른 한 사람과 일요일에 마주치고, 서아와 민경 모두가 자신을 다시 보고 싶어 한다고 확신한다.",
+        "events.anchor.day_05_weekend_reflection.presentation.perceived.title": "두 번째로 이어진 운명",
+        "events.anchor.day_05_weekend_reflection.presentation.reality.summary": "토요일과 일요일에 서아와 민경이 한 명씩 한도윤과 마주친다. 두 사람은 각자의 조우를 평범한 우연으로 받아들이며 아직 서로의 경험을 연결하거나 한도윤을 의심하지 않는다.",
+        "events.anchor.day_05_weekend_reflection.presentation.reality.title": "서로 연결되지 않은 두 번의 우연",
+        "events.anchor.day_05_weekend_reflection.title": "두 번째 주말의 우연",
         "events.anchor.day_10_hr_notice.presentation.perceived.summary": "연애에 서툰 사람들이 사소한 호의를 오해해서 생긴 공지라고 생각한다.",
         "events.anchor.day_10_hr_notice.presentation.perceived.title": "회사 분위기가 예민한 날",
         "events.anchor.day_10_hr_notice.presentation.reality.summary": "반복되는 비공식 상담 때문에 회사가 기록과 동행 원칙을 재공지한다.",
@@ -12493,7 +12597,7 @@
         "campaign.main.acts.collisions.title": "시간 충돌과 의심",
         "campaign.main.acts.crisis.purpose": "두 번째 주말의 확신이 비밀 연애, 삼각관계, 간병과 사내 소문으로 번역되다가 주거지 방문과 현장 신고로 수렴한다.",
         "campaign.main.acts.crisis.title": "수습이 침범이 되는 시간",
-        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 주말 조우에서 주인공의 호감과 여성의 의심을 동시에 시작한다.",
+        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 토·일요일에 서아와 민경을 한 명씩 교차해 만나며 한도윤만 두 개의 운명적 신호로 확신한다.",
         "campaign.main.acts.romantic_surface.title": "연애 시뮬레이션의 얼굴",
         "campaign.main.lanes.cha_min_kyung.title": "차민경",
         "campaign.main.lanes.company.title": "회사와 고정 사건",
@@ -12565,14 +12669,19 @@
         "ending.unlockedCopy": "같은 날짜와 선택을 다른 인물의 마음으로 다시 읽을 수 있습니다.",
         "error.heading": "장면을 이어 갈 수 없습니다.",
         "error.recover": "캘린더로 복귀",
-        "events.anchor.day_01_company_meeting.presentation.perceived.summary": "부모의 결혼 독촉을 떠올리며 프로젝트에 합류한 여러 여성의 첫인상을 살펴본다.",
-        "events.anchor.day_01_company_meeting.presentation.perceived.title": "신부감을 찾는 새로운 프로젝트",
+        "events.anchor.day_01_company_meeting.presentation.perceived.summary": "프로젝트에 합류한 서아·민경·유진의 첫인상을 살펴보지만 아직 신부감을 고르겠다고 결심하지는 않는다.",
+        "events.anchor.day_01_company_meeting.presentation.perceived.title": "새로운 프로젝트와 세 사람",
         "events.anchor.day_01_company_meeting.presentation.reality.summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.",
         "events.anchor.day_01_company_meeting.presentation.reality.title": "수요일 프로젝트 킥오프",
         "events.anchor.day_01_company_meeting.title": "신규 프로젝트 킥오프",
-        "events.anchor.day_02_practical_meeting.presentation.perceived.summary": "발표에서 말이 막힌 서아를 도우며 의존을 받고, 회의를 단호하게 이어 가는 민경에게도 매력을 느낀다.",
+        "events.anchor.day_01_parent_pressure.presentation.perceived.summary": "퇴근 후 부모의 결혼 재촉과 칭찬을 듣고, 오전 프로젝트에서 만난 서아와 민경을 연애 후보로 다시 떠올린다.",
+        "events.anchor.day_01_parent_pressure.presentation.perceived.title": "신부감을 찾아볼 때",
+        "events.anchor.day_01_parent_pressure.presentation.reality.summary": "부모는 한도윤의 자존심을 다치지 않으려 외모와 조건을 칭찬하며 사람을 만나보라고 권한다.",
+        "events.anchor.day_01_parent_pressure.presentation.reality.title": "수요일 저녁의 가족 식사",
+        "events.anchor.day_01_parent_pressure.title": "올해는 사람 좀 만나",
+        "events.anchor.day_02_practical_meeting.presentation.perceived.summary": "발표에서 말이 막힌 서아를 도우고 그녀의 실제 고마움을 연애적 의존으로 확대해 받아들이며, 회의를 단호하게 이어 가는 민경에게도 매력을 느낀다.",
         "events.anchor.day_02_practical_meeting.presentation.perceived.title": "보호본능과 차가운 도발",
-        "events.anchor.day_02_practical_meeting.presentation.reality.summary": "서아는 발표 실수로 당황하고, 민경은 안건을 업무 문제로 돌리며, 유진은 잘못된 파일의 버전과 교체 시각을 기록한다.",
+        "events.anchor.day_02_practical_meeting.presentation.reality.summary": "서아는 발표 실수를 도와준 한도윤에게 실제 고마움과 인간적 호감을 표현한다. 민경은 안건을 업무 문제로 돌리고, 유진은 파일 버전과 교체 시각을 기록한다.",
         "events.anchor.day_02_practical_meeting.presentation.reality.title": "발표 파일 실수를 수습한 회의",
         "events.anchor.day_02_practical_meeting.title": "첫 실무 회의와 서아의 발표 실수",
         "events.anchor.day_02_project_dinner.presentation.perceived.summary": "조용한 서아에게는 귀가를 제안하고, 2차에서는 술이 올라 호탕해진 민경의 다른 모습을 볼 수 있다.",
@@ -12582,19 +12691,19 @@
         "events.anchor.day_02_project_dinner.title": "프로젝트 기념 회식",
         "events.anchor.day_03_business_trip_or_cafe.presentation.perceived.summary": "전날의 선택과 업무 담당에 따라 서아나 민경과 출장·점심·커피 시간을 가지며 사적인 라포가 생겼다고 느낀다.",
         "events.anchor.day_03_business_trip_or_cafe.presentation.perceived.title": "처음으로 단둘이 된 시간",
-        "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 대화 중 주말 예정 장소에 관한 단서가 나온다.",
+        "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 주요 대화 상대와 회사 복귀 후 공용 대화에서 두 사람의 주말 예정 장소가 각각 자연스럽게 드러난다.",
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.title": "업무 외출과 짧은 휴식",
         "events.anchor.day_03_business_trip_or_cafe.title": "출장 또는 단둘의 점심",
-        "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": "회사에서 들은 주말 계획을 기억하고 장소를 선택한 뒤 서아나 민경과 마주치며, 이를 운명적인 호감의 시작으로 받아들인다.",
-        "events.anchor.day_04_weekend_encounter.presentation.perceived.title": "우연을 기다리는 사람",
-        "events.anchor.day_04_weekend_encounter.presentation.reality.summary": "여성은 전날 자신이 장소를 말했는지 떠올리며 한도윤의 방문이 우연인지 처음으로 의심한다. 한 회차에서는 한 명과만 조우한다.",
-        "events.anchor.day_04_weekend_encounter.presentation.reality.title": "우연인지 의심하게 된 주말 조우",
-        "events.anchor.day_04_weekend_encounter.title": "주말의 우연",
-        "events.anchor.day_05_weekend_reflection.presentation.perceived.summary": "부모의 연락을 받고 주말에 만난 여성을 떠올리며, 둘 사이에 진짜 호감이 시작됐다고 확신한다.",
-        "events.anchor.day_05_weekend_reflection.presentation.perceived.title": "마음이 가는 사람",
-        "events.anchor.day_05_weekend_reflection.presentation.reality.summary": "주말에 만난 여성은 동료에게 조우가 정말 우연인지 확인하고, 한도윤은 다음 주부터 본격적으로 공략할 상대를 정한다.",
-        "events.anchor.day_05_weekend_reflection.presentation.reality.title": "첫 의심의 여운",
-        "events.anchor.day_05_weekend_reflection.title": "서로 다른 확신",
+        "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": "현재 공략 우선 판정이 높은 한 사람과 주말 장소에서 마주치고, 작별 인사에 덧붙은 한 구절을 다시 만나고 싶다는 신호로 받아들인다.",
+        "events.anchor.day_04_weekend_encounter.presentation.perceived.title": "첫 번째로 이어진 운명",
+        "events.anchor.day_04_weekend_encounter.presentation.reality.summary": "토요일에는 서아와 민경 중 한 명과만 만난다. 상대는 공공장소에서 동료와 마주친 우연으로 받아들이며 아직 의도적 접근을 의심하지 않는다.",
+        "events.anchor.day_04_weekend_encounter.presentation.reality.title": "동료와 마주친 한 번의 우연",
+        "events.anchor.day_04_weekend_encounter.title": "첫 번째 주말의 우연",
+        "events.anchor.day_05_weekend_reflection.presentation.perceived.summary": "토요일에 만나지 않은 다른 한 사람과 일요일에 마주치고, 서아와 민경 모두가 자신을 다시 보고 싶어 한다고 확신한다.",
+        "events.anchor.day_05_weekend_reflection.presentation.perceived.title": "두 번째로 이어진 운명",
+        "events.anchor.day_05_weekend_reflection.presentation.reality.summary": "토요일과 일요일에 서아와 민경이 한 명씩 한도윤과 마주친다. 두 사람은 각자의 조우를 평범한 우연으로 받아들이며 아직 서로의 경험을 연결하거나 한도윤을 의심하지 않는다.",
+        "events.anchor.day_05_weekend_reflection.presentation.reality.title": "서로 연결되지 않은 두 번의 우연",
+        "events.anchor.day_05_weekend_reflection.title": "두 번째 주말의 우연",
         "events.anchor.day_10_hr_notice.presentation.perceived.summary": "연애에 서툰 사람들이 사소한 호의를 오해해서 생긴 공지라고 생각한다.",
         "events.anchor.day_10_hr_notice.presentation.perceived.title": "회사 분위기가 예민한 날",
         "events.anchor.day_10_hr_notice.presentation.reality.summary": "반복되는 비공식 상담 때문에 회사가 기록과 동행 원칙을 재공지한다.",
@@ -13074,7 +13183,7 @@
         "campaign.main.acts.collisions.title": "Cracks in the Interpretation",
         "campaign.main.acts.crisis.purpose": "두 번째 주말의 확신이 비밀 연애, 삼각관계, 간병과 사내 소문으로 번역되다가 주거지 방문과 현장 신고로 수렴한다.",
         "campaign.main.acts.crisis.title": "Records That Cannot Be Rewritten",
-        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 주말 조우에서 주인공의 호감과 여성의 의심을 동시에 시작한다.",
+        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 토·일요일에 서아와 민경을 한 명씩 교차해 만나며 한도윤만 두 개의 운명적 신호로 확신한다.",
         "campaign.main.acts.romantic_surface.title": "The Face of a Romance Simulation",
         "campaign.main.lanes.cha_min_kyung.title": "차민경",
         "campaign.main.lanes.company.title": "회사와 고정 사건",
@@ -13146,14 +13255,19 @@
         "ending.unlockedCopy": "Replay the same dates and choices through another character's heart.",
         "error.heading": "The scene cannot continue.",
         "error.recover": "Return to Calendar",
-        "events.anchor.day_01_company_meeting.presentation.perceived.summary": "부모의 결혼 독촉을 떠올리며 프로젝트에 합류한 여러 여성의 첫인상을 살펴본다.",
-        "events.anchor.day_01_company_meeting.presentation.perceived.title": "신부감을 찾는 새로운 프로젝트",
+        "events.anchor.day_01_company_meeting.presentation.perceived.summary": "프로젝트에 합류한 서아·민경·유진의 첫인상을 살펴보지만 아직 신부감을 고르겠다고 결심하지는 않는다.",
+        "events.anchor.day_01_company_meeting.presentation.perceived.title": "새로운 프로젝트와 세 사람",
         "events.anchor.day_01_company_meeting.presentation.reality.summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.",
         "events.anchor.day_01_company_meeting.presentation.reality.title": "수요일 프로젝트 킥오프",
         "events.anchor.day_01_company_meeting.title": "신규 프로젝트 킥오프",
-        "events.anchor.day_02_practical_meeting.presentation.perceived.summary": "발표에서 말이 막힌 서아를 도우며 의존을 받고, 회의를 단호하게 이어 가는 민경에게도 매력을 느낀다.",
+        "events.anchor.day_01_parent_pressure.presentation.perceived.summary": "퇴근 후 부모의 결혼 재촉과 칭찬을 듣고, 오전 프로젝트에서 만난 서아와 민경을 연애 후보로 다시 떠올린다.",
+        "events.anchor.day_01_parent_pressure.presentation.perceived.title": "신부감을 찾아볼 때",
+        "events.anchor.day_01_parent_pressure.presentation.reality.summary": "부모는 한도윤의 자존심을 다치지 않으려 외모와 조건을 칭찬하며 사람을 만나보라고 권한다.",
+        "events.anchor.day_01_parent_pressure.presentation.reality.title": "수요일 저녁의 가족 식사",
+        "events.anchor.day_01_parent_pressure.title": "올해는 사람 좀 만나",
+        "events.anchor.day_02_practical_meeting.presentation.perceived.summary": "발표에서 말이 막힌 서아를 도우고 그녀의 실제 고마움을 연애적 의존으로 확대해 받아들이며, 회의를 단호하게 이어 가는 민경에게도 매력을 느낀다.",
         "events.anchor.day_02_practical_meeting.presentation.perceived.title": "보호본능과 차가운 도발",
-        "events.anchor.day_02_practical_meeting.presentation.reality.summary": "서아는 발표 실수로 당황하고, 민경은 안건을 업무 문제로 돌리며, 유진은 잘못된 파일의 버전과 교체 시각을 기록한다.",
+        "events.anchor.day_02_practical_meeting.presentation.reality.summary": "서아는 발표 실수를 도와준 한도윤에게 실제 고마움과 인간적 호감을 표현한다. 민경은 안건을 업무 문제로 돌리고, 유진은 파일 버전과 교체 시각을 기록한다.",
         "events.anchor.day_02_practical_meeting.presentation.reality.title": "발표 파일 실수를 수습한 회의",
         "events.anchor.day_02_practical_meeting.title": "첫 실무 회의와 서아의 발표 실수",
         "events.anchor.day_02_project_dinner.presentation.perceived.summary": "조용한 서아에게는 귀가를 제안하고, 2차에서는 술이 올라 호탕해진 민경의 다른 모습을 볼 수 있다.",
@@ -13163,19 +13277,19 @@
         "events.anchor.day_02_project_dinner.title": "프로젝트 기념 회식",
         "events.anchor.day_03_business_trip_or_cafe.presentation.perceived.summary": "전날의 선택과 업무 담당에 따라 서아나 민경과 출장·점심·커피 시간을 가지며 사적인 라포가 생겼다고 느낀다.",
         "events.anchor.day_03_business_trip_or_cafe.presentation.perceived.title": "처음으로 단둘이 된 시간",
-        "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 대화 중 주말 예정 장소에 관한 단서가 나온다.",
+        "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 주요 대화 상대와 회사 복귀 후 공용 대화에서 두 사람의 주말 예정 장소가 각각 자연스럽게 드러난다.",
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.title": "업무 외출과 짧은 휴식",
         "events.anchor.day_03_business_trip_or_cafe.title": "출장 또는 단둘의 점심",
-        "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": "회사에서 들은 주말 계획을 기억하고 장소를 선택한 뒤 서아나 민경과 마주치며, 이를 운명적인 호감의 시작으로 받아들인다.",
-        "events.anchor.day_04_weekend_encounter.presentation.perceived.title": "우연을 기다리는 사람",
-        "events.anchor.day_04_weekend_encounter.presentation.reality.summary": "여성은 전날 자신이 장소를 말했는지 떠올리며 한도윤의 방문이 우연인지 처음으로 의심한다. 한 회차에서는 한 명과만 조우한다.",
-        "events.anchor.day_04_weekend_encounter.presentation.reality.title": "우연인지 의심하게 된 주말 조우",
-        "events.anchor.day_04_weekend_encounter.title": "주말의 우연",
-        "events.anchor.day_05_weekend_reflection.presentation.perceived.summary": "부모의 연락을 받고 주말에 만난 여성을 떠올리며, 둘 사이에 진짜 호감이 시작됐다고 확신한다.",
-        "events.anchor.day_05_weekend_reflection.presentation.perceived.title": "마음이 가는 사람",
-        "events.anchor.day_05_weekend_reflection.presentation.reality.summary": "주말에 만난 여성은 동료에게 조우가 정말 우연인지 확인하고, 한도윤은 다음 주부터 본격적으로 공략할 상대를 정한다.",
-        "events.anchor.day_05_weekend_reflection.presentation.reality.title": "첫 의심의 여운",
-        "events.anchor.day_05_weekend_reflection.title": "서로 다른 확신",
+        "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": "현재 공략 우선 판정이 높은 한 사람과 주말 장소에서 마주치고, 작별 인사에 덧붙은 한 구절을 다시 만나고 싶다는 신호로 받아들인다.",
+        "events.anchor.day_04_weekend_encounter.presentation.perceived.title": "첫 번째로 이어진 운명",
+        "events.anchor.day_04_weekend_encounter.presentation.reality.summary": "토요일에는 서아와 민경 중 한 명과만 만난다. 상대는 공공장소에서 동료와 마주친 우연으로 받아들이며 아직 의도적 접근을 의심하지 않는다.",
+        "events.anchor.day_04_weekend_encounter.presentation.reality.title": "동료와 마주친 한 번의 우연",
+        "events.anchor.day_04_weekend_encounter.title": "첫 번째 주말의 우연",
+        "events.anchor.day_05_weekend_reflection.presentation.perceived.summary": "토요일에 만나지 않은 다른 한 사람과 일요일에 마주치고, 서아와 민경 모두가 자신을 다시 보고 싶어 한다고 확신한다.",
+        "events.anchor.day_05_weekend_reflection.presentation.perceived.title": "두 번째로 이어진 운명",
+        "events.anchor.day_05_weekend_reflection.presentation.reality.summary": "토요일과 일요일에 서아와 민경이 한 명씩 한도윤과 마주친다. 두 사람은 각자의 조우를 평범한 우연으로 받아들이며 아직 서로의 경험을 연결하거나 한도윤을 의심하지 않는다.",
+        "events.anchor.day_05_weekend_reflection.presentation.reality.title": "서로 연결되지 않은 두 번의 우연",
+        "events.anchor.day_05_weekend_reflection.title": "두 번째 주말의 우연",
         "events.anchor.day_10_hr_notice.presentation.perceived.summary": "연애에 서툰 사람들이 사소한 호의를 오해해서 생긴 공지라고 생각한다.",
         "events.anchor.day_10_hr_notice.presentation.perceived.title": "회사 분위기가 예민한 날",
         "events.anchor.day_10_hr_notice.presentation.reality.summary": "반복되는 비공식 상담 때문에 회사가 기록과 동행 원칙을 재공지한다.",
@@ -13643,10 +13757,10 @@
     },
     "coverage": {
       "ko": {
-        "direct": 579,
-        "resolved": 579,
-        "translated": 579,
-        "total": 579,
+        "direct": 584,
+        "resolved": 584,
+        "translated": 584,
+        "total": 584,
         "ratio": 1.0,
         "fallback_used": [],
         "missing": [],
@@ -13667,8 +13781,8 @@
             "total": 40
           },
           "event": {
-            "direct": 115,
-            "total": 115
+            "direct": 120,
+            "total": 120
           },
           "locale": {
             "direct": 4,
@@ -13698,10 +13812,10 @@
       },
       "en": {
         "direct": 186,
-        "resolved": 579,
+        "resolved": 584,
         "translated": 186,
-        "total": 579,
-        "ratio": 0.3212,
+        "total": 584,
+        "ratio": 0.3185,
         "fallback_used": [
           "campaign.main.acts.collisions.purpose",
           "campaign.main.acts.crisis.purpose",
@@ -13753,6 +13867,11 @@
           "events.anchor.day_01_company_meeting.presentation.reality.summary",
           "events.anchor.day_01_company_meeting.presentation.reality.title",
           "events.anchor.day_01_company_meeting.title",
+          "events.anchor.day_01_parent_pressure.presentation.perceived.summary",
+          "events.anchor.day_01_parent_pressure.presentation.perceived.title",
+          "events.anchor.day_01_parent_pressure.presentation.reality.summary",
+          "events.anchor.day_01_parent_pressure.presentation.reality.title",
+          "events.anchor.day_01_parent_pressure.title",
           "events.anchor.day_02_practical_meeting.presentation.perceived.summary",
           "events.anchor.day_02_practical_meeting.presentation.perceived.title",
           "events.anchor.day_02_practical_meeting.presentation.reality.summary",
@@ -14148,6 +14267,11 @@
           "events.anchor.day_01_company_meeting.presentation.reality.summary",
           "events.anchor.day_01_company_meeting.presentation.reality.title",
           "events.anchor.day_01_company_meeting.title",
+          "events.anchor.day_01_parent_pressure.presentation.perceived.summary",
+          "events.anchor.day_01_parent_pressure.presentation.perceived.title",
+          "events.anchor.day_01_parent_pressure.presentation.reality.summary",
+          "events.anchor.day_01_parent_pressure.presentation.reality.title",
+          "events.anchor.day_01_parent_pressure.title",
           "events.anchor.day_02_practical_meeting.presentation.perceived.summary",
           "events.anchor.day_02_practical_meeting.presentation.perceived.title",
           "events.anchor.day_02_practical_meeting.presentation.reality.summary",
@@ -14510,7 +14634,7 @@
           },
           "event": {
             "direct": 2,
-            "total": 115
+            "total": 120
           },
           "locale": {
             "direct": 2,
@@ -14574,7 +14698,7 @@
             1,
             5
           ],
-          "purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 주말 조우에서 주인공의 호감과 여성의 의심을 동시에 시작한다."
+          "purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 토·일요일에 서아와 민경을 한 명씩 교차해 만나며 한도윤만 두 개의 운명적 신호로 확신한다."
         },
         {
           "number": 2,
@@ -15167,12 +15291,58 @@
       },
       "presentation": {
         "perceived": {
-          "title": "신부감을 찾는 새로운 프로젝트",
-          "summary": "부모의 결혼 독촉을 떠올리며 프로젝트에 합류한 여러 여성의 첫인상을 살펴본다."
+          "title": "새로운 프로젝트와 세 사람",
+          "summary": "프로젝트에 합류한 서아·민경·유진의 첫인상을 살펴보지만 아직 신부감을 고르겠다고 결심하지는 않는다."
         },
         "reality": {
           "title": "수요일 프로젝트 킥오프",
           "summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다."
+        }
+      }
+    },
+    "anchor.day_01_parent_pressure": {
+      "schema_version": 1,
+      "id": "anchor.day_01_parent_pressure",
+      "title": "올해는 사람 좀 만나",
+      "type": "anchor",
+      "lane": "personal",
+      "window": {
+        "days": [
+          1,
+          1
+        ],
+        "slots": [
+          "after_work"
+        ],
+        "deadline_day": 1
+      },
+      "duration": 1,
+      "priority": 100,
+      "availability": "automatic",
+      "completion": "return_to_timeline",
+      "participants": [
+        "han_do_yoon"
+      ],
+      "requires": {
+        "events": [
+          "anchor.day_01_company_meeting"
+        ],
+        "conditions": []
+      },
+      "on_seen": {
+        "effects": []
+      },
+      "on_missed": {
+        "effects": []
+      },
+      "presentation": {
+        "perceived": {
+          "title": "신부감을 찾아볼 때",
+          "summary": "퇴근 후 부모의 결혼 재촉과 칭찬을 듣고, 오전 프로젝트에서 만난 서아와 민경을 연애 후보로 다시 떠올린다."
+        },
+        "reality": {
+          "title": "수요일 저녁의 가족 식사",
+          "summary": "부모는 한도윤의 자존심을 다치지 않으려 외모와 조건을 칭찬하며 사람을 만나보라고 권한다."
         }
       }
     },
@@ -15215,11 +15385,11 @@
       "presentation": {
         "perceived": {
           "title": "보호본능과 차가운 도발",
-          "summary": "발표에서 말이 막힌 서아를 도우며 의존을 받고, 회의를 단호하게 이어 가는 민경에게도 매력을 느낀다."
+          "summary": "발표에서 말이 막힌 서아를 도우고 그녀의 실제 고마움을 연애적 의존으로 확대해 받아들이며, 회의를 단호하게 이어 가는 민경에게도 매력을 느낀다."
         },
         "reality": {
           "title": "발표 파일 실수를 수습한 회의",
-          "summary": "서아는 발표 실수로 당황하고, 민경은 안건을 업무 문제로 돌리며, 유진은 잘못된 파일의 버전과 교체 시각을 기록한다."
+          "summary": "서아는 발표 실수를 도와준 한도윤에게 실제 고마움과 인간적 호감을 표현한다. 민경은 안건을 업무 문제로 돌리고, 유진은 파일 버전과 교체 시각을 기록한다."
         }
       }
     },
@@ -15311,14 +15481,14 @@
         },
         "reality": {
           "title": "업무 외출과 짧은 휴식",
-          "summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 대화 중 주말 예정 장소에 관한 단서가 나온다."
+          "summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 주요 대화 상대와 회사 복귀 후 공용 대화에서 두 사람의 주말 예정 장소가 각각 자연스럽게 드러난다."
         }
       }
     },
     "anchor.day_04_weekend_encounter": {
       "schema_version": 1,
       "id": "anchor.day_04_weekend_encounter",
-      "title": "주말의 우연",
+      "title": "첫 번째 주말의 우연",
       "type": "anchor",
       "lane": "personal",
       "window": {
@@ -15349,19 +15519,19 @@
       },
       "presentation": {
         "perceived": {
-          "title": "우연을 기다리는 사람",
-          "summary": "회사에서 들은 주말 계획을 기억하고 장소를 선택한 뒤 서아나 민경과 마주치며, 이를 운명적인 호감의 시작으로 받아들인다."
+          "title": "첫 번째로 이어진 운명",
+          "summary": "현재 공략 우선 판정이 높은 한 사람과 주말 장소에서 마주치고, 작별 인사에 덧붙은 한 구절을 다시 만나고 싶다는 신호로 받아들인다."
         },
         "reality": {
-          "title": "우연인지 의심하게 된 주말 조우",
-          "summary": "여성은 전날 자신이 장소를 말했는지 떠올리며 한도윤의 방문이 우연인지 처음으로 의심한다. 한 회차에서는 한 명과만 조우한다."
+          "title": "동료와 마주친 한 번의 우연",
+          "summary": "토요일에는 서아와 민경 중 한 명과만 만난다. 상대는 공공장소에서 동료와 마주친 우연으로 받아들이며 아직 의도적 접근을 의심하지 않는다."
         }
       }
     },
     "anchor.day_05_weekend_reflection": {
       "schema_version": 1,
       "id": "anchor.day_05_weekend_reflection",
-      "title": "서로 다른 확신",
+      "title": "두 번째 주말의 우연",
       "type": "anchor",
       "lane": "personal",
       "window": {
@@ -15370,7 +15540,7 @@
           5
         ],
         "slots": [
-          "after_work"
+          "afternoon"
         ],
         "deadline_day": 5
       },
@@ -15392,12 +15562,12 @@
       },
       "presentation": {
         "perceived": {
-          "title": "마음이 가는 사람",
-          "summary": "부모의 연락을 받고 주말에 만난 여성을 떠올리며, 둘 사이에 진짜 호감이 시작됐다고 확신한다."
+          "title": "두 번째로 이어진 운명",
+          "summary": "토요일에 만나지 않은 다른 한 사람과 일요일에 마주치고, 서아와 민경 모두가 자신을 다시 보고 싶어 한다고 확신한다."
         },
         "reality": {
-          "title": "첫 의심의 여운",
-          "summary": "주말에 만난 여성은 동료에게 조우가 정말 우연인지 확인하고, 한도윤은 다음 주부터 본격적으로 공략할 상대를 정한다."
+          "title": "서로 연결되지 않은 두 번의 우연",
+          "summary": "토요일과 일요일에 서아와 민경이 한 명씩 한도윤과 마주친다. 두 사람은 각자의 조우를 평범한 우연으로 받아들이며 아직 서로의 경험을 연결하거나 한도윤을 의심하지 않는다."
         }
       }
     },

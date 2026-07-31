@@ -441,7 +441,7 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual(5, result["combo"])
         self.assertEqual({"suspicion": 7, "dislike": 4, "evidence_count": 1}, result["hidden_delta"])
         hidden = state["hidden"]["heroines"]["yoon_seo_a"]
-        self.assertEqual(12, hidden["suspicion"])
+        self.assertEqual(7, hidden["suspicion"])
         self.assertEqual(4, hidden["dislike"])
         self.assertEqual(1, hidden["evidence_count"])
 
@@ -475,11 +475,26 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertIn("kang_yoo_jin", base_lanes)
         self.assertIn("kang_yoo_jin", bundle["initial_state"]["visible"]["heroines"])
         self.assertIn("kang_yoo_jin", bundle["initial_state"]["hidden"]["heroines"])
+        self.assertEqual(0, bundle["initial_state"]["hidden"]["heroines"]["yoon_seo_a"]["suspicion"])
+        self.assertEqual(0, bundle["initial_state"]["hidden"]["heroines"]["cha_min_kyung"]["suspicion"])
         self.assertIn(
             "kang_yoo_jin",
             bundle["events"]["anchor.day_01_company_meeting"]["participants"],
         )
-        self.assertEqual(23, len(bundle["events"]))
+        self.assertEqual(24, len(bundle["events"]))
+        parent_pressure = bundle["events"]["anchor.day_01_parent_pressure"]
+        self.assertEqual([1, 1], parent_pressure["window"]["days"])
+        self.assertEqual(["after_work"], parent_pressure["window"]["slots"])
+        self.assertEqual(
+            ["anchor.day_01_company_meeting"],
+            parent_pressure["requires"]["events"],
+        )
+        second_weekend_encounter = bundle["events"]["anchor.day_05_weekend_reflection"]
+        self.assertEqual(["afternoon"], second_weekend_encounter["window"]["slots"])
+        self.assertEqual(
+            ["anchor.day_04_weekend_encounter"],
+            second_weekend_encounter["requires"]["events"],
+        )
         self.assertEqual({"seo_a", "min_kyung"}, set(bundle["threads"]))
         self.assertIn("unlocks", bundle["meta"])
         reveals = bundle["meta"]["unlocks"]["mode_teasers"][0]["reveals"]
@@ -590,7 +605,7 @@ class StoryHarnessTests(unittest.TestCase):
         ).run(stop_before_scene="seo_a.relief_smile")
         self.assertEqual("seo_a.relief_smile", result["stopped_at"])
         context = self.project.context_package("seo_a.relief_smile", result["final_state"])
-        self.assertEqual(25, context["state_snapshot"]["hidden.heroines.yoon_seo_a.suspicion"])
+        self.assertEqual(20, context["state_snapshot"]["hidden.heroines.yoon_seo_a.suspicion"])
         self.assertEqual("anxiety", context["derived_emotions"]["yoon_seo_a"]["emotion"])
 
 

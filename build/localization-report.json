@@ -1,20 +1,20 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-07-31T08:32:52.009603+00:00",
-  "source_sha256": "bc5ce0e47a9a1771b28f4d0797a8e5458e14333d83192b182e33e258245aab9b",
+  "generated_at": "2026-07-31T11:38:02.543184+00:00",
+  "source_sha256": "16329e42ba93bc6688abe6b02dc4268eeab60e2d3b63d27a6c85d9445dc454e4",
   "profile": "development",
   "default_locale": "ko",
   "supported_locales": [
     "ko",
     "en"
   ],
-  "total_entries": 579,
+  "total_entries": 584,
   "coverage": {
     "ko": {
-      "direct": 579,
-      "resolved": 579,
-      "translated": 579,
-      "total": 579,
+      "direct": 584,
+      "resolved": 584,
+      "translated": 584,
+      "total": 584,
       "ratio": 1.0,
       "fallback_used": [],
       "missing": [],
@@ -35,8 +35,8 @@
           "total": 40
         },
         "event": {
-          "direct": 115,
-          "total": 115
+          "direct": 120,
+          "total": 120
         },
         "locale": {
           "direct": 4,
@@ -66,10 +66,10 @@
     },
     "en": {
       "direct": 186,
-      "resolved": 579,
+      "resolved": 584,
       "translated": 186,
-      "total": 579,
-      "ratio": 0.3212,
+      "total": 584,
+      "ratio": 0.3185,
       "fallback_used": [
         "campaign.main.acts.collisions.purpose",
         "campaign.main.acts.crisis.purpose",
@@ -121,6 +121,11 @@
         "events.anchor.day_01_company_meeting.presentation.reality.summary",
         "events.anchor.day_01_company_meeting.presentation.reality.title",
         "events.anchor.day_01_company_meeting.title",
+        "events.anchor.day_01_parent_pressure.presentation.perceived.summary",
+        "events.anchor.day_01_parent_pressure.presentation.perceived.title",
+        "events.anchor.day_01_parent_pressure.presentation.reality.summary",
+        "events.anchor.day_01_parent_pressure.presentation.reality.title",
+        "events.anchor.day_01_parent_pressure.title",
         "events.anchor.day_02_practical_meeting.presentation.perceived.summary",
         "events.anchor.day_02_practical_meeting.presentation.perceived.title",
         "events.anchor.day_02_practical_meeting.presentation.reality.summary",
@@ -516,6 +521,11 @@
         "events.anchor.day_01_company_meeting.presentation.reality.summary",
         "events.anchor.day_01_company_meeting.presentation.reality.title",
         "events.anchor.day_01_company_meeting.title",
+        "events.anchor.day_01_parent_pressure.presentation.perceived.summary",
+        "events.anchor.day_01_parent_pressure.presentation.perceived.title",
+        "events.anchor.day_01_parent_pressure.presentation.reality.summary",
+        "events.anchor.day_01_parent_pressure.presentation.reality.title",
+        "events.anchor.day_01_parent_pressure.title",
         "events.anchor.day_02_practical_meeting.presentation.perceived.summary",
         "events.anchor.day_02_practical_meeting.presentation.perceived.title",
         "events.anchor.day_02_practical_meeting.presentation.reality.summary",
@@ -878,7 +888,7 @@
         },
         "event": {
           "direct": 2,
-          "total": 115
+          "total": 120
         },
         "locale": {
           "direct": 2,

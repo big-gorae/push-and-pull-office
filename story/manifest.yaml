@@ -122,11 +122,11 @@ initial_state:
   hidden:
     heroines:
       yoon_seo_a:
-        suspicion: 5
+        suspicion: 0
         dislike: 0
         evidence_count: 0
       cha_min_kyung:
-        suspicion: 20
+        suspicion: 0
         dislike: 10
         evidence_count: 0
       kang_yoo_jin:
