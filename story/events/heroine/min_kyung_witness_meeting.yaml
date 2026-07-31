@@ -16,7 +16,9 @@ scene: min_kyung.witness_meeting
 requires:
   events: [min_kyung.explicit_boundary]
   conditions: []
-on_seen: {effects: []}
+on_seen:
+  effects:
+    - {path: progress.flags.story_mode.target, op: set, value: cha_min_kyung}
 on_missed: {effects: []}
 presentation:
   perceived:
@@ -25,4 +27,3 @@ presentation:
   reality:
     title: 목격자를 둔 공식 회의
     summary: 민경은 단둘이 남지 않고 대화 내용이 회의록에 남도록 준비한다.
-

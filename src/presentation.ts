@@ -12,6 +12,13 @@ import type {
   VisualObject,
 } from "./types";
 
+export type MessageVariables = Record<string, string | number>;
+
+function interpolate(message: string, variables: MessageVariables): string {
+  return message.replace(/\{\{\s*([a-zA-Z_][a-zA-Z0-9_.-]*)\s*\}\}/g, (_, key: string) =>
+    String(variables[key] ?? `{{${key}}}`));
+}
+
 /** Resolves translated copy while preserving the Korean authoring source as fallback. */
 export class LocalizationService {
   readonly locale: LocaleId;
@@ -23,15 +30,29 @@ export class LocalizationService {
       : runtime.localization.default_locale;
   }
 
-  t(key: string, fallback = ""): string {
-    return this.runtime.localization.catalogs[this.locale]?.[key]
+  t(key: string, fallbackOrVariables: string | MessageVariables = "", variables: MessageVariables = {}): string {
+    const fallback = typeof fallbackOrVariables === "string" ? fallbackOrVariables : "";
+    const resolvedVariables = typeof fallbackOrVariables === "string" ? variables : fallbackOrVariables;
+    const value = this.runtime.localization.resolved_catalogs?.[this.locale]?.[key]
+      || this.runtime.localization.catalogs[this.locale]?.[key]
       || this.runtime.localization.source_strings[key]
       || fallback
       || key;
+    return interpolate(value, resolvedVariables);
+  }
+
+  hasDirect(key: string): boolean {
+    return this.locale === this.runtime.localization.default_locale
+      ? Boolean(this.runtime.localization.entries?.[key])
+      : Boolean(this.runtime.localization.direct_catalogs?.[this.locale]?.[key]);
+  }
+
+  entry(key: string) {
+    return this.runtime.localization.entries?.[key];
   }
 
   isTranslated(key: string): boolean {
-    return !this.runtime.localization.coverage[this.locale]?.missing.includes(key);
+    return this.hasDirect(key);
   }
 
   coverage() {
@@ -116,8 +137,8 @@ export class VisualResolver {
     };
   }
 
-  resolveStage(scene: Scene, nodeId: string, mode: ViewMode): ResolvedStage {
-    const node = scene.nodes[nodeId];
+  resolveStage(scene: Scene, nodeId: string, mode: ViewMode, nodeOverride?: StoryNode): ResolvedStage {
+    const node = nodeOverride || scene.nodes[nodeId];
     const layer = layerFor(node, mode);
     const positions = stagePositions(scene.cast.length);
     const characters = scene.cast.flatMap((characterId, index) => {

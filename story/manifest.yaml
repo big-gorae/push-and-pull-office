@@ -1,7 +1,7 @@
 schema_version: 1
 project:
   id: love_office_story_1
-  title: 호의의 해석
+  title: 밀당 오피스 - 초필살 다크 스킬로 그녀의 마음을 캐에에에에엣치 존잘 중년 이야기
   default_language: ko
   supported_languages: [ko, en]
 
@@ -13,7 +13,7 @@ enums:
   event_type: [anchor, heroine, company, offscreen, ending]
   event_availability: [automatic, player, hidden]
   event_completion: [return_to_timeline, honor_scene_exit]
-  presentation_flag: [original_text_lock, ui_glitch, ui_label_reveal, auditory_distortion]
+  presentation_flag: [original_text_lock, ui_glitch, ui_label_reveal, auditory_distortion, romance_insert]
   visual_kind: [background_archetype, background, character_archetype, character]
   render_strategy: [flat_portrait, layered_sprite, background]
   stage_position: [far_left, left, center, right, far_right]
@@ -74,7 +74,7 @@ stats:
   progress.time.day:
     type: integer
     min: 1
-    max: 15
+    max: 17
     description: 현재 캠페인 날짜
   progress.time.act:
     type: integer
@@ -145,9 +145,21 @@ initial_state:
     memories: []
     cleared_routes: []
     unlocked_modes: [base]
-    flags: {}
+    flags:
+      push_pull:
+        combo: 0
+        position: 0
+        target: none
+        last_action: none
+        heroine: ""
+      story_mode:
+        target: none
+        final_interpretation: undecided
+        home_incident: none
+        yoo_jin_intervention: false
 
 files:
+  ui: ui.yaml
   campaigns: campaigns/*.yaml
   characters: characters/*.yaml
   events: events/**/*.yaml
@@ -157,6 +169,26 @@ files:
   meta: meta/*.yaml
   routes: routes/*.yaml
   scenes: scenes/**/*.yaml
+
+localization_quality:
+  required_accessibility_keys:
+    - app.title
+    - locale.label
+    - menu.main
+    - menu.close
+    - hud.gameMenu
+    - menu.game
+  profiles:
+    development:
+      missing_translation: ignore
+      identical_translation: ignore
+      maximum_length: ignore
+    release:
+      missing_translation: warning
+      required_locales:
+        en:
+          minimum_direct_ratio: 1.0
+          required_domains: [ui]
 
 build:
   runtime_output: build/story-runtime.json

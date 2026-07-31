@@ -8,6 +8,7 @@ duration: 1
 priority: 100
 availability: automatic
 completion: return_to_timeline
+participants: [han_do_yoon, yoon_seo_a, cha_min_kyung, kang_yoo_jin]
 requires: {events: [], conditions: []}
 on_seen: {effects: []}
 on_missed: {effects: []}
@@ -17,4 +18,4 @@ presentation:
     summary: 부모의 결혼 독촉을 떠올리며 프로젝트에 합류한 여러 여성의 첫인상을 살펴본다.
   reality:
     title: 수요일 프로젝트 킥오프
-    summary: 서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 업무적으로 검토한다.
+    summary: 서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.

@@ -127,12 +127,42 @@ def unique(values: Iterable[str]) -> List[str]:
     return result
 
 
+def push_pull_heroine(scene: Mapping[str, Any]) -> str | None:
+    candidates = []
+    contract = scene.get("state_contract", {})
+    if isinstance(contract, Mapping):
+        candidates.extend(contract.get("writes", []))
+    candidates.extend(walk_effects(scene.get("nodes", [])))
+    for path in candidates:
+        match = re.match(r"^(?:visible|hidden)\.heroines\.([a-z][a-z0-9_]*)\.", str(path))
+        if match:
+            return match.group(1)
+    return None
+
+
 def derive_state_contract(scene: MutableMapping[str, Any]) -> None:
     reads = unique(walk_conditions({
         "entry_conditions": scene.get("entry_conditions", []),
         "nodes": scene.get("nodes", []),
     }))
     writes = unique(walk_effects(scene.get("nodes", [])))
+    uses_push_pull = any(
+        isinstance(option, Mapping) and isinstance(option.get("push_pull"), Mapping)
+        for node in scene.get("nodes", [])
+        if isinstance(node, Mapping)
+        for option in node.get("options", [])
+    )
+    heroine = push_pull_heroine(scene) if uses_push_pull else None
+    if heroine:
+        reads = unique([*reads, "progress.flags.push_pull"])
+        writes = unique([
+            *writes,
+            "progress.flags.push_pull",
+            f"visible.heroines.{heroine}.initiative",
+            f"hidden.heroines.{heroine}.suspicion",
+            f"hidden.heroines.{heroine}.dislike",
+            f"hidden.heroines.{heroine}.evidence_count",
+        ])
     scene["state_contract"] = {"reads": reads, "writes": writes}
 
 

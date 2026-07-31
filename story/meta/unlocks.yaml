@@ -1,5 +1,9 @@
 schema_version: 1
 id: unlocks
+mode_labels:
+  base: 스토리 모드
+  truth_view: 원문 모드
+  survivor_view: 생존 모드
 unlock_rules:
   - id: revelation_after_seo_a
     mode: truth_view
@@ -13,12 +17,12 @@ unlock_rules:
       - {path: progress.cleared_routes, op: contains, value: min_kyung}
   - id: survival_after_seo_a
     mode: survivor_view
-    reward: 첫 번째 루트 클리어 보상으로 피해자 시점에서 증거를 모으고 살아남는 생존 모드를 연다.
+    reward: 첫 번째 루트 클리어 보상으로 평행세계의 피해자 시점에서 증거를 모으고 살아남는 생존 모드를 연다.
     conditions:
       - {path: progress.cleared_routes, op: contains, value: seo_a}
   - id: survival_after_min_kyung
     mode: survivor_view
-    reward: 첫 번째 루트 클리어 보상으로 피해자 시점에서 증거를 모으고 살아남는 생존 모드를 연다.
+    reward: 첫 번째 루트 클리어 보상으로 평행세계의 피해자 시점에서 증거를 모으고 살아남는 생존 모드를 연다.
     conditions:
       - {path: progress.cleared_routes, op: contains, value: min_kyung}
 mode_teasers:
@@ -37,13 +41,14 @@ survival_mode:
   playable_character:
     status: undecided
   objective: 지속적으로 공격적인 한도윤을 최대한 자극하지 않으면서, 그가 스스로 남기는 물리적 증거를 보존·연결하고 살아남는다.
-  timeline_replay:
-    source: base_campaign
-    same_days: true
-    same_core_events: true
-    preserve_factual_continuity: true
-    perspective: reality
-    reveal_omitted_victim_experience: true
+  continuity:
+    type: parallel_world
+    reference_campaign: main
+    shares_starting_premise: true
+    may_reuse_date_motifs: true
+    same_core_events_required: false
+    preserve_base_outcome: true
+    acts_as_base_truth_view: false
   antagonist_stance:
     starts_aggressive: true
     remains_aggressive: true

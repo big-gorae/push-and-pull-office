@@ -33,20 +33,36 @@ progress:
   memories: []
   cleared_routes: []
   unlocked_modes: [base]
-  flags: {}
+  flags:
+    push_pull:
+      combo: 0
+      position: 0
+      target: none
+      last_action: none
+      heroine: ""
 ```
 
 - `visible`: 플레이어와 주인공이 보는 값
-- `hidden`: 본편에서 감춰지는 실제 상태
+- `hidden`: 스토리 모드에서 감춰지는 실제 상태
 - `progress`: 현재 시간, 본·놓친 사건, 회차 기억, 루트 완료와 모드 해금
+
+스토리 모드 UI가 표시하는 관계 정보는 `visible.heroines.<id>.initiative`, `progress.flags.push_pull.combo`, `progress.flags.push_pull.position`과 `progress.flags.push_pull.target`이다. 각각 `밀당 주도권`, `x1~x5`의 순간 콤보, 숫자를 숨긴 `당기기↔밀기` 연속 위치와 현재 활성 득점선으로 표시한다. 최초 엔딩 이후 라벨은 `통제 욕구`, `통제 시도 연쇄`와 `접근 시도/거리 둠`으로 바뀐다.
+
+`position`은 `-100~100` 범위이며 음수는 당기기, 양수는 밀기다. 기본 적정 범위는 `-40~40`, 득점선은 `-32`와 `32`다. 한 선택의 기본 이동량은 12이며 장면 강도에 따라 `8~16`에서 조정한다. `target`은 `pull`, `push`, `none` 중 하나다.
+
+`affection`과 `perceived_state`는 기존 장면·세이브 호환을 위해 상태 모델에 남아 있지만 신규 장면 조건이나 UI에는 사용하지 않는다. 콤보가 이어질 때는 원래 장면 효과와 별도로 반복 패턴 인식에 따른 숨은 효과를 적용할 수 있다.
 
 감정은 별도 게이지로 만들지 않는다. 각 인물의 `emotion_rules`가 의심도·비호감도 구간을 표정, 속마음, 행동 경향으로 변환한다.
 
 `survivor_view`는 유저에게 `생존 모드`로 표시하는 안정 ID다. 서아나 민경 루트의 엔딩을 하나라도 보면 해금한다. 플레이어 캐릭터는 후속 결정 전까지 스토리 데이터에 고정하지 않는다.
 
-생존 모드는 본편과 동일한 날짜·시간대·핵심 사건을 `reality` 시점으로 다시 진행한다. 들리는 대사와 사건의 핵심 사실은 본편과 모순되지 않아야 하며, 본편에서 순화되거나 누락된 한도윤의 공격적 태도와 피해자만 겪은 맥락을 추가로 드러낸다.
+생존 모드는 스토리 모드의 실제 시간선이나 후일담이 아니라 별도의 평행세계 캠페인이다. 스토리 모드와 같은 출발 상황, 날짜 모티프와 한도윤의 행동 패턴을 재사용해 첫 플레이와 공감대를 만들 수 있지만, 피해자의 선택에 따라 사건의 순서·내용과 결말은 스토리 모드에서 독립적으로 갈라질 수 있다. 스토리 모드 장면의 객관적 진실은 `truth_view`가 담당하며, `survivor_view`의 사건을 스토리 모드에서 누락된 사실로 소급하지 않는다.
 
 한도윤의 지속적 공격성은 피해자의 선택 결과가 아니다. 플레이어는 한도윤을 최대한 자극하지 않는 동시에 이미 벌어지는 행동의 물리적 증거를 확보·보존해야 한다. 증거를 위해 폭력을 직접 유도하는 선택은 작성하지 않는다.
+
+스토리 모드의 파국은 생존 모드에서 대신 설명하지 않는다. 스토리 모드 엔딩 안에서 사건의 발생과 즉각적인 결과를 플레이어가 실제로 확인할 수 있어야 한다. 다만 범죄의 세부 방법은 재현하지 않고 피해, 부재, 남은 기록과 주변인의 반응을 중심으로 연출한다.
+
+강유진은 스토리 모드와 `truth_view`에 계속 등장하는 비공략 조연이다. 사실관계를 확인하고 다른 인물의 이상 징후를 알아차릴 수는 있지만, 기본 결말에서 갑자기 모든 증거를 완성하거나 피해자를 구해 파국을 취소하는 해결사로 기능해서는 안 된다. 한도윤이 유진을 직접 사건 당사자로 끌어들인 특수 엔딩 `공략 불가`에서만 공식 대응한다. 생존 모드에서의 플레이어·조력자·조연 역할은 별도로 결정한다.
 
 삭제된 `collapse` 모드는 해금 값·루트·사건에서 사용하지 않는다.
 
@@ -80,7 +96,7 @@ path: hidden.heroines.yoon_seo_a.suspicion
 campaign → day → slot → eligible event → scene → node
 ```
 
-- 기본 캠페인은 15일이며 `morning`, `lunch`, `afternoon`, `after_work` 네 시간대를 사용한다.
+- 기본 캠페인은 17일이며 `morning`, `lunch`, `afternoon`, `after_work` 네 시간대를 사용한다.
 - 오전·오후는 고정 업무 사건, 점심·퇴근 후는 플레이어 선택 사건을 중심으로 배치한다.
 - 루트는 처음 선택하는 선형 경로가 아니라 플레이 결과를 엔딩·해금 단위로 분류하는 메타데이터다.
 - 날짜별 파일을 만들지 않는다. 이벤트가 `[시작일, 종료일]`, 허용 시간대와 마감을 가진다.
@@ -171,8 +187,27 @@ reality:
 - `reality.line`은 객관적으로 발화된 문장이다. 특별한 환청·기억 왜곡 연출이 아니라면 `perceived.line`도 핵심 사실관계를 유지한다.
 - `protagonist_interpretation`은 사실이 아니라 주인공의 해석이다.
 - `inner_thought`와 `intent`는 실제 인물의 상태다.
-- 원문 모드에서는 `reality`를 표시하고, 본편에서는 `perceived`를 표시한다.
+- 원문 모드에서는 `reality`를 표시하고, 스토리 모드에서는 `perceived`를 표시한다.
 - 표정 ID는 화자의 인물 파일에 등록되어야 한다.
+
+### `romance_insert`
+
+`romance_insert`는 한도윤이 실제 대사 끝에 없었던 짧은 한 구절을 덧붙여 기억하는 제한적 예외다.
+
+```yaml
+presentation_flags: [romance_insert]
+perceived:
+  line: "월요일에 뵙겠습니다. 다음에 또 뵈어요."
+reality:
+  line: "월요일에 뵙겠습니다."
+```
+
+- 한 노드에서 실제와 달라지는 부분은 한 문장 또는 한 절이어야 한다.
+- 실제 사건, 선택 결과와 상태 변화는 `reality`와 `effects`를 따른다.
+- 일반적인 호감 해석, 표정 미화와 따뜻한 분위기에는 이 플래그를 쓰지 않는다.
+- 스토리 모드 렌더러는 이 플래그에 고정된 펄 프레임을 적용하고, 원문 모드는 효과 없이 `reality.line`만 표시한다.
+- 제작용 플래그 이름은 플레이어 UI와 도움말에 노출하지 않는다.
+- 스토리 1의 배치와 시각값은 `docs/story-1-romance-insert.md`를 원문으로 삼는다.
 
 ## 9. 선택지
 
@@ -181,11 +216,12 @@ reality:
   label: "나도 며칠 거리를 둔다"
   interpretation: "그녀의 밀기에 맞춰 긴장감을 유지한다."
   action: "사적인 접근을 사흘 중단한다."
+  push_pull:
+    action: space
+    intensity: 12
+    base_score: 4
   conditions: []
   effects:
-    - path: visible.heroines.yoon_seo_a.affection
-      op: add
-      value: 8
     - path: hidden.heroines.yoon_seo_a.suspicion
       op: add
       value: -12
@@ -193,6 +229,8 @@ reality:
 ```
 
 `label`은 플레이어가 보는 선택지, `interpretation`은 주인공이 믿는 의미, `action`은 객관적으로 발생하는 행동이다. 세 필드를 섞지 않는다.
+
+`push_pull`은 제작·런타임 전용 분류이며 선택지 화면에는 노출하지 않는다. `action`은 `approach`, `space`, `literal`, `intensity`는 `8~16`, `base_score`는 `2~5`를 사용한다. 런타임은 장면의 일반 `effects`를 먼저 적용한 뒤 이 메타데이터로 위치, 콤보, 득점선, 주도권과 반복 패턴 효과를 계산한다. 장면 효과에서 `affection`, `perceived_state`, `initiative`를 수동으로 변경하지 않는다.
 
 ## 10. 전이 우선순위
 
@@ -217,8 +255,13 @@ transitions:
 state_contract:
   reads:
     - hidden.heroines.yoon_seo_a.suspicion
+    - progress.flags.push_pull
   writes:
-    - visible.heroines.yoon_seo_a.affection
+    - visible.heroines.yoon_seo_a.initiative
+    - hidden.heroines.yoon_seo_a.suspicion
+    - hidden.heroines.yoon_seo_a.dislike
+    - hidden.heroines.yoon_seo_a.evidence_count
+    - progress.flags.push_pull
 ```
 
 하네스는 조건에서 읽는 경로와 효과에서 쓰는 경로가 계약에 없으면 오류로 처리한다. 이 계약은 게임 코드의 의존성과 AI 컨텍스트를 동시에 제한한다.
@@ -244,12 +287,13 @@ emotion_rules:
 
 ## 13. 다국어 문자열
 
-한국어 장면 YAML은 기본 언어의 소스 오브 트루스다. 빌드는 인물·이벤트·장면의 표시 문자열을 안정적인 키로 수집하고 `locales/<locale>.yaml`의 번역을 덮어쓴다.
+한국어 장면 YAML과 `story/ui.yaml`은 기본 언어의 소스 오브 트루스다. 빌드는 인물·이벤트·장면·UI 표시 문자열을 출처 메타데이터가 있는 안정 키 레지스트리로 수집하고 `locales/<locale>.yaml`의 번역을 덮어쓴다.
 
 ```yaml
 schema_version: 1
 id: en
 name: English
+native_name: English
 fallback: ko
 strings:
   scenes.seo_a.email_request.title: Send It by Email
@@ -258,7 +302,10 @@ strings:
 
 - 키는 `scenes.<scene_id>.nodes.<node_id>...`처럼 배포 후 유지되는 ID로 만든다.
 - 번역이 없으면 locale의 `fallback`, 마지막에는 기본 한국어 원문으로 되돌아간다.
-- 런타임의 `localization.coverage`는 직접 번역 수, 전체 키와 누락 키를 제공한다.
+- 런타임의 `localization.entries`, `direct_catalogs`, `resolved_catalogs`, `coverage`는 출처, 직접 번역, fallback 결과와 도메인별 누락을 제공한다.
+- locale YAML의 중복 키, 고아 키, 원문과 다른 `{{placeholder}}` 집합은 빌드 오류다.
+- 비주얼 제목과 locale 이름도 원본 문서에서 같은 레지스트리로 수집한다.
+- 개발·릴리스 profile은 번역 누락, 동일 번역, 권장 길이와 필수 UI 도메인 coverage를 서로 다른 강도로 검사한다.
 - 표시 언어는 세이브 상태가 아니라 사용자 설정으로 보관한다.
 
 ## 14. 비주얼 객체와 상속
@@ -296,7 +343,8 @@ variants:
 `build` 명령은 YAML을 하나의 JSON으로 합친다.
 
 - 캠페인, 이벤트, 스레드, 메타, 캐릭터, 비주얼 객체, 루트와 장면을 ID 맵으로 변환
-- locale fallback을 해석한 문자열 카탈로그와 번역 coverage 포함
+- UI를 포함한 단일 문자열 레지스트리, locale fallback 카탈로그와 번역 coverage 포함
+- 별도 `build/localization-report.json` 생성
 - visual 상속을 해석한 구체 객체와 자산 경로 포함
 - 원본 파일 위치를 `_source`에 기록
 - manifest 초기 상태와 수치 정의 포함

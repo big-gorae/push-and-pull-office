@@ -10,6 +10,7 @@ import {
   inspectTimelineEvent,
   setPath,
 } from "./storyLogic";
+import { breakPushPullFlow, readPushPullState, writePushPullState, type PushPullTarget } from "./pushPull";
 import type {
   ProjectPayload,
   DocumentActivity,
@@ -66,9 +67,9 @@ type Props = {
   onDocumentActivity: (activity: DocumentActivity) => void;
 };
 
-function timelineStatus(event: TimelineEvent, state: RuntimeState, day: number) {
+function timelineStatus(runtime: Runtime, event: TimelineEvent, state: RuntimeState, day: number) {
   const slot = event.window.slots[0];
-  return inspectTimelineEvent(event, state, day, slot);
+  return inspectTimelineEvent(runtime, event, state, day, slot);
 }
 
 export default function TimelineEditor({
@@ -111,7 +112,7 @@ export default function TimelineEditor({
   const lanes = campaign.lanes.filter((lane) => mode === "reality" || lane.kind !== "truth");
   const act = campaign.acts.find((item) => selectedDay >= item.days[0] && selectedDay <= item.days[1]);
   const selectedEvent = selectedEventId ? runtime.events[selectedEventId] : undefined;
-  const verdict = selectedEvent ? inspectTimelineEvent(selectedEvent, state, selectedDay, selectedSlot) : undefined;
+  const verdict = selectedEvent ? inspectTimelineEvent(runtime, selectedEvent, state, selectedDay, selectedSlot) : undefined;
   const modeIds = useMemo(() => Array.from(new Set([
     ...state.progress.unlocked_modes,
     ...Object.values(runtime.meta).flatMap((document) => document.unlock_rules.map((rule) => rule.mode)),
@@ -292,7 +293,7 @@ export default function TimelineEditor({
     if (!selectedEvent) return;
     const eventDay = Math.max(selectedEvent.window.days[0], Math.min(selectedDay, selectedEvent.window.days[1]));
     const eventSlot = selectedEvent.window.slots.includes(selectedSlot) ? selectedSlot : selectedEvent.window.slots[0];
-    const check = inspectTimelineEvent(selectedEvent, state, eventDay, eventSlot);
+    const check = inspectTimelineEvent(runtime, selectedEvent, state, eventDay, eventSlot);
     if (!check.eligible) {
       onStatus(`사건을 실행할 수 없습니다: ${check.reasons.join(" / ")}`);
       return;
@@ -318,9 +319,10 @@ export default function TimelineEditor({
       if (!next.progress.events.expired.includes(event.id)) next.progress.events.expired.push(event.id);
       missedCount += 1;
     });
+    if (missedCount > 0) breakPushPullFlow(next);
     const candidates = Object.values(runtime.events)
       .filter((event) => ["automatic", "hidden"].includes(event.availability))
-      .filter((event) => inspectTimelineEvent(event, next, selectedDay, selectedSlot).eligible)
+      .filter((event) => inspectTimelineEvent(runtime, event, next, selectedDay, selectedSlot).eligible)
       .sort((a, b) => b.priority - a.priority);
     const occupied = new Set<string>();
     let automaticCount = 0;
@@ -332,7 +334,7 @@ export default function TimelineEditor({
       automaticCount += 1;
     });
     onState(next);
-    const playerCount = Object.values(runtime.events).filter((event) => event.availability === "player" && inspectTimelineEvent(event, next, selectedDay, selectedSlot).eligible).length;
+    const playerCount = Object.values(runtime.events).filter((event) => event.availability === "player" && inspectTimelineEvent(runtime, event, next, selectedDay, selectedSlot).eligible).length;
     onStatus(`${selectedDay}일 ${SLOT_LABELS[selectedSlot]} 실행 · 자동 ${automaticCount}개 · 선택 가능 ${playerCount}개 · 만료 ${missedCount}개`);
   };
 
@@ -340,6 +342,12 @@ export default function TimelineEditor({
     const next = clone(state);
     const target = next[section].heroines[heroineId] as unknown as Record<string, number | string>;
     target[key] = value;
+    onState(next);
+  };
+
+  const updateRhythm = (patch: { position?: number; combo?: number; target?: PushPullTarget }) => {
+    const next = clone(state);
+    writePushPullState(next, { ...readPushPullState(next), ...patch });
     onState(next);
   };
 
@@ -352,6 +360,7 @@ export default function TimelineEditor({
 
   const visible = state.visible.heroines[heroineId];
   const hidden = state.hidden.heroines[heroineId];
+  const rhythmState = readPushPullState(state);
 
   return <div className="timeline-shell">
     <section className="timeline-main">
@@ -383,7 +392,7 @@ export default function TimelineEditor({
           <div className={`lane-label ${lane.kind}`}><strong>{lane.title}</strong><small>{lane.kind === "truth" ? "클리어 후 공개" : lane.kind === "world" ? "고정 사건" : "인물 스레드"}</small></div>
           {days.map((day) => <div className={day === selectedDay ? "timeline-cell selected" : "timeline-cell"} key={`${lane.id}-${day}`}>
             {eventsForDay(runtime.events, day).filter((event) => event.lane === lane.id).map((event) => {
-              const check = timelineStatus(event, state, day);
+              const check = timelineStatus(runtime, event, state, day);
               const presentation = event.presentation[mode];
               return <button
                 type="button"
@@ -424,9 +433,10 @@ export default function TimelineEditor({
       <div className="inspector-section heroine-state">
         <div className="inspector-heading"><div><p className="eyebrow">STATE</p><h3>인물 수치</h3></div></div>
         <select value={heroineId} onChange={(event) => setHeroineId(event.target.value)}>{Object.keys(runtime.initial_state.visible.heroines).map((id) => <option value={id} key={id}>{runtime.characters[id]?.display_name || id}</option>)}</select>
-        <label><span>호감도 <strong>{visible.affection}</strong></span><input type="range" min="0" max="100" value={visible.affection} onChange={(event) => updateHeroine("visible", "affection", Number(event.target.value))} /></label>
         <label><span>밀당 주도권 <strong>{visible.initiative}</strong></span><input type="range" min="0" max="100" value={visible.initiative} onChange={(event) => updateHeroine("visible", "initiative", Number(event.target.value))} /></label>
-        <label><span>현재 해석</span><select value={visible.perceived_state} onChange={(event) => updateHeroine("visible", "perceived_state", event.target.value)}><option value="push">밀기</option><option value="pull">당기기</option><option value="neutral">중립</option></select></label>
+        <label><span>리듬 위치 <strong>{rhythmState.position}</strong></span><input type="range" min="-100" max="100" value={rhythmState.position} onChange={(event) => updateRhythm({ position: Number(event.target.value) })} /></label>
+        <label><span>콤보 <strong>x{rhythmState.combo}</strong></span><input type="range" min="0" max="5" value={rhythmState.combo} onChange={(event) => updateRhythm({ combo: Number(event.target.value) })} /></label>
+        <label><span>활성 득점선</span><select value={rhythmState.target} onChange={(event) => updateRhythm({ target: event.target.value as PushPullTarget })}><option value="pull">당기기</option><option value="push">밀기</option><option value="none">첫 방향 대기</option></select></label>
         <label><span>의심도 <strong>{hidden.suspicion}</strong></span><input type="range" min="0" max="100" value={hidden.suspicion} onChange={(event) => updateHeroine("hidden", "suspicion", Number(event.target.value))} /></label>
         <label><span>비호감 <strong>{hidden.dislike}</strong></span><input type="range" min="0" max="100" value={hidden.dislike} onChange={(event) => updateHeroine("hidden", "dislike", Number(event.target.value))} /></label>
         <label><span>물리적 증거 <strong>{hidden.evidence_count}</strong></span><input type="range" min="0" max="10" value={hidden.evidence_count} onChange={(event) => updateHeroine("hidden", "evidence_count", Number(event.target.value))} /></label>

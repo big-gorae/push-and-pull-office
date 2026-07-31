@@ -3,7 +3,9 @@ id: character.yoon_seo_a
 kind: character
 extends: archetype.character_bust
 title_key: visual.character.yoon_seo_a.title
+title: 윤서아 기본 바스트
 character: yoon_seo_a
+default_reality_expression: actual_social_smile
 fallback_asset: assets/concept-art/yoon-seo-a.png
 default_outfit: office
 default_pose: guarded

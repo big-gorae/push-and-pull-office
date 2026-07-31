@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 1420",
     "build": "tsc && vite build",
+    "build:site": "VITE_APP_SURFACE=game npm run build",
+    "test:player": "vitest run src/player",
     "preview": "vite preview --host 127.0.0.1",
     "tauri": "tauri"
   },
@@ -16,10 +18,13 @@
     "react-dom": "19.2.7"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "1.37.1",
     "@tauri-apps/cli": "2.11.4",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "typescript": "5.9.3",
-    "vite": "6.4.3"
+    "vite": "6.4.3",
+    "vitest": "3.2.7",
+    "wrangler": "4.92.0"
   }
 }

@@ -8,6 +8,7 @@ duration: 1
 priority: 100
 availability: automatic
 completion: return_to_timeline
+participants: [han_do_yoon, yoon_seo_a, cha_min_kyung, kang_yoo_jin]
 requires: {events: [], conditions: []}
 on_seen: {effects: []}
 on_missed: {effects: []}
@@ -17,4 +18,4 @@ presentation:
     summary: 발표에서 말이 막힌 서아를 도우며 의존을 받고, 회의를 단호하게 이어 가는 민경에게도 매력을 느낀다.
   reality:
     title: 발표 파일 실수를 수습한 회의
-    summary: 서아는 발표 실수로 당황하고, 민경은 실수가 공개적으로 확대되지 않게 안건을 다시 업무 문제로 돌린다.
+    summary: 서아는 발표 실수로 당황하고, 민경은 안건을 업무 문제로 돌리며, 유진은 잘못된 파일의 버전과 교체 시각을 기록한다.

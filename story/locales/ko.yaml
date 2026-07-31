@@ -1,17 +1,7 @@
 schema_version: 1
 id: ko
-name: 한국어
+name: Korean
+native_name: 한국어
 fallback: null
 strings:
-  locale.ko.name: 한국어
-  locale.en.name: 영어
-  visual.background.office_open.title: 오픈 오피스
-  visual.background.office_corridor.title: 사무실 복도
-  visual.background.meeting_room.title: 유리 회의실
-  visual.background.office_pantry.title: 사내 휴게실
-  visual.background.empty_office.title: 빈 사무실
-  visual.character.han_do_yoon.title: 한도윤 기본 바스트
-  visual.character.yoon_seo_a.title: 윤서아 기본 바스트
-  visual.character.cha_min_kyung.title: 차민경 기본 바스트
-  visual.character.kang_yoo_jin.title: 강유진 기본 바스트
-  visual.character.im_soo_yeon.title: 임수연 기본 바스트
+  campaign.main.title: 열일곱 날의 밀당

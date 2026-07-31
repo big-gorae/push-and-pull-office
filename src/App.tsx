@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import TimelineEditor from "./TimelineEditor";
 import PresentationEditor from "./PresentationEditor";
 import CharacterEditor from "./CharacterEditor";
@@ -8,7 +8,17 @@ import ProjectSettingsEditor, { type SettingsKind, type SettingsRequest } from "
 import QuickOpen, { type QuickOpenItem } from "./QuickOpen";
 import DuplicateDialog from "./DuplicateDialog";
 import {
+  pushPullPositionLabel,
+  pushPullTargetLabel,
+  readPushPullState,
+  resolvePushPull,
+  writePushPullState,
+  type PushPullResult,
+  type PushPullTarget,
+} from "./pushPull";
+import {
   applyEffect,
+  canEnterScene,
   chooseTransition,
   clone,
   conditionsMatch,
@@ -17,6 +27,7 @@ import {
   getPath,
   makeNode,
   parseEditorValue,
+  resolveDialogueNode,
   resolveStart,
   statePaths,
 } from "./storyLogic";
@@ -25,6 +36,7 @@ import type {
   ChoiceOption,
   Condition,
   DecisionTrace,
+  DialogueVariant,
   DocumentActivity,
   Effect,
   JsonValue,
@@ -307,6 +319,7 @@ function ChoiceEditor({ runtime, scene, node, onChange }: { runtime: Runtime; sc
       label: "새 선택지",
       interpretation: "",
       action: "",
+      push_pull: { action: "literal", intensity: 12, base_score: 4 },
       conditions: [],
       effects: [],
       next: scene.node_order.find((id) => id !== node.id) || "",
@@ -330,6 +343,49 @@ function ChoiceEditor({ runtime, scene, node, onChange }: { runtime: Runtime; sc
           <Field label="플레이어 문구" wide><TextInput value={option.label} onChange={(event) => updateOption(index, { label: event.target.value })} /></Field>
           <Field label="주인공 해석" wide><TextArea value={option.interpretation} onChange={(event) => updateOption(index, { interpretation: event.target.value })} /></Field>
           <Field label="실제로 하는 행동" wide><TextArea value={option.action} onChange={(event) => updateOption(index, { action: event.target.value })} /></Field>
+          <Field label="밀당 방향">
+            <select
+              value={option.push_pull?.action || "literal"}
+              onChange={(event) => updateOption(index, {
+                push_pull: {
+                  ...(option.push_pull || { intensity: 12, base_score: 4 }),
+                  action: event.target.value as ChoiceOption["push_pull"]["action"],
+                },
+              })}
+            >
+              <option value="approach">당기기 · 접근 시도</option>
+              <option value="space">밀기 · 거리 둠</option>
+              <option value="literal">문자 그대로 따름</option>
+            </select>
+          </Field>
+          <Field label="이동 강도 (8~16)">
+            <TextInput
+              type="number"
+              min="8"
+              max="16"
+              value={option.push_pull?.intensity ?? 12}
+              onChange={(event) => updateOption(index, {
+                push_pull: {
+                  ...(option.push_pull || { action: "literal", base_score: 4 }),
+                  intensity: Number(event.target.value),
+                },
+              })}
+            />
+          </Field>
+          <Field label="기본 점수 (2~5)">
+            <TextInput
+              type="number"
+              min="2"
+              max="5"
+              value={option.push_pull?.base_score ?? 4}
+              onChange={(event) => updateOption(index, {
+                push_pull: {
+                  ...(option.push_pull || { action: "literal", intensity: 12 }),
+                  base_score: Number(event.target.value),
+                },
+              })}
+            />
+          </Field>
         </div>
         <details>
           <summary>표시 조건 ({option.conditions.length})</summary>
@@ -413,13 +469,174 @@ function TransitionEditor({
   </div>;
 }
 
+function DialogueVariantEditor({
+  runtime,
+  state,
+  node,
+  onChange,
+}: {
+  runtime: Runtime;
+  state: RuntimeState;
+  node: StoryNode;
+  onChange: (node: StoryNode) => void;
+}) {
+  const variants = node.variants || [];
+  const selectedVariantId = node.variants ? resolveDialogueNode(runtime, state, node).variantId : undefined;
+  const displayedVariants = variants
+    .map((variant, index) => ({ variant, index }))
+    .sort((left, right) =>
+      Number(left.variant.default) - Number(right.variant.default)
+      || (right.variant.priority || 0) - (left.variant.priority || 0)
+      || left.index - right.index);
+  const narration = node.kind === "dual_narration";
+  const duplicateConditionIds = new Set<string>();
+  variants.forEach((variant, index) => {
+    if (variant.default) return;
+    const signature = JSON.stringify(variant.conditions || []);
+    if (variants.some((candidate, candidateIndex) =>
+      candidateIndex < index && !candidate.default && JSON.stringify(candidate.conditions || []) === signature)) {
+      duplicateConditionIds.add(variant.id);
+    }
+  });
+
+  const update = (index: number, patch: Partial<DialogueVariant>) => {
+    const next = clone(variants);
+    next[index] = { ...next[index], ...patch };
+    onChange({ ...node, variants: next });
+  };
+  const startVariants = () => {
+    const defaultVariant: DialogueVariant = {
+      id: "default",
+      priority: 0,
+      default: true,
+      perceived: clone(node.perceived || {}),
+      reality: clone(node.reality || {}),
+    };
+    const next = { ...node, variants: [defaultVariant] };
+    delete next.perceived;
+    delete next.reality;
+    onChange(next);
+  };
+  const flattenVariants = () => {
+    const source = variants.find((variant) => variant.default) || variants[0];
+    if (!source) return;
+    const next = {
+      ...node,
+      perceived: clone(source.perceived),
+      reality: clone(source.reality),
+    };
+    delete next.variants;
+    onChange(next);
+  };
+  const add = () => {
+    let counter = variants.length + 1;
+    while (variants.some((variant) => variant.id === `variant_${counter}`)) counter += 1;
+    const source = variants.find((variant) => variant.default) || variants[0];
+    const next: DialogueVariant = {
+      id: `variant_${counter}`,
+      priority: Math.max(10, ...variants.map((variant) => variant.priority || 0)) + 10,
+      conditions: [],
+      perceived: clone(source?.perceived || {}),
+      reality: clone(source?.reality || {}),
+    };
+    onChange({ ...node, variants: [...variants.filter((variant) => !variant.default), next, ...variants.filter((variant) => variant.default)] });
+  };
+  const cloneVariant = (index: number) => {
+    let counter = 2;
+    const base = variants[index].id.replace(/[._]?copy\d*$/, "");
+    while (variants.some((variant) => variant.id === `${base}.copy${counter}`)) counter += 1;
+    const copy = clone(variants[index]);
+    copy.id = `${base}.copy${counter}`;
+    copy.default = undefined;
+    copy.priority = (copy.priority || 0) + 1;
+    copy.conditions ||= [];
+    const next = clone(variants);
+    next.splice(index + 1, 0, copy);
+    onChange({ ...node, variants: next });
+  };
+  const makeDefault = (index: number) => {
+    onChange({
+      ...node,
+      variants: variants.map((variant, itemIndex) => ({
+        ...variant,
+        default: itemIndex === index ? true : undefined,
+        conditions: itemIndex === index ? undefined : variant.conditions || [],
+      })),
+    });
+  };
+
+  if (!node.variants) {
+    return <section className="variant-authoring-intro">
+      <div><strong>상황별 대사 변형</strong><small>현재 대사를 기본 변형으로 바꾼 뒤 조건별 문구를 추가합니다.</small></div>
+      <button type="button" onClick={startVariants}>변형 사용</button>
+    </section>;
+  }
+
+  return <section className="dialogue-variant-editor">
+    <header>
+      <div><strong>상황별 대사 변형</strong><small>우선순위가 높은 조건을 먼저 검사하며, 기본 변형은 항상 마지막 대체값입니다.</small></div>
+      <div className="inline-actions">
+        <button type="button" onClick={add}>＋ 변형 추가</button>
+        <button type="button" onClick={flattenVariants}>기본 대사로 합치기</button>
+      </div>
+    </header>
+    <div className="dialogue-variant-list">
+      {displayedVariants.map(({ variant, index }) => {
+        const invalidId = !/^[a-z][a-z0-9_.]*$/.test(variant.id)
+          || variants.some((candidate, candidateIndex) => candidateIndex !== index && candidate.id === variant.id);
+        return <article className={`dialogue-variant-card ${variant.default ? "default" : ""} ${variant.id === selectedVariantId ? "selected" : ""}`} key={`${variant.id}:${index}`}>
+          <div className="dialogue-variant-heading">
+            <div className="dialogue-variant-fields">
+              <Field label="안정 ID"><TextInput value={variant.id} aria-invalid={invalidId} onChange={(event) => update(index, { id: event.target.value })} /></Field>
+              <Field label="우선순위"><TextInput type="number" value={variant.priority || 0} onChange={(event) => update(index, { priority: Number(event.target.value) })} /></Field>
+            </div>
+            <div className="inline-actions">
+              {!variant.default && <button type="button" onClick={() => makeDefault(index)}>기본값 지정</button>}
+              <button type="button" onClick={() => cloneVariant(index)}>복제</button>
+              <button type="button" className="icon-button danger" aria-label="변형 삭제" disabled={variant.default} onClick={() => onChange({ ...node, variants: variants.filter((_, itemIndex) => itemIndex !== index) })}>×</button>
+            </div>
+          </div>
+          {variant.default
+            ? <p className="variant-default-note">기본 변형 · 다른 조건이 모두 실패할 때 사용됩니다.</p>
+            : <ConditionEditor runtime={runtime} conditions={variant.conditions || []} onChange={(conditions) => update(index, { conditions })} />}
+          {(invalidId || duplicateConditionIds.has(variant.id)) && <p className="variant-warning">
+            {invalidId ? "ID는 소문자 영문으로 시작하며 중복될 수 없습니다." : "앞선 변형과 조건이 같아 이 변형은 도달하지 못할 수 있습니다."}
+          </p>}
+          <div className="dual-layer-grid">
+            <LayerEditor
+              title={narration ? "주인공이 보는 서술" : "주인공이 보는 장면"}
+              narration={narration}
+              layer={variant.perceived}
+              mode="perceived"
+              runtime={runtime}
+              speaker={node.speaker}
+              onChange={(perceived) => update(index, { perceived })}
+            />
+            <LayerEditor
+              title={narration ? "실제 서술" : "실제 장면"}
+              narration={narration}
+              layer={variant.reality}
+              mode="reality"
+              runtime={runtime}
+              speaker={node.speaker}
+              onChange={(reality) => update(index, { reality })}
+            />
+          </div>
+        </article>;
+      })}
+    </div>
+  </section>;
+}
+
 function NodeEditor({
   runtime,
+  state,
   scene,
   node,
   onChange,
 }: {
   runtime: Runtime;
+  state: RuntimeState;
   scene: Scene;
   node: StoryNode;
   onChange: (node: StoryNode) => void;
@@ -435,16 +652,20 @@ function NodeEditor({
 
     {node.kind === "dual_dialogue" && <>
       <Field label="화자"><select value={node.speaker || ""} onChange={(event) => onChange({ ...node, speaker: event.target.value })}>{scene.cast.map((id) => <option value={id} key={id}>{runtime.characters[id]?.display_name || id}</option>)}</select></Field>
-      <div className="dual-layer-grid">
+      {!node.variants && <div className="dual-layer-grid">
         <LayerEditor title="주인공이 보는 장면" layer={node.perceived || {}} mode="perceived" runtime={runtime} speaker={node.speaker} onChange={(perceived) => onChange({ ...node, perceived })} />
         <LayerEditor title="실제 장면" layer={node.reality || {}} mode="reality" runtime={runtime} speaker={node.speaker} onChange={(reality) => onChange({ ...node, reality })} />
-      </div>
+      </div>}
+      <DialogueVariantEditor runtime={runtime} state={state} node={node} onChange={onChange} />
     </>}
 
-    {node.kind === "dual_narration" && <div className="dual-layer-grid">
-      <LayerEditor title="주인공이 보는 서술" narration layer={node.perceived || {}} mode="perceived" runtime={runtime} onChange={(perceived) => onChange({ ...node, perceived })} />
-      <LayerEditor title="실제 서술" narration layer={node.reality || {}} mode="reality" runtime={runtime} onChange={(reality) => onChange({ ...node, reality })} />
-    </div>}
+    {node.kind === "dual_narration" && <>
+      {!node.variants && <div className="dual-layer-grid">
+        <LayerEditor title="주인공이 보는 서술" narration layer={node.perceived || {}} mode="perceived" runtime={runtime} onChange={(perceived) => onChange({ ...node, perceived })} />
+        <LayerEditor title="실제 서술" narration layer={node.reality || {}} mode="reality" runtime={runtime} onChange={(reality) => onChange({ ...node, reality })} />
+      </div>}
+      <DialogueVariantEditor runtime={runtime} state={state} node={node} onChange={onChange} />
+    </>}
 
     {node.kind === "choice" && <ChoiceEditor runtime={runtime} scene={scene} node={node} onChange={onChange} />}
     {node.kind === "state_gate" && <TransitionEditor runtime={runtime} scene={scene} transitions={node.transitions || []} target="node" onChange={(transitions) => onChange({ ...node, transitions })} />}
@@ -453,8 +674,8 @@ function NodeEditor({
   </div>;
 }
 
-function StateSlider({ label, value, max = 100, onChange }: { label: string; value: number; max?: number; onChange: (value: number) => void }) {
-  return <label className="state-slider"><span>{label}<output>{value}</output></span><input type="range" min="0" max={max} value={value} onChange={(event) => onChange(Number(event.target.value))} /></label>;
+function StateSlider({ label, value, min = 0, max = 100, onChange }: { label: string; value: number; min?: number; max?: number; onChange: (value: number) => void }) {
+  return <label className="state-slider"><span>{label}<output>{value}</output></span><input type="range" min={min} max={max} value={value} onChange={(event) => onChange(Number(event.target.value))} /></label>;
 }
 
 function Preview({
@@ -482,13 +703,31 @@ function Preview({
   const heroine = route.heroine;
   const visible = state.visible.heroines[heroine];
   const hidden = state.hidden.heroines[heroine];
+  const rhythmState = readPushPullState(state);
+  const [pushPullResult, setPushPullResult] = useState<PushPullResult | null>(null);
   const emotion = deriveEmotion(runtime.characters[heroine], hidden);
   const selected = scene.nodes[selectedNodeId];
   const automatic = selected?.kind === "state_gate" ? chooseTransition(state, selected.transitions) : undefined;
-  const displayNode = automatic?.chosen?.node ? scene.nodes[automatic.chosen.node] : selected;
+  const rawDisplayNode = automatic?.chosen?.node ? scene.nodes[automatic.chosen.node] : selected;
+  const dialogueResolution = rawDisplayNode && (rawDisplayNode.kind === "dual_dialogue" || rawDisplayNode.kind === "dual_narration")
+    ? resolveDialogueNode(runtime, state, rawDisplayNode)
+    : undefined;
+  const displayNode = dialogueResolution?.node || rawDisplayNode;
   const layer = displayNode?.[mode] as Layer | undefined;
   const exitDecision = displayNode?.kind === "exit" ? chooseTransition(state, displayNode.transitions) : undefined;
   const availableOptions = displayNode?.kind === "choice" ? (displayNode.options || []).filter((option) => conditionsMatch(state, option.conditions)) : [];
+  const hasClearedEnding = state.progress.cleared_routes.length > 0;
+  const entryDecision = canEnterScene(runtime, state, scene.id);
+
+  useEffect(() => {
+    setPushPullResult(null);
+  }, [scene.id, heroine]);
+
+  useEffect(() => {
+    if (!pushPullResult) return;
+    const timer = window.setTimeout(() => setPushPullResult(null), 1400);
+    return () => window.clearTimeout(timer);
+  }, [pushPullResult]);
 
   const updateHeroine = (section: "visible" | "hidden", key: string, value: number | string) => {
     const next = clone(state);
@@ -500,24 +739,65 @@ function Preview({
   const simulateChoice = (option: ChoiceOption) => {
     const next = clone(state);
     option.effects.forEach((effect) => applyEffect(runtime, next, effect));
+    const result = resolvePushPull(next, heroine, option.push_pull);
+    setPushPullResult(result);
+    onState(next);
+  };
+
+  const updateRhythm = (patch: { position?: number; combo?: number; target?: PushPullTarget }) => {
+    const next = clone(state);
+    writePushPullState(next, { ...readPushPullState(next), ...patch, heroine });
+    setPushPullResult(null);
     onState(next);
   };
 
   const speaker = displayNode?.speaker || heroine;
   const character = runtime.characters[speaker] || runtime.characters[heroine];
   const expression = layer?.expression || emotion?.default_expression || "narration";
+  const truthLabels = mode === "reality" || hasClearedEnding;
+  const rhythmLabelMode: ViewMode = truthLabels ? "reality" : "perceived";
+  const scoreLabel = truthLabels ? "통제 욕구" : "밀당 주도권";
+  const comboLabel = truthLabels ? "통제 시도 연쇄" : "COMBO";
+  const markerPosition = `${(rhythmState.position + 100) / 2}%`;
+  const targetPosition = rhythmState.target === "pull" ? "34%" : rhythmState.target === "push" ? "66%" : "50%";
+  const rhythmStyle = {
+    "--rhythm-marker": markerPosition,
+    "--rhythm-target": targetPosition,
+  } as CSSProperties;
 
   return <aside className="preview-panel">
     <div className="panel-heading">
       <div><p className="eyebrow">LIVE PREVIEW</p><h2>게임 화면</h2></div>
-      <div className="segmented"><button type="button" className={mode === "perceived" ? "active" : ""} onClick={() => onMode("perceived")}>본편</button><button type="button" className={mode === "reality" ? "active truth" : ""} onClick={() => onMode("reality")}>실제</button></div>
+      <div className="segmented"><button type="button" className={mode === "perceived" ? "active" : ""} onClick={() => onMode("perceived")}>스토리 모드</button><button type="button" className={mode === "reality" ? "active truth" : ""} onClick={() => onMode("reality")}>실제</button></div>
     </div>
 
     <div className={`mini-game ${mode}`}>
       <div className="mini-portrait">{image ? <img src={image} alt={`${character.display_name} 콘셉트 아트`} /> : <div className="image-placeholder">NO IMAGE</div>}<div className="portrait-label"><strong>{character.display_name}</strong><span>{expression}</span></div></div>
       <div className="mini-dialogue">
-        <div className="hud-row">
-          {(mode === "perceived" ? [`호감 ${visible.affection}`, `주도권 ${visible.initiative}`, STATE_LABELS[visible.perceived_state]] : [`의심 ${hidden.suspicion}`, `비호감 ${hidden.dislike}`, `증거 ${hidden.evidence_count}`]).map((label) => <span key={label}>{label}</span>)}
+        <div className="push-pull-hud">
+          <div className="push-pull-score">
+            <span>{scoreLabel}</span>
+            <strong>{visible.initiative}</strong>
+            {rhythmState.combo > 0 && <em>{comboLabel} x{rhythmState.combo}</em>}
+          </div>
+          <div
+            className={`rhythm-gauge ${rhythmState.target === "none" ? "no-target" : ""}`}
+            style={rhythmStyle}
+            role="img"
+            aria-label={`현재 ${pushPullPositionLabel(rhythmState.position, rhythmLabelMode)}, 다음 득점선 ${pushPullTargetLabel(rhythmState.target, rhythmLabelMode)}`}
+          >
+            <span>{rhythmLabelMode === "perceived" ? "당기기" : "접근 시도"}</span>
+            <div aria-hidden="true">
+              <i className="optimal-range"></i>
+              <i className="checkpoint pull"></i>
+              <i className="checkpoint push"></i>
+              <i className="active-target"></i>
+              <b className="rhythm-marker"></b>
+            </div>
+            <span>{rhythmLabelMode === "perceived" ? "밀기" : "거리 둠"}</span>
+            <small>현재: {pushPullPositionLabel(rhythmState.position, rhythmLabelMode)}</small>
+            <small>다음 득점선: {pushPullTargetLabel(rhythmState.target, rhythmLabelMode)}</small>
+          </div>
         </div>
         <div className="dialogue-copy">
           <small>{layer?.atmosphere || NODE_LABELS[displayNode?.kind || "effect"]}</small>
@@ -527,13 +807,39 @@ function Preview({
       </div>
     </div>
 
-    {availableOptions.length > 0 && <div className="preview-choices">{availableOptions.map((option) => <button type="button" key={option.id} onClick={() => simulateChoice(option)}><strong>{option.label}</strong><small>효과 적용해 보기</small></button>)}</div>}
+    <div className={`preview-runtime-trace ${entryDecision.allowed ? "allowed" : "blocked"}`}>
+      <strong>{entryDecision.allowed ? "장면 진입 가능" : "장면 진입 차단"}</strong>
+      <small>{entryDecision.trace.length
+        ? entryDecision.trace.map((item) => `${item.met ? "✓" : "×"} ${item.condition.path} ${item.condition.op} ${String(item.condition.value)} (현재 ${String(item.actual)})`).join(" / ")
+        : "진입 조건 없음"}</small>
+    </div>
+
+    {dialogueResolution && <div className="preview-runtime-trace variant">
+      <strong>선택된 대사 · {dialogueResolution.variantId}</strong>
+      <small>{dialogueResolution.trace.map((item) => `${item.chosen ? "●" : item.met ? "○" : "×"} ${item.variantId} (우선순위 ${item.priority})`).join(" / ")}</small>
+    </div>}
+
+    {pushPullResult && <div className={`push-pull-feedback ${pushPullResult.kind}`} aria-live="polite">
+      <strong>{truthLabels
+        ? pushPullResult.kind === "literal" ? "반복 중단" : pushPullResult.combo >= 5 ? "대응·기록 연결" : "반복 패턴 확인"
+        : pushPullResult.kind === "turn" ? "적정선 도착"
+          : pushPullResult.kind === "score" ? "밀당의 흐름을 잡았다"
+            : pushPullResult.kind === "literal" ? "흐름을 잠시 놓쳤다"
+              : "득점 없음"}</strong>
+      <span>{pushPullResult.gain > 0 ? `+${pushPullResult.gain}` : `${scoreLabel} 변화 없음`}</span>
+      <small>{pushPullResult.kind === "turn"
+        ? `다음 득점선: ${pushPullTargetLabel(pushPullResult.target, rhythmLabelMode)}`
+        : pushPullResult.combo > 0 ? `${comboLabel} x${pushPullResult.combo}` : pushPullPositionLabel(pushPullResult.position, rhythmLabelMode)}</small>
+    </div>}
+
+    {availableOptions.length > 0 && <div className="preview-choices">{availableOptions.map((option) => <button type="button" key={option.id} onClick={() => simulateChoice(option)}><strong>{option.label}</strong><small>{option.action}</small></button>)}</div>}
 
     <div className="test-state">
-      <div className="state-section-heading"><div className="state-section-label">테스트 상태 · {runtime.characters[heroine].display_name}</div><button type="button" onClick={() => onState(clone(initialState))}>수치 초기화</button></div>
-      <StateSlider label="호감도" value={visible.affection} onChange={(value) => updateHeroine("visible", "affection", value)} />
-      <StateSlider label="주도권" value={visible.initiative} onChange={(value) => updateHeroine("visible", "initiative", value)} />
-      <label className="state-select"><span>현재 해석</span><select value={visible.perceived_state} onChange={(event) => updateHeroine("visible", "perceived_state", event.target.value)}>{runtime.enums.perceived_state.map((value) => <option value={value} key={value}>{STATE_LABELS[value]}</option>)}</select></label>
+      <div className="state-section-heading"><div className="state-section-label">테스트 상태 · {runtime.characters[heroine].display_name}</div><button type="button" onClick={() => { setPushPullResult(null); onState(clone(initialState)); }}>수치 초기화</button></div>
+      <StateSlider label={scoreLabel} value={visible.initiative} onChange={(value) => updateHeroine("visible", "initiative", value)} />
+      <StateSlider label="리듬 위치" value={rhythmState.position} min={-100} onChange={(value) => updateRhythm({ position: value })} />
+      <StateSlider label="콤보" value={rhythmState.combo} max={5} onChange={(value) => updateRhythm({ combo: value })} />
+      <label className="state-select"><span>활성 득점선</span><select value={rhythmState.target} onChange={(event) => updateRhythm({ target: event.target.value as PushPullTarget })}><option value="pull">당기기</option><option value="push">밀기</option><option value="none">첫 방향 대기</option></select></label>
       <StateSlider label="의심도" value={hidden.suspicion} onChange={(value) => updateHeroine("hidden", "suspicion", value)} />
       <StateSlider label="비호감" value={hidden.dislike} onChange={(value) => updateHeroine("hidden", "dislike", value)} />
       <StateSlider label="물리적 증거" value={hidden.evidence_count} max={10} onChange={(value) => updateHeroine("hidden", "evidence_count", value)} />
@@ -724,7 +1030,7 @@ export default function App() {
       if (!current) return current;
       const next = clone(current);
       updater(next);
-      next.state_contract = deriveStateContract(next);
+      next.state_contract = deriveStateContract(next, runtime?.routes[next.route]?.heroine);
       setHistory((value) => ({ past: [...value.past, clone(current)].slice(-100), future: [] }));
       const changed = JSON.stringify(next) !== JSON.stringify(payload?.runtime.scenes[next.id]);
       setDirty(changed);
@@ -935,7 +1241,7 @@ export default function App() {
       id: route.id,
       kind: "route" as const,
       title: route.title,
-      context: `${runtime.characters[route.heroine]?.display_name || route.heroine} · 본편 ${route.scene_order.length} · 엔딩 ${route.endings.length}`,
+      context: `${runtime.characters[route.heroine]?.display_name || route.heroine} · 스토리 ${route.scene_order.length} · 엔딩 ${route.endings.length}`,
       path: payload.documents.routes[route.id]?.path || "",
       search: `${route.id} ${route.title} ${route.summary} ${route.mode} ${route.scene_order.join(" ")} ${route.endings.map((ending) => `${ending.scene} ${ending.outcome}`).join(" ")}`.toLocaleLowerCase(),
     }));
@@ -1157,7 +1463,7 @@ export default function App() {
     </main>;
   }
 
-  const contract = deriveStateContract(draft);
+  const contract = deriveStateContract(draft, runtime.routes[draft.route]?.heroine);
   const errorCount = issues.filter((issue) => issue.severity === "error").length;
   const saveStateLabel = documentActivity.phase === "saving" ? "저장 중…"
     : documentActivity.phase === "dirty" ? "자동 저장 대기"
@@ -1302,7 +1608,7 @@ export default function App() {
             <div className="node-actions"><button type="button" aria-label="노드를 앞으로" onClick={() => moveNode(-1)}>←</button><button type="button" aria-label="노드를 뒤로" onClick={() => moveNode(1)}>→</button><button type="button" className="danger" onClick={deleteNode}>노드 삭제</button></div>
           </div>
           <div className="new-node-row"><input placeholder="새 노드 ID" value={newNodeId} onChange={(event) => setNewNodeId(event.target.value)} /><select value={newNodeKind} onChange={(event) => setNewNodeKind(event.target.value as NodeKind)}>{Object.entries(NODE_LABELS).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select><button type="button" onClick={addNode}>노드 추가</button></div>
-          <div className="scroll-area">{selectedNode ? <NodeEditor runtime={runtime} scene={draft} node={selectedNode} onChange={updateNode} /> : <p>노드를 선택하세요.</p>}</div>
+          <div className="scroll-area">{selectedNode ? <NodeEditor runtime={runtime} state={testState} scene={draft} node={selectedNode} onChange={updateNode} /> : <p>노드를 선택하세요.</p>}</div>
         </div>}
 
         {editorTab === "source" && <div className="scroll-area source-view"><div className="source-notice">원본은 읽기 전용입니다. 구조화된 폼에서 저장하면 주석과 키 순서를 보존해 갱신합니다.</div><pre><code>{payload.documents.scenes[draft.id]?.source}</code></pre></div>}

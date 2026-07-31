@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ui.schema.json",
+  "title": "Love Office UI Source Strings",
+  "type": "object",
+  "required": ["schema_version", "id", "strings"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"const": "game_ui"},
+    "strings": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"type": "string", "minLength": 1}
+    }
+  },
+  "additionalProperties": false
+}
