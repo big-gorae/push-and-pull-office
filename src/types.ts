@@ -37,11 +37,74 @@ export type Layer = {
   intent?: string;
 };
 
+export type SelfDevelopmentStat = "stamina" | "appearance" | "humor" | "taste";
+
+export type SelfDevelopmentRequirement = {
+  appeal_gte?: number;
+  stat?: SelfDevelopmentStat;
+  minimum?: number;
+  fatigue_lte?: number;
+};
+
+export type SelfDevelopmentChoiceUse = {
+  expression: string;
+  equivalent_to: string;
+  converges_at: string;
+};
+
+export type SelfDevelopmentVariantUse = {
+  expression: string;
+};
+
+export type SelfDevelopmentExpression = {
+  requires: SelfDevelopmentRequirement;
+  score_bonus: number;
+};
+
+export type SelfDevelopmentActivity = {
+  id: string;
+  title_key: string;
+  description_key: string;
+  reflection_keys: Record<ViewMode, string>;
+  appeal_delta: number;
+  fatigue_delta: number;
+  stat_deltas: Partial<Record<SelfDevelopmentStat, number>>;
+  fatigue_lte?: number;
+};
+
+export type SelfDevelopmentConfig = {
+  max_night_day: number;
+  activities: SelfDevelopmentActivity[];
+  expressions: Record<string, SelfDevelopmentExpression>;
+};
+
+export type SelfDevelopmentState = {
+  appeal: number;
+  stats: Record<SelfDevelopmentStat, number>;
+  fatigue: number;
+};
+
+export type SelfDevelopmentProgress = {
+  completed_days: number[];
+  activity_history: string[];
+  last_activity: string;
+};
+
+export type SelfDevelopmentResult = {
+  activityId: string;
+  appealDelta: number;
+  fatigueDelta: number;
+  statDeltas: Partial<Record<SelfDevelopmentStat, number>>;
+  before: SelfDevelopmentState;
+  after: SelfDevelopmentState;
+};
+
 export type DialogueVariant = {
   id: string;
   priority?: number;
   conditions?: Condition[];
   default?: boolean;
+  self_development?: SelfDevelopmentVariantUse;
   perceived: Layer;
   reality: Layer;
 };
@@ -52,6 +115,7 @@ export type ChoiceOption = {
   interpretation: string;
   action: string;
   push_pull: PushPullConfig;
+  self_development?: SelfDevelopmentChoiceUse;
   conditions: Condition[];
   effects: Effect[];
   next: string;
@@ -348,7 +412,10 @@ export type ResolvedStage = {
 };
 
 export type RuntimeState = {
-  visible: { heroines: Record<string, { affection: number; initiative: number; perceived_state: string }> };
+  visible: {
+    heroines: Record<string, { affection: number; initiative: number; perceived_state: string }>;
+    protagonist: { self_development: SelfDevelopmentState };
+  };
   hidden: { heroines: Record<string, { suspicion: number; dislike: number; evidence_count: number }> };
   progress: {
     time: { day: number; act: number; slot: TimeSlot };
@@ -356,6 +423,7 @@ export type RuntimeState = {
     memories: string[];
     cleared_routes: string[];
     unlocked_modes: string[];
+    self_development: SelfDevelopmentProgress;
     flags: Record<string, JsonValue>;
   };
 };
@@ -365,6 +433,7 @@ export type Runtime = {
   generated_at: string;
   enums: Record<string, string[]>;
   stats: Record<string, { type: string; min?: number; max?: number; values?: string[]; description: string }>;
+  self_development: SelfDevelopmentConfig;
   initial_state: RuntimeState;
   localization: LocalizationBundle;
   campaigns: Record<string, Campaign>;

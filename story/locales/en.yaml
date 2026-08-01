@@ -28,6 +28,14 @@ strings:
   events.seo_a.email_request.presentation.perceived.title: Seo-a Tests the Distance at Lunch
   events.seo_a.email_request.presentation.reality.title: Restricting How Work Is Delivered
   scenes.seo_a.email_request.title: Send It by Email
+  scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.perceived.line: "Oh, I think you've lost a little weight lately."
+  scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.reality.line: "Oh, I think you've lost a little weight lately."
+  scenes.seo_a.email_request.nodes.appearance_observation.variants.default.perceived.line: "Manager Han, I need to tell you something."
+  scenes.seo_a.email_request.nodes.appearance_observation.variants.default.reality.line: "Manager Han, I need to tell you something."
+  scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.perceived.line: (She must have kept watching me to notice first. The workouts paid off.)
+  scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.reality.line: (I only mentioned the visible change as a greeting. Now I need to discuss how he sends the files.)
+  scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.perceived.line: (She must be curious about my reaction if she called me aside.)
+  scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.reality.line: (This time I need to clearly tell him not to come to my desk.)
   scenes.seo_a.email_request.nodes.request.perceived.line: "Please send those materials by email. Don't come to my desk."
   scenes.seo_a.email_request.nodes.request.reality.line: "Please send those materials by email. Don't come to my desk."
   scenes.seo_a.email_request.nodes.request_inner.perceived.line: (Does she regret losing an excuse for me to visit? Looking away like that is cute.)
@@ -35,8 +43,18 @@ strings:
   scenes.seo_a.email_request.nodes.interpret.prompt: How should he answer Seo-a after she clearly specified how to deliver the files?
   scenes.seo_a.email_request.nodes.interpret.stimulus: "Seo-a said, ‘Email me the files and do not come to my desk.’"
   scenes.seo_a.email_request.nodes.interpret.options.match_push.label: Briefly say “Understood” and keep his distance for a few days
+  scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.label: Mention working out, then send only the requested files by email
   scenes.seo_a.email_request.nodes.interpret.options.pull_harder.label: Send a private message after work and ask again why she refused
   scenes.seo_a.email_request.nodes.interpret.options.take_literally.label: Email only the requested files and return to work
+  scenes.seo_a.email_request.nodes.workout_self_promotion.perceived.line: "I've been working out lately. I'll send the files by email as you asked."
+  scenes.seo_a.email_request.nodes.workout_self_promotion.reality.line: "I've been working out lately. I'll send the files by email as you asked."
+  scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.label: Bring up short-video trends and invite her to dinner again
+  scenes.seo_a.relief_smile.nodes.trend_self_promotion.perceived.line: "I heard young women watch short review clips first these days. I've seen a few too—let's talk over dinner after work."
+  scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line: "I heard young women watch short review clips first these days. I've seen a few too—let's talk over dinner after work."
+  scenes.seo_a.relief_smile.nodes.trend_response.perceived.line: "Everyone is different. Still, you do seem quick to pick up trends among younger people. But I can't have dinner with you."
+  scenes.seo_a.relief_smile.nodes.trend_response.reality.line: "Everyone is different. Still, you do seem quick to pick up trends among younger people. But I can't have dinner with you."
+  scenes.seo_a.relief_smile.nodes.trend_response_inner.perceived.line: (She sees that we connect without a generation gap. Dinner is only a matter of timing.)
+  scenes.seo_a.relief_smile.nodes.trend_response_inner.reality.line: (He's grouping us as “young women” again. I should make the refusal clear and leave.)
   "app.title": "Love Office - Catch Her Heart with My Ultimate Dark Skill: A Handsome Middle-Aged Man's Story"
   "app.shortTitle": "Love Office"
   "app.catchphrase": "Catch her heart with the ultimate dark skill!"
@@ -103,6 +121,7 @@ strings:
   "slot.lunch": "Lunch"
   "slot.afternoon": "Afternoon"
   "slot.after_work": "After work"
+  "slot.night": "Night"
   "weekday.wed": "Wednesday"
   "weekday.thu": "Thursday"
   "weekday.fri": "Friday"
@@ -149,6 +168,39 @@ strings:
   "feedback.break": "Rhythm changed"
   "feedback.gain": "Initiative +{{gain}}"
   "feedback.controlGain": "Control +{{gain}}"
+  "feedback.expressionBonus": "Self-improvement expression bonus +{{gain}}"
+  "selfDevelopment.title": "What should I work on tonight?"
+  "selfDevelopment.subtitle": "He recalls the day's passing remarks and prepares tomorrow's impression."
+  "selfDevelopment.appeal": "Appeal"
+  "selfDevelopment.fatigue": "Fatigue"
+  "selfDevelopment.stat.stamina": "Stamina"
+  "selfDevelopment.stat.appearance": "Appearance"
+  "selfDevelopment.stat.humor": "Humor"
+  "selfDevelopment.stat.taste": "Taste"
+  "selfDevelopment.choose": "Do this activity"
+  "selfDevelopment.result": "Tonight's changes"
+  "selfDevelopment.continue": "Turn off the light and sleep"
+  "selfDevelopment.blocked": "Too tired for this right now"
+  "selfDevelopment.activity.workout.title": "Work out at the gym"
+  "selfDevelopment.activity.workout.description": "Build stamina and appearance at the cost of significant fatigue."
+  "selfDevelopment.activity.workout.reflection.perceived": "(If I keep improving, she'll be the first to notice tomorrow.)"
+  "selfDevelopment.activity.workout.reflection.reality": "Do-yoon imagined his coworkers noticing the change before thinking about the workout itself."
+  "selfDevelopment.activity.grooming.title": "Clothes and skincare"
+  "selfDevelopment.activity.grooming.description": "Prepare a polished impression while gaining a little fatigue."
+  "selfDevelopment.activity.grooming.reflection.perceived": "(Someone is bound to notice the small differences.)"
+  "selfDevelopment.activity.grooming.reflection.reality": "Do-yoon adjusted his reflection while deciding in advance how a particular coworker would react."
+  "selfDevelopment.activity.ott.title": "Watch a comedy series"
+  "selfDevelopment.activity.ott.description": "Gain humor and taste while resting, with a tiny loss of appeal."
+  "selfDevelopment.activity.ott.reflection.perceived": "(Now I can join any conversation naturally.)"
+  "selfDevelopment.activity.ott.reflection.reality": "Do-yoon replayed lines he could reuse in conversation instead of the funniest scenes."
+  "selfDevelopment.activity.reels.title": "Browse reels"
+  "selfDevelopment.activity.reels.description": "Pick up quick trends and recover, with a tiny loss of appeal."
+  "selfDevelopment.activity.reels.reflection.perceived": "(I finally understand what younger people like.)"
+  "selfDevelopment.activity.reels.reflection.reality": "Do-yoon recorded a few seconds of trend as if it proved he understood his coworkers."
+  "selfDevelopment.activity.sleep.title": "Go to bed early"
+  "selfDevelopment.activity.sleep.description": "Gain no stats, but recover a large amount of fatigue."
+  "selfDevelopment.activity.sleep.reflection.perceived": "(Keeping my composure is part of maintaining my appeal.)"
+  "selfDevelopment.activity.sleep.reflection.reality": "The phone screen went dark, leaving Do-yoon alone in the room."
   "save.title": "Save"
   "save.slot": "SLOT {{slot}}"
   "save.here": "Save here"

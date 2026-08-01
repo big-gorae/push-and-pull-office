@@ -15,10 +15,10 @@ export type PlayerSettings = {
 };
 
 export type SaveSlot = {
-  schema_version: 3;
+  schema_version: 4;
   savedAt: number;
   preview: {
-    kind: "timeline" | "scene" | "ending";
+    kind: "timeline" | "scene" | "self_development" | "ending";
     day: number;
     slot: string;
     eventId?: string;
@@ -142,7 +142,7 @@ export function normalizeSaveSlot(value: unknown, runtime?: Runtime): ReadableSa
   if (!value || typeof value !== "object") return undefined;
   const slot = value as LegacySaveSlot;
   if (!slot.session || typeof slot.savedAt !== "number") return undefined;
-  const session = normalizePlayerSession(slot.session);
+  const session = normalizePlayerSession(slot.session, runtime);
   const existing = slot.preview;
   const sceneId = existing?.sceneId || slot.sceneId || session.sceneId;
   const nodeId = existing?.nodeId || slot.nodeId || session.nodeId;
@@ -169,7 +169,7 @@ export function normalizeSaveSlot(value: unknown, runtime?: Runtime): ReadableSa
     ? { sceneTitle: slot.sceneTitle, line: slot.line }
     : undefined);
   return {
-    schema_version: 3,
+    schema_version: 4,
     savedAt: slot.savedAt,
     preview,
     session,

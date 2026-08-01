@@ -18,6 +18,19 @@ function sessionAtTranslatedScene(): PlayerSession {
   return session;
 }
 
+function sessionAtNightPlan(): PlayerSession {
+  const session = createSession(runtime, "seo_a");
+  session.phase = "self_development";
+  session.state.progress.time = { day: 1, act: 1, slot: "after_work" };
+  session.nightPhase = {
+    status: "selecting",
+    day: 1,
+    profile: structuredClone(session.state.visible.protagonist.self_development),
+    options: [],
+  };
+  return session;
+}
+
 describe("locale-independent save schema", () => {
   it("fills and bounds persistent debug layout settings", () => {
     expect(normalizePlayerSettings(undefined)).toMatchObject({
@@ -69,6 +82,23 @@ describe("locale-independent save schema", () => {
     expect(english.line).toContain("Please send");
   });
 
+  it("stores and localizes the nightly self-development preview", () => {
+    const slot = sessionSlot(sessionAtNightPlan());
+    expect(slot.schema_version).toBe(4);
+    expect(slot.preview).toMatchObject({
+      kind: "self_development",
+      day: 1,
+      slot: "after_work",
+      mode: "perceived",
+    });
+
+    const korean = savePreview(slot, new GameLocalizer(runtime, "ko"));
+    const english = savePreview(slot, new GameLocalizer(runtime, "en"));
+    expect(korean.title).toBe("오늘 밤, 무엇을 준비할까?");
+    expect(english.title).toBe("What should I work on tonight?");
+    expect(korean.line).not.toBe(english.line);
+  });
+
   it("normalizes a v2 slot without rewriting it and drops translated backlog caches", () => {
     const session = sessionAtTranslatedScene() as PlayerSession & {
       backlog: Array<Record<string, unknown>>;
@@ -93,7 +123,7 @@ describe("locale-independent save schema", () => {
       session,
     };
     const migrated = normalizeSaveSlot(legacy, runtime);
-    expect(migrated?.schema_version).toBe(3);
+    expect(migrated?.schema_version).toBe(4);
     expect(migrated?.preview.variantId).toBe("default");
     expect(migrated?.legacy).toEqual({ sceneTitle: "옛 장면 제목", line: "옛 대사" });
     expect(migrated?.session.backlog[0]).not.toHaveProperty("text");

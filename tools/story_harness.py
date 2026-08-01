@@ -5,6 +5,7 @@ Commands:
   validate  Validate references, state contracts, dual-layer fields, and reachability.
   build     Compile YAML sources into a runtime-friendly JSON bundle.
   timeline  Inspect event availability at a date and time slot.
+  night     Inspect or perform one nightly self-development activity.
   simulate  Execute a route with deterministic choices and print a state trace.
   explore   Traverse every reachable choice branch for one or all routes.
   context   Produce a bounded AI context package for one scene.
@@ -19,6 +20,7 @@ import datetime as dt
 import glob
 import hashlib
 import json
+import math
 import os
 import re
 import sys
@@ -36,6 +38,16 @@ NO_DEFAULT = object()
 VALID_CONDITION_OPS = {"eq", "ne", "gt", "gte", "lt", "lte", "contains", "not_contains", "exists", "not_exists"}
 VALID_EFFECT_OPS = {"set", "add", "append_unique", "remove"}
 VALID_PUSH_PULL_ACTIONS = {"approach", "space", "literal"}
+SELF_DEVELOPMENT_STATE_PREFIX = "visible.protagonist.self_development"
+SELF_DEVELOPMENT_PROGRESS_PREFIX = "progress.self_development"
+SELF_DEVELOPMENT_STAT_ORDER = ("stamina", "appearance", "humor", "taste")
+SELF_DEVELOPMENT_STATS = {"stamina", "appearance", "humor", "taste"}
+SELF_DEVELOPMENT_MAX_SCORE_BONUS = 3
+SELF_DEVELOPMENT_BOUNDS = {
+    f"{SELF_DEVELOPMENT_STATE_PREFIX}.appeal": (0, 100),
+    f"{SELF_DEVELOPMENT_STATE_PREFIX}.fatigue": (0, 6),
+    **{f"{SELF_DEVELOPMENT_STATE_PREFIX}.stats.{stat}": (0, 5) for stat in SELF_DEVELOPMENT_STAT_ORDER},
+}
 PUSH_PULL_LIMIT = 100
 PUSH_PULL_OPTIMAL_LIMIT = 56
 PUSH_PULL_CHECKPOINT = 32
@@ -227,6 +239,7 @@ class StoryProject:
     def validate(self, profile: str = "development") -> List[Issue]:
         issues: List[Issue] = []
         self._validate_manifest(issues)
+        self._validate_self_development(issues)
         self._validate_campaigns(issues)
         self._validate_characters(issues)
         self._validate_events(issues)
@@ -272,7 +285,7 @@ class StoryProject:
 
     def _validate_manifest(self, issues: List[Issue]) -> None:
         location = relative_source(self.manifest.get("_source", "manifest.yaml"))
-        for key in ("schema_version", "project", "enums", "stats", "initial_state", "files", "build"):
+        for key in ("schema_version", "project", "enums", "stats", "initial_state", "self_development", "files", "build"):
             if key not in self.manifest:
                 self._error(issues, location, f"required key is missing: {key}")
         state = self.initial_state()
@@ -282,6 +295,136 @@ class StoryProject:
                 self._error(issues, location, f"initial state path is not declared: {path}")
                 continue
             self._validate_value_against_spec(issues, location, path, value, spec)
+
+    def _validate_self_development(self, issues: List[Issue]) -> None:
+        location = f"{relative_source(self.manifest.get('_source', 'manifest.yaml'))}#self_development"
+        config = self.manifest.get("self_development")
+        if not isinstance(config, dict):
+            self._error(issues, location, "self_development must be a mapping")
+            return
+
+        stat_specs = self.manifest.get("stats", {})
+        for path, (minimum, maximum) in SELF_DEVELOPMENT_BOUNDS.items():
+            spec = stat_specs.get(path) if isinstance(stat_specs, dict) else None
+            if (
+                not isinstance(spec, dict)
+                or spec.get("type") != "integer"
+                or spec.get("min") != minimum
+                or spec.get("max") != maximum
+            ):
+                self._error(
+                    issues,
+                    location,
+                    f"{path} must keep runtime bounds {minimum}..{maximum}",
+                )
+
+        campaign = next(iter(self.campaigns.values()), {})
+        total_days = campaign.get("total_days", 0)
+        max_night_day = config.get("max_night_day")
+        if (
+            not isinstance(max_night_day, int)
+            or isinstance(max_night_day, bool)
+            or max_night_day < 1
+            or (isinstance(total_days, int) and total_days > 0 and max_night_day > total_days)
+        ):
+            self._error(issues, location, "max_night_day must be an integer inside the campaign")
+
+        activities = config.get("activities")
+        if not isinstance(activities, list) or not activities:
+            self._error(issues, location, "activities must be a non-empty list")
+        else:
+            activity_ids: Set[str] = set()
+            for index, activity in enumerate(activities):
+                activity_location = f"{location}.activities[{index}]"
+                if not isinstance(activity, dict):
+                    self._error(issues, activity_location, "activity must be a mapping")
+                    continue
+                activity_id = activity.get("id")
+                if not self.id_is_valid(activity_id):
+                    self._error(issues, activity_location, f"invalid activity id: {activity_id}")
+                elif activity_id in activity_ids:
+                    self._error(issues, activity_location, f"duplicate activity id: {activity_id}")
+                activity_ids.add(activity_id)
+                for key in ("title_key", "description_key", "reflection_keys", "appeal_delta", "fatigue_delta", "stat_deltas"):
+                    if key not in activity:
+                        self._error(issues, activity_location, f"required key is missing: {key}")
+                reflection_keys = activity.get("reflection_keys")
+                if not isinstance(reflection_keys, dict) or not all(
+                    isinstance(reflection_keys.get(mode), str) and reflection_keys.get(mode)
+                    for mode in ("perceived", "reality")
+                ):
+                    self._error(issues, activity_location, "reflection_keys requires perceived and reality keys")
+                for key in ("appeal_delta", "fatigue_delta"):
+                    value = activity.get(key)
+                    if not isinstance(value, int) or isinstance(value, bool):
+                        self._error(issues, activity_location, f"{key} must be an integer")
+                fatigue_lte = activity.get("fatigue_lte")
+                if fatigue_lte is not None and (
+                    not isinstance(fatigue_lte, int) or isinstance(fatigue_lte, bool) or not 0 <= fatigue_lte <= 6
+                ):
+                    self._error(issues, activity_location, "fatigue_lte must be an integer from 0 to 6")
+                stat_deltas = activity.get("stat_deltas")
+                if not isinstance(stat_deltas, dict):
+                    self._error(issues, activity_location, "stat_deltas must be a mapping")
+                else:
+                    for stat, delta in stat_deltas.items():
+                        if stat not in SELF_DEVELOPMENT_STATS:
+                            self._error(issues, activity_location, f"unknown self-development stat: {stat}")
+                        if not isinstance(delta, int) or isinstance(delta, bool):
+                            self._error(issues, activity_location, f"stat delta must be an integer: {stat}")
+
+        expressions = config.get("expressions")
+        if not isinstance(expressions, dict) or not expressions:
+            self._error(issues, location, "expressions must be a non-empty mapping")
+            return
+        for expression_id, expression in expressions.items():
+            expression_location = f"{location}.expressions.{expression_id}"
+            if not self.id_is_valid(expression_id):
+                self._error(issues, expression_location, f"invalid expression id: {expression_id}")
+            if not isinstance(expression, dict):
+                self._error(issues, expression_location, "expression must be a mapping")
+                continue
+            unknown_keys = sorted(set(expression) - {"requires", "score_bonus"})
+            for key in unknown_keys:
+                self._error(issues, expression_location, f"unknown expression key: {key}")
+            requires = expression.get("requires")
+            if not isinstance(requires, dict) or not requires:
+                self._error(issues, expression_location, "expression requires must be a non-empty mapping")
+            else:
+                unknown_requirements = sorted(set(requires) - {"appeal_gte", "stat", "minimum", "fatigue_lte"})
+                for key in unknown_requirements:
+                    self._error(issues, expression_location, f"unknown expression requirement: {key}")
+                appeal_gte = requires.get("appeal_gte")
+                if appeal_gte is not None and (
+                    not isinstance(appeal_gte, int) or isinstance(appeal_gte, bool) or not 0 <= appeal_gte <= 100
+                ):
+                    self._error(issues, expression_location, "appeal_gte must be an integer from 0 to 100")
+                stat = requires.get("stat")
+                minimum = requires.get("minimum")
+                if (stat is None) != (minimum is None):
+                    self._error(issues, expression_location, "stat and minimum must be declared together")
+                if stat is not None and stat not in SELF_DEVELOPMENT_STATS:
+                    self._error(issues, expression_location, f"unknown self-development stat: {stat}")
+                if minimum is not None and (
+                    not isinstance(minimum, int) or isinstance(minimum, bool) or not 0 <= minimum <= 5
+                ):
+                    self._error(issues, expression_location, "minimum must be an integer from 0 to 5")
+                fatigue_lte = requires.get("fatigue_lte")
+                if fatigue_lte is not None and (
+                    not isinstance(fatigue_lte, int) or isinstance(fatigue_lte, bool) or not 0 <= fatigue_lte <= 6
+                ):
+                    self._error(issues, expression_location, "fatigue_lte must be an integer from 0 to 6")
+            score_bonus = expression.get("score_bonus")
+            if (
+                not isinstance(score_bonus, int)
+                or isinstance(score_bonus, bool)
+                or not 0 <= score_bonus <= SELF_DEVELOPMENT_MAX_SCORE_BONUS
+            ):
+                self._error(
+                    issues,
+                    expression_location,
+                    f"score_bonus must be an integer from 0 to {SELF_DEVELOPMENT_MAX_SCORE_BONUS}",
+                )
 
     def _validate_value_against_spec(self, issues: List[Issue], location: str, path: str, value: Any, spec: Mapping[str, Any]) -> None:
         value_type = spec.get("type")
@@ -1334,6 +1477,7 @@ class StoryProject:
             if start_node not in node_map:
                 self._error(issues, location, f"unknown start_node: {start_node}")
             self._validate_local_links(issues, location, node_map)
+            self._validate_self_development_choice_equivalence(issues, location, node_map)
             if start_node in node_map:
                 reachable = local_reachable(node_map, start_node)
                 for unreachable in sorted(set(node_map) - reachable):
@@ -1374,9 +1518,18 @@ class StoryProject:
                     variant_ids.add(variant_id)
                     if variant.get("default") is True:
                         defaults += 1
+                        if "self_development" in variant:
+                            self._error(issues, variant_location, "default variant cannot require a self-development expression")
                     else:
                         self._validate_conditions(issues, variant_location, variant.get("conditions", []), reads)
-                        signature = json.dumps(variant.get("conditions", []), ensure_ascii=False, sort_keys=True)
+                        signature = json.dumps(
+                            {
+                                "conditions": variant.get("conditions", []),
+                                "self_development": variant.get("self_development"),
+                            },
+                            ensure_ascii=False,
+                            sort_keys=True,
+                        )
                         if signature in condition_signatures:
                             self._warning(
                                 issues,
@@ -1385,6 +1538,14 @@ class StoryProject:
                             )
                         else:
                             condition_signatures[signature] = str(variant_id)
+                    if "self_development" in variant:
+                        self._validate_self_development_use(
+                            issues,
+                            variant_location,
+                            variant.get("self_development"),
+                            kind="variant",
+                            reads=reads,
+                        )
                     variant_node = {
                         **node,
                         "perceived": variant.get("perceived"),
@@ -1462,6 +1623,14 @@ class StoryProject:
                     for effect in option.get("effects", []):
                         if effect.get("path") in forbidden:
                             self._error(issues, option_location, f"push_pull choice must not manually write compatibility stat: {effect.get('path')}")
+                if "self_development" in option:
+                    self._validate_self_development_use(
+                        issues,
+                        option_location,
+                        option.get("self_development"),
+                        kind="choice",
+                        reads=reads,
+                    )
                 self._validate_conditions(issues, option_location, option.get("conditions", []), reads)
                 self._validate_effects(issues, option_location, option.get("effects", []), reads, writes)
         elif kind == "state_gate":
@@ -1472,6 +1641,122 @@ class StoryProject:
                 self._error(issues, location, "effect node requires next")
         elif kind == "exit":
             self._validate_transitions(issues, location, node.get("transitions"), reads, target_key="scene", allow_ending=True)
+
+    def _validate_self_development_use(
+        self,
+        issues: List[Issue],
+        location: str,
+        value: Any,
+        *,
+        kind: str,
+        reads: Set[str],
+    ) -> None:
+        if not isinstance(value, dict):
+            self._error(issues, location, "self_development must be a mapping")
+            return
+        required = {"expression"} if kind == "variant" else {"expression", "equivalent_to", "converges_at"}
+        missing = sorted(required - set(value))
+        unknown = sorted(set(value) - required)
+        for key in missing:
+            self._error(issues, location, f"self_development.{key} is required")
+        for key in unknown:
+            self._error(issues, location, f"unknown self_development key: {key}")
+        expression_id = value.get("expression")
+        expressions = self.manifest.get("self_development", {}).get("expressions", {})
+        if not isinstance(expression_id, str) or expression_id not in expressions:
+            self._error(issues, location, f"unknown self-development expression: {expression_id}")
+        else:
+            expression = expressions[expression_id]
+            requires = expression.get("requires", {}) if isinstance(expression, dict) else {}
+            required_paths: List[str] = []
+            if isinstance(requires, dict):
+                if "appeal_gte" in requires:
+                    required_paths.append(f"{SELF_DEVELOPMENT_STATE_PREFIX}.appeal")
+                if isinstance(requires.get("stat"), str):
+                    required_paths.append(f"{SELF_DEVELOPMENT_STATE_PREFIX}.stats.{requires['stat']}")
+                if "fatigue_lte" in requires:
+                    required_paths.append(f"{SELF_DEVELOPMENT_STATE_PREFIX}.fatigue")
+            for path in required_paths:
+                if path not in reads:
+                    self._error(
+                        issues,
+                        location,
+                        f"self-development expression path is not declared in state_contract.reads: {path}",
+                    )
+        if kind == "choice":
+            for key in ("equivalent_to", "converges_at"):
+                if not self.id_is_valid(value.get(key)):
+                    self._error(issues, location, f"invalid self_development.{key}: {value.get(key)}")
+
+    def _validate_self_development_choice_equivalence(
+        self,
+        issues: List[Issue],
+        location: str,
+        node_map: Mapping[str, Mapping[str, Any]],
+    ) -> None:
+        for node_id, node in node_map.items():
+            if node.get("kind") != "choice":
+                continue
+            options = node.get("options", [])
+            option_map = {
+                option.get("id"): option
+                for option in options
+                if isinstance(option, dict) and isinstance(option.get("id"), str)
+            }
+            for option in options:
+                if not isinstance(option, dict) or "self_development" not in option:
+                    continue
+                option_location = f"{location}#nodes.{node_id}.options.{option.get('id')}"
+                use = option.get("self_development")
+                if not isinstance(use, dict):
+                    continue
+                equivalent_id = use.get("equivalent_to")
+                equivalent = option_map.get(equivalent_id)
+                if equivalent is None:
+                    self._error(
+                        issues,
+                        option_location,
+                        f"self_development.equivalent_to must reference an option in the same choice: {equivalent_id}",
+                    )
+                    continue
+                if equivalent is option:
+                    self._error(issues, option_location, "self-development option cannot be equivalent to itself")
+                    continue
+                if "self_development" in equivalent or equivalent.get("conditions", []) != []:
+                    self._error(
+                        issues,
+                        option_location,
+                        "self_development.equivalent_to must reference an unconditional base option",
+                    )
+                if option.get("push_pull") != equivalent.get("push_pull"):
+                    self._error(issues, option_location, "self-development option push_pull must match equivalent base option")
+                if option.get("effects", []) != equivalent.get("effects", []):
+                    self._error(issues, option_location, "self-development option effects must match equivalent base option")
+
+                convergence = use.get("converges_at")
+                if convergence not in node_map:
+                    self._error(
+                        issues,
+                        option_location,
+                        f"unknown self_development.converges_at node: {convergence}",
+                    )
+                    continue
+                option_next = option.get("next")
+                equivalent_next = equivalent.get("next")
+                option_reachable = local_reachable(node_map, option_next) if isinstance(option_next, str) else set()
+                equivalent_reachable = local_reachable(node_map, equivalent_next) if isinstance(equivalent_next, str) else set()
+                if convergence not in option_reachable:
+                    self._error(
+                        issues,
+                        option_location,
+                        f"self-development branch does not reach converges_at: {convergence}",
+                    )
+                if convergence not in equivalent_reachable:
+                    self._error(
+                        issues,
+                        option_location,
+                        f"equivalent base branch does not reach converges_at: {convergence}",
+                    )
 
     def _validate_speaker_reference(
         self,
@@ -1657,6 +1942,15 @@ class StoryProject:
                 continue
             path = condition.get("path")
             op = condition.get("op")
+            if isinstance(path, str) and (
+                path == SELF_DEVELOPMENT_STATE_PREFIX
+                or path.startswith(f"{SELF_DEVELOPMENT_STATE_PREFIX}.")
+            ):
+                self._error(
+                    issues,
+                    item_location,
+                    "self-development state is forbidden in general conditions; use self_development.expression metadata",
+                )
             if self.path_spec(path) is None:
                 self._error(issues, item_location, f"unknown state path: {path}")
             if reads is not None and path not in reads:
@@ -1928,6 +2222,7 @@ class StoryProject:
             "source_sha256": digest.hexdigest(),
             "enums": self.manifest.get("enums"),
             "stats": self.manifest.get("stats"),
+            "self_development": copy.deepcopy(self.manifest.get("self_development", {})),
             "initial_state": self.initial_state(),
             "localization": self.localization_bundle(),
             "campaigns": campaigns,
@@ -2531,9 +2826,400 @@ def apply_effect(project: StoryProject, state: MutableMapping[str, Any], effect:
 
 
 def _bounded_number(value: Any, fallback: int, minimum: int, maximum: int) -> int:
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(value)
+    ):
         return fallback
     return max(minimum, min(maximum, int(value)))
+
+
+def self_development_expression_matches(
+    project: StoryProject,
+    state: Mapping[str, Any],
+    expression_id: Any,
+) -> bool:
+    expressions = project.manifest.get("self_development", {}).get("expressions", {})
+    expression = expressions.get(expression_id) if isinstance(expressions, Mapping) else None
+    if not isinstance(expression, Mapping):
+        return False
+    requires = expression.get("requires", {})
+    if not isinstance(requires, Mapping):
+        return False
+    profile = get_path(state, SELF_DEVELOPMENT_STATE_PREFIX, {})
+    if not isinstance(profile, Mapping):
+        return False
+    appeal_gte = requires.get("appeal_gte")
+    if appeal_gte is not None:
+        appeal = _number_value(profile.get("appeal"))
+        threshold = _number_value(appeal_gte)
+        if appeal is None or threshold is None or appeal < threshold:
+            return False
+    stat = requires.get("stat")
+    minimum = requires.get("minimum")
+    if stat is not None:
+        stats = profile.get("stats", {})
+        actual = _number_value(stats.get(stat)) if isinstance(stats, Mapping) else None
+        threshold = _number_value(minimum)
+        if actual is None or threshold is None or actual < threshold:
+            return False
+    fatigue_lte = requires.get("fatigue_lte")
+    if fatigue_lte is not None:
+        fatigue = _number_value(profile.get("fatigue"))
+        threshold = _number_value(fatigue_lte)
+        if fatigue is None or threshold is None or fatigue > threshold:
+            return False
+    return True
+
+
+def _number_value(value: Any) -> Optional[float]:
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(value)
+    ):
+        return None
+    return float(value)
+
+
+def self_development_use_matches(
+    project: StoryProject,
+    state: Mapping[str, Any],
+    value: Any,
+) -> bool:
+    if value is None:
+        return True
+    if not isinstance(value, Mapping):
+        return False
+    return self_development_expression_matches(project, state, value.get("expression"))
+
+
+def self_development_score_bonus(
+    project: StoryProject,
+    state: Mapping[str, Any],
+    value: Any,
+) -> int:
+    if not self_development_use_matches(project, state, value) or not isinstance(value, Mapping):
+        return 0
+    expressions = project.manifest.get("self_development", {}).get("expressions", {})
+    expression = expressions.get(value.get("expression"), {}) if isinstance(expressions, Mapping) else {}
+    raw_bonus = expression.get("score_bonus") if isinstance(expression, Mapping) else 0
+    return _bounded_number(raw_bonus, 0, 0, SELF_DEVELOPMENT_MAX_SCORE_BONUS)
+
+
+def choice_option_enabled(project: StoryProject, state: Mapping[str, Any], option: Mapping[str, Any]) -> bool:
+    return conditions_match(state, option.get("conditions", [])) and self_development_use_matches(
+        project,
+        state,
+        option.get("self_development"),
+    )
+
+
+class SelfDevelopmentError(RuntimeError):
+    """Typed harness failure matching the player self-development domain."""
+
+    def __init__(self, code: str, message: str):
+        super().__init__(message)
+        self.code = code
+
+
+class NightPhaseError(RuntimeError):
+    """Typed nightly lifecycle failure matching the player coordinator."""
+
+    def __init__(self, code: str, message: str):
+        super().__init__(message)
+        self.code = code
+
+
+class SelfDevelopmentService:
+    """Manifest-driven Python mirror of the player self-development service."""
+
+    def __init__(self, project: StoryProject):
+        self.project = project
+        raw_config = project.manifest.get("self_development", {})
+        self.config = raw_config if isinstance(raw_config, Mapping) else {}
+        configured_max_day = _number_value(self.config.get("max_night_day"))
+        self.max_night_day = max(0, int(configured_max_day)) if configured_max_day is not None else 16
+        self.activities: Dict[str, Dict[str, Any]] = {}
+        for activity in self.config.get("activities", []):
+            if not isinstance(activity, Mapping) or not isinstance(activity.get("id"), str):
+                continue
+            activity_id = activity["id"]
+            if activity_id in self.activities:
+                raise SelfDevelopmentError(
+                    "duplicate_activity",
+                    f"duplicate self-development activity: {activity_id}",
+                )
+            self.activities[activity_id] = copy.deepcopy(dict(activity))
+        initial_state = project.initial_state()
+        initial_profile = get_path(initial_state, SELF_DEVELOPMENT_STATE_PREFIX, {})
+        self.initial_profile = self._hydrate_profile(initial_profile, {
+            "appeal": 30,
+            "stats": {stat: 0 for stat in SELF_DEVELOPMENT_STAT_ORDER},
+            "fatigue": 1,
+        })
+        initial_progress = get_path(initial_state, SELF_DEVELOPMENT_PROGRESS_PREFIX, {})
+        self.initial_progress = self._hydrate_progress(initial_progress, {
+            "completed_days": [],
+            "activity_history": [],
+            "last_activity": "",
+        })
+
+    def _stat_bounds(self, path: str, default_minimum: int, default_maximum: int) -> Tuple[int, int]:
+        if path in SELF_DEVELOPMENT_BOUNDS:
+            return SELF_DEVELOPMENT_BOUNDS[path]
+        spec = self.project.path_spec(path) or {}
+        minimum = spec.get("min", default_minimum)
+        maximum = spec.get("max", default_maximum)
+        return int(minimum), int(maximum)
+
+    def _safe_integer(self, value: Any, fallback: int, minimum: int, maximum: int) -> int:
+        return _bounded_number(value, fallback, minimum, maximum)
+
+    def _hydrate_profile(self, value: Any, fallback: Mapping[str, Any]) -> Dict[str, Any]:
+        source = value if isinstance(value, Mapping) else {}
+        fallback_stats = fallback.get("stats", {}) if isinstance(fallback.get("stats"), Mapping) else {}
+        source_stats = source.get("stats", {}) if isinstance(source.get("stats"), Mapping) else {}
+        appeal_min, appeal_max = self._stat_bounds(
+            f"{SELF_DEVELOPMENT_STATE_PREFIX}.appeal", 0, 100
+        )
+        fatigue_min, fatigue_max = self._stat_bounds(
+            f"{SELF_DEVELOPMENT_STATE_PREFIX}.fatigue", 0, 6
+        )
+        stats = {}
+        for stat in SELF_DEVELOPMENT_STAT_ORDER:
+            stat_min, stat_max = self._stat_bounds(
+                f"{SELF_DEVELOPMENT_STATE_PREFIX}.stats.{stat}", 0, 5
+            )
+            stats[stat] = self._safe_integer(
+                source_stats.get(stat),
+                int(fallback_stats.get(stat, 0)),
+                stat_min,
+                stat_max,
+            )
+        return {
+            "appeal": self._safe_integer(
+                source.get("appeal"), int(fallback.get("appeal", 30)), appeal_min, appeal_max
+            ),
+            "stats": stats,
+            "fatigue": self._safe_integer(
+                source.get("fatigue"), int(fallback.get("fatigue", 1)), fatigue_min, fatigue_max
+            ),
+        }
+
+    def _hydrate_progress(self, value: Any, fallback: Mapping[str, Any]) -> Dict[str, Any]:
+        source = value if isinstance(value, Mapping) else {}
+        raw_days = source.get("completed_days", fallback.get("completed_days", []))
+        raw_history = source.get("activity_history", fallback.get("activity_history", []))
+        days = raw_days if isinstance(raw_days, list) else fallback.get("completed_days", [])
+        history = raw_history if isinstance(raw_history, list) else fallback.get("activity_history", [])
+        return {
+            "completed_days": sorted({
+                day for day in days
+                if isinstance(day, int) and not isinstance(day, bool) and day >= 1
+            }),
+            "activity_history": [item for item in history if isinstance(item, str)],
+            "last_activity": source.get("last_activity")
+            if isinstance(source.get("last_activity"), str)
+            else str(fallback.get("last_activity", "")),
+        }
+
+    def hydrate(self, state: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
+        profile = self._hydrate_profile(
+            get_path(state, SELF_DEVELOPMENT_STATE_PREFIX, {}),
+            self.initial_profile,
+        )
+        progress = self._hydrate_progress(
+            get_path(state, SELF_DEVELOPMENT_PROGRESS_PREFIX, {}),
+            self.initial_progress,
+        )
+        set_path(state, SELF_DEVELOPMENT_STATE_PREFIX, profile)
+        set_path(state, SELF_DEVELOPMENT_PROGRESS_PREFIX, progress)
+        return state
+
+    def profile(self, state: MutableMapping[str, Any]) -> Dict[str, Any]:
+        self.hydrate(state)
+        return copy.deepcopy(get_path(state, SELF_DEVELOPMENT_STATE_PREFIX, self.initial_profile))
+
+    def progress(self, state: MutableMapping[str, Any]) -> Dict[str, Any]:
+        self.hydrate(state)
+        return copy.deepcopy(get_path(state, SELF_DEVELOPMENT_PROGRESS_PREFIX, self.initial_progress))
+
+    def activity_options(self, state: MutableMapping[str, Any]) -> List[Dict[str, Any]]:
+        self.hydrate(state)
+        profile = self.profile(state)
+        progress = self.progress(state)
+        day = get_path(state, "progress.time.day", None)
+        slot = get_path(state, "progress.time.slot", None)
+        _, fatigue_max = self._stat_bounds(f"{SELF_DEVELOPMENT_STATE_PREFIX}.fatigue", 0, 6)
+        result = []
+        for activity in self.activities.values():
+            reason = None
+            if slot != "after_work":
+                reason = "not_after_work"
+            elif not isinstance(day, int) or isinstance(day, bool) or day < 1 or day > self.max_night_day:
+                reason = "outside_night_window"
+            elif day in progress["completed_days"]:
+                reason = "already_completed"
+            else:
+                fatigue_lte = activity.get("fatigue_lte")
+                if fatigue_lte is not None and (
+                    not isinstance(fatigue_lte, int)
+                    or isinstance(fatigue_lte, bool)
+                    or profile["fatigue"] > fatigue_lte
+                ):
+                    reason = "fatigue_limit"
+                fatigue_delta = activity.get("fatigue_delta", 0)
+                if reason is None and isinstance(fatigue_delta, int) and fatigue_delta > 0:
+                    if profile["fatigue"] + fatigue_delta > fatigue_max:
+                        reason = "fatigue_overflow"
+            result.append({
+                "activity": copy.deepcopy(activity),
+                "available": reason is None,
+                **({"reason": reason} if reason else {}),
+            })
+        return result
+
+    def perform_activity(
+        self,
+        state: MutableMapping[str, Any],
+        activity_id: str,
+        day: int,
+    ) -> Dict[str, Any]:
+        self.hydrate(state)
+        if not isinstance(day, int) or isinstance(day, bool) or day < 1 or day > self.max_night_day:
+            raise SelfDevelopmentError("invalid_day", f"night activity is unavailable on day {day}")
+        current_day = get_path(state, "progress.time.day", None)
+        if day != current_day:
+            raise SelfDevelopmentError(
+                "day_mismatch",
+                f"night activity day {day} does not match current day {current_day}",
+            )
+        activity = self.activities.get(activity_id)
+        if activity is None:
+            raise SelfDevelopmentError("unknown_activity", f"unknown self-development activity: {activity_id}")
+        option = next(
+            (item for item in self.activity_options(state) if item["activity"]["id"] == activity_id),
+            None,
+        )
+        if not option or not option["available"]:
+            code = option.get("reason", "outside_night_window") if option else "outside_night_window"
+            raise SelfDevelopmentError(
+                code,
+                f"self-development activity {activity_id} is unavailable: {code}",
+            )
+
+        state_before = copy.deepcopy(state)
+        before = self.profile(state)
+        after = copy.deepcopy(before)
+        appeal_min, appeal_max = self._stat_bounds(
+            f"{SELF_DEVELOPMENT_STATE_PREFIX}.appeal", 0, 100
+        )
+        fatigue_min, fatigue_max = self._stat_bounds(
+            f"{SELF_DEVELOPMENT_STATE_PREFIX}.fatigue", 0, 6
+        )
+        after["appeal"] = self._safe_integer(
+            before["appeal"] + int(activity.get("appeal_delta", 0)),
+            before["appeal"],
+            appeal_min,
+            appeal_max,
+        )
+        after["fatigue"] = self._safe_integer(
+            before["fatigue"] + int(activity.get("fatigue_delta", 0)),
+            before["fatigue"],
+            fatigue_min,
+            fatigue_max,
+        )
+        stat_deltas = {}
+        for stat, delta in activity.get("stat_deltas", {}).items():
+            stat_min, stat_max = self._stat_bounds(
+                f"{SELF_DEVELOPMENT_STATE_PREFIX}.stats.{stat}", 0, 5
+            )
+            after["stats"][stat] = self._safe_integer(
+                before["stats"][stat] + int(delta),
+                before["stats"][stat],
+                stat_min,
+                stat_max,
+            )
+            stat_deltas[stat] = after["stats"][stat] - before["stats"][stat]
+
+        progress = self.progress(state)
+        progress["completed_days"] = sorted({*progress["completed_days"], day})
+        progress["activity_history"].append(activity_id)
+        progress["last_activity"] = activity_id
+        set_path(state, SELF_DEVELOPMENT_STATE_PREFIX, after)
+        set_path(state, SELF_DEVELOPMENT_PROGRESS_PREFIX, progress)
+        return {
+            "type": "self_development",
+            "day": day,
+            "activity": activity_id,
+            "appeal_delta": after["appeal"] - before["appeal"],
+            "fatigue_delta": after["fatigue"] - before["fatigue"],
+            "stat_deltas": stat_deltas,
+            "before": before,
+            "after": copy.deepcopy(after),
+            "state_diff": state_diff(state_before, state),
+        }
+
+
+class NightPhaseCoordinator:
+    """Night selection/result/finish lifecycle for harness simulations."""
+
+    def __init__(self, service: SelfDevelopmentService):
+        self.service = service
+
+    def should_start(self, state: MutableMapping[str, Any]) -> bool:
+        self.service.hydrate(state)
+        day = get_path(state, "progress.time.day", None)
+        slot = get_path(state, "progress.time.slot", None)
+        progress = self.service.progress(state)
+        return (
+            slot == "after_work"
+            and isinstance(day, int)
+            and not isinstance(day, bool)
+            and 1 <= day <= self.service.max_night_day
+            and day not in progress["completed_days"]
+            and any(option["available"] for option in self.service.activity_options(state))
+        )
+
+    def start(self, state: MutableMapping[str, Any]) -> Dict[str, Any]:
+        if not self.should_start(state):
+            raise NightPhaseError("not_available", "night phase is unavailable in the current state")
+        return {
+            "status": "selecting",
+            "day": get_path(state, "progress.time.day", None),
+            "profile": self.service.profile(state),
+            "options": self.service.activity_options(state),
+        }
+
+    def choose(self, state: MutableMapping[str, Any], activity_id: str) -> Dict[str, Any]:
+        if not self.should_start(state):
+            raise NightPhaseError("not_available", "night phase is unavailable in the current state")
+        day = get_path(state, "progress.time.day", None)
+        result = self.service.perform_activity(state, activity_id, day)
+        return {
+            "status": "result",
+            "day": day,
+            "profile": copy.deepcopy(result["after"]),
+            "result": result,
+        }
+
+    def finish(self, state: MutableMapping[str, Any]) -> Dict[str, Any]:
+        self.service.hydrate(state)
+        day = get_path(state, "progress.time.day", None)
+        progress = self.service.progress(state)
+        if day not in progress["completed_days"]:
+            raise NightPhaseError(
+                "activity_not_completed",
+                f"a night activity has not been completed for day {day}",
+            )
+        return {
+            "status": "finished",
+            "day": day,
+            "profile": self.service.profile(state),
+            "activity": progress["last_activity"],
+        }
 
 
 def push_pull_state(state: Mapping[str, Any]) -> Dict[str, Any]:
@@ -2598,6 +3284,7 @@ def resolve_push_pull(
     state: MutableMapping[str, Any],
     heroine: str,
     config: Mapping[str, Any],
+    visible_score_bonus: int = 0,
 ) -> Dict[str, Any]:
     current = push_pull_state(state)
     heroine_changed = bool(current["heroine"] and current["heroine"] != heroine)
@@ -2612,6 +3299,8 @@ def resolve_push_pull(
     combo = 0 if heroine_changed else current["combo"]
     target = "none" if heroine_changed else current["target"]
     position = previous_position
+    base_gain = 0
+    bonus_gain = 0
     gain = 0
     reached_checkpoint = False
 
@@ -2639,12 +3328,19 @@ def resolve_push_pull(
         )
         if previous_inside and inside and moving_toward_target:
             combo = min(PUSH_PULL_MAX_COMBO, combo + 1)
-            gain = base_score * combo
+            base_gain = base_score * combo
             kind = "score"
             if reached_checkpoint:
-                gain += PUSH_PULL_TURN_BONUS
+                base_gain += PUSH_PULL_TURN_BONUS
                 target = "push" if target == "pull" else "pull"
                 kind = "turn"
+            bonus_gain = _bounded_number(
+                visible_score_bonus,
+                0,
+                0,
+                SELF_DEVELOPMENT_MAX_SCORE_BONUS,
+            )
+            gain = base_gain + bonus_gain
             apply_effect(project, state, {"path": initiative_path, "op": "add", "value": gain})
         else:
             combo = 0
@@ -2673,6 +3369,8 @@ def resolve_push_pull(
         "previous_initiative": previous_initiative,
         "initiative": int(get_path(state, initiative_path, previous_initiative)),
         "combo": combo,
+        "base_gain": base_gain,
+        "bonus_gain": bonus_gain,
         "gain": gain,
         "target": target,
         "reached_checkpoint": reached_checkpoint,
@@ -2788,7 +3486,13 @@ def resolve_dialogue_variant(
             key=lambda item: (-int(item[1].get("priority", 0)), item[0]),
         )
         selected = next(
-            (variant for _, variant in ordered if variant.get("default") is not True and conditions_match(context, variant.get("conditions", []))),
+            (
+                variant
+                for _, variant in ordered
+                if variant.get("default") is not True
+                and conditions_match(context, variant.get("conditions", []))
+                and self_development_use_matches(project, state, variant.get("self_development"))
+            ),
             None,
         )
         selected = selected or next((variant for _, variant in ordered if variant.get("default") is True), ordered[0][1])
@@ -3056,7 +3760,7 @@ class Simulator:
                 })
                 node_id = node["next"]
             elif kind == "choice":
-                enabled = [option for option in node["options"] if conditions_match(self.state, option.get("conditions", []))]
+                enabled = [option for option in node["options"] if choice_option_enabled(self.project, self.state, option)]
                 if not enabled:
                     raise RuntimeError(f"no enabled option: {scene_id}:{node_id}")
                 key_specific = f"{scene_id}:{node_id}"
@@ -3069,6 +3773,11 @@ class Simulator:
                 else:
                     selected = enabled[0] if self.strategy == "first" else enabled[-1]
                 before = copy.deepcopy(self.state)
+                score_bonus = self_development_score_bonus(
+                    self.project,
+                    self.state,
+                    selected.get("self_development"),
+                )
                 applied = []
                 for effect in selected.get("effects", []):
                     if apply_effect(self.project, self.state, effect):
@@ -3078,6 +3787,7 @@ class Simulator:
                     self.state,
                     self.route["heroine"],
                     selected["push_pull"],
+                    score_bonus,
                 )
                 self.trace.append({
                     "type": "choice",
@@ -3130,6 +3840,22 @@ class Simulator:
         return {"route": self.route_id, "ending": ending_id, "stopped_at": None, "trace": self.trace, "final_state": self.state}
 
 
+def maximum_self_development_state(project: StoryProject, state: Mapping[str, Any]) -> Dict[str, Any]:
+    result = copy.deepcopy(dict(state))
+    stats = project.manifest.get("stats", {})
+    appeal_path = f"{SELF_DEVELOPMENT_STATE_PREFIX}.appeal"
+    fatigue_path = f"{SELF_DEVELOPMENT_STATE_PREFIX}.fatigue"
+    appeal_spec = stats.get(appeal_path, {}) if isinstance(stats, Mapping) else {}
+    fatigue_spec = stats.get(fatigue_path, {}) if isinstance(stats, Mapping) else {}
+    set_path(result, appeal_path, int(appeal_spec.get("max", 100)))
+    set_path(result, fatigue_path, int(fatigue_spec.get("min", 0)))
+    for stat in sorted(SELF_DEVELOPMENT_STATS):
+        path = f"{SELF_DEVELOPMENT_STATE_PREFIX}.stats.{stat}"
+        spec = stats.get(path, {}) if isinstance(stats, Mapping) else {}
+        set_path(result, path, int(spec.get("max", 5)))
+    return result
+
+
 def explore_route(
     project: StoryProject,
     route_id: str,
@@ -3149,9 +3875,15 @@ def explore_route(
     if not conditions_match(initial_state, route.get("unlock_conditions", [])):
         raise RuntimeError(f"route is locked for current state: {route_id}")
 
-    queue: List[Tuple[str, Optional[str], Dict[str, Any], Tuple[str, ...]]] = [
-        (route["entry_scene"], None, initial_state, ()),
-    ]
+    profiles = [initial_state, maximum_self_development_state(project, initial_state)]
+    queue: List[Tuple[str, Optional[str], Dict[str, Any], Tuple[str, ...]]] = []
+    profile_fingerprints: Set[str] = set()
+    for profile in profiles:
+        fingerprint = json.dumps(profile, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        if fingerprint in profile_fingerprints:
+            continue
+        profile_fingerprints.add(fingerprint)
+        queue.append((route["entry_scene"], None, profile, ()))
     visited: Set[Tuple[str, str, str]] = set()
     covered_options: Set[str] = set()
     reached_endings: Set[str] = set()
@@ -3190,15 +3922,26 @@ def explore_route(
         elif kind == "choice":
             enabled = [
                 option for option in node["options"]
-                if conditions_match(current_state, option.get("conditions", []))
+                if choice_option_enabled(project, current_state, option)
             ]
             if not enabled:
                 raise RuntimeError(f"no enabled option during exploration: {scene_id}:{node_id}")
             for option in enabled:
                 next_state = copy.deepcopy(current_state)
+                score_bonus = self_development_score_bonus(
+                    project,
+                    current_state,
+                    option.get("self_development"),
+                )
                 for effect in option.get("effects", []):
                     apply_effect(project, next_state, effect)
-                resolve_push_pull(project, next_state, route["heroine"], option["push_pull"])
+                resolve_push_pull(
+                    project,
+                    next_state,
+                    route["heroine"],
+                    option["push_pull"],
+                    score_bonus,
+                )
                 option_key = f"{scene_id}:{node_id}={option['id']}"
                 covered_options.add(option_key)
                 queue.append((scene_id, option["next"], next_state, (*path, option_key)))
@@ -3509,6 +4252,74 @@ def command_explore(project: StoryProject, args: argparse.Namespace) -> int:
     return 0
 
 
+def command_night(project: StoryProject, args: argparse.Namespace) -> int:
+    state = parse_state_overrides(args.state, project.initial_state())
+    campaign = next(iter(project.campaigns.values()), {})
+    set_path(state, "progress.time.day", args.day)
+    set_path(state, "progress.time.slot", "after_work")
+    set_path(state, "progress.time.act", campaign_act(campaign, args.day))
+
+    service = SelfDevelopmentService(project)
+    coordinator = NightPhaseCoordinator(service)
+    profile_before = service.profile(state)
+    options = service.activity_options(state)
+    available_before = coordinator.should_start(state)
+    status = "selecting" if available_before else "unavailable"
+    result = None
+    finished = None
+
+    if args.activity:
+        if not available_before:
+            raise NightPhaseError(
+                "not_available",
+                f"night phase is unavailable on day {args.day}",
+            )
+        selected = coordinator.choose(state, args.activity)
+        result = selected["result"]
+        finished = coordinator.finish(state)
+        status = finished["status"]
+
+    payload = {
+        "day": args.day,
+        "slot": "after_work",
+        "act": get_path(state, "progress.time.act", None),
+        "available_before": available_before,
+        "available": coordinator.should_start(state),
+        "status": status,
+        "profile_before": profile_before,
+        "options": options,
+        "result": result,
+        "profile": service.profile(state),
+        "progress": service.progress(state),
+        "state": state,
+    }
+    if args.json:
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
+        return 0
+
+    profile = payload["profile_before"]
+    stats = " ".join(f"{stat}={profile['stats'][stat]}" for stat in SELF_DEVELOPMENT_STAT_ORDER)
+    print(f"DAY {args.day} · NIGHT · ACT {payload['act']} · {status.upper()}")
+    print(f"PROFILE appeal={profile['appeal']} fatigue={profile['fatigue']} {stats}")
+    for option in options:
+        marker = "AVAILABLE" if option["available"] else "BLOCKED"
+        reason = f" ({option['reason']})" if option.get("reason") else ""
+        print(f"  {marker:9} {option['activity']['id']}{reason}")
+    if result:
+        deltas = [
+            f"appeal={result['appeal_delta']:+d}",
+            f"fatigue={result['fatigue_delta']:+d}",
+            *(f"{stat}={delta:+d}" for stat, delta in result["stat_deltas"].items()),
+        ]
+        print(f"PERFORMED {result['activity']}: {' '.join(deltas)}")
+        after = payload["profile"]
+        after_stats = " ".join(
+            f"{stat}={after['stats'][stat]}" for stat in SELF_DEVELOPMENT_STAT_ORDER
+        )
+        print(f"PROFILE appeal={after['appeal']} fatigue={after['fatigue']} {after_stats}")
+    return 0
+
+
 def command_timeline(project: StoryProject, args: argparse.Namespace) -> int:
     state = parse_state_overrides(args.state, project.initial_state())
     scheduler = TimelineScheduler(project, state)
@@ -3665,6 +4476,16 @@ def build_parser() -> argparse.ArgumentParser:
     explore_parser.add_argument("--max-states", type=int, default=100_000)
     explore_parser.add_argument("--json", action="store_true")
     explore_parser.set_defaults(func=command_explore)
+
+    night_parser = subparsers.add_parser(
+        "night",
+        help="inspect or perform a nightly self-development activity",
+    )
+    night_parser.add_argument("--day", type=int, required=True)
+    night_parser.add_argument("--activity")
+    night_parser.add_argument("--state", action="append", default=[], help="PATH=JSON")
+    night_parser.add_argument("--json", action="store_true")
+    night_parser.set_defaults(func=command_night)
 
     timeline_parser = subparsers.add_parser("timeline", help="inspect scheduled events at a day and slot")
     timeline_parser.add_argument("--day", type=int, required=True)

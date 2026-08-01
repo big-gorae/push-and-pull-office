@@ -90,9 +90,28 @@
         "interpretation": {"type": "string"},
         "action": {"type": "string"},
         "push_pull": {"$ref": "#/$defs/push_pull"},
+        "self_development": {"$ref": "#/$defs/self_development_choice"},
         "conditions": {"type": "array", "items": {"$ref": "#/$defs/condition"}},
         "effects": {"type": "array", "items": {"$ref": "#/$defs/effect"}},
         "next": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "self_development_choice": {
+      "type": "object",
+      "required": ["expression", "equivalent_to", "converges_at"],
+      "properties": {
+        "expression": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
+        "equivalent_to": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
+        "converges_at": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"}
+      },
+      "additionalProperties": false
+    },
+    "self_development_variant": {
+      "type": "object",
+      "required": ["expression"],
+      "properties": {
+        "expression": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"}
       },
       "additionalProperties": false
     },
@@ -125,6 +144,7 @@
         "priority": {"type": "integer"},
         "conditions": {"type": "array", "items": {"$ref": "#/$defs/condition"}},
         "default": {"type": "boolean"},
+        "self_development": {"$ref": "#/$defs/self_development_variant"},
         "perceived": {"$ref": "#/$defs/perceived"},
         "reality": {"$ref": "#/$defs/reality"}
       },

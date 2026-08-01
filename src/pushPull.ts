@@ -27,6 +27,8 @@ export type PushPullResult = {
   previousInitiative: number;
   initiative: number;
   combo: number;
+  baseGain: number;
+  bonusGain: number;
   gain: number;
   target: PushPullTarget;
   reachedCheckpoint: boolean;
@@ -117,6 +119,7 @@ export function resolvePushPull(
   state: RuntimeState,
   heroine: string,
   config: PushPullConfig,
+  modifier: { visibleScoreBonus?: number } = {},
 ): PushPullResult {
   const current = readPushPullState(state);
   const heroineChanged = Boolean(current.heroine && current.heroine !== heroine);
@@ -127,6 +130,8 @@ export function resolvePushPull(
   let combo = heroineChanged ? 0 : current.combo;
   let target: PushPullTarget = heroineChanged ? "none" : current.target;
   let position = current.position;
+  let baseGain = 0;
+  let bonusGain = 0;
   let gain = 0;
   let reachedCheckpoint = false;
   let kind: PushPullResultKind;
@@ -151,13 +156,15 @@ export function resolvePushPull(
 
     if (previousInside && inside && movingTowardTarget) {
       combo = Math.min(PUSH_PULL_MAX_COMBO, combo + 1);
-      gain = baseScore * combo;
+      baseGain = baseScore * combo;
       kind = "score";
       if (reachedCheckpoint) {
-        gain += PUSH_PULL_TURN_BONUS;
+        baseGain += PUSH_PULL_TURN_BONUS;
         target = target === "pull" ? "push" : "pull";
         kind = "turn";
       }
+      bonusGain = numberInRange(modifier.visibleScoreBonus, 0, 0, 3);
+      gain = baseGain + bonusGain;
       const visible = state.visible.heroines[heroine];
       if (visible) visible.initiative = Math.min(100, visible.initiative + gain);
     } else {
@@ -187,6 +194,8 @@ export function resolvePushPull(
     previousInitiative,
     initiative: state.visible.heroines[heroine]?.initiative ?? previousInitiative,
     combo,
+    baseGain,
+    bonusGain,
     gain,
     target,
     reachedCheckpoint,

@@ -136,6 +136,35 @@ class StoryEditorBridgeTests(unittest.TestCase):
             scene["state_contract"]["writes"],
         )
 
+    def test_state_contract_includes_expression_registry_requirements(self):
+        scene = {
+            "entry_conditions": [],
+            "nodes": [{
+                "kind": "dual_dialogue",
+                "variants": [{
+                    "self_development": {"expression": "stamina.answer"},
+                }],
+            }],
+        }
+        derive_state_contract(scene, {
+            "stamina.answer": {
+                "requires": {
+                    "appeal_gte": 32,
+                    "stat": "stamina",
+                    "minimum": 2,
+                    "fatigue_lte": 4,
+                },
+            },
+        })
+        self.assertEqual(
+            [
+                "visible.protagonist.self_development.appeal",
+                "visible.protagonist.self_development.stats.stamina",
+                "visible.protagonist.self_development.fatigue",
+            ],
+            scene["state_contract"]["reads"],
+        )
+
     def test_validate_scene_does_not_modify_source(self):
         temporary, root = self.make_project_copy()
         try:

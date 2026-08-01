@@ -1,20 +1,20 @@
 {
   "schema_version": 2,
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "7efcdcc79b42f1e27bed2bb7f34e2c09aef1f90a2f7373ec14a2c65174b65921",
+  "source_sha256": "382593e5cbb2c91e367ade5b7919516a8e7523256d5cc09b89b86299fd432a1f",
   "profile": "development",
   "default_locale": "ko",
   "supported_locales": [
     "ko",
     "en"
   ],
-  "total_entries": 717,
+  "total_entries": 773,
   "coverage": {
     "ko": {
-      "direct": 717,
-      "resolved": 717,
-      "translated": 717,
-      "total": 717,
+      "direct": 773,
+      "resolved": 773,
+      "translated": 773,
+      "total": 773,
       "ratio": 1.0,
       "fallback_used": [],
       "missing": [],
@@ -23,8 +23,8 @@
       "invalid_placeholders": [],
       "by_domain": {
         "ui": {
-          "direct": 146,
-          "total": 146
+          "direct": 180,
+          "total": 180
         },
         "campaign": {
           "direct": 14,
@@ -51,8 +51,8 @@
           "total": 8
         },
         "scene": {
-          "direct": 362,
-          "total": 362
+          "direct": 384,
+          "total": 384
         },
         "thread": {
           "direct": 2,
@@ -69,11 +69,11 @@
       }
     },
     "en": {
-      "direct": 179,
-      "resolved": 717,
-      "translated": 179,
-      "total": 717,
-      "ratio": 0.2497,
+      "direct": 231,
+      "resolved": 773,
+      "translated": 231,
+      "total": 773,
+      "ratio": 0.2988,
       "fallback_used": [
         "campaign.main.acts.collisions.purpose",
         "campaign.main.acts.crisis.purpose",
@@ -578,6 +578,8 @@
         "scenes.seo_a.email_request.nodes.after_choice_inner.reality.line",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.action",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.interpretation",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.action",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.interpretation",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.action",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.interpretation",
         "scenes.seo_a.email_request.nodes.interpret.options.take_literally.action",
@@ -600,6 +602,8 @@
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.action",
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.interpretation",
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.label",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.action",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.interpretation",
         "scenes.seo_a.relief_smile.nodes.response_choice.prompt",
         "scenes.seo_a.relief_smile.nodes.response_choice.stimulus",
         "scenes.seo_a.relief_smile.purpose",
@@ -1118,6 +1122,8 @@
         "scenes.seo_a.email_request.nodes.after_choice_inner.reality.line",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.action",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.interpretation",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.action",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.interpretation",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.action",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.interpretation",
         "scenes.seo_a.email_request.nodes.interpret.options.take_literally.action",
@@ -1140,6 +1146,8 @@
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.action",
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.interpretation",
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.label",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.action",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.interpretation",
         "scenes.seo_a.relief_smile.nodes.response_choice.prompt",
         "scenes.seo_a.relief_smile.nodes.response_choice.stimulus",
         "scenes.seo_a.relief_smile.purpose",
@@ -1159,8 +1167,8 @@
       "invalid_placeholders": [],
       "by_domain": {
         "ui": {
-          "direct": 146,
-          "total": 146
+          "direct": 180,
+          "total": 180
         },
         "campaign": {
           "direct": 4,
@@ -1187,8 +1195,8 @@
           "total": 8
         },
         "scene": {
-          "direct": 10,
-          "total": 362
+          "direct": 28,
+          "total": 384
         },
         "thread": {
           "direct": 0,
@@ -1320,29 +1328,29 @@
     },
     "seo_a.email_request": {
       "ko": {
-        "total": 26,
-        "direct": 26,
+        "total": 39,
+        "direct": 39,
         "fallback": 0,
         "missing": 0
       },
       "en": {
-        "total": 26,
-        "direct": 12,
-        "fallback": 14,
+        "total": 39,
+        "direct": 23,
+        "fallback": 16,
         "missing": 0
       }
     },
     "seo_a.relief_smile": {
       "ko": {
-        "total": 26,
-        "direct": 26,
+        "total": 35,
+        "direct": 35,
         "fallback": 0,
         "missing": 0
       },
       "en": {
-        "total": 26,
-        "direct": 0,
-        "fallback": 26,
+        "total": 35,
+        "direct": 7,
+        "fallback": 28,
         "missing": 0
       }
     }

@@ -14,6 +14,8 @@
 - `events/**/*.yaml`: 발생 기간, 마감, 우선순위, 선행 사건과 놓침 결과
 - `threads/*.yaml`: 인물별 순차 사건
 - `timeline`: 특정 날짜·시간대의 발생 가능·차단 이유와 자동 사건 재현
+- `night`: 밤 활동의 가능 여부·차단 이유와 선택 → 결과 → 종료 상태 재현
+- `manifest.self_development`: 활동, 매력도·능력치·피로도 변화와 표현 해금의 단일 레지스트리
 
 검증 테스트:
 
@@ -29,6 +31,10 @@
 - 감정 상태에 따라 상황별 대사가 바뀌고 default variant가 안전하게 선택됨
 - 1일차 자동 사건이 오전 회의 장면과 퇴근길 가족 전화 장면을 순서대로 재생하고 타임라인으로 복귀함
 - 1일차 두 장면이 공략 상대·밀당 수치·의심도를 바꾸지 않음
+- 구버전 상태의 자기계발 값이 기본값으로 보충되고 범위를 벗어난 값이 clamp됨
+- 제1~16일 퇴근 후에만 밤 페이즈가 열리고 같은 날짜에는 한 번만 활동할 수 있음
+- 피로 제한·상한 초과·기간 종료의 차단 사유가 런타임과 같은 우선순위로 판정됨
+- 활동 결과가 clamp 이후 실제 변화량을 기록하고, 운동 결과가 해당 전용 표현을 해금함
 
 ## 2. 주인공 분위기·대사와 실제 속마음·표정 기록
 
@@ -53,6 +59,7 @@
 - `RUNTIME_INTEGRATION.md`: 노드 실행, 세이브, UI, 모드, 이벤트 훅 계약
 - 안정적인 장면·노드·선택지 ID
 - 하네스와 엔진이 공유하는 상태 연산과 범위 제한
+- Python 하네스의 `SelfDevelopmentService`와 `NightPhaseCoordinator`가 플레이어 도메인 경계와 생명주기를 그대로 재현
 - 캐릭터 콘셉트 아트 경로 검증
 - 모든 장면이 최소 하나의 시간 이벤트에 연결되는 전역 검사
 - 자동 사건의 동일 레인·날짜·시간 충돌과 이벤트 의존 순환 검사
@@ -115,6 +122,8 @@
 python3 tools/story_harness.py validate
 python3 -m unittest discover -s tests -v
 python3 tools/story_harness.py build
+python3 tools/story_harness.py night --day 1
+python3 tools/story_harness.py night --day 1 --activity workout --json
 python3 tools/story_harness.py timeline --day 5 --slot after_work --process-automatic
 python3 tools/story_harness.py context \
   --scene seo_a.relief_smile \
