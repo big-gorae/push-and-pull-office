@@ -198,7 +198,7 @@ push_pull:
 
 `push_pull`은 선택지에 표시하지 않는다. 런타임은 이 값으로 전역 리듬 상태를 갱신한다. 다른 인물로 이동하거나 사건 마감을 넘기면 콤보와 활성 득점선을 초기화하되 위치는 유지한다.
 
-자기계발 해금 선택지는 `self_development.expression`, 같은 선택 노드의 `equivalent_to`, 합류 노드 `converges_at`을 선언한다. 요구 수치와 `score_bonus`는 `manifest.self_development.expressions`가 소유한다. 해금 선택지는 기준 선택지와 `push_pull` 및 `effects`가 같아야 하며, 성공한 `score`/`turn` 판정에만 `0~3`의 보이는 주도권 보너스를 더한다. 위치·콤보·활성 득점선·숨은 반복 패턴 효과와 엔딩 결과에는 이 보너스를 사용하지 않는다.
+자기계발 해금 선택지는 `self_development.expression`, 같은 선택 노드의 `equivalent_to`, 합류 노드 `converges_at`을 선언한다. 요구 수치와 `score_bonus`는 `manifest.self_development.expressions`가 소유한다. 해금 선택지는 기준 선택지와 `push_pull` 및 `effects`가 같아야 하며, 성공한 `score`/`turn` 판정에만 `0~3`의 보이는 주도권 보너스를 더한다. 위치·콤보·활성 득점선·숨은 반복 패턴 효과와 엔딩 결과에는 이 보너스를 사용하지 않으며, 보이는 주도권 `visible.heroines.<id>.initiative`는 일반 조건에서 읽지 않는다.
 
 최초 엔딩 이후 `밀당 주도권`은 `통제 욕구`, `현재 콤보`는 `통제 시도 연쇄`, 리듬 게이지는 `접근 시도/거리 둠`으로 라벨을 교체한다.
 

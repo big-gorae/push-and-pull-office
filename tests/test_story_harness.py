@@ -282,6 +282,20 @@ class StoryHarnessTests(unittest.TestCase):
         )
         self.assertTrue(any("forbidden in general conditions" in issue.message for issue in issues))
 
+    def test_general_conditions_cannot_read_display_only_initiative(self):
+        path = "visible.heroines.yoon_seo_a.initiative"
+        issues = []
+        self.project._validate_conditions(
+            issues,
+            "test",
+            [{"path": path, "op": "gte", "value": 60}],
+            {path},
+        )
+        self.assertTrue(any(
+            "visible initiative is display-only and forbidden in general conditions" in issue.message
+            for issue in issues
+        ))
+
     def test_self_development_choice_requires_equivalent_mechanics_and_convergence(self):
         scene = self.project.scenes["seo_a.email_request"]
         node = next(item for item in scene["nodes"] if item["id"] == "interpret")
@@ -304,6 +318,89 @@ class StoryHarnessTests(unittest.TestCase):
         finally:
             option.clear()
             option.update(original)
+
+    def test_self_development_branch_allows_only_presentation_nodes_before_convergence(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        promotion = next(item for item in scene["nodes"] if item["id"] == "workout_self_promotion")
+        original_next = promotion["next"]
+        injected_ids = {"workout_extra_effect", "workout_branch_gate"}
+        candidates = [
+            {
+                "id": "workout_extra_effect",
+                "kind": "effect",
+                "effects": [{
+                    "path": "hidden.heroines.yoon_seo_a.suspicion",
+                    "op": "add",
+                    "value": 50,
+                }],
+                "next": "after_choice",
+            },
+            {
+                "id": "workout_branch_gate",
+                "kind": "state_gate",
+                "transitions": [{"default": True, "node": "after_choice"}],
+            },
+        ]
+        try:
+            for candidate in candidates:
+                with self.subTest(kind=candidate["kind"]):
+                    scene["nodes"].append(candidate)
+                    promotion["next"] = candidate["id"]
+                    issues = []
+                    self.project._validate_scenes(issues)
+                    self.assertTrue(any(
+                        "self-development branch does not reach converges_at" in issue.message
+                        and "path must contain only dialogue/narration" in issue.message
+                        and f"({candidate['kind']})" in issue.message
+                        for issue in issues
+                    ))
+                    scene["nodes"].pop()
+        finally:
+            promotion["next"] = original_next
+            scene["nodes"][:] = [item for item in scene["nodes"] if item.get("id") not in injected_ids]
+
+    def test_self_development_convergence_rejects_cycles_and_base_side_effects(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        choice = next(item for item in scene["nodes"] if item["id"] == "interpret")
+        promoted = next(item for item in choice["options"] if item["id"] == "mention_workout_and_step_back")
+        base = next(item for item in choice["options"] if item["id"] == "match_push")
+        promotion = next(item for item in scene["nodes"] if item["id"] == "workout_self_promotion")
+        original_promotion_next = promotion["next"]
+        original_base_next = base["next"]
+        try:
+            promotion["next"] = "workout_self_promotion"
+            issues = []
+            self.project._validate_scenes(issues)
+            self.assertTrue(any(
+                "self-development branch does not reach converges_at: after_choice; "
+                "cycle at workout_self_promotion" in issue.message
+                for issue in issues
+            ))
+
+            promotion["next"] = original_promotion_next
+            scene["nodes"].append({
+                "id": "base_extra_effect",
+                "kind": "effect",
+                "effects": [{
+                    "path": "hidden.heroines.yoon_seo_a.dislike",
+                    "op": "add",
+                    "value": 50,
+                }],
+                "next": promoted["self_development"]["converges_at"],
+            })
+            base["next"] = "base_extra_effect"
+            issues = []
+            self.project._validate_scenes(issues)
+            self.assertTrue(any(
+                "equivalent base branch does not reach converges_at" in issue.message
+                and "path must contain only dialogue/narration" in issue.message
+                and "base_extra_effect (effect)" in issue.message
+                for issue in issues
+            ))
+        finally:
+            promotion["next"] = original_promotion_next
+            base["next"] = original_base_next
+            scene["nodes"][:] = [item for item in scene["nodes"] if item.get("id") != "base_extra_effect"]
 
     def test_self_development_metadata_rejects_unknown_expression(self):
         scene = self.project.scenes["seo_a.email_request"]

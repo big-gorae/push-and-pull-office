@@ -289,7 +289,7 @@ self_development:
   converges_at: after_choice
 ```
 
-`manifest.self_development.expressions`가 매력도·능력치·피로 요구와 `score_bonus`를 소유한다. 해금 선택지는 같은 선택 노드의 조건 없는 기준 선택지를 `equivalent_to`로 가리키고, 기준과 같은 `push_pull` 및 `effects`를 사용하며, 짧은 고유 대사 뒤 `converges_at`으로 합류해야 한다. 보너스는 밀당의 `score` 또는 `turn` 판정이 성립할 때만 보이는 주도권에 `0~3`을 더한다. 위치, 콤보, 득점선, hidden 상태, 사건과 엔딩 판정은 바꾸지 않는다.
+`manifest.self_development.expressions`가 매력도·능력치·피로 요구와 `score_bonus`를 소유한다. 해금 선택지는 같은 선택 노드의 조건 없는 기준 선택지를 `equivalent_to`로 가리키고, 기준과 같은 `push_pull` 및 `effects`를 사용하며, 짧은 고유 대사 뒤 `converges_at`으로 합류해야 한다. 두 분기의 `next`부터 합류점 직전까지는 `dual_dialogue`와 `dual_narration`만 허용하며 `effect`, `state_gate`, `choice`, `exit`를 둘 수 없다. 보너스는 밀당의 `score` 또는 `turn` 판정이 성립할 때만 보이는 주도권에 `0~3`을 더한다. 위치, 콤보, 득점선, hidden 상태, 사건과 엔딩 판정은 바꾸지 않으며, 보이는 주도권 `visible.heroines.<id>.initiative`는 일반 조건에서 읽을 수 없다.
 
 대사 variant는 `self_development: {expression: <id>}`만 선언할 수 있다. 기본 variant는 항상 하나 남기며 자기계발 조건을 붙이지 않는다. 자기계발 상태 경로는 일반 장면·사건·엔딩 조건에서 직접 읽지 않는다.
 
