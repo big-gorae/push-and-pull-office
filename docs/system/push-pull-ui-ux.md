@@ -1,4 +1,4 @@
-# 밀당 UI/UX 설계
+# [구현] 밀당 UI/UX 설계
 
 ## 핵심 결정
 
@@ -67,7 +67,7 @@
 └ 퇴근 후 개인 메시지로 이유를 다시 묻는다       ┘
 ```
 
-디버깅 모드를 켜면 각 버튼 아래에만 `DEBUG · space 12`처럼 제작 분류를 덧붙일 수 있다.
+디버깅 모드를 켜면 각 버튼 아래에만 `DEBUG · space 12 · 계산 대상 차민경 · 반응 대상 윤서아`처럼 제작 분류를 덧붙일 수 있다. 지원 화법 ID는 제작 검수용 상세 정보에서 확인하되 일반 화면에 성격 정답으로 표시하지 않는다.
 
 ## 리듬 피드백
 
@@ -118,6 +118,7 @@
 - 이전 대화로 한 단계 이동하며 전체 상태 스냅샷 복원
 - 현재 장면·노드·이벤트·variant ID
 - 선택지의 제작용 밀당 분류와 결과
+- 선택지의 반응 대상·지원 화법과 별도의 밀당 계산 인물
 - 현재 발화자 일러스트의 X/Y/크기 슬라이더
 
 디버깅 모드를 껐을 때 이 정보는 백로그, 토스트, 접근성 문구와 세이브 미리보기에도 새어 나오지 않아야 한다.
@@ -139,7 +140,13 @@ progress.flags.push_pull.position     → 리듬 게이지의 연속 위치
 progress.flags.push_pull.target       → 현재 활성 득점선
 progress.flags.push_pull.last_action  → 최근 이동 방향과 장면 기록
 progress.flags.push_pull.heroine      → 콤보 대상과 인물 이동 판정
+
+option.interaction.target             → 실제 대화 반응 상대
+option.interaction.support_styles     → 비노출 지원 화법 저작 태그
+option.push_pull.target               → 이 선택의 밀당 계산 인물, 생략 시 루트 히로인
 ```
+
+`progress.flags.push_pull.target`은 득점선 **방향**이고 `option.push_pull.target`은 **인물 ID**다. 이름이 같아도 서로 대체하지 않는다. `interaction`은 대사 분기와 검수에만 쓰며 점수 계산에는 참여하지 않는다.
 
 내부 계산 순서는 유지한다.
 

@@ -1,5 +1,12 @@
 # Love Office Agent Instructions
 
+## Repository GitHub identity
+
+- Use the GitHub account big-gorae exclusively for this repository's commits, pushes, pull requests, and GitHub API or CLI operations.
+- Keep the repository-local Git identity set to big-gorae with 293377911+big-gorae@users.noreply.github.com; never fall back to the global binary-ho identity.
+- Keep origin pointed at https://github.com/big-gorae/push-and-pull-office.git.
+- Before any remote publication, verify that the active GitHub CLI account is big-gorae. If it is not authenticated, stop and authenticate or switch to big-gorae; never publish this repository through another account.
+
 ## `전부 반영` publishing workflow
 
 - When the user says `전부 반영`, treat it as explicit authorization to stage and commit the completed in-scope changes, integrate the latest remote `main`, publish an automation branch, open a pull request, enable auto-merge, wait for the required CI check, and deploy the resulting `main` commit without asking for additional approval.
