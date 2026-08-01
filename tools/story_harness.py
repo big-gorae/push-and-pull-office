@@ -6,6 +6,7 @@ Commands:
   build     Compile YAML sources into a runtime-friendly JSON bundle.
   timeline  Inspect event availability at a date and time slot.
   simulate  Execute a route with deterministic choices and print a state trace.
+  explore   Traverse every reachable choice branch for one or all routes.
   context   Produce a bounded AI context package for one scene.
   new-scene Create a schema-compliant scene scaffold.
 """
@@ -18,6 +19,7 @@ import datetime as dt
 import glob
 import hashlib
 import json
+import os
 import re
 import sys
 from dataclasses import dataclass
@@ -52,6 +54,28 @@ FORBIDDEN_CHOICE_DIRECTION_TERMS = (
     "당기자",
 )
 FORBIDDEN_CHOICE_DIRECTION_ENGLISH = re.compile(r"\b(?:push|pull)\b", re.IGNORECASE)
+APPROVED_UI_STRINGS = {
+    "mode.truth.title": "속마음 모드",
+    "mode.truth.copyUnlocked": "그녀들의 일상과 속마음을 들어 보아요",
+    "mode.truth.copyLocked": "그녀들의 일상과 속마음을 들어 보아요",
+    "mode.survivor.title": "어나더 스토리",
+    "mode.survivor.copy": "새로운 그녀로 새로운 이야기를 만들어 보아요",
+}
+
+
+def reproducible_generated_at() -> str:
+    """Return a deterministic timestamp for tracked build artifacts.
+
+    SOURCE_DATE_EPOCH is the standard reproducible-build input. Keeping the
+    default at the Unix epoch makes local and CI builds byte-identical even
+    when callers do not provide an environment variable.
+    """
+    raw = os.environ.get("SOURCE_DATE_EPOCH", "0")
+    try:
+        timestamp = int(raw)
+    except ValueError as exc:
+        raise RuntimeError("SOURCE_DATE_EPOCH must be an integer") from exc
+    return dt.datetime.fromtimestamp(timestamp, tz=dt.timezone.utc).isoformat()
 
 
 def effective_speaker(node: Mapping[str, Any], mode: str) -> Optional[str]:
@@ -207,6 +231,7 @@ class StoryProject:
         self._validate_characters(issues)
         self._validate_events(issues)
         self._validate_locales(issues, profile)
+        self._validate_player_ui_contract(issues)
         self._validate_visuals(issues)
         self._validate_threads(issues)
         self._validate_meta(issues)
@@ -217,6 +242,27 @@ class StoryProject:
         self._validate_global_graph(issues)
         self._validate_timeline_graph(issues)
         return issues
+
+    def _validate_player_ui_contract(self, issues: List[Issue]) -> None:
+        strings = self.ui.get("strings", {})
+        if not isinstance(strings, Mapping):
+            return
+        for key, expected in APPROVED_UI_STRINGS.items():
+            if strings.get(key) != expected:
+                self._error(
+                    issues,
+                    f"story/ui.yaml#strings.{key}",
+                    f"approved player copy must remain {expected!r}",
+                )
+        for key, value in strings.items():
+            if not isinstance(value, str):
+                continue
+            if "17일" in value or re.search(r"\bACT\s*\d+\b", value, re.IGNORECASE):
+                self._error(
+                    issues,
+                    f"story/ui.yaml#strings.{key}",
+                    "player UI must not promote the total day count or visible ACT labels",
+                )
 
     def _error(self, issues: List[Issue], location: str, message: str) -> None:
         issues.append(Issue("error", location, message))
@@ -1878,7 +1924,7 @@ class StoryProject:
         return {
             "schema_version": self.manifest.get("schema_version"),
             "project": self.manifest.get("project"),
-            "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+            "generated_at": reproducible_generated_at(),
             "source_sha256": digest.hexdigest(),
             "enums": self.manifest.get("enums"),
             "stats": self.manifest.get("stats"),
@@ -3084,6 +3130,121 @@ class Simulator:
         return {"route": self.route_id, "ending": ending_id, "stopped_at": None, "trace": self.trace, "final_state": self.state}
 
 
+def explore_route(
+    project: StoryProject,
+    route_id: str,
+    state: Optional[Dict[str, Any]] = None,
+    max_states: int = 100_000,
+) -> Dict[str, Any]:
+    """Explore every reachable choice branch for one route.
+
+    The explorer follows runtime transition precedence exactly while forking at
+    each enabled player choice. A canonical state fingerprint prevents loops
+    from hiding behind different paths and keeps the traversal deterministic.
+    """
+    if route_id not in project.routes:
+        raise RuntimeError(f"unknown route: {route_id}")
+    route = project.routes[route_id]
+    initial_state = copy.deepcopy(state if state is not None else project.initial_state())
+    if not conditions_match(initial_state, route.get("unlock_conditions", [])):
+        raise RuntimeError(f"route is locked for current state: {route_id}")
+
+    queue: List[Tuple[str, Optional[str], Dict[str, Any], Tuple[str, ...]]] = [
+        (route["entry_scene"], None, initial_state, ()),
+    ]
+    visited: Set[Tuple[str, str, str]] = set()
+    covered_options: Set[str] = set()
+    reached_endings: Set[str] = set()
+    completed_paths = 0
+
+    while queue:
+        scene_id, node_id, current_state, path = queue.pop()
+        scene = project.scenes.get(scene_id)
+        if scene is None:
+            raise RuntimeError(f"unknown scene during exploration: {scene_id}")
+        if node_id is None:
+            entry_decision = can_enter_scene(project, current_state, scene_id)
+            if not entry_decision["allowed"]:
+                raise RuntimeError(
+                    f"entry conditions failed during exploration: {scene_id}: "
+                    f"{json.dumps(entry_decision['trace'], ensure_ascii=False)}"
+                )
+            node_id = scene["start_node"]
+
+        state_key = json.dumps(current_state, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        visit_key = (scene_id, node_id, state_key)
+        if visit_key in visited:
+            continue
+        visited.add(visit_key)
+        if len(visited) > max_states:
+            raise RuntimeError(f"route exploration exceeded {max_states} unique states: {route_id}")
+
+        node_map = {node["id"]: node for node in scene["nodes"]}
+        node = node_map.get(node_id)
+        if node is None:
+            raise RuntimeError(f"unknown node during exploration: {scene_id}:{node_id}")
+        kind = node["kind"]
+
+        if kind in {"dual_dialogue", "dual_narration"}:
+            queue.append((scene_id, node["next"], current_state, path))
+        elif kind == "choice":
+            enabled = [
+                option for option in node["options"]
+                if conditions_match(current_state, option.get("conditions", []))
+            ]
+            if not enabled:
+                raise RuntimeError(f"no enabled option during exploration: {scene_id}:{node_id}")
+            for option in enabled:
+                next_state = copy.deepcopy(current_state)
+                for effect in option.get("effects", []):
+                    apply_effect(project, next_state, effect)
+                resolve_push_pull(project, next_state, route["heroine"], option["push_pull"])
+                option_key = f"{scene_id}:{node_id}={option['id']}"
+                covered_options.add(option_key)
+                queue.append((scene_id, option["next"], next_state, (*path, option_key)))
+        elif kind == "state_gate":
+            transition = choose_transition(current_state, node["transitions"])
+            queue.append((scene_id, transition["node"], current_state, path))
+        elif kind == "effect":
+            next_state = copy.deepcopy(current_state)
+            for effect in node.get("effects", []):
+                apply_effect(project, next_state, effect)
+            queue.append((scene_id, node["next"], next_state, path))
+        elif kind == "exit":
+            transition = choose_transition(current_state, node["transitions"], project=project)
+            if transition.get("ending") is True:
+                reached_endings.add(transition["ending_id"])
+                completed_paths += 1
+            else:
+                queue.append((transition["scene"], None, current_state, path))
+        else:
+            raise RuntimeError(f"unsupported node kind during exploration: {kind}")
+
+    expected_options = {
+        f"{scene_id}:{node['id']}={option['id']}"
+        for scene_id, scene in project.scenes.items()
+        if scene.get("route") == route_id
+        for node in scene.get("nodes", [])
+        if node.get("kind") == "choice"
+        for option in node.get("options", [])
+    }
+    missing_options = sorted(expected_options - covered_options)
+    if missing_options:
+        raise RuntimeError(
+            f"route exploration found unreachable choice options for {route_id}: "
+            f"{', '.join(missing_options)}"
+        )
+    if not reached_endings:
+        raise RuntimeError(f"route exploration reached no ending: {route_id}")
+    return {
+        "route": route_id,
+        "states": len(visited),
+        "choice_options": len(covered_options),
+        "completed_paths": completed_paths,
+        "endings": sorted(reached_endings),
+    }
+
+
 def choose_transition(
     state: Mapping[str, Any],
     transitions: Sequence[Mapping[str, Any]],
@@ -3173,12 +3334,16 @@ def print_simulation(result: Mapping[str, Any]) -> None:
     print(yaml.safe_dump(result["final_state"], allow_unicode=True, sort_keys=False).rstrip())
 
 
+def render_json(data: Any) -> str:
+    return json.dumps(data, ensure_ascii=False, indent=2) + "\n"
+
+
 def write_json(path: Path, data: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    path.write_text(render_json(data), encoding="utf-8")
 
 
-def write_localization_types(bundle: Mapping[str, Any]) -> None:
+def localization_types_source(bundle: Mapping[str, Any]) -> str:
     entries = bundle["localization"]["entries"]
     all_keys = sorted(entries)
     ui_keys = [key for key in all_keys if entries[key]["domain"] == "ui"]
@@ -3191,9 +3356,13 @@ def write_localization_types(bundle: Mapping[str, Any]) -> None:
         "export type UiMessageKey = (typeof UI_MESSAGE_KEYS)[number];",
         "",
     ]
+    return "\n".join(lines)
+
+
+def write_localization_types(bundle: Mapping[str, Any]) -> None:
     path = PROJECT_ROOT / "src/generated/localizationKeys.ts"
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("\n".join(lines), encoding="utf-8")
+    path.write_text(localization_types_source(bundle), encoding="utf-8")
 
 
 def localization_report(bundle: Mapping[str, Any], issues: Sequence[Issue], profile: str) -> Dict[str, Any]:
@@ -3240,6 +3409,19 @@ def localization_report(bundle: Mapping[str, Any], issues: Sequence[Issue], prof
     }
 
 
+def generated_build_outputs(
+    project: StoryProject,
+    bundle: Mapping[str, Any],
+    issues: Sequence[Issue],
+    profile: str,
+) -> Dict[Path, str]:
+    return {
+        PROJECT_ROOT / project.manifest["build"]["runtime_output"]: render_json(bundle),
+        PROJECT_ROOT / "build/localization-report.json": render_json(localization_report(bundle, issues, profile)),
+        PROJECT_ROOT / "src/generated/localizationKeys.ts": localization_types_source(bundle),
+    }
+
+
 def command_validate(project: StoryProject, args: argparse.Namespace) -> int:
     issues = project.validate(args.profile)
     for issue in issues:
@@ -3268,13 +3450,33 @@ def command_build(project: StoryProject, args: argparse.Namespace) -> int:
             print(issue.render(), file=sys.stderr)
         print("Build aborted because validation failed.", file=sys.stderr)
         return 1
-    output = Path(args.out) if args.out else PROJECT_ROOT / project.manifest["build"]["runtime_output"]
     bundle = project.build_bundle()
+    if args.check:
+        if args.out:
+            raise RuntimeError("build --check cannot be combined with --out")
+        stale = []
+        for path, expected in generated_build_outputs(project, bundle, issues, args.profile).items():
+            actual = path.read_text(encoding="utf-8") if path.exists() else None
+            if actual != expected:
+                stale.append(str(path.relative_to(PROJECT_ROOT)))
+        if stale:
+            print(
+                "Generated build artifacts are stale: " + ", ".join(stale),
+                file=sys.stderr,
+            )
+            print("Run: python3 tools/story_harness.py build", file=sys.stderr)
+            return 1
+        print("Generated build artifacts match the story sources.")
+        return 0
+
+    output = Path(args.out) if args.out else PROJECT_ROOT / project.manifest["build"]["runtime_output"]
     write_json(output, bundle)
-    write_localization_types(bundle)
-    write_json(PROJECT_ROOT / "build/localization-report.json", localization_report(bundle, issues, args.profile))
+    if not args.out:
+        write_localization_types(bundle)
+        write_json(PROJECT_ROOT / "build/localization-report.json", localization_report(bundle, issues, args.profile))
     print(f"Built runtime story: {output}")
-    print(f"Built localization report: {PROJECT_ROOT / 'build/localization-report.json'}")
+    if not args.out:
+        print(f"Built localization report: {PROJECT_ROOT / 'build/localization-report.json'}")
     return 0
 
 
@@ -3288,6 +3490,22 @@ def command_simulate(project: StoryProject, args: argparse.Namespace) -> int:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
         print_simulation(result)
+    return 0
+
+
+def command_explore(project: StoryProject, args: argparse.Namespace) -> int:
+    route_ids = [args.route] if args.route else sorted(project.routes)
+    results = [explore_route(project, route_id, max_states=args.max_states) for route_id in route_ids]
+    if args.json:
+        print(json.dumps({"routes": results}, ensure_ascii=False, indent=2))
+    else:
+        for result in results:
+            print(
+                f"EXPLORED {result['route']}: {result['states']} states, "
+                f"{result['choice_options']} choice options, "
+                f"{result['completed_paths']} completed paths, "
+                f"{len(result['endings'])} endings"
+            )
     return 0
 
 
@@ -3430,6 +3648,7 @@ def build_parser() -> argparse.ArgumentParser:
     build_parser_ = subparsers.add_parser("build", help="compile runtime JSON")
     build_parser_.add_argument("--out")
     build_parser_.add_argument("--profile", default="development")
+    build_parser_.add_argument("--check", action="store_true", help="fail when tracked generated outputs are stale")
     build_parser_.set_defaults(func=command_build)
 
     simulate_parser = subparsers.add_parser("simulate", help="simulate a route")
@@ -3440,6 +3659,12 @@ def build_parser() -> argparse.ArgumentParser:
     simulate_parser.add_argument("--max-steps", type=int, default=500)
     simulate_parser.add_argument("--json", action="store_true")
     simulate_parser.set_defaults(func=command_simulate)
+
+    explore_parser = subparsers.add_parser("explore", help="explore every reachable choice branch")
+    explore_parser.add_argument("--route")
+    explore_parser.add_argument("--max-states", type=int, default=100_000)
+    explore_parser.add_argument("--json", action="store_true")
+    explore_parser.set_defaults(func=command_explore)
 
     timeline_parser = subparsers.add_parser("timeline", help="inspect scheduled events at a day and slot")
     timeline_parser.add_argument("--day", type=int, required=True)

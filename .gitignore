@@ -3,7 +3,10 @@
 .venv/
 node_modules/
 dist/
+build/ai-context.json
 src-tauri/target/
 *.log
 .playwright-mcp/
+playwright-report/
+test-results/
 .wrangler/

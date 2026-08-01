@@ -1,0 +1,6 @@
+*, *::before, *::after {
+  animation: none !important;
+  caret-color: transparent !important;
+  font-family: Arial, sans-serif !important;
+  transition: none !important;
+}
