@@ -8,7 +8,7 @@
 
 ```text
 story/
-├── manifest.yaml          # 수치, 열거형, 초기 상태, 전체 파일 규칙
+├── manifest.yaml          # 수치, 초기 상태, 자기계발 활동·표현 레지스트리, 전체 파일 규칙
 ├── campaigns/             # 전체 기간, 막, 시간대와 타임보드 레인
 ├── events/                # 시간 범위·마감·우선순위를 가진 사건 풀
 ├── locales/               # 언어별 번역 오버라이드와 fallback
@@ -35,10 +35,16 @@ story/
 python3 tools/story_harness.py validate
 python3 tools/story_harness.py build
 python3 tools/story_harness.py simulate --route seo_a --strategy first
+python3 tools/story_harness.py explore --route seo_a
+python3 tools/story_harness.py night --day 1 --activity workout
 python3 tools/story_harness.py timeline --day 5 --slot after_work --process-automatic
 python3 tools/story_harness.py context --scene seo_a.email_request
 python3 -m unittest discover -s tests -v
 ```
+
+`explore`는 기본 프로필과 최대 자기계발 프로필을 함께 사용해 조건부 표현을 포함한 모든 route 선택지의 도달 가능성을 검사한다.
+
+`night`는 지정한 날짜의 활동 가능 여부를 미리 보여 준다. `--activity`를 주면 선택 → 결과 → 종료 생명주기를 실행하고, `--state PATH=JSON`으로 피로도나 능력치를 덮어쓴 상태도 재현할 수 있다.
 
 특정 선택을 재현하려면 `장면 ID=선택지 ID` 형식으로 전달한다.
 
@@ -72,7 +78,7 @@ python3 tools/story_harness.py context \
 8. 새 캐릭터는 콘셉트 아트만 직접 참조하지 말고 `visuals/characters/`의 구체 객체를 하나 만든다.
 9. 새 장면을 `events/`의 시간 이벤트에 연결하고, 필요한 경우 `threads/` 순서에도 등록한다.
 10. 번역은 원본 YAML을 바꾸지 않고 `locales/<언어>.yaml`에 안정적인 키로 덮어쓴다.
-11. `validate`, `timeline`, `simulate`, `build`, `context` 순서로 확인한다.
+11. `validate`, `timeline`, `night`, `simulate`, `build`, `context` 순서로 확인한다.
 
 ## 원본 우선순위
 

@@ -140,12 +140,64 @@ def push_pull_heroine(scene: Mapping[str, Any]) -> str | None:
     return None
 
 
-def derive_state_contract(scene: MutableMapping[str, Any]) -> None:
+def self_development_expressions(target: Path) -> Mapping[str, Any]:
+    story_root = next((parent for parent in target.parents if parent.name == "story"), None)
+    if story_root is None:
+        return {}
+    manifest_path = story_root / "manifest.yaml"
+    if not manifest_path.is_file():
+        return {}
+    with manifest_path.open("r", encoding="utf-8") as handle:
+        manifest = YAML_RT.load(handle)
+    if not isinstance(manifest, Mapping):
+        return {}
+    config = manifest.get("self_development", {})
+    return config.get("expressions", {}) if isinstance(config, Mapping) else {}
+
+
+def derive_state_contract(
+    scene: MutableMapping[str, Any],
+    expressions: Mapping[str, Any] | None = None,
+) -> None:
     reads = unique(walk_conditions({
         "entry_conditions": scene.get("entry_conditions", []),
         "nodes": scene.get("nodes", []),
     }))
     writes = unique(walk_effects(scene.get("nodes", [])))
+    expression_ids = []
+    for node in scene.get("nodes", []):
+        if not isinstance(node, Mapping):
+            continue
+        for candidate in [*(node.get("variants") or []), *(node.get("options") or [])]:
+            if not isinstance(candidate, Mapping):
+                continue
+            metadata = candidate.get("self_development")
+            if isinstance(metadata, Mapping) and isinstance(metadata.get("expression"), str):
+                expression_ids.append(metadata["expression"])
+    for expression_id in unique(expression_ids):
+        expression = (expressions or {}).get(expression_id, {})
+        requirement = expression.get("requires", {}) if isinstance(expression, Mapping) else {}
+        if not isinstance(requirement, Mapping) or not requirement:
+            reads = unique([
+                *reads,
+                "visible.protagonist.self_development.appeal",
+                "visible.protagonist.self_development.fatigue",
+                "visible.protagonist.self_development.stats.stamina",
+                "visible.protagonist.self_development.stats.appearance",
+                "visible.protagonist.self_development.stats.humor",
+                "visible.protagonist.self_development.stats.taste",
+            ])
+            continue
+        required_paths = []
+        if "appeal_gte" in requirement:
+            required_paths.append("visible.protagonist.self_development.appeal")
+        if isinstance(requirement.get("stat"), str):
+            required_paths.append(
+                f"visible.protagonist.self_development.stats.{requirement['stat']}"
+            )
+        if "fatigue_lte" in requirement:
+            required_paths.append("visible.protagonist.self_development.fatigue")
+        reads = unique([*reads, *required_paths])
     uses_push_pull = any(
         isinstance(option, Mapping) and isinstance(option.get("push_pull"), Mapping)
         for node in scene.get("nodes", [])
@@ -166,7 +218,10 @@ def derive_state_contract(scene: MutableMapping[str, Any]) -> None:
     scene["state_contract"] = {"reads": reads, "writes": writes}
 
 
-def prepare_scene(raw_scene: Mapping[str, Any]) -> Dict[str, Any]:
+def prepare_scene(
+    raw_scene: Mapping[str, Any],
+    expressions: Mapping[str, Any] | None = None,
+) -> Dict[str, Any]:
     scene = copy.deepcopy(dict(raw_scene))
     scene.pop("_source", None)
     node_order = scene.pop("node_order", None)
@@ -174,7 +229,7 @@ def prepare_scene(raw_scene: Mapping[str, Any]) -> Dict[str, Any]:
     if isinstance(nodes, Mapping):
         order = node_order if isinstance(node_order, list) else list(nodes)
         scene["nodes"] = [copy.deepcopy(nodes[node_id]) for node_id in order if node_id in nodes]
-    derive_state_contract(scene)
+    derive_state_contract(scene, expressions)
     return scene
 
 
@@ -217,7 +272,7 @@ def yaml_text_for_scene(target: Path, scene: Mapping[str, Any]) -> str:
         current = YAML_RT.load(handle)
     if not isinstance(current, CommentedMap):
         raise RuntimeError(f"YAML root must be a mapping: {target}")
-    merged = merge_round_trip(current, prepare_scene(scene))
+    merged = merge_round_trip(current, prepare_scene(scene, self_development_expressions(target)))
     from io import StringIO
 
     buffer = StringIO()
@@ -346,7 +401,10 @@ def validate_scene(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
     return {
         "issues": issues,
         "source": yaml_text,
-        "state_contract": prepare_scene(scene)["state_contract"],
+        "state_contract": prepare_scene(
+            scene,
+            self_development_expressions(target),
+        )["state_contract"],
     }
 
 

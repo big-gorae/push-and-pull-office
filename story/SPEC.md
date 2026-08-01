@@ -16,6 +16,11 @@
 
 ```yaml
 visible:
+  protagonist:
+    self_development:
+      appeal: 30
+      stats: {stamina: 0, appearance: 0, humor: 0, taste: 0}
+      fatigue: 1
   heroines:
     yoon_seo_a:
       affection: 0
@@ -33,6 +38,10 @@ progress:
   memories: []
   cleared_routes: []
   unlocked_modes: [base]
+  self_development:
+    completed_days: []
+    activity_history: []
+    last_activity: ""
   flags:
     push_pull:
       combo: 0
@@ -103,6 +112,7 @@ campaign → day → slot → eligible event → scene → node
 - 플레이어에게 별도의 타임라인·ACT 선택 화면이나 캠페인 총일수 홍보 문구를 노출하지 않는다.
 - 런타임은 다음 의미 있는 사건으로 자동 진행하고 날짜가 바뀔 때만 짧은 전환 연출을 재생한다.
 - 같은 시간대에 선택 가능한 사건이 여럿이면 타임라인 카드가 아니라 장면 안의 대사·상황 요약과 선택지로 고르게 한다.
+- 1~16일의 `after_work` 사건 처리가 끝나면 날짜를 넘기기 전에 자기계발 밤 페이즈를 하루 한 번 연다. 17일은 최종 사건과 엔딩에 집중한다.
 
 ## 5. 시간 이벤트
 
@@ -270,6 +280,19 @@ reality:
 
 `push_pull`은 제작·런타임 전용 분류이며 일반 선택지 화면과 결과 연출에는 노출하지 않는다. 선택지별 방향·강도와 계산 결과는 명시적으로 켠 디버깅 모드에서만 표시한다. `action`은 `approach`, `space`, `literal`, `intensity`는 `8~16`, `base_score`는 `2~5`를 사용한다. 런타임은 장면의 일반 `effects`를 먼저 적용한 뒤 이 메타데이터로 위치, 콤보, 득점선, 주도권과 반복 패턴 효과를 계산한다. 장면 효과에서 `affection`, `perceived_state`, `initiative`를 수동으로 변경하지 않는다.
 
+자기계발로 여는 표현은 일반 `conditions` 대신 전용 메타데이터를 사용한다.
+
+```yaml
+self_development:
+  expression: stamina.workout_answer
+  equivalent_to: match_push
+  converges_at: after_choice
+```
+
+`manifest.self_development.expressions`가 매력도·능력치·피로 요구와 `score_bonus`를 소유한다. 해금 선택지는 같은 선택 노드의 조건 없는 기준 선택지를 `equivalent_to`로 가리키고, 기준과 같은 `push_pull` 및 `effects`를 사용하며, 짧은 고유 대사 뒤 `converges_at`으로 합류해야 한다. 보너스는 밀당의 `score` 또는 `turn` 판정이 성립할 때만 보이는 주도권에 `0~3`을 더한다. 위치, 콤보, 득점선, hidden 상태, 사건과 엔딩 판정은 바꾸지 않는다.
+
+대사 variant는 `self_development: {expression: <id>}`만 선언할 수 있다. 기본 variant는 항상 하나 남기며 자기계발 조건을 붙이지 않는다. 자기계발 상태 경로는 일반 장면·사건·엔딩 조건에서 직접 읽지 않는다.
+
 ## 10. 전이 우선순위
 
 `state_gate`와 `exit`의 전이는 위에서 아래로 평가하며 처음 참인 항목을 사용한다. 마지막에는 조건 없는 `default: true` 전이가 정확히 하나 있어야 한다.
@@ -385,7 +408,7 @@ variants:
 - 별도 `build/localization-report.json` 생성
 - visual 상속을 해석한 구체 객체와 자산 경로 포함
 - 원본 파일 위치를 `_source`에 기록
-- manifest 초기 상태와 수치 정의 포함
+- manifest 초기 상태, 수치 정의와 `self_development` 활동·표현 레지스트리 포함
 - 빌드 시각과 원본 해시 기록
 - 게임 엔진은 YAML이 아니라 생성된 JSON만 읽어도 된다.
 

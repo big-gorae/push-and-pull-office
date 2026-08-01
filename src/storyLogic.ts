@@ -17,6 +17,7 @@ import type {
   DialogueVariant,
   ViewMode,
 } from "./types";
+import { selfDevelopmentSystem } from "./selfDevelopment";
 
 export const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
@@ -44,6 +45,8 @@ export function setPath(state: RuntimeState, path: string, value: unknown): void
   if (!key) return;
   let target: Record<string, unknown> = state as unknown as Record<string, unknown>;
   parts.forEach((part) => {
+    const child = target[part];
+    if (!child || typeof child !== "object" || Array.isArray(child)) target[part] = {};
     target = target[part] as Record<string, unknown>;
   });
   target[key] = value;
@@ -172,6 +175,7 @@ export function eventsForDay(events: Record<string, TimelineEvent>, day: number)
 }
 
 function statDefinition(runtime: Runtime, path: string) {
+  if (runtime.stats[path]) return runtime.stats[path];
   if (path.includes(".affection")) return runtime.stats["visible.affection"];
   if (path.includes(".initiative")) return runtime.stats["visible.initiative"];
   if (path.includes(".perceived_state")) return runtime.stats["visible.perceived_state"];
@@ -331,6 +335,11 @@ export function resolveDialogueNode(
     };
   }
   const context = evaluationContext(runtime, state);
+  const eligibility = selfDevelopmentSystem(runtime).eligibility;
+  const variantMatches = (variant: DialogueVariant): boolean =>
+    conditionsMatch(state, variant.conditions || [], context.derived)
+      && (!variant.self_development
+        || eligibility.isEligible(state, variant.self_development.expression));
   const ordered = node.variants
     .map((variant, index) => ({ variant, index }))
     .sort((left, right) => (right.variant.priority || 0) - (left.variant.priority || 0) || left.index - right.index);
@@ -340,7 +349,7 @@ export function resolveDialogueNode(
   let selected = forced;
   if (!selected) {
     selected = ordered.find(({ variant }) =>
-      variant.default !== true && conditionsMatch(state, variant.conditions || [], context.derived))?.variant;
+      variant.default !== true && variantMatches(variant))?.variant;
   }
   selected ||= ordered.find(({ variant }) => variant.default === true)?.variant;
   selected ||= ordered[0].variant;
@@ -351,7 +360,7 @@ export function resolveDialogueNode(
     trace: ordered.map(({ variant }) => ({
       variantId: variant.id,
       priority: variant.priority || 0,
-      met: variant.default === true || conditionsMatch(state, variant.conditions || [], context.derived),
+      met: variant.default === true || variantMatches(variant),
       chosen: variant.id === selected?.id,
     })),
   };
@@ -422,11 +431,42 @@ function collectEffectPaths(value: unknown, result: string[]): void {
   }
 }
 
-export function deriveStateContract(scene: Scene, heroineId?: string): Scene["state_contract"] {
+export function deriveStateContract(
+  scene: Scene,
+  heroineId?: string,
+  runtime?: Runtime,
+): Scene["state_contract"] {
   const reads: string[] = [];
   const writes: string[] = [];
   collectConditionPaths({ entry_conditions: scene.entry_conditions, nodes: scene.nodes }, reads);
   collectEffectPaths(scene.nodes, writes);
+  const expressionIds = Object.values(scene.nodes).flatMap((node) => [
+    ...(node.variants || []).flatMap((variant) => variant.self_development?.expression || []),
+    ...(node.options || []).flatMap((option) => option.self_development?.expression || []),
+  ]);
+  const selfDevelopmentPaths = new Set<string>();
+  expressionIds.forEach((expressionId) => {
+    const requirement = runtime?.self_development.expressions[expressionId]?.requires;
+    if (!requirement) {
+      selfDevelopmentPaths.add("visible.protagonist.self_development.appeal");
+      selfDevelopmentPaths.add("visible.protagonist.self_development.fatigue");
+      ["stamina", "appearance", "humor", "taste"].forEach((stat) =>
+        selfDevelopmentPaths.add(`visible.protagonist.self_development.stats.${stat}`));
+      return;
+    }
+    if (requirement.appeal_gte !== undefined) {
+      selfDevelopmentPaths.add("visible.protagonist.self_development.appeal");
+    }
+    if (requirement.stat) {
+      selfDevelopmentPaths.add(`visible.protagonist.self_development.stats.${requirement.stat}`);
+    }
+    if (requirement.fatigue_lte !== undefined) {
+      selfDevelopmentPaths.add("visible.protagonist.self_development.fatigue");
+    }
+  });
+  selfDevelopmentPaths.forEach((path) => {
+    if (!reads.includes(path)) reads.push(path);
+  });
   const usesPushPull = Object.values(scene.nodes).some((node) =>
     node.kind === "choice" && (node.options || []).some((option) => Boolean(option.push_pull)));
   if (usesPushPull && heroineId) {

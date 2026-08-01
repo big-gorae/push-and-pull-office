@@ -15,6 +15,7 @@ run_story_checks() {
   SOURCE_DATE_EPOCH=0 "$python_bin" -m unittest discover -s tests -v
   SOURCE_DATE_EPOCH=0 "$python_bin" tools/story_harness.py explore
   SOURCE_DATE_EPOCH=0 "$python_bin" tools/story_harness.py build --check
+  SOURCE_DATE_EPOCH=0 "$python_bin" tools/story_harness.py night --day 1 --activity workout --json >/dev/null
   SOURCE_DATE_EPOCH=0 "$python_bin" tools/story_harness.py timeline --day 5 --slot after_work --process-automatic >/dev/null
 }
 

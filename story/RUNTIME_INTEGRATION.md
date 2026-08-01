@@ -23,7 +23,7 @@ build/story-runtime.json
 
 ```json
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "current_event": "seo_a.relief_smile",
   "current_scene": "seo_a.relief_smile",
   "current_node": "response_choice",
@@ -55,13 +55,13 @@ build/story-runtime.json
 - 수치 범위 제한은 런타임과 하네스가 동일한 manifest 정의를 사용한다.
 - `state.progress.time`, `events.seen/missed/expired`, `memories`도 세이브에 포함한다.
 - 표시 문자열과 번역 결과는 저장하지 않는다. 불러오기·백로그는 저장된 ID로 현재 locale에서 다시 해석한다.
-- v2 저장의 문자열 필드는 읽기 마이그레이션에만 사용하고, 다시 저장할 때 v3 ID 구조로 정규화한다.
+- v2·v3 저장은 읽을 때 자기계발 기본 상태를 보충하고, 다시 저장할 때 v4 ID 구조로 정규화한다. 과거 저장의 번역 문자열 필드는 읽기 호환에만 사용한다.
 
 슬롯 자체는 세션과 별도로 번역 독립적인 미리보기 ID만 저장한다.
 
 ```json
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "savedAt": 1730000000000,
   "preview": {
     "kind": "scene",
@@ -78,6 +78,7 @@ build/story-runtime.json
 ```
 
 `preview`를 목록이 열리는 시점의 locale로 해석하므로, 저장 후 언어를 바꿔도 제목과 대사가 즉시 함께 바뀐다.
+`preview.kind`는 `timeline`, `scene`, `self_development`, `ending` 중 하나이며 밤의 선택·결과 상태도 같은 v4 세션에서 이어서 불러온다.
 
 ## 시간 이벤트 처리
 
@@ -90,6 +91,7 @@ build/story-runtime.json
 4. player 사건 중 조건을 만족한 후보를 플레이어에게 표시
 5. 선택한 사건의 장면을 실행하고 on_seen 효과 적용
 6. 보이지 않는 인물 사건을 처리한 뒤 다음 시간대로 이동
+7. `after_work`의 마지막 사건 뒤 1~16일이면 자기계발 밤 페이즈를 한 번 실행
 ```
 
 사건 조건을 만족하지 못하면 런타임은 단순 `false`가 아니라 선행 사건, 상태 조건, 시간대와 마감 중 어떤 이유로 차단됐는지 디버그 정보로 남긴다. 스토리 모드 UI에는 이 이유를 숨기고 제작 에디터와 개발 로그에서만 표시한다.
@@ -103,13 +105,14 @@ build/story-runtime.json
 ```text
 dual_dialogue / dual_narration
   emotion_rules로 derived.characters를 계산
-  priority와 conditions로 dialogue variant를 선택
+  priority, conditions와 self_development.expression으로 dialogue variant를 선택
   현재 모드의 layer speaker와 레이어를 렌더링하고 next로 이동
 
 choice
-  conditions가 참인 option만 표시
+  conditions가 참이고 self_development.expression이 충족된 option만 표시
   stimulus로 직전 말·행동의 요약을 먼저 표시
   선택된 effects를 순서대로 적용
+  밀당 득점이 성립하면 expression의 보이는 점수 보너스만 합산
   option.next로 이동
 
 state_gate
@@ -165,6 +168,13 @@ progress.flags.push_pull.target       → 현재 활성 득점선
 progress.flags.push_pull.last_action  → 최근 이동 방향
 progress.flags.push_pull.heroine      → 현재 흐름의 대상 인물
 
+visible.protagonist.self_development.appeal           → 밤 화면의 매력도
+visible.protagonist.self_development.stats.<stat>      → 체력 | 외모 | 유머 | 취향
+visible.protagonist.self_development.fatigue           → 피로도
+progress.self_development.completed_days               → 밤 활동을 마친 날짜
+progress.self_development.activity_history             → 선택한 활동 ID 기록
+progress.self_development.last_activity                → 최근 활동 ID
+
 hidden.heroines.<id>.suspicion        → 의심도
 hidden.heroines.<id>.dislike          → 비호감도
 hidden.heroines.<id>.evidence_count   → 증거 개수
@@ -187,6 +197,8 @@ push_pull:
 ```
 
 `push_pull`은 선택지에 표시하지 않는다. 런타임은 이 값으로 전역 리듬 상태를 갱신한다. 다른 인물로 이동하거나 사건 마감을 넘기면 콤보와 활성 득점선을 초기화하되 위치는 유지한다.
+
+자기계발 해금 선택지는 `self_development.expression`, 같은 선택 노드의 `equivalent_to`, 합류 노드 `converges_at`을 선언한다. 요구 수치와 `score_bonus`는 `manifest.self_development.expressions`가 소유한다. 해금 선택지는 기준 선택지와 `push_pull` 및 `effects`가 같아야 하며, 성공한 `score`/`turn` 판정에만 `0~3`의 보이는 주도권 보너스를 더한다. 위치·콤보·활성 득점선·숨은 반복 패턴 효과와 엔딩 결과에는 이 보너스를 사용하지 않는다.
 
 최초 엔딩 이후 `밀당 주도권`은 `통제 욕구`, `현재 콤보`는 `통제 시도 연쇄`, 리듬 게이지는 `접근 시도/거리 둠`으로 라벨을 교체한다.
 

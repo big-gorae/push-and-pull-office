@@ -11,6 +11,8 @@ import {
   createCampaignSession,
   currentNode,
   prepareTimeSlot,
+  finishSelfDevelopmentNight,
+  selectSelfDevelopmentActivity,
   selectOption,
   startTimelineEvent,
   type PlayerSession,
@@ -32,6 +34,16 @@ function finishCurrentScene(value: PlayerSession): PlayerSession {
     }
   }
   return session;
+}
+
+function finishNight(value: PlayerSession, activityId = "sleep"): PlayerSession {
+  if (value.phase !== "self_development") return value;
+  const selected = selectSelfDevelopmentActivity(runtime, value, activityId);
+  return finishSelfDevelopmentNight(runtime, selected);
+}
+
+function advanceMeaningfulMoment(value: PlayerSession): PlayerSession {
+  return finishNight(advanceToNextMoment(runtime, value));
 }
 
 describe("web player campaign runtime", () => {
@@ -60,12 +72,23 @@ describe("web player campaign runtime", () => {
     expect(readPushPullState(session.state)).toMatchObject({ combo: 0, position: 0, target: "none", heroine: "" });
 
     session = advanceToNextMoment(runtime, session);
+    expect(session.phase).toBe("self_development");
+    expect(session.nightPhase?.status).toBe("selecting");
+    session = selectSelfDevelopmentActivity(runtime, session, "workout");
+    expect(session.nightPhase?.status).toBe("result");
+    expect(session.state.visible.protagonist.self_development).toMatchObject({
+      appeal: 33,
+      fatigue: 3,
+      stats: { stamina: 2, appearance: 1 },
+    });
+    session = finishSelfDevelopmentNight(runtime, session);
     expect(session.state.progress.time).toMatchObject({ day: 2, slot: "morning" });
     expect(session.state.progress.events.seen).toContain("anchor.day_02_practical_meeting");
 
-    session = advanceToNextMoment(runtime, session);
-    for (let index = 0; index < 20 && session.state.progress.time.day < 7; index += 1) {
-      session = advanceToNextMoment(runtime, session);
+    session = advanceMeaningfulMoment(session);
+    for (let index = 0; index < 24; index += 1) {
+      if (session.state.progress.time.day === 7 && session.state.progress.time.slot === "lunch") break;
+      session = advanceMeaningfulMoment(session);
     }
     expect(session.state.progress.time).toMatchObject({ day: 7, slot: "lunch" });
     expect(availableTimelineEvents(runtime, session).map((event) => event.id)).toContain("seo_a.email_request");
@@ -75,13 +98,13 @@ describe("web player campaign runtime", () => {
     let session = createCampaignSession(runtime);
     session = finishCurrentScene(session);
     for (let index = 0; index < 24; index += 1) {
-      session = advanceToNextMoment(runtime, session);
+      session = advanceMeaningfulMoment(session);
       if (session.phase === "scene") session = finishCurrentScene(session);
       if (session.state.progress.time.day === 7 && session.state.progress.time.slot === "lunch") break;
     }
     session = startTimelineEvent(runtime, session, "seo_a.email_request");
     expect(session.phase).toBe("scene");
-    expect(session.version).toBe(3);
+    expect(session.version).toBe(4);
 
     session = finishCurrentScene(session);
     expect(session.phase).toBe("timeline");
@@ -119,6 +142,50 @@ describe("web player campaign runtime", () => {
     session.state.hidden.heroines.yoon_seo_a.suspicion = 70;
     const advanced = advanceSession(copy, session);
     expect(advanced.backlog.at(-1)?.variantId).toBe("guarded");
+  });
+
+  it("unlocks self-development dialogue and adds only the declared visible score bonus", () => {
+    const base = createSession(runtime, "seo_a");
+    base.phase = "scene";
+    base.sceneId = "seo_a.email_request";
+    base.nodeId = "interpret";
+    base.routeId = "seo_a";
+    expect(availableOptions(runtime, base).map((option) => option.id))
+      .not.toContain("mention_workout_and_step_back");
+
+    const trained = structuredClone(base);
+    trained.state.visible.protagonist.self_development.appeal = 32;
+    trained.state.visible.protagonist.self_development.stats.stamina = 2;
+    trained.state.visible.protagonist.self_development.fatigue = 3;
+    expect(availableOptions(runtime, trained).map((option) => option.id))
+      .toContain("mention_workout_and_step_back");
+
+    const ordinary = selectOption(runtime, structuredClone(trained), "match_push");
+    const promoted = selectOption(runtime, structuredClone(trained), "mention_workout_and_step_back");
+    expect(promoted.lastFeedback).toMatchObject({
+      baseGain: ordinary.lastFeedback?.baseGain,
+      bonusGain: 2,
+      gain: (ordinary.lastFeedback?.gain || 0) + 2,
+      position: ordinary.lastFeedback?.position,
+      combo: ordinary.lastFeedback?.combo,
+      target: ordinary.lastFeedback?.target,
+      hiddenDelta: ordinary.lastFeedback?.hiddenDelta,
+    });
+    expect(promoted.state.hidden).toEqual(ordinary.state.hidden);
+  });
+
+  it("selects a self-development dialogue variant only for an eligible profile", () => {
+    const baseline = createSession(runtime, "seo_a");
+    baseline.phase = "scene";
+    baseline.sceneId = "seo_a.email_request";
+    baseline.nodeId = "appearance_observation";
+    expect(advanceSession(runtime, baseline).backlog.at(-1)?.variantId).toBe("default");
+
+    const trained = structuredClone(baseline);
+    trained.state.visible.protagonist.self_development.appeal = 32;
+    trained.state.visible.protagonist.self_development.stats.stamina = 2;
+    trained.state.visible.protagonist.self_development.fatigue = 3;
+    expect(advanceSession(runtime, trained).backlog.at(-1)?.variantId).toBe("noticed_change");
   });
 
   it("does not mark an event seen when its scene entry condition fails", () => {
@@ -161,7 +228,7 @@ describe("web player campaign runtime", () => {
     let session = createCampaignSession(runtime);
     session = finishCurrentScene(session);
     for (let index = 0; index < 40; index += 1) {
-      session = advanceToNextMoment(runtime, session);
+      session = advanceMeaningfulMoment(session);
       if (session.phase === "scene") session = finishCurrentScene(session);
       if (session.state.progress.events.missed.includes("seo_a.email_request")) break;
     }

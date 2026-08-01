@@ -14,8 +14,20 @@ import {
   readPushPullState,
 } from "../pushPull";
 import { VisualResolver } from "../presentation";
+import {
+  selfDevelopmentSystem,
+  type SelfDevelopmentActivityOption,
+} from "../selfDevelopment";
 import { effectiveSpeaker, resolveDialogueNode } from "../storyLogic";
-import type { Runtime, StoryNode, TimelineEvent, TimeSlot, ViewMode } from "../types";
+import type {
+  ChoiceOption,
+  Runtime,
+  SelfDevelopmentStat,
+  StoryNode,
+  TimelineEvent,
+  TimeSlot,
+  ViewMode,
+} from "../types";
 import {
   advanceTimeline,
   advanceSession,
@@ -23,8 +35,10 @@ import {
   availableOptions,
   createCampaignSession,
   currentNode,
+  finishSelfDevelopmentNight,
   nodeRead,
   prepareTimeSlot,
+  selectSelfDevelopmentActivity,
   selectOption,
   setViewMode,
   startTimelineEvent,
@@ -53,6 +67,13 @@ import { GameLocalizer, gameLocales, type GameLocale } from "./gameI18n";
 import "./web-game.css";
 
 const runtime = runtimeJson as unknown as Runtime;
+const selfDevelopment = selfDevelopmentSystem(runtime);
+const SELF_DEVELOPMENT_STATS: readonly SelfDevelopmentStat[] = [
+  "stamina",
+  "appearance",
+  "humor",
+  "taste",
+];
 const assetModules = import.meta.glob([
   "../../assets/backgrounds/*",
   "../../assets/concept-art/*",
@@ -120,6 +141,35 @@ function dialogueKey(sceneId: string, nodeId: string, variantId: string | undefi
   return `scenes.${sceneId}.nodes.${nodeId}${variant}.${mode}.${field}`;
 }
 
+function selfDevelopmentMessage(i18n: GameLocalizer, key: string): string {
+  return i18n.ui(key as Parameters<GameLocalizer["ui"]>[0]);
+}
+
+function signedValue(value: number): string {
+  return value > 0 ? `+${value}` : String(value);
+}
+
+function expressionStat(option: ChoiceOption): SelfDevelopmentStat | undefined {
+  const stat = option.self_development?.expression.split(".")[0] as SelfDevelopmentStat | undefined;
+  return stat && SELF_DEVELOPMENT_STATS.includes(stat) ? stat : undefined;
+}
+
+function visibleNightActivities(
+  options: SelfDevelopmentActivityOption[],
+  day: number,
+): SelfDevelopmentActivityOption[] {
+  if (options.length <= 4) return options;
+  const sleep = options.find((option) => option.activity.id === "sleep");
+  const rotating = options.filter((option) => option.activity.id !== "sleep");
+  const offset = rotating.length ? Math.max(0, day - 1) % rotating.length : 0;
+  const ordered = [...rotating.slice(offset), ...rotating.slice(0, offset)];
+  const prioritized = [
+    ...ordered.filter((option) => option.available),
+    ...ordered.filter((option) => !option.available),
+  ];
+  return [...prioritized.slice(0, sleep ? 3 : 4), ...(sleep ? [sleep] : [])];
+}
+
 export function sessionSlot(session: PlayerSession): SaveSlot {
   const node = currentNode(runtime, session);
   const lastTimelineEvent = [...session.timelineLog].reverse().find((entry) => entry.status === "seen");
@@ -127,7 +177,7 @@ export function sessionSlot(session: PlayerSession): SaveSlot {
     ? resolveDialogueNode(runtime, session.state, node)
     : undefined;
   return {
-    schema_version: 3,
+    schema_version: 4,
     savedAt: Date.now(),
     preview: {
       kind: session.phase === "complete" ? "ending" : session.phase,
@@ -154,6 +204,20 @@ export function savePreview(slot: ReadableSaveSlot, i18n: GameLocalizer): { titl
     return {
       title: `DAY ${String(preview.day).padStart(2, "0")} · ${slotLabel(i18n, preview.slot as TimeSlot)}`,
       line: event ? eventPresentation(i18n, event, preview.mode).title : i18n.ui("save.waiting"),
+    };
+  }
+  if (preview.kind === "self_development") {
+    const activityId = session.nightPhase?.status === "result"
+      ? session.nightPhase.result.activityId
+      : undefined;
+    const activity = runtime.self_development?.activities.find((candidate) => candidate.id === activityId);
+    return {
+      title: i18n.ui(session.nightPhase?.status === "result"
+        ? "selfDevelopment.result"
+        : "selfDevelopment.title"),
+      line: activity
+        ? selfDevelopmentMessage(i18n, activity.title_key)
+        : i18n.ui("selfDevelopment.subtitle"),
     };
   }
   if (preview.kind === "ending") {
@@ -366,6 +430,156 @@ function FlowScreen({
         </button>
       </div>
     </section>}
+  </main>;
+}
+
+function activityIcon(activityId: string): string {
+  if (activityId === "workout") return "◆";
+  if (activityId === "grooming") return "✦";
+  if (activityId === "ott") return "▶";
+  if (activityId === "reels") return "⌁";
+  return "☾";
+}
+
+function SelfDevelopmentScreen({
+  session,
+  debugMode,
+  onActivity,
+  onContinue,
+  onMode,
+  onMenu,
+  i18n,
+}: {
+  session: PlayerSession;
+  debugMode: boolean;
+  onActivity: (activityId: string) => void;
+  onContinue: () => void;
+  onMode: () => void;
+  onMenu: () => void;
+  i18n: GameLocalizer;
+}) {
+  const night = session.nightPhase;
+  const profile = selfDevelopment.profile(session.state).snapshot();
+  const options = visibleNightActivities(
+    selfDevelopment.activityOptions(session.state),
+    session.state.progress.time.day,
+  );
+  const result = night?.status === "result" ? night.result : undefined;
+  const resultActivity = result
+    ? runtime.self_development.activities.find((activity) => activity.id === result.activityId)
+    : undefined;
+  const fatigueCells = Array.from({ length: 6 }, (_, index) => index < profile.fatigue);
+  const activityTags = (option: SelfDevelopmentActivityOption) => [
+    ...(option.activity.appeal_delta
+      ? [`${i18n.ui("selfDevelopment.appeal")} ${option.activity.appeal_delta > 0 ? "↑" : "↓"}`]
+      : []),
+    ...SELF_DEVELOPMENT_STATS
+      .filter((stat) => Boolean(option.activity.stat_deltas[stat]))
+      .map((stat) => i18n.ui(`selfDevelopment.stat.${stat}` as Parameters<GameLocalizer["ui"]>[0])),
+    ...(option.activity.fatigue_delta
+      ? [`${i18n.ui("selfDevelopment.fatigue")} ${option.activity.fatigue_delta > 0 ? "↑" : "↓"}`]
+      : []),
+  ];
+  const resultDeltas: Array<{ label: string; value: number }> = result ? [
+    ...(result.appealDelta
+      ? [{ label: i18n.ui("selfDevelopment.appeal"), value: result.appealDelta }]
+      : []),
+    ...SELF_DEVELOPMENT_STATS.flatMap((stat) => {
+      const value = result.statDeltas[stat] || 0;
+      return value
+        ? [{ label: i18n.ui(`selfDevelopment.stat.${stat}` as Parameters<GameLocalizer["ui"]>[0]), value }]
+        : [];
+    }),
+    ...(result.fatigueDelta
+      ? [{ label: i18n.ui("selfDevelopment.fatigue"), value: result.fatigueDelta }]
+      : []),
+  ] : [];
+
+  return <main className={`vn-self-development ${session.mode}`}>
+    <div className="vn-night-sky" aria-hidden="true"><i /><i /><i /><i /></div>
+    <header className="vn-night-hud">
+      <div><span>{i18n.ui("app.brand")}</span><strong>{i18n.ui("slot.night")}</strong></div>
+      <button type="button" className="vn-mode-button" onClick={onMode}>
+        <span>{i18n.ui(session.mode === "reality" ? "hud.original" : "hud.story")}</span>
+        <small>{i18n.ui(session.mode === "reality" ? "hud.reality" : "hud.subjective")}</small>
+      </button>
+      <button type="button" className="vn-menu-button" onClick={onMenu} aria-label={i18n.ui("hud.gameMenu")}>☰</button>
+      {debugMode && <div className="vn-debug-badge">DEBUG</div>}
+    </header>
+
+    <section className="vn-night-plan" aria-labelledby="vn-night-title">
+      <header className="vn-night-plan-title">
+        <span>✦ {i18n.ui("selfDevelopment.appeal")}</span>
+        <h1 id="vn-night-title">{i18n.ui("selfDevelopment.title")}</h1>
+        <p>{i18n.ui("selfDevelopment.subtitle")}</p>
+      </header>
+
+      <section className="vn-night-profile" aria-label={i18n.ui("selfDevelopment.appeal")}>
+        <div className="vn-appeal-score">
+          <span>{i18n.ui("selfDevelopment.appeal")}</span>
+          <div><strong>{profile.appeal}</strong><small>/ 100</small></div>
+        </div>
+        <div className="vn-night-stats">
+          {SELF_DEVELOPMENT_STATS.map((stat) => <div key={stat}>
+            <span>{i18n.ui(`selfDevelopment.stat.${stat}` as Parameters<GameLocalizer["ui"]>[0])}</span>
+            <i><b style={{ width: `${profile.stats[stat] * 20}%` }} /></i>
+            <strong>{profile.stats[stat]}</strong>
+          </div>)}
+        </div>
+        <div className="vn-fatigue-meter">
+          <span>{i18n.ui("selfDevelopment.fatigue")}</span>
+          <div aria-label={`${i18n.ui("selfDevelopment.fatigue")} ${profile.fatigue} / 6`}>
+            {fatigueCells.map((active, index) => <i className={active ? "active" : ""} key={index} />)}
+          </div>
+          <strong>{profile.fatigue}<small>/ 6</small></strong>
+        </div>
+      </section>
+
+      {night?.status === "selecting" && <section className="vn-night-activity-section">
+        <div className="vn-night-section-heading"><span>01</span><strong>{i18n.ui("selfDevelopment.choose")}</strong></div>
+        <div className="vn-night-activities">
+          {options.map((option) => {
+            const title = selfDevelopmentMessage(i18n, option.activity.title_key);
+            return <button
+              type="button"
+              className={option.available ? "" : "blocked"}
+              disabled={!option.available}
+              onClick={() => onActivity(option.activity.id)}
+              aria-label={`${title}${option.available ? "" : ` · ${i18n.ui("selfDevelopment.blocked")}`}`}
+              key={option.activity.id}
+            >
+              <i className="vn-night-activity-icon" aria-hidden="true">{activityIcon(option.activity.id)}</i>
+              <div>
+                <strong>{title}</strong>
+                <p>{selfDevelopmentMessage(i18n, option.activity.description_key)}</p>
+                <span>{activityTags(option).map((tag) => <small key={tag}>{tag}</small>)}</span>
+              </div>
+              <em>{option.available ? i18n.ui("selfDevelopment.choose") : i18n.ui("selfDevelopment.blocked")}</em>
+              {debugMode && <code>DEBUG · {option.activity.id}</code>}
+            </button>;
+          })}
+        </div>
+      </section>}
+
+      {result && resultActivity && <section className="vn-night-result" aria-live="polite">
+        <div className="vn-night-section-heading"><span>02</span><strong>{i18n.ui("selfDevelopment.result")}</strong></div>
+        <div className="vn-night-result-card">
+          <i className="vn-night-result-icon" aria-hidden="true">{activityIcon(result.activityId)}</i>
+          <div className="vn-night-result-copy">
+            <span>{i18n.ui("selfDevelopment.result")}</span>
+            <h2>{selfDevelopmentMessage(i18n, resultActivity.title_key)}</h2>
+            <div className="vn-night-result-deltas">
+              {resultDeltas.map((delta) => <span key={delta.label}>
+                {delta.label} <strong>{signedValue(delta.value)}</strong>
+              </span>)}
+            </div>
+            <blockquote>{selfDevelopmentMessage(i18n, resultActivity.reflection_keys[session.mode])}</blockquote>
+          </div>
+          <button type="button" onClick={onContinue}>{i18n.ui("selfDevelopment.continue")}</button>
+          {debugMode && <code>DEBUG · {result.activityId}</code>}
+        </div>
+      </section>}
+    </section>
   </main>;
 }
 
@@ -631,6 +845,16 @@ export default function WebGame() {
     window.setTimeout(() => setFeedbackVisible(true), settings.reducedMotion ? 0 : 650);
   }, [session, settings.reducedMotion, updateSession]);
 
+  const chooseNightActivity = useCallback((activityId: string) => {
+    if (!session || session.phase !== "self_development") return;
+    updateSession(selectSelfDevelopmentActivity(runtime, session, activityId), true);
+  }, [session, updateSession]);
+
+  const finishNight = useCallback(() => {
+    if (!session || session.phase !== "self_development") return;
+    moveSession(finishSelfDevelopmentNight(runtime, session), true);
+  }, [moveSession, session]);
+
   const chooseTimelineEvent = (eventId: string) => {
     if (!session) return;
     updateSession(startTimelineEvent(runtime, session, eventId), true);
@@ -825,6 +1049,22 @@ export default function WebGame() {
     </div>;
   }
 
+  if (session.phase === "self_development") {
+    return <div className={settings.reducedMotion ? "vn-reduced-motion" : ""}>
+      <SelfDevelopmentScreen
+        session={session}
+        debugMode={settings.debugMode}
+        onActivity={chooseNightActivity}
+        onContinue={finishNight}
+        onMode={changeMode}
+        onMenu={() => setOverlay("menu")}
+        i18n={i18n}
+      />
+      {toast && <div className="vn-toast">{toast}</div>}
+      {overlays}
+    </div>;
+  }
+
   if (session.phase === "complete") {
     const truthUnlocked = session.state.progress.unlocked_modes.includes("truth_view");
     const route = runtime.routes[session.routeId];
@@ -893,12 +1133,22 @@ export default function WebGame() {
       <p>{i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.prompt`, node.prompt || "")}</p>
       {options.map((option, index) => {
         const debugEffect = choiceDebugEffect(option);
+        const unlockedStat = expressionStat(option);
+        const expressionBonus = option.self_development
+          ? selfDevelopment.eligibility.scoreBonus(session.state, option.self_development.expression)
+          : 0;
         const effectKey = debugEffect.action === "approach"
           ? "debug.effectApproach"
           : debugEffect.action === "space" ? "debug.effectSpace" : "debug.effectLiteral";
         return <button type="button" onClick={() => choose(option.id)} key={option.id}>
-          <span>{String(index + 1).padStart(2, "0")}</span><strong>{i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.options.${option.id}.label`, option.label)}</strong>
-          {settings.debugMode && <em>DEBUG · {i18n.ui(effectKey)} {debugEffect.intensity}</em>}
+          <span>{String(index + 1).padStart(2, "0")}</span><strong>
+            {unlockedStat && <i className="vn-expression-badge">✦ {i18n.ui(`selfDevelopment.stat.${unlockedStat}` as Parameters<GameLocalizer["ui"]>[0])}</i>}
+            {i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.options.${option.id}.label`, option.label)}
+          </strong>
+          {settings.debugMode && <em>
+            DEBUG · {i18n.ui(effectKey)} {debugEffect.intensity}
+            {expressionBonus > 0 && ` · ${i18n.ui("feedback.expressionBonus", { gain: expressionBonus })}`}
+          </em>}
         </button>;
       })}
       {quickMenu}
@@ -910,6 +1160,7 @@ export default function WebGame() {
       {settings.debugMode && feedback && feedbackVisible && <div className={`vn-feedback ${feedback.kind}`}>
         <strong>{feedback.kind === "turn" ? i18n.ui("feedback.turn") : feedback.kind === "score" ? `${i18n.ui("hud.combo")} ×${feedback.combo}` : i18n.ui(feedback.kind === "literal" ? "feedback.literal" : "feedback.break")}</strong>
         {feedback.gain > 0 && <span>{i18n.ui(session.mode === "reality" ? "feedback.controlGain" : "feedback.gain", { gain: feedback.gain })}</span>}
+        {feedback.bonusGain > 0 && <span>{i18n.ui("feedback.expressionBonus", { gain: feedback.bonusGain })}</span>}
         <small>{pushPullPositionLabel(rhythm.position, session.mode)}</small>
       </div>}
       {quickMenu}

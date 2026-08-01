@@ -15,6 +15,9 @@ state_contract:
     - hidden.heroines.yoon_seo_a.dislike
     - hidden.heroines.yoon_seo_a.evidence_count
     - progress.flags.push_pull
+    - visible.protagonist.self_development.appeal
+    - visible.protagonist.self_development.stats.taste
+    - visible.protagonist.self_development.fatigue
   writes:
     - visible.heroines.yoon_seo_a.initiative
     - hidden.heroines.yoon_seo_a.suspicion
@@ -106,6 +109,21 @@ nodes:
           - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 18}
           - {path: hidden.heroines.yoon_seo_a.evidence_count, op: add, value: 1}
         next: leave
+      - id: trend_dinner_invite
+        label: 짧은 영상 유행을 화제로 꺼내며 퇴근 후 식사를 다시 제안한다
+        interpretation: 최신 유행을 아는 모습을 보여 주면 서아가 세대 차이 없이 통한다고 느낄 거라 믿는다.
+        action: 젊은 여성의 짧은 영상 취향을 일반화해 말하며 퇴근 뒤 둘만의 식사를 다시 제안한다.
+        push_pull: {action: approach, intensity: 16, base_score: 4}
+        self_development:
+          expression: taste.trend_topic
+          equivalent_to: interpret_pull
+          converges_at: leave
+        conditions: []
+        effects:
+          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: 25}
+          - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 18}
+          - {path: hidden.heroines.yoon_seo_a.evidence_count, op: add, value: 1}
+        next: trend_self_promotion
       - id: keep_distance
         label: 업무 인사만 하고 사적인 말은 건네지 않는다
         interpretation: 먼저 다가오게 만들기 위해 거리를 유지한다.
@@ -124,6 +142,49 @@ nodes:
         effects:
           - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -8}
         next: leave
+
+  - id: trend_self_promotion
+    kind: dual_dialogue
+    speaker: han_do_yoon
+    perceived:
+      atmosphere: warm_romance
+      expression: subjective_confident
+      line: "요즘 젊은 여자들은 짧은 리뷰 영상을 먼저 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요."
+    reality:
+      atmosphere: cold_office
+      expression: actual_waiting_smile
+      line: "요즘 젊은 여자들은 짧은 리뷰 영상을 먼저 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요."
+      intent: self_promotion
+    next: trend_response
+
+  - id: trend_response
+    kind: dual_dialogue
+    speaker: yoon_seo_a
+    perceived:
+      atmosphere: warm_romance
+      expression: subjective_relieved_smile
+      line: "사람마다 다르죠. 그래도 과장님은 젊은 사람들 사이의 트렌드도 빨리 아시는 것 같아요. 그런데 저는 저녁은 어렵습니다."
+    reality:
+      atmosphere: guarded_office
+      expression: actual_social_smile
+      line: "사람마다 다르죠. 그래도 과장님은 젊은 사람들 사이의 트렌드도 빨리 아시는 것 같아요. 그런데 저는 저녁은 어렵습니다."
+      intent: boundary
+    next: trend_response_inner
+
+  - id: trend_response_inner
+    kind: dual_dialogue
+    presentation_flags: [inner_voice]
+    speakers:
+      perceived: han_do_yoon
+      reality: yoon_seo_a
+    perceived:
+      atmosphere: warm_romance
+      line: (세대 차이 없이 통한다는 걸 알아봤군. 저녁은 아직 타이밍의 문제겠지.)
+    reality:
+      atmosphere: guarded_office
+      line: (또 ‘젊은 여자들’로 묶어서 말하네. 거절만 분명히 하고 나가자.)
+      intent: boundary
+    next: leave
 
   - id: leave
     kind: exit

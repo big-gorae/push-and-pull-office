@@ -32,6 +32,7 @@ import {
   resolveStart,
   statePaths,
 } from "./storyLogic";
+import { selfDevelopmentSystem } from "./selfDevelopment";
 import type {
   Character,
   ChoiceOption,
@@ -727,7 +728,10 @@ function Preview({
   const displayNode = dialogueResolution?.node || rawDisplayNode;
   const layer = displayNode?.[mode] as Layer | undefined;
   const exitDecision = displayNode?.kind === "exit" ? chooseTransition(state, displayNode.transitions) : undefined;
-  const availableOptions = displayNode?.kind === "choice" ? (displayNode.options || []).filter((option) => conditionsMatch(state, option.conditions)) : [];
+  const availableOptions = displayNode?.kind === "choice" ? (displayNode.options || []).filter((option) =>
+    conditionsMatch(state, option.conditions)
+      && (!option.self_development
+        || selfDevelopmentSystem(runtime).eligibility.isEligible(state, option.self_development.expression))) : [];
   const hasClearedEnding = state.progress.cleared_routes.length > 0;
   const entryDecision = canEnterScene(runtime, state, scene.id);
 
@@ -750,8 +754,11 @@ function Preview({
 
   const simulateChoice = (option: ChoiceOption) => {
     const next = clone(state);
+    const visibleScoreBonus = option.self_development
+      ? selfDevelopmentSystem(runtime).eligibility.scoreBonus(state, option.self_development.expression)
+      : 0;
     option.effects.forEach((effect) => applyEffect(runtime, next, effect));
-    const result = resolvePushPull(next, heroine, option.push_pull);
+    const result = resolvePushPull(next, heroine, option.push_pull, { visibleScoreBonus });
     setPushPullResult(result);
     onState(next);
   };
@@ -1046,7 +1053,7 @@ export default function App() {
       if (!current) return current;
       const next = clone(current);
       updater(next);
-      next.state_contract = deriveStateContract(next, runtime?.routes[next.route]?.heroine);
+      next.state_contract = deriveStateContract(next, runtime?.routes[next.route]?.heroine, runtime);
       setHistory((value) => ({ past: [...value.past, clone(current)].slice(-100), future: [] }));
       const changed = JSON.stringify(next) !== JSON.stringify(payload?.runtime.scenes[next.id]);
       setDirty(changed);
@@ -1479,7 +1486,7 @@ export default function App() {
     </main>;
   }
 
-  const contract = deriveStateContract(draft, runtime.routes[draft.route]?.heroine);
+  const contract = deriveStateContract(draft, runtime.routes[draft.route]?.heroine, runtime);
   const errorCount = issues.filter((issue) => issue.severity === "error").length;
   const saveStateLabel = documentActivity.phase === "saving" ? "저장 중…"
     : documentActivity.phase === "dirty" ? "자동 저장 대기"

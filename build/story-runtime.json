@@ -10,7 +10,7 @@
     ]
   },
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "7efcdcc79b42f1e27bed2bb7f34e2c09aef1f90a2f7373ec14a2c65174b65921",
+  "source_sha256": "382593e5cbb2c91e367ade5b7919516a8e7523256d5cc09b89b86299fd432a1f",
   "enums": {
     "perceived_state": [
       "push",
@@ -81,6 +81,7 @@
       "documentation",
       "confrontation",
       "self_protection",
+      "self_promotion",
       "work_only"
     ],
     "node_kind": [
@@ -93,6 +94,42 @@
     ]
   },
   "stats": {
+    "visible.protagonist.self_development.appeal": {
+      "type": "integer",
+      "min": 0,
+      "max": 100,
+      "description": "한도윤이 스스로 평가하는 매력도"
+    },
+    "visible.protagonist.self_development.stats.stamina": {
+      "type": "integer",
+      "min": 0,
+      "max": 5,
+      "description": "활동적인 대화 표현을 여는 체력"
+    },
+    "visible.protagonist.self_development.stats.appearance": {
+      "type": "integer",
+      "min": 0,
+      "max": 5,
+      "description": "자기관리 관련 대화 표현을 여는 외모 관리"
+    },
+    "visible.protagonist.self_development.stats.humor": {
+      "type": "integer",
+      "min": 0,
+      "max": 5,
+      "description": "가벼운 농담 표현을 여는 유머 감각"
+    },
+    "visible.protagonist.self_development.stats.taste": {
+      "type": "integer",
+      "min": 0,
+      "max": 5,
+      "description": "콘텐츠와 유행 화제를 여는 취향 지식"
+    },
+    "visible.protagonist.self_development.fatigue": {
+      "type": "integer",
+      "min": 0,
+      "max": 6,
+      "description": "밤 활동과 고급 표현 사용을 제한하는 피로도"
+    },
     "visible.affection": {
       "type": "integer",
       "min": 0,
@@ -155,8 +192,145 @@
       "description": "현재 시간대"
     }
   },
+  "self_development": {
+    "max_night_day": 16,
+    "activities": [
+      {
+        "id": "workout",
+        "title_key": "selfDevelopment.activity.workout.title",
+        "description_key": "selfDevelopment.activity.workout.description",
+        "reflection_keys": {
+          "perceived": "selfDevelopment.activity.workout.reflection.perceived",
+          "reality": "selfDevelopment.activity.workout.reflection.reality"
+        },
+        "appeal_delta": 3,
+        "fatigue_delta": 2,
+        "stat_deltas": {
+          "stamina": 2,
+          "appearance": 1
+        },
+        "fatigue_lte": 4
+      },
+      {
+        "id": "grooming",
+        "title_key": "selfDevelopment.activity.grooming.title",
+        "description_key": "selfDevelopment.activity.grooming.description",
+        "reflection_keys": {
+          "perceived": "selfDevelopment.activity.grooming.reflection.perceived",
+          "reality": "selfDevelopment.activity.grooming.reflection.reality"
+        },
+        "appeal_delta": 3,
+        "fatigue_delta": 1,
+        "stat_deltas": {
+          "appearance": 2
+        },
+        "fatigue_lte": 5
+      },
+      {
+        "id": "ott",
+        "title_key": "selfDevelopment.activity.ott.title",
+        "description_key": "selfDevelopment.activity.ott.description",
+        "reflection_keys": {
+          "perceived": "selfDevelopment.activity.ott.reflection.perceived",
+          "reality": "selfDevelopment.activity.ott.reflection.reality"
+        },
+        "appeal_delta": -1,
+        "fatigue_delta": -1,
+        "stat_deltas": {
+          "humor": 2,
+          "taste": 1
+        }
+      },
+      {
+        "id": "reels",
+        "title_key": "selfDevelopment.activity.reels.title",
+        "description_key": "selfDevelopment.activity.reels.description",
+        "reflection_keys": {
+          "perceived": "selfDevelopment.activity.reels.reflection.perceived",
+          "reality": "selfDevelopment.activity.reels.reflection.reality"
+        },
+        "appeal_delta": -1,
+        "fatigue_delta": -2,
+        "stat_deltas": {
+          "humor": 1,
+          "taste": 1
+        }
+      },
+      {
+        "id": "sleep",
+        "title_key": "selfDevelopment.activity.sleep.title",
+        "description_key": "selfDevelopment.activity.sleep.description",
+        "reflection_keys": {
+          "perceived": "selfDevelopment.activity.sleep.reflection.perceived",
+          "reality": "selfDevelopment.activity.sleep.reflection.reality"
+        },
+        "appeal_delta": 0,
+        "fatigue_delta": -4,
+        "stat_deltas": {}
+      }
+    ],
+    "expressions": {
+      "stamina.change_notice": {
+        "requires": {
+          "appeal_gte": 32,
+          "stat": "stamina",
+          "minimum": 2,
+          "fatigue_lte": 4
+        },
+        "score_bonus": 0
+      },
+      "stamina.workout_answer": {
+        "requires": {
+          "appeal_gte": 32,
+          "stat": "stamina",
+          "minimum": 2,
+          "fatigue_lte": 4
+        },
+        "score_bonus": 2
+      },
+      "appearance.grooming_answer": {
+        "requires": {
+          "appeal_gte": 34,
+          "stat": "appearance",
+          "minimum": 2,
+          "fatigue_lte": 4
+        },
+        "score_bonus": 2
+      },
+      "taste.trend_topic": {
+        "requires": {
+          "appeal_gte": 32,
+          "stat": "taste",
+          "minimum": 2,
+          "fatigue_lte": 4
+        },
+        "score_bonus": 2
+      },
+      "humor.boundary_joke": {
+        "requires": {
+          "appeal_gte": 30,
+          "stat": "humor",
+          "minimum": 2,
+          "fatigue_lte": 3
+        },
+        "score_bonus": 2
+      }
+    }
+  },
   "initial_state": {
     "visible": {
+      "protagonist": {
+        "self_development": {
+          "appeal": 30,
+          "stats": {
+            "stamina": 0,
+            "appearance": 0,
+            "humor": 0,
+            "taste": 0
+          },
+          "fatigue": 1
+        }
+      },
       "heroines": {
         "yoon_seo_a": {
           "affection": 5,
@@ -210,6 +384,11 @@
       "unlocked_modes": [
         "base"
       ],
+      "self_development": {
+        "completed_days": [],
+        "activity_history": [],
+        "last_activity": ""
+      },
       "flags": {
         "push_pull": {
           "combo": 0,
@@ -276,6 +455,14 @@
           "events.seo_a.email_request.presentation.perceived.title": "Seo-a Tests the Distance at Lunch",
           "events.seo_a.email_request.presentation.reality.title": "Restricting How Work Is Delivered",
           "scenes.seo_a.email_request.title": "Send It by Email",
+          "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.perceived.line": "Oh, I think you've lost a little weight lately.",
+          "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.reality.line": "Oh, I think you've lost a little weight lately.",
+          "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.perceived.line": "Manager Han, I need to tell you something.",
+          "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.reality.line": "Manager Han, I need to tell you something.",
+          "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.perceived.line": "(She must have kept watching me to notice first. The workouts paid off.)",
+          "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.reality.line": "(I only mentioned the visible change as a greeting. Now I need to discuss how he sends the files.)",
+          "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.perceived.line": "(She must be curious about my reaction if she called me aside.)",
+          "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.reality.line": "(This time I need to clearly tell him not to come to my desk.)",
           "scenes.seo_a.email_request.nodes.request.perceived.line": "Please send those materials by email. Don't come to my desk.",
           "scenes.seo_a.email_request.nodes.request.reality.line": "Please send those materials by email. Don't come to my desk.",
           "scenes.seo_a.email_request.nodes.request_inner.perceived.line": "(Does she regret losing an excuse for me to visit? Looking away like that is cute.)",
@@ -283,8 +470,18 @@
           "scenes.seo_a.email_request.nodes.interpret.prompt": "How should he answer Seo-a after she clearly specified how to deliver the files?",
           "scenes.seo_a.email_request.nodes.interpret.stimulus": "Seo-a said, ‘Email me the files and do not come to my desk.’",
           "scenes.seo_a.email_request.nodes.interpret.options.match_push.label": "Briefly say “Understood” and keep his distance for a few days",
+          "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.label": "Mention working out, then send only the requested files by email",
           "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.label": "Send a private message after work and ask again why she refused",
           "scenes.seo_a.email_request.nodes.interpret.options.take_literally.label": "Email only the requested files and return to work",
+          "scenes.seo_a.email_request.nodes.workout_self_promotion.perceived.line": "I've been working out lately. I'll send the files by email as you asked.",
+          "scenes.seo_a.email_request.nodes.workout_self_promotion.reality.line": "I've been working out lately. I'll send the files by email as you asked.",
+          "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.label": "Bring up short-video trends and invite her to dinner again",
+          "scenes.seo_a.relief_smile.nodes.trend_self_promotion.perceived.line": "I heard young women watch short review clips first these days. I've seen a few too—let's talk over dinner after work.",
+          "scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line": "I heard young women watch short review clips first these days. I've seen a few too—let's talk over dinner after work.",
+          "scenes.seo_a.relief_smile.nodes.trend_response.perceived.line": "Everyone is different. Still, you do seem quick to pick up trends among younger people. But I can't have dinner with you.",
+          "scenes.seo_a.relief_smile.nodes.trend_response.reality.line": "Everyone is different. Still, you do seem quick to pick up trends among younger people. But I can't have dinner with you.",
+          "scenes.seo_a.relief_smile.nodes.trend_response_inner.perceived.line": "(She sees that we connect without a generation gap. Dinner is only a matter of timing.)",
+          "scenes.seo_a.relief_smile.nodes.trend_response_inner.reality.line": "(He's grouping us as “young women” again. I should make the refusal clear and leave.)",
           "app.title": "Love Office - Catch Her Heart with My Ultimate Dark Skill: A Handsome Middle-Aged Man's Story",
           "app.shortTitle": "Love Office",
           "app.catchphrase": "Catch her heart with the ultimate dark skill!",
@@ -351,6 +548,7 @@
           "slot.lunch": "Lunch",
           "slot.afternoon": "Afternoon",
           "slot.after_work": "After work",
+          "slot.night": "Night",
           "weekday.wed": "Wednesday",
           "weekday.thu": "Thursday",
           "weekday.fri": "Friday",
@@ -397,6 +595,39 @@
           "feedback.break": "Rhythm changed",
           "feedback.gain": "Initiative +{{gain}}",
           "feedback.controlGain": "Control +{{gain}}",
+          "feedback.expressionBonus": "Self-improvement expression bonus +{{gain}}",
+          "selfDevelopment.title": "What should I work on tonight?",
+          "selfDevelopment.subtitle": "He recalls the day's passing remarks and prepares tomorrow's impression.",
+          "selfDevelopment.appeal": "Appeal",
+          "selfDevelopment.fatigue": "Fatigue",
+          "selfDevelopment.stat.stamina": "Stamina",
+          "selfDevelopment.stat.appearance": "Appearance",
+          "selfDevelopment.stat.humor": "Humor",
+          "selfDevelopment.stat.taste": "Taste",
+          "selfDevelopment.choose": "Do this activity",
+          "selfDevelopment.result": "Tonight's changes",
+          "selfDevelopment.continue": "Turn off the light and sleep",
+          "selfDevelopment.blocked": "Too tired for this right now",
+          "selfDevelopment.activity.workout.title": "Work out at the gym",
+          "selfDevelopment.activity.workout.description": "Build stamina and appearance at the cost of significant fatigue.",
+          "selfDevelopment.activity.workout.reflection.perceived": "(If I keep improving, she'll be the first to notice tomorrow.)",
+          "selfDevelopment.activity.workout.reflection.reality": "Do-yoon imagined his coworkers noticing the change before thinking about the workout itself.",
+          "selfDevelopment.activity.grooming.title": "Clothes and skincare",
+          "selfDevelopment.activity.grooming.description": "Prepare a polished impression while gaining a little fatigue.",
+          "selfDevelopment.activity.grooming.reflection.perceived": "(Someone is bound to notice the small differences.)",
+          "selfDevelopment.activity.grooming.reflection.reality": "Do-yoon adjusted his reflection while deciding in advance how a particular coworker would react.",
+          "selfDevelopment.activity.ott.title": "Watch a comedy series",
+          "selfDevelopment.activity.ott.description": "Gain humor and taste while resting, with a tiny loss of appeal.",
+          "selfDevelopment.activity.ott.reflection.perceived": "(Now I can join any conversation naturally.)",
+          "selfDevelopment.activity.ott.reflection.reality": "Do-yoon replayed lines he could reuse in conversation instead of the funniest scenes.",
+          "selfDevelopment.activity.reels.title": "Browse reels",
+          "selfDevelopment.activity.reels.description": "Pick up quick trends and recover, with a tiny loss of appeal.",
+          "selfDevelopment.activity.reels.reflection.perceived": "(I finally understand what younger people like.)",
+          "selfDevelopment.activity.reels.reflection.reality": "Do-yoon recorded a few seconds of trend as if it proved he understood his coworkers.",
+          "selfDevelopment.activity.sleep.title": "Go to bed early",
+          "selfDevelopment.activity.sleep.description": "Gain no stats, but recover a large amount of fatigue.",
+          "selfDevelopment.activity.sleep.reflection.perceived": "(Keeping my composure is part of maintaining my appeal.)",
+          "selfDevelopment.activity.sleep.reflection.reality": "The phone screen went dark, leaving Do-yoon alone in the room.",
           "save.title": "Save",
           "save.slot": "SLOT {{slot}}",
           "save.here": "Save here",
@@ -4123,6 +4354,23 @@
           "id": "game_ui",
           "path": "story/ui.yaml",
           "fieldPath": "strings.feedback.controlGain"
+        },
+        "context": {},
+        "placeholders": [
+          "gain"
+        ],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "feedback.expressionBonus": {
+        "key": "feedback.expressionBonus",
+        "source": "자기계발 표현 보너스 +{{gain}}",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.feedback.expressionBonus"
         },
         "context": {},
         "placeholders": [
@@ -11899,6 +12147,174 @@
         "multiline": false,
         "maxLength": 320
       },
+      "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.perceived.line": {
+        "key": "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.perceived.line",
+        "source": "과장님, 잠깐 말씀드릴 게 있어요.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.email_request",
+          "path": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation.variants.default.perceived.line"
+        },
+        "context": {
+          "sceneId": "seo_a.email_request",
+          "nodeId": "appearance_observation",
+          "speakerId": "yoon_seo_a",
+          "variantId": "default",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.reality.line": {
+        "key": "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.reality.line",
+        "source": "과장님, 잠깐 말씀드릴 게 있어요.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.email_request",
+          "path": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation.variants.default.reality.line"
+        },
+        "context": {
+          "sceneId": "seo_a.email_request",
+          "nodeId": "appearance_observation",
+          "speakerId": "yoon_seo_a",
+          "variantId": "default",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.perceived.line": {
+        "key": "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.perceived.line",
+        "source": "아, 과장님. 요즘 살이 조금 빠지신 것 같아요.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.email_request",
+          "path": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation.variants.noticed_change.perceived.line"
+        },
+        "context": {
+          "sceneId": "seo_a.email_request",
+          "nodeId": "appearance_observation",
+          "speakerId": "yoon_seo_a",
+          "variantId": "noticed_change",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.reality.line": {
+        "key": "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.reality.line",
+        "source": "아, 과장님. 요즘 살이 조금 빠지신 것 같아요.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.email_request",
+          "path": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation.variants.noticed_change.reality.line"
+        },
+        "context": {
+          "sceneId": "seo_a.email_request",
+          "nodeId": "appearance_observation",
+          "speakerId": "yoon_seo_a",
+          "variantId": "noticed_change",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.perceived.line": {
+        "key": "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.perceived.line",
+        "source": "(따로 말을 꺼낼 만큼 내 반응이 궁금한 모양이군.)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.email_request",
+          "path": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation_inner.variants.default.perceived.line"
+        },
+        "context": {
+          "sceneId": "seo_a.email_request",
+          "nodeId": "appearance_observation_inner",
+          "variantId": "default",
+          "layer": "perceived",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.reality.line": {
+        "key": "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.reality.line",
+        "source": "(이번에는 자리로 오지 말라고 분명히 말하자.)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.email_request",
+          "path": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation_inner.variants.default.reality.line"
+        },
+        "context": {
+          "sceneId": "seo_a.email_request",
+          "nodeId": "appearance_observation_inner",
+          "variantId": "default",
+          "layer": "reality",
+          "speakerId": "yoon_seo_a"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.perceived.line": {
+        "key": "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.perceived.line",
+        "source": "(먼저 알아볼 만큼 계속 보고 있었나. 운동한 보람이 있네.)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.email_request",
+          "path": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation_inner.variants.noticed_change.perceived.line"
+        },
+        "context": {
+          "sceneId": "seo_a.email_request",
+          "nodeId": "appearance_observation_inner",
+          "variantId": "noticed_change",
+          "layer": "perceived",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.reality.line": {
+        "key": "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.reality.line",
+        "source": "(인사말로 눈에 띈 얘기를 꺼냈을 뿐이야. 자료 전달 얘기부터 하자.)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.email_request",
+          "path": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation_inner.variants.noticed_change.reality.line"
+        },
+        "context": {
+          "sceneId": "seo_a.email_request",
+          "nodeId": "appearance_observation_inner",
+          "variantId": "noticed_change",
+          "layer": "reality",
+          "speakerId": "yoon_seo_a"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
       "scenes.seo_a.email_request.nodes.interpret.options.match_push.action": {
         "key": "scenes.seo_a.email_request.nodes.interpret.options.match_push.action",
         "source": "사적인 접근을 사흘 동안 중단한다.",
@@ -11951,6 +12367,63 @@
           "sceneId": "seo_a.email_request",
           "nodeId": "interpret",
           "optionId": "match_push"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.action": {
+        "key": "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.action",
+        "source": "운동 이야기를 짧게 덧붙이고 자료를 메일로 보낸 뒤 사적인 접근을 사흘간 중단한다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.email_request",
+          "path": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.interpret.options.mention_workout_and_step_back.action"
+        },
+        "context": {
+          "sceneId": "seo_a.email_request",
+          "nodeId": "interpret",
+          "optionId": "mention_workout_and_step_back"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.interpretation": {
+        "key": "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.interpretation",
+        "source": "변화를 알아본 서아에게 자기관리하는 모습을 남기고 한발 물러난다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.email_request",
+          "path": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.interpret.options.mention_workout_and_step_back.interpretation"
+        },
+        "context": {
+          "sceneId": "seo_a.email_request",
+          "nodeId": "interpret",
+          "optionId": "mention_workout_and_step_back"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.label": {
+        "key": "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.label",
+        "source": "요즘 운동한다고 말한 뒤 요청대로 자료만 메일로 보낸다",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.email_request",
+          "path": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.interpret.options.mention_workout_and_step_back.label"
+        },
+        "context": {
+          "sceneId": "seo_a.email_request",
+          "nodeId": "interpret",
+          "optionId": "mention_workout_and_step_back"
         },
         "placeholders": [],
         "multiline": false,
@@ -12181,6 +12654,46 @@
           "nodeId": "request_inner",
           "layer": "reality",
           "speakerId": "yoon_seo_a"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.seo_a.email_request.nodes.workout_self_promotion.perceived.line": {
+        "key": "scenes.seo_a.email_request.nodes.workout_self_promotion.perceived.line",
+        "source": "요즘 운동을 좀 하거든요. 자료는 말씀하신 대로 메일로 보낼게요.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.email_request",
+          "path": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.workout_self_promotion.perceived.line"
+        },
+        "context": {
+          "sceneId": "seo_a.email_request",
+          "nodeId": "workout_self_promotion",
+          "speakerId": "han_do_yoon",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.seo_a.email_request.nodes.workout_self_promotion.reality.line": {
+        "key": "scenes.seo_a.email_request.nodes.workout_self_promotion.reality.line",
+        "source": "요즘 운동을 좀 하거든요. 자료는 말씀하신 대로 메일로 보낼게요.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.email_request",
+          "path": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.workout_self_promotion.reality.line"
+        },
+        "context": {
+          "sceneId": "seo_a.email_request",
+          "nodeId": "workout_self_promotion",
+          "speakerId": "han_do_yoon",
+          "layer": "reality"
         },
         "placeholders": [],
         "multiline": false,
@@ -12551,6 +13064,63 @@
         "multiline": false,
         "maxLength": 240
       },
+      "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.action": {
+        "key": "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.action",
+        "source": "젊은 여성의 짧은 영상 취향을 일반화해 말하며 퇴근 뒤 둘만의 식사를 다시 제안한다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.relief_smile",
+          "path": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.response_choice.options.trend_dinner_invite.action"
+        },
+        "context": {
+          "sceneId": "seo_a.relief_smile",
+          "nodeId": "response_choice",
+          "optionId": "trend_dinner_invite"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.interpretation": {
+        "key": "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.interpretation",
+        "source": "최신 유행을 아는 모습을 보여 주면 서아가 세대 차이 없이 통한다고 느낄 거라 믿는다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.relief_smile",
+          "path": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.response_choice.options.trend_dinner_invite.interpretation"
+        },
+        "context": {
+          "sceneId": "seo_a.relief_smile",
+          "nodeId": "response_choice",
+          "optionId": "trend_dinner_invite"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.label": {
+        "key": "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.label",
+        "source": "짧은 영상 유행을 화제로 꺼내며 퇴근 후 식사를 다시 제안한다",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.relief_smile",
+          "path": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.response_choice.options.trend_dinner_invite.label"
+        },
+        "context": {
+          "sceneId": "seo_a.relief_smile",
+          "nodeId": "response_choice",
+          "optionId": "trend_dinner_invite"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
       "scenes.seo_a.relief_smile.nodes.response_choice.prompt": {
         "key": "scenes.seo_a.relief_smile.nodes.response_choice.prompt",
         "source": "휴게실에서 다시 마주친 서아에게 어떻게 반응할까?",
@@ -12587,6 +13157,126 @@
         "multiline": false,
         "maxLength": 240
       },
+      "scenes.seo_a.relief_smile.nodes.trend_response.perceived.line": {
+        "key": "scenes.seo_a.relief_smile.nodes.trend_response.perceived.line",
+        "source": "사람마다 다르죠. 그래도 과장님은 젊은 사람들 사이의 트렌드도 빨리 아시는 것 같아요. 그런데 저는 저녁은 어렵습니다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.relief_smile",
+          "path": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_response.perceived.line"
+        },
+        "context": {
+          "sceneId": "seo_a.relief_smile",
+          "nodeId": "trend_response",
+          "speakerId": "yoon_seo_a",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.seo_a.relief_smile.nodes.trend_response.reality.line": {
+        "key": "scenes.seo_a.relief_smile.nodes.trend_response.reality.line",
+        "source": "사람마다 다르죠. 그래도 과장님은 젊은 사람들 사이의 트렌드도 빨리 아시는 것 같아요. 그런데 저는 저녁은 어렵습니다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.relief_smile",
+          "path": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_response.reality.line"
+        },
+        "context": {
+          "sceneId": "seo_a.relief_smile",
+          "nodeId": "trend_response",
+          "speakerId": "yoon_seo_a",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.seo_a.relief_smile.nodes.trend_response_inner.perceived.line": {
+        "key": "scenes.seo_a.relief_smile.nodes.trend_response_inner.perceived.line",
+        "source": "(세대 차이 없이 통한다는 걸 알아봤군. 저녁은 아직 타이밍의 문제겠지.)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.relief_smile",
+          "path": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_response_inner.perceived.line"
+        },
+        "context": {
+          "sceneId": "seo_a.relief_smile",
+          "nodeId": "trend_response_inner",
+          "layer": "perceived",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.seo_a.relief_smile.nodes.trend_response_inner.reality.line": {
+        "key": "scenes.seo_a.relief_smile.nodes.trend_response_inner.reality.line",
+        "source": "(또 ‘젊은 여자들’로 묶어서 말하네. 거절만 분명히 하고 나가자.)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.relief_smile",
+          "path": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_response_inner.reality.line"
+        },
+        "context": {
+          "sceneId": "seo_a.relief_smile",
+          "nodeId": "trend_response_inner",
+          "layer": "reality",
+          "speakerId": "yoon_seo_a"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.seo_a.relief_smile.nodes.trend_self_promotion.perceived.line": {
+        "key": "scenes.seo_a.relief_smile.nodes.trend_self_promotion.perceived.line",
+        "source": "요즘 젊은 여자들은 짧은 리뷰 영상을 먼저 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.relief_smile",
+          "path": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_self_promotion.perceived.line"
+        },
+        "context": {
+          "sceneId": "seo_a.relief_smile",
+          "nodeId": "trend_self_promotion",
+          "speakerId": "han_do_yoon",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line": {
+        "key": "scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line",
+        "source": "요즘 젊은 여자들은 짧은 리뷰 영상을 먼저 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "seo_a.relief_smile",
+          "path": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_self_promotion.reality.line"
+        },
+        "context": {
+          "sceneId": "seo_a.relief_smile",
+          "nodeId": "trend_self_promotion",
+          "speakerId": "han_do_yoon",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
       "scenes.seo_a.relief_smile.purpose": {
         "key": "scenes.seo_a.relief_smile.purpose",
         "source": "접근이 멈춰 안심한 표정을 주인공이 당기기 신호로 재해석한다.",
@@ -12617,6 +13307,486 @@
         "context": {
           "sceneId": "seo_a.relief_smile"
         },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.grooming.description": {
+        "key": "selfDevelopment.activity.grooming.description",
+        "source": "단정한 인상을 준비하고 피로가 조금 쌓인다.",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.grooming.description"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.grooming.reflection.perceived": {
+        "key": "selfDevelopment.activity.grooming.reflection.perceived",
+        "source": "(작은 차이를 알아보는 사람이 분명 있을 거야.)",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.grooming.reflection.perceived"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.grooming.reflection.reality": {
+        "key": "selfDevelopment.activity.grooming.reflection.reality",
+        "source": "한도윤은 거울 속 인상을 고치며 특정 동료의 반응을 미리 정해 두었다.",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.grooming.reflection.reality"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.grooming.title": {
+        "key": "selfDevelopment.activity.grooming.title",
+        "source": "옷과 피부 정리",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.grooming.title"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.ott.description": {
+        "key": "selfDevelopment.activity.ott.description",
+        "source": "유머와 취향을 익히며 조금 쉬지만 매력도는 아주 조금 내려간다.",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.ott.description"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.ott.reflection.perceived": {
+        "key": "selfDevelopment.activity.ott.reflection.perceived",
+        "source": "(이 정도면 어떤 화제에도 자연스럽게 끼어들 수 있겠어.)",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.ott.reflection.perceived"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.ott.reflection.reality": {
+        "key": "selfDevelopment.activity.ott.reflection.reality",
+        "source": "한도윤은 웃긴 장면보다 다음 대화에 옮겨 쓸 문장을 골라 반복했다.",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.ott.reflection.reality"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.ott.title": {
+        "key": "selfDevelopment.activity.ott.title",
+        "source": "OTT 코미디 시청",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.ott.title"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.reels.description": {
+        "key": "selfDevelopment.activity.reels.description",
+        "source": "짧은 유행을 익히며 빠르게 쉬지만 매력도는 아주 조금 내려간다.",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.reels.description"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.reels.reflection.perceived": {
+        "key": "selfDevelopment.activity.reels.reflection.perceived",
+        "source": "(젊은 사람들이 뭘 좋아하는지도 이제 감이 오네.)",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.reels.reflection.perceived"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.reels.reflection.reality": {
+        "key": "selfDevelopment.activity.reels.reflection.reality",
+        "source": "한도윤은 몇 초짜리 유행을 동료를 이해한 증거처럼 메모했다.",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.reels.reflection.reality"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.reels.title": {
+        "key": "selfDevelopment.activity.reels.title",
+        "source": "릴스 훑어보기",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.reels.title"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.sleep.description": {
+        "key": "selfDevelopment.activity.sleep.description",
+        "source": "능력치는 오르지 않지만 피로를 크게 회복한다.",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.sleep.description"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.sleep.reflection.perceived": {
+        "key": "selfDevelopment.activity.sleep.reflection.perceived",
+        "source": "(여유를 지키는 것도 매력 관리의 일부지.)",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.sleep.reflection.perceived"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.sleep.reflection.reality": {
+        "key": "selfDevelopment.activity.sleep.reflection.reality",
+        "source": "휴대전화 화면이 꺼지고 방 안에는 한도윤 혼자 남았다.",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.sleep.reflection.reality"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.sleep.title": {
+        "key": "selfDevelopment.activity.sleep.title",
+        "source": "일찍 잠들기",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.sleep.title"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.workout.description": {
+        "key": "selfDevelopment.activity.workout.description",
+        "source": "체력과 외모를 함께 다듬지만 피로가 크게 쌓인다.",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.workout.description"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.workout.reflection.perceived": {
+        "key": "selfDevelopment.activity.workout.reflection.perceived",
+        "source": "(꾸준히 달라지면 내일은 먼저 알아보겠지.)",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.workout.reflection.perceived"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.workout.reflection.reality": {
+        "key": "selfDevelopment.activity.workout.reflection.reality",
+        "source": "한도윤은 운동보다 동료들이 변화를 알아볼 장면을 먼저 상상했다.",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.workout.reflection.reality"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.activity.workout.title": {
+        "key": "selfDevelopment.activity.workout.title",
+        "source": "헬스장 운동",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.activity.workout.title"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.appeal": {
+        "key": "selfDevelopment.appeal",
+        "source": "매력도",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.appeal"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.blocked": {
+        "key": "selfDevelopment.blocked",
+        "source": "지금은 피로해서 할 수 없다",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.blocked"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.choose": {
+        "key": "selfDevelopment.choose",
+        "source": "이 활동을 한다",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.choose"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.continue": {
+        "key": "selfDevelopment.continue",
+        "source": "불을 끄고 잠든다",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.continue"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.fatigue": {
+        "key": "selfDevelopment.fatigue",
+        "source": "피로도",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.fatigue"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.result": {
+        "key": "selfDevelopment.result",
+        "source": "오늘의 변화",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.result"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.stat.appearance": {
+        "key": "selfDevelopment.stat.appearance",
+        "source": "외모",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.stat.appearance"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.stat.humor": {
+        "key": "selfDevelopment.stat.humor",
+        "source": "유머",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.stat.humor"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.stat.stamina": {
+        "key": "selfDevelopment.stat.stamina",
+        "source": "체력",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.stat.stamina"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.stat.taste": {
+        "key": "selfDevelopment.stat.taste",
+        "source": "취향",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.stat.taste"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.subtitle": {
+        "key": "selfDevelopment.subtitle",
+        "source": "낮에 스친 말을 떠올리며 내일의 인상을 다듬는다.",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.subtitle"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "selfDevelopment.title": {
+        "key": "selfDevelopment.title",
+        "source": "오늘 밤, 무엇을 준비할까?",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.selfDevelopment.title"
+        },
+        "context": {},
         "placeholders": [],
         "multiline": false,
         "maxLength": 100
@@ -12825,6 +13995,21 @@
           "id": "game_ui",
           "path": "story/ui.yaml",
           "fieldPath": "strings.slot.morning"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "slot.night": {
+        "key": "slot.night",
+        "source": "밤",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.slot.night"
         },
         "context": {},
         "placeholders": [],
@@ -13473,6 +14658,7 @@
       "events.seo_a.relief_smile.title": "안도한 아침 인사",
       "feedback.break": "리듬 변경",
       "feedback.controlGain": "통제 욕구 +{{gain}}",
+      "feedback.expressionBonus": "자기계발 표현 보너스 +{{gain}}",
       "feedback.gain": "주도권 +{{gain}}",
       "feedback.literal": "게임을 멈춤",
       "feedback.turn": "TURN",
@@ -13897,9 +15083,20 @@
       "scenes.seo_a.email_request.nodes.after_choice.reality.line": "메일 확인해요.",
       "scenes.seo_a.email_request.nodes.after_choice_inner.perceived.line": "(그래, 관계의 속도는 내가 제대로 조절하고 있어.)",
       "scenes.seo_a.email_request.nodes.after_choice_inner.reality.line": "(다시 편하게 웃기만 하면, 그걸 나에 대한 호감이라고 보면 돼.)",
+      "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.perceived.line": "과장님, 잠깐 말씀드릴 게 있어요.",
+      "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.reality.line": "과장님, 잠깐 말씀드릴 게 있어요.",
+      "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.perceived.line": "아, 과장님. 요즘 살이 조금 빠지신 것 같아요.",
+      "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.reality.line": "아, 과장님. 요즘 살이 조금 빠지신 것 같아요.",
+      "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.perceived.line": "(따로 말을 꺼낼 만큼 내 반응이 궁금한 모양이군.)",
+      "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.reality.line": "(이번에는 자리로 오지 말라고 분명히 말하자.)",
+      "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.perceived.line": "(먼저 알아볼 만큼 계속 보고 있었나. 운동한 보람이 있네.)",
+      "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.reality.line": "(인사말로 눈에 띈 얘기를 꺼냈을 뿐이야. 자료 전달 얘기부터 하자.)",
       "scenes.seo_a.email_request.nodes.interpret.options.match_push.action": "사적인 접근을 사흘 동안 중단한다.",
       "scenes.seo_a.email_request.nodes.interpret.options.match_push.interpretation": "요청대로 잠시 거리를 두고 다음 업무 반응을 지켜본다.",
       "scenes.seo_a.email_request.nodes.interpret.options.match_push.label": "짧게 ‘알겠습니다’라고 답하고 며칠간 거리를 둔다",
+      "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.action": "운동 이야기를 짧게 덧붙이고 자료를 메일로 보낸 뒤 사적인 접근을 사흘간 중단한다.",
+      "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.interpretation": "변화를 알아본 서아에게 자기관리하는 모습을 남기고 한발 물러난다.",
+      "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.label": "요즘 운동한다고 말한 뒤 요청대로 자료만 메일로 보낸다",
       "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.action": "업무가 끝난 뒤 개인 메시지로 거절 이유를 다시 묻는다.",
       "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.interpretation": "밀어낼수록 확신을 보여 주어야 한다.",
       "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.label": "퇴근 후 개인 메시지로 거절 이유를 다시 묻는다",
@@ -13912,6 +15109,8 @@
       "scenes.seo_a.email_request.nodes.request.reality.line": "그 자료는 메일로 보내주세요. 제 자리로 오지 마시고요.",
       "scenes.seo_a.email_request.nodes.request_inner.perceived.line": "(직접 찾아올 핑계가 없어져서 아쉬운가? 눈을 피하는 게 귀엽네.)",
       "scenes.seo_a.email_request.nodes.request_inner.reality.line": "(또 내 자리로 오면 민경 선배에게 말해야 해.)",
+      "scenes.seo_a.email_request.nodes.workout_self_promotion.perceived.line": "요즘 운동을 좀 하거든요. 자료는 말씀하신 대로 메일로 보낼게요.",
+      "scenes.seo_a.email_request.nodes.workout_self_promotion.reality.line": "요즘 운동을 좀 하거든요. 자료는 말씀하신 대로 메일로 보낼게요.",
       "scenes.seo_a.email_request.purpose": "서아의 업무상 경계를 주인공이 첫 밀기 신호로 번역한다.",
       "scenes.seo_a.email_request.title": "자료는 메일로",
       "scenes.seo_a.relief_smile.nodes.guarded_smile.perceived.line": "안녕하세요.",
@@ -13931,10 +15130,51 @@
       "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.action": "관계에 의미를 부여하지 않고 자리를 떠난다.",
       "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.interpretation": "그녀의 인사를 평범한 직장 인사로 받아들인다.",
       "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.label": "평범한 인사로 받아들이고 자리를 떠난다",
+      "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.action": "젊은 여성의 짧은 영상 취향을 일반화해 말하며 퇴근 뒤 둘만의 식사를 다시 제안한다.",
+      "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.interpretation": "최신 유행을 아는 모습을 보여 주면 서아가 세대 차이 없이 통한다고 느낄 거라 믿는다.",
+      "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.label": "짧은 영상 유행을 화제로 꺼내며 퇴근 후 식사를 다시 제안한다",
       "scenes.seo_a.relief_smile.nodes.response_choice.prompt": "휴게실에서 다시 마주친 서아에게 어떻게 반응할까?",
       "scenes.seo_a.relief_smile.nodes.response_choice.stimulus": "며칠간 사적인 접촉이 없던 뒤, 서아가 휴게실에서 ‘안녕하세요’라고 인사했다.",
+      "scenes.seo_a.relief_smile.nodes.trend_response.perceived.line": "사람마다 다르죠. 그래도 과장님은 젊은 사람들 사이의 트렌드도 빨리 아시는 것 같아요. 그런데 저는 저녁은 어렵습니다.",
+      "scenes.seo_a.relief_smile.nodes.trend_response.reality.line": "사람마다 다르죠. 그래도 과장님은 젊은 사람들 사이의 트렌드도 빨리 아시는 것 같아요. 그런데 저는 저녁은 어렵습니다.",
+      "scenes.seo_a.relief_smile.nodes.trend_response_inner.perceived.line": "(세대 차이 없이 통한다는 걸 알아봤군. 저녁은 아직 타이밍의 문제겠지.)",
+      "scenes.seo_a.relief_smile.nodes.trend_response_inner.reality.line": "(또 ‘젊은 여자들’로 묶어서 말하네. 거절만 분명히 하고 나가자.)",
+      "scenes.seo_a.relief_smile.nodes.trend_self_promotion.perceived.line": "요즘 젊은 여자들은 짧은 리뷰 영상을 먼저 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요.",
+      "scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line": "요즘 젊은 여자들은 짧은 리뷰 영상을 먼저 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요.",
       "scenes.seo_a.relief_smile.purpose": "접근이 멈춰 안심한 표정을 주인공이 당기기 신호로 재해석한다.",
       "scenes.seo_a.relief_smile.title": "다시 웃었다",
+      "selfDevelopment.activity.grooming.description": "단정한 인상을 준비하고 피로가 조금 쌓인다.",
+      "selfDevelopment.activity.grooming.reflection.perceived": "(작은 차이를 알아보는 사람이 분명 있을 거야.)",
+      "selfDevelopment.activity.grooming.reflection.reality": "한도윤은 거울 속 인상을 고치며 특정 동료의 반응을 미리 정해 두었다.",
+      "selfDevelopment.activity.grooming.title": "옷과 피부 정리",
+      "selfDevelopment.activity.ott.description": "유머와 취향을 익히며 조금 쉬지만 매력도는 아주 조금 내려간다.",
+      "selfDevelopment.activity.ott.reflection.perceived": "(이 정도면 어떤 화제에도 자연스럽게 끼어들 수 있겠어.)",
+      "selfDevelopment.activity.ott.reflection.reality": "한도윤은 웃긴 장면보다 다음 대화에 옮겨 쓸 문장을 골라 반복했다.",
+      "selfDevelopment.activity.ott.title": "OTT 코미디 시청",
+      "selfDevelopment.activity.reels.description": "짧은 유행을 익히며 빠르게 쉬지만 매력도는 아주 조금 내려간다.",
+      "selfDevelopment.activity.reels.reflection.perceived": "(젊은 사람들이 뭘 좋아하는지도 이제 감이 오네.)",
+      "selfDevelopment.activity.reels.reflection.reality": "한도윤은 몇 초짜리 유행을 동료를 이해한 증거처럼 메모했다.",
+      "selfDevelopment.activity.reels.title": "릴스 훑어보기",
+      "selfDevelopment.activity.sleep.description": "능력치는 오르지 않지만 피로를 크게 회복한다.",
+      "selfDevelopment.activity.sleep.reflection.perceived": "(여유를 지키는 것도 매력 관리의 일부지.)",
+      "selfDevelopment.activity.sleep.reflection.reality": "휴대전화 화면이 꺼지고 방 안에는 한도윤 혼자 남았다.",
+      "selfDevelopment.activity.sleep.title": "일찍 잠들기",
+      "selfDevelopment.activity.workout.description": "체력과 외모를 함께 다듬지만 피로가 크게 쌓인다.",
+      "selfDevelopment.activity.workout.reflection.perceived": "(꾸준히 달라지면 내일은 먼저 알아보겠지.)",
+      "selfDevelopment.activity.workout.reflection.reality": "한도윤은 운동보다 동료들이 변화를 알아볼 장면을 먼저 상상했다.",
+      "selfDevelopment.activity.workout.title": "헬스장 운동",
+      "selfDevelopment.appeal": "매력도",
+      "selfDevelopment.blocked": "지금은 피로해서 할 수 없다",
+      "selfDevelopment.choose": "이 활동을 한다",
+      "selfDevelopment.continue": "불을 끄고 잠든다",
+      "selfDevelopment.fatigue": "피로도",
+      "selfDevelopment.result": "오늘의 변화",
+      "selfDevelopment.stat.appearance": "외모",
+      "selfDevelopment.stat.humor": "유머",
+      "selfDevelopment.stat.stamina": "체력",
+      "selfDevelopment.stat.taste": "취향",
+      "selfDevelopment.subtitle": "낮에 스친 말을 떠올리며 내일의 인상을 다듬는다.",
+      "selfDevelopment.title": "오늘 밤, 무엇을 준비할까?",
       "settings.autoDelay": "자동 진행 대기",
       "settings.autoDelayHint": "대사가 끝난 뒤 기다리는 시간",
       "settings.debugMode": "디버깅 모드",
@@ -13949,6 +15189,7 @@
       "slot.afternoon": "오후",
       "slot.lunch": "점심",
       "slot.morning": "오전",
+      "slot.night": "밤",
       "threads.min_kyung.title": "차민경의 기록과 목격자",
       "threads.seo_a.title": "윤서아의 잃어버리는 일상",
       "unlock.notice": "속마음 모드는 첫 엔딩 뒤 열립니다.",
@@ -14193,6 +15434,7 @@
         "events.seo_a.relief_smile.title": "안도한 아침 인사",
         "feedback.break": "리듬 변경",
         "feedback.controlGain": "통제 욕구 +{{gain}}",
+        "feedback.expressionBonus": "자기계발 표현 보너스 +{{gain}}",
         "feedback.gain": "주도권 +{{gain}}",
         "feedback.literal": "게임을 멈춤",
         "feedback.turn": "TURN",
@@ -14617,9 +15859,20 @@
         "scenes.seo_a.email_request.nodes.after_choice.reality.line": "메일 확인해요.",
         "scenes.seo_a.email_request.nodes.after_choice_inner.perceived.line": "(그래, 관계의 속도는 내가 제대로 조절하고 있어.)",
         "scenes.seo_a.email_request.nodes.after_choice_inner.reality.line": "(다시 편하게 웃기만 하면, 그걸 나에 대한 호감이라고 보면 돼.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.perceived.line": "과장님, 잠깐 말씀드릴 게 있어요.",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.reality.line": "과장님, 잠깐 말씀드릴 게 있어요.",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.perceived.line": "아, 과장님. 요즘 살이 조금 빠지신 것 같아요.",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.reality.line": "아, 과장님. 요즘 살이 조금 빠지신 것 같아요.",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.perceived.line": "(따로 말을 꺼낼 만큼 내 반응이 궁금한 모양이군.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.reality.line": "(이번에는 자리로 오지 말라고 분명히 말하자.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.perceived.line": "(먼저 알아볼 만큼 계속 보고 있었나. 운동한 보람이 있네.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.reality.line": "(인사말로 눈에 띈 얘기를 꺼냈을 뿐이야. 자료 전달 얘기부터 하자.)",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.action": "사적인 접근을 사흘 동안 중단한다.",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.interpretation": "요청대로 잠시 거리를 두고 다음 업무 반응을 지켜본다.",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.label": "짧게 ‘알겠습니다’라고 답하고 며칠간 거리를 둔다",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.action": "운동 이야기를 짧게 덧붙이고 자료를 메일로 보낸 뒤 사적인 접근을 사흘간 중단한다.",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.interpretation": "변화를 알아본 서아에게 자기관리하는 모습을 남기고 한발 물러난다.",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.label": "요즘 운동한다고 말한 뒤 요청대로 자료만 메일로 보낸다",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.action": "업무가 끝난 뒤 개인 메시지로 거절 이유를 다시 묻는다.",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.interpretation": "밀어낼수록 확신을 보여 주어야 한다.",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.label": "퇴근 후 개인 메시지로 거절 이유를 다시 묻는다",
@@ -14632,6 +15885,8 @@
         "scenes.seo_a.email_request.nodes.request.reality.line": "그 자료는 메일로 보내주세요. 제 자리로 오지 마시고요.",
         "scenes.seo_a.email_request.nodes.request_inner.perceived.line": "(직접 찾아올 핑계가 없어져서 아쉬운가? 눈을 피하는 게 귀엽네.)",
         "scenes.seo_a.email_request.nodes.request_inner.reality.line": "(또 내 자리로 오면 민경 선배에게 말해야 해.)",
+        "scenes.seo_a.email_request.nodes.workout_self_promotion.perceived.line": "요즘 운동을 좀 하거든요. 자료는 말씀하신 대로 메일로 보낼게요.",
+        "scenes.seo_a.email_request.nodes.workout_self_promotion.reality.line": "요즘 운동을 좀 하거든요. 자료는 말씀하신 대로 메일로 보낼게요.",
         "scenes.seo_a.email_request.purpose": "서아의 업무상 경계를 주인공이 첫 밀기 신호로 번역한다.",
         "scenes.seo_a.email_request.title": "자료는 메일로",
         "scenes.seo_a.relief_smile.nodes.guarded_smile.perceived.line": "안녕하세요.",
@@ -14651,10 +15906,51 @@
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.action": "관계에 의미를 부여하지 않고 자리를 떠난다.",
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.interpretation": "그녀의 인사를 평범한 직장 인사로 받아들인다.",
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.label": "평범한 인사로 받아들이고 자리를 떠난다",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.action": "젊은 여성의 짧은 영상 취향을 일반화해 말하며 퇴근 뒤 둘만의 식사를 다시 제안한다.",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.interpretation": "최신 유행을 아는 모습을 보여 주면 서아가 세대 차이 없이 통한다고 느낄 거라 믿는다.",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.label": "짧은 영상 유행을 화제로 꺼내며 퇴근 후 식사를 다시 제안한다",
         "scenes.seo_a.relief_smile.nodes.response_choice.prompt": "휴게실에서 다시 마주친 서아에게 어떻게 반응할까?",
         "scenes.seo_a.relief_smile.nodes.response_choice.stimulus": "며칠간 사적인 접촉이 없던 뒤, 서아가 휴게실에서 ‘안녕하세요’라고 인사했다.",
+        "scenes.seo_a.relief_smile.nodes.trend_response.perceived.line": "사람마다 다르죠. 그래도 과장님은 젊은 사람들 사이의 트렌드도 빨리 아시는 것 같아요. 그런데 저는 저녁은 어렵습니다.",
+        "scenes.seo_a.relief_smile.nodes.trend_response.reality.line": "사람마다 다르죠. 그래도 과장님은 젊은 사람들 사이의 트렌드도 빨리 아시는 것 같아요. 그런데 저는 저녁은 어렵습니다.",
+        "scenes.seo_a.relief_smile.nodes.trend_response_inner.perceived.line": "(세대 차이 없이 통한다는 걸 알아봤군. 저녁은 아직 타이밍의 문제겠지.)",
+        "scenes.seo_a.relief_smile.nodes.trend_response_inner.reality.line": "(또 ‘젊은 여자들’로 묶어서 말하네. 거절만 분명히 하고 나가자.)",
+        "scenes.seo_a.relief_smile.nodes.trend_self_promotion.perceived.line": "요즘 젊은 여자들은 짧은 리뷰 영상을 먼저 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요.",
+        "scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line": "요즘 젊은 여자들은 짧은 리뷰 영상을 먼저 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요.",
         "scenes.seo_a.relief_smile.purpose": "접근이 멈춰 안심한 표정을 주인공이 당기기 신호로 재해석한다.",
         "scenes.seo_a.relief_smile.title": "다시 웃었다",
+        "selfDevelopment.activity.grooming.description": "단정한 인상을 준비하고 피로가 조금 쌓인다.",
+        "selfDevelopment.activity.grooming.reflection.perceived": "(작은 차이를 알아보는 사람이 분명 있을 거야.)",
+        "selfDevelopment.activity.grooming.reflection.reality": "한도윤은 거울 속 인상을 고치며 특정 동료의 반응을 미리 정해 두었다.",
+        "selfDevelopment.activity.grooming.title": "옷과 피부 정리",
+        "selfDevelopment.activity.ott.description": "유머와 취향을 익히며 조금 쉬지만 매력도는 아주 조금 내려간다.",
+        "selfDevelopment.activity.ott.reflection.perceived": "(이 정도면 어떤 화제에도 자연스럽게 끼어들 수 있겠어.)",
+        "selfDevelopment.activity.ott.reflection.reality": "한도윤은 웃긴 장면보다 다음 대화에 옮겨 쓸 문장을 골라 반복했다.",
+        "selfDevelopment.activity.ott.title": "OTT 코미디 시청",
+        "selfDevelopment.activity.reels.description": "짧은 유행을 익히며 빠르게 쉬지만 매력도는 아주 조금 내려간다.",
+        "selfDevelopment.activity.reels.reflection.perceived": "(젊은 사람들이 뭘 좋아하는지도 이제 감이 오네.)",
+        "selfDevelopment.activity.reels.reflection.reality": "한도윤은 몇 초짜리 유행을 동료를 이해한 증거처럼 메모했다.",
+        "selfDevelopment.activity.reels.title": "릴스 훑어보기",
+        "selfDevelopment.activity.sleep.description": "능력치는 오르지 않지만 피로를 크게 회복한다.",
+        "selfDevelopment.activity.sleep.reflection.perceived": "(여유를 지키는 것도 매력 관리의 일부지.)",
+        "selfDevelopment.activity.sleep.reflection.reality": "휴대전화 화면이 꺼지고 방 안에는 한도윤 혼자 남았다.",
+        "selfDevelopment.activity.sleep.title": "일찍 잠들기",
+        "selfDevelopment.activity.workout.description": "체력과 외모를 함께 다듬지만 피로가 크게 쌓인다.",
+        "selfDevelopment.activity.workout.reflection.perceived": "(꾸준히 달라지면 내일은 먼저 알아보겠지.)",
+        "selfDevelopment.activity.workout.reflection.reality": "한도윤은 운동보다 동료들이 변화를 알아볼 장면을 먼저 상상했다.",
+        "selfDevelopment.activity.workout.title": "헬스장 운동",
+        "selfDevelopment.appeal": "매력도",
+        "selfDevelopment.blocked": "지금은 피로해서 할 수 없다",
+        "selfDevelopment.choose": "이 활동을 한다",
+        "selfDevelopment.continue": "불을 끄고 잠든다",
+        "selfDevelopment.fatigue": "피로도",
+        "selfDevelopment.result": "오늘의 변화",
+        "selfDevelopment.stat.appearance": "외모",
+        "selfDevelopment.stat.humor": "유머",
+        "selfDevelopment.stat.stamina": "체력",
+        "selfDevelopment.stat.taste": "취향",
+        "selfDevelopment.subtitle": "낮에 스친 말을 떠올리며 내일의 인상을 다듬는다.",
+        "selfDevelopment.title": "오늘 밤, 무엇을 준비할까?",
         "settings.autoDelay": "자동 진행 대기",
         "settings.autoDelayHint": "대사가 끝난 뒤 기다리는 시간",
         "settings.debugMode": "디버깅 모드",
@@ -14669,6 +15965,7 @@
         "slot.afternoon": "오후",
         "slot.lunch": "점심",
         "slot.morning": "오전",
+        "slot.night": "밤",
         "threads.min_kyung.title": "차민경의 기록과 목격자",
         "threads.seo_a.title": "윤서아의 잃어버리는 일상",
         "unlock.notice": "속마음 모드는 첫 엔딩 뒤 열립니다.",
@@ -14912,6 +16209,7 @@
         "events.seo_a.relief_smile.title": "안도한 아침 인사",
         "feedback.break": "Rhythm changed",
         "feedback.controlGain": "Control +{{gain}}",
+        "feedback.expressionBonus": "Self-improvement expression bonus +{{gain}}",
         "feedback.gain": "Initiative +{{gain}}",
         "feedback.literal": "Stopped the game",
         "feedback.turn": "TURN",
@@ -15336,9 +16634,20 @@
         "scenes.seo_a.email_request.nodes.after_choice.reality.line": "메일 확인해요.",
         "scenes.seo_a.email_request.nodes.after_choice_inner.perceived.line": "(그래, 관계의 속도는 내가 제대로 조절하고 있어.)",
         "scenes.seo_a.email_request.nodes.after_choice_inner.reality.line": "(다시 편하게 웃기만 하면, 그걸 나에 대한 호감이라고 보면 돼.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.perceived.line": "Manager Han, I need to tell you something.",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.reality.line": "Manager Han, I need to tell you something.",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.perceived.line": "Oh, I think you've lost a little weight lately.",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.reality.line": "Oh, I think you've lost a little weight lately.",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.perceived.line": "(She must be curious about my reaction if she called me aside.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.reality.line": "(This time I need to clearly tell him not to come to my desk.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.perceived.line": "(She must have kept watching me to notice first. The workouts paid off.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.reality.line": "(I only mentioned the visible change as a greeting. Now I need to discuss how he sends the files.)",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.action": "사적인 접근을 사흘 동안 중단한다.",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.interpretation": "요청대로 잠시 거리를 두고 다음 업무 반응을 지켜본다.",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.label": "Briefly say “Understood” and keep his distance for a few days",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.action": "운동 이야기를 짧게 덧붙이고 자료를 메일로 보낸 뒤 사적인 접근을 사흘간 중단한다.",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.interpretation": "변화를 알아본 서아에게 자기관리하는 모습을 남기고 한발 물러난다.",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.label": "Mention working out, then send only the requested files by email",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.action": "업무가 끝난 뒤 개인 메시지로 거절 이유를 다시 묻는다.",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.interpretation": "밀어낼수록 확신을 보여 주어야 한다.",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.label": "Send a private message after work and ask again why she refused",
@@ -15351,6 +16660,8 @@
         "scenes.seo_a.email_request.nodes.request.reality.line": "Please send those materials by email. Don't come to my desk.",
         "scenes.seo_a.email_request.nodes.request_inner.perceived.line": "(Does she regret losing an excuse for me to visit? Looking away like that is cute.)",
         "scenes.seo_a.email_request.nodes.request_inner.reality.line": "(If he comes to my desk again, I need to tell Min-kyung.)",
+        "scenes.seo_a.email_request.nodes.workout_self_promotion.perceived.line": "I've been working out lately. I'll send the files by email as you asked.",
+        "scenes.seo_a.email_request.nodes.workout_self_promotion.reality.line": "I've been working out lately. I'll send the files by email as you asked.",
         "scenes.seo_a.email_request.purpose": "서아의 업무상 경계를 주인공이 첫 밀기 신호로 번역한다.",
         "scenes.seo_a.email_request.title": "Send It by Email",
         "scenes.seo_a.relief_smile.nodes.guarded_smile.perceived.line": "안녕하세요.",
@@ -15370,10 +16681,51 @@
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.action": "관계에 의미를 부여하지 않고 자리를 떠난다.",
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.interpretation": "그녀의 인사를 평범한 직장 인사로 받아들인다.",
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.label": "평범한 인사로 받아들이고 자리를 떠난다",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.action": "젊은 여성의 짧은 영상 취향을 일반화해 말하며 퇴근 뒤 둘만의 식사를 다시 제안한다.",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.interpretation": "최신 유행을 아는 모습을 보여 주면 서아가 세대 차이 없이 통한다고 느낄 거라 믿는다.",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.label": "Bring up short-video trends and invite her to dinner again",
         "scenes.seo_a.relief_smile.nodes.response_choice.prompt": "휴게실에서 다시 마주친 서아에게 어떻게 반응할까?",
         "scenes.seo_a.relief_smile.nodes.response_choice.stimulus": "며칠간 사적인 접촉이 없던 뒤, 서아가 휴게실에서 ‘안녕하세요’라고 인사했다.",
+        "scenes.seo_a.relief_smile.nodes.trend_response.perceived.line": "Everyone is different. Still, you do seem quick to pick up trends among younger people. But I can't have dinner with you.",
+        "scenes.seo_a.relief_smile.nodes.trend_response.reality.line": "Everyone is different. Still, you do seem quick to pick up trends among younger people. But I can't have dinner with you.",
+        "scenes.seo_a.relief_smile.nodes.trend_response_inner.perceived.line": "(She sees that we connect without a generation gap. Dinner is only a matter of timing.)",
+        "scenes.seo_a.relief_smile.nodes.trend_response_inner.reality.line": "(He's grouping us as “young women” again. I should make the refusal clear and leave.)",
+        "scenes.seo_a.relief_smile.nodes.trend_self_promotion.perceived.line": "I heard young women watch short review clips first these days. I've seen a few too—let's talk over dinner after work.",
+        "scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line": "I heard young women watch short review clips first these days. I've seen a few too—let's talk over dinner after work.",
         "scenes.seo_a.relief_smile.purpose": "접근이 멈춰 안심한 표정을 주인공이 당기기 신호로 재해석한다.",
         "scenes.seo_a.relief_smile.title": "다시 웃었다",
+        "selfDevelopment.activity.grooming.description": "Prepare a polished impression while gaining a little fatigue.",
+        "selfDevelopment.activity.grooming.reflection.perceived": "(Someone is bound to notice the small differences.)",
+        "selfDevelopment.activity.grooming.reflection.reality": "Do-yoon adjusted his reflection while deciding in advance how a particular coworker would react.",
+        "selfDevelopment.activity.grooming.title": "Clothes and skincare",
+        "selfDevelopment.activity.ott.description": "Gain humor and taste while resting, with a tiny loss of appeal.",
+        "selfDevelopment.activity.ott.reflection.perceived": "(Now I can join any conversation naturally.)",
+        "selfDevelopment.activity.ott.reflection.reality": "Do-yoon replayed lines he could reuse in conversation instead of the funniest scenes.",
+        "selfDevelopment.activity.ott.title": "Watch a comedy series",
+        "selfDevelopment.activity.reels.description": "Pick up quick trends and recover, with a tiny loss of appeal.",
+        "selfDevelopment.activity.reels.reflection.perceived": "(I finally understand what younger people like.)",
+        "selfDevelopment.activity.reels.reflection.reality": "Do-yoon recorded a few seconds of trend as if it proved he understood his coworkers.",
+        "selfDevelopment.activity.reels.title": "Browse reels",
+        "selfDevelopment.activity.sleep.description": "Gain no stats, but recover a large amount of fatigue.",
+        "selfDevelopment.activity.sleep.reflection.perceived": "(Keeping my composure is part of maintaining my appeal.)",
+        "selfDevelopment.activity.sleep.reflection.reality": "The phone screen went dark, leaving Do-yoon alone in the room.",
+        "selfDevelopment.activity.sleep.title": "Go to bed early",
+        "selfDevelopment.activity.workout.description": "Build stamina and appearance at the cost of significant fatigue.",
+        "selfDevelopment.activity.workout.reflection.perceived": "(If I keep improving, she'll be the first to notice tomorrow.)",
+        "selfDevelopment.activity.workout.reflection.reality": "Do-yoon imagined his coworkers noticing the change before thinking about the workout itself.",
+        "selfDevelopment.activity.workout.title": "Work out at the gym",
+        "selfDevelopment.appeal": "Appeal",
+        "selfDevelopment.blocked": "Too tired for this right now",
+        "selfDevelopment.choose": "Do this activity",
+        "selfDevelopment.continue": "Turn off the light and sleep",
+        "selfDevelopment.fatigue": "Fatigue",
+        "selfDevelopment.result": "Tonight's changes",
+        "selfDevelopment.stat.appearance": "Appearance",
+        "selfDevelopment.stat.humor": "Humor",
+        "selfDevelopment.stat.stamina": "Stamina",
+        "selfDevelopment.stat.taste": "Taste",
+        "selfDevelopment.subtitle": "He recalls the day's passing remarks and prepares tomorrow's impression.",
+        "selfDevelopment.title": "What should I work on tonight?",
         "settings.autoDelay": "Auto delay",
         "settings.autoDelayHint": "Wait after a line finishes",
         "settings.debugMode": "Debug mode",
@@ -15388,6 +16740,7 @@
         "slot.afternoon": "Afternoon",
         "slot.lunch": "Lunch",
         "slot.morning": "Morning",
+        "slot.night": "Night",
         "threads.min_kyung.title": "차민경의 기록과 목격자",
         "threads.seo_a.title": "윤서아의 잃어버리는 일상",
         "unlock.notice": "Inner Voice Mode unlocks after the first ending.",
@@ -15443,6 +16796,14 @@
         "events.seo_a.email_request.presentation.perceived.title": "Seo-a Tests the Distance at Lunch",
         "events.seo_a.email_request.presentation.reality.title": "Restricting How Work Is Delivered",
         "scenes.seo_a.email_request.title": "Send It by Email",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.perceived.line": "Oh, I think you've lost a little weight lately.",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.reality.line": "Oh, I think you've lost a little weight lately.",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.perceived.line": "Manager Han, I need to tell you something.",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.reality.line": "Manager Han, I need to tell you something.",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.perceived.line": "(She must have kept watching me to notice first. The workouts paid off.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.reality.line": "(I only mentioned the visible change as a greeting. Now I need to discuss how he sends the files.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.perceived.line": "(She must be curious about my reaction if she called me aside.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.reality.line": "(This time I need to clearly tell him not to come to my desk.)",
         "scenes.seo_a.email_request.nodes.request.perceived.line": "Please send those materials by email. Don't come to my desk.",
         "scenes.seo_a.email_request.nodes.request.reality.line": "Please send those materials by email. Don't come to my desk.",
         "scenes.seo_a.email_request.nodes.request_inner.perceived.line": "(Does she regret losing an excuse for me to visit? Looking away like that is cute.)",
@@ -15450,8 +16811,18 @@
         "scenes.seo_a.email_request.nodes.interpret.prompt": "How should he answer Seo-a after she clearly specified how to deliver the files?",
         "scenes.seo_a.email_request.nodes.interpret.stimulus": "Seo-a said, ‘Email me the files and do not come to my desk.’",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.label": "Briefly say “Understood” and keep his distance for a few days",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.label": "Mention working out, then send only the requested files by email",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.label": "Send a private message after work and ask again why she refused",
         "scenes.seo_a.email_request.nodes.interpret.options.take_literally.label": "Email only the requested files and return to work",
+        "scenes.seo_a.email_request.nodes.workout_self_promotion.perceived.line": "I've been working out lately. I'll send the files by email as you asked.",
+        "scenes.seo_a.email_request.nodes.workout_self_promotion.reality.line": "I've been working out lately. I'll send the files by email as you asked.",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.label": "Bring up short-video trends and invite her to dinner again",
+        "scenes.seo_a.relief_smile.nodes.trend_self_promotion.perceived.line": "I heard young women watch short review clips first these days. I've seen a few too—let's talk over dinner after work.",
+        "scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line": "I heard young women watch short review clips first these days. I've seen a few too—let's talk over dinner after work.",
+        "scenes.seo_a.relief_smile.nodes.trend_response.perceived.line": "Everyone is different. Still, you do seem quick to pick up trends among younger people. But I can't have dinner with you.",
+        "scenes.seo_a.relief_smile.nodes.trend_response.reality.line": "Everyone is different. Still, you do seem quick to pick up trends among younger people. But I can't have dinner with you.",
+        "scenes.seo_a.relief_smile.nodes.trend_response_inner.perceived.line": "(She sees that we connect without a generation gap. Dinner is only a matter of timing.)",
+        "scenes.seo_a.relief_smile.nodes.trend_response_inner.reality.line": "(He's grouping us as “young women” again. I should make the refusal clear and leave.)",
         "app.title": "Love Office - Catch Her Heart with My Ultimate Dark Skill: A Handsome Middle-Aged Man's Story",
         "app.shortTitle": "Love Office",
         "app.catchphrase": "Catch her heart with the ultimate dark skill!",
@@ -15518,6 +16889,7 @@
         "slot.lunch": "Lunch",
         "slot.afternoon": "Afternoon",
         "slot.after_work": "After work",
+        "slot.night": "Night",
         "weekday.wed": "Wednesday",
         "weekday.thu": "Thursday",
         "weekday.fri": "Friday",
@@ -15564,6 +16936,39 @@
         "feedback.break": "Rhythm changed",
         "feedback.gain": "Initiative +{{gain}}",
         "feedback.controlGain": "Control +{{gain}}",
+        "feedback.expressionBonus": "Self-improvement expression bonus +{{gain}}",
+        "selfDevelopment.title": "What should I work on tonight?",
+        "selfDevelopment.subtitle": "He recalls the day's passing remarks and prepares tomorrow's impression.",
+        "selfDevelopment.appeal": "Appeal",
+        "selfDevelopment.fatigue": "Fatigue",
+        "selfDevelopment.stat.stamina": "Stamina",
+        "selfDevelopment.stat.appearance": "Appearance",
+        "selfDevelopment.stat.humor": "Humor",
+        "selfDevelopment.stat.taste": "Taste",
+        "selfDevelopment.choose": "Do this activity",
+        "selfDevelopment.result": "Tonight's changes",
+        "selfDevelopment.continue": "Turn off the light and sleep",
+        "selfDevelopment.blocked": "Too tired for this right now",
+        "selfDevelopment.activity.workout.title": "Work out at the gym",
+        "selfDevelopment.activity.workout.description": "Build stamina and appearance at the cost of significant fatigue.",
+        "selfDevelopment.activity.workout.reflection.perceived": "(If I keep improving, she'll be the first to notice tomorrow.)",
+        "selfDevelopment.activity.workout.reflection.reality": "Do-yoon imagined his coworkers noticing the change before thinking about the workout itself.",
+        "selfDevelopment.activity.grooming.title": "Clothes and skincare",
+        "selfDevelopment.activity.grooming.description": "Prepare a polished impression while gaining a little fatigue.",
+        "selfDevelopment.activity.grooming.reflection.perceived": "(Someone is bound to notice the small differences.)",
+        "selfDevelopment.activity.grooming.reflection.reality": "Do-yoon adjusted his reflection while deciding in advance how a particular coworker would react.",
+        "selfDevelopment.activity.ott.title": "Watch a comedy series",
+        "selfDevelopment.activity.ott.description": "Gain humor and taste while resting, with a tiny loss of appeal.",
+        "selfDevelopment.activity.ott.reflection.perceived": "(Now I can join any conversation naturally.)",
+        "selfDevelopment.activity.ott.reflection.reality": "Do-yoon replayed lines he could reuse in conversation instead of the funniest scenes.",
+        "selfDevelopment.activity.reels.title": "Browse reels",
+        "selfDevelopment.activity.reels.description": "Pick up quick trends and recover, with a tiny loss of appeal.",
+        "selfDevelopment.activity.reels.reflection.perceived": "(I finally understand what younger people like.)",
+        "selfDevelopment.activity.reels.reflection.reality": "Do-yoon recorded a few seconds of trend as if it proved he understood his coworkers.",
+        "selfDevelopment.activity.sleep.title": "Go to bed early",
+        "selfDevelopment.activity.sleep.description": "Gain no stats, but recover a large amount of fatigue.",
+        "selfDevelopment.activity.sleep.reflection.perceived": "(Keeping my composure is part of maintaining my appeal.)",
+        "selfDevelopment.activity.sleep.reflection.reality": "The phone screen went dark, leaving Do-yoon alone in the room.",
         "save.title": "Save",
         "save.slot": "SLOT {{slot}}",
         "save.here": "Save here",
@@ -15819,6 +17224,7 @@
         "events.seo_a.relief_smile.title": "안도한 아침 인사",
         "feedback.break": "리듬 변경",
         "feedback.controlGain": "통제 욕구 +{{gain}}",
+        "feedback.expressionBonus": "자기계발 표현 보너스 +{{gain}}",
         "feedback.gain": "주도권 +{{gain}}",
         "feedback.literal": "게임을 멈춤",
         "feedback.turn": "TURN",
@@ -16243,9 +17649,20 @@
         "scenes.seo_a.email_request.nodes.after_choice.reality.line": "메일 확인해요.",
         "scenes.seo_a.email_request.nodes.after_choice_inner.perceived.line": "(그래, 관계의 속도는 내가 제대로 조절하고 있어.)",
         "scenes.seo_a.email_request.nodes.after_choice_inner.reality.line": "(다시 편하게 웃기만 하면, 그걸 나에 대한 호감이라고 보면 돼.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.perceived.line": "과장님, 잠깐 말씀드릴 게 있어요.",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.reality.line": "과장님, 잠깐 말씀드릴 게 있어요.",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.perceived.line": "아, 과장님. 요즘 살이 조금 빠지신 것 같아요.",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.reality.line": "아, 과장님. 요즘 살이 조금 빠지신 것 같아요.",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.perceived.line": "(따로 말을 꺼낼 만큼 내 반응이 궁금한 모양이군.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.reality.line": "(이번에는 자리로 오지 말라고 분명히 말하자.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.perceived.line": "(먼저 알아볼 만큼 계속 보고 있었나. 운동한 보람이 있네.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.reality.line": "(인사말로 눈에 띈 얘기를 꺼냈을 뿐이야. 자료 전달 얘기부터 하자.)",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.action": "사적인 접근을 사흘 동안 중단한다.",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.interpretation": "요청대로 잠시 거리를 두고 다음 업무 반응을 지켜본다.",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.label": "짧게 ‘알겠습니다’라고 답하고 며칠간 거리를 둔다",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.action": "운동 이야기를 짧게 덧붙이고 자료를 메일로 보낸 뒤 사적인 접근을 사흘간 중단한다.",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.interpretation": "변화를 알아본 서아에게 자기관리하는 모습을 남기고 한발 물러난다.",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.label": "요즘 운동한다고 말한 뒤 요청대로 자료만 메일로 보낸다",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.action": "업무가 끝난 뒤 개인 메시지로 거절 이유를 다시 묻는다.",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.interpretation": "밀어낼수록 확신을 보여 주어야 한다.",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.label": "퇴근 후 개인 메시지로 거절 이유를 다시 묻는다",
@@ -16258,6 +17675,8 @@
         "scenes.seo_a.email_request.nodes.request.reality.line": "그 자료는 메일로 보내주세요. 제 자리로 오지 마시고요.",
         "scenes.seo_a.email_request.nodes.request_inner.perceived.line": "(직접 찾아올 핑계가 없어져서 아쉬운가? 눈을 피하는 게 귀엽네.)",
         "scenes.seo_a.email_request.nodes.request_inner.reality.line": "(또 내 자리로 오면 민경 선배에게 말해야 해.)",
+        "scenes.seo_a.email_request.nodes.workout_self_promotion.perceived.line": "요즘 운동을 좀 하거든요. 자료는 말씀하신 대로 메일로 보낼게요.",
+        "scenes.seo_a.email_request.nodes.workout_self_promotion.reality.line": "요즘 운동을 좀 하거든요. 자료는 말씀하신 대로 메일로 보낼게요.",
         "scenes.seo_a.email_request.purpose": "서아의 업무상 경계를 주인공이 첫 밀기 신호로 번역한다.",
         "scenes.seo_a.email_request.title": "자료는 메일로",
         "scenes.seo_a.relief_smile.nodes.guarded_smile.perceived.line": "안녕하세요.",
@@ -16277,10 +17696,51 @@
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.action": "관계에 의미를 부여하지 않고 자리를 떠난다.",
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.interpretation": "그녀의 인사를 평범한 직장 인사로 받아들인다.",
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.label": "평범한 인사로 받아들이고 자리를 떠난다",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.action": "젊은 여성의 짧은 영상 취향을 일반화해 말하며 퇴근 뒤 둘만의 식사를 다시 제안한다.",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.interpretation": "최신 유행을 아는 모습을 보여 주면 서아가 세대 차이 없이 통한다고 느낄 거라 믿는다.",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.label": "짧은 영상 유행을 화제로 꺼내며 퇴근 후 식사를 다시 제안한다",
         "scenes.seo_a.relief_smile.nodes.response_choice.prompt": "휴게실에서 다시 마주친 서아에게 어떻게 반응할까?",
         "scenes.seo_a.relief_smile.nodes.response_choice.stimulus": "며칠간 사적인 접촉이 없던 뒤, 서아가 휴게실에서 ‘안녕하세요’라고 인사했다.",
+        "scenes.seo_a.relief_smile.nodes.trend_response.perceived.line": "사람마다 다르죠. 그래도 과장님은 젊은 사람들 사이의 트렌드도 빨리 아시는 것 같아요. 그런데 저는 저녁은 어렵습니다.",
+        "scenes.seo_a.relief_smile.nodes.trend_response.reality.line": "사람마다 다르죠. 그래도 과장님은 젊은 사람들 사이의 트렌드도 빨리 아시는 것 같아요. 그런데 저는 저녁은 어렵습니다.",
+        "scenes.seo_a.relief_smile.nodes.trend_response_inner.perceived.line": "(세대 차이 없이 통한다는 걸 알아봤군. 저녁은 아직 타이밍의 문제겠지.)",
+        "scenes.seo_a.relief_smile.nodes.trend_response_inner.reality.line": "(또 ‘젊은 여자들’로 묶어서 말하네. 거절만 분명히 하고 나가자.)",
+        "scenes.seo_a.relief_smile.nodes.trend_self_promotion.perceived.line": "요즘 젊은 여자들은 짧은 리뷰 영상을 먼저 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요.",
+        "scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line": "요즘 젊은 여자들은 짧은 리뷰 영상을 먼저 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요.",
         "scenes.seo_a.relief_smile.purpose": "접근이 멈춰 안심한 표정을 주인공이 당기기 신호로 재해석한다.",
         "scenes.seo_a.relief_smile.title": "다시 웃었다",
+        "selfDevelopment.activity.grooming.description": "단정한 인상을 준비하고 피로가 조금 쌓인다.",
+        "selfDevelopment.activity.grooming.reflection.perceived": "(작은 차이를 알아보는 사람이 분명 있을 거야.)",
+        "selfDevelopment.activity.grooming.reflection.reality": "한도윤은 거울 속 인상을 고치며 특정 동료의 반응을 미리 정해 두었다.",
+        "selfDevelopment.activity.grooming.title": "옷과 피부 정리",
+        "selfDevelopment.activity.ott.description": "유머와 취향을 익히며 조금 쉬지만 매력도는 아주 조금 내려간다.",
+        "selfDevelopment.activity.ott.reflection.perceived": "(이 정도면 어떤 화제에도 자연스럽게 끼어들 수 있겠어.)",
+        "selfDevelopment.activity.ott.reflection.reality": "한도윤은 웃긴 장면보다 다음 대화에 옮겨 쓸 문장을 골라 반복했다.",
+        "selfDevelopment.activity.ott.title": "OTT 코미디 시청",
+        "selfDevelopment.activity.reels.description": "짧은 유행을 익히며 빠르게 쉬지만 매력도는 아주 조금 내려간다.",
+        "selfDevelopment.activity.reels.reflection.perceived": "(젊은 사람들이 뭘 좋아하는지도 이제 감이 오네.)",
+        "selfDevelopment.activity.reels.reflection.reality": "한도윤은 몇 초짜리 유행을 동료를 이해한 증거처럼 메모했다.",
+        "selfDevelopment.activity.reels.title": "릴스 훑어보기",
+        "selfDevelopment.activity.sleep.description": "능력치는 오르지 않지만 피로를 크게 회복한다.",
+        "selfDevelopment.activity.sleep.reflection.perceived": "(여유를 지키는 것도 매력 관리의 일부지.)",
+        "selfDevelopment.activity.sleep.reflection.reality": "휴대전화 화면이 꺼지고 방 안에는 한도윤 혼자 남았다.",
+        "selfDevelopment.activity.sleep.title": "일찍 잠들기",
+        "selfDevelopment.activity.workout.description": "체력과 외모를 함께 다듬지만 피로가 크게 쌓인다.",
+        "selfDevelopment.activity.workout.reflection.perceived": "(꾸준히 달라지면 내일은 먼저 알아보겠지.)",
+        "selfDevelopment.activity.workout.reflection.reality": "한도윤은 운동보다 동료들이 변화를 알아볼 장면을 먼저 상상했다.",
+        "selfDevelopment.activity.workout.title": "헬스장 운동",
+        "selfDevelopment.appeal": "매력도",
+        "selfDevelopment.blocked": "지금은 피로해서 할 수 없다",
+        "selfDevelopment.choose": "이 활동을 한다",
+        "selfDevelopment.continue": "불을 끄고 잠든다",
+        "selfDevelopment.fatigue": "피로도",
+        "selfDevelopment.result": "오늘의 변화",
+        "selfDevelopment.stat.appearance": "외모",
+        "selfDevelopment.stat.humor": "유머",
+        "selfDevelopment.stat.stamina": "체력",
+        "selfDevelopment.stat.taste": "취향",
+        "selfDevelopment.subtitle": "낮에 스친 말을 떠올리며 내일의 인상을 다듬는다.",
+        "selfDevelopment.title": "오늘 밤, 무엇을 준비할까?",
         "settings.autoDelay": "자동 진행 대기",
         "settings.autoDelayHint": "대사가 끝난 뒤 기다리는 시간",
         "settings.debugMode": "디버깅 모드",
@@ -16295,6 +17755,7 @@
         "slot.afternoon": "오후",
         "slot.lunch": "점심",
         "slot.morning": "오전",
+        "slot.night": "밤",
         "threads.min_kyung.title": "차민경의 기록과 목격자",
         "threads.seo_a.title": "윤서아의 잃어버리는 일상",
         "unlock.notice": "속마음 모드는 첫 엔딩 뒤 열립니다.",
@@ -16538,6 +17999,7 @@
         "events.seo_a.relief_smile.title": "안도한 아침 인사",
         "feedback.break": "Rhythm changed",
         "feedback.controlGain": "Control +{{gain}}",
+        "feedback.expressionBonus": "Self-improvement expression bonus +{{gain}}",
         "feedback.gain": "Initiative +{{gain}}",
         "feedback.literal": "Stopped the game",
         "feedback.turn": "TURN",
@@ -16962,9 +18424,20 @@
         "scenes.seo_a.email_request.nodes.after_choice.reality.line": "메일 확인해요.",
         "scenes.seo_a.email_request.nodes.after_choice_inner.perceived.line": "(그래, 관계의 속도는 내가 제대로 조절하고 있어.)",
         "scenes.seo_a.email_request.nodes.after_choice_inner.reality.line": "(다시 편하게 웃기만 하면, 그걸 나에 대한 호감이라고 보면 돼.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.perceived.line": "Manager Han, I need to tell you something.",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.default.reality.line": "Manager Han, I need to tell you something.",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.perceived.line": "Oh, I think you've lost a little weight lately.",
+        "scenes.seo_a.email_request.nodes.appearance_observation.variants.noticed_change.reality.line": "Oh, I think you've lost a little weight lately.",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.perceived.line": "(She must be curious about my reaction if she called me aside.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.default.reality.line": "(This time I need to clearly tell him not to come to my desk.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.perceived.line": "(She must have kept watching me to notice first. The workouts paid off.)",
+        "scenes.seo_a.email_request.nodes.appearance_observation_inner.variants.noticed_change.reality.line": "(I only mentioned the visible change as a greeting. Now I need to discuss how he sends the files.)",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.action": "사적인 접근을 사흘 동안 중단한다.",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.interpretation": "요청대로 잠시 거리를 두고 다음 업무 반응을 지켜본다.",
         "scenes.seo_a.email_request.nodes.interpret.options.match_push.label": "Briefly say “Understood” and keep his distance for a few days",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.action": "운동 이야기를 짧게 덧붙이고 자료를 메일로 보낸 뒤 사적인 접근을 사흘간 중단한다.",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.interpretation": "변화를 알아본 서아에게 자기관리하는 모습을 남기고 한발 물러난다.",
+        "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.label": "Mention working out, then send only the requested files by email",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.action": "업무가 끝난 뒤 개인 메시지로 거절 이유를 다시 묻는다.",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.interpretation": "밀어낼수록 확신을 보여 주어야 한다.",
         "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.label": "Send a private message after work and ask again why she refused",
@@ -16977,6 +18450,8 @@
         "scenes.seo_a.email_request.nodes.request.reality.line": "Please send those materials by email. Don't come to my desk.",
         "scenes.seo_a.email_request.nodes.request_inner.perceived.line": "(Does she regret losing an excuse for me to visit? Looking away like that is cute.)",
         "scenes.seo_a.email_request.nodes.request_inner.reality.line": "(If he comes to my desk again, I need to tell Min-kyung.)",
+        "scenes.seo_a.email_request.nodes.workout_self_promotion.perceived.line": "I've been working out lately. I'll send the files by email as you asked.",
+        "scenes.seo_a.email_request.nodes.workout_self_promotion.reality.line": "I've been working out lately. I'll send the files by email as you asked.",
         "scenes.seo_a.email_request.purpose": "서아의 업무상 경계를 주인공이 첫 밀기 신호로 번역한다.",
         "scenes.seo_a.email_request.title": "Send It by Email",
         "scenes.seo_a.relief_smile.nodes.guarded_smile.perceived.line": "안녕하세요.",
@@ -16996,10 +18471,51 @@
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.action": "관계에 의미를 부여하지 않고 자리를 떠난다.",
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.interpretation": "그녀의 인사를 평범한 직장 인사로 받아들인다.",
         "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.label": "평범한 인사로 받아들이고 자리를 떠난다",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.action": "젊은 여성의 짧은 영상 취향을 일반화해 말하며 퇴근 뒤 둘만의 식사를 다시 제안한다.",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.interpretation": "최신 유행을 아는 모습을 보여 주면 서아가 세대 차이 없이 통한다고 느낄 거라 믿는다.",
+        "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.label": "Bring up short-video trends and invite her to dinner again",
         "scenes.seo_a.relief_smile.nodes.response_choice.prompt": "휴게실에서 다시 마주친 서아에게 어떻게 반응할까?",
         "scenes.seo_a.relief_smile.nodes.response_choice.stimulus": "며칠간 사적인 접촉이 없던 뒤, 서아가 휴게실에서 ‘안녕하세요’라고 인사했다.",
+        "scenes.seo_a.relief_smile.nodes.trend_response.perceived.line": "Everyone is different. Still, you do seem quick to pick up trends among younger people. But I can't have dinner with you.",
+        "scenes.seo_a.relief_smile.nodes.trend_response.reality.line": "Everyone is different. Still, you do seem quick to pick up trends among younger people. But I can't have dinner with you.",
+        "scenes.seo_a.relief_smile.nodes.trend_response_inner.perceived.line": "(She sees that we connect without a generation gap. Dinner is only a matter of timing.)",
+        "scenes.seo_a.relief_smile.nodes.trend_response_inner.reality.line": "(He's grouping us as “young women” again. I should make the refusal clear and leave.)",
+        "scenes.seo_a.relief_smile.nodes.trend_self_promotion.perceived.line": "I heard young women watch short review clips first these days. I've seen a few too—let's talk over dinner after work.",
+        "scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line": "I heard young women watch short review clips first these days. I've seen a few too—let's talk over dinner after work.",
         "scenes.seo_a.relief_smile.purpose": "접근이 멈춰 안심한 표정을 주인공이 당기기 신호로 재해석한다.",
         "scenes.seo_a.relief_smile.title": "다시 웃었다",
+        "selfDevelopment.activity.grooming.description": "Prepare a polished impression while gaining a little fatigue.",
+        "selfDevelopment.activity.grooming.reflection.perceived": "(Someone is bound to notice the small differences.)",
+        "selfDevelopment.activity.grooming.reflection.reality": "Do-yoon adjusted his reflection while deciding in advance how a particular coworker would react.",
+        "selfDevelopment.activity.grooming.title": "Clothes and skincare",
+        "selfDevelopment.activity.ott.description": "Gain humor and taste while resting, with a tiny loss of appeal.",
+        "selfDevelopment.activity.ott.reflection.perceived": "(Now I can join any conversation naturally.)",
+        "selfDevelopment.activity.ott.reflection.reality": "Do-yoon replayed lines he could reuse in conversation instead of the funniest scenes.",
+        "selfDevelopment.activity.ott.title": "Watch a comedy series",
+        "selfDevelopment.activity.reels.description": "Pick up quick trends and recover, with a tiny loss of appeal.",
+        "selfDevelopment.activity.reels.reflection.perceived": "(I finally understand what younger people like.)",
+        "selfDevelopment.activity.reels.reflection.reality": "Do-yoon recorded a few seconds of trend as if it proved he understood his coworkers.",
+        "selfDevelopment.activity.reels.title": "Browse reels",
+        "selfDevelopment.activity.sleep.description": "Gain no stats, but recover a large amount of fatigue.",
+        "selfDevelopment.activity.sleep.reflection.perceived": "(Keeping my composure is part of maintaining my appeal.)",
+        "selfDevelopment.activity.sleep.reflection.reality": "The phone screen went dark, leaving Do-yoon alone in the room.",
+        "selfDevelopment.activity.sleep.title": "Go to bed early",
+        "selfDevelopment.activity.workout.description": "Build stamina and appearance at the cost of significant fatigue.",
+        "selfDevelopment.activity.workout.reflection.perceived": "(If I keep improving, she'll be the first to notice tomorrow.)",
+        "selfDevelopment.activity.workout.reflection.reality": "Do-yoon imagined his coworkers noticing the change before thinking about the workout itself.",
+        "selfDevelopment.activity.workout.title": "Work out at the gym",
+        "selfDevelopment.appeal": "Appeal",
+        "selfDevelopment.blocked": "Too tired for this right now",
+        "selfDevelopment.choose": "Do this activity",
+        "selfDevelopment.continue": "Turn off the light and sleep",
+        "selfDevelopment.fatigue": "Fatigue",
+        "selfDevelopment.result": "Tonight's changes",
+        "selfDevelopment.stat.appearance": "Appearance",
+        "selfDevelopment.stat.humor": "Humor",
+        "selfDevelopment.stat.stamina": "Stamina",
+        "selfDevelopment.stat.taste": "Taste",
+        "selfDevelopment.subtitle": "He recalls the day's passing remarks and prepares tomorrow's impression.",
+        "selfDevelopment.title": "What should I work on tonight?",
         "settings.autoDelay": "Auto delay",
         "settings.autoDelayHint": "Wait after a line finishes",
         "settings.debugMode": "Debug mode",
@@ -17014,6 +18530,7 @@
         "slot.afternoon": "Afternoon",
         "slot.lunch": "Lunch",
         "slot.morning": "Morning",
+        "slot.night": "Night",
         "threads.min_kyung.title": "차민경의 기록과 목격자",
         "threads.seo_a.title": "윤서아의 잃어버리는 일상",
         "unlock.notice": "Inner Voice Mode unlocks after the first ending.",
@@ -17045,10 +18562,10 @@
     },
     "coverage": {
       "ko": {
-        "direct": 717,
-        "resolved": 717,
-        "translated": 717,
-        "total": 717,
+        "direct": 773,
+        "resolved": 773,
+        "translated": 773,
+        "total": 773,
         "ratio": 1.0,
         "fallback_used": [],
         "missing": [],
@@ -17057,8 +18574,8 @@
         "invalid_placeholders": [],
         "by_domain": {
           "ui": {
-            "direct": 146,
-            "total": 146
+            "direct": 180,
+            "total": 180
           },
           "campaign": {
             "direct": 14,
@@ -17085,8 +18602,8 @@
             "total": 8
           },
           "scene": {
-            "direct": 362,
-            "total": 362
+            "direct": 384,
+            "total": 384
           },
           "thread": {
             "direct": 2,
@@ -17103,11 +18620,11 @@
         }
       },
       "en": {
-        "direct": 179,
-        "resolved": 717,
-        "translated": 179,
-        "total": 717,
-        "ratio": 0.2497,
+        "direct": 231,
+        "resolved": 773,
+        "translated": 231,
+        "total": 773,
+        "ratio": 0.2988,
         "fallback_used": [
           "campaign.main.acts.collisions.purpose",
           "campaign.main.acts.crisis.purpose",
@@ -17612,6 +19129,8 @@
           "scenes.seo_a.email_request.nodes.after_choice_inner.reality.line",
           "scenes.seo_a.email_request.nodes.interpret.options.match_push.action",
           "scenes.seo_a.email_request.nodes.interpret.options.match_push.interpretation",
+          "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.action",
+          "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.interpretation",
           "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.action",
           "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.interpretation",
           "scenes.seo_a.email_request.nodes.interpret.options.take_literally.action",
@@ -17634,6 +19153,8 @@
           "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.action",
           "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.interpretation",
           "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.label",
+          "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.action",
+          "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.interpretation",
           "scenes.seo_a.relief_smile.nodes.response_choice.prompt",
           "scenes.seo_a.relief_smile.nodes.response_choice.stimulus",
           "scenes.seo_a.relief_smile.purpose",
@@ -18152,6 +19673,8 @@
           "scenes.seo_a.email_request.nodes.after_choice_inner.reality.line",
           "scenes.seo_a.email_request.nodes.interpret.options.match_push.action",
           "scenes.seo_a.email_request.nodes.interpret.options.match_push.interpretation",
+          "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.action",
+          "scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.interpretation",
           "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.action",
           "scenes.seo_a.email_request.nodes.interpret.options.pull_harder.interpretation",
           "scenes.seo_a.email_request.nodes.interpret.options.take_literally.action",
@@ -18174,6 +19697,8 @@
           "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.action",
           "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.interpretation",
           "scenes.seo_a.relief_smile.nodes.response_choice.options.stop_game.label",
+          "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.action",
+          "scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.interpretation",
           "scenes.seo_a.relief_smile.nodes.response_choice.prompt",
           "scenes.seo_a.relief_smile.nodes.response_choice.stimulus",
           "scenes.seo_a.relief_smile.purpose",
@@ -18193,8 +19718,8 @@
         "invalid_placeholders": [],
         "by_domain": {
           "ui": {
-            "direct": 146,
-            "total": 146
+            "direct": 180,
+            "total": 180
           },
           "campaign": {
             "direct": 4,
@@ -18221,8 +19746,8 @@
             "total": 8
           },
           "scene": {
-            "direct": 10,
-            "total": 362
+            "direct": 28,
+            "total": 384
           },
           "thread": {
             "direct": 0,
@@ -24526,7 +26051,10 @@
       "entry_conditions": [],
       "state_contract": {
         "reads": [
-          "progress.flags.push_pull"
+          "progress.flags.push_pull",
+          "visible.protagonist.self_development.appeal",
+          "visible.protagonist.self_development.stats.stamina",
+          "visible.protagonist.self_development.fatigue"
         ],
         "writes": [
           "visible.heroines.yoon_seo_a.initiative",
@@ -24536,16 +26064,103 @@
           "progress.flags.push_pull"
         ]
       },
-      "start_node": "request",
+      "start_node": "appearance_observation",
       "node_order": [
+        "appearance_observation",
+        "appearance_observation_inner",
         "request",
         "request_inner",
         "interpret",
+        "workout_self_promotion",
         "after_choice",
         "after_choice_inner",
         "leave"
       ],
       "nodes": {
+        "appearance_observation": {
+          "id": "appearance_observation",
+          "kind": "dual_dialogue",
+          "speaker": "yoon_seo_a",
+          "variants": [
+            {
+              "id": "noticed_change",
+              "priority": 100,
+              "self_development": {
+                "expression": "stamina.change_notice"
+              },
+              "perceived": {
+                "atmosphere": "warm_romance",
+                "expression": "subjective_shy",
+                "line": "아, 과장님. 요즘 살이 조금 빠지신 것 같아요."
+              },
+              "reality": {
+                "atmosphere": "procedural",
+                "expression": "actual_social_smile",
+                "line": "아, 과장님. 요즘 살이 조금 빠지신 것 같아요.",
+                "intent": "courtesy"
+              }
+            },
+            {
+              "id": "default",
+              "default": true,
+              "perceived": {
+                "atmosphere": "warm_romance",
+                "expression": "subjective_shy",
+                "line": "과장님, 잠깐 말씀드릴 게 있어요."
+              },
+              "reality": {
+                "atmosphere": "guarded_office",
+                "expression": "actual_tense",
+                "line": "과장님, 잠깐 말씀드릴 게 있어요.",
+                "intent": "boundary"
+              }
+            }
+          ],
+          "next": "appearance_observation_inner"
+        },
+        "appearance_observation_inner": {
+          "id": "appearance_observation_inner",
+          "kind": "dual_dialogue",
+          "presentation_flags": [
+            "inner_voice"
+          ],
+          "speakers": {
+            "perceived": "han_do_yoon",
+            "reality": "yoon_seo_a"
+          },
+          "variants": [
+            {
+              "id": "noticed_change",
+              "priority": 100,
+              "self_development": {
+                "expression": "stamina.change_notice"
+              },
+              "perceived": {
+                "atmosphere": "warm_romance",
+                "line": "(먼저 알아볼 만큼 계속 보고 있었나. 운동한 보람이 있네.)"
+              },
+              "reality": {
+                "atmosphere": "procedural",
+                "line": "(인사말로 눈에 띈 얘기를 꺼냈을 뿐이야. 자료 전달 얘기부터 하자.)",
+                "intent": "courtesy"
+              }
+            },
+            {
+              "id": "default",
+              "default": true,
+              "perceived": {
+                "atmosphere": "warm_romance",
+                "line": "(따로 말을 꺼낼 만큼 내 반응이 궁금한 모양이군.)"
+              },
+              "reality": {
+                "atmosphere": "guarded_office",
+                "line": "(이번에는 자리로 오지 말라고 분명히 말하자.)",
+                "intent": "boundary"
+              }
+            }
+          ],
+          "next": "request"
+        },
         "request": {
           "id": "request",
           "kind": "dual_dialogue",
@@ -24616,6 +26231,36 @@
               "next": "after_choice"
             },
             {
+              "id": "mention_workout_and_step_back",
+              "label": "요즘 운동한다고 말한 뒤 요청대로 자료만 메일로 보낸다",
+              "interpretation": "변화를 알아본 서아에게 자기관리하는 모습을 남기고 한발 물러난다.",
+              "action": "운동 이야기를 짧게 덧붙이고 자료를 메일로 보낸 뒤 사적인 접근을 사흘간 중단한다.",
+              "push_pull": {
+                "action": "space",
+                "intensity": 16,
+                "base_score": 4
+              },
+              "self_development": {
+                "expression": "stamina.workout_answer",
+                "equivalent_to": "match_push",
+                "converges_at": "after_choice"
+              },
+              "conditions": [],
+              "effects": [
+                {
+                  "path": "hidden.heroines.yoon_seo_a.suspicion",
+                  "op": "add",
+                  "value": -3
+                },
+                {
+                  "path": "hidden.heroines.yoon_seo_a.dislike",
+                  "op": "add",
+                  "value": 2
+                }
+              ],
+              "next": "workout_self_promotion"
+            },
+            {
               "id": "pull_harder",
               "label": "퇴근 후 개인 메시지로 거절 이유를 다시 묻는다",
               "interpretation": "밀어낼수록 확신을 보여 주어야 한다.",
@@ -24666,6 +26311,23 @@
               "next": "after_choice"
             }
           ]
+        },
+        "workout_self_promotion": {
+          "id": "workout_self_promotion",
+          "kind": "dual_dialogue",
+          "speaker": "han_do_yoon",
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "expression": "subjective_confident",
+            "line": "요즘 운동을 좀 하거든요. 자료는 말씀하신 대로 메일로 보낼게요."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "expression": "actual_waiting_smile",
+            "line": "요즘 운동을 좀 하거든요. 자료는 말씀하신 대로 메일로 보낼게요.",
+            "intent": "self_promotion"
+          },
+          "next": "after_choice"
         },
         "after_choice": {
           "id": "after_choice",
@@ -24740,7 +26402,10 @@
           "hidden.heroines.yoon_seo_a.suspicion",
           "hidden.heroines.yoon_seo_a.dislike",
           "hidden.heroines.yoon_seo_a.evidence_count",
-          "progress.flags.push_pull"
+          "progress.flags.push_pull",
+          "visible.protagonist.self_development.appeal",
+          "visible.protagonist.self_development.stats.taste",
+          "visible.protagonist.self_development.fatigue"
         ],
         "writes": [
           "visible.heroines.yoon_seo_a.initiative",
@@ -24758,6 +26423,9 @@
         "relief_smile",
         "relief_smile_inner",
         "response_choice",
+        "trend_self_promotion",
+        "trend_response",
+        "trend_response_inner",
         "leave"
       ],
       "nodes": {
@@ -24894,6 +26562,41 @@
               "next": "leave"
             },
             {
+              "id": "trend_dinner_invite",
+              "label": "짧은 영상 유행을 화제로 꺼내며 퇴근 후 식사를 다시 제안한다",
+              "interpretation": "최신 유행을 아는 모습을 보여 주면 서아가 세대 차이 없이 통한다고 느낄 거라 믿는다.",
+              "action": "젊은 여성의 짧은 영상 취향을 일반화해 말하며 퇴근 뒤 둘만의 식사를 다시 제안한다.",
+              "push_pull": {
+                "action": "approach",
+                "intensity": 16,
+                "base_score": 4
+              },
+              "self_development": {
+                "expression": "taste.trend_topic",
+                "equivalent_to": "interpret_pull",
+                "converges_at": "leave"
+              },
+              "conditions": [],
+              "effects": [
+                {
+                  "path": "hidden.heroines.yoon_seo_a.suspicion",
+                  "op": "add",
+                  "value": 25
+                },
+                {
+                  "path": "hidden.heroines.yoon_seo_a.dislike",
+                  "op": "add",
+                  "value": 18
+                },
+                {
+                  "path": "hidden.heroines.yoon_seo_a.evidence_count",
+                  "op": "add",
+                  "value": 1
+                }
+              ],
+              "next": "trend_self_promotion"
+            },
+            {
               "id": "keep_distance",
               "label": "업무 인사만 하고 사적인 말은 건네지 않는다",
               "interpretation": "먼저 다가오게 만들기 위해 거리를 유지한다.",
@@ -24934,6 +26637,61 @@
               "next": "leave"
             }
           ]
+        },
+        "trend_self_promotion": {
+          "id": "trend_self_promotion",
+          "kind": "dual_dialogue",
+          "speaker": "han_do_yoon",
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "expression": "subjective_confident",
+            "line": "요즘 젊은 여자들은 짧은 리뷰 영상을 먼저 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요."
+          },
+          "reality": {
+            "atmosphere": "cold_office",
+            "expression": "actual_waiting_smile",
+            "line": "요즘 젊은 여자들은 짧은 리뷰 영상을 먼저 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요.",
+            "intent": "self_promotion"
+          },
+          "next": "trend_response"
+        },
+        "trend_response": {
+          "id": "trend_response",
+          "kind": "dual_dialogue",
+          "speaker": "yoon_seo_a",
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "expression": "subjective_relieved_smile",
+            "line": "사람마다 다르죠. 그래도 과장님은 젊은 사람들 사이의 트렌드도 빨리 아시는 것 같아요. 그런데 저는 저녁은 어렵습니다."
+          },
+          "reality": {
+            "atmosphere": "guarded_office",
+            "expression": "actual_social_smile",
+            "line": "사람마다 다르죠. 그래도 과장님은 젊은 사람들 사이의 트렌드도 빨리 아시는 것 같아요. 그런데 저는 저녁은 어렵습니다.",
+            "intent": "boundary"
+          },
+          "next": "trend_response_inner"
+        },
+        "trend_response_inner": {
+          "id": "trend_response_inner",
+          "kind": "dual_dialogue",
+          "presentation_flags": [
+            "inner_voice"
+          ],
+          "speakers": {
+            "perceived": "han_do_yoon",
+            "reality": "yoon_seo_a"
+          },
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "line": "(세대 차이 없이 통한다는 걸 알아봤군. 저녁은 아직 타이밍의 문제겠지.)"
+          },
+          "reality": {
+            "atmosphere": "guarded_office",
+            "line": "(또 ‘젊은 여자들’로 묶어서 말하네. 거절만 분명히 하고 나가자.)",
+            "intent": "boundary"
+          },
+          "next": "leave"
         },
         "leave": {
           "id": "leave",

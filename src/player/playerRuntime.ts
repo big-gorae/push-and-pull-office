@@ -16,6 +16,12 @@ import {
   resolvePushPull,
   type PushPullResult,
 } from "../pushPull";
+import { selfDevelopmentSystem } from "../selfDevelopment";
+import {
+  nightPhaseCoordinator,
+  type NightPhaseActivityResult,
+  type NightPhaseSelection,
+} from "./nightPhase";
 import type {
   ChoiceOption,
   Condition,
@@ -49,8 +55,8 @@ export type TimelineLogEntry = {
 };
 
 export type PlayerSession = {
-  version: 3;
-  phase: "timeline" | "scene" | "complete";
+  version: 4;
+  phase: "timeline" | "scene" | "self_development" | "complete";
   campaignId: string;
   routeId: string;
   sceneId: string;
@@ -63,6 +69,7 @@ export type PlayerSession = {
   timelineLog: TimelineLogEntry[];
   currentEventId?: string;
   preparedTimeKey?: string;
+  nightPhase?: NightPhaseSelection | NightPhaseActivityResult;
   lastFeedback?: PushPullResult;
   lastEntryDecision?: {
     sceneId: string;
@@ -133,6 +140,7 @@ function applyTransition(runtime: Runtime, session: PlayerSession, transition?: 
 /** Consumes nodes that do not require presentation or player input. */
 export function settleSession(runtime: Runtime, value: PlayerSession): PlayerSession {
   const session = clone(value);
+  selfDevelopmentSystem(runtime).hydrate(session.state);
   for (let index = 0; index < MAX_AUTOMATIC_NODES && session.phase === "scene"; index += 1) {
     const scene = runtime.scenes[session.sceneId];
     const node = scene?.nodes[session.nodeId];
@@ -176,7 +184,7 @@ export function createSession(runtime: Runtime, routeId: string, mode: ViewMode 
   const route = runtime.routes[routeId] || Object.values(runtime.routes)[0];
   if (!route) throw new Error("플레이할 루트가 없습니다.");
   const initial: PlayerSession = {
-    version: 3,
+    version: 4,
     phase: "scene",
     campaignId: firstCampaignId(runtime),
     routeId: route.id,
@@ -198,7 +206,7 @@ export function createSession(runtime: Runtime, routeId: string, mode: ViewMode 
   return settleSession(runtime, initial);
 }
 
-export function normalizePlayerSession(value: PlayerSession): PlayerSession {
+export function normalizePlayerSession(value: PlayerSession, runtime?: Runtime): PlayerSession {
   const legacy = value as PlayerSession & Partial<Pick<PlayerSession, "phase" | "campaignId" | "timelineLog">> & {
     backlog?: Array<Partial<BacklogEntry> & {
       speaker?: string;
@@ -210,9 +218,9 @@ export function normalizePlayerSession(value: PlayerSession): PlayerSession {
       realityInterpretation?: string;
     }>;
   };
-  return {
+  const normalized: PlayerSession = {
     ...legacy,
-    version: 3,
+    version: 4,
     phase: legacy.phase || (legacy.endingId ? "complete" : "scene"),
     campaignId: legacy.campaignId || "main",
     timelineLog: legacy.timelineLog || [],
@@ -227,6 +235,8 @@ export function normalizePlayerSession(value: PlayerSession): PlayerSession {
       modeAtPresentation: entry.modeAtPresentation || legacy.mode || "perceived",
     })),
   };
+  if (runtime) selfDevelopmentSystem(runtime).hydrate(normalized.state);
+  return normalized;
 }
 
 function timeKey(state: RuntimeState): string {
@@ -286,8 +296,8 @@ function automaticCandidates(runtime: Runtime, session: PlayerSession): Timeline
 }
 
 export function prepareTimeSlot(runtime: Runtime, value: PlayerSession): PlayerSession {
-  const session = normalizePlayerSession(clone(value));
-  if (session.phase === "complete") return session;
+  const session = normalizePlayerSession(clone(value), runtime);
+  if (session.phase === "complete" || session.phase === "self_development") return session;
   session.phase = "timeline";
   const campaign = runtime.campaigns[session.campaignId] || Object.values(runtime.campaigns)[0];
   if (!campaign) return session;
@@ -334,7 +344,7 @@ export function createCampaignSession(
     state.progress.memories = [...carry.memories];
   }
   return prepareTimeSlot(runtime, {
-    version: 3,
+    version: 4,
     phase: "timeline",
     campaignId,
     routeId: "",
@@ -360,7 +370,7 @@ export function availableTimelineEvents(runtime: Runtime, session: PlayerSession
 }
 
 export function startTimelineEvent(runtime: Runtime, value: PlayerSession, eventId: string): PlayerSession {
-  const session = normalizePlayerSession(clone(value));
+  const session = normalizePlayerSession(clone(value), runtime);
   const event = availableTimelineEvents(runtime, session).find((candidate) => candidate.id === eventId);
   if (!event) return session;
   enterTimelineEvent(runtime, session, event);
@@ -368,13 +378,20 @@ export function startTimelineEvent(runtime: Runtime, value: PlayerSession, event
 }
 
 export function advanceTimeline(runtime: Runtime, value: PlayerSession): PlayerSession {
-  const session = normalizePlayerSession(clone(value));
+  const session = normalizePlayerSession(clone(value), runtime);
   if (session.phase !== "timeline") return session;
   const campaign = runtime.campaigns[session.campaignId] || Object.values(runtime.campaigns)[0];
   if (!campaign) return session;
   const currentSlot = campaign.slots.indexOf(session.state.progress.time.slot);
   const atLastSlot = currentSlot < 0 || currentSlot === campaign.slots.length - 1;
   if (atLastSlot) {
+    const coordinator = nightPhaseCoordinator(runtime);
+    if (coordinator.shouldStart(session.state)) {
+      session.phase = "self_development";
+      session.nightPhase = coordinator.start(session.state);
+      session.lastFeedback = undefined;
+      return session;
+    }
     session.state.progress.time.day += 1;
     session.state.progress.time.slot = campaign.slots[0];
   } else {
@@ -390,7 +407,7 @@ export function advanceTimeline(runtime: Runtime, value: PlayerSession): PlayerS
 }
 
 export function advanceToNextMoment(runtime: Runtime, value: PlayerSession): PlayerSession {
-  let session = normalizePlayerSession(clone(value));
+  let session = normalizePlayerSession(clone(value), runtime);
   const campaign = runtime.campaigns[session.campaignId] || Object.values(runtime.campaigns)[0];
   const safetyLimit = Math.max(1, (campaign?.total_days || 17) * (campaign?.slots.length || 4) + 1);
   let previousLogCount = session.timelineLog.length;
@@ -414,7 +431,11 @@ export function currentNode(runtime: Runtime, session: PlayerSession): StoryNode
 export function availableOptions(runtime: Runtime, session: PlayerSession): ChoiceOption[] {
   const node = currentNode(runtime, session);
   if (node?.kind !== "choice") return [];
-  return (node.options || []).filter((option) => conditionsMatch(session.state, option.conditions || []));
+  const eligibility = selfDevelopmentSystem(runtime).eligibility;
+  return (node.options || []).filter((option) =>
+    conditionsMatch(session.state, option.conditions || [])
+      && (!option.self_development
+        || eligibility.isEligible(session.state, option.self_development.expression)));
 }
 
 function logCurrent(runtime: Runtime, session: PlayerSession): void {
@@ -449,17 +470,23 @@ export function advanceSession(runtime: Runtime, value: PlayerSession): PlayerSe
 }
 
 export function selectOption(runtime: Runtime, value: PlayerSession, optionId: string): PlayerSession {
-  const session = clone(value);
+  const session = normalizePlayerSession(clone(value), runtime);
   const node = currentNode(runtime, session);
   const option = availableOptions(runtime, session).find((candidate) => candidate.id === optionId);
   if (!node || node.kind !== "choice" || !option) return session;
 
+  const visibleScoreBonus = option.self_development
+    ? selfDevelopmentSystem(runtime).eligibility.scoreBonus(
+      session.state,
+      option.self_development.expression,
+    )
+    : 0;
   option.effects.forEach((effect) => applyEffect(runtime, session.state, effect));
   const sceneRoute = runtime.scenes[session.sceneId]?.route;
   const route = runtime.routes[sceneRoute || session.routeId];
   const heroine = route?.heroine;
   if (heroine && session.state.visible.heroines[heroine] && option.push_pull) {
-    session.lastFeedback = resolvePushPull(session.state, heroine, option.push_pull);
+    session.lastFeedback = resolvePushPull(session.state, heroine, option.push_pull, { visibleScoreBonus });
   }
   session.backlog.push({
     id: `${readId(session.sceneId, node.id)}:${session.backlog.length}`,
@@ -474,6 +501,26 @@ export function selectOption(runtime: Runtime, value: PlayerSession, optionId: s
   if (!session.readNodes.includes(key)) session.readNodes.push(key);
   session.nodeId = option.next;
   return settleSession(runtime, session);
+}
+
+export function selectSelfDevelopmentActivity(
+  runtime: Runtime,
+  value: PlayerSession,
+  activityId: string,
+): PlayerSession {
+  const session = normalizePlayerSession(clone(value), runtime);
+  if (session.phase !== "self_development" || session.nightPhase?.status !== "selecting") return session;
+  session.nightPhase = nightPhaseCoordinator(runtime).choose(session.state, activityId);
+  return session;
+}
+
+export function finishSelfDevelopmentNight(runtime: Runtime, value: PlayerSession): PlayerSession {
+  const session = normalizePlayerSession(clone(value), runtime);
+  if (session.phase !== "self_development" || session.nightPhase?.status !== "result") return session;
+  nightPhaseCoordinator(runtime).finish(session.state);
+  session.phase = "timeline";
+  session.nightPhase = undefined;
+  return advanceTimeline(runtime, session);
 }
 
 export function setViewMode(value: PlayerSession, mode: ViewMode): PlayerSession {

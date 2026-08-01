@@ -32,6 +32,7 @@ enums:
     - documentation
     - confrontation
     - self_protection
+    - self_promotion
     - work_only
   node_kind:
     - dual_dialogue
@@ -42,6 +43,36 @@ enums:
     - exit
 
 stats:
+  visible.protagonist.self_development.appeal:
+    type: integer
+    min: 0
+    max: 100
+    description: 한도윤이 스스로 평가하는 매력도
+  visible.protagonist.self_development.stats.stamina:
+    type: integer
+    min: 0
+    max: 5
+    description: 활동적인 대화 표현을 여는 체력
+  visible.protagonist.self_development.stats.appearance:
+    type: integer
+    min: 0
+    max: 5
+    description: 자기관리 관련 대화 표현을 여는 외모 관리
+  visible.protagonist.self_development.stats.humor:
+    type: integer
+    min: 0
+    max: 5
+    description: 가벼운 농담 표현을 여는 유머 감각
+  visible.protagonist.self_development.stats.taste:
+    type: integer
+    min: 0
+    max: 5
+    description: 콘텐츠와 유행 화제를 여는 취향 지식
+  visible.protagonist.self_development.fatigue:
+    type: integer
+    min: 0
+    max: 6
+    description: 밤 활동과 고급 표현 사용을 제한하는 피로도
   visible.affection:
     type: integer
     min: 0
@@ -87,6 +118,10 @@ stats:
     description: 현재 시간대
 
 state_path_patterns:
+  - pattern: "^visible\\.protagonist\\.self_development\\.(appeal|fatigue)$"
+    stat_from_path: true
+  - pattern: "^visible\\.protagonist\\.self_development\\.stats\\.(stamina|appearance|humor|taste)$"
+    stat_from_path: true
   - pattern: "^visible\\.heroines\\.[a-z][a-z0-9_]*\\.(affection|initiative|perceived_state)$"
     stat_from_suffix: true
   - pattern: "^hidden\\.heroines\\.[a-z][a-z0-9_]*\\.(suspicion|dislike|evidence_count)$"
@@ -103,9 +138,22 @@ state_path_patterns:
     type: array
   - pattern: "^progress\\.memories$"
     type: array
+  - pattern: "^progress\\.self_development\\.(completed_days|activity_history)$"
+    type: array
+  - pattern: "^progress\\.self_development\\.last_activity$"
+    type: string
 
 initial_state:
   visible:
+    protagonist:
+      self_development:
+        appeal: 30
+        stats:
+          stamina: 0
+          appearance: 0
+          humor: 0
+          taste: 0
+        fatigue: 1
     heroines:
       yoon_seo_a:
         affection: 5
@@ -145,6 +193,10 @@ initial_state:
     memories: []
     cleared_routes: []
     unlocked_modes: [base]
+    self_development:
+      completed_days: []
+      activity_history: []
+      last_activity: ""
     flags:
       push_pull:
         combo: 0
@@ -157,6 +209,73 @@ initial_state:
         final_interpretation: undecided
         home_incident: none
         yoo_jin_intervention: false
+
+self_development:
+  max_night_day: 16
+  activities:
+    - id: workout
+      title_key: selfDevelopment.activity.workout.title
+      description_key: selfDevelopment.activity.workout.description
+      reflection_keys:
+        perceived: selfDevelopment.activity.workout.reflection.perceived
+        reality: selfDevelopment.activity.workout.reflection.reality
+      appeal_delta: 3
+      fatigue_delta: 2
+      stat_deltas: {stamina: 2, appearance: 1}
+      fatigue_lte: 4
+    - id: grooming
+      title_key: selfDevelopment.activity.grooming.title
+      description_key: selfDevelopment.activity.grooming.description
+      reflection_keys:
+        perceived: selfDevelopment.activity.grooming.reflection.perceived
+        reality: selfDevelopment.activity.grooming.reflection.reality
+      appeal_delta: 3
+      fatigue_delta: 1
+      stat_deltas: {appearance: 2}
+      fatigue_lte: 5
+    - id: ott
+      title_key: selfDevelopment.activity.ott.title
+      description_key: selfDevelopment.activity.ott.description
+      reflection_keys:
+        perceived: selfDevelopment.activity.ott.reflection.perceived
+        reality: selfDevelopment.activity.ott.reflection.reality
+      appeal_delta: -1
+      fatigue_delta: -1
+      stat_deltas: {humor: 2, taste: 1}
+    - id: reels
+      title_key: selfDevelopment.activity.reels.title
+      description_key: selfDevelopment.activity.reels.description
+      reflection_keys:
+        perceived: selfDevelopment.activity.reels.reflection.perceived
+        reality: selfDevelopment.activity.reels.reflection.reality
+      appeal_delta: -1
+      fatigue_delta: -2
+      stat_deltas: {humor: 1, taste: 1}
+    - id: sleep
+      title_key: selfDevelopment.activity.sleep.title
+      description_key: selfDevelopment.activity.sleep.description
+      reflection_keys:
+        perceived: selfDevelopment.activity.sleep.reflection.perceived
+        reality: selfDevelopment.activity.sleep.reflection.reality
+      appeal_delta: 0
+      fatigue_delta: -4
+      stat_deltas: {}
+  expressions:
+    stamina.change_notice:
+      requires: {appeal_gte: 32, stat: stamina, minimum: 2, fatigue_lte: 4}
+      score_bonus: 0
+    stamina.workout_answer:
+      requires: {appeal_gte: 32, stat: stamina, minimum: 2, fatigue_lte: 4}
+      score_bonus: 2
+    appearance.grooming_answer:
+      requires: {appeal_gte: 34, stat: appearance, minimum: 2, fatigue_lte: 4}
+      score_bonus: 2
+    taste.trend_topic:
+      requires: {appeal_gte: 32, stat: taste, minimum: 2, fatigue_lte: 4}
+      score_bonus: 2
+    humor.boundary_joke:
+      requires: {appeal_gte: 30, stat: humor, minimum: 2, fatigue_lte: 3}
+      score_bonus: 2
 
 files:
   ui: ui.yaml
