@@ -4,14 +4,17 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    # Temporarily paused; restore a positive limit for the next batch review.
+    open-pull-requests-limit: 0
   - package-ecosystem: pip
     directory: /
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    # Temporarily paused; restore a positive limit for the next batch review.
+    open-pull-requests-limit: 0
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    # Temporarily paused; restore a positive limit for the next batch review.
+    open-pull-requests-limit: 0
