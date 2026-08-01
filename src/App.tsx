@@ -565,6 +565,7 @@ function DialogueVariantEditor({
     onChange({ ...node, variants: next });
   };
   const makeDefault = (index: number) => {
+    if (variants[index]?.self_development) return;
     onChange({
       ...node,
       variants: variants.map((variant, itemIndex) => ({
@@ -594,6 +595,7 @@ function DialogueVariantEditor({
       {displayedVariants.map(({ variant, index }) => {
         const invalidId = !/^[a-z][a-z0-9_.]*$/.test(variant.id)
           || variants.some((candidate, candidateIndex) => candidateIndex !== index && candidate.id === variant.id);
+        const selfDevelopmentVariant = Boolean(variant.self_development);
         return <article className={`dialogue-variant-card ${variant.default ? "default" : ""} ${variant.id === selectedVariantId ? "selected" : ""}`} key={`${variant.id}:${index}`}>
           <div className="dialogue-variant-heading">
             <div className="dialogue-variant-fields">
@@ -601,7 +603,12 @@ function DialogueVariantEditor({
               <Field label="우선순위"><TextInput type="number" value={variant.priority || 0} onChange={(event) => update(index, { priority: Number(event.target.value) })} /></Field>
             </div>
             <div className="inline-actions">
-              {!variant.default && <button type="button" onClick={() => makeDefault(index)}>기본값 지정</button>}
+              {!variant.default && <button
+                type="button"
+                disabled={selfDevelopmentVariant}
+                title={selfDevelopmentVariant ? "자기계발 변형은 기본값으로 지정할 수 없습니다." : undefined}
+                onClick={() => makeDefault(index)}
+              >기본값 지정</button>}
               <button type="button" onClick={() => cloneVariant(index)}>복제</button>
               <button type="button" className="icon-button danger" aria-label="변형 삭제" disabled={variant.default} onClick={() => onChange({ ...node, variants: variants.filter((_, itemIndex) => itemIndex !== index) })}>×</button>
             </div>

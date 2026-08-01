@@ -66,6 +66,9 @@ FORBIDDEN_CHOICE_DIRECTION_TERMS = (
     "당기자",
 )
 FORBIDDEN_CHOICE_DIRECTION_ENGLISH = re.compile(r"\b(?:push|pull)\b", re.IGNORECASE)
+VISIBLE_INITIATIVE_CONDITION_PATTERN = re.compile(
+    r"^visible\.heroines\.[a-z][a-z0-9_]*\.initiative$"
+)
 APPROVED_UI_STRINGS = {
     "mode.truth.title": "속마음 모드",
     "mode.truth.copyUnlocked": "그녀들의 일상과 속마음을 들어 보아요",
@@ -1743,20 +1746,62 @@ class StoryProject:
                     continue
                 option_next = option.get("next")
                 equivalent_next = equivalent.get("next")
-                option_reachable = local_reachable(node_map, option_next) if isinstance(option_next, str) else set()
-                equivalent_reachable = local_reachable(node_map, equivalent_next) if isinstance(equivalent_next, str) else set()
-                if convergence not in option_reachable:
-                    self._error(
-                        issues,
-                        option_location,
-                        f"self-development branch does not reach converges_at: {convergence}",
-                    )
-                if convergence not in equivalent_reachable:
-                    self._error(
-                        issues,
-                        option_location,
-                        f"equivalent base branch does not reach converges_at: {convergence}",
-                    )
+                self._validate_self_development_convergence_path(
+                    issues,
+                    option_location,
+                    "self-development branch",
+                    option_next,
+                    convergence,
+                    node_map,
+                )
+                self._validate_self_development_convergence_path(
+                    issues,
+                    option_location,
+                    "equivalent base branch",
+                    equivalent_next,
+                    convergence,
+                    node_map,
+                )
+
+    def _validate_self_development_convergence_path(
+        self,
+        issues: List[Issue],
+        location: str,
+        branch_label: str,
+        start: Any,
+        convergence: str,
+        node_map: Mapping[str, Mapping[str, Any]],
+    ) -> None:
+        """Allow flavor dialogue only until both mechanically equivalent branches rejoin."""
+        current = start
+        visited: Set[str] = set()
+        while current != convergence:
+            if not isinstance(current, str) or current not in node_map:
+                self._error(
+                    issues,
+                    location,
+                    f"{branch_label} does not reach converges_at: {convergence}; unknown node: {current}",
+                )
+                return
+            if current in visited:
+                self._error(
+                    issues,
+                    location,
+                    f"{branch_label} does not reach converges_at: {convergence}; cycle at {current}",
+                )
+                return
+            visited.add(current)
+            node = node_map[current]
+            kind = node.get("kind")
+            if kind not in {"dual_dialogue", "dual_narration"}:
+                self._error(
+                    issues,
+                    location,
+                    f"{branch_label} does not reach converges_at: {convergence}; path must contain only "
+                    f"dialogue/narration before convergence; found {current} ({kind})",
+                )
+                return
+            current = node.get("next")
 
     def _validate_speaker_reference(
         self,
@@ -1950,6 +1995,12 @@ class StoryProject:
                     issues,
                     item_location,
                     "self-development state is forbidden in general conditions; use self_development.expression metadata",
+                )
+            if isinstance(path, str) and VISIBLE_INITIATIVE_CONDITION_PATTERN.fullmatch(path):
+                self._error(
+                    issues,
+                    item_location,
+                    "visible initiative is display-only and forbidden in general conditions",
                 )
             if self.path_spec(path) is None:
                 self._error(issues, item_location, f"unknown state path: {path}")
