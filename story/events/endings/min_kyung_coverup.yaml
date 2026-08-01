@@ -22,7 +22,7 @@ on_seen: {effects: []}
 on_missed: {effects: []}
 presentation:
   perceived:
-    title: 마지막 밀당의 선택
+    title: 돌이킬 수 없는 선택
     summary: 신고마저 사랑의 시련이나 배신으로 번역하며 자신의 다음 행동을 정한다.
   reality:
     title: 증거가 부족한 현장 신고

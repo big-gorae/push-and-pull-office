@@ -6,7 +6,7 @@ chapter: 1
 sequence: 10
 location: meeting_room
 time: evening
-purpose: 민경의 명시적 거절을 주인공이 도전적인 밀기로 바꿔 듣는다.
+purpose: 민경의 명시적 거절을 주인공이 쉽게 마음을 열지 않는 태도로 바꿔 듣는다.
 cast: [han_do_yoon, cha_min_kyung]
 entry_conditions: []
 state_contract:
@@ -27,21 +27,35 @@ nodes:
       atmosphere: playful_tension
       expression: subjective_challenging
       line: "업무 외 연락은 하지 말아 주세요."
-      protagonist_interpretation: 쉽게 넘을 수 없는 선을 보여 주며 자신을 시험한다.
     reality:
       atmosphere: guarded_office
       expression: actual_disgust
       line: "업무 외 연락은 하지 말아 주세요."
-      inner_thought: 이번에는 애매하게 말하지 않았다. 다시 연락하면 기록을 남긴다.
+      intent: boundary
+    next: boundary_inner
+
+  - id: boundary_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: cha_min_kyung
+    perceived:
+      atmosphere: playful_tension
+      line: (쉽게 넘지 못할 선을 보여 주는군. 나를 시험하는 건가.)
+    reality:
+      atmosphere: guarded_office
+      line: (이번엔 애매하게 말하지 않았어. 또 연락하면 기록으로 남겨야 해.)
       intent: boundary
     next: respond
-
   - id: respond
     kind: choice
-    prompt: 강하게 미는 민경에게 어떻게 대응할까?
+    prompt: 업무 외 연락을 하지 말라는 민경의 요청에 어떻게 답할까?
+    stimulus: 민경이 ‘업무 외 연락은 하지 말아 주세요’라고 명확히 말했다.
     options:
       - id: mirror_push
-        label: 나도 밀어낸다
+        label: 알겠다고 답하고 일주일간 업무 외 연락을 멈춘다
         interpretation: 연락을 끊어 그녀가 먼저 아쉬움을 느끼게 한다.
         action: 일주일간 업무 외 연락을 중단한다.
         push_pull: {action: space, intensity: 16, base_score: 4}
@@ -51,7 +65,7 @@ nodes:
           - {path: hidden.heroines.cha_min_kyung.dislike, op: add, value: 2}
         next: leave
       - id: challenge_boundary
-        label: 진심으로 당긴다
+        label: 그날 밤 개인 메시지로 거절 이유를 다시 묻는다
         interpretation: 확신 있는 태도로 시험을 통과한다.
         action: 그날 밤 거절의 의미를 다시 묻는 개인 메시지를 보낸다.
         push_pull: {action: approach, intensity: 16, base_score: 4}
@@ -62,7 +76,7 @@ nodes:
           - {path: hidden.heroines.cha_min_kyung.evidence_count, op: add, value: 1}
         next: leave
       - id: accept_boundary
-        label: 선을 그대로 인정한다
+        label: 업무 채널 이외에는 연락하지 않는다
         interpretation: 이번 상대와는 연애 게임을 중단한다.
         action: 업무 채널 이외의 연락을 하지 않는다.
         push_pull: {action: literal, intensity: 12, base_score: 4}

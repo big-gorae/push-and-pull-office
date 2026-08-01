@@ -35,11 +35,53 @@ VALID_CONDITION_OPS = {"eq", "ne", "gt", "gte", "lt", "lte", "contains", "not_co
 VALID_EFFECT_OPS = {"set", "add", "append_unique", "remove"}
 VALID_PUSH_PULL_ACTIONS = {"approach", "space", "literal"}
 PUSH_PULL_LIMIT = 100
-PUSH_PULL_OPTIMAL_LIMIT = 40
+PUSH_PULL_OPTIMAL_LIMIT = 56
 PUSH_PULL_CHECKPOINT = 32
 PUSH_PULL_TURN_BONUS = 6
 PUSH_PULL_MAX_COMBO = 5
 PLACEHOLDER_PATTERN = re.compile(r"\{\{\s*([a-zA-Z_][a-zA-Z0-9_.-]*)\s*\}\}")
+FORBIDDEN_CHOICE_DIRECTION_TERMS = (
+    "밀기",
+    "당기기",
+    "밀당",
+    "밀고",
+    "당기고",
+    "밀어",
+    "당겨",
+    "밀자",
+    "당기자",
+)
+FORBIDDEN_CHOICE_DIRECTION_ENGLISH = re.compile(r"\b(?:push|pull)\b", re.IGNORECASE)
+
+
+def effective_speaker(node: Mapping[str, Any], mode: str) -> Optional[str]:
+    """Resolve the nameplate/portrait speaker for one presentation layer.
+
+    An explicitly null layered speaker is meaningful: it selects authoritative,
+    nameplate-free narration and must not fall back to the legacy single speaker.
+    """
+    speakers = node.get("speakers")
+    if isinstance(speakers, Mapping) and mode in speakers:
+        speaker = speakers[mode]
+        return speaker if isinstance(speaker, str) else None
+    speaker = node.get("speaker")
+    return speaker if isinstance(speaker, str) else None
+
+
+def is_parenthesized_utterance(value: Any) -> bool:
+    if not isinstance(value, str):
+        return False
+    stripped = value.strip()
+    return len(stripped) >= 2 and stripped.startswith("(") and stripped.endswith(")")
+
+
+def contains_explicit_choice_direction(value: Any) -> bool:
+    if not isinstance(value, str):
+        return False
+    return (
+        any(term in value for term in FORBIDDEN_CHOICE_DIRECTION_TERMS)
+        or FORBIDDEN_CHOICE_DIRECTION_ENGLISH.search(value) is not None
+    )
 
 
 class UniqueKeyLoader(yaml.SafeLoader):
@@ -95,6 +137,7 @@ class StoryProject:
         self.meta = self._load_kind("meta")
         self.routes = self._load_kind("routes")
         self.scenes = self._load_kind("scenes")
+        self.world = self._load_kind("world")
 
     @staticmethod
     def _load_yaml(path: Path) -> Dict[str, Any]:
@@ -168,7 +211,9 @@ class StoryProject:
         self._validate_threads(issues)
         self._validate_meta(issues)
         self._validate_routes(issues)
+        self._validate_world(issues)
         self._validate_scenes(issues)
+        self._validate_scene_world_contexts(issues)
         self._validate_global_graph(issues)
         self._validate_timeline_graph(issues)
         return issues
@@ -393,6 +438,29 @@ class StoryProject:
                     for reveal in reveals:
                         if not reveal.get("mode") or not reveal.get("title") or not reveal.get("teaser"):
                             self._error(issues, teaser_location, "each teaser reveal requires mode, title and teaser")
+            if meta_id == "unlocks" and isinstance(rules, list):
+                for route_id, route in self.routes.items():
+                    if route.get("mode") != "base":
+                        continue
+                    for required_mode in ("truth_view", "survivor_view"):
+                        covered = any(
+                            rule.get("mode") == required_mode
+                            and any(
+                                condition.get("path") == "progress.cleared_routes"
+                                and condition.get("op") == "contains"
+                                and condition.get("value") == route_id
+                                for condition in rule.get("conditions", [])
+                                if isinstance(condition, dict)
+                            )
+                            for rule in rules
+                            if isinstance(rule, dict)
+                        )
+                        if not covered:
+                            self._error(
+                                issues,
+                                location,
+                                f"base route {route_id} must unlock {required_mode} after its first ending",
+                            )
 
     def _validate_characters(self, issues: List[Issue]) -> None:
         for character_id, character in self.characters.items():
@@ -681,6 +749,470 @@ class StoryProject:
             if condition.get("op") not in VALID_CONDITION_OPS:
                 self._error(issues, item_location, f"invalid condition op: {condition.get('op')}")
 
+    def _world_ref(
+        self,
+        issues: List[Issue],
+        location: str,
+        value: Any,
+        expected_kind: str,
+        field: str,
+    ) -> Optional[Dict[str, Any]]:
+        if not isinstance(value, str):
+            self._error(issues, location, f"{field} must reference a {expected_kind} id")
+            return None
+        entity = self.world.get(value)
+        if entity is None:
+            self._error(issues, location, f"unknown {expected_kind} reference in {field}: {value}")
+            return None
+        if entity.get("kind") != expected_kind:
+            self._error(
+                issues,
+                location,
+                f"{field} must reference kind {expected_kind}, got {entity.get('kind')}: {value}",
+            )
+            return None
+        return entity
+
+    def _validate_unique_world_refs(
+        self,
+        issues: List[Issue],
+        location: str,
+        field: str,
+        values: Any,
+    ) -> List[str]:
+        if not isinstance(values, list):
+            self._error(issues, location, f"{field} must be a list")
+            return []
+        refs = [value for value in values if isinstance(value, str)]
+        if len(refs) != len(values):
+            self._error(issues, location, f"{field} entries must be ids")
+        duplicates = sorted({value for value in refs if refs.count(value) > 1})
+        for duplicate in duplicates:
+            self._error(issues, location, f"duplicate id in {field}: {duplicate}")
+        return refs
+
+    def _validate_world(self, issues: List[Issue]) -> None:
+        if not self.world:
+            self._error(issues, "story/world", "at least one world entity is required")
+            return
+
+        valid_kinds = {"company", "role", "team", "member", "project", "meeting"}
+        required_by_kind = {
+            "company": {"name", "industry", "scale", "team_ids", "operating_facts", "authoring_constraints"},
+            "role": {"company", "name", "rank", "people_manager", "can_approve", "can_lead_project", "description"},
+            "team": {"company", "name", "function", "lead_member", "member_ids"},
+            "member": {
+                "company", "display_name", "team", "role", "title", "manager", "employment",
+                "presentation", "route_eligible", "responsibilities",
+            },
+            "project": {
+                "company", "name", "project_type", "summary", "owner_team", "participating_teams",
+                "sponsor_member", "lead_member", "deliverables", "assignments",
+            },
+            "meeting": {
+                "company", "name", "formality", "minimum_participants", "maximum_participants",
+                "minimum_text_only_participants", "required_teams", "required_responsibilities",
+                "allowed_unassigned_participants",
+            },
+        }
+
+        for entity_id, entity in self.world.items():
+            location = relative_source(entity.get("_source", entity_id))
+            kind = entity.get("kind")
+            if not self.id_is_valid(entity_id):
+                self._error(issues, location, f"invalid world entity id: {entity_id}")
+            if kind not in valid_kinds:
+                self._error(issues, location, f"unknown world entity kind: {kind}")
+                continue
+            if not entity_id.startswith(f"{kind}."):
+                self._error(issues, location, f"{kind} id must start with {kind}.: {entity_id}")
+            for key in sorted(required_by_kind[kind]):
+                if key not in entity:
+                    self._error(issues, location, f"required {kind} key is missing: {key}")
+
+        companies = {entity_id: entity for entity_id, entity in self.world.items() if entity.get("kind") == "company"}
+        roles = {entity_id: entity for entity_id, entity in self.world.items() if entity.get("kind") == "role"}
+        teams = {entity_id: entity for entity_id, entity in self.world.items() if entity.get("kind") == "team"}
+        members = {entity_id: entity for entity_id, entity in self.world.items() if entity.get("kind") == "member"}
+        projects = {entity_id: entity for entity_id, entity in self.world.items() if entity.get("kind") == "project"}
+        meetings = {entity_id: entity for entity_id, entity in self.world.items() if entity.get("kind") == "meeting"}
+
+        for company_id, company in companies.items():
+            location = relative_source(company.get("_source", company_id))
+            team_ids = self._validate_unique_world_refs(issues, location, "team_ids", company.get("team_ids"))
+            for team_id in team_ids:
+                team = self._world_ref(issues, location, team_id, "team", "team_ids")
+                if team and team.get("company") != company_id:
+                    self._error(issues, location, f"team {team_id} belongs to {team.get('company')}, not {company_id}")
+            actual_teams = {team_id for team_id, team in teams.items() if team.get("company") == company_id}
+            missing_teams = sorted(actual_teams - set(team_ids))
+            extra_teams = sorted(set(team_ids) - actual_teams)
+            if missing_teams:
+                self._error(issues, location, f"company team_ids omits teams: {missing_teams}")
+            if extra_teams:
+                self._error(issues, location, f"company team_ids includes foreign teams: {extra_teams}")
+
+        for role_id, role in roles.items():
+            location = relative_source(role.get("_source", role_id))
+            self._world_ref(issues, location, role.get("company"), "company", "company")
+            rank = role.get("rank")
+            if not isinstance(rank, int) or isinstance(rank, bool) or not 0 <= rank <= 100:
+                self._error(issues, location, "role rank must be an integer from 0 to 100")
+            for flag in ("people_manager", "can_approve", "can_lead_project"):
+                if not isinstance(role.get(flag), bool):
+                    self._error(issues, location, f"{flag} must be boolean")
+
+        for team_id, team in teams.items():
+            location = relative_source(team.get("_source", team_id))
+            company = self._world_ref(issues, location, team.get("company"), "company", "company")
+            member_ids = self._validate_unique_world_refs(issues, location, "member_ids", team.get("member_ids"))
+            lead = self._world_ref(issues, location, team.get("lead_member"), "member", "lead_member")
+            if lead and lead.get("team") != team_id:
+                self._error(issues, location, f"lead member {team.get('lead_member')} does not belong to {team_id}")
+            if team.get("lead_member") not in member_ids:
+                self._error(issues, location, "lead_member must also appear in member_ids")
+            if lead:
+                lead_role = roles.get(lead.get("role"))
+                if not lead_role or lead_role.get("people_manager") is not True:
+                    self._error(issues, location, f"lead member {team.get('lead_member')} lacks people-manager authority")
+            for member_id in member_ids:
+                member = self._world_ref(issues, location, member_id, "member", "member_ids")
+                if member and member.get("team") != team_id:
+                    self._error(issues, location, f"member {member_id} declares team {member.get('team')}, not {team_id}")
+                if company and member and member.get("company") != team.get("company"):
+                    self._error(issues, location, f"member {member_id} belongs to a different company")
+
+        story_character_members: Dict[str, str] = {}
+        for member_id, member in members.items():
+            location = relative_source(member.get("_source", member_id))
+            company = self._world_ref(issues, location, member.get("company"), "company", "company")
+            team = self._world_ref(issues, location, member.get("team"), "team", "team")
+            role = self._world_ref(issues, location, member.get("role"), "role", "role")
+            if company and team and team.get("company") != member.get("company"):
+                self._error(issues, location, f"team {member.get('team')} belongs to a different company")
+            if company and role and role.get("company") != member.get("company"):
+                self._error(issues, location, f"role {member.get('role')} belongs to a different company")
+            if team and member_id not in team.get("member_ids", []):
+                self._error(issues, location, f"member is missing from reciprocal team.member_ids: {member.get('team')}")
+
+            manager_id = member.get("manager")
+            if manager_id is not None:
+                manager = self._world_ref(issues, location, manager_id, "member", "manager")
+                if manager:
+                    if manager.get("company") != member.get("company"):
+                        self._error(issues, location, f"manager {manager_id} belongs to a different company")
+                    if team and member_id != team.get("lead_member") and manager.get("team") != member.get("team"):
+                        self._error(issues, location, f"manager {manager_id} is outside member team {member.get('team')}")
+                    manager_role = roles.get(manager.get("role"), {})
+                    if manager_role.get("people_manager") is not True:
+                        self._error(issues, location, f"manager {manager_id} lacks people-manager authority")
+                    if role and isinstance(role.get("rank"), int) and manager_role.get("rank", -1) <= role.get("rank"):
+                        self._error(issues, location, f"manager {manager_id} must have a higher role rank")
+
+            presentation = member.get("presentation")
+            story_character = member.get("story_character")
+            route_eligible = member.get("route_eligible")
+            if presentation not in {"illustrated", "text_only"}:
+                self._error(issues, location, f"invalid member presentation: {presentation}")
+            elif presentation == "illustrated":
+                if story_character not in self.characters:
+                    self._error(issues, location, f"illustrated member requires a known story_character: {story_character}")
+                elif story_character in story_character_members:
+                    self._error(
+                        issues,
+                        location,
+                        f"story_character {story_character} is already linked by {story_character_members[story_character]}",
+                    )
+                else:
+                    story_character_members[story_character] = member_id
+            else:
+                if story_character is not None:
+                    self._error(issues, location, "text_only member must not declare story_character")
+                if route_eligible is not False:
+                    self._error(issues, location, "text_only member cannot be route_eligible")
+            if not isinstance(route_eligible, bool):
+                self._error(issues, location, "route_eligible must be boolean")
+            if route_eligible is True and story_character in self.characters:
+                if presentation != "illustrated":
+                    self._error(issues, location, "route_eligible member must be illustrated")
+                if self.characters[story_character].get("narrative_role") != "main_heroine":
+                    self._error(issues, location, "route_eligible member must link to a main_heroine")
+
+        for member_id in members:
+            location = relative_source(members[member_id].get("_source", member_id))
+            chain: List[str] = []
+            current: Optional[str] = member_id
+            while current is not None and current in members:
+                if current in chain:
+                    cycle = chain[chain.index(current):] + [current]
+                    self._error(issues, location, f"cyclic reporting line: {' -> '.join(cycle)}")
+                    break
+                chain.append(current)
+                current = members[current].get("manager")
+
+        route_heroines = {route.get("heroine") for route in self.routes.values() if route.get("heroine")}
+        for heroine_id in sorted(route_heroines):
+            member_id = story_character_members.get(heroine_id)
+            if not member_id:
+                self._error(issues, "story/world", f"route heroine has no illustrated world member: {heroine_id}")
+            elif members[member_id].get("route_eligible") is not True:
+                location = relative_source(members[member_id].get("_source", member_id))
+                self._error(issues, location, f"route heroine member must be route_eligible: {heroine_id}")
+        for character_id, member_id in story_character_members.items():
+            if members[member_id].get("route_eligible") is True and character_id not in route_heroines:
+                location = relative_source(members[member_id].get("_source", member_id))
+                self._error(issues, location, f"route_eligible member is not used by any route: {member_id}")
+
+        for project_id, project in projects.items():
+            location = relative_source(project.get("_source", project_id))
+            self._world_ref(issues, location, project.get("company"), "company", "company")
+            owner = self._world_ref(issues, location, project.get("owner_team"), "team", "owner_team")
+            participating = self._validate_unique_world_refs(
+                issues, location, "participating_teams", project.get("participating_teams")
+            )
+            for team_id in participating:
+                team = self._world_ref(issues, location, team_id, "team", "participating_teams")
+                if team and team.get("company") != project.get("company"):
+                    self._error(issues, location, f"participating team {team_id} belongs to a different company")
+            if project.get("owner_team") not in participating:
+                self._error(issues, location, "owner_team must be included in participating_teams")
+            if owner and owner.get("company") != project.get("company"):
+                self._error(issues, location, "owner_team belongs to a different company")
+            sponsor = self._world_ref(issues, location, project.get("sponsor_member"), "member", "sponsor_member")
+            lead = self._world_ref(issues, location, project.get("lead_member"), "member", "lead_member")
+            for field, member in (("sponsor_member", sponsor), ("lead_member", lead)):
+                if member and member.get("company") != project.get("company"):
+                    self._error(issues, location, f"{field} belongs to a different company")
+            if lead:
+                lead_role = roles.get(lead.get("role"), {})
+                if lead_role.get("can_lead_project") is not True:
+                    self._error(issues, location, f"lead_member {project.get('lead_member')} cannot lead projects")
+                if lead.get("team") not in participating:
+                    self._error(issues, location, "lead_member team is not a participating team")
+
+            deliverables = project.get("deliverables")
+            if not isinstance(deliverables, list) or not deliverables:
+                self._error(issues, location, "project deliverables must be a non-empty list")
+            else:
+                deliverable_ids = [item.get("id") for item in deliverables if isinstance(item, dict)]
+                for duplicate in sorted({
+                    item for item in deliverable_ids
+                    if isinstance(item, str) and deliverable_ids.count(item) > 1
+                }):
+                    self._error(issues, location, f"duplicate id in deliverables: {duplicate}")
+                for index, deliverable in enumerate(deliverables):
+                    item_location = f"{location}#deliverables[{index}]"
+                    if not isinstance(deliverable, dict):
+                        self._error(issues, item_location, "deliverable must be a mapping")
+                        continue
+                    team = self._world_ref(issues, item_location, deliverable.get("owner_team"), "team", "owner_team")
+                    role = self._world_ref(issues, item_location, deliverable.get("approver_role"), "role", "approver_role")
+                    if team and team.get("id") not in participating:
+                        self._error(issues, item_location, "deliverable owner_team is not a participating team")
+                    if role and role.get("company") != project.get("company"):
+                        self._error(issues, item_location, "deliverable approver_role belongs to a different company")
+
+            assignments = project.get("assignments")
+            if not isinstance(assignments, list) or not assignments:
+                self._error(issues, location, "project assignments must be a non-empty list")
+            else:
+                responsibilities: List[Any] = []
+                assigned_members: List[Any] = []
+                for index, assignment in enumerate(assignments):
+                    item_location = f"{location}#assignments[{index}]"
+                    if not isinstance(assignment, dict):
+                        self._error(issues, item_location, "assignment must be a mapping")
+                        continue
+                    responsibility = assignment.get("responsibility")
+                    member_id = assignment.get("member")
+                    if not isinstance(responsibility, str) or not responsibility:
+                        self._error(issues, item_location, "assignment responsibility is required")
+                    responsibilities.append(responsibility)
+                    assigned_members.append(member_id)
+                    member = self._world_ref(issues, item_location, member_id, "member", "member")
+                    if member:
+                        if member.get("company") != project.get("company"):
+                            self._error(issues, item_location, "assigned member belongs to a different company")
+                        if member.get("team") not in participating:
+                            self._error(issues, item_location, "assigned member team is not a participating team")
+                for duplicate in sorted({item for item in responsibilities if responsibilities.count(item) > 1 and item}):
+                    self._error(issues, location, f"duplicate project responsibility: {duplicate}")
+                for duplicate in sorted({item for item in assigned_members if assigned_members.count(item) > 1 and item}):
+                    self._error(issues, location, f"member has duplicate project assignments: {duplicate}")
+                if project.get("lead_member") not in assigned_members:
+                    self._error(issues, location, "lead_member must have a project assignment")
+
+        for meeting_id, meeting in meetings.items():
+            location = relative_source(meeting.get("_source", meeting_id))
+            self._world_ref(issues, location, meeting.get("company"), "company", "company")
+            minimum = meeting.get("minimum_participants")
+            maximum = meeting.get("maximum_participants")
+            minimum_text = meeting.get("minimum_text_only_participants")
+            if not isinstance(minimum, int) or isinstance(minimum, bool) or minimum < 1:
+                self._error(issues, location, "minimum_participants must be a positive integer")
+            if not isinstance(maximum, int) or isinstance(maximum, bool) or maximum < 1:
+                self._error(issues, location, "maximum_participants must be a positive integer")
+            if isinstance(minimum, int) and isinstance(maximum, int) and maximum < minimum:
+                self._error(issues, location, "maximum_participants must be at least minimum_participants")
+            if not isinstance(minimum_text, int) or isinstance(minimum_text, bool) or minimum_text < 0:
+                self._error(issues, location, "minimum_text_only_participants must be a non-negative integer")
+            required_teams = self._validate_unique_world_refs(
+                issues, location, "required_teams", meeting.get("required_teams")
+            )
+            for team_id in required_teams:
+                team = self._world_ref(issues, location, team_id, "team", "required_teams")
+                if team and team.get("company") != meeting.get("company"):
+                    self._error(issues, location, f"required team {team_id} belongs to a different company")
+            self._validate_unique_world_refs(
+                issues, location, "required_responsibilities", meeting.get("required_responsibilities")
+            )
+
+    @staticmethod
+    def _scene_requires_world_context(scene: Mapping[str, Any]) -> bool:
+        if scene.get("world_context") is not None:
+            return False
+        location = str(scene.get("location", ""))
+        if "meeting_room" not in location:
+            return False
+        searchable = " ".join(str(scene.get(key, "")) for key in ("id", "title", "purpose")).lower()
+        formal_hints = ("킥오프", "정기 회의", "승인 회의", "최종 발표", "다부서", "kickoff", "cross_function")
+        return len(scene.get("cast", [])) >= 4 or any(hint in searchable for hint in formal_hints)
+
+    def _validate_scene_world_contexts(self, issues: List[Issue]) -> None:
+        members = {entity_id: entity for entity_id, entity in self.world.items() if entity.get("kind") == "member"}
+        character_members = {
+            member.get("story_character"): member_id
+            for member_id, member in members.items()
+            if member.get("story_character")
+        }
+        for scene_id, scene in self.scenes.items():
+            location = relative_source(scene.get("_source", scene_id))
+            context = scene.get("world_context")
+            if context is None:
+                if self._scene_requires_world_context(scene):
+                    self._error(
+                        issues,
+                        location,
+                        "formal or cross-functional meeting requires world_context",
+                    )
+                continue
+            if not isinstance(context, dict):
+                self._error(issues, location, "world_context must be a mapping")
+                continue
+            allowed_keys = {"company", "project", "interaction", "participants"}
+            for key in sorted(set(context) - allowed_keys):
+                self._error(issues, location, f"unknown world_context key: {key}")
+            for key in sorted(allowed_keys - set(context)):
+                self._error(issues, location, f"required world_context key is missing: {key}")
+
+            company = self._world_ref(issues, location, context.get("company"), "company", "world_context.company")
+            project = self._world_ref(issues, location, context.get("project"), "project", "world_context.project")
+            meeting = self._world_ref(issues, location, context.get("interaction"), "meeting", "world_context.interaction")
+            participant_ids = self._validate_unique_world_refs(
+                issues, location, "world_context.participants", context.get("participants")
+            )
+            participant_entities: Dict[str, Dict[str, Any]] = {}
+            for participant_id in participant_ids:
+                member = self._world_ref(
+                    issues, location, participant_id, "member", "world_context.participants"
+                )
+                if member:
+                    participant_entities[participant_id] = member
+
+            company_id = context.get("company")
+            if project and project.get("company") != company_id:
+                self._error(issues, location, "world_context project belongs to a different company")
+            if meeting and meeting.get("company") != company_id:
+                self._error(issues, location, "world_context interaction belongs to a different company")
+            for participant_id, participant in participant_entities.items():
+                if participant.get("company") != company_id:
+                    self._error(issues, location, f"participant {participant_id} belongs to a different company")
+
+            if project and meeting:
+                minimum = meeting.get("minimum_participants", 0)
+                maximum = meeting.get("maximum_participants", 10**9)
+                if isinstance(minimum, int) and len(participant_ids) < minimum:
+                    self._error(issues, location, f"meeting requires at least {minimum} participants")
+                if isinstance(maximum, int) and len(participant_ids) > maximum:
+                    self._error(issues, location, f"meeting allows at most {maximum} participants")
+                text_only_count = sum(
+                    participant.get("presentation") == "text_only"
+                    for participant in participant_entities.values()
+                )
+                minimum_text = meeting.get("minimum_text_only_participants", 0)
+                if isinstance(minimum_text, int) and text_only_count < minimum_text:
+                    self._error(
+                        issues,
+                        location,
+                        f"meeting requires at least {minimum_text} text_only supporting coworkers",
+                    )
+
+                represented_teams = {participant.get("team") for participant in participant_entities.values()}
+                missing_teams = sorted(set(meeting.get("required_teams", [])) - represented_teams)
+                if missing_teams:
+                    self._error(issues, location, f"meeting is missing required teams: {missing_teams}")
+
+                assignments = {
+                    assignment.get("responsibility"): assignment.get("member")
+                    for assignment in project.get("assignments", [])
+                    if isinstance(assignment, dict)
+                }
+                missing_responsibilities = []
+                for responsibility in meeting.get("required_responsibilities", []):
+                    assigned_member = assignments.get(responsibility)
+                    if not assigned_member or assigned_member not in participant_ids:
+                        missing_responsibilities.append(responsibility)
+                if missing_responsibilities:
+                    self._error(
+                        issues,
+                        location,
+                        f"meeting is missing required project responsibilities: {sorted(missing_responsibilities)}",
+                    )
+                if meeting.get("allowed_unassigned_participants") is False:
+                    assigned_members = set(assignments.values())
+                    unassigned = sorted(set(participant_ids) - assigned_members)
+                    if unassigned:
+                        self._error(issues, location, f"meeting has participants not assigned to project: {unassigned}")
+
+            cast = set(scene.get("cast", []))
+            for character_id in cast:
+                member_id = character_members.get(character_id)
+                if member_id and member_id not in participant_ids:
+                    self._error(
+                        issues,
+                        location,
+                        f"illustrated cast member is absent from world_context.participants: {character_id}",
+                    )
+            for participant_id, participant in participant_entities.items():
+                story_character = participant.get("story_character")
+                if participant.get("presentation") == "illustrated" and story_character not in cast:
+                    self._error(
+                        issues,
+                        location,
+                        f"illustrated participant must appear in scene cast: {participant_id}",
+                    )
+                if participant.get("presentation") == "text_only" and participant_id in cast:
+                    self._error(issues, location, f"text_only participant must not appear in illustrated cast: {participant_id}")
+
+            for node in scene.get("nodes", []):
+                speakers: Set[Any] = {node.get("speaker")}
+                if isinstance(node.get("speakers"), dict):
+                    speakers.update(node["speakers"].values())
+                for speaker in speakers:
+                    if isinstance(speaker, str) and speaker.startswith("member."):
+                        if speaker not in participant_ids:
+                            self._error(
+                                issues,
+                                f"{location}#nodes.{node.get('id')}",
+                                f"world member speaker is not a declared participant: {speaker}",
+                            )
+                        elif members.get(speaker, {}).get("presentation") != "text_only":
+                            self._error(
+                                issues,
+                                f"{location}#nodes.{node.get('id')}",
+                                f"illustrated world member speaker must use story_character id: {speaker}",
+                            )
+
     def _validate_routes(self, issues: List[Issue]) -> None:
         for route_id, route in self.routes.items():
             location = relative_source(route.get("_source", route_id))
@@ -818,6 +1350,17 @@ class StoryProject:
             if not node.get("next"):
                 self._error(issues, location, "dual node requires next")
         elif kind == "choice":
+            if not node.get("prompt"):
+                self._error(issues, location, "choice prompt is required")
+            if not node.get("stimulus"):
+                self._error(issues, location, "choice stimulus is required")
+            for field in ("prompt",):
+                if contains_explicit_choice_direction(node.get(field)):
+                    self._error(
+                        issues,
+                        location,
+                        f"player-visible choice {field} must describe concrete words or actions, not explicit push/pull direction",
+                    )
             options = node.get("options")
             if not isinstance(options, list) or not options:
                 self._error(issues, location, "choice requires non-empty options")
@@ -834,6 +1377,12 @@ class StoryProject:
                 for key in ("label", "interpretation", "action", "next"):
                     if not option.get(key):
                         self._error(issues, option_location, f"required key is missing: {key}")
+                if contains_explicit_choice_direction(option.get("label")):
+                    self._error(
+                        issues,
+                        option_location,
+                        "player-visible choice label must describe concrete speech or action, not explicit push/pull direction",
+                    )
                 push_pull = option.get("push_pull")
                 if not isinstance(push_pull, dict):
                     self._error(issues, option_location, "push_pull mapping is required")
@@ -878,6 +1427,38 @@ class StoryProject:
         elif kind == "exit":
             self._validate_transitions(issues, location, node.get("transitions"), reads, target_key="scene", allow_ending=True)
 
+    def _validate_speaker_reference(
+        self,
+        issues: List[Issue],
+        scene: Mapping[str, Any],
+        speaker: Any,
+        location: str,
+        *,
+        require_cast: bool = True,
+    ) -> Optional[str]:
+        """Validate one effective speaker and return its presentation kind."""
+        if not isinstance(speaker, str) or not speaker:
+            self._error(issues, location, f"unknown speaker: {speaker}")
+            return None
+        if speaker in self.characters:
+            if require_cast and speaker not in scene.get("cast", []):
+                self._error(issues, location, f"speaker {speaker} is not in cast")
+            return "illustrated"
+        member = self.world.get(speaker)
+        if member is None or member.get("kind") != "member":
+            self._error(issues, location, f"unknown speaker: {speaker}")
+            return None
+        if member.get("presentation") != "text_only":
+            self._error(
+                issues,
+                location,
+                f"illustrated world member speaker must use story_character id: {speaker}",
+            )
+            return None
+        if speaker in scene.get("cast", []):
+            self._error(issues, location, f"text_only speaker must not appear in illustrated cast: {speaker}")
+        return "text_only"
+
     def _validate_dual_node(self, issues: List[Issue], scene: Mapping[str, Any], node: Mapping[str, Any], location: str) -> None:
         perceived = node.get("perceived")
         reality = node.get("reality")
@@ -887,10 +1468,18 @@ class StoryProject:
         if not isinstance(reality, dict):
             self._error(issues, location, "reality layer is required")
             return
-        for key in ("atmosphere", "line", "protagonist_interpretation"):
+        for layer_name, layer in (("perceived", perceived), ("reality", reality)):
+            for legacy_field in ("protagonist_interpretation", "inner_thought"):
+                if legacy_field in layer:
+                    self._error(
+                        issues,
+                        location,
+                        f"legacy {layer_name}.{legacy_field} is forbidden; author a separate inner_voice beat",
+                    )
+        for key in ("atmosphere", "line"):
             if not perceived.get(key):
                 self._error(issues, location, f"perceived.{key} is required")
-        for key in ("atmosphere", "line", "inner_thought", "intent"):
+        for key in ("atmosphere", "line", "intent"):
             if not reality.get(key):
                 self._error(issues, location, f"reality.{key} is required")
         atmospheres = set(self.manifest.get("enums", {}).get("atmosphere", []))
@@ -902,12 +1491,82 @@ class StoryProject:
         if reality.get("intent") not in intents:
             self._error(issues, location, f"unknown reality intent: {reality.get('intent')}")
 
-        if node.get("kind") == "dual_dialogue":
-            flags = node.get("presentation_flags", [])
-            valid_flags = set(self.manifest.get("enums", {}).get("presentation_flag", []))
-            for flag in flags:
-                if flag not in valid_flags:
-                    self._error(issues, location, f"unknown presentation flag: {flag}")
+        raw_flags = node.get("presentation_flags", [])
+        if not isinstance(raw_flags, list):
+            self._error(issues, location, "presentation_flags must be a list")
+            flags: Set[str] = set()
+        else:
+            flags = {flag for flag in raw_flags if isinstance(flag, str)}
+            if len(flags) != len(raw_flags):
+                self._error(issues, location, "presentation_flags must contain unique string ids")
+        valid_flags = set(self.manifest.get("enums", {}).get("presentation_flag", []))
+        for flag in sorted(flags):
+            if flag not in valid_flags:
+                self._error(issues, location, f"unknown presentation flag: {flag}")
+
+        inner_voice = "inner_voice" in flags
+        if node.get("kind") == "dual_narration":
+            if inner_voice:
+                self._error(issues, location, "inner_voice must use dual_dialogue with layer speakers")
+            if "speaker" in node or "speakers" in node:
+                self._error(issues, location, "dual_narration must not declare speaker or speakers")
+            return
+
+        if node.get("kind") != "dual_dialogue":
+            return
+
+        speaker_kinds: Dict[str, Optional[str]] = {}
+        if inner_voice:
+            if "speaker" in node:
+                self._error(issues, location, "inner_voice must use speakers, not a single speaker")
+            speakers = node.get("speakers")
+            if not isinstance(speakers, dict):
+                self._error(issues, location, "inner_voice requires speakers.perceived and speakers.reality")
+                speakers = {}
+            else:
+                unknown_keys = sorted(set(speakers) - {"perceived", "reality"})
+                for key in unknown_keys:
+                    self._error(issues, location, f"unknown inner_voice speaker layer: {key}")
+                for layer_name in ("perceived", "reality"):
+                    if layer_name not in speakers:
+                        self._error(issues, location, f"inner_voice speakers.{layer_name} is required")
+            for layer_name, layer in (("perceived", perceived), ("reality", reality)):
+                speaker = speakers.get(layer_name)
+                line = layer.get("line")
+                if isinstance(speaker, str):
+                    speaker_kinds[layer_name] = self._validate_speaker_reference(
+                        issues,
+                        scene,
+                        speaker,
+                        f"{location}.{layer_name}",
+                        require_cast=False,
+                    )
+                    if not is_parenthesized_utterance(line):
+                        self._error(
+                            issues,
+                            location,
+                            f"inner_voice {layer_name} line with a speaker must be parenthesized",
+                        )
+                elif speaker is None and layer_name in speakers:
+                    speaker_kinds[layer_name] = None
+                    if is_parenthesized_utterance(line):
+                        self._error(
+                            issues,
+                            location,
+                            f"speakerless inner_voice {layer_name} narration must not be parenthesized",
+                        )
+                elif layer_name in speakers:
+                    self._error(
+                        issues,
+                        location,
+                        f"inner_voice speakers.{layer_name} must be a speaker id or null",
+                    )
+        else:
+            if "speakers" in node:
+                self._error(issues, location, "regular dual_dialogue must use a single speaker")
+            speaker = node.get("speaker")
+            kind = self._validate_speaker_reference(issues, scene, speaker, location)
+            speaker_kinds = {"perceived": kind, "reality": kind}
             distortion_flags = {"auditory_distortion", "romance_insert"}
             if perceived.get("line") != reality.get("line") and distortion_flags.isdisjoint(flags):
                 self._error(
@@ -915,21 +1574,31 @@ class StoryProject:
                     location,
                     "spoken lines must match unless auditory_distortion or romance_insert is explicit",
                 )
-            speaker = node.get("speaker")
-            if speaker not in self.characters:
-                self._error(issues, location, f"unknown speaker: {speaker}")
-                return
-            if speaker not in scene.get("cast", []):
-                self._error(issues, location, f"speaker {speaker} is not in cast")
+
+        for layer_name, layer in (("perceived", perceived), ("reality", reality)):
+            speaker = effective_speaker(node, layer_name)
+            expression_id = layer.get("expression")
+            speaker_kind = speaker_kinds.get(layer_name)
+            if not expression_id:
+                if not inner_voice and speaker_kind == "illustrated" and layer_name == "perceived":
+                    self._error(issues, location, f"unknown perceived expression {expression_id} for {speaker}")
+                continue
+            if speaker_kind != "illustrated" or speaker not in self.characters:
+                self._error(
+                    issues,
+                    location,
+                    f"{layer_name} expression requires an illustrated character speaker",
+                )
+                continue
             expressions = self.characters[speaker].get("expressions", {})
-            for layer_name, layer in (("perceived", perceived), ("reality", reality)):
-                expression_id = layer.get("expression")
-                if layer_name == "reality" and not expression_id:
-                    continue
-                if expression_id not in expressions:
-                    self._error(issues, location, f"unknown {layer_name} expression {expression_id} for {speaker}")
-                elif expressions[expression_id].get("layer") != layer_name:
-                    self._error(issues, location, f"expression {expression_id} belongs to {expressions[expression_id].get('layer')}, not {layer_name}")
+            if expression_id not in expressions:
+                self._error(issues, location, f"unknown {layer_name} expression {expression_id} for {speaker}")
+            elif expressions[expression_id].get("layer") != layer_name:
+                self._error(
+                    issues,
+                    location,
+                    f"expression {expression_id} belongs to {expressions[expression_id].get('layer')}, not {layer_name}",
+                )
 
     def _validate_conditions(self, issues: List[Issue], location: str, conditions: Any, reads: Optional[Set[str]]) -> None:
         if not isinstance(conditions, list):
@@ -1082,6 +1751,94 @@ class StoryProject:
                 location = relative_source(scene.get("_source", scene_id))
                 self._error(issues, location, "scene is not scheduled by any timeline event")
 
+    def world_bundle(self) -> Dict[str, Any]:
+        entities = {entity_id: clean_source(entity) for entity_id, entity in self.world.items()}
+        by_kind: Dict[str, List[str]] = {}
+        story_character_members: Dict[str, str] = {}
+        for entity_id, entity in self.world.items():
+            by_kind.setdefault(str(entity.get("kind")), []).append(entity_id)
+            if entity.get("kind") == "member" and entity.get("story_character"):
+                story_character_members[entity["story_character"]] = entity_id
+        return {
+            "entities": entities,
+            "by_kind": {kind: sorted(ids) for kind, ids in sorted(by_kind.items())},
+            "story_character_members": dict(sorted(story_character_members.items())),
+        }
+
+    def bounded_world_context(self, scene: Mapping[str, Any]) -> Dict[str, Any]:
+        declared = scene.get("world_context") if isinstance(scene.get("world_context"), dict) else {}
+        members = {
+            entity_id: entity
+            for entity_id, entity in self.world.items()
+            if entity.get("kind") == "member"
+        }
+        character_members = {
+            member.get("story_character"): member_id
+            for member_id, member in members.items()
+            if member.get("story_character")
+        }
+        participant_ids = list(declared.get("participants", []))
+        if not participant_ids:
+            participant_ids = [
+                character_members[character_id]
+                for character_id in scene.get("cast", [])
+                if character_id in character_members
+            ]
+        participant_entities = {
+            member_id: clean_source(members[member_id])
+            for member_id in participant_ids
+            if member_id in members
+        }
+        team_ids = {
+            member.get("team")
+            for member in participant_entities.values()
+            if member.get("team") in self.world
+        }
+        project_id = declared.get("project")
+        project = self.world.get(project_id, {})
+        if project.get("kind") == "project":
+            team_ids.update(project.get("participating_teams", []))
+        role_ids = {
+            member.get("role")
+            for member in participant_entities.values()
+            if member.get("role") in self.world
+        }
+        company_ids = {
+            member.get("company")
+            for member in participant_entities.values()
+            if member.get("company") in self.world
+        }
+        if declared.get("company") in self.world:
+            company_ids.add(declared["company"])
+        return {
+            "declared": copy.deepcopy(declared),
+            "companies": {
+                entity_id: clean_source(self.world[entity_id])
+                for entity_id in sorted(company_ids)
+            },
+            "projects": {
+                project_id: clean_source(project)
+                for project_id in [declared.get("project")]
+                if project_id in self.world and project.get("kind") == "project"
+            },
+            "interactions": {
+                interaction_id: clean_source(self.world[interaction_id])
+                for interaction_id in [declared.get("interaction")]
+                if interaction_id in self.world and self.world[interaction_id].get("kind") == "meeting"
+            },
+            "participants": participant_entities,
+            "teams": {
+                entity_id: clean_source(self.world[entity_id])
+                for entity_id in sorted(team_ids)
+                if entity_id in self.world
+            },
+            "roles": {
+                entity_id: clean_source(self.world[entity_id])
+                for entity_id in sorted(role_ids)
+                if entity_id in self.world
+            },
+        }
+
     def build_bundle(self) -> Dict[str, Any]:
         source_paths = [self.manifest_path]
         source_paths.append(Path(self.ui["_source"]))
@@ -1095,6 +1852,7 @@ class StoryProject:
             self.meta,
             self.routes,
             self.scenes,
+            self.world,
         ):
             source_paths.extend(Path(item["_source"]) for item in collection.values())
         digest = hashlib.sha256()
@@ -1134,6 +1892,7 @@ class StoryProject:
             "meta": meta,
             "routes": routes,
             "scenes": scenes,
+            "world": self.world_bundle(),
         }
 
     def context_package(self, scene_id: str, state: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
@@ -1172,6 +1931,14 @@ class StoryProject:
             mode: resolve_scene_stage(self.resolve_visuals(), preview_scene, scene.get("start_node"), mode)
             for mode in ("perceived", "reality")
         }
+        effective_speakers = {
+            node.get("id"): {
+                mode: effective_speaker(node, mode)
+                for mode in ("perceived", "reality")
+            }
+            for node in preview_scene.get("nodes", [])
+            if node.get("kind") in {"dual_dialogue", "dual_narration"}
+        }
         return {
             "purpose": "Bounded context for an AI agent editing exactly one scene",
             "authoring_rules": rules_path.read_text(encoding="utf-8"),
@@ -1187,8 +1954,10 @@ class StoryProject:
             "state_snapshot": state_snapshot,
             "derived_emotions": derived_emotions,
             "selected_dialogue_variant": selected_variant,
+            "effective_speakers": effective_speakers,
             "localization": self.localization_bundle(),
             "visual_scene": visual_scene,
+            "world_context": self.bounded_world_context(scene),
             "linked_scenes": linked_scenes,
             "open_questions": [],
         }
@@ -1360,16 +2129,12 @@ def resolve_scene_stage(
     background = resolve_scene_background(visuals, scene, node_id, mode)
     node = scene_node(scene, node_id)
     layer = node.get(mode, {}) if isinstance(node, Mapping) else {}
-    speaker = node.get("speaker") if isinstance(node, Mapping) else None
+    speaker = effective_speaker(node, mode) if isinstance(node, Mapping) else None
     cast = list(scene.get("cast", []))
-    position_sets = {
-        1: ["center"],
-        2: ["left", "right"],
-        3: ["far_left", "center", "far_right"],
-    }
-    positions = position_sets.get(len(cast), ["far_left", "left", "right", "far_right"])
     characters = []
-    for index, character_id in enumerate(cast):
+    for character_id in cast:
+        if character_id != speaker:
+            continue
         visual = next(
             (
                 item for item in visuals.values()
@@ -1388,8 +2153,8 @@ def resolve_scene_stage(
             "expression": expression_id,
             "outfit": visual.get("default_outfit"),
             "pose": visual.get("default_pose"),
-            "position": positions[min(index, len(positions) - 1)],
-            "speaker": character_id == speaker,
+            "position": "center",
+            "speaker": True,
             "render_strategy": visual.get("render_strategy"),
         })
     return {"background": background, "characters": characters, "mode": mode, "node": node_id}
@@ -1475,6 +2240,20 @@ def collect_localizable_entries(project: StoryProject) -> Dict[str, Dict[str, An
             add(f"{base}.{field}", character.get(field), domain="character", kind="character", item_id=character_id, source=source, field_path=field, context={"characterId": character_id}, max_length=240)
         for expression_id, expression in character.get("expressions", {}).items():
             add(f"{base}.expressions.{expression_id}.description", expression.get("description"), domain="character", kind="character", item_id=character_id, source=source, field_path=f"expressions.{expression_id}.description", context={"characterId": character_id}, max_length=240)
+    for member_id, member in project.world.items():
+        if member.get("kind") != "member" or member.get("presentation") != "text_only":
+            continue
+        add(
+            f"world.members.{member_id}.display_name",
+            member.get("display_name"),
+            domain="world",
+            kind="member",
+            item_id=member_id,
+            source=member.get("_source", member_id),
+            field_path="display_name",
+            context={"memberId": member_id, "presentation": "text_only"},
+            max_length=80,
+        )
     for event_id, event in project.events.items():
         base = f"events.{event_id}"
         source = event.get("_source", event_id)
@@ -1510,18 +2289,25 @@ def collect_localizable_entries(project: StoryProject) -> Dict[str, Dict[str, An
             if node.get("speaker"):
                 node_context["speakerId"] = node["speaker"]
             add(f"{node_base}.prompt", node.get("prompt"), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.prompt", context=node_context, max_length=160)
+            add(f"{node_base}.stimulus", node.get("stimulus"), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.stimulus", context=node_context, max_length=240)
             for mode in ("perceived", "reality"):
                 layer = node.get(mode, {})
-                for field in ("line", "protagonist_interpretation", "inner_thought"):
-                    add(f"{node_base}.{mode}.{field}", layer.get(field), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.{mode}.{field}", context={**node_context, "layer": mode}, max_length=320)
+                mode_speaker = effective_speaker(node, mode)
+                mode_context = {**node_context, "layer": mode}
+                if mode_speaker:
+                    mode_context["speakerId"] = mode_speaker
+                add(f"{node_base}.{mode}.line", layer.get("line"), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.{mode}.line", context=mode_context, max_length=320)
             for variant in node.get("variants", []):
                 variant_id = variant.get("id")
                 variant_context = {**node_context, "variantId": variant_id}
                 variant_base = f"{node_base}.variants.{variant_id}"
                 for mode in ("perceived", "reality"):
                     layer = variant.get(mode, {})
-                    for field in ("line", "protagonist_interpretation", "inner_thought"):
-                        add(f"{variant_base}.{mode}.{field}", layer.get(field), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.variants.{variant_id}.{mode}.{field}", context={**variant_context, "layer": mode}, max_length=320)
+                    mode_speaker = effective_speaker(node, mode)
+                    mode_context = {**variant_context, "layer": mode}
+                    if mode_speaker:
+                        mode_context["speakerId"] = mode_speaker
+                    add(f"{variant_base}.{mode}.line", layer.get("line"), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.variants.{variant_id}.{mode}.line", context=mode_context, max_length=320)
             for option in node.get("options", []):
                 option_id = option.get("id")
                 option_base = f"{node_base}.options.{option_id}"
@@ -1965,7 +2751,7 @@ def resolve_dialogue_variant(
         resolved["reality"] = copy.deepcopy(selected.get("reality", {}))
         selected_id = str(selected.get("id"))
     context = evaluation_state(project, state)
-    speaker = node.get("speaker")
+    speaker = effective_speaker(resolved, "reality")
     reality = resolved.get("reality")
     if speaker and isinstance(reality, MutableMapping) and not reality.get("expression"):
         expression = context.get("derived", {}).get("characters", {}).get(speaker, {}).get("default_expression")
@@ -2213,7 +2999,11 @@ class Simulator:
                     "type": kind,
                     "scene": scene_id,
                     "node": node_id,
-                    "speaker": node.get("speaker"),
+                    "speaker": effective_speaker(resolved_node, "reality"),
+                    "speakers": {
+                        mode: effective_speaker(resolved_node, mode)
+                        for mode in ("perceived", "reality")
+                    },
                     "variant": variant_id,
                     "perceived": resolved_node["perceived"]["line"],
                     "reality": resolved_node["reality"]["line"],
@@ -2354,7 +3144,14 @@ def print_simulation(result: Mapping[str, Any]) -> None:
         if event_type == "scene":
             print(f"\nSCENE {event['scene']} — {event['title']}")
         elif event_type in {"dual_dialogue", "dual_narration"}:
-            speaker = f" [{event['speaker']}]" if event.get("speaker") else ""
+            layer_speakers = event.get("speakers", {})
+            if layer_speakers.get("perceived") != layer_speakers.get("reality"):
+                speaker = (
+                    f" [perceived:{layer_speakers.get('perceived') or 'narration'}"
+                    f" | reality:{layer_speakers.get('reality') or 'narration'}]"
+                )
+            else:
+                speaker = f" [{event['speaker']}]" if event.get("speaker") else ""
             print(f"  {event_type}{speaker}")
             print(f"    perceived: {event['perceived']}")
             print(f"    reality:   {event['reality']}")
@@ -2453,7 +3250,8 @@ def command_validate(project: StoryProject, args: argparse.Namespace) -> int:
         f"Validated {len(project.campaigns)} campaign, {len(project.events)} events, "
         f"{len(project.threads)} threads, {len(project.characters)} characters, "
         f"{len(project.locales)} locales, {len(project.visuals)} visuals, "
-        f"{len(project.routes)} routes, {len(project.scenes)} scenes: "
+        f"{len(project.world)} world entities, {len(project.routes)} routes, "
+        f"{len(project.scenes)} scenes: "
         f"{len(errors)} errors, {len(warnings)} warnings"
     )
     if not errors:
@@ -2573,12 +3371,29 @@ def command_new_scene(project: StoryProject, args: argparse.Namespace) -> int:
                 "perceived": {
                     "atmosphere": "warm_romance",
                     "line": "TODO",
-                    "protagonist_interpretation": "TODO",
                 },
                 "reality": {
                     "atmosphere": "cold_office",
                     "line": "TODO",
-                    "inner_thought": "TODO",
+                    "intent": "work_only",
+                },
+                "next": "opening_inner",
+            },
+            {
+                "id": "opening_inner",
+                "kind": "dual_dialogue",
+                "presentation_flags": ["inner_voice"],
+                "speakers": {
+                    "perceived": "han_do_yoon",
+                    "reality": None,
+                },
+                "perceived": {
+                    "atmosphere": "warm_romance",
+                    "line": "(TODO: 한도윤의 자연스러운 속말)",
+                },
+                "reality": {
+                    "atmosphere": "cold_office",
+                    "line": "TODO: 이름표 없는 권위적 서술",
                     "intent": "work_only",
                 },
                 "next": "leave",

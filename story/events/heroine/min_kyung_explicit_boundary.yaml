@@ -18,8 +18,8 @@ on_seen: {effects: []}
 on_missed: {effects: []}
 presentation:
   perceived:
-    title: 도전적인 밀기
-    summary: 민경이 쉽게 넘어오지 않는 상대로서 강한 규칙을 제시한다.
+    title: 쉽게 물러서지 않는 태도
+    summary: 민경이 강한 규칙을 제시하자 도윤은 아직 마음을 열지 않는 것이라고 해석한다.
   reality:
     title: 명시적인 사적 연락 거부
     summary: 민경은 모호함을 없애기 위해 업무 외 연락을 하지 말라고 분명히 말한다.

@@ -39,15 +39,28 @@ nodes:
       atmosphere: playful_tension
       expression: subjective_jealous
       line: "서아 씨가 회의록을 함께 작성할 겁니다."
-      protagonist_interpretation: 다른 여성을 앞세워 자신의 반응을 떠본다.
     reality:
       atmosphere: guarded_office
       expression: actual_protective
       line: "서아 씨가 회의록을 함께 작성할 겁니다."
-      inner_thought: 단둘이 있는 상황을 만들지 않는다.
+      intent: self_protection
+    next: protective_inner
+
+  - id: protective_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: cha_min_kyung
+    perceived:
+      atmosphere: playful_tension
+      line: (다른 여자를 앞세워서 내 반응을 보려는 거군.)
+    reality:
+      atmosphere: guarded_office
+      line: (오늘은 절대 둘만 남지 말자.)
       intent: self_protection
     next: choose
-
   - id: skeptical
     kind: dual_dialogue
     speaker: cha_min_kyung
@@ -55,21 +68,35 @@ nodes:
       atmosphere: playful_tension
       expression: subjective_challenging
       line: "회의록 담당으로 서아 씨가 배석합니다."
-      protagonist_interpretation: 자신의 질투를 유도하려는 가벼운 밀기다.
     reality:
       atmosphere: cold_office
       expression: actual_skeptical
       line: "회의록 담당으로 서아 씨가 배석합니다."
-      inner_thought: 업무 형식을 분명히 해 두면 불필요한 말을 줄일 수 있다.
+      intent: documentation
+    next: skeptical_inner
+
+  - id: skeptical_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: cha_min_kyung
+    perceived:
+      atmosphere: playful_tension
+      line: (서아 씨를 데려와 내 질투를 살짝 건드려 보겠다는 건가.)
+    reality:
+      atmosphere: cold_office
+      line: (업무 형식을 확실히 해 두면 쓸데없는 말을 줄일 수 있겠지.)
       intent: documentation
     next: choose
-
   - id: choose
     kind: choice
-    prompt: 제삼자를 끌어들인 민경에게 어떻게 반응할까?
+    prompt: 서아가 함께 있는 회의에서 민경에게 어떻게 행동할까?
+    stimulus: 민경이 서아를 회의록 담당으로 배석시키며 둘만의 회의를 피했다.
     options:
       - id: public_tease
-        label: 여유 있게 질투를 받아준다
+        label: 서아 앞에서 민경과의 사적 연락을 암시한다
         interpretation: 공개된 자리에서 은근한 관계를 확인시킨다.
         action: 두 사람 앞에서 민경과의 사적 연락을 암시한다.
         push_pull: {action: approach, intensity: 16, base_score: 4}
@@ -80,7 +107,7 @@ nodes:
           - {path: hidden.heroines.cha_min_kyung.evidence_count, op: add, value: 1}
         next: leave
       - id: retaliatory_push
-        label: 더 강하게 밀어낸다
+        label: 민경을 다음 비공식 프로젝트 논의에서 제외한다
         interpretation: 주도권을 되찾기 위해 관심을 완전히 거둔다.
         action: 민경을 다음 비공식 프로젝트 논의에서 제외한다.
         push_pull: {action: space, intensity: 16, base_score: 4}
@@ -91,8 +118,8 @@ nodes:
           - {path: hidden.heroines.cha_min_kyung.evidence_count, op: add, value: 1}
         next: leave
       - id: work_only
-        label: 회의에만 집중한다
-        interpretation: 오늘의 밀당을 쉬고 업무를 끝낸다.
+        label: 사적인 언급 없이 회의 안건만 논의한다
+        interpretation: 사적인 의미를 붙이지 않고 오늘은 업무만 마무리한다.
         action: 사적인 언급 없이 안건만 논의한다.
         push_pull: {action: literal, intensity: 12, base_score: 4}
         conditions: []

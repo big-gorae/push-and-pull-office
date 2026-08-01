@@ -1,0 +1,8 @@
+schema_version: 1
+id: team.people_operations
+kind: team
+company: company.dawon_living
+name: 인사운영팀
+function: 인사 정책, 고충 접수, 내부 기록과 후속 절차 운영
+lead_member: member.shin_hye_rim
+member_ids: [member.shin_hye_rim]

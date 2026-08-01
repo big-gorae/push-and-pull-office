@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import fixture from "../../tests/fixtures/condition-conformance.json";
 import runtimeJson from "../../build/story-runtime.json";
+import { VisualResolver } from "../presentation";
 import type { Condition, Runtime, StoryNode } from "../types";
 import {
   canEnterScene,
   chooseSceneTransition,
   conditionMatches,
+  effectiveSpeaker,
   inspectTimelineEvent,
   resolveDialogueNode,
   setPath,
@@ -47,6 +49,44 @@ describe("condition conformance", () => {
 });
 
 describe("contextual dialogue", () => {
+  it("resolves layer-specific inner-voice speakers and explicit narration", () => {
+    const node: StoryNode = {
+      id: "inner",
+      kind: "dual_dialogue",
+      speakers: { perceived: "han_do_yoon", reality: "yoon_seo_a" },
+      perceived: { line: "(내 생각)" },
+      reality: { line: "(서아의 생각)" },
+      next: "done",
+    };
+    expect(effectiveSpeaker(node, "perceived")).toBe("han_do_yoon");
+    expect(effectiveSpeaker(node, "reality")).toBe("yoon_seo_a");
+    expect(effectiveSpeaker({ ...node, speakers: { ...node.speakers, reality: null } }, "reality")).toBeUndefined();
+  });
+
+  it("resolves stage art for the active illustrated speaker only", () => {
+    const scene = runtime.scenes["common.day_01_company_meeting"];
+    const resolver = new VisualResolver(runtime);
+    const spoken = resolver.resolveStage(scene, "preview", "perceived", {
+      id: "preview",
+      kind: "dual_dialogue",
+      speaker: "yoon_seo_a",
+      perceived: { line: "안녕하세요", atmosphere: "procedural", expression: "subjective_shy" },
+      reality: { line: "안녕하세요", atmosphere: "procedural", intent: "work_only" },
+      next: "done",
+    });
+    expect(spoken.characters.map((character) => character.character)).toEqual(["yoon_seo_a"]);
+    expect(spoken.characters[0]?.speaker).toBe(true);
+
+    const narrated = resolver.resolveStage(scene, "preview", "perceived", {
+      id: "preview",
+      kind: "dual_narration",
+      perceived: { line: "회의가 시작됐다.", atmosphere: "procedural" },
+      reality: { line: "회의가 시작됐다.", atmosphere: "procedural", intent: "work_only" },
+      next: "done",
+    });
+    expect(narrated.characters).toEqual([]);
+  });
+
   it("selects the first matching priority variant and preserves a forced backlog variant", () => {
     const node: StoryNode = {
       id: "response",
@@ -57,14 +97,14 @@ describe("contextual dialogue", () => {
           id: "guarded",
           priority: 100,
           conditions: [{ path: "derived.characters.yoon_seo_a.emotion", op: "eq", value: "fear" }],
-          perceived: { line: "guarded", atmosphere: "warm_romance", expression: "subjective_shy", protagonist_interpretation: "x" },
-          reality: { line: "guarded", atmosphere: "cold_office", inner_thought: "x", intent: "boundary" },
+          perceived: { line: "guarded", atmosphere: "warm_romance", expression: "subjective_shy" },
+          reality: { line: "guarded", atmosphere: "cold_office", intent: "boundary" },
         },
         {
           id: "default",
           default: true,
-          perceived: { line: "default", atmosphere: "warm_romance", expression: "subjective_shy", protagonist_interpretation: "x" },
-          reality: { line: "default", atmosphere: "cold_office", inner_thought: "x", intent: "work_only" },
+          perceived: { line: "default", atmosphere: "warm_romance", expression: "subjective_shy" },
+          reality: { line: "default", atmosphere: "cold_office", intent: "work_only" },
         },
       ],
       next: "leave",

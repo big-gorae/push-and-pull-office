@@ -1,9 +1,13 @@
 import copy
 import json
+import shutil
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+
+import yaml
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,8 +21,10 @@ from story_harness import (  # noqa: E402
     break_push_pull_flow,
     can_enter_scene,
     choose_transition,
+    command_new_scene,
     condition_matches,
     derive_emotion,
+    effective_speaker,
     localization_report,
     push_pull_state,
     resolve_scene_background,
@@ -188,6 +194,131 @@ class StoryHarnessTests(unittest.TestCase):
         finally:
             scene["nodes"][0]["reality"] = original
 
+    def test_legacy_embedded_thought_fields_are_rejected(self):
+        node = self.project.scenes["seo_a.email_request"]["nodes"][0]
+        try:
+            node["perceived"]["protagonist_interpretation"] = "legacy"
+            node["reality"]["inner_thought"] = "legacy"
+            issues = []
+            self.project._validate_scenes(issues)
+            messages = [issue.message for issue in issues]
+            self.assertTrue(any("legacy perceived.protagonist_interpretation is forbidden" in message for message in messages))
+            self.assertTrue(any("legacy reality.inner_thought is forbidden" in message for message in messages))
+        finally:
+            node["perceived"].pop("protagonist_interpretation", None)
+            node["reality"].pop("inner_thought", None)
+
+    def test_inner_voice_uses_layer_speakers_and_conditional_parentheses(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        node = next(item for item in scene["nodes"] if item["id"] == "request_inner")
+        original = copy.deepcopy(node)
+        try:
+            self.assertEqual("han_do_yoon", effective_speaker(node, "perceived"))
+            self.assertEqual("yoon_seo_a", effective_speaker(node, "reality"))
+
+            del node["speakers"]["reality"]
+            issues = []
+            self.project._validate_scenes(issues)
+            self.assertTrue(any("speakers.reality is required" in issue.message for issue in issues))
+
+            node.clear()
+            node.update(copy.deepcopy(original))
+            node["perceived"]["line"] = "괄호가 없는 속말"
+            issues = []
+            self.project._validate_scenes(issues)
+            self.assertTrue(any("with a speaker must be parenthesized" in issue.message for issue in issues))
+
+            node.clear()
+            node.update(copy.deepcopy(original))
+            node["speakers"]["reality"] = None
+            node["reality"]["line"] = "(이름표 없는 권위적 서술)"
+            issues = []
+            self.project._validate_scenes(issues)
+            self.assertTrue(any("speakerless inner_voice reality narration must not be parenthesized" in issue.message for issue in issues))
+        finally:
+            node.clear()
+            node.update(original)
+
+    def test_regular_dialogue_cannot_use_layer_speakers(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        node = scene["nodes"][0]
+        original = copy.deepcopy(node)
+        try:
+            node.pop("speaker")
+            node["speakers"] = {"perceived": "yoon_seo_a", "reality": "yoon_seo_a"}
+            issues = []
+            self.project._validate_scenes(issues)
+            self.assertTrue(any("regular dual_dialogue must use a single speaker" in issue.message for issue in issues))
+        finally:
+            node.clear()
+            node.update(original)
+
+    def test_text_only_speaker_is_valid_only_as_a_declared_meeting_participant(self):
+        scene = self.project.scenes["common.day_01_company_meeting"]
+        node = next(item for item in scene["nodes"] if item["id"] == "jeong_da_eun_opening")
+        issues = []
+        self.project._validate_scenes(issues)
+        self.assertFalse(any("member.jeong_da_eun" in issue.message for issue in issues))
+
+        original_participants = list(scene["world_context"]["participants"])
+        try:
+            scene["world_context"]["participants"].remove("member.jeong_da_eun")
+            issues = []
+            self.project._validate_scene_world_contexts(issues)
+            self.assertTrue(any("world member speaker is not a declared participant: member.jeong_da_eun" in issue.message for issue in issues))
+
+            node["speaker"] = "member.han_do_yoon"
+            issues = []
+            self.project._validate_scenes(issues)
+            self.assertTrue(any("illustrated world member speaker must use story_character id" in issue.message for issue in issues))
+        finally:
+            node["speaker"] = "member.jeong_da_eun"
+            scene["world_context"]["participants"] = original_participants
+
+    def test_choice_requires_stimulus_and_hides_explicit_direction_words(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        node = next(item for item in scene["nodes"] if item["kind"] == "choice")
+        original = copy.deepcopy(node)
+        try:
+            node["stimulus"] = ""
+            node["prompt"] = "이번에는 밀당으로 갈까?"
+            node["options"][0]["label"] = "PUSH"
+            issues = []
+            self.project._validate_scenes(issues)
+            messages = [issue.message for issue in issues]
+            self.assertTrue(any("choice stimulus is required" in message for message in messages))
+            self.assertTrue(any("choice prompt" in message and "push/pull" in message for message in messages))
+            self.assertTrue(any("choice label" in message and "push/pull" in message for message in messages))
+        finally:
+            node.clear()
+            node.update(original)
+
+    def test_new_scene_scaffold_uses_separate_inner_voice_contract(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "draft.yaml"
+            command_new_scene(
+                self.project,
+                SimpleNamespace(
+                    route="seo_a",
+                    id="seo_a.contract_draft",
+                    title="계약 초안",
+                    chapter=1,
+                    sequence=99,
+                    out=str(output),
+                    force=False,
+                ),
+            )
+            document = yaml.safe_load(output.read_text(encoding="utf-8"))
+            serialized = json.dumps(document, ensure_ascii=False)
+            self.assertNotIn("protagonist_interpretation", serialized)
+            self.assertNotIn("inner_thought", serialized)
+            inner = next(node for node in document["nodes"] if node["id"] == "opening_inner")
+            self.assertEqual(["inner_voice"], inner["presentation_flags"])
+            self.assertEqual("han_do_yoon", inner["speakers"]["perceived"])
+            self.assertIsNone(inner["speakers"]["reality"])
+            self.assertTrue(inner["perceived"]["line"].startswith("("))
+            self.assertFalse(inner["reality"]["line"].startswith("("))
+
     def test_unmarked_spoken_line_distortion_is_rejected(self):
         scene = self.project.scenes["seo_a.email_request"]
         original = scene["nodes"][0]["perceived"]["line"]
@@ -316,7 +447,7 @@ class StoryHarnessTests(unittest.TestCase):
             reached,
         )
 
-    def test_first_cleared_base_route_unlocks_survival_mode(self):
+    def test_first_cleared_base_route_unlocks_truth_and_survival_modes(self):
         cases = {
             "seo_a": {
                 "seo_a.email_request": "take_literally",
@@ -332,8 +463,19 @@ class StoryHarnessTests(unittest.TestCase):
                 result = Simulator(self.project, route_id, choices, "first").run()
                 progress = result["final_state"]["progress"]
                 self.assertEqual([route_id], progress["cleared_routes"])
+                self.assertIn("truth_view", progress["unlocked_modes"])
                 self.assertIn("survivor_view", progress["unlocked_modes"])
                 self.assertNotIn("collapse", progress["unlocked_modes"])
+
+    def test_every_base_route_has_both_post_ending_unlock_rules(self):
+        unlocks = self.project.meta["unlocks"]
+        removed = unlocks["unlock_rules"].pop()
+        try:
+            issues = []
+            self.project._validate_meta(issues)
+            self.assertTrue(any("must unlock survivor_view" in issue.message for issue in issues))
+        finally:
+            unlocks["unlock_rules"].append(removed)
 
     def test_retired_collapse_route_is_absent(self):
         self.assertNotIn("yoo_jin", self.project.routes)
@@ -401,7 +543,7 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual(0, wrong["combo"])
         self.assertEqual(0, wrong["gain"])
 
-        state["progress"]["flags"]["push_pull"].update({"position": 36, "target": "pull", "combo": 2})
+        state["progress"]["flags"]["push_pull"].update({"position": 52, "target": "pull", "combo": 2})
         outside = resolve_push_pull(
             self.project,
             state,
@@ -409,7 +551,7 @@ class StoryHarnessTests(unittest.TestCase):
             {"action": "space", "intensity": 12, "base_score": 4},
         )
         self.assertEqual("outside", outside["kind"])
-        self.assertEqual(48, outside["position"])
+        self.assertEqual(64, outside["position"])
         self.assertEqual(0, outside["gain"])
 
         literal = resolve_push_pull(
@@ -419,7 +561,7 @@ class StoryHarnessTests(unittest.TestCase):
             {"action": "literal", "intensity": 12, "base_score": 4},
         )
         self.assertEqual("literal", literal["kind"])
-        self.assertEqual(36, literal["position"])
+        self.assertEqual(52, literal["position"])
         self.assertEqual("none", literal["target"])
 
     def test_high_combo_adds_hidden_pattern_consequences(self):
@@ -502,7 +644,7 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual({"seo_a", "min_kyung"}, set(bundle["threads"]))
         self.assertIn("unlocks", bundle["meta"])
         reveals = bundle["meta"]["unlocks"]["mode_teasers"][0]["reveals"]
-        self.assertEqual(["survivor_view"], [reveal["mode"] for reveal in reveals])
+        self.assertEqual(["truth_view", "survivor_view"], [reveal["mode"] for reveal in reveals])
         survival = bundle["meta"]["unlocks"]["survival_mode"]
         self.assertEqual("confirmed", survival["status"])
         self.assertEqual("undecided", survival["playable_character"]["status"])
@@ -520,6 +662,144 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertTrue(story_mode["report_trigger"]["report_after_actual_visit"])
         self.assertEqual("later_termination", story_mode["police_and_company_order"][-1])
 
+    def test_runtime_build_contains_indexed_world_bible(self):
+        world = self.project.build_bundle()["world"]
+        self.assertEqual("다원리빙", world["entities"]["company.dawon_living"]["name"])
+        self.assertIn("project.harudam_spring_campaign", world["by_kind"]["project"])
+        self.assertEqual(
+            "member.yoon_seo_a",
+            world["story_character_members"]["yoon_seo_a"],
+        )
+        self.assertNotIn("_source", world["entities"]["member.oh_se_jin"])
+
+    def test_world_bible_rejects_unknown_team_and_inconsistent_membership(self):
+        member = self.project.world["member.yoon_seo_a"]
+        original_team = member["team"]
+        try:
+            member["team"] = "team.unknown"
+            issues = []
+            self.project._validate_world(issues)
+            self.assertTrue(any("unknown team reference" in issue.message for issue in issues))
+            self.assertTrue(any("declares team" in issue.message for issue in issues))
+        finally:
+            member["team"] = original_team
+
+    def test_world_bible_rejects_unknown_company_role_and_member_references(self):
+        cases = [
+            ("role.manager", "company", "company.unknown", "unknown company reference"),
+            ("member.yoon_seo_a", "role", "role.unknown", "unknown role reference"),
+            ("team.product_planning", "lead_member", "member.unknown", "unknown member reference"),
+        ]
+        for entity_id, field, invalid_value, expected in cases:
+            with self.subTest(field=field):
+                entity = self.project.world[entity_id]
+                original = entity[field]
+                try:
+                    entity[field] = invalid_value
+                    issues = []
+                    self.project._validate_world(issues)
+                    self.assertTrue(any(expected in issue.message for issue in issues))
+                finally:
+                    entity[field] = original
+
+    def test_world_bible_rejects_invalid_reporting_line(self):
+        member = self.project.world["member.yoon_seo_a"]
+        original_manager = member["manager"]
+        try:
+            member["manager"] = "member.moon_ji_hye"
+            issues = []
+            self.project._validate_world(issues)
+            self.assertTrue(any("outside member team" in issue.message for issue in issues))
+        finally:
+            member["manager"] = original_manager
+
+    def test_world_bible_rejects_text_only_route_heroine_misuse(self):
+        member = self.project.world["member.yoon_seo_a"]
+        original = copy.deepcopy(member)
+        try:
+            member["presentation"] = "text_only"
+            issues = []
+            self.project._validate_world(issues)
+            messages = [issue.message for issue in issues]
+            self.assertTrue(any("text_only member must not declare story_character" in message for message in messages))
+            self.assertTrue(any("text_only member cannot be route_eligible" in message for message in messages))
+        finally:
+            member.clear()
+            member.update(original)
+
+    def test_duplicate_world_entity_id_is_rejected_during_load(self):
+        with tempfile.TemporaryDirectory() as directory:
+            story_root = Path(directory) / "story"
+            shutil.copytree(ROOT / "story", story_root)
+            duplicate = story_root / "world" / "members" / "duplicate_han.yaml"
+            duplicate.write_text(
+                (story_root / "world" / "members" / "han_do_yoon.yaml").read_text(encoding="utf-8"),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(RuntimeError, "duplicate world id member.han_do_yoon"):
+                StoryProject(story_root)
+
+    def test_world_meeting_rejects_heroine_only_or_understaffed_cast(self):
+        scene = self.project.scenes["common.day_01_company_meeting"]
+        original = copy.deepcopy(scene.get("world_context"))
+        scene["world_context"] = {
+            "company": "company.dawon_living",
+            "project": "project.harudam_spring_campaign",
+            "interaction": "meeting.cross_function_kickoff",
+            "participants": [
+                "member.han_do_yoon",
+                "member.yoon_seo_a",
+                "member.cha_min_kyung",
+                "member.kang_yoo_jin",
+            ],
+        }
+        try:
+            issues = []
+            self.project._validate_scene_world_contexts(issues)
+            messages = [issue.message for issue in issues]
+            self.assertTrue(any("at least 6 participants" in message for message in messages))
+            self.assertTrue(any("text_only supporting coworkers" in message for message in messages))
+            self.assertTrue(any("missing required project responsibilities" in message for message in messages))
+        finally:
+            if original is None:
+                scene.pop("world_context", None)
+            else:
+                scene["world_context"] = original
+
+    def test_day_one_context_exposes_only_bounded_relevant_world(self):
+        scene = self.project.scenes["common.day_01_company_meeting"]
+        original = copy.deepcopy(scene.get("world_context"))
+        scene["world_context"] = {
+            "company": "company.dawon_living",
+            "project": "project.harudam_spring_campaign",
+            "interaction": "meeting.cross_function_kickoff",
+            "participants": [
+                "member.han_do_yoon",
+                "member.yoon_seo_a",
+                "member.cha_min_kyung",
+                "member.kang_yoo_jin",
+                "member.oh_se_jin",
+                "member.jeong_da_eun",
+                "member.moon_ji_hye",
+            ],
+        }
+        try:
+            context = self.project.context_package("common.day_01_company_meeting")
+            world = context["world_context"]
+            self.assertEqual(
+                "하루담 봄 리빙 캠페인",
+                world["projects"]["project.harudam_spring_campaign"]["name"],
+            )
+            self.assertEqual(7, len(world["participants"]))
+            self.assertIn("member.oh_se_jin", world["participants"])
+            self.assertNotIn("member.shin_hye_rim", world["participants"])
+            self.assertNotIn("team.people_operations", world["teams"])
+        finally:
+            if original is None:
+                scene.pop("world_context", None)
+            else:
+                scene["world_context"] = original
+
     def test_runtime_build_contains_localization_with_fallback_and_coverage(self):
         localization = self.project.build_bundle()["localization"]
         self.assertEqual(["ko", "en"], localization["supported_locales"])
@@ -535,6 +815,13 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual("story/visuals/characters/yoon_seo_a.yaml", localization["entries"][visual_key]["sourceDocument"]["path"])
         self.assertEqual("한국어", localization["locale_names"]["ko"]["native_name"])
         self.assertIn("locale.ko.native_name", localization["entries"])
+        stimulus_key = "scenes.seo_a.email_request.nodes.interpret.stimulus"
+        self.assertIn(stimulus_key, localization["entries"])
+        self.assertFalse(any("protagonist_interpretation" in key or "inner_thought" in key for key in localization["entries"]))
+        self.assertEqual(
+            "오세진",
+            localization["entries"]["world.members.member.oh_se_jin.display_name"]["source"],
+        )
 
     def test_visual_inheritance_resolves_shared_character_defaults(self):
         visuals = self.project.resolve_visuals()
@@ -557,10 +844,15 @@ class StoryHarnessTests(unittest.TestCase):
         scene = self.project.scenes["seo_a.email_request"]
         stage = resolve_scene_stage(self.project.resolve_visuals(), scene, "request", "reality")
         self.assertEqual("background.office_open", stage["background"]["visual_id"])
-        self.assertEqual({"han_do_yoon", "yoon_seo_a"}, {item["character"] for item in stage["characters"]})
-        seo_a = next(item for item in stage["characters"] if item["character"] == "yoon_seo_a")
+        self.assertEqual(["yoon_seo_a"], [item["character"] for item in stage["characters"]])
+        seo_a = stage["characters"][0]
         self.assertEqual("actual_tense", seo_a["expression"])
         self.assertTrue(seo_a["speaker"])
+
+        perceived_inner = resolve_scene_stage(self.project.resolve_visuals(), scene, "request_inner", "perceived")
+        reality_inner = resolve_scene_stage(self.project.resolve_visuals(), scene, "request_inner", "reality")
+        self.assertEqual(["han_do_yoon"], [item["character"] for item in perceived_inner["characters"]])
+        self.assertEqual(["yoon_seo_a"], [item["character"] for item in reality_inner["characters"]])
 
     def test_timeline_scheduler_does_not_expose_retired_collapse_events(self):
         scheduler = TimelineScheduler(self.project)
@@ -599,6 +891,10 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertIn("perceived", first_node)
         self.assertIn("reality", first_node)
         self.assertIn("authoring_rules", context)
+        self.assertEqual(
+            {"perceived": "han_do_yoon", "reality": "yoon_seo_a"},
+            context["effective_speakers"]["request_inner"],
+        )
 
     def test_branch_simulation_produces_exact_context_state(self):
         result = Simulator(
@@ -608,6 +904,14 @@ class StoryHarnessTests(unittest.TestCase):
             "first",
         ).run(stop_before_scene="seo_a.relief_smile")
         self.assertEqual("seo_a.relief_smile", result["stopped_at"])
+        request_inner = next(
+            event for event in result["trace"]
+            if event.get("scene") == "seo_a.email_request" and event.get("node") == "request_inner"
+        )
+        self.assertEqual(
+            {"perceived": "han_do_yoon", "reality": "yoon_seo_a"},
+            request_inner["speakers"],
+        )
         context = self.project.context_package("seo_a.relief_smile", result["final_state"])
         self.assertEqual(20, context["state_snapshot"]["hidden.heroines.yoon_seo_a.suspicion"])
         self.assertEqual("anxiety", context["derived_emotions"]["yoon_seo_a"]["emotion"])

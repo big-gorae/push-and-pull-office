@@ -1,0 +1,14 @@
+schema_version: 1
+id: member.lee_hyeon_woo
+kind: member
+company: company.dawon_living
+display_name: 이현우
+team: team.sales_planning
+role: role.coordinator
+title: 사원
+manager: member.han_do_yoon
+employment: permanent
+presentation: text_only
+route_eligible: false
+responsibilities: [account_documents, sales_data]
+voice: 수치와 파일 위치를 확인하고 불필요한 신상 대화는 줄이는 화법.

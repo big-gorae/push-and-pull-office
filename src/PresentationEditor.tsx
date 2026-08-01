@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import LocalizationTable from "./LocalizationTable";
 import { LocalizationService, storyTextKey, VisualResolver } from "./presentation";
-import { canEnterScene, clone, resolveDialogueNode, setPath } from "./storyLogic";
+import { canEnterScene, clone, effectiveSpeaker, resolveDialogueNode, setPath } from "./storyLogic";
 import type {
   DocumentActivity,
   LocaleId,
@@ -31,29 +31,25 @@ export function StageCanvas({ runtime, scene, node, stage, locale, variantId, im
   const i18n = useMemo(() => new LocalizationService(runtime, locale), [runtime, locale]);
   const layer = node[stage.mode];
   const variantPath = variantId && variantId !== "default" ? `variants.${variantId}.` : "";
-  const speakerName = node.speaker
-    ? i18n.t(`characters.${node.speaker}.display_name`, runtime.characters[node.speaker]?.display_name || node.speaker)
+  const speaker = effectiveSpeaker(node, stage.mode);
+  const speakerName = speaker
+    ? i18n.t(
+      runtime.characters[speaker] ? `characters.${speaker}.display_name` : `world.${speaker}.display_name`,
+      runtime.characters[speaker]?.display_name || runtime.world?.entities[speaker]?.display_name || speaker,
+    )
     : "";
   const line = layer?.line
     ? i18n.t(storyTextKey(scene.id, node.id, `${variantPath}${stage.mode}.line`), layer.line)
     : node.prompt
       ? i18n.t(storyTextKey(scene.id, node.id, "prompt"), node.prompt)
       : node.kind === "exit" ? "장면을 떠납니다." : "상태를 계산합니다.";
-  const interpretation = stage.mode === "perceived"
-    ? layer?.protagonist_interpretation
-      ? i18n.t(storyTextKey(scene.id, node.id, `${variantPath}perceived.protagonist_interpretation`), layer.protagonist_interpretation)
-      : ""
-    : layer?.inner_thought
-      ? i18n.t(storyTextKey(scene.id, node.id, `${variantPath}reality.inner_thought`), layer.inner_thought)
-      : "";
-
   return <div className={`stage-canvas ${stage.mode}`} aria-label={`${scene.title} 연출 프리뷰`}>
     {stage.background?.asset && images[stage.background.asset]
       ? <img className="stage-background" src={images[stage.background.asset]} alt="" />
       : <div className="stage-background-placeholder">BACKGROUND</div>}
     <div className="stage-vignette" />
     <div className="stage-cast" aria-label="등장인물 배치">
-      {stage.characters.map((character) => <figure
+      {stage.characters.filter((character) => character.speaker).map((character) => <figure
         className={`stage-character ${character.position} ${character.speaker ? "speaking" : ""} ${character.render_strategy}`}
         key={character.character}
       >
@@ -66,7 +62,6 @@ export function StageCanvas({ runtime, scene, node, stage, locale, variantId, im
     <div className="stage-dialogue">
       {speakerName && <strong>{speakerName}</strong>}
       <blockquote>{line}</blockquote>
-      {interpretation && <p>{interpretation}</p>}
     </div>
   </div>;
 }

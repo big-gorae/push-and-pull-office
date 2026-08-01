@@ -3,7 +3,7 @@ import runtimeJson from "../../build/story-runtime.json";
 import type { Runtime } from "../types";
 import { GameLocalizer } from "./gameI18n";
 import { createSession, type PlayerSession } from "./playerRuntime";
-import { normalizeSaveSlot } from "./playerStorage";
+import { normalizePlayerProfile, normalizePlayerSettings, normalizeSaveSlot } from "./playerStorage";
 import { savePreview, sessionSlot } from "./WebGame";
 
 const runtime = runtimeJson as unknown as Runtime;
@@ -19,6 +19,36 @@ function sessionAtTranslatedScene(): PlayerSession {
 }
 
 describe("locale-independent save schema", () => {
+  it("fills and bounds persistent debug layout settings", () => {
+    expect(normalizePlayerSettings(undefined)).toMatchObject({
+      debugMode: false,
+      characterX: -8,
+      characterY: 8,
+      characterScale: 108,
+    });
+    expect(normalizePlayerSettings({
+      debugMode: true,
+      characterX: -200,
+      characterY: 200,
+      characterScale: 500,
+      locale: "invalid",
+    }, ["ko", "en"], "ko")).toMatchObject({
+      debugMode: true,
+      characterX: -24,
+      characterY: 24,
+      characterScale: 135,
+      locale: "ko",
+    });
+  });
+
+  it("normalizes every first route clear into both post-ending mode unlocks", () => {
+    expect(normalizePlayerProfile({
+      clearedRoutes: ["future_route"],
+      unlockedModes: ["base"],
+      memories: [],
+    }).unlockedModes).toEqual(["base", "truth_view", "survivor_view"]);
+  });
+
   it("stores only stable preview identifiers and rerenders the same slot in another locale", () => {
     const slot = sessionSlot(sessionAtTranslatedScene());
     expect(slot.preview).toMatchObject({

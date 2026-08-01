@@ -2,27 +2,27 @@ schema_version: 1
 id: unlocks
 mode_labels:
   base: 스토리 모드
-  truth_view: 원문 모드
-  survivor_view: 생존 모드
+  truth_view: 속마음 모드
+  survivor_view: 어나더 스토리
 unlock_rules:
   - id: revelation_after_seo_a
     mode: truth_view
-    reward: 실제 표정, 속마음과 보이지 않는 사건을 같은 타임라인에 표시한다.
+    reward: 그녀들의 일상과 속마음을 들어 보아요.
     conditions:
       - {path: progress.cleared_routes, op: contains, value: seo_a}
   - id: revelation_after_min_kyung
     mode: truth_view
-    reward: 실제 표정, 속마음과 보이지 않는 사건을 같은 타임라인에 표시한다.
+    reward: 그녀들의 일상과 속마음을 들어 보아요.
     conditions:
       - {path: progress.cleared_routes, op: contains, value: min_kyung}
   - id: survival_after_seo_a
     mode: survivor_view
-    reward: 첫 번째 루트 클리어 보상으로 평행세계의 피해자 시점에서 증거를 모으고 살아남는 생존 모드를 연다.
+    reward: 새로운 그녀로 새로운 이야기를 만들어 보아요.
     conditions:
       - {path: progress.cleared_routes, op: contains, value: seo_a}
   - id: survival_after_min_kyung
     mode: survivor_view
-    reward: 첫 번째 루트 클리어 보상으로 평행세계의 피해자 시점에서 증거를 모으고 살아남는 생존 모드를 연다.
+    reward: 새로운 그녀로 새로운 이야기를 만들어 보아요.
     conditions:
       - {path: progress.cleared_routes, op: contains, value: min_kyung}
 mode_teasers:
@@ -30,9 +30,12 @@ mode_teasers:
     conditions:
       - {path: progress.unlocked_modes, op: contains, value: survivor_view}
     reveals:
+      - mode: truth_view
+        title: 속마음 모드
+        teaser: 그녀들의 일상과 속마음을 들어 보아요.
       - mode: survivor_view
-        title: 생존 모드
-        teaser: 그의 애정과 분노 사이를 읽으며, 증거를 모으고 살아남으십시오.
+        title: 어나더 스토리
+        teaser: 새로운 그녀로 새로운 이야기를 만들어 보아요.
 
 survival_mode:
   id: survivor_view

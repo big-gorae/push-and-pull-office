@@ -1,7 +1,7 @@
 import type { JsonValue, PushPullConfig, RuntimeState } from "./types";
 
 export const PUSH_PULL_LIMIT = 100;
-export const PUSH_PULL_OPTIMAL_LIMIT = 40;
+export const PUSH_PULL_OPTIMAL_LIMIT = 56;
 export const PUSH_PULL_CHECKPOINT = 32;
 export const PUSH_PULL_TURN_BONUS = 6;
 export const PUSH_PULL_MAX_COMBO = 5;
@@ -199,8 +199,8 @@ export function resolvePushPull(
 export function pushPullPositionLabel(position: number, mode: "perceived" | "reality"): string {
   const side = position < -4 ? (mode === "perceived" ? "당기기 쪽" : "접근 시도 쪽")
     : position > 4 ? (mode === "perceived" ? "밀기 쪽" : "거리 둠 쪽")
-      : "중앙";
-  return `${side} · ${Math.abs(position) <= PUSH_PULL_OPTIMAL_LIMIT ? "적정 범위 안" : "적정 범위 밖"}`;
+      : "균형 지점";
+  return side;
 }
 
 export function pushPullTargetLabel(target: PushPullTarget, mode: "perceived" | "reality"): string {

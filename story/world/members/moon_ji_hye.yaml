@@ -1,0 +1,14 @@
+schema_version: 1
+id: member.moon_ji_hye
+kind: member
+company: company.dawon_living
+display_name: 문지혜
+team: team.brand_design
+role: role.department_head
+title: 팀장
+manager: null
+employment: permanent
+presentation: text_only
+route_eligible: false
+responsibilities: [creative_approval, design_capacity, brand_consistency]
+voice: 시안 수와 수정 횟수를 명확히 한 뒤 디자인 의도를 짧게 설명하는 화법.

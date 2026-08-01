@@ -7,6 +7,10 @@ export type PlayerSettings = {
   textSpeed: number;
   autoDelay: number;
   reducedMotion: boolean;
+  debugMode: boolean;
+  characterX: number;
+  characterY: number;
+  characterScale: number;
   locale: GameLocale;
 };
 
@@ -47,8 +51,38 @@ export const DEFAULT_PLAYER_SETTINGS: PlayerSettings = {
   textSpeed: 28,
   autoDelay: 1500,
   reducedMotion: false,
+  debugMode: false,
+  characterX: -8,
+  characterY: 8,
+  characterScale: 108,
   locale: "ko",
 };
+
+function clamp(value: unknown, minimum: number, maximum: number, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value)
+    ? Math.min(maximum, Math.max(minimum, value))
+    : fallback;
+}
+
+export function normalizePlayerSettings(
+  stored: Partial<PlayerSettings> | undefined,
+  supportedLocales: string[] = ["ko"],
+  defaultLocale = "ko",
+): PlayerSettings {
+  const locale = stored?.locale && supportedLocales.includes(stored.locale) ? stored.locale : defaultLocale;
+  return {
+    ...DEFAULT_PLAYER_SETTINGS,
+    ...stored,
+    textSpeed: clamp(stored?.textSpeed, 8, 55, DEFAULT_PLAYER_SETTINGS.textSpeed),
+    autoDelay: clamp(stored?.autoDelay, 600, 3500, DEFAULT_PLAYER_SETTINGS.autoDelay),
+    characterX: clamp(stored?.characterX, -24, 24, DEFAULT_PLAYER_SETTINGS.characterX),
+    characterY: clamp(stored?.characterY, -8, 24, DEFAULT_PLAYER_SETTINGS.characterY),
+    characterScale: clamp(stored?.characterScale, 75, 135, DEFAULT_PLAYER_SETTINGS.characterScale),
+    debugMode: stored?.debugMode === true,
+    reducedMotion: stored?.reducedMotion === true,
+    locale,
+  };
+}
 
 function readJson<T>(key: string): T | undefined {
   try {
@@ -69,8 +103,7 @@ function writeJson(key: string, value: unknown): void {
 
 export function readSettings(supportedLocales: string[] = ["ko"], defaultLocale = "ko"): PlayerSettings {
   const stored = readJson<Partial<PlayerSettings>>(SETTINGS_KEY);
-  const locale = stored?.locale && supportedLocales.includes(stored.locale) ? stored.locale : defaultLocale;
-  return { ...DEFAULT_PLAYER_SETTINGS, ...stored, locale };
+  return normalizePlayerSettings(stored, supportedLocales, defaultLocale);
 }
 
 export function writeSettings(settings: PlayerSettings): void {
@@ -150,12 +183,24 @@ export function writeSlot(index: number, slot: SaveSlot): void {
 }
 
 export function readProfile(): PlayerProfile {
-  return {
+  return normalizePlayerProfile(readJson<Partial<PlayerProfile>>(PROFILE_KEY));
+}
+
+export function normalizePlayerProfile(stored: Partial<PlayerProfile> | undefined): PlayerProfile {
+  const profile: PlayerProfile = {
     clearedRoutes: [],
     unlockedModes: ["base"],
     memories: [],
-    ...readJson<Partial<PlayerProfile>>(PROFILE_KEY),
+    ...stored,
   };
+  profile.clearedRoutes = Array.from(new Set(profile.clearedRoutes));
+  profile.memories = Array.from(new Set(profile.memories));
+  profile.unlockedModes = Array.from(new Set([
+    "base",
+    ...profile.unlockedModes,
+    ...(profile.clearedRoutes.length > 0 ? ["truth_view", "survivor_view"] : []),
+  ]));
+  return profile;
 }
 
 export function writeProfileFromSession(session: PlayerSession): void {

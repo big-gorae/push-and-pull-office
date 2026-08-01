@@ -39,15 +39,28 @@ nodes:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
       line: "안녕하세요."
-      protagonist_interpretation: 밀어낸 시간이 길어지자 먼저 관계를 회복하려 한다.
     reality:
       atmosphere: guarded_office
       expression: actual_tense
       line: "안녕하세요."
-      inner_thought: 혼자 있지 말고 커피만 받아서 바로 나가자.
+      intent: self_protection
+    next: guarded_smile_inner
+
+  - id: guarded_smile_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: yoon_seo_a
+    perceived:
+      atmosphere: warm_romance
+      line: (거리를 둔 시간이 길어지니 먼저 관계를 회복하려는군.)
+    reality:
+      atmosphere: guarded_office
+      line: (혼자 있지 말자. 커피만 받아서 바로 나가야 해.)
       intent: self_protection
     next: response_choice
-
   - id: relief_smile
     kind: dual_dialogue
     speaker: yoon_seo_a
@@ -55,22 +68,36 @@ nodes:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
       line: "안녕하세요."
-      protagonist_interpretation: 자신이 밀자 서아가 먼저 부드러워졌다.
     reality:
       atmosphere: cold_office
       expression: actual_relief
       line: "안녕하세요."
-      inner_thought: 며칠 조용했으니 정말 내가 오해했던 걸까.
+      intent: courtesy
+    next: relief_smile_inner
+
+  - id: relief_smile_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: yoon_seo_a
+    perceived:
+      atmosphere: warm_romance
+      line: (내가 거리를 두니 서아 씨가 먼저 부드러워졌네.)
+    reality:
+      atmosphere: cold_office
+      line: (며칠 조용했으니 정말 내가 오해했던 걸까?)
       intent: courtesy
     next: response_choice
-
   - id: response_choice
     kind: choice
-    prompt: 다시 당겨 온 서아에게 어떻게 반응할까?
+    prompt: 휴게실에서 다시 마주친 서아에게 어떻게 반응할까?
+    stimulus: 며칠간 사적인 접촉이 없던 뒤, 서아가 휴게실에서 ‘안녕하세요’라고 인사했다.
     options:
       - id: interpret_pull
-        label: 그녀의 용기에 답한다
-        interpretation: 당기기 신호를 놓치지 않고 다시 접근한다.
+        label: 퇴근 후 둘이 식사하자고 다시 제안한다
+        interpretation: 안도한 표정을 다시 말을 걸어도 된다는 신호로 오해한다.
         action: 퇴근 뒤 둘만의 식사를 다시 제안한다.
         push_pull: {action: approach, intensity: 16, base_score: 4}
         conditions: []
@@ -80,7 +107,7 @@ nodes:
           - {path: hidden.heroines.yoon_seo_a.evidence_count, op: add, value: 1}
         next: leave
       - id: keep_distance
-        label: 밀당의 여운을 남긴다
+        label: 업무 인사만 하고 사적인 말은 건네지 않는다
         interpretation: 먼저 다가오게 만들기 위해 거리를 유지한다.
         action: 업무 인사만 하고 사적 접촉을 하지 않는다.
         push_pull: {action: space, intensity: 16, base_score: 4}
@@ -89,7 +116,7 @@ nodes:
           - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -5}
         next: leave
       - id: stop_game
-        label: 밀당으로 해석하지 않는다
+        label: 평범한 인사로 받아들이고 자리를 떠난다
         interpretation: 그녀의 인사를 평범한 직장 인사로 받아들인다.
         action: 관계에 의미를 부여하지 않고 자리를 떠난다.
         push_pull: {action: literal, intensity: 12, base_score: 4}

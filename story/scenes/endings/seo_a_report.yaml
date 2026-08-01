@@ -36,42 +36,81 @@ nodes:
       atmosphere: dread
       expression: subjective_shy
       line: "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
-      protagonist_interpretation: 갑작스러운 고백에 놀라 주변의 시선을 의식하며 자신을 밀어낸다고 믿는다.
     reality:
       atmosphere: dread
       expression: actual_tense
       line: "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
-      inner_thought: 문을 더 열지 말고 지금 바로 신고해야 한다.
+      intent: self_protection
+    next: leave_request_inner
+
+  - id: leave_request_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: yoon_seo_a
+    perceived:
+      atmosphere: dread
+      line: (갑작스러운 고백이라 놀란 거겠지. 사람들 눈 때문에 마음에도 없는 말을 하는 거야.)
+    reality:
+      atmosphere: dread
+      line: (문은 더 열지 말자. 지금 바로 신고해야 해.)
       intent: self_protection
     next: police_response
-
   - id: police_response
     kind: dual_narration
     perceived:
       atmosphere: dread
       line: "경찰은 연인 사이의 오해를 풀기 위해 두 사람을 잠시 떼어 놓았다."
-      protagonist_interpretation: 기록을 보면 자신이 얼마나 진지하게 사랑했는지 모두가 알게 될 것이라 생각한다.
     reality:
       atmosphere: procedural
       line: "경찰은 두 사람을 분리하고 서아의 퇴거 요구, 현장 신고와 이전 기록을 순서대로 확인했다."
-      inner_thought: 현장 행동과 축적된 기록이 연결되면서 사건은 단순한 말다툼이 아닌 정식 신병 처리 단계로 넘어갔다.
+      intent: documentation
+    next: police_response_inner
+
+  - id: police_response_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality:
+    perceived:
+      atmosphere: dread
+      line: (기록을 보면 다들 내가 얼마나 진지하게 사랑했는지 알게 될 거야.)
+    reality:
+      atmosphere: procedural
+      line: 퇴거 요구와 현장 신고가 이전 기록과 이어지면서 정식 신병 처리 단계로 넘어갔다.
       intent: documentation
     next: mugshot
-
   - id: mugshot
     kind: dual_narration
     presentation_flags: [ui_label_reveal]
     perceived:
       atmosphere: dread
       line: "플래시 속에는 사랑을 오해받은, 단정하고 훤칠한 중년 남자가 서 있었다."
-      protagonist_interpretation: 이 사진이 언젠가 서아에게 자신의 억울함을 증명할 초상이라고 믿는다.
     reality:
       atmosphere: procedural
       line: "정식 신병 처리 뒤 촬영된 머그샷에는 166cm의 무거운 체형, 관리되지 않은 피부와 몸에 맞지 않는 정장을 입은 한도윤이 기록됐다."
-      inner_thought: 반전은 외모가 아니라 그가 한 번도 연인이 아니었던 사람을 계속 여자친구라고 불렀다는 사실이다.
+      intent: documentation
+    next: mugshot_inner
+
+  - id: mugshot_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality:
+    perceived:
+      atmosphere: dread
+      line: (이 사진이 언젠가 서아에게 내 억울함을 증명해 주겠지.)
+    reality:
+      atmosphere: procedural
+      line: 문제는 외모가 아니라 연인이 아니었던 사람을 계속 여자친구라고 부른 행동이었다.
       intent: documentation
     next: record_memory
-
   - id: record_memory
     kind: effect
     effects:
@@ -94,28 +133,54 @@ nodes:
     perceived:
       atmosphere: cold_office
       line: "며칠 뒤 회사는 소문이 커졌다는 이유로 자신을 내보냈다."
-      protagonist_interpretation: 사내연애를 지켜 주지 못한 조직의 배신이라고 기억한다.
     reality:
       atmosphere: procedural
       line: "회사는 경찰 대응 뒤 업무 배제와 내부 확인을 거쳐 뒤늦게 해고를 통보했다."
-      inner_thought: 경찰 조사가 먼저였고, 느린 회사 행정은 그 뒤에야 움직였다.
+      intent: documentation
+    next: company_epilogue_inner
+
+  - id: company_epilogue_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality:
+    perceived:
+      atmosphere: cold_office
+      line: (회사는 끝내 우리 관계를 지켜 주지 않고 나를 배신했군.)
+    reality:
+      atmosphere: procedural
+      line: 경찰 대응이 먼저였고, 회사는 그 뒤에야 업무 배제와 내부 확인을 시작했다.
       intent: documentation
     next: grooms_face_end
-
   - id: never_dated
     kind: dual_narration
     presentation_flags: [original_text_lock, ui_label_reveal]
     perceived:
       atmosphere: dread
       line: "임수연은 오래전 헤어진 첫사랑이었고, 아직도 화가 풀리지 않은 채 살아 있었다."
-      protagonist_interpretation: 두 번의 사랑이 모두 주변의 오해로 망가졌다고 믿는다.
     reality:
       atmosphere: procedural
       line: "임수연은 살아 있는 과거 피해자였다. 연애의 추억으로 보였던 장면은 거절, 신고와 접근 제한 기록으로 교체됐다."
-      inner_thought: 완전한 원문을 확인한 것은 한도윤이 아니라 플레이어뿐이다.
+      intent: documentation
+    next: never_dated_inner
+
+  - id: never_dated_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality:
+    perceived:
+      atmosphere: dread
+      line: (두 번의 사랑이 모두 주변의 오해 때문에 망가진 거야.)
+    reality:
+      atmosphere: procedural
+      line: 완전한 원문을 확인한 것은 한도윤이 아니라 플레이어뿐이었다.
       intent: documentation
     next: never_dated_end
-
   - id: grooms_face_end
     kind: exit
     transitions:

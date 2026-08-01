@@ -1,0 +1,14 @@
+schema_version: 1
+id: member.park_jae_hyun
+kind: member
+company: company.dawon_living
+display_name: 박재현
+team: team.sales_planning
+role: role.department_head
+title: 부장·팀장
+manager: null
+employment: permanent
+presentation: text_only
+route_eligible: false
+responsibilities: [sales_approval, account_escalation, project_sponsorship]
+voice: 회의 목표와 승인 범위를 짧게 확인하는 실무형 화법.

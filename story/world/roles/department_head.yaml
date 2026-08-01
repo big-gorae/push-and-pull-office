@@ -1,0 +1,10 @@
+schema_version: 1
+id: role.department_head
+kind: role
+company: company.dawon_living
+name: 팀장·부장급
+rank: 80
+people_manager: true
+can_approve: true
+can_lead_project: true
+description: 팀 인력과 예산, 주요 산출물을 승인하는 조직 책임자.

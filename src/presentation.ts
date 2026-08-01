@@ -11,6 +11,7 @@ import type {
   ViewMode,
   VisualObject,
 } from "./types";
+import { effectiveSpeaker } from "./storyLogic";
 
 export type MessageVariables = Record<string, string | number>;
 
@@ -140,13 +141,15 @@ export class VisualResolver {
   resolveStage(scene: Scene, nodeId: string, mode: ViewMode, nodeOverride?: StoryNode): ResolvedStage {
     const node = nodeOverride || scene.nodes[nodeId];
     const layer = layerFor(node, mode);
-    const positions = stagePositions(scene.cast.length);
-    const characters = scene.cast.flatMap((characterId, index) => {
+    const speaker = effectiveSpeaker(node, mode);
+    const visibleCast = speaker ? scene.cast.filter((characterId) => characterId === speaker) : [];
+    const positions = stagePositions(visibleCast.length);
+    const characters = visibleCast.flatMap((characterId, index) => {
       const visual = this.resolveCharacter(
         characterId,
-        node?.speaker === characterId ? layer?.expression : undefined,
+        speaker === characterId ? layer?.expression : undefined,
         positions[Math.min(index, positions.length - 1)],
-        node?.speaker === characterId,
+        speaker === characterId,
       );
       return visual ? [visual] : [];
     });

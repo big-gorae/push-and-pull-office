@@ -14,10 +14,10 @@ import {
   readPushPullState,
 } from "../pushPull";
 import { VisualResolver } from "../presentation";
-import { resolveDialogueNode } from "../storyLogic";
+import { effectiveSpeaker, resolveDialogueNode } from "../storyLogic";
 import type { Runtime, StoryNode, TimelineEvent, TimeSlot, ViewMode } from "../types";
 import {
-  advanceToNextMoment,
+  advanceTimeline,
   advanceSession,
   availableTimelineEvents,
   availableOptions,
@@ -30,6 +30,13 @@ import {
   startTimelineEvent,
   type PlayerSession,
 } from "./playerRuntime";
+import {
+  choiceDebugEffect,
+  dayChanged,
+  modeUnlocked,
+  speakingCharacters,
+  visibleTimelineLogs,
+} from "./playerUiPolicy";
 import {
   readAutosave,
   readProfile,
@@ -59,16 +66,6 @@ const assetModules = import.meta.glob([
 type Screen = "title" | "new-game" | "game";
 type Overlay = "backlog" | "save" | "load" | "settings" | "menu" | null;
 
-const WEEKDAY_KEYS = [
-  "weekday.wed",
-  "weekday.thu",
-  "weekday.fri",
-  "weekday.sat",
-  "weekday.sun",
-  "weekday.mon",
-  "weekday.tue",
-] as const;
-
 function assetUrl(path?: string): string | undefined {
   if (!path) return undefined;
   return assetModules[`../../${path.replace(/^\.\//, "")}`];
@@ -92,6 +89,29 @@ function eventPresentation(i18n: GameLocalizer, event: TimelineEvent, mode: View
   return {
     title: i18n.story(`events.${event.id}.presentation.${mode}.title`, source.title),
     summary: i18n.story(`events.${event.id}.presentation.${mode}.summary`, source.summary),
+  };
+}
+
+function choiceTriggerSummary(session: PlayerSession, i18n: GameLocalizer): { speaker: string; line: string } | undefined {
+  const entries = [...session.backlog].reverse();
+  const entry = entries.find((candidate) => {
+    if (candidate.kind !== "dialogue") return false;
+    const candidateNode = runtime.scenes[candidate.sceneId]?.nodes[candidate.nodeId];
+    if (!candidateNode || (candidateNode.kind !== "dual_dialogue" && candidateNode.kind !== "dual_narration")) return false;
+    const resolved = resolveDialogueNode(runtime, session.state, candidateNode, candidate.variantId);
+    const speaker = effectiveSpeaker(resolved.node, session.mode);
+    return Boolean(speaker && speaker !== "han_do_yoon");
+  })
+    || entries.find((candidate) => candidate.kind !== "choice");
+  if (!entry) return undefined;
+  const sourceNode = runtime.scenes[entry.sceneId]?.nodes[entry.nodeId];
+  if (!sourceNode || (sourceNode.kind !== "dual_dialogue" && sourceNode.kind !== "dual_narration")) return undefined;
+  const resolved = resolveDialogueNode(runtime, session.state, sourceNode, entry.variantId);
+  const sourceLayer = resolved.node[session.mode];
+  if (!sourceLayer?.line) return undefined;
+  return {
+    speaker: i18n.characterName(effectiveSpeaker(resolved.node, session.mode)),
+    line: i18n.story(dialogueKey(entry.sceneId, entry.nodeId, resolved.variantId, session.mode, "line"), sourceLayer.line),
   };
 }
 
@@ -229,20 +249,20 @@ function TitleScreen({
 
 function NewGameScreen({
   onStart,
+  onAnother,
   onBack,
   i18n,
 }: {
   onStart: (mode: ViewMode) => void;
+  onAnother: () => void;
   onBack: () => void;
   i18n: GameLocalizer;
 }) {
   const profile = readProfile();
-  const truthUnlocked = profile.unlockedModes.includes("truth_view");
+  const truthUnlocked = modeUnlocked(profile, "truth_view");
+  const anotherUnlocked = modeUnlocked(profile, "survivor_view");
   return <main className="vn-route-screen">
-    <header>
-      <button type="button" onClick={onBack}>{i18n.ui("newGame.back")}</button>
-      <div><span>{i18n.ui("newGame.label")}</span><h1>{i18n.ui("newGame.heading")}</h1><p>{i18n.ui("newGame.copy")}</p></div>
-    </header>
+    <button type="button" className="vn-route-back" onClick={onBack}>{i18n.ui("newGame.back")}</button>
     <div className="vn-mode-grid">
       <button type="button" className="vn-mode-card story" onClick={() => onStart("perceived")}>
         <i>♥</i><span>{i18n.ui("mode.story.label")}</span><h2>{i18n.ui("mode.story.title")}</h2><strong>{i18n.ui("mode.story.strong")}</strong>
@@ -253,152 +273,119 @@ function NewGameScreen({
         <p>{i18n.ui(truthUnlocked ? "mode.truth.copyUnlocked" : "mode.truth.copyLocked")}</p>
         <em>{truthUnlocked ? i18n.ui("mode.truth.action") : i18n.ui("mode.locked")}</em>
       </button>
-      <section className="vn-mode-card survivor locked" aria-disabled="true">
-        <i>♡</i><span>{i18n.ui("mode.survivor.label")}</span><h2>{i18n.ui("mode.survivor.title")}</h2><strong>{i18n.ui("mode.survivor.strong")}</strong>
-        <p>{i18n.ui("mode.survivor.copy")}</p><em>{i18n.ui("mode.coming")}</em>
-      </section>
+      <button type="button" className={`vn-mode-card survivor ${anotherUnlocked ? "" : "locked"}`} disabled={!anotherUnlocked} onClick={onAnother}>
+        <i>♡</i><span>{i18n.ui("mode.survivor.label")}</span><h2>{i18n.ui("mode.survivor.title")}</h2><strong>{i18n.ui(anotherUnlocked ? "mode.survivor.unlocked" : "mode.survivor.strong")}</strong>
+        <p>{i18n.ui("mode.survivor.copy")}</p><em>{i18n.ui(anotherUnlocked ? "mode.survivor.action" : "mode.locked")}</em>
+      </button>
     </div>
   </main>;
 }
 
-function deadlineLabel(i18n: GameLocalizer, event: TimelineEvent, day: number): string {
-  const remaining = event.window.deadline_day - day;
-  if (remaining <= 0) return i18n.ui("deadline.today");
-  if (remaining === 1) return i18n.ui("deadline.tomorrow");
-  return i18n.ui("deadline.days", { count: remaining });
+function DayTransition({ from, to, i18n }: { from: number; to: number; i18n: GameLocalizer }) {
+  return <main className="vn-day-transition" role="status" aria-live="assertive">
+    <div className="vn-day-transition-orbit" aria-hidden="true"><i /><i /><i /></div>
+    <div className="vn-day-transition-copy">
+      <span>{i18n.ui("dayChange.label")}</span>
+      <div><small>DAY {String(from).padStart(2, "0")}</small><i>→</i><strong>DAY {String(to).padStart(2, "0")}</strong></div>
+    </div>
+  </main>;
 }
 
-function heroineForEvent(event: TimelineEvent): string | undefined {
-  if (event.scene) {
-    const route = runtime.routes[runtime.scenes[event.scene]?.route];
-    if (route?.heroine) return route.heroine;
-  }
-  return (event.participants || []).find((id) => Boolean(runtime.initial_state.visible.heroines[id]));
-}
-
-function TimelineHud({
+function FlowScreen({
   session,
-  onMode,
-  onMenu,
-  i18n,
-}: {
-  session: PlayerSession;
-  onMode: () => void;
-  onMenu: () => void;
-  i18n: GameLocalizer;
-}) {
-  const rhythm = readPushPullState(session.state);
-  const targetFromStory = session.state.progress.flags.story_mode;
-  const targetId = targetFromStory && typeof targetFromStory === "object" && !Array.isArray(targetFromStory)
-    ? String((targetFromStory as Record<string, unknown>).target || "")
-    : "";
-  const heroineId = rhythm.heroine || (targetId !== "none" ? targetId : "");
-  const initiative = session.state.visible.heroines[heroineId]?.initiative ?? 0;
-  const reality = session.mode === "reality";
-  return <header className="vn-timeline-hud">
-    <div><span>{i18n.ui(reality ? "hud.original" : "hud.story")}</span><strong>{i18n.ui("app.shortTitle")}</strong></div>
-    {heroineId && <div className="vn-timeline-score"><span>{i18n.ui(reality ? "hud.control" : "hud.initiative")}</span><strong>{initiative}</strong><i><b style={{ width: `${initiative}%` }} /></i></div>}
-    {rhythm.combo > 0 && <div className="vn-timeline-combo"><span>{i18n.ui(reality ? "hud.controlCombo" : "hud.combo")}</span><strong>×{rhythm.combo}</strong></div>}
-    <button type="button" className="vn-mode-button" onClick={onMode}><span>{i18n.ui(reality ? "hud.original" : "hud.story")}</span><small>{i18n.ui(reality ? "hud.reality" : "hud.subjective")}</small></button>
-    <button type="button" className="vn-menu-button" onClick={onMenu} aria-label={i18n.ui("hud.gameMenu")}>☰</button>
-  </header>;
-}
-
-function TimelineScreen({
-  session,
+  acknowledgedLogs,
+  debugMode,
+  onAcknowledge,
   onSelect,
   onAdvance,
+  onStepBack,
+  canStepBack,
   onMode,
   onMenu,
   i18n,
 }: {
   session: PlayerSession;
+  acknowledgedLogs: ReadonlySet<string>;
+  debugMode: boolean;
+  onAcknowledge: (logId: string) => void;
   onSelect: (eventId: string) => void;
   onAdvance: () => void;
+  onStepBack: () => void;
+  canStepBack: boolean;
   onMode: () => void;
   onMenu: () => void;
   i18n: GameLocalizer;
 }) {
-  const campaign = runtime.campaigns[session.campaignId] || Object.values(runtime.campaigns)[0];
   const { day, slot } = session.state.progress.time;
-  const act = campaign?.acts.find((candidate) => day >= candidate.days[0] && day <= candidate.days[1]);
   const events = availableTimelineEvents(runtime, session);
-  const rhythm = readPushPullState(session.state);
-  const logs = session.timelineLog
+  const relevantLogs = session.timelineLog
     .filter((entry) => entry.day === day && entry.slot === slot)
-    .filter((entry) => session.mode === "reality" || entry.availability !== "hidden")
-    .map((entry) => ({ entry, event: runtime.events[entry.eventId] }))
-    .filter((item) => Boolean(item.event));
-  const weekday = i18n.ui(WEEKDAY_KEYS[(day - 1) % WEEKDAY_KEYS.length]);
-  const timelineBackground = assetUrl(slot === "morning"
+    .filter((entry) => Boolean(runtime.events[entry.eventId]))
+    .map((entry) => ({ ...entry, eventHasScene: Boolean(runtime.events[entry.eventId]?.scene) }));
+  const pendingLog = visibleTimelineLogs(relevantLogs, acknowledgedLogs, session.mode === "reality")[0];
+  const pendingEvent = pendingLog ? runtime.events[pendingLog.eventId] : undefined;
+  const background = assetUrl(slot === "morning"
     ? "assets/backgrounds/office-pantry-morning.png"
     : slot === "lunch"
       ? "assets/backgrounds/glass-meeting-room-afternoon.png"
       : "assets/backgrounds/open-office-late-afternoon.png");
-  return <main className={`vn-timeline ${session.mode}`} style={{ "--timeline-bg": `url("${timelineBackground}")` } as CSSProperties}>
-    <TimelineHud session={session} onMode={onMode} onMenu={onMenu} i18n={i18n} />
-    <div className="vn-timeline-shade" />
-    <section className="vn-calendar-panel">
-      <div className="vn-date-block"><span>DAY</span><strong>{String(day).padStart(2, "0")}</strong><div><b>{weekday}</b><small>{slotLabel(i18n, slot)}</small></div></div>
-      <div className="vn-act-copy"><span>ACT {act?.number || 1} · {act ? i18n.story(`campaign.${campaign.id}.acts.${act.id}.title`, act.title) : ""}</span><h1>{campaign ? i18n.story(`campaign.${campaign.id}.title`, campaign.title) : ""}</h1><p>{act ? i18n.story(`campaign.${campaign.id}.acts.${act.id}.purpose`, act.purpose) : ""}</p></div>
-      <div className="vn-day-track" aria-label={i18n.ui("timeline.dayProgress", { day })}>
-        {Array.from({ length: campaign?.total_days || 17 }, (_, index) => <i className={index + 1 < day ? "past" : index + 1 === day ? "current" : ""} key={index} />)}
-      </div>
-    </section>
 
-    <section className="vn-time-events" aria-live="polite">
-      <header><span>{i18n.ui(session.mode === "reality" ? "timeline.actual" : "timeline.todayScenes")}</span><strong>{slotLabel(i18n, slot)}</strong></header>
-      <div className="vn-event-log">
-        {logs.map(({ entry, event }) => {
-          const presentation = eventPresentation(i18n, event, session.mode);
-          return <article className={`${entry.status} ${event.availability}`} key={entry.id}>
-            <span>{i18n.ui(entry.status === "missed" ? "timeline.pastChance" : event.availability === "hidden" ? "timeline.hiddenNow" : "timeline.record")}</span>
-            <h2>{presentation.title}</h2><p>{presentation.summary}</p>
-          </article>;
-        })}
-        {!logs.length && <article className="quiet"><span>{i18n.ui("timeline.quiet")}</span><h2>{i18n.ui("timeline.quietTitle")}</h2><p>{i18n.ui(session.mode === "reality" ? "timeline.quietReality" : "timeline.quietStory")}</p></article>}
-      </div>
-    </section>
+  return <main className={`vn-game vn-flow-game ${session.mode}`}>
+    <div className="vn-stage">
+      {background && <img className="vn-stage-bg" src={background} alt="" />}
+      <div className="vn-stage-light" />
+      <div className="vn-flow-shade" />
+    </div>
+    <header className="vn-flow-hud">
+      <div><span>DAY {String(day).padStart(2, "0")}</span><strong>{slotLabel(i18n, slot)}</strong></div>
+      {debugMode && <button type="button" className="vn-debug-previous" disabled={!canStepBack} onClick={onStepBack}>{i18n.ui("debug.previous")}</button>}
+      <button type="button" className="vn-mode-button" onClick={onMode}><span>{i18n.ui(session.mode === "reality" ? "hud.original" : "hud.story")}</span><small>{i18n.ui(session.mode === "reality" ? "hud.reality" : "hud.subjective")}</small></button>
+      <button type="button" className="vn-menu-button" onClick={onMenu} aria-label={i18n.ui("hud.gameMenu")}>☰</button>
+    </header>
 
-    <section className="vn-event-choices">
-      <div className="vn-event-heading"><div><span>{i18n.ui("timeline.available")}</span><h2>{i18n.ui(events.length ? "timeline.choose" : "timeline.schedule")}</h2></div><small>{i18n.ui(events.length ? "timeline.chooseHelp" : "timeline.scheduleHelp")}</small></div>
-      <div className="vn-event-card-grid">
+    {pendingEvent && pendingLog && <section className="vn-flow-dialogue">
+      <p>{eventPresentation(i18n, pendingEvent, session.mode).summary}</p>
+      <button type="button" onClick={() => onAcknowledge(pendingLog.id)}>{i18n.ui("flow.continue")}</button>
+      {debugMode && <small>DEBUG · {pendingEvent.id} · {pendingLog.status}</small>}
+    </section>}
+
+    {!pendingEvent && events.length > 0 && <section className="vn-flow-choices" aria-label={i18n.ui("flow.choicePrompt")}>
+      <div className="vn-choice-context"><span>{i18n.ui("flow.choiceContext")}</span><strong>{i18n.ui("flow.choicePrompt")}</strong></div>
+      <div className="vn-flow-option-list">
         {events.map((event, index) => {
           const presentation = eventPresentation(i18n, event, session.mode);
-          const heroineId = heroineForEvent(event);
-          const willBreak = rhythm.combo > 0 && rhythm.heroine && heroineId && rhythm.heroine !== heroineId;
-          return <button type="button" className={`vn-event-card ${willBreak ? "will-break" : ""}`} onClick={() => onSelect(event.id)} key={event.id}>
-            <span>0{index + 1}</span><div><small>{deadlineLabel(i18n, event, day)}</small><strong>{presentation.title}</strong><p>{presentation.summary}</p></div><i>♥</i>
+          return <button type="button" onClick={() => onSelect(event.id)} key={event.id}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <div><strong>{presentation.title}</strong><small>{presentation.summary}</small></div>
+            {debugMode && <em>DEBUG · {event.id}</em>}
           </button>;
         })}
-        <button type="button" className="vn-pass-time" onClick={onAdvance}><span>{i18n.ui("timeline.time")}</span><div><strong>{i18n.ui(events.length ? "timeline.pass" : "timeline.next")}</strong><small>{slot === "after_work" ? i18n.ui("timeline.finishDay") : i18n.ui("timeline.moveNext", { slot: slotLabel(i18n, campaign?.slots[(campaign?.slots.indexOf(slot) ?? 0) + 1] || "morning") })}</small></div><i>→</i></button>
+        <button type="button" className="pass" onClick={onAdvance}>
+          <span>{String(events.length + 1).padStart(2, "0")}</span>
+          <div><strong>{i18n.ui("flow.passAction")}</strong><small>{i18n.ui("flow.passCopy")}</small></div>
+        </button>
       </div>
-      {rhythm.combo > 0 && events.some((event) => {
-        const heroineId = heroineForEvent(event);
-        return Boolean(rhythm.heroine && heroineId && rhythm.heroine !== heroineId);
-      }) && <p className="vn-combo-preview">{i18n.ui("timeline.comboPreview", { combo: rhythm.combo })}</p>}
-    </section>
+    </section>}
   </main>;
 }
 
-function RhythmGauge({ session, i18n }: { session: PlayerSession; i18n: GameLocalizer }) {
+function RhythmGauge({ session, debugMode, i18n }: { session: PlayerSession; debugMode: boolean; i18n: GameLocalizer }) {
   const value = readPushPullState(session.state);
   const marker = (value.position + 100) / 2;
   const target = value.target === "pull" ? 34 : value.target === "push" ? 66 : 50;
-  const reality = session.mode === "reality";
-  return <div className="vn-rhythm" aria-label={pushPullPositionLabel(value.position, session.mode)}>
-    <div className="vn-rhythm-labels"><span>{i18n.ui(reality ? "rhythm.approach" : "rhythm.pull")}</span><b>{pushPullPositionLabel(value.position, session.mode)}</b><span>{i18n.ui(reality ? "rhythm.space" : "rhythm.push")}</span></div>
+  return <div className="vn-rhythm" aria-label={debugMode ? pushPullPositionLabel(value.position, session.mode) : i18n.ui("rhythm.status")}>
+    <div className="vn-rhythm-labels"><span>{i18n.ui("rhythm.approach")}</span><span>{i18n.ui("rhythm.space")}</span></div>
     <div className="vn-rhythm-track">
       <i className="optimal" />
       <i className="checkpoint left" /><i className="checkpoint right" />
-      <i className="target" style={{ left: `${target}%`, opacity: value.target === "none" ? 0 : 1 }} />
+      <i className="target" style={{ left: `${target}%`, opacity: debugMode && value.target !== "none" ? 1 : 0 }} />
       <b style={{ left: `${marker}%` }} />
     </div>
-    <small>{i18n.ui("rhythm.next", { target: pushPullTargetLabel(value.target, session.mode) })}</small>
+    {debugMode && <small>DEBUG · {i18n.ui("rhythm.next", { target: pushPullTargetLabel(value.target, session.mode) })}</small>}
   </div>;
 }
 
-function GameHud({ session, onMode, onMenu, i18n }: { session: PlayerSession; onMode: () => void; onMenu: () => void; i18n: GameLocalizer }) {
+function GameHud({ session, debugMode, onMode, onMenu, i18n }: { session: PlayerSession; debugMode: boolean; onMode: () => void; onMenu: () => void; i18n: GameLocalizer }) {
   const scene = runtime.scenes[session.sceneId];
   const route = runtime.routes[session.routeId];
   const heroine = session.state.visible.heroines[route?.heroine];
@@ -411,25 +398,29 @@ function GameHud({ session, onMode, onMenu, i18n }: { session: PlayerSession; on
       <strong>{slotLabel(i18n, session.state.progress.time.slot)}</strong>
       <small>{scene ? sceneTitle(i18n, scene.id) : ""}</small>
     </div>
-    {!isCommonScene && <div className="vn-stats">
+    {debugMode && !isCommonScene && <div className="vn-stats">
       <div><span>{i18n.ui(reality ? "hud.control" : "hud.initiative")}</span><strong>{heroine?.initiative ?? 0}</strong><small>/ 100</small><i className="vn-initiative-line"><b style={{ width: `${heroine?.initiative ?? 0}%` }} /></i></div>
       {rhythm.combo > 0 && <div className={rhythm.combo >= 3 ? "hot" : ""}><span>{i18n.ui(reality ? "hud.controlCombo" : "hud.combo")}</span><strong>×{rhythm.combo}</strong></div>}
     </div>}
     <button type="button" className="vn-mode-button" onClick={onMode}><span>{i18n.ui(reality ? "hud.original" : "hud.story")}</span><small>{i18n.ui(reality ? "hud.reality" : "hud.subjective")}</small></button>
     <button type="button" className="vn-menu-button" onClick={onMenu} aria-label={i18n.ui("hud.gameMenu")}>☰</button>
-    {!isCommonScene && <RhythmGauge session={session} i18n={i18n} />}
+    {debugMode && <div className="vn-debug-badge">DEBUG</div>}
   </header>;
 }
 
-function Stage({ session, node, i18n }: { session: PlayerSession; node?: StoryNode; i18n: GameLocalizer }) {
+function Stage({ session, node, settings, i18n }: { session: PlayerSession; node?: StoryNode; settings: PlayerSettings; i18n: GameLocalizer }) {
   const resolver = useMemo(() => new VisualResolver(runtime), []);
   const stage = resolver.resolveStage(runtime.scenes[session.sceneId], session.nodeId, session.mode, node);
   const background = assetUrl(stage.background?.asset);
-  const visibleCharacters = stage.characters.filter((character) => character.character !== "han_do_yoon");
+  const visibleCharacters = speakingCharacters(stage.characters);
   return <div className="vn-stage">
     {background && <img className="vn-stage-bg" src={background} alt="" />}
     <div className="vn-stage-light" />
-    <div className="vn-cast">
+    <div className="vn-cast" style={{
+      left: `${settings.characterX}vw`,
+      bottom: `${14 - settings.characterY}vh`,
+      "--vn-character-scale": settings.characterScale / 100,
+    } as CSSProperties}>
       {visibleCharacters.map((character, index) => <figure
         className={`vn-character ${character.position} ${character.speaker ? "speaking" : ""}`}
         key={`${character.character}:${character.expression || "default"}`}
@@ -440,6 +431,27 @@ function Stage({ session, node, i18n }: { session: PlayerSession; node?: StoryNo
     </div>
     {node?.kind === "choice" && <div className="vn-choice-vignette" />}
   </div>;
+}
+
+function DebugPanel({
+  settings,
+  canStepBack,
+  onSettings,
+  onStepBack,
+  i18n,
+}: {
+  settings: PlayerSettings;
+  canStepBack: boolean;
+  onSettings: (settings: PlayerSettings) => void;
+  onStepBack: () => void;
+  i18n: GameLocalizer;
+}) {
+  return <aside className="vn-debug-panel" aria-label={i18n.ui("debug.panel")}>
+    <header><span>DEBUG MODE</span><button type="button" disabled={!canStepBack} onClick={onStepBack}>{i18n.ui("debug.previous")}</button></header>
+    <label><span>{i18n.ui("debug.positionX")}</span><input type="range" min="-24" max="24" value={settings.characterX} onChange={(event) => onSettings({ ...settings, characterX: Number(event.target.value) })} /><output>{settings.characterX}</output></label>
+    <label><span>{i18n.ui("debug.positionY")}</span><input type="range" min="-8" max="24" value={settings.characterY} onChange={(event) => onSettings({ ...settings, characterY: Number(event.target.value) })} /><output>{settings.characterY}</output></label>
+    <label><span>{i18n.ui("debug.scale")}</span><input type="range" min="75" max="135" value={settings.characterScale} onChange={(event) => onSettings({ ...settings, characterScale: Number(event.target.value) })} /><output>{settings.characterScale}%</output></label>
+  </aside>;
 }
 
 function SaveGrid({
@@ -488,6 +500,7 @@ function SettingsPanel({ value, onChange, i18n }: { value: PlayerSettings; onCha
     <label><span><strong>{i18n.ui("settings.textSpeed")}</strong><small>{i18n.ui("settings.textSpeedHint")}</small></span><input type="range" min="8" max="55" value={value.textSpeed} onChange={(event) => onChange({ ...value, textSpeed: Number(event.target.value) })} /><output>{value.textSpeed}</output></label>
     <label><span><strong>{i18n.ui("settings.autoDelay")}</strong><small>{i18n.ui("settings.autoDelayHint")}</small></span><input type="range" min="600" max="3500" step="100" value={value.autoDelay} onChange={(event) => onChange({ ...value, autoDelay: Number(event.target.value) })} /><output>{(value.autoDelay / 1000).toFixed(1)}s</output></label>
     <label className="vn-switch"><span><strong>{i18n.ui("settings.reducedMotion")}</strong><small>{i18n.ui("settings.reducedMotionHint")}</small></span><input type="checkbox" checked={value.reducedMotion} onChange={(event) => onChange({ ...value, reducedMotion: event.target.checked })} /><i /></label>
+    <label className="vn-switch"><span><strong>{i18n.ui("settings.debugMode")}</strong><small>{i18n.ui("settings.debugModeHint")}</small></span><input type="checkbox" checked={value.debugMode} onChange={(event) => onChange({ ...value, debugMode: event.target.checked })} /><i /></label>
     <button type="button" className="vn-fullscreen" onClick={() => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()}>{i18n.ui("settings.fullscreen")}</button>
   </div>;
 }
@@ -506,6 +519,9 @@ export default function WebGame() {
   const [visibleCharacters, setVisibleCharacters] = useState(0);
   const [feedbackVisible, setFeedbackVisible] = useState(false);
   const [toast, setToast] = useState("");
+  const [debugHistory, setDebugHistory] = useState<PlayerSession[]>([]);
+  const [acknowledgedLogs, setAcknowledgedLogs] = useState<Set<string>>(() => new Set());
+  const [dayTransition, setDayTransition] = useState<{ from: number; to: number; next: PlayerSession }>();
   const toastTimer = useRef<number | undefined>(undefined);
   const i18n = useMemo(() => new GameLocalizer(runtime, settings.locale), [settings.locale]);
   const rawNode = session ? currentNode(runtime, session) : undefined;
@@ -533,6 +549,9 @@ export default function WebGame() {
   const loadSession = useCallback((value: PlayerSession) => {
     const ready = value.phase === "timeline" ? prepareTimeSlot(runtime, value) : value;
     setSession(ready);
+    setDebugHistory([]);
+    setAcknowledgedLogs(new Set(ready.timelineLog.map((entry) => entry.id)));
+    setDayTransition(undefined);
     setScreen("game");
     setOverlay(null);
     setAuto(false);
@@ -551,10 +570,38 @@ export default function WebGame() {
     saveAutosave(next);
   };
 
-  const updateSession = useCallback((next: PlayerSession) => {
+  const updateSession = useCallback((next: PlayerSession, remember = false) => {
+    if (remember && session) {
+      setDebugHistory((history) => [...history.slice(-99), structuredClone(session)]);
+    }
     setSession(next);
     saveAutosave(next);
-  }, [saveAutosave]);
+  }, [saveAutosave, session]);
+
+  const moveSession = useCallback((next: PlayerSession, remember = false) => {
+    if (session && next.phase !== "complete" && dayChanged(session.state.progress.time.day, next.state.progress.time.day)) {
+      if (remember) setDebugHistory((history) => [...history.slice(-99), structuredClone(session)]);
+      setDayTransition({
+        from: session.state.progress.time.day,
+        to: next.state.progress.time.day,
+        next,
+      });
+      return;
+    }
+    updateSession(next, remember);
+  }, [session, updateSession]);
+
+  const stepBack = useCallback(() => {
+    const previous = debugHistory.at(-1);
+    if (!settings.debugMode || !previous) return;
+    setDebugHistory((history) => history.slice(0, -1));
+    setDayTransition(undefined);
+    setSession(previous);
+    saveAutosave(previous);
+    setAuto(false);
+    setSkip(false);
+    setFeedbackVisible(false);
+  }, [debugHistory, saveAutosave, settings.debugMode]);
 
   const changeMode = useCallback(() => {
     if (!session) return;
@@ -573,25 +620,25 @@ export default function WebGame() {
       setRevealed(true);
       return;
     }
-    updateSession(advanceSession(runtime, session));
+    updateSession(advanceSession(runtime, session), true);
   }, [fullText.length, node?.kind, overlay, revealed, session, uiHidden, updateSession]);
 
   const choose = useCallback((optionId: string) => {
     if (!session || session.phase !== "scene") return;
     const next = selectOption(runtime, session, optionId);
     setFeedbackVisible(false);
-    updateSession(next);
+    updateSession(next, true);
     window.setTimeout(() => setFeedbackVisible(true), settings.reducedMotion ? 0 : 650);
   }, [session, settings.reducedMotion, updateSession]);
 
   const chooseTimelineEvent = (eventId: string) => {
     if (!session) return;
-    updateSession(startTimelineEvent(runtime, session, eventId));
+    updateSession(startTimelineEvent(runtime, session, eventId), true);
   };
 
-  const moveToNextMoment = () => {
+  const moveToNextMoment = (remember = true) => {
     if (!session) return;
-    updateSession(advanceToNextMoment(runtime, session));
+    moveSession(advanceTimeline(runtime, session), remember);
   };
 
   useEffect(() => {
@@ -630,7 +677,7 @@ export default function WebGame() {
         setVisibleCharacters(fullText.length);
         setRevealed(true);
       } else {
-        updateSession(advanceSession(runtime, session));
+        updateSession(advanceSession(runtime, session), true);
       }
     }, delay);
     return () => window.clearTimeout(timer);
@@ -641,6 +688,32 @@ export default function WebGame() {
   }, [session?.nodeId, session?.phase, skip]);
 
   useEffect(() => {
+    if (!dayTransition) return;
+    const delay = settings.reducedMotion ? 220 : 1250;
+    const timer = window.setTimeout(() => {
+      setSession(dayTransition.next);
+      saveAutosave(dayTransition.next);
+      setDayTransition(undefined);
+    }, delay);
+    return () => window.clearTimeout(timer);
+  }, [dayTransition, saveAutosave, settings.reducedMotion]);
+
+  useEffect(() => {
+    if (!session || session.phase !== "timeline" || dayTransition || overlay) return;
+    const { day, slot } = session.state.progress.time;
+    const logs = session.timelineLog
+      .filter((entry) => entry.day === day && entry.slot === slot)
+      .filter((entry) => Boolean(runtime.events[entry.eventId]))
+      .map((entry) => ({ ...entry, eventHasScene: Boolean(runtime.events[entry.eventId]?.scene) }));
+    const pending = visibleTimelineLogs(logs, acknowledgedLogs, session.mode === "reality");
+    if (pending.length || availableTimelineEvents(runtime, session).length) return;
+    const timer = window.setTimeout(() => {
+      moveSession(advanceTimeline(runtime, session));
+    }, settings.reducedMotion ? 0 : 90);
+    return () => window.clearTimeout(timer);
+  }, [acknowledgedLogs, dayTransition, moveSession, overlay, session, settings.reducedMotion]);
+
+  useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         if (overlay) setOverlay(null);
@@ -648,6 +721,11 @@ export default function WebGame() {
         return;
       }
       if (screen !== "game" || overlay || !session) return;
+      if (settings.debugMode && event.key === "ArrowLeft") {
+        event.preventDefault();
+        stepBack();
+        return;
+      }
       if (session.phase === "scene" && node?.kind === "choice" && /^[1-9]$/.test(event.key)) {
         const option = availableOptions(runtime, session)[Number(event.key) - 1];
         if (option) choose(option.id);
@@ -664,7 +742,7 @@ export default function WebGame() {
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [advance, choose, node?.kind, overlay, screen, session]);
+  }, [advance, choose, node?.kind, overlay, screen, session, settings.debugMode, stepBack]);
 
   useEffect(() => {
     writeSettings(settings);
@@ -681,22 +759,14 @@ export default function WebGame() {
         const sourceText = entry.kind === "choice" && entry.optionId
           ? sourceNode?.options?.find((option) => option.id === entry.optionId)?.label || entry.optionId
           : resolvedLayer?.line || entry.nodeId;
-        const sourceInterpretation = session.mode === "reality"
-          ? resolvedLayer?.inner_thought
-          : resolvedLayer?.protagonist_interpretation;
         const text = entry.kind === "choice" && entry.optionId
           ? i18n.story(`scenes.${entry.sceneId}.nodes.${entry.nodeId}.options.${entry.optionId}.label`, sourceText)
           : i18n.story(dialogueKey(entry.sceneId, entry.nodeId, resolved?.variantId || entry.variantId, session.mode, "line"), sourceText);
-        const interpretation = sourceInterpretation
-          ? i18n.story(
-            dialogueKey(entry.sceneId, entry.nodeId, resolved?.variantId || entry.variantId, session.mode, session.mode === "reality" ? "inner_thought" : "protagonist_interpretation"),
-            sourceInterpretation,
-          )
-          : undefined;
-        const speakerName = entry.speakerId
-          ? i18n.characterName(entry.speakerId)
-          : entry.kind === "choice" ? i18n.ui("dialogue.choice") : i18n.ui("dialogue.narration");
-        return <article className={entry.kind} key={entry.id}><span>{speakerName}</span><p>{text}</p>{interpretation && <small>{interpretation}</small>}</article>;
+        const backlogSpeakerId = resolved ? effectiveSpeaker(resolved.node, session.mode) : entry.speakerId;
+        const speakerName = backlogSpeakerId
+          ? i18n.characterName(backlogSpeakerId)
+          : entry.kind === "choice" ? i18n.ui("dialogue.choice") : "";
+        return <article className={entry.kind} key={entry.id}>{speakerName && <span>{speakerName}</span>}<p>{text}</p></article>;
       })}
         {!session.backlog.length && <p className="vn-empty">{i18n.ui("backlog.empty")}</p>}</div>
     </Modal>}
@@ -723,15 +793,33 @@ export default function WebGame() {
     </div>;
   }
 
-  if (screen === "new-game") return <NewGameScreen onStart={startCampaign} onBack={() => setScreen("title")} i18n={i18n} />;
+  if (screen === "new-game") return <div className={settings.reducedMotion ? "vn-reduced-motion" : ""}>
+    <NewGameScreen onStart={startCampaign} onAnother={() => notify(i18n.ui("mode.survivor.notice"))} onBack={() => setScreen("title")} i18n={i18n} />
+    {toast && <div className="vn-toast">{toast}</div>}
+  </div>;
   if (!session) return <TitleScreen autosave={autosave} onContinue={() => autosave && loadSession(autosave.session)} onNewGame={() => setScreen("new-game")} onLoad={() => setOverlay("load")} onSettings={() => setOverlay("settings")} i18n={i18n} onLocale={(locale) => setSettings((value) => ({ ...value, locale }))} />;
+
+  if (dayTransition) {
+    return <div className={settings.reducedMotion ? "vn-reduced-motion" : ""}>
+      <DayTransition from={dayTransition.from} to={dayTransition.to} i18n={i18n} />
+    </div>;
+  }
 
   if (session.phase === "timeline") {
     return <div className={settings.reducedMotion ? "vn-reduced-motion" : ""}>
-      <TimelineScreen session={session} onSelect={chooseTimelineEvent} onAdvance={moveToNextMoment} onMode={changeMode} onMenu={() => setOverlay("menu")} i18n={i18n} />
-      <nav className="vn-timeline-quick" aria-label={i18n.ui("menu.game")}>
-        <button type="button" onClick={() => setOverlay("backlog")}>{i18n.ui("menu.backlog")}</button><button type="button" onClick={() => setOverlay("save")}>{i18n.ui("menu.save")}</button><button type="button" onClick={() => setOverlay("load")}>{i18n.ui("menu.load")}</button><button type="button" onClick={() => setOverlay("settings")}>{i18n.ui("menu.settings")}</button>
-      </nav>
+      <FlowScreen
+        session={session}
+        acknowledgedLogs={acknowledgedLogs}
+        debugMode={settings.debugMode}
+        onAcknowledge={(logId) => setAcknowledgedLogs((logs) => new Set([...logs, logId]))}
+        onSelect={chooseTimelineEvent}
+        onAdvance={() => moveToNextMoment(true)}
+        onStepBack={stepBack}
+        canStepBack={debugHistory.length > 0}
+        onMode={changeMode}
+        onMenu={() => setOverlay("menu")}
+        i18n={i18n}
+      />
       {toast && <div className="vn-toast">{toast}</div>}
       {overlays}
     </div>;
@@ -754,20 +842,18 @@ export default function WebGame() {
     return <div className="vn-runtime-error"><h1>{i18n.ui("error.heading")}</h1><button type="button" onClick={() => updateSession(recovered)}>{i18n.ui("error.recover")}</button></div>;
   }
 
-  const speaker = i18n.characterName(node.speaker);
-  const interpretationSource = session.mode === "perceived" ? layer?.protagonist_interpretation : layer?.inner_thought;
-  const interpretation = interpretationSource
-    ? i18n.story(
-      dialogueKey(session.sceneId, node.id, resolvedDialogue?.variantId, session.mode, session.mode === "perceived" ? "protagonist_interpretation" : "inner_thought"),
-      interpretationSource,
-    )
-    : undefined;
+  const speaker = i18n.characterName(effectiveSpeaker(node, session.mode));
   const displayedText = revealed ? fullText : fullText.slice(0, visibleCharacters);
   const options = availableOptions(runtime, session);
   const rhythm = readPushPullState(session.state);
   const feedback = session.lastFeedback;
+  const triggerSummary = node.kind === "choice" ? choiceTriggerSummary(session, i18n) : undefined;
+  const choiceStimulus = node.kind === "choice"
+    ? i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.stimulus`, node.stimulus || triggerSummary?.line || "")
+    : "";
+  const isCommonScene = runtime.scenes[session.sceneId]?.id.startsWith("common.") ?? false;
   const clickStage = (event: MouseEvent) => {
-    if ((event.target as HTMLElement).closest("button, input")) return;
+    if ((event.target as HTMLElement).closest("button, input, .vn-debug-panel")) return;
     advance();
   };
   const choiceKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
@@ -780,6 +866,16 @@ export default function WebGame() {
     event.preventDefault();
     buttons[next].focus();
   };
+  const quickMenu = <div className="vn-quick-menu">
+    {settings.debugMode && <button type="button" disabled={!debugHistory.length} onClick={stepBack}>{i18n.ui("debug.previous")}</button>}
+    <button type="button" onClick={() => setOverlay("backlog")}>{i18n.ui("menu.backlog")}</button>
+    <button type="button" className={auto ? "active" : ""} onClick={() => { setAuto((value) => !value); setSkip(false); }}>{i18n.ui("menu.auto")}</button>
+    <button type="button" className={skip ? "active" : ""} onClick={() => { setSkip((value) => !value); setAuto(false); }}>{i18n.ui("menu.skip")}</button>
+    <button type="button" onClick={() => setOverlay("save")}>{i18n.ui("menu.save")}</button>
+    <button type="button" onClick={() => setOverlay("load")}>{i18n.ui("menu.load")}</button>
+    <button type="button" onClick={() => setOverlay("settings")}>{i18n.ui("menu.settings")}</button>
+    <button type="button" onClick={() => setUiHidden(true)}>{i18n.ui("menu.hide")}</button>
+  </div>;
 
   return <main
     className={`vn-game ${session.mode} ${settings.reducedMotion ? "vn-reduced-motion" : ""} ${uiHidden ? "ui-hidden" : ""}`}
@@ -787,35 +883,36 @@ export default function WebGame() {
     onContextMenu={(event) => { event.preventDefault(); setUiHidden((value) => !value); }}
     onWheel={(event) => { if (event.deltaY < -20 && !overlay) setOverlay("backlog"); }}
   >
-    <Stage session={session} node={node} i18n={i18n} />
-    <GameHud session={session} onMode={changeMode} onMenu={() => setOverlay("menu")} i18n={i18n} />
+    <Stage session={session} node={node} settings={settings} i18n={i18n} />
+    <GameHud session={session} debugMode={settings.debugMode} onMode={changeMode} onMenu={() => setOverlay("menu")} i18n={i18n} />
+    {!isCommonScene && <RhythmGauge session={session} debugMode={settings.debugMode} i18n={i18n} />}
+    {settings.debugMode && <DebugPanel settings={settings} canStepBack={debugHistory.length > 0} onSettings={setSettings} onStepBack={stepBack} i18n={i18n} />}
 
     {node.kind === "choice" && !uiHidden && <section className="vn-choices" aria-label={i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.prompt`, node.prompt || "")} onKeyDown={choiceKeyDown}>
+      <div className="vn-choice-context"><span>{triggerSummary?.speaker || i18n.ui("flow.choiceContext")}</span><strong>{choiceStimulus}</strong></div>
       <p>{i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.prompt`, node.prompt || "")}</p>
-      {options.map((option, index) => <button type="button" onClick={() => choose(option.id)} key={option.id}>
-        <span>{String(index + 1).padStart(2, "0")}</span><strong>{i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.options.${option.id}.label`, option.label)}</strong><i>♥</i>
-      </button>)}
+      {options.map((option, index) => {
+        const debugEffect = choiceDebugEffect(option);
+        const effectKey = debugEffect.action === "approach"
+          ? "debug.effectApproach"
+          : debugEffect.action === "space" ? "debug.effectSpace" : "debug.effectLiteral";
+        return <button type="button" onClick={() => choose(option.id)} key={option.id}>
+          <span>{String(index + 1).padStart(2, "0")}</span><strong>{i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.options.${option.id}.label`, option.label)}</strong>
+          {settings.debugMode && <em>DEBUG · {i18n.ui(effectKey)} {debugEffect.intensity}</em>}
+        </button>;
+      })}
+      {quickMenu}
     </section>}
 
-    {!uiHidden && <section className={`vn-dialogue ${node.kind === "choice" ? "waiting" : ""}`}>
-      <div className="vn-nameplate">{speaker || i18n.ui(node.kind === "dual_narration" ? "dialogue.narration" : "dialogue.choice")}</div>
-      {node.kind === "choice" ? <div className="vn-choice-prompt"><span>{i18n.ui("dialogue.choiceLabel")}</span><strong>{i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.prompt`, node.prompt || "")}</strong></div>
-        : <><p className="vn-line">{displayedText}<i className={revealed ? "done" : ""} /></p>
-          {interpretation && <p className="vn-interpretation"><span>{i18n.ui(session.mode === "perceived" ? "dialogue.interpretation" : "dialogue.reality", { name: i18n.characterName("han_do_yoon") })}</span>{interpretation}</p>}</>}
-      {feedback && feedbackVisible && <div className={`vn-feedback ${feedback.kind}`}>
+    {!uiHidden && node.kind !== "choice" && <section className="vn-dialogue">
+      {speaker && <div className="vn-nameplate">{speaker}</div>}
+      <p className="vn-line">{displayedText}<i className={revealed ? "done" : ""} /></p>
+      {settings.debugMode && feedback && feedbackVisible && <div className={`vn-feedback ${feedback.kind}`}>
         <strong>{feedback.kind === "turn" ? i18n.ui("feedback.turn") : feedback.kind === "score" ? `${i18n.ui("hud.combo")} ×${feedback.combo}` : i18n.ui(feedback.kind === "literal" ? "feedback.literal" : "feedback.break")}</strong>
         {feedback.gain > 0 && <span>{i18n.ui(session.mode === "reality" ? "feedback.controlGain" : "feedback.gain", { gain: feedback.gain })}</span>}
         <small>{pushPullPositionLabel(rhythm.position, session.mode)}</small>
       </div>}
-      <div className="vn-quick-menu">
-        <button type="button" onClick={() => setOverlay("backlog")}>{i18n.ui("menu.backlog")}</button>
-        <button type="button" className={auto ? "active" : ""} onClick={() => { setAuto((value) => !value); setSkip(false); }}>{i18n.ui("menu.auto")}</button>
-        <button type="button" className={skip ? "active" : ""} onClick={() => { setSkip((value) => !value); setAuto(false); }}>{i18n.ui("menu.skip")}</button>
-        <button type="button" onClick={() => setOverlay("save")}>{i18n.ui("menu.save")}</button>
-        <button type="button" onClick={() => setOverlay("load")}>{i18n.ui("menu.load")}</button>
-        <button type="button" onClick={() => setOverlay("settings")}>{i18n.ui("menu.settings")}</button>
-        <button type="button" onClick={() => setUiHidden(true)}>{i18n.ui("menu.hide")}</button>
-      </div>
+      {quickMenu}
     </section>}
 
     {uiHidden && <button type="button" className="vn-show-ui" onClick={() => setUiHidden(false)}>{i18n.ui("menu.show")}</button>}

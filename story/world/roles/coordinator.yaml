@@ -1,0 +1,10 @@
+schema_version: 1
+id: role.coordinator
+kind: role
+company: company.dawon_living
+name: 사원·코디네이터급
+rank: 20
+people_manager: false
+can_approve: false
+can_lead_project: false
+description: 자료, 회의록, 일정과 실행 업무를 담당하며 최종 승인 권한은 없다.

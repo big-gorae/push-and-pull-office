@@ -12,6 +12,7 @@
 
 - Narrative intent and reviews live in `docs/`.
 - Machine-readable story truth lives in `story/`.
+- Company, team, role, employee, project, and meeting truth lives in `story/world/`. Never invent an office fact in a scene that conflicts with this world bible.
 - Do not treat `build/` as an authoring source. It is generated output.
 - Before editing story YAML, read `story/AI_AUTHORING_RULES.md` and `story/SPEC.md`.
 
@@ -42,6 +43,8 @@
 
 - Every dialogue or narration beat must contain both `perceived` and `reality` layers.
 - `perceived` is Han Do-yoon's interpretation; `reality` is authoritative.
+- Never use the legacy `protagonist_interpretation` or `inner_thought` layer fields. Any inner thought is its own `dual_dialogue` node with `presentation_flags: [inner_voice]`, explicit per-layer `speakers`, and a naturally spoken line enclosed in parentheses. A layer with an explicit null speaker is authoritative narration and stays unparenthesized.
+- Narration has no visible speaker label. An explicit null layer speaker is narration, not a character named “나레이션”.
 - State reads and writes must be declared in `state_contract`.
 - State changes belong only in `effects`.
 - Visible affection is Han Do-yoon's confidence, not a heroine's love.
@@ -55,4 +58,18 @@
 - Do not put asset paths in scenes. Resolve backgrounds from location, time, atmosphere, and view mode through `story/visuals/`.
 - Every character has one concrete visual object extending a character archetype; outfit, pose, and expression are composed rather than copied into scenes.
 - Every scene node must resolve a background in both perceived and reality modes.
+- Formal or cross-functional workplace meetings must declare `world_context` with company, project, meeting type, and every actual participant as `member.*` references. The illustrated `cast` is not a substitute for the full participant list.
+- Keep non-illustrated supporting coworkers as `presentation: text_only` world members. They may attend and speak, but must never be placed in the illustrated `cast` or used as a route heroine.
+- Meeting casts must satisfy the selected meeting policy's headcount, participating teams, project responsibilities, and minimum text-only coworker requirements. Do not compose a normal office meeting only from romance-route characters.
+- When adding or changing a company, team, role, member, project, or meeting, preserve reciprocal team membership and acyclic, upward reporting lines and run the world validator through `story_harness.py validate`.
 - Never add detailed, reproducible instructions for committing or concealing abuse.
+
+## Player experience invariants
+
+- The new-game screen contains only the three mode cards. `속마음 모드` and `어나더 스토리` both unlock after the first ending; keep their approved descriptions in `story/ui.yaml`.
+- Render only the character speaking in the active layer. Keep character X/Y/scale adjustable in Debug Mode, and keep previous-dialogue navigation available there.
+- Do not restore the removed interpretation/thought sub-panels, a `나레이션` nameplate, a timeline/calendar selection screen, visible ACT labels, or copy/effects that promote the campaign's day count.
+- Between ordinary moments, present event summaries and selections as dialogue-style in-game beats. Use the cinematic day-change overlay only when the day number changes.
+- Every choice node has a neutral `stimulus` summary. Player-facing prompts and labels describe concrete words, actions, or nuanced interpretations; they never reveal `push`, `pull`, `밀기`, `당기기`, or `밀당`. Direction and numeric effects are Debug Mode only.
+- Keep the push-pull bar high-contrast above the lower-right dialogue area, use the shared wider optimal range, and do not display “적정 범위 안” copy.
+- Put spacing, typography, radii, control sizes, and nameplate/button alignment in the central player design tokens instead of one-off component values.

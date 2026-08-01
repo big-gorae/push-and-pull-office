@@ -24,6 +24,7 @@ import {
   conditionsMatch,
   deriveEmotion,
   deriveStateContract,
+  effectiveSpeaker,
   getPath,
   makeNode,
   parseEditorValue,
@@ -110,6 +111,18 @@ function storyRoutes(runtime: Runtime) {
     const rightLane = Object.values(runtime.threads).find((thread) => thread.heroine === right.heroine)?.lane;
     return (laneOrder.get(leftLane || "") ?? 999) - (laneOrder.get(rightLane || "") ?? 999);
   });
+}
+
+function sceneSpeakerOptions(runtime: Runtime, scene: Scene): Array<{ id: string; label: string }> {
+  const illustrated = scene.cast.map((id) => ({
+    id,
+    label: runtime.characters[id]?.display_name || id,
+  }));
+  const supporting = (scene.world_context?.participants || [])
+    .filter((id) => runtime.world?.entities[id]?.presentation === "text_only")
+    .map((id) => ({ id, label: `${runtime.world?.entities[id]?.display_name || id} · 텍스트 동료` }));
+  return [...illustrated, ...supporting].filter((option, index, options) =>
+    options.findIndex((candidate) => candidate.id === option.id) === index);
 }
 
 function conditionOperators(type: "number" | "enum" | "array") {
@@ -283,16 +296,11 @@ function LayerEditor({
         </select>
       </Field>}
       <Field label="화면 대사" wide><TextArea value={layer.line || ""} onChange={(event) => update({ line: event.target.value })} /></Field>
-      {mode === "perceived" ? <Field label="주인공의 해석" wide>
-        <TextArea value={layer.protagonist_interpretation || ""} onChange={(event) => update({ protagonist_interpretation: event.target.value })} />
-      </Field> : <>
-        <Field label="속마음" wide><TextArea value={layer.inner_thought || ""} onChange={(event) => update({ inner_thought: event.target.value })} /></Field>
-        <Field label="실제 의도">
+      {mode === "reality" && <Field label="실제 의도">
           <select value={layer.intent || "work_only"} onChange={(event) => update({ intent: event.target.value })}>
             {runtime.enums.intent.map((value) => <option value={value} key={value}>{value}</option>)}
           </select>
-        </Field>
-      </>}
+        </Field>}
     </div>
   </fieldset>;
 }
@@ -327,6 +335,7 @@ function ChoiceEditor({ runtime, scene, node, onChange }: { runtime: Runtime; sc
   };
   return <>
     <Field label="선택 질문" wide><TextArea value={node.prompt || ""} onChange={(event) => onChange({ ...node, prompt: event.target.value })} /></Field>
+    <Field label="대응할 말·행동 요약" wide><TextArea value={node.stimulus || ""} onChange={(event) => onChange({ ...node, stimulus: event.target.value })} /></Field>
     <div className="option-list">
       {options.map((option, index) => <section className="option-editor" key={option.id}>
         <div className="option-heading">
@@ -609,7 +618,7 @@ function DialogueVariantEditor({
               layer={variant.perceived}
               mode="perceived"
               runtime={runtime}
-              speaker={node.speaker}
+              speaker={effectiveSpeaker(node, "perceived")}
               onChange={(perceived) => update(index, { perceived })}
             />
             <LayerEditor
@@ -618,7 +627,7 @@ function DialogueVariantEditor({
               layer={variant.reality}
               mode="reality"
               runtime={runtime}
-              speaker={node.speaker}
+              speaker={effectiveSpeaker(node, "reality")}
               onChange={(reality) => update(index, { reality })}
             />
           </div>
@@ -642,6 +651,7 @@ function NodeEditor({
   onChange: (node: StoryNode) => void;
 }) {
   const commonNext = node.kind === "dual_dialogue" || node.kind === "dual_narration" || node.kind === "effect";
+  const speakerOptions = sceneSpeakerOptions(runtime, scene);
   return <div className="node-editor">
     <div className="form-grid compact-grid">
       <Field label="노드 ID"><TextInput value={node.id} readOnly /></Field>
@@ -651,10 +661,12 @@ function NodeEditor({
     </div>
 
     {node.kind === "dual_dialogue" && <>
-      <Field label="화자"><select value={node.speaker || ""} onChange={(event) => onChange({ ...node, speaker: event.target.value })}>{scene.cast.map((id) => <option value={id} key={id}>{runtime.characters[id]?.display_name || id}</option>)}</select></Field>
+      {node.presentation_flags?.includes("inner_voice") ? <div className="form-grid compact-grid">
+        {(["perceived", "reality"] as ViewMode[]).map((mode) => <Field label={mode === "perceived" ? "스토리 모드 생각 화자" : "속마음 모드 생각 화자"} key={mode}><select value={node.speakers?.[mode] || ""} onChange={(event) => onChange({ ...node, speakers: { ...node.speakers, [mode]: event.target.value || null } })}><option value="">화자 없는 서술</option>{speakerOptions.map(({ id, label }) => <option value={id} key={id}>{label}</option>)}</select></Field>)}
+      </div> : <Field label="화자"><select value={node.speaker || ""} onChange={(event) => onChange({ ...node, speaker: event.target.value })}>{speakerOptions.map(({ id, label }) => <option value={id} key={id}>{label}</option>)}</select></Field>}
       {!node.variants && <div className="dual-layer-grid">
-        <LayerEditor title="주인공이 보는 장면" layer={node.perceived || {}} mode="perceived" runtime={runtime} speaker={node.speaker} onChange={(perceived) => onChange({ ...node, perceived })} />
-        <LayerEditor title="실제 장면" layer={node.reality || {}} mode="reality" runtime={runtime} speaker={node.speaker} onChange={(reality) => onChange({ ...node, reality })} />
+        <LayerEditor title="주인공이 보는 장면" layer={node.perceived || {}} mode="perceived" runtime={runtime} speaker={effectiveSpeaker(node, "perceived")} onChange={(perceived) => onChange({ ...node, perceived })} />
+        <LayerEditor title="실제 장면" layer={node.reality || {}} mode="reality" runtime={runtime} speaker={effectiveSpeaker(node, "reality")} onChange={(reality) => onChange({ ...node, reality })} />
       </div>}
       <DialogueVariantEditor runtime={runtime} state={state} node={node} onChange={onChange} />
     </>}
@@ -751,8 +763,9 @@ function Preview({
     onState(next);
   };
 
-  const speaker = displayNode?.speaker || heroine;
-  const character = runtime.characters[speaker] || runtime.characters[heroine];
+  const speaker = effectiveSpeaker(displayNode, mode);
+  const character = speaker ? runtime.characters[speaker] : undefined;
+  const showPreviewImage = Boolean(character && speaker === heroine && image);
   const expression = layer?.expression || emotion?.default_expression || "narration";
   const truthLabels = mode === "reality" || hasClearedEnding;
   const rhythmLabelMode: ViewMode = truthLabels ? "reality" : "perceived";
@@ -772,7 +785,10 @@ function Preview({
     </div>
 
     <div className={`mini-game ${mode}`}>
-      <div className="mini-portrait">{image ? <img src={image} alt={`${character.display_name} 콘셉트 아트`} /> : <div className="image-placeholder">NO IMAGE</div>}<div className="portrait-label"><strong>{character.display_name}</strong><span>{expression}</span></div></div>
+      <div className="mini-portrait">
+        {showPreviewImage ? <img src={image} alt={`${character?.display_name || speaker} 콘셉트 아트`} /> : <div className="image-placeholder">{speaker ? "ACTIVE SPEAKER" : "NO SPEAKER"}</div>}
+        {character && <div className="portrait-label"><strong>{character.display_name}</strong><span>{expression}</span></div>}
+      </div>
       <div className="mini-dialogue">
         <div className="push-pull-hud">
           <div className="push-pull-score">
@@ -802,7 +818,7 @@ function Preview({
         <div className="dialogue-copy">
           <small>{layer?.atmosphere || NODE_LABELS[displayNode?.kind || "effect"]}</small>
           <blockquote>{layer?.line || (displayNode?.kind === "choice" ? displayNode.prompt : displayNode?.kind === "exit" ? "장면을 떠납니다." : "판정 노드")}</blockquote>
-          <p>{mode === "perceived" ? layer?.protagonist_interpretation : [layer?.inner_thought, layer?.intent].filter(Boolean).join(" · ")}</p>
+          {mode === "reality" && layer?.intent && <p>{layer.intent}</p>}
         </div>
       </div>
     </div>
@@ -1203,7 +1219,7 @@ export default function App() {
       const route = runtime.routes[scene.route];
       const dialogue = scene.node_order.flatMap((id) => {
         const node = scene.nodes[id];
-        return [node.prompt, node.perceived?.line, node.reality?.line, node.perceived?.protagonist_interpretation, node.reality?.inner_thought];
+        return [node.prompt, node.stimulus, node.perceived?.line, node.reality?.line];
       }).filter(Boolean).join(" ");
       const context = `${route?.title || scene.route} · ${scene.location || "장소 미정"} · 노드 ${scene.node_order.length}개`;
       return {

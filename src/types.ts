@@ -34,8 +34,6 @@ export type Layer = {
   atmosphere?: string;
   expression?: string;
   line?: string;
-  protagonist_interpretation?: string;
-  inner_thought?: string;
   intent?: string;
 };
 
@@ -69,10 +67,12 @@ export type StoryNode = {
   id: string;
   kind: NodeKind;
   speaker?: string;
+  speakers?: Partial<Record<ViewMode, string | null>>;
   perceived?: Layer;
   reality?: Layer;
   variants?: DialogueVariant[];
   prompt?: string;
+  stimulus?: string;
   options?: ChoiceOption[];
   transitions?: Transition[];
   effects?: Effect[];
@@ -91,6 +91,12 @@ export type Scene = {
   time?: string;
   purpose: string;
   cast: string[];
+  world_context?: {
+    company: string;
+    project: string;
+    interaction: string;
+    participants: string[];
+  };
   entry_conditions?: Condition[];
   state_contract: { reads: string[]; writes: string[] };
   start_node: string;
@@ -230,7 +236,18 @@ export type LocalizationBundle = {
 export type LocalizationEntry = {
   key: string;
   source: string;
-  domain: "ui" | "campaign" | "character" | "event" | "thread" | "route" | "scene" | "meta" | "visual" | "locale";
+  domain:
+    | "ui"
+    | "campaign"
+    | "character"
+    | "event"
+    | "thread"
+    | "route"
+    | "scene"
+    | "meta"
+    | "visual"
+    | "world"
+    | "locale";
   sourceDocument: {
     kind: string;
     id: string;
@@ -358,6 +375,18 @@ export type Runtime = {
   meta: Record<string, MetaDocument>;
   routes: Record<string, Route>;
   scenes: Record<string, Scene>;
+  world?: {
+    entities: Record<string, {
+      id: string;
+      kind: "company" | "role" | "team" | "member" | "project" | "meeting";
+      display_name?: string;
+      presentation?: "illustrated" | "text_only";
+      story_character?: string;
+      [key: string]: JsonValue | undefined;
+    }>;
+    by_kind: Record<string, string[]>;
+    story_character_members: Record<string, string>;
+  };
 };
 
 export type DocumentMeta = {

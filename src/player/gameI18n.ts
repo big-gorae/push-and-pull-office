@@ -45,7 +45,11 @@ export class GameLocalizer {
   characterName(characterId?: string): string {
     if (!characterId) return "";
     const character = this.runtime.characters[characterId];
-    return this.story(`characters.${characterId}.display_name`, character?.display_name || characterId);
+    if (character) {
+      return this.story(`characters.${characterId}.display_name`, character.display_name || characterId);
+    }
+    const member = this.runtime.world?.entities[characterId];
+    return this.story(`world.${characterId}.display_name`, member?.display_name || characterId);
   }
 
   localeName(locale: GameLocale): string {

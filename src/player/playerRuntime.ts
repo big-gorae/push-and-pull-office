@@ -7,6 +7,7 @@ import {
   clone,
   conditionsMatch,
   inspectTimelineEvent,
+  effectiveSpeaker,
   resolveDialogueNode,
 } from "../storyLogic";
 import {
@@ -425,7 +426,7 @@ function logCurrent(runtime: Runtime, session: PlayerSession): void {
     kind: node.kind === "dual_dialogue" ? "dialogue" : "narration",
     sceneId: session.sceneId,
     nodeId: node.id,
-    speakerId: node.speaker,
+    speakerId: effectiveSpeaker(resolved.node, session.mode),
     variantId: resolved.variantId,
     modeAtPresentation: session.mode,
   });

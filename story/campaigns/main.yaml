@@ -1,6 +1,6 @@
 schema_version: 1
 id: main
-title: 열일곱 날의 밀당
+title: 오피스의 신호들
 total_days: 17
 slots: [morning, lunch, afternoon, after_work]
 choice_slots: [lunch, after_work]
@@ -10,7 +10,7 @@ calendar:
 acts:
   - number: 1
     id: romantic_surface
-    title: 연애 시뮬레이션의 얼굴
+    title: 첫인상과 업무의 거리
     days: [1, 5]
     purpose: 수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 토·일요일에 서아와 민경을 한 명씩 교차해 만나며 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.
   - number: 2

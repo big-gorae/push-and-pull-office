@@ -1,0 +1,10 @@
+schema_version: 1
+id: role.senior_associate
+kind: role
+company: company.dawon_living
+name: 대리급
+rank: 40
+people_manager: false
+can_approve: false
+can_lead_project: true
+description: 독립적인 실무 영역을 담당하며 위임받은 프로젝트의 실무 리드를 맡을 수 있다.

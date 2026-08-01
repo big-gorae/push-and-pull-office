@@ -1,0 +1,14 @@
+schema_version: 1
+id: member.yoon_seo_a
+kind: member
+company: company.dawon_living
+display_name: 윤서아
+team: team.product_planning
+role: role.coordinator
+title: 계약직 사원
+manager: member.oh_se_jin
+employment: fixed_term
+presentation: illustrated
+story_character: yoon_seo_a
+route_eligible: true
+responsibilities: [meeting_materials, minutes, product_data]

@@ -1,0 +1,14 @@
+schema_version: 1
+id: member.lee_su_hyeon
+kind: member
+company: company.dawon_living
+display_name: 이수현
+team: team.marketing
+role: role.department_head
+title: 팀장
+manager: null
+employment: permanent
+presentation: text_only
+route_eligible: false
+responsibilities: [marketing_approval, media_budget, project_delegation]
+voice: 마감과 성과 지표를 먼저 확인하고 실무는 리드에게 위임하는 화법.

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "world-context.schema.json",
+  "title": "Love Office Scene World Context",
+  "type": "object",
+  "required": ["company", "project", "interaction", "participants"],
+  "properties": {
+    "company": {"type": "string", "pattern": "^company\\."},
+    "project": {"type": "string", "pattern": "^project\\."},
+    "interaction": {"type": "string", "pattern": "^meeting\\."},
+    "participants": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^member\\."},
+      "uniqueItems": true,
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false
+}

@@ -28,18 +28,32 @@ nodes:
       atmosphere: warm_romance
       expression: subjective_expression_id
       line: "주인공이 듣거나 기억하는 대사"
-      protagonist_interpretation: "한도윤의 해석"
     reality:
       atmosphere: cold_office
       expression: actual_expression_id
       line: "실제로 한 대사"
-      inner_thought: "실제 속마음"
+      intent: boundary
+    next: opening_inner
+
+  - id: opening_inner
+    kind: dual_dialogue
+    presentation_flags: [inner_voice]
+    speakers:
+      perceived: han_do_yoon
+      reality: heroine_id
+    perceived:
+      atmosphere: warm_romance
+      line: "(한도윤이 자연스럽게 떠올리는 생각.)"
+    reality:
+      atmosphere: cold_office
+      line: "(실제 인물이 자연스럽게 떠올리는 속마음.)"
       intent: boundary
     next: choice_01
 
   - id: choice_01
     kind: choice
     prompt: 상대의 현재 상태를 어떻게 판단할까?
+    stimulus: 상대가 방금 한 말이나 행동을 한 문장으로 요약한다.
     options:
       - id: option_id
         label: "플레이어가 보는 선택지"

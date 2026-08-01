@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1 --port 1420",
+    "dev": "VITE_APP_SURFACE=game vite --host 127.0.0.1 --port 1420",
+    "dev:editor": "vite --host 127.0.0.1 --port 1420",
     "build": "tsc && vite build",
     "build:site": "VITE_APP_SURFACE=game npm run build",
     "test:player": "vitest run src/player",

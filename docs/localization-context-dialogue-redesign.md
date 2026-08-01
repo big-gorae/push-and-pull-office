@@ -177,17 +177,18 @@ UI 키의 오타는 빌드 전에 잡기 위해 레지스트리에서 `UiMessage
 선택한 장면과 노드에 속한 모든 항목을 한 화면에 보여 준다.
 
 ```text
-장면: seo_a.email_request / 노드: request / locale: English
+장면: seo_a.email_request / locale: English
 
-주인공 인식
-  대사
-  한도윤의 해석
+노드: request
+  perceived 대사
+  reality 대사
 
-실제
-  실제 대사
-  속마음
+노드: request_inner / inner_voice
+  perceived 화자 / 괄호 발화
+  reality 화자 / 괄호 발화
 
 선택지
+  stimulus
   match_push / label / interpretation / action
   pull_harder / label / interpretation / action
 
@@ -360,11 +361,35 @@ derived.characters.yoon_seo_a.rule_id
         atmosphere: warm_romance
         expression: subjective_shy
         line: "메일로 보내주세요."
-        protagonist_interpretation: "부끄러워서 짧게 말한 것이다."
       reality:
         atmosphere: cold_office
         line: "메일로 보내주세요."
-        inner_thought: "혼자 마주치지 말아야 한다."
+        intent: boundary
+    - id: default
+      default: true
+      perceived: { ... }
+      reality: { ... }
+  next: response_inner
+
+- id: response_inner
+  kind: dual_dialogue
+  presentation_flags: [inner_voice]
+  speakers:
+    perceived: han_do_yoon
+    reality: yoon_seo_a
+  variants:
+    - id: guarded
+      priority: 100
+      conditions:
+        - path: derived.characters.yoon_seo_a.emotion
+          op: eq
+          value: fear
+      perceived:
+        atmosphere: warm_romance
+        line: "(부끄러워서 짧게 말한 건가?)"
+      reality:
+        atmosphere: cold_office
+        line: "(혼자 마주치지 말아야 해.)"
         intent: boundary
     - id: default
       default: true
@@ -384,7 +409,7 @@ derived.characters.yoon_seo_a.rule_id
 
 ```text
 scenes.<scene>.nodes.<node>.variants.<variant>.perceived.line
-scenes.<scene>.nodes.<node>.variants.<variant>.reality.inner_thought
+scenes.<scene>.nodes.<node>.variants.<variant>.reality.line
 ```
 
 variant ID도 배포 후 안정 ID로 취급한다.
@@ -409,7 +434,7 @@ type ResolvedDialogueNode = {
   variantId: string;
   perceived: Layer;
   reality: Layer;
-  speakerId?: string;
+  speakers: Partial<Record<ViewMode, string | null>>;
   trace: VariantDecisionTrace[];
 };
 
@@ -440,7 +465,7 @@ type SaveSlotV3 = {
   schema_version: 3;
   savedAt: number;
   preview: {
-    kind: "timeline" | "scene" | "ending";
+    kind: "timeline" | "scene" | "ending"; // timeline은 호환용 내부 사건 큐 미리보기
     day: number;
     slot: string;
     eventId?: string;
@@ -475,7 +500,7 @@ type BacklogEntryV3 = {
 
 - 상태가 나중에 바뀌어도 저장된 `variantId`로 당시 대사를 복원한다.
 - locale를 바꾸면 같은 backlog가 새 언어로 즉시 다시 렌더링된다.
-- 원문 모드 비교는 같은 variant의 다른 레이어를 읽는다.
+- 속마음 모드 비교는 같은 variant의 다른 레이어를 읽는다.
 
 ### 7.3 이전 세이브 마이그레이션
 
@@ -483,7 +508,7 @@ v2 세이브를 읽을 때 다음 순서로 v3 preview를 만든다.
 
 1. `session.sceneId`, `session.nodeId`, `session.mode` 사용
 2. 현재 상태로 variant를 다시 계산하되 기존 장면은 `default` 사용
-3. timeline이면 마지막 timeline log와 현재 day/slot 사용
+3. legacy `timeline` 미리보기면 마지막 내부 사건 로그와 현재 day/slot 사용하되 플레이어용 타임라인 화면은 열지 않음
 4. 기존 `sceneTitle`, `line`은 마이그레이션 실패 시 표시하는 legacy fallback으로만 보존
 5. 다음 저장 시 v3로 기록
 
@@ -629,7 +654,7 @@ build/localization-report.json
 - UI와 장면 문구가 같은 `LocalizationService`에서 조회
 - direct와 fallback coverage가 구분
 - 모든 `LocalizationEntry`가 에디터 표에서 검색·편집 가능
-- 현재 장면 문맥에 line, interpretation, inner thought, option 3종, event presentation 포함
+- 현재 장면 문맥에 일반 line, 별도 `inner_voice` line, choice stimulus, option 3종과 event presentation 포함
 - unknown key, duplicate key, placeholder 불일치가 저장과 빌드를 차단
 - visual title과 locale name이 coverage에 포함
 

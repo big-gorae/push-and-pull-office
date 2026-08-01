@@ -1,0 +1,8 @@
+schema_version: 1
+id: team.sales_planning
+kind: team
+company: company.dawon_living
+name: 영업기획팀
+function: 거래처 조율, 매출 계획, 승인 일정과 상업 조건 관리
+lead_member: member.park_jae_hyun
+member_ids: [member.park_jae_hyun, member.han_do_yoon, member.lee_hyeon_woo]

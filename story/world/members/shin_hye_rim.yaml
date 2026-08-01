@@ -1,0 +1,14 @@
+schema_version: 1
+id: member.shin_hye_rim
+kind: member
+company: company.dawon_living
+display_name: 신혜림
+team: team.people_operations
+role: role.department_head
+title: 팀장
+manager: null
+employment: permanent
+presentation: text_only
+route_eligible: false
+responsibilities: [hr_policy, grievance_intake, investigation_coordination]
+voice: 확인된 기록과 절차 범위를 먼저 말하고 확정적 판단은 늦추는 화법.

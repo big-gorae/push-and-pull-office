@@ -1,0 +1,8 @@
+schema_version: 1
+id: team.marketing
+kind: team
+company: company.dawon_living
+name: 마케팅팀
+function: 캠페인 전략, 전체 일정, 매체 집행과 성과 분석
+lead_member: member.lee_su_hyeon
+member_ids: [member.lee_su_hyeon, member.cha_min_kyung, member.jeong_da_eun]

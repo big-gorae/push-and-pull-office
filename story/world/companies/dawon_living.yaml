@@ -1,0 +1,25 @@
+schema_version: 1
+id: company.dawon_living
+kind: company
+name: 다원리빙
+industry: lifestyle_consumer_goods
+scale: mid_sized
+headcount_band: 300_499
+headquarters: 서울
+description: 자체 생활용품 브랜드와 유통사 협업 상품을 기획·영업·홍보하는 중견 소비재 기업.
+team_ids:
+  - team.sales_planning
+  - team.product_planning
+  - team.marketing
+  - team.brand_design
+  - team.people_operations
+operating_facts:
+  - 부서 간 프로젝트는 실무 리드와 각 부서의 승인 권한자를 따로 둔다.
+  - 핵심 거래처 일정과 승인 기록은 영업기획팀이 보관한다.
+  - 프로젝트 회의록과 버전 기록은 공유 문서로 남긴다.
+  - 회사는 투자 및 인수 심사를 앞두고 있어 대외 평판에 민감하다.
+  - 인사 이슈는 기록과 직속 상사 검토를 중시하며 보호 조치가 느리게 시작되는 구조적 문제가 있다.
+authoring_constraints:
+  - 실무자만 참석하는 비공식 협의와 승인 권한자가 필요한 공식 회의를 구분한다.
+  - 다부서 킥오프에는 프로젝트 리드와 업무 영역별 책임자가 참석한다.
+  - 단순히 공략 가능 인물만으로 회의 참석자를 구성하지 않는다.

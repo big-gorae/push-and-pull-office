@@ -15,9 +15,19 @@ import type {
   TimelineEvent,
   TimeSlot,
   DialogueVariant,
+  ViewMode,
 } from "./types";
 
 export const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
+
+/** Resolves the visible speaker for a layer. An explicit null means narration. */
+export function effectiveSpeaker(node: StoryNode | undefined, mode: ViewMode): string | undefined {
+  if (!node) return undefined;
+  if (node.speakers && Object.prototype.hasOwnProperty.call(node.speakers, mode)) {
+    return node.speakers[mode] || undefined;
+  }
+  return node.speaker;
+}
 
 export function getPath(state: RuntimeState, path: string): unknown {
   return path.split(".").reduce<unknown>((value, key) => {
@@ -297,11 +307,12 @@ function withRealityExpressionFallback(
   state: RuntimeState,
   node: StoryNode,
 ): StoryNode {
-  if (node.reality?.expression || !node.speaker) return node;
+  const speaker = effectiveSpeaker(node, "reality");
+  if (node.reality?.expression || !speaker) return node;
   const context = evaluationContext(runtime, state);
-  const derivedExpression = context.derived.characters[node.speaker]?.default_expression;
+  const derivedExpression = context.derived.characters[speaker]?.default_expression;
   const visualExpression = Object.values(runtime.visuals).find((visual) =>
-    visual.kind === "character" && !visual.abstract && visual.character === node.speaker)?.default_reality_expression;
+    visual.kind === "character" && !visual.abstract && visual.character === speaker)?.default_reality_expression;
   const expression = derivedExpression || visualExpression;
   return expression ? { ...node, reality: { ...node.reality, expression } } : node;
 }
@@ -442,8 +453,8 @@ export function makeNode(kind: NodeKind, id: string, heroineId: string): StoryNo
       id,
       kind,
       speaker: heroineId,
-      perceived: { atmosphere: "warm_romance", expression: "", line: "", protagonist_interpretation: "" },
-      reality: { atmosphere: "cold_office", expression: "", line: "", inner_thought: "", intent: "work_only" },
+      perceived: { atmosphere: "warm_romance", expression: "", line: "" },
+      reality: { atmosphere: "cold_office", expression: "", line: "", intent: "work_only" },
       next: "",
     };
   }
@@ -451,12 +462,12 @@ export function makeNode(kind: NodeKind, id: string, heroineId: string): StoryNo
     return {
       id,
       kind,
-      perceived: { atmosphere: "warm_romance", line: "", protagonist_interpretation: "" },
-      reality: { atmosphere: "cold_office", line: "", inner_thought: "", intent: "work_only" },
+      perceived: { atmosphere: "warm_romance", line: "" },
+      reality: { atmosphere: "cold_office", line: "", intent: "work_only" },
       next: "",
     };
   }
-  if (kind === "choice") return { id, kind, prompt: "", options: [] };
+  if (kind === "choice") return { id, kind, prompt: "", stimulus: "", options: [] };
   if (kind === "state_gate") return { id, kind, transitions: [{ default: true, node: "" }] };
   if (kind === "effect") return { id, kind, effects: [], next: "" };
   return { id, kind: "exit", transitions: [{ default: true, ending: true, ending_id: `draft.${id}` }] };

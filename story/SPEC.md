@@ -46,15 +46,15 @@ progress:
 - `hidden`: 스토리 모드에서 감춰지는 실제 상태
 - `progress`: 현재 시간, 본·놓친 사건, 회차 기억, 루트 완료와 모드 해금
 
-스토리 모드 UI가 표시하는 관계 정보는 `visible.heroines.<id>.initiative`, `progress.flags.push_pull.combo`, `progress.flags.push_pull.position`과 `progress.flags.push_pull.target`이다. 각각 `밀당 주도권`, `x1~x5`의 순간 콤보, 숫자를 숨긴 `당기기↔밀기` 연속 위치와 현재 활성 득점선으로 표시한다. 최초 엔딩 이후 라벨은 `통제 욕구`, `통제 시도 연쇄`와 `접근 시도/거리 둠`으로 바뀐다.
+스토리 모드 UI가 표시하는 관계 정보는 `visible.heroines.<id>.initiative`, `progress.flags.push_pull.combo`, `progress.flags.push_pull.position`과 `progress.flags.push_pull.target`이다. 각각 `밀당 주도권`, `x1~x5`의 순간 콤보, 숫자를 숨긴 `당기기↔밀기` 연속 위치와 현재 활성 득점선으로 표시한다. 최초 엔딩 이후 속마음 모드에서는 라벨을 `통제 욕구`, `통제 시도 연쇄`와 `접근 시도/거리 둠`으로 바꾼다. 선택지별 제작 분류와 수치 변화는 디버깅 모드에서만 보인다.
 
-`position`은 `-100~100` 범위이며 음수는 당기기, 양수는 밀기다. 기본 적정 범위는 `-40~40`, 득점선은 `-32`와 `32`다. 한 선택의 기본 이동량은 12이며 장면 강도에 따라 `8~16`에서 조정한다. `target`은 `pull`, `push`, `none` 중 하나다.
+`position`은 `-100~100` 범위이며 음수는 당기기, 양수는 밀기다. 기본 적정 범위는 `-56~56`, 득점선은 `-32`와 `32`다. 한 선택의 기본 이동량은 12이며 장면 강도에 따라 `8~16`에서 조정한다. `target`은 `pull`, `push`, `none` 중 하나다.
 
 `affection`과 `perceived_state`는 기존 장면·세이브 호환을 위해 상태 모델에 남아 있지만 신규 장면 조건이나 UI에는 사용하지 않는다. 콤보가 이어질 때는 원래 장면 효과와 별도로 반복 패턴 인식에 따른 숨은 효과를 적용할 수 있다.
 
 감정은 별도 게이지로 만들지 않는다. 각 인물의 `emotion_rules`가 의심도·비호감도 구간을 표정, 속마음, 행동 경향으로 변환한다.
 
-`survivor_view`는 유저에게 `생존 모드`로 표시하는 안정 ID다. 서아나 민경 루트의 엔딩을 하나라도 보면 해금한다. 플레이어 캐릭터는 후속 결정 전까지 스토리 데이터에 고정하지 않는다.
+`truth_view`는 유저에게 `속마음 모드`, `survivor_view`는 `어나더 스토리`로 표시하는 안정 ID다. 서아나 민경 루트의 첫 엔딩을 보면 둘을 동시에 해금한다. 속마음 모드의 안내 문구는 `그녀들의 일상과 속마음을 들어 보아요`, 어나더 스토리의 안내 문구는 `새로운 그녀로 새로운 이야기를 만들어 보아요`로 고정한다. `survivor_view` 캠페인의 플레이어 캐릭터는 후속 결정 전까지 스토리 데이터에 고정하지 않는다.
 
 생존 모드는 스토리 모드의 실제 시간선이나 후일담이 아니라 별도의 평행세계 캠페인이다. 스토리 모드와 같은 출발 상황, 날짜 모티프와 한도윤의 행동 패턴을 재사용해 첫 플레이와 공감대를 만들 수 있지만, 피해자의 선택에 따라 사건의 순서·내용과 결말은 스토리 모드에서 독립적으로 갈라질 수 있다. 스토리 모드 장면의 객관적 진실은 `truth_view`가 담당하며, `survivor_view`의 사건을 스토리 모드에서 누락된 사실로 소급하지 않는다.
 
@@ -90,16 +90,19 @@ path: hidden.heroines.yoon_seo_a.suspicion
 
 ## 4. 시간축 캠페인
 
-게임 진행의 최상위 단위는 루트가 아니라 캠페인의 날짜와 시간대다.
+게임 진행 데이터의 최상위 단위는 루트가 아니라 캠페인의 날짜와 시간대다.
 
 ```text
 campaign → day → slot → eligible event → scene → node
 ```
 
-- 기본 캠페인은 17일이며 `morning`, `lunch`, `afternoon`, `after_work` 네 시간대를 사용한다.
+- 기본 캠페인은 내부적으로 17일이며 `morning`, `lunch`, `afternoon`, `after_work` 네 시간대를 사용한다.
 - 오전·오후는 고정 업무 사건, 점심·퇴근 후는 플레이어 선택 사건을 중심으로 배치한다.
 - 루트는 처음 선택하는 선형 경로가 아니라 플레이 결과를 엔딩·해금 단위로 분류하는 메타데이터다.
 - 날짜별 파일을 만들지 않는다. 이벤트가 `[시작일, 종료일]`, 허용 시간대와 마감을 가진다.
+- 플레이어에게 별도의 타임라인·ACT 선택 화면이나 캠페인 총일수 홍보 문구를 노출하지 않는다.
+- 런타임은 다음 의미 있는 사건으로 자동 진행하고 날짜가 바뀔 때만 짧은 전환 연출을 재생한다.
+- 같은 시간대에 선택 가능한 사건이 여럿이면 타임라인 카드가 아니라 장면 안의 대사·상황 요약과 선택지로 고르게 한다.
 
 ## 5. 시간 이벤트
 
@@ -121,7 +124,7 @@ presentation:
   reality: {title: 업무 전달 방식을 제한함, summary: "..."}
 ```
 
-이벤트 상태는 `eligible`, `blocked`, `upcoming`, `seen`, `missed`로 판정한다. 고정·숨은 사건은 우선순위가 높은 것부터 자동 실행하며 같은 `exclusive_group`에서는 하나만 실행한다. 마감이 지난 사건은 `on_missed` 효과를 적용하고 오프스크린 사건을 열 수 있다.
+이벤트 상태는 `eligible`, `blocked`, `upcoming`, `seen`, `missed`로 판정한다. 고정·숨은 사건은 우선순위가 높은 것부터 자동 실행하며 같은 `exclusive_group`에서는 하나만 실행한다. 마감이 지난 사건은 `on_missed` 효과를 적용하고 오프스크린 사건을 열 수 있다. 이 판정과 사건 큐는 제작·디버깅 정보이며 일반 플레이 화면에는 타임라인으로 노출하지 않는다.
 
 ## 6. 사건 종류
 
@@ -148,9 +151,17 @@ nodes:
     speaker: yoon_seo_a
     perceived: {}
     reality: {}
+    next: opening_inner
+  - id: opening_inner
+    kind: dual_dialogue
+    presentation_flags: [inner_voice]
+    speakers: {perceived: han_do_yoon, reality: yoon_seo_a}
+    perceived: {}
+    reality: {}
     next: interpretation
   - id: interpretation
     kind: choice
+    stimulus: "방금 말하거나 행동한 사실을 한 문장으로 요약한다."
     options: []
   - id: leave
     kind: exit
@@ -168,27 +179,49 @@ nodes:
 
 ## 8. 이중 레이어
 
-모든 `dual_dialogue`와 `dual_narration`은 두 레이어를 반드시 가진다.
+모든 `dual_dialogue`와 `dual_narration`은 두 레이어를 반드시 가진다. 대사와 생각은 같은 노드의 위아래 보조문단으로 합치지 않고 각각 독립된 발화 노드로 이어 붙인다.
 
 ```yaml
-perceived:
-  atmosphere: warm_romance
-  expression: subjective_shy
-  line: "자료는 메일로 보내주셔도 돼요."
-  protagonist_interpretation: "직접 찾아올 핑계가 사라져 아쉬운 것이다."
-reality:
-  atmosphere: cold_office
-  expression: actual_tense
-  line: "그 자료는 메일로 보내주세요. 제 자리로 오지 마시고요."
-  inner_thought: "또 내 자리로 오면 민경 선배에게 말해야 한다."
-  intent: boundary
+- id: request
+  kind: dual_dialogue
+  speaker: yoon_seo_a
+  perceived:
+    atmosphere: warm_romance
+    expression: subjective_shy
+    line: "그 자료는 메일로 보내주세요. 제 자리로 오지 마시고요."
+  reality:
+    atmosphere: cold_office
+    expression: actual_tense
+    line: "그 자료는 메일로 보내주세요. 제 자리로 오지 마시고요."
+    intent: boundary
+  next: request_inner
+
+- id: request_inner
+  kind: dual_dialogue
+  presentation_flags: [inner_voice]
+  speakers:
+    perceived: han_do_yoon
+    reality: yoon_seo_a
+  perceived:
+    atmosphere: warm_romance
+    line: "(직접 찾아올 핑계가 없어져서 아쉬운가? 눈을 피하는 게 귀엽네.)"
+  reality:
+    atmosphere: cold_office
+    line: "(또 내 자리로 오면 민경 선배에게 말해야 해.)"
+    intent: boundary
+  next: interpretation
 ```
 
 - `reality.line`은 객관적으로 발화된 문장이다. 특별한 환청·기억 왜곡 연출이 아니라면 `perceived.line`도 핵심 사실관계를 유지한다.
-- `protagonist_interpretation`은 사실이 아니라 주인공의 해석이다.
-- `inner_thought`와 `intent`는 실제 인물의 상태다.
-- 원문 모드에서는 `reality`를 표시하고, 스토리 모드에서는 `perceived`를 표시한다.
+- `protagonist_interpretation`과 `inner_thought`는 폐기된 필드이며 신규·수정 장면에서 사용하지 않는다.
+- 생각과 내적 관찰은 `presentation_flags: [inner_voice]`인 별도 `dual_dialogue`로 작성한다.
+- `inner_voice`는 레이어마다 주체가 다를 수 있으므로 공통 `speaker` 대신 `speakers.perceived`와 `speakers.reality`를 모두 선언한다.
+- 레이어의 speaker가 문자열이면 그 인물의 1인칭 속말이므로 `line`을 괄호로 감싸고 해당 이름표를 표시한다.
+- 레이어의 speaker가 명시적 `null`이면 인물의 생각이 아니라 권위적 서술이다. 괄호 없이 쓰고 이름표를 표시하지 않는다.
+- `intent`는 현실 레이어의 실제 의도를 분류하며 플레이어에게 대사 아래 설명문으로 그대로 출력하지 않는다.
+- 속마음 모드에서는 `reality`를 표시하고, 스토리 모드에서는 `perceived`를 표시한다.
 - 표정 ID는 화자의 인물 파일에 등록되어야 한다.
+- `dual_narration`은 화자 이름표 없이 문장만 표시한다. 플레이어 UI에 `나레이션`이라는 가상 화자명을 만들지 않는다.
 
 ### `romance_insert`
 
@@ -205,32 +238,37 @@ reality:
 - 한 노드에서 실제와 달라지는 부분은 한 문장 또는 한 절이어야 한다.
 - 실제 사건, 선택 결과와 상태 변화는 `reality`와 `effects`를 따른다.
 - 일반적인 호감 해석, 표정 미화와 따뜻한 분위기에는 이 플래그를 쓰지 않는다.
-- 스토리 모드 렌더러는 이 플래그에 최종 선택된 고유 베일 효과를 적용하고, 원문 모드는 효과 없이 `reality.line`만 표시한다.
+- 스토리 모드 렌더러는 이 플래그에 최종 선택된 고유 베일 효과를 적용하고, 속마음 모드는 효과 없이 `reality.line`만 표시한다.
 - 제작용 플래그 이름은 플레이어 UI와 도움말에 노출하지 않는다.
 - 스토리 1의 배치와 시각값은 `docs/story-1-romance-insert.md`를 원문으로 삼는다.
 
 ## 9. 선택지
 
 ```yaml
-- id: match_push
-  label: "나도 며칠 거리를 둔다"
-  interpretation: "그녀의 밀기에 맞춰 긴장감을 유지한다."
-  action: "사적인 접근을 사흘 중단한다."
-  push_pull:
-    action: space
-    intensity: 12
-    base_score: 4
-  conditions: []
-  effects:
-    - path: hidden.heroines.yoon_seo_a.suspicion
-      op: add
-      value: -12
-  next: after_choice
+- id: response_choice
+  kind: choice
+  prompt: "자료 전달 방식을 분명히 한 서아에게 어떻게 답할까?"
+  stimulus: "서아가 자료는 메일로 보내고 자리로 오지 말라고 요청했다."
+  options:
+    - id: match_push
+      label: "알겠다고 답하고 요청대로 자료만 메일로 보낸다"
+      interpretation: "지금은 말수를 줄이고 다음 반응을 기다린다."
+      action: "자료를 메일로 보내고 추가 접촉을 하지 않는다."
+      push_pull:
+        action: space
+        intensity: 12
+        base_score: 4
+      conditions: []
+      effects:
+        - path: hidden.heroines.yoon_seo_a.suspicion
+          op: add
+          value: -12
+      next: after_choice
 ```
 
-`label`은 플레이어가 보는 선택지, `interpretation`은 주인공이 믿는 의미, `action`은 객관적으로 발생하는 행동이다. 세 필드를 섞지 않는다.
+선택 노드의 `stimulus`는 선택을 촉발한 직전 말이나 행동을 사실 중심의 한 문장으로 요약한다. 선택 화면은 이 요약을 문맥으로 먼저 보여 준다. `label`은 플레이어가 실제로 말하거나 수행할 구체적인 선택지, `interpretation`은 주인공이 믿는 미묘한 의미, `action`은 객관적으로 발생하는 행동이다. 세 필드를 섞지 않으며 `label`이나 `prompt`에 `밀기`, `당기기`, `push`, `pull` 같은 제작 판정을 직접 쓰지 않는다.
 
-`push_pull`은 제작·런타임 전용 분류이며 선택지 화면에는 노출하지 않는다. `action`은 `approach`, `space`, `literal`, `intensity`는 `8~16`, `base_score`는 `2~5`를 사용한다. 런타임은 장면의 일반 `effects`를 먼저 적용한 뒤 이 메타데이터로 위치, 콤보, 득점선, 주도권과 반복 패턴 효과를 계산한다. 장면 효과에서 `affection`, `perceived_state`, `initiative`를 수동으로 변경하지 않는다.
+`push_pull`은 제작·런타임 전용 분류이며 일반 선택지 화면과 결과 연출에는 노출하지 않는다. 선택지별 방향·강도와 계산 결과는 명시적으로 켠 디버깅 모드에서만 표시한다. `action`은 `approach`, `space`, `literal`, `intensity`는 `8~16`, `base_score`는 `2~5`를 사용한다. 런타임은 장면의 일반 `effects`를 먼저 적용한 뒤 이 메타데이터로 위치, 콤보, 득점선, 주도권과 반복 패턴 효과를 계산한다. 장면 효과에서 `affection`, `perceived_state`, `initiative`를 수동으로 변경하지 않는다.
 
 ## 10. 전이 우선순위
 
@@ -366,3 +404,42 @@ variants:
 - 번역 키·카탈로그·누락률을 포함한 `localization`
 
 이 패키지 밖의 사실을 추측해서 새 설정으로 확정하지 않는다.
+
+## 17. 회사 월드 바이블
+
+`story/world/`는 회사 장면의 조직 사실을 담는 기계 판독용 소스다. 각 YAML은 하나의 엔티티를 정의하며 ID 접두사는 종류와 일치해야 한다.
+
+```text
+company.*
+├── role.*
+├── team.* ↔ member.* → story/characters/* (일러스트 인물만)
+├── project.* → team.* + member.* + role.*
+└── meeting.* → required teams + required project responsibilities
+```
+
+- `team.member_ids`와 `member.team`은 양방향으로 일치해야 한다.
+- `member.manager`는 같은 회사의 더 높은 랭크이며 인원 관리 권한이 있어야 하고 보고 순환은 금지한다.
+- `presentation: illustrated`는 스토리 캐릭터 하나와 연결된다. `text_only`는 스토리 캐릭터·일러스트 캐스트·공략 라우트를 가질 수 없다.
+- `route_eligible`은 `illustrated`이고 연결 캐릭터가 `main_heroine`인 멤버에게만 허용한다.
+- 프로젝트 배정자는 해당 프로젝트의 참여 팀에 소속해야 한다.
+
+권한과 구성을 검증해야 하는 회의 장면은 다음처럼 제한된 월드 참조를 선언한다.
+
+```yaml
+world_context:
+  company: company.dawon_living
+  project: project.harudam_spring_campaign
+  interaction: meeting.cross_function_kickoff
+  participants:
+    - member.han_do_yoon
+    - member.yoon_seo_a
+    - member.cha_min_kyung
+    - member.kang_yoo_jin
+    - member.oh_se_jin
+    - member.jeong_da_eun
+    - member.moon_ji_hye
+```
+
+`cast`는 화면에 그릴 인물의 `story_character` ID만 포함한다. `world_context.participants`는 일러스트가 없는 동료까지 포함한 실제 참석자 전원의 `member.*` ID다. validator는 회의 정책의 최소·최대 인원, 필수 팀·프로젝트 책임, 비일러스트 동료 최소치를 모두 검사한다.
+
+`build`는 `world.entities`, `world.by_kind`, `world.story_character_members`를 출력한다. `context`는 장면에 선언된 회사·프로젝트·회의·참석자와 그들의 팀·직급만 `world_context`에 제공하여 다른 조직 사실을 임의로 혼합하지 못하게 한다.

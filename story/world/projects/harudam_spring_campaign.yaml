@@ -1,0 +1,41 @@
+schema_version: 1
+id: project.harudam_spring_campaign
+kind: project
+company: company.dawon_living
+name: 하루담 봄 리빙 캠페인
+project_type: integrated_retail_campaign
+summary: 생활용품 브랜드 하루담의 봄 판매 캠페인을 위해 거래처 승인, 상품 자료, 마케팅 일정과 디자인 버전을 통합하는 다부서 프로젝트.
+owner_team: team.marketing
+participating_teams:
+  - team.sales_planning
+  - team.product_planning
+  - team.marketing
+  - team.brand_design
+sponsor_member: member.park_jae_hyun
+lead_member: member.cha_min_kyung
+deliverables:
+  - id: deliverable.client_approval
+    owner_team: team.sales_planning
+    approver_role: role.manager
+    description: 거래처 사전 검토와 1차 승인 일정
+  - id: deliverable.product_packet
+    owner_team: team.product_planning
+    approver_role: role.department_head
+    description: 상품 정보와 표시 문구 패킷
+  - id: deliverable.campaign_plan
+    owner_team: team.marketing
+    approver_role: role.department_head
+    description: 캠페인 마스터 일정과 매체 계획
+  - id: deliverable.creative_set
+    owner_team: team.brand_design
+    approver_role: role.department_head
+    description: 최종안 1종과 매체별 변형 2종
+assignments:
+  - {responsibility: project_lead, member: member.cha_min_kyung}
+  - {responsibility: commercial_owner, member: member.han_do_yoon}
+  - {responsibility: product_owner, member: member.oh_se_jin}
+  - {responsibility: product_coordinator, member: member.yoon_seo_a}
+  - {responsibility: marketing_coordinator, member: member.jeong_da_eun}
+  - {responsibility: creative_approver, member: member.moon_ji_hye}
+  - {responsibility: creative_producer, member: member.kang_yoo_jin}
+  - {responsibility: account_support, member: member.lee_hyeon_woo}

@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "world.schema.json",
+  "title": "Love Office World Entity",
+  "type": "object",
+  "required": ["schema_version", "id", "kind"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
+    "kind": {"enum": ["company", "role", "team", "member", "project", "meeting"]},
+    "company": {"type": "string", "pattern": "^company\\."},
+    "name": {"type": "string", "minLength": 1},
+    "description": {"type": "string"},
+    "industry": {"type": "string"},
+    "scale": {"type": "string"},
+    "headcount_band": {"type": "string"},
+    "headquarters": {"type": "string"},
+    "team_ids": {"type": "array", "items": {"type": "string", "pattern": "^team\\."}, "uniqueItems": true},
+    "operating_facts": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "authoring_constraints": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "rank": {"type": "integer", "minimum": 0, "maximum": 100},
+    "people_manager": {"type": "boolean"},
+    "can_approve": {"type": "boolean"},
+    "can_lead_project": {"type": "boolean"},
+    "function": {"type": "string"},
+    "member_ids": {"type": "array", "items": {"type": "string", "pattern": "^member\\."}, "uniqueItems": true},
+    "display_name": {"type": "string"},
+    "team": {"type": "string", "pattern": "^team\\."},
+    "role": {"type": "string", "pattern": "^role\\."},
+    "title": {"type": "string"},
+    "manager": {"type": ["string", "null"], "pattern": "^member\\."},
+    "employment": {"enum": ["permanent", "fixed_term"]},
+    "presentation": {"enum": ["illustrated", "text_only"]},
+    "story_character": {"type": "string"},
+    "route_eligible": {"type": "boolean"},
+    "responsibilities": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "voice": {"type": "string"},
+    "project_type": {"type": "string"},
+    "summary": {"type": "string"},
+    "owner_team": {"type": "string", "pattern": "^team\\."},
+    "participating_teams": {"type": "array", "items": {"type": "string", "pattern": "^team\\."}, "uniqueItems": true},
+    "sponsor_member": {"type": "string", "pattern": "^member\\."},
+    "lead_member": {"type": "string", "pattern": "^member\\."},
+    "deliverables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "owner_team", "approver_role", "description"],
+        "properties": {
+          "id": {"type": "string"},
+          "owner_team": {"type": "string", "pattern": "^team\\."},
+          "approver_role": {"type": "string", "pattern": "^role\\."},
+          "description": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "assignments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["responsibility", "member"],
+        "properties": {
+          "responsibility": {"type": "string"},
+          "member": {"type": "string", "pattern": "^member\\."}
+        },
+        "additionalProperties": false
+      }
+    },
+    "formality": {"enum": ["formal", "informal"]},
+    "minimum_participants": {"type": "integer", "minimum": 1},
+    "maximum_participants": {"type": "integer", "minimum": 1},
+    "minimum_text_only_participants": {"type": "integer", "minimum": 0},
+    "required_teams": {"type": "array", "items": {"type": "string", "pattern": "^team\\."}, "uniqueItems": true},
+    "required_responsibilities": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "allowed_unassigned_participants": {"type": "boolean"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "allOf": [
+    {"if": {"properties": {"kind": {"const": "company"}}}, "then": {"required": ["name", "industry", "scale", "team_ids", "operating_facts", "authoring_constraints"]}},
+    {"if": {"properties": {"kind": {"const": "role"}}}, "then": {"required": ["company", "name", "rank", "people_manager", "can_approve", "can_lead_project", "description"]}},
+    {"if": {"properties": {"kind": {"const": "team"}}}, "then": {"required": ["company", "name", "function", "lead_member", "member_ids"]}},
+    {"if": {"properties": {"kind": {"const": "member"}}}, "then": {"required": ["company", "display_name", "team", "role", "title", "manager", "employment", "presentation", "route_eligible", "responsibilities"]}},
+    {"if": {"properties": {"kind": {"const": "project"}}}, "then": {"required": ["company", "name", "project_type", "summary", "owner_team", "participating_teams", "sponsor_member", "lead_member", "deliverables", "assignments"]}},
+    {"if": {"properties": {"kind": {"const": "meeting"}}}, "then": {"required": ["company", "name", "formality", "minimum_participants", "maximum_participants", "minimum_text_only_participants", "required_teams", "required_responsibilities", "allowed_unassigned_participants"]}}
+  ],
+  "additionalProperties": false
+}

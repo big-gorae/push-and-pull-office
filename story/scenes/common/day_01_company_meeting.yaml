@@ -8,6 +8,18 @@ location: meeting_room
 time: morning
 purpose: 프로젝트 킥오프에서 서아·민경·유진의 업무 태도와 한도윤의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.
 cast: [han_do_yoon, yoon_seo_a, cha_min_kyung, kang_yoo_jin]
+world_context:
+  company: company.dawon_living
+  project: project.harudam_spring_campaign
+  interaction: meeting.cross_function_kickoff
+  participants:
+    - member.han_do_yoon
+    - member.yoon_seo_a
+    - member.cha_min_kyung
+    - member.kang_yoo_jin
+    - member.oh_se_jin
+    - member.jeong_da_eun
+    - member.moon_ji_hye
 entry_conditions: []
 state_contract:
   reads: []
@@ -19,14 +31,51 @@ nodes:
     perceived:
       atmosphere: procedural
       line: "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 낯선 팀이 한자리에 모이면 사람의 장점도 평소보다 선명하게 보이는 법이다."
-      protagonist_interpretation: 새 프로젝트는 자신의 능력을 보여 주고 새로운 사람을 알아갈 기회라고 생각한다.
     reality:
       atmosphere: procedural
       line: "수요일 오전, 영업기획·상품기획·마케팅·브랜드디자인 실무자들이 신규 프로젝트 킥오프를 위해 회의실에 모였다."
-      inner_thought: 참석자들은 배포 자료와 일정표를 확인하며 각자 맡을 업무를 준비한다.
+      intent: work_only
+    next: arrival_inner
+
+  - id: arrival_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality:
+    perceived:
+      atmosphere: procedural
+      line: (새 프로젝트라… 내 능력도 보여 주고, 사람들도 천천히 알아볼 기회겠군.)
+    reality:
+      atmosphere: procedural
+      line: 참석자들은 배포 자료와 일정표를 확인한 뒤 각자 맡은 일을 시작할 차례였다.
+      intent: work_only
+    next: jeong_da_eun_opening
+
+  - id: jeong_da_eun_opening
+    kind: dual_dialogue
+    speaker: member.jeong_da_eun
+    perceived:
+      atmosphere: procedural
+      line: "상품기획 오세진 팀장님, 디자인 문지혜 팀장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다."
+    reality:
+      atmosphere: procedural
+      line: "상품기획 오세진 팀장님, 디자인 문지혜 팀장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다."
+      intent: documentation
+    next: oh_se_jin_scope
+
+  - id: oh_se_jin_scope
+    kind: dual_dialogue
+    speaker: member.oh_se_jin
+    perceived:
+      atmosphere: procedural
+      line: "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
+    reality:
+      atmosphere: procedural
+      line: "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
       intent: work_only
     next: seo_a_materials
-
   - id: seo_a_materials
     kind: dual_dialogue
     speaker: yoon_seo_a
@@ -34,15 +83,28 @@ nodes:
       atmosphere: warm_romance
       expression: subjective_shy
       line: "과장님, 이걸로 먼저 보세요. 저는 화면으로 봐도 돼요."
-      protagonist_interpretation: 자신의 자료가 빠진 것을 가장 먼저 알아채고 개인 몫까지 내어 준 세심한 배려라고 느낀다.
     reality:
       atmosphere: procedural
       expression: actual_social_smile
       line: "과장님, 이걸로 먼저 보세요. 저는 화면으로 봐도 돼요."
-      inner_thought: 배포 부수가 하나 부족하다. 준비 담당자인 내가 화면을 보면 회의를 늦추지 않을 수 있다.
+      intent: work_only
+    next: seo_a_materials_inner
+
+  - id: seo_a_materials_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: yoon_seo_a
+    perceived:
+      atmosphere: warm_romance
+      line: (내 자료가 빠진 걸 제일 먼저 알아챘네. 자기 몫까지 내주고, 꽤 세심한데.)
+    reality:
+      atmosphere: procedural
+      line: (한 부가 모자라네. 내가 화면으로 보면 회의는 안 늦겠지.)
       intent: work_only
     next: do_yoon_thanks
-
   - id: do_yoon_thanks
     kind: dual_dialogue
     speaker: han_do_yoon
@@ -50,15 +112,28 @@ nodes:
       atmosphere: procedural
       expression: subjective_confident
       line: "고마워요. 윤서아 씨 맞죠? 출력은 회의 끝나고 해도 됩니다."
-      protagonist_interpretation: 긴장한 신입에게 이름을 불러 주며 여유 있게 부담을 덜어 준다고 생각한다.
     reality:
       atmosphere: procedural
       expression: actual_waiting_smile
       line: "고마워요. 윤서아 씨 맞죠? 출력은 회의 끝나고 해도 됩니다."
-      inner_thought: 사원증에서 이름을 확인했다. 자료가 생겼으니 회의를 시작하면 된다.
+      intent: courtesy
+    next: do_yoon_thanks_inner
+
+  - id: do_yoon_thanks_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: han_do_yoon
+    perceived:
+      atmosphere: procedural
+      line: (이름까지 불러 주면 긴장도 풀리겠지. 여유 있는 상사처럼 보였을 거야.)
+    reality:
+      atmosphere: procedural
+      line: (사원증에 윤서아라고 적혀 있었지. 자료도 생겼으니 시작하자.)
       intent: courtesy
     next: seo_a_introduction
-
   - id: seo_a_introduction
     kind: dual_dialogue
     speaker: yoon_seo_a
@@ -66,15 +141,28 @@ nodes:
       atmosphere: procedural
       expression: subjective_shy
       line: "아, 네. 상품기획팀 윤서아입니다. 빠진 자료는 회의 끝나고 바로 출력해 둘게요."
-      protagonist_interpretation: 이름을 기억해 준 것이 반가워 자신을 다시 또렷하게 소개한다고 받아들인다.
     reality:
       atmosphere: procedural
       expression: actual_social_smile
       line: "아, 네. 상품기획팀 윤서아입니다. 빠진 자료는 회의 끝나고 바로 출력해 둘게요."
-      inner_thought: 첫 회의부터 준비 실수로 보이지 않게 부족한 자료를 보충해야 한다.
+      intent: work_only
+    next: seo_a_introduction_inner
+
+  - id: seo_a_introduction_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: yoon_seo_a
+    perceived:
+      atmosphere: procedural
+      line: (이름을 기억해 줘서 반가운가? 다시 또렷이 소개하는 게 파릇파릇해서 귀엽네.)
+    reality:
+      atmosphere: procedural
+      line: (첫 회의부터 준비를 빼먹은 사람처럼 보이면 안 돼. 끝나자마자 출력해 두자.)
       intent: work_only
     next: min_kyung_question
-
   - id: min_kyung_question
     kind: dual_dialogue
     speaker: cha_min_kyung
@@ -82,15 +170,28 @@ nodes:
       atmosphere: playful_tension
       expression: subjective_challenging
       line: "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?"
-      protagonist_interpretation: 회의의 핵심을 곧바로 찌르며 자신의 실력을 확인하려는 도전이라고 느낀다.
     reality:
       atmosphere: procedural
       expression: actual_skeptical
       line: "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?"
-      inner_thought: 승인 지연이 전체 제작 일정을 무너뜨릴 수 있으니 근거를 지금 확인해야 한다.
+      intent: documentation
+    next: min_kyung_question_inner
+
+  - id: min_kyung_question_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: cha_min_kyung
+    perceived:
+      atmosphere: playful_tension
+      line: (시작부터 핵심을 찌르네. 내 실력을 한번 보겠다는 건가?)
+    reality:
+      atmosphere: procedural
+      line: (승인이 늦으면 제작 일정이 다 밀려. 근거는 지금 확인해야 해.)
       intent: documentation
     next: do_yoon_answer
-
   - id: do_yoon_answer
     kind: dual_dialogue
     speaker: han_do_yoon
@@ -98,15 +199,28 @@ nodes:
       atmosphere: playful_tension
       expression: subjective_confident
       line: "이번에는 사전 검토를 먼저 받았습니다. 회신 기한도 어제 메일로 확인했고요."
-      protagonist_interpretation: 상대가 던진 까다로운 질문에 준비된 답을 내놓으며 주도권을 잡았다고 생각한다.
     reality:
       atmosphere: procedural
       expression: actual_waiting_smile
       line: "이번에는 사전 검토를 먼저 받았습니다. 회신 기한도 어제 메일로 확인했고요."
-      inner_thought: 일정 근거는 준비되어 있다. 확인 메일을 공유하면 논의를 빨리 끝낼 수 있다.
+      intent: documentation
+    next: do_yoon_answer_inner
+
+  - id: do_yoon_answer_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: han_do_yoon
+    perceived:
+      atmosphere: playful_tension
+      line: (이 정도 질문은 이미 예상했지. 이제 흐름은 내가 잡았어.)
+    reality:
+      atmosphere: procedural
+      line: (근거는 준비됐고, 확인 메일만 공유하면 빨리 넘어갈 수 있겠네.)
       intent: documentation
     next: min_kyung_accepts
-
   - id: min_kyung_accepts
     kind: dual_dialogue
     speaker: cha_min_kyung
@@ -114,15 +228,28 @@ nodes:
       atmosphere: procedural
       expression: subjective_challenging
       line: "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠."
-      protagonist_interpretation: 자신을 시험한 뒤 실력을 인정하고 한발 물러난 반응처럼 느낀다.
     reality:
       atmosphere: procedural
       expression: actual_skeptical
       line: "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠."
-      inner_thought: 일정 근거가 있으니 이 안건에 시간을 더 쓸 필요는 없다.
+      intent: work_only
+    next: min_kyung_accepts_inner
+
+  - id: min_kyung_accepts_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: cha_min_kyung
+    perceived:
+      atmosphere: procedural
+      line: (시험은 끝났다는 표정이군. 내 답을 인정하고 한발 물러났네.)
+    reality:
+      atmosphere: procedural
+      line: (근거가 확인됐으니 여기서 더 시간을 쓸 필요는 없겠네.)
       intent: work_only
     next: yoo_jin_correction
-
   - id: yoo_jin_correction
     kind: dual_dialogue
     speaker: kang_yoo_jin
@@ -130,15 +257,28 @@ nodes:
       atmosphere: playful_tension
       expression: subjective_bold_flirt
       line: "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다."
-      protagonist_interpretation: 회의 내내 자신을 지켜보다 사소한 오류를 빌미로 대화에 끼어든 당돌한 관심이라고 여긴다.
     reality:
       atmosphere: procedural
       expression: actual_fact_check
       line: "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다."
-      inner_thought: 잘못된 수량이 회의록과 발주 문서에 남기 전에 바로잡아야 한다.
+      intent: documentation
+    next: yoo_jin_correction_inner
+
+  - id: yoo_jin_correction_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: kang_yoo_jin
+    perceived:
+      atmosphere: playful_tension
+      line: (계속 보고 있었군. 작은 오류라도 핑계 삼아 말을 거는 게 꽤 당돌하네.)
+    reality:
+      atmosphere: procedural
+      line: (네 종으로 남으면 회의록도 발주도 틀어진다. 지금 바로 고쳐야 해.)
       intent: documentation
     next: do_yoon_accepts_correction
-
   - id: do_yoon_accepts_correction
     kind: dual_dialogue
     speaker: han_do_yoon
@@ -146,15 +286,28 @@ nodes:
       atmosphere: procedural
       expression: subjective_confident
       line: "확인했습니다. 회의록에는 세 종으로 정리하죠. 수정된 시각도 같이 남겨 주세요."
-      protagonist_interpretation: 지적을 넉넉하게 받아 주면서 오히려 더 꼼꼼한 기준을 제시했다고 생각한다.
     reality:
       atmosphere: procedural
       expression: actual_waiting_smile
       line: "확인했습니다. 회의록에는 세 종으로 정리하죠. 수정된 시각도 같이 남겨 주세요."
-      inner_thought: 수량 오류를 인정하고 변경 기록을 남기는 편이 업무상 안전하다.
+      intent: documentation
+    next: do_yoon_accepts_correction_inner
+
+  - id: do_yoon_accepts_correction_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: han_do_yoon
+    perceived:
+      atmosphere: procedural
+      line: (실수는 받아들이고 기준은 더 꼼꼼하게. 이런 게 책임자의 여유지.)
+    reality:
+      atmosphere: procedural
+      line: (수량은 바로잡고 수정 시각까지 남겨야 나중에 문제없겠군.)
       intent: documentation
     next: yoo_jin_timestamp
-
   - id: yoo_jin_timestamp
     kind: dual_dialogue
     speaker: kang_yoo_jin
@@ -162,28 +315,66 @@ nodes:
       atmosphere: procedural
       expression: subjective_bold_flirt
       line: "오늘 오전 8시 42분에 수정했습니다. 공유 문서에도 같은 내용으로 반영했습니다."
-      protagonist_interpretation: 자신의 주문을 기다렸다는 듯 정확한 답을 내놓는 모습에서 좋은 호흡을 느낀다.
     reality:
       atmosphere: procedural
       expression: actual_procedural
       line: "오늘 오전 8시 42분에 수정했습니다. 공유 문서에도 같은 내용으로 반영했습니다."
-      inner_thought: 날짜와 시각까지 말하면 이후 버전 혼선을 막을 수 있다.
       intent: documentation
-    next: assignments
+    next: yoo_jin_timestamp_inner
 
+  - id: yoo_jin_timestamp_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: kang_yoo_jin
+    perceived:
+      atmosphere: procedural
+      line: (내가 뭘 물을지 기다렸다는 듯 바로 나오네. 호흡이 잘 맞는데.)
+    reality:
+      atmosphere: procedural
+      line: (수정 시각까지 말해 두면 나중에 버전이 섞이지 않겠지.)
+      intent: documentation
+    next: moon_ji_hye_capacity
+
+  - id: moon_ji_hye_capacity
+    kind: dual_dialogue
+    speaker: member.moon_ji_hye
+    perceived:
+      atmosphere: procedural
+      line: "디자인팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요."
+    reality:
+      atmosphere: procedural
+      line: "디자인팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요."
+      intent: work_only
+    next: assignments
   - id: assignments
     kind: dual_narration
     perceived:
       atmosphere: procedural
       line: "서아는 세심했고, 민경은 정확했으며, 유진은 거리낌이 없었다. 첫 회의치고는 각자의 색이 분명한 팀이었다."
-      protagonist_interpretation: 세 사람이 자신 앞에서 서로 다른 장점을 드러냈다고 기억한다.
     reality:
       atmosphere: procedural
-      line: "서아는 회의록과 자료 보충을, 민경은 승인 일정 검증을, 유진은 디자인 버전 관리를 맡았다."
-      inner_thought: 참석자들은 정해진 역할을 확인하고 남은 안건을 처리한다.
+      line: "민경이 전체 일정을 이끌고, 한도윤은 거래처 승인, 오세진은 상품 문구, 서아는 자료와 회의록, 정다은은 캠페인 일정, 문지혜와 유진은 디자인 승인과 버전 관리를 나눠 맡았다."
+      intent: work_only
+    next: assignments_inner
+
+  - id: assignments_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality:
+    perceived:
+      atmosphere: procedural
+      line: (세 사람 모두 자기 장점이 뚜렷하군. 내 앞이라 더 신경 쓴 걸까?)
+    reality:
+      atmosphere: procedural
+      line: 참석자들은 배정된 역할을 확인했고, 다음 회의 전까지 각 팀의 산출물을 준비하기로 했다.
       intent: work_only
     next: seo_a_closing
-
   - id: seo_a_closing
     kind: dual_dialogue
     speaker: yoon_seo_a
@@ -191,15 +382,28 @@ nodes:
       atmosphere: procedural
       expression: subjective_shy
       line: "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요."
-      protagonist_interpretation: 자신의 불편을 끝까지 챙기려는 책임감 있는 배려라고 받아들인다.
     reality:
       atmosphere: procedural
       expression: actual_social_smile
       line: "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요."
-      inner_thought: 담당한 두 가지 일을 한 번에 처리하면 된다.
+      intent: work_only
+    next: seo_a_closing_inner
+
+  - id: seo_a_closing_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: yoon_seo_a
+    perceived:
+      atmosphere: procedural
+      line: (내가 불편하지 않게 끝까지 챙겨 주려는 건가. 책임감도 있고 세심하네.)
+    reality:
+      atmosphere: procedural
+      line: (회의록과 빠진 자료를 같이 올리면 두 일을 한 번에 끝낼 수 있겠어.)
       intent: work_only
     next: min_kyung_closing
-
   - id: min_kyung_closing
     kind: dual_dialogue
     speaker: cha_min_kyung
@@ -207,15 +411,28 @@ nodes:
       atmosphere: procedural
       expression: subjective_challenging
       line: "승인 회신이 오면 일정표부터 다시 맞추겠습니다. 확인 메일은 저도 참조해 주세요."
-      protagonist_interpretation: 자신의 판단을 신뢰하되 다음 움직임은 함께 맞추겠다는 동료다운 제안으로 느낀다.
     reality:
       atmosphere: procedural
       expression: actual_skeptical
       line: "승인 회신이 오면 일정표부터 다시 맞추겠습니다. 확인 메일은 저도 참조해 주세요."
-      inner_thought: 회신을 직접 확인해야 일정 책임자로서 변경을 관리할 수 있다.
+      intent: documentation
+    next: min_kyung_closing_inner
+
+  - id: min_kyung_closing_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: cha_min_kyung
+    perceived:
+      atmosphere: procedural
+      line: (내 판단을 믿으면서도 다음 움직임은 함께 맞추겠다는 거군.)
+    reality:
+      atmosphere: procedural
+      line: (회신을 직접 봐야 일정이 바뀌어도 내가 책임지고 관리할 수 있어.)
       intent: documentation
     next: yoo_jin_closing
-
   - id: yoo_jin_closing
     kind: dual_dialogue
     speaker: kang_yoo_jin
@@ -223,15 +440,28 @@ nodes:
       atmosphere: procedural
       expression: subjective_bold_flirt
       line: "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다."
-      protagonist_interpretation: 자신과 기준을 맞춰 일하겠다는 단호한 약속처럼 들린다.
     reality:
       atmosphere: procedural
       expression: actual_procedural
       line: "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다."
-      inner_thought: 잘못된 파일이 다시 유통되지 않도록 전달 경로를 분명히 한다.
+      intent: documentation
+    next: yoo_jin_closing_inner
+
+  - id: yoo_jin_closing_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: kang_yoo_jin
+    perceived:
+      atmosphere: procedural
+      line: (나와 같은 기준으로 맞춰 일하겠다는 단호한 약속처럼 들리네.)
+    reality:
+      atmosphere: procedural
+      line: (잘못된 파일이 다시 돌지 않게 전달 경로를 확실히 해 둬야지.)
       intent: documentation
     next: do_yoon_closing
-
   - id: do_yoon_closing
     kind: dual_dialogue
     speaker: han_do_yoon
@@ -239,28 +469,54 @@ nodes:
       atmosphere: procedural
       expression: subjective_confident
       line: "좋습니다. 첫 주는 일정부터 맞추죠. 불편한 건 부담 갖지 말고 바로 말해요."
-      protagonist_interpretation: 서로 다른 성격의 팀원들을 편안하게 이끄는 믿음직한 책임자로 회의를 마쳤다고 생각한다.
     reality:
       atmosphere: procedural
       expression: actual_waiting_smile
       line: "좋습니다. 첫 주는 일정부터 맞추죠. 불편한 건 부담 갖지 말고 바로 말해요."
-      inner_thought: 첫 회의에서는 의견을 열어 두는 상사처럼 보이는 편이 좋다.
+      intent: work_only
+    next: do_yoon_closing_inner
+
+  - id: do_yoon_closing_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: han_do_yoon
+    perceived:
+      atmosphere: procedural
+      line: (서로 다른 사람들을 편하게 이끄는 책임자라면 이 정도 여유는 보여야지.)
+    reality:
+      atmosphere: procedural
+      line: (첫 회의니까 의견을 편하게 말할 수 있는 상사처럼 보이는 게 좋겠군.)
       intent: work_only
     next: after_meeting
-
   - id: after_meeting
     kind: dual_narration
     perceived:
       atmosphere: procedural
       line: "첫인상은 나쁘지 않았다. 다만 아직은 함께 일하게 된 사람들의 얼굴과 이름을 익힌 정도였다."
-      protagonist_interpretation: 세 사람의 매력을 눈여겨보지만 누구를 사적으로 알아가겠다는 생각까지는 하지 않는다.
     reality:
       atmosphere: procedural
       line: "회의가 끝나자 세 사람은 각자 맡은 업무로 돌아갔다. 누구도 한도윤에게 사적인 관심을 표현하지 않았다."
-      inner_thought: 한도윤은 업무에 필요한 것보다 조금 오래 세 사람의 인상을 정리하지만 아직 행동으로 옮기지는 않는다.
+      intent: work_only
+    next: after_meeting_inner
+
+  - id: after_meeting_inner
+    kind: dual_dialogue
+    presentation_flags:
+      - inner_voice
+    speakers:
+      perceived: han_do_yoon
+      reality: han_do_yoon
+    perceived:
+      atmosphere: procedural
+      line: (셋 다 눈에 띄긴 하지만, 아직은 같이 일하게 된 사람들일 뿐이지.)
+    reality:
+      atmosphere: procedural
+      line: (업무에 필요한 것보다 셋의 인상을 조금 오래 떠올렸군. 그래도 아직 뭘 할 생각은 없어.)
       intent: work_only
     next: leave
-
   - id: leave
     kind: exit
     transitions:
