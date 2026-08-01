@@ -1,7 +1,7 @@
 PYTHON := $(if $(wildcard .venv/bin/python),.venv/bin/python,python3)
 RUST_ENV := PATH=$(CURDIR)/.tooling/cargo/bin:$(PATH) RUSTUP_HOME=$(CURDIR)/.tooling/rustup CARGO_HOME=$(CURDIR)/.tooling/cargo
 
-.PHONY: story-validate story-build story-test story-context story-simulate story-editor rust-setup editor-setup tauri-dev tauri-build
+.PHONY: story-validate story-build story-test story-context story-simulate story-explore story-editor verify verify-story verify-player verify-e2e setup-hooks rust-setup editor-setup tauri-dev tauri-build
 
 story-validate:
 	$(PYTHON) tools/story_harness.py validate
@@ -18,6 +18,24 @@ story-context:
 story-simulate:
 	$(PYTHON) tools/story_harness.py simulate --route seo_a --strategy first
 
+story-explore:
+	$(PYTHON) tools/story_harness.py explore
+
+verify:
+	bash tools/verify_all.sh all
+
+verify-story:
+	bash tools/verify_all.sh story
+
+verify-player:
+	bash tools/verify_all.sh player
+
+verify-e2e:
+	bash tools/verify_all.sh e2e
+
+setup-hooks:
+	bash tools/install_git_hooks.sh
+
 story-editor:
 	$(PYTHON) tools/story_editor.py
 
@@ -30,7 +48,7 @@ rust-setup:
 
 editor-setup: rust-setup
 	python3 -m venv .venv
-	.venv/bin/python -m pip install -r requirements-story.txt
+	.venv/bin/python -m pip install --require-hashes -r requirements-story.txt
 	npm install
 
 tauri-dev:

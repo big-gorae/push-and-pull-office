@@ -25,12 +25,14 @@ from story_harness import (  # noqa: E402
     condition_matches,
     derive_emotion,
     effective_speaker,
+    explore_route,
     localization_report,
     push_pull_state,
     resolve_scene_background,
     resolve_scene_stage,
     resolve_push_pull,
     resolve_dialogue_variant,
+    reproducible_generated_at,
     set_path,
 )
 
@@ -42,6 +44,41 @@ class StoryHarnessTests(unittest.TestCase):
     def test_project_validates_without_errors_or_warnings(self):
         issues = self.project.validate()
         self.assertEqual([], issues)
+
+    def test_build_metadata_is_reproducible_by_default(self):
+        self.assertEqual("1970-01-01T00:00:00+00:00", reproducible_generated_at())
+        self.assertEqual(self.project.build_bundle(), self.project.build_bundle())
+
+    def test_approved_player_copy_is_a_hard_contract(self):
+        original = self.project.ui["strings"]["mode.truth.copyUnlocked"]
+        try:
+            self.project.ui["strings"]["mode.truth.copyUnlocked"] = "다른 설명"
+            issues = self.project.validate()
+            self.assertTrue(any("approved player copy" in issue.message for issue in issues))
+        finally:
+            self.project.ui["strings"]["mode.truth.copyUnlocked"] = original
+
+    def test_explorer_covers_every_route_choice_option(self):
+        results = {route_id: explore_route(self.project, route_id) for route_id in self.project.routes}
+        self.assertGreaterEqual(results["seo_a"]["choice_options"], 10)
+        self.assertGreaterEqual(results["min_kyung"]["choice_options"], 6)
+        self.assertTrue(results["seo_a"]["endings"])
+        self.assertTrue(results["min_kyung"]["endings"])
+
+    def test_explorer_rejects_an_unreachable_choice_option(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        option = scene["nodes"][2]["options"][0]
+        original = copy.deepcopy(option["conditions"])
+        try:
+            option["conditions"] = [{
+                "path": "hidden.heroines.yoon_seo_a.suspicion",
+                "op": "gt",
+                "value": 100,
+            }]
+            with self.assertRaisesRegex(RuntimeError, "unreachable choice options"):
+                explore_route(self.project, "seo_a")
+        finally:
+            option["conditions"] = original
 
     def test_condition_fixture_matches_typescript_contract(self):
         fixture = json.loads((ROOT / "tests/fixtures/condition-conformance.json").read_text(encoding="utf-8"))

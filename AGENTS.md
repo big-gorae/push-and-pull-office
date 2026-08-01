@@ -2,10 +2,11 @@
 
 ## `전부 반영` publishing workflow
 
-- When the user says `전부 반영`, treat it as explicit authorization to stage and commit the completed in-scope changes, integrate the latest remote `main`, and push directly to `main` without asking for additional approval.
-- Before pushing, inspect the local diff and fetch the current `origin/main` so the scope and intent of both the local work and incoming commits are understood.
-- Commit the intended local work if necessary, then run `git pull --no-rebase origin main` before the push. Resolve merge conflicts by preserving the intent of both the latest `main` commits and the commit being published; never solve a conflict by silently dropping either side.
-- After integration, rerun the relevant validation and tests. Push only when the merged result is valid and includes both sets of intended behavior.
+- When the user says `전부 반영`, treat it as explicit authorization to stage and commit the completed in-scope changes, integrate the latest remote `main`, publish an automation branch, open a pull request, enable auto-merge, wait for the required CI check, and deploy the resulting `main` commit without asking for additional approval.
+- Never bypass the protected `main` branch or its required `required` status check. A successful automated pull request merge is the only normal publication path.
+- Before publishing the automation branch, inspect the local diff and fetch the current `origin/main` so the scope and intent of both the local work and incoming commits are understood.
+- Integrate the current `origin/main` into the intended work before the pull request. Resolve merge conflicts by preserving the intent of both the latest `main` commits and the commit being published; never solve a conflict by silently dropping either side.
+- Run `npm run verify` locally before publishing. After auto-merge, confirm the merged `main` SHA passed CI and deploy only that exact SHA.
 - Do not include unrelated user changes merely because `전부 반영` was invoked. If a conflict is genuinely ambiguous and both intentions cannot safely be preserved, stop and explain the conflict instead of guessing or discarding work.
 
 ## Story source of truth
@@ -31,13 +32,10 @@
 3. Run all gates:
 
    ```bash
-   python3 tools/story_harness.py validate
-   python3 -m unittest discover -s tests -v
-   python3 tools/story_harness.py build
-   python3 tools/story_harness.py timeline --day 5 --slot after_work --process-automatic
+   npm run verify
    ```
 
-4. Simulate every changed branch, not only the default option.
+4. `story_harness.py explore` must cover every route choice option, not only a default strategy.
 
 ## Story invariants
 
