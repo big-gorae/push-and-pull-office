@@ -92,4 +92,7 @@ make tauri-build
 완성된 앱은 `src-tauri/target/release/bundle/macos/밀당 오피스 스토리 에디터.app`에 생성됩니다.
 
 Tauri 기반 제작 에디터의 화면, 편집 흐름, 저장·검증 구조와 구현 단계는
-[`docs/tauri-story-editor-design.md`](docs/tauri-story-editor-design.md)에 정리되어 있습니다.
+[`docs/system/tauri-story-editor-design.md`](docs/system/tauri-story-editor-design.md)에 정리되어 있습니다.
+
+게임 시스템 설계 문서의 구현 상태와 단일 진입점은
+[`docs/system/README.md`](docs/system/README.md)에서 관리합니다.
