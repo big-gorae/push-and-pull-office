@@ -280,7 +280,7 @@ reality:
 
 `push_pull`은 제작·런타임 전용 분류이며 일반 선택지 화면과 결과 연출에는 노출하지 않는다. 선택지별 방향·강도와 계산 결과는 명시적으로 켠 디버깅 모드에서만 표시한다. `action`은 `approach`, `space`, `literal`, `intensity`는 `8~16`, `base_score`는 `2~5`를 사용한다. 런타임은 장면의 일반 `effects`를 먼저 적용한 뒤 이 메타데이터로 위치, 콤보, 득점선, 주도권과 반복 패턴 효과를 계산한다. 장면 효과에서 `affection`, `perceived_state`, `initiative`를 수동으로 변경하지 않는다.
 
-인물별 지원 화법을 쓴 선택은 `interaction`을 선언한다. 여러 공략 인물이 함께 있어 밀당 계산 대상도 장면 루트의 기본 히로인과 다르면 `push_pull.target`을 별도로 선언한다.
+MBTI 요소의 인물별 지원 화법을 쓴 선택은 `interaction`을 선언한다. 여러 공략 인물이 함께 있어 밀당 계산 대상도 장면 루트의 기본 히로인과 다르면 `push_pull.target`을 별도로 선언한다.
 
 ```yaml
 push_pull:
@@ -346,13 +346,13 @@ state_contract:
 
 하네스는 조건에서 읽는 경로와 효과에서 쓰는 경로가 계약에 없으면 오류로 처리한다. 이 계약은 게임 코드의 의존성과 AI 컨텍스트를 동시에 제한한다.
 
-## 12. 캐릭터 상호작용 선호와 감정 규칙
+## 12. 캐릭터 MBTI 요소와 감정 규칙
 
-공략 대상과 주요 대화 상대는 `interaction_preferences`에 지원을 받아들이는 기본 순서를 기록할 수 있다.
+내부 기획에서는 캐릭터별 반응 화법 축을 **MBTI 요소**라고 부른다. 공략 대상과 주요 대화 상대는 `interaction_preferences`에 지원을 받아들이는 기본 순서를 기록할 수 있다.
 
 ```yaml
 interaction_preferences:
-  authoring_shorthand: F 성향을 떠올리되 감정 인정부터 시작하는 지원 순서로만 사용한다.
+  authoring_shorthand: MBTI 요소의 F 성향을 떠올리되 감정 인정부터 시작하는 지원 순서로만 사용한다.
   support_order:
     - emotional_validation
     - ask_before_helping
@@ -366,7 +366,7 @@ interaction_preferences:
     - 마감이 임박하면 복구 행동을 먼저 요청할 수 있다.
 ```
 
-`authoring_shorthand`는 작가 참고용이며 플레이어에게 성격 검사 결과나 정답표로 노출하지 않는다. `support_order`는 평상시 기본값이고 현재 상황, 명시적인 요청과 거절이 항상 우선한다. 순서에 맞는 대화는 고유 반응, 정보와 후속 콜백을 만들지만 실제 호감도·주도권 보너스·숨은 악영향을 자동으로 바꾸지 않는다. 장면 선택지의 객관적인 거리와 타이밍은 계속 `push_pull`에서 별도로 판정한다.
+`authoring_shorthand`는 MBTI 요소를 빠르게 논의하기 위한 작가 참고용이며 플레이어에게 성격 검사 결과나 정답표로 노출하지 않는다. 실제 데이터는 유형이 아니라 행동 기반 `support_order`와 `support_styles`를 사용한다. `support_order`는 평상시 기본값이고 현재 상황, 명시적인 요청과 거절이 항상 우선한다. 순서에 맞는 대화는 고유 반응, 정보와 후속 콜백을 만들지만 실제 호감도·주도권 보너스·숨은 악영향을 자동으로 바꾸지 않는다. 장면 선택지의 객관적인 거리와 타이밍은 계속 `push_pull`에서 별도로 판정한다.
 
 지원 화법의 안정 ID는 다음과 같다.
 

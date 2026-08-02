@@ -20,7 +20,7 @@ story/
 ├── RUNTIME_INTEGRATION.md # 게임 엔진 처리·세이브·UI 계약
 ├── VERIFICATION.md        # 요구사항별 구현 및 테스트 증거
 ├── AI_AUTHORING_RULES.md  # AI 에이전트용 작성 계약
-├── characters/            # 인물별 상호작용 선호, 감정 모델, 표정, 신고 규칙
+├── characters/            # 인물별 MBTI 요소(상호작용 선호), 감정 모델, 표정, 신고 규칙
 ├── routes/                # 루트 해금, 진입 장면, 엔딩
 ├── scenes/                # 실제 대사와 분기 노드 그래프
 ├── templates/             # 새 장면 작성 템플릿
@@ -70,7 +70,7 @@ python3 tools/story_harness.py context \
 
 1. `templates/scene.template.yaml`을 복사해 장면 ID와 루트를 정한다.
 2. 회사 장면이면 `world/README.md`와 `world/**/*.yaml`에서 소속·권한·참석자를 확인하고, 공식 회의에 `world_context`를 선언한다.
-3. 선택지를 쓰기 전에 반응 상대의 행동 기반 `interaction_preferences`와 현재 상황 예외를 확인한다. F/T 약칭을 정답표로 사용하지 않고, 명시적 요청·거절에는 `literal_respect`를 우선한다.
+3. MBTI 요소를 적용할 때 반응 상대의 행동 기반 `interaction_preferences`와 현재 상황 예외를 확인한다. F/T는 작가용 약칭으로만 사용하고, 명시적 요청·거절에는 `literal_respect`를 우선한다.
 4. 다인물 선택은 `interaction.target`의 반응 상대와 `push_pull.target`의 밀당 계산 인물을 따로 정한다. 둘 다 현재 `cast` 인물이어야 한다.
 5. 장면에서 읽고 쓸 상태를 `state_contract`에 먼저 선언한다. 루트 기본 히로인과 다른 계산 인물을 쓰면 그 인물의 시스템 경로도 포함한다.
 6. 각 대사 노드에 `perceived`와 `reality`를 모두 작성한다.
