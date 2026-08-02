@@ -16,7 +16,7 @@ import { NightPhaseError, nightPhaseCoordinator } from "./nightPhase";
 
 const INITIAL_PROFILE: SelfDevelopmentState = {
   appeal: 30,
-  stats: { stamina: 0, appearance: 0, humor: 0, taste: 0 },
+  stats: { health: 0, appearance: 0, humor: 0, intelligence: 0 },
   fatigue: 1,
 };
 
@@ -30,8 +30,18 @@ const CONFIG: SelfDevelopmentConfig = {
       reflection_keys: { perceived: "workout.perceived", reality: "workout.reality" },
       appeal_delta: 3,
       fatigue_delta: 2,
-      stat_deltas: { stamina: 2, appearance: 1 },
+      stat_deltas: { health: 2, appearance: 1 },
       fatigue_lte: 4,
+    },
+    {
+      id: "reading",
+      title_key: "reading.title",
+      description_key: "reading.description",
+      reflection_keys: { perceived: "reading.perceived", reality: "reading.reality" },
+      appeal_delta: 1,
+      fatigue_delta: 1,
+      stat_deltas: { intelligence: 2 },
+      fatigue_lte: 5,
     },
     {
       id: "ott",
@@ -40,7 +50,7 @@ const CONFIG: SelfDevelopmentConfig = {
       reflection_keys: { perceived: "ott.perceived", reality: "ott.reality" },
       appeal_delta: -1,
       fatigue_delta: -1,
-      stat_deltas: { humor: 2, taste: 1 },
+      stat_deltas: { humor: 2 },
     },
     {
       id: "sleep",
@@ -51,20 +61,31 @@ const CONFIG: SelfDevelopmentConfig = {
       fatigue_delta: -4,
       stat_deltas: {},
     },
+    {
+      id: "solo_drinking",
+      title_key: "solo_drinking.title",
+      description_key: "solo_drinking.description",
+      reflection_keys: { perceived: "solo_drinking.perceived", reality: "solo_drinking.reality" },
+      selectable: false,
+      appeal_delta: -1,
+      fatigue_delta: -2,
+      stat_deltas: { health: -1 },
+      fatigue_gte: 5,
+    },
   ],
   expressions: {
-    "stamina.workout_answer": {
-      requires: { appeal_gte: 32, stat: "stamina", minimum: 2, fatigue_lte: 4 },
+    "health.workout_answer": {
+      requires: { appeal_gte: 32, stat: "health", minimum: 2, fatigue_lte: 4 },
       score_bonus: 2,
     },
     "appearance.change_notice": {
       requires: { stat: "appearance", minimum: 2, fatigue_lte: 4 },
       score_bonus: 0,
     },
-    "stamina.recent_workout_answer": {
+    "health.recent_workout_answer": {
       requires: {
         appeal_gte: 32,
-        stat: "stamina",
+        stat: "health",
         minimum: 2,
         fatigue_lte: 4,
         last_activity: "workout",
@@ -123,13 +144,13 @@ describe("self-development domain", () => {
     (legacy.visible.protagonist as unknown as Record<string, unknown>).self_development = {
       appeal: 500,
       fatigue: -10,
-      stats: { stamina: -2, appearance: 9, humor: Number.NaN, taste: 3.8 },
+      stats: { stamina: 3, health: -2, appearance: 9, humor: Number.NaN, intelligence: 3.8 },
     };
     const profile = service.profile(legacy);
     expect(profile.snapshot()).toEqual({
       appeal: 100,
       fatigue: 0,
-      stats: { stamina: 0, appearance: 5, humor: 0, taste: 3 },
+      stats: { health: 0, appearance: 5, humor: 0, intelligence: 3 },
     });
   });
 
@@ -139,38 +160,38 @@ describe("self-development domain", () => {
     const state = stateAtNight(runtime);
     state.visible.protagonist.self_development = {
       appeal: 32,
-      stats: { stamina: 2, appearance: 2, humor: 0, taste: 0 },
+      stats: { health: 2, appearance: 2, humor: 0, intelligence: 0 },
       fatigue: 4,
     };
 
-    expect(service.eligibility.isEligible(state, "stamina.workout_answer")).toBe(true);
-    expect(service.eligibility.scoreBonus(state, "stamina.workout_answer")).toBe(2);
+    expect(service.eligibility.isEligible(state, "health.workout_answer")).toBe(true);
+    expect(service.eligibility.scoreBonus(state, "health.workout_answer")).toBe(2);
     expect(service.eligibility.isEligible(state, "appearance.change_notice")).toBe(true);
     expect(service.eligibility.scoreBonus(state, "appearance.change_notice")).toBe(0);
-    expect(service.eligibility.isEligible(state, "stamina.recent_workout_answer")).toBe(false);
-    expect(service.eligibility.scoreBonus(state, "stamina.recent_workout_answer")).toBe(0);
+    expect(service.eligibility.isEligible(state, "health.recent_workout_answer")).toBe(false);
+    expect(service.eligibility.scoreBonus(state, "health.recent_workout_answer")).toBe(0);
     expect(service.eligibility.isEligible(state, "missing.expression")).toBe(false);
 
     state.progress.self_development.last_activity = "workout";
-    expect(service.eligibility.isEligible(state, "stamina.recent_workout_answer")).toBe(true);
-    expect(service.eligibility.scoreBonus(state, "stamina.recent_workout_answer")).toBe(3);
+    expect(service.eligibility.isEligible(state, "health.recent_workout_answer")).toBe(true);
+    expect(service.eligibility.scoreBonus(state, "health.recent_workout_answer")).toBe(3);
 
     state.visible.protagonist.self_development.fatigue = 5;
-    expect(service.eligibility.isEligible(state, "stamina.workout_answer")).toBe(false);
-    expect(service.eligibility.isEligible(state, "stamina.recent_workout_answer")).toBe(false);
-    expect(service.eligibility.scoreBonus(state, "stamina.workout_answer")).toBe(0);
+    expect(service.eligibility.isEligible(state, "health.workout_answer")).toBe(false);
+    expect(service.eligibility.isEligible(state, "health.recent_workout_answer")).toBe(false);
+    expect(service.eligibility.scoreBonus(state, "health.workout_answer")).toBe(0);
   });
 
   it("keeps profile and eligibility objects independently usable", () => {
     const profile = SelfDevelopmentProfile.hydrate({
       appeal: 40,
-      stats: { stamina: 3, appearance: 0, humor: 0, taste: 0 },
+      stats: { health: 3, appearance: 0, humor: 0, intelligence: 0 },
       fatigue: 2,
     });
-    expect(profile.meets({ appeal_gte: 40, stat: "stamina", minimum: 3, fatigue_lte: 2 })).toBe(true);
+    expect(profile.meets({ appeal_gte: 40, stat: "health", minimum: 3, fatigue_lte: 2 })).toBe(true);
     expect(profile.meets({
       appeal_gte: 40,
-      stat: "stamina",
+      stat: "health",
       minimum: 3,
       fatigue_lte: 2,
       last_activity: "workout",
@@ -181,10 +202,10 @@ describe("self-development domain", () => {
     const runtime = testRuntime();
     const state = stateAtNight(runtime);
     state.visible.protagonist.self_development = profile.snapshot();
-    expect(policy.scoreBonus(state, "stamina.workout_answer")).toBe(2);
-    expect(policy.scoreBonus(state, "stamina.recent_workout_answer")).toBe(0);
+    expect(policy.scoreBonus(state, "health.workout_answer")).toBe(2);
+    expect(policy.scoreBonus(state, "health.recent_workout_answer")).toBe(0);
     state.progress.self_development.last_activity = "workout";
-    expect(policy.scoreBonus(state, "stamina.recent_workout_answer")).toBe(3);
+    expect(policy.scoreBonus(state, "health.recent_workout_answer")).toBe(3);
   });
 
   it("reports activity availability without allowing fatigue to overflow", () => {
@@ -211,7 +232,7 @@ describe("self-development domain", () => {
     const state = stateAtNight(runtime);
     state.visible.protagonist.self_development = {
       appeal: 99,
-      stats: { stamina: 4, appearance: 5, humor: 0, taste: 0 },
+      stats: { health: 4, appearance: 5, humor: 0, intelligence: 0 },
       fatigue: 4,
     };
 
@@ -220,11 +241,11 @@ describe("self-development domain", () => {
       activityId: "workout",
       appealDelta: 1,
       fatigueDelta: 2,
-      statDeltas: { stamina: 1, appearance: 0 },
+      statDeltas: { health: 1, appearance: 0 },
     });
     expect(result.after).toEqual({
       appeal: 100,
-      stats: { stamina: 5, appearance: 5, humor: 0, taste: 0 },
+      stats: { health: 5, appearance: 5, humor: 0, intelligence: 0 },
       fatigue: 6,
     });
     expect(state.progress.self_development).toEqual({
@@ -266,8 +287,11 @@ describe("night phase coordinator", () => {
     const state = stateAtNight(runtime);
 
     expect(coordinator.shouldStart(state)).toBe(true);
-    const selecting = coordinator.start(state);
+    const intro = coordinator.start(state);
+    expect(intro).toMatchObject({ status: "intro", day: 1 });
+    const selecting = coordinator.continueIntro(state, intro);
     expect(selecting).toMatchObject({ status: "selecting", day: 1 });
+    if (selecting.status !== "selecting") throw new Error("expected selectable night");
     expect(selecting.options.some((option) => option.available)).toBe(true);
     expectErrorCode(() => coordinator.finish(state), "activity_not_completed");
 
@@ -296,6 +320,22 @@ describe("night phase coordinator", () => {
     state.progress.time.slot = "after_work";
     state.progress.time.day = 17;
     expect(coordinator.shouldStart(state)).toBe(false);
+  });
+
+  it("forces solo drinking instead of choices when fatigue is high", () => {
+    const runtime = testRuntime();
+    const coordinator = nightPhaseCoordinator(runtime);
+    const state = stateAtNight(runtime);
+    state.visible.protagonist.self_development.fatigue = 5;
+
+    const intro = coordinator.start(state);
+    expect(intro).toMatchObject({ status: "intro", forcedActivityId: "solo_drinking" });
+    const result = coordinator.continueIntro(state, intro);
+    expect(result).toMatchObject({
+      status: "result",
+      result: { activityId: "solo_drinking", fatigueDelta: -2 },
+    });
+    expect(state.progress.self_development.last_activity).toBe("solo_drinking");
   });
 
   it("caches its coordinator and exposes typed domain errors", () => {

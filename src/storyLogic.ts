@@ -450,7 +450,7 @@ export function deriveStateContract(
     if (!requirement) {
       selfDevelopmentPaths.add("visible.protagonist.self_development.appeal");
       selfDevelopmentPaths.add("visible.protagonist.self_development.fatigue");
-      ["stamina", "appearance", "humor", "taste"].forEach((stat) =>
+      ["health", "appearance", "humor", "intelligence"].forEach((stat) =>
         selfDevelopmentPaths.add(`visible.protagonist.self_development.stats.${stat}`));
       return;
     }

@@ -13,7 +13,8 @@ state_contract:
   reads:
     - progress.flags.push_pull
     - visible.protagonist.self_development.appeal
-    - visible.protagonist.self_development.stats.stamina
+    - visible.protagonist.self_development.stats.health
+    - visible.protagonist.self_development.stats.intelligence
     - visible.protagonist.self_development.fatigue
   writes:
     - visible.heroines.yoon_seo_a.initiative
@@ -26,31 +27,15 @@ nodes:
   - id: appearance_observation
     kind: dual_dialogue
     speaker: yoon_seo_a
-    variants:
-      - id: noticed_change
-        priority: 100
-        self_development:
-          expression: stamina.change_notice
-        perceived:
-          atmosphere: warm_romance
-          expression: subjective_shy
-          line: "아, 과장님. 요즘 살이 조금 빠지신 것 같아요."
-        reality:
-          atmosphere: procedural
-          expression: actual_social_smile
-          line: "아, 과장님. 요즘 살이 조금 빠지신 것 같아요."
-          intent: courtesy
-      - id: default
-        default: true
-        perceived:
-          atmosphere: warm_romance
-          expression: subjective_shy
-          line: "과장님, 잠깐 말씀드릴 게 있어요."
-        reality:
-          atmosphere: guarded_office
-          expression: actual_tense
-          line: "과장님, 잠깐 말씀드릴 게 있어요."
-          intent: boundary
+    perceived:
+      atmosphere: warm_romance
+      expression: subjective_shy
+      line: "과장님, 잠깐 말씀드릴 게 있어요."
+    reality:
+      atmosphere: guarded_office
+      expression: actual_tense
+      line: "과장님, 잠깐 말씀드릴 게 있어요."
+      intent: boundary
     next: appearance_observation_inner
 
   - id: appearance_observation_inner
@@ -59,27 +44,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
-    variants:
-      - id: noticed_change
-        priority: 100
-        self_development:
-          expression: stamina.change_notice
-        perceived:
-          atmosphere: warm_romance
-          line: (먼저 알아볼 만큼 계속 보고 있었나. 운동한 보람이 있네.)
-        reality:
-          atmosphere: procedural
-          line: (인사말로 눈에 띈 얘기를 꺼냈을 뿐이야. 자료 전달 얘기부터 하자.)
-          intent: courtesy
-      - id: default
-        default: true
-        perceived:
-          atmosphere: warm_romance
-          line: (따로 말을 꺼낼 만큼 내 반응이 궁금한 모양이군.)
-        reality:
-          atmosphere: guarded_office
-          line: (이번에는 자리로 오지 말라고 분명히 말하자.)
-          intent: boundary
+    perceived:
+      atmosphere: warm_romance
+      line: (따로 말을 꺼낼 만큼 내 반응이 궁금한 모양이군.)
+    reality:
+      atmosphere: guarded_office
+      line: (이번에는 자리로 오지 말라고 분명히 말하자.)
+      intent: boundary
     next: request
 
   - id: request
@@ -128,11 +99,11 @@ nodes:
         next: after_choice
       - id: mention_workout_and_step_back
         label: 요즘 운동한다고 말한 뒤 요청대로 자료만 메일로 보낸다
-        interpretation: 변화를 알아본 서아에게 자기관리하는 모습을 남기고 한발 물러난다.
+        interpretation: 건강을 챙기는 모습을 짧게 어필하고 한발 물러난다.
         action: 운동 이야기를 짧게 덧붙이고 자료를 메일로 보낸 뒤 사적인 접근을 사흘간 중단한다.
         push_pull: {action: space, intensity: 16, base_score: 4}
         self_development:
-          expression: stamina.workout_answer
+          expression: health.workout_answer
           equivalent_to: match_push
           converges_at: after_choice
         conditions: []
@@ -140,6 +111,20 @@ nodes:
           - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -3}
           - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 2}
         next: workout_self_promotion
+      - id: mention_reading_and_step_back
+        label: 최근 읽은 책을 짧게 언급한 뒤 요청대로 자료만 메일로 보낸다
+        interpretation: 상대의 말을 이해하는 사람이라는 인상을 남기고 한발 물러난다.
+        action: 최근 읽은 책을 짧게 언급하고 자료를 메일로 보낸 뒤 사적인 접근을 사흘간 중단한다.
+        push_pull: {action: space, intensity: 16, base_score: 4}
+        self_development:
+          expression: intelligence.contextual_answer
+          equivalent_to: match_push
+          converges_at: after_choice
+        conditions: []
+        effects:
+          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -3}
+          - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 2}
+        next: reading_self_promotion
       - id: pull_harder
         label: 퇴근 후 개인 메시지로 거절 이유를 다시 묻는다
         interpretation: 밀어낼수록 확신을 보여 주어야 한다.
@@ -172,6 +157,20 @@ nodes:
       atmosphere: procedural
       expression: actual_waiting_smile
       line: "요즘 운동을 좀 하거든요. 자료는 말씀하신 대로 메일로 보낼게요."
+      intent: self_promotion
+    next: after_choice
+
+  - id: reading_self_promotion
+    kind: dual_dialogue
+    speaker: han_do_yoon
+    perceived:
+      atmosphere: warm_romance
+      expression: subjective_confident
+      line: "요즘 《말보다 맥락》이라는 책을 읽고 있습니다. 상대가 정한 선을 먼저 이해해야 대화도 된다고 하더군요. 자료는 메일로 보낼게요."
+    reality:
+      atmosphere: procedural
+      expression: actual_waiting_smile
+      line: "요즘 《말보다 맥락》이라는 책을 읽고 있습니다. 상대가 정한 선을 먼저 이해해야 대화도 된다고 하더군요. 자료는 메일로 보낼게요."
       intent: self_promotion
     next: after_choice
 

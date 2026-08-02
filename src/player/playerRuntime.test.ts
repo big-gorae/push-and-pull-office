@@ -7,6 +7,7 @@ import {
   advanceToNextMoment,
   availableOptions,
   availableTimelineEvents,
+  beginSelfDevelopmentNight,
   createSession,
   createCampaignSession,
   currentNode,
@@ -38,8 +39,15 @@ function finishCurrentScene(value: PlayerSession): PlayerSession {
 
 function finishNight(value: PlayerSession, activityId = "sleep"): PlayerSession {
   if (value.phase !== "self_development") return value;
-  const selected = selectSelfDevelopmentActivity(runtime, value, activityId);
-  return finishSelfDevelopmentNight(runtime, selected);
+  const started = value.nightPhase?.status === "intro"
+    ? beginSelfDevelopmentNight(runtime, value)
+    : value;
+  const selected = started.nightPhase?.status === "selecting"
+    ? selectSelfDevelopmentActivity(runtime, started, activityId)
+    : started;
+  return selected.nightPhase?.status === "result"
+    ? finishSelfDevelopmentNight(runtime, selected)
+    : selected;
 }
 
 function advanceMeaningfulMoment(value: PlayerSession): PlayerSession {
@@ -73,13 +81,15 @@ describe("web player campaign runtime", () => {
 
     session = advanceToNextMoment(runtime, session);
     expect(session.phase).toBe("self_development");
+    expect(session.nightPhase?.status).toBe("intro");
+    session = beginSelfDevelopmentNight(runtime, session);
     expect(session.nightPhase?.status).toBe("selecting");
     session = selectSelfDevelopmentActivity(runtime, session, "workout");
     expect(session.nightPhase?.status).toBe("result");
     expect(session.state.visible.protagonist.self_development).toMatchObject({
       appeal: 33,
       fatigue: 3,
-      stats: { stamina: 2, appearance: 1 },
+      stats: { health: 2, appearance: 1 },
     });
     session = finishSelfDevelopmentNight(runtime, session);
     expect(session.state.progress.time).toMatchObject({ day: 2, slot: "morning" });
@@ -175,7 +185,7 @@ describe("web player campaign runtime", () => {
 
     const trained = structuredClone(base);
     trained.state.visible.protagonist.self_development.appeal = 32;
-    trained.state.visible.protagonist.self_development.stats.stamina = 2;
+    trained.state.visible.protagonist.self_development.stats.health = 2;
     trained.state.visible.protagonist.self_development.fatigue = 3;
     expect(availableOptions(runtime, trained).map((option) => option.id))
       .toContain("mention_workout_and_step_back");
@@ -253,7 +263,7 @@ describe("web player campaign runtime", () => {
     });
   });
 
-  it("selects a self-development dialogue variant only for an eligible profile", () => {
+  it("does not make a heroine notice an overnight physical change", () => {
     const baseline = createSession(runtime, "seo_a");
     baseline.phase = "scene";
     baseline.sceneId = "seo_a.email_request";
@@ -262,9 +272,9 @@ describe("web player campaign runtime", () => {
 
     const trained = structuredClone(baseline);
     trained.state.visible.protagonist.self_development.appeal = 32;
-    trained.state.visible.protagonist.self_development.stats.stamina = 2;
+    trained.state.visible.protagonist.self_development.stats.health = 2;
     trained.state.visible.protagonist.self_development.fatigue = 3;
-    expect(advanceSession(runtime, trained).backlog.at(-1)?.variantId).toBe("noticed_change");
+    expect(advanceSession(runtime, trained).backlog.at(-1)?.variantId).toBe("default");
   });
 
   it("does not mark an event seen when its scene entry condition fails", () => {

@@ -19,7 +19,7 @@ visible:
   protagonist:
     self_development:
       appeal: 30
-      stats: {stamina: 0, appearance: 0, humor: 0, taste: 0}
+      stats: {health: 0, appearance: 0, humor: 0, intelligence: 0}
       fatigue: 1
   heroines:
     yoon_seo_a:
@@ -114,7 +114,7 @@ campaign → day → slot → eligible event → scene → node
 - 플레이어에게 별도의 타임라인·ACT 선택 화면이나 캠페인 총일수 홍보 문구를 노출하지 않는다.
 - 런타임은 다음 의미 있는 사건으로 자동 진행하고 날짜가 바뀔 때만 짧은 전환 연출을 재생한다.
 - 같은 시간대에 선택 가능한 사건이 여럿이면 타임라인 카드가 아니라 장면 안의 대사·상황 요약과 선택지로 고르게 한다.
-- 1~16일의 `after_work` 사건 처리가 끝나면 날짜를 넘기기 전에 자기계발 밤 페이즈를 하루 한 번 연다. 17일은 최종 사건과 엔딩에 집중한다.
+- 1~16일의 `after_work` 사건 처리가 끝나면 날짜를 넘기기 전에 자기계발 밤 페이즈를 하루 한 번 연다. 별도 관리 화면을 만들지 않고 집에 돌아온 한도윤의 독백과 일반 대화 UI로 시작한 뒤, 선택 순간에만 현재 상태와 네 행동을 표시한다. 피로도 5 이상이면 선택 대신 혼술 사건이 강제로 발생한다. 17일은 최종 사건과 엔딩에 집중한다.
 - 캠페인은 안정 ID, `entry_event_id`, `initial_state_patch`와 활성 시스템을 선언한다.
 - 사건, 루트와 스레드는 `campaign_id`를 필수로 선언한다. 장면의 캠페인은 소속 루트에서 파생한다.
 - 런타임과 제작 도구는 캠페인 컬렉션의 첫 항목을 기본값으로 사용하지 않는다.
@@ -311,7 +311,7 @@ interaction:
 
 ```yaml
 self_development:
-  expression: stamina.workout_answer
+  expression: health.workout_answer
   equivalent_to: match_push
   converges_at: after_choice
 ```
@@ -320,7 +320,7 @@ self_development:
 
 대사 variant는 `self_development: {expression: <id>}`만 선언할 수 있다. 기본 variant는 항상 하나 남기며 자기계발 조건을 붙이지 않는다. `visible.protagonist.self_development`와 `progress.self_development` 경로는 일반 장면·사건·엔딩 조건에서 직접 읽지 않는다.
 
-직전 밤 활동을 다음 날 스몰토크로 회수할 때는 같은 다섯 활동 variant를 장면마다 복제하지 않고 저작 전용 `self_development_template`을 사용할 수 있다. 활동별 공통 소재는 `manifest.self_development.conversation_topics`가 소유한다.
+직전 밤 활동을 다음 날 스몰토크로 회수할 때는 활동별 variant를 장면마다 복제하지 않고 저작 전용 `self_development_template`을 사용할 수 있다. 활동별 공통 소재는 `manifest.self_development.conversation_topics`가 소유한다.
 
 ```yaml
 self_development:
@@ -330,7 +330,7 @@ self_development:
       expression: feedback.last_workout
       slots:
         formal_opener: "요즘 운동을 다시 시작했습니다."
-        formal_pitch: "앉아 있는 시간이 길어서 체력부터 챙기려고요."
+        formal_pitch: "앉아 있는 시간이 길어서 건강부터 챙기려고요."
 ```
 
 `slots`의 값은 조사나 어미 조각이 아니라 그대로 발화할 수 있는 완결된 한국어 문장으로 작성한다. 장면 템플릿이 참조하는 모든 `{{slot_id}}`는 모든 대화 소재에 존재해야 하며, 알 수 없거나 비어 있는 슬롯은 빌드 오류다. `variant_id`와 `expression`은 배포 뒤 유지하고, `expression`은 해당 활동을 `requires.last_activity`로 요구하면서 `score_bonus: 0`인 표현을 가리킨다.

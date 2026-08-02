@@ -185,15 +185,15 @@ class StoryEditorBridgeTests(unittest.TestCase):
             "nodes": [{
                 "kind": "dual_dialogue",
                 "variants": [{
-                    "self_development": {"expression": "stamina.answer"},
+                    "self_development": {"expression": "health.answer"},
                 }],
             }],
         }
         derive_state_contract(scene, {
-            "stamina.answer": {
+            "health.answer": {
                 "requires": {
                     "appeal_gte": 32,
-                    "stat": "stamina",
+                    "stat": "health",
                     "minimum": 2,
                     "fatigue_lte": 4,
                 },
@@ -202,7 +202,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
         self.assertEqual(
             [
                 "visible.protagonist.self_development.appeal",
-                "visible.protagonist.self_development.stats.stamina",
+                "visible.protagonist.self_development.stats.health",
                 "visible.protagonist.self_development.fatigue",
             ],
             scene["state_contract"]["reads"],
