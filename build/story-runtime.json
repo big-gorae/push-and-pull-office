@@ -10,7 +10,7 @@
     ]
   },
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "571cc87f8494642d841f952f416028ffe136e8c1cec83a7fa9f6d5cb5e59cbc5",
+  "source_sha256": "be0d12e513fb49f1a8e8df12d1dddf92e0b01ba4be3d8ff463241de2f1f6bebe",
   "enums": {
     "perceived_state": [
       "push",
@@ -11502,6 +11502,126 @@
         "multiline": false,
         "maxLength": 320
       },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.perceived.line": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.perceived.line",
+        "source": "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_close_response.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "after_resolution_close_response",
+          "speakerId": "cha_min_kyung",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.reality.line": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.reality.line",
+        "source": "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_close_response.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "after_resolution_close_response",
+          "speakerId": "cha_min_kyung",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.perceived.line": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.perceived.line",
+        "source": "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_empathy_response.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "after_resolution_empathy_response",
+          "speakerId": "cha_min_kyung",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.reality.line": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.reality.line",
+        "source": "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_empathy_response.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "after_resolution_empathy_response",
+          "speakerId": "cha_min_kyung",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.perceived.line": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.perceived.line",
+        "source": "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_overwork_response.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "after_resolution_overwork_response",
+          "speakerId": "cha_min_kyung",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.reality.line": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.reality.line",
+        "source": "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_overwork_response.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "after_resolution_overwork_response",
+          "speakerId": "cha_min_kyung",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
       "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.perceived.line": {
         "key": "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.perceived.line",
         "source": "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요.",
@@ -11536,6 +11656,251 @@
           "sceneId": "common.day_03_business_trip_or_cafe",
           "nodeId": "fatigue_response",
           "speakerId": "cha_min_kyung",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.action": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.action",
+        "source": "해결이 끝난 뒤 민경이 감당한 구체적인 부담을 인정하고, 쉴지는 민경이 정하도록 묻는다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.post_resolution_choice.options.acknowledge_after_resolution.action"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "post_resolution_choice",
+          "optionId": "acknowledge_after_resolution"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.interpretation": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.interpretation",
+        "source": "일을 끝낸 뒤 드러난 부담을 정확히 짚으면 민경도 업무 밖의 마음을 조금 더 보여 줄 거라고 생각한다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.post_resolution_choice.options.acknowledge_after_resolution.interpretation"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "post_resolution_choice",
+          "optionId": "acknowledge_after_resolution"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.label": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.label",
+        "source": "“세 쟁점을 끝까지 나눠 확인하느라 신경 많이 쓰셨겠어요. 이제 다 끝났는데, 잠깐 쉬시겠어요?”라고 묻는다",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.post_resolution_choice.options.acknowledge_after_resolution.label"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "post_resolution_choice",
+          "optionId": "acknowledge_after_resolution"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.action": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.action",
+        "source": "이미 담당과 다음 확인 시각이 정리된 업무에 새 확인표를 추가하겠다고, 필요 여부를 묻지 않고 통보한다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.post_resolution_choice.options.add_more_work.action"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "post_resolution_choice",
+          "optionId": "add_more_work"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.interpretation": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.interpretation",
+        "source": "해결책을 한 단계 더 준비하면 민경이 끝까지 믿고 맡길 사람으로 볼 거라고 생각한다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.post_resolution_choice.options.add_more_work.interpretation"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "post_resolution_choice",
+          "optionId": "add_more_work"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.label": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.label",
+        "source": "“다음 확인표도 제가 새로 만들어 둘게요. 이제는 신경 쓰지 마세요.”라고 말한다",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.post_resolution_choice.options.add_more_work.label"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "post_resolution_choice",
+          "optionId": "add_more_work"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.action": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.action",
+        "source": "완료된 항목을 사실대로 확인하고 추가적인 감정 질문 없이 업무 대화를 끝낸다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.post_resolution_choice.options.close_with_facts.action"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "post_resolution_choice",
+          "optionId": "close_with_facts"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.interpretation": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.interpretation",
+        "source": "일을 정확히 닫고 먼저 물러나면 민경이 다음 대화를 기다릴 거라고 생각한다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.post_resolution_choice.options.close_with_facts.interpretation"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "post_resolution_choice",
+          "optionId": "close_with_facts"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.label": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.label",
+        "source": "“세 건 모두 담당과 다음 확인 시각까지 정리됐습니다. 오늘은 여기서 마치죠.”라고 말한다",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.post_resolution_choice.options.close_with_facts.label"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "post_resolution_choice",
+          "optionId": "close_with_facts"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.prompt": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.prompt",
+        "source": "업무 정리를 마친 민경에게 어떻게 말할까?",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.post_resolution_choice.prompt"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "post_resolution_choice"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.stimulus": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.stimulus",
+        "source": "세 쟁점의 담당과 다음 확인 시각을 정리한 민경이 노트북을 닫고 짧게 숨을 내쉬었다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.post_resolution_choice.stimulus"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "post_resolution_choice"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.perceived.line": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.perceived.line",
+        "source": "세 쟁점에 마지막 확인이 붙자 민경은 노트북을 닫고 짧게 숨을 내쉬었다. 일을 끝낸 뒤에야 내게 보여 주는 틈처럼 느껴졌다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.resolution_complete.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "resolution_complete",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.reality.line": {
+        "key": "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.reality.line",
+        "source": "거래처 승인 회신, 수정 범위, 공개 일정의 담당과 다음 확인 시각이 모두 정리됐다. 민경은 노트북을 닫고 짧게 숨을 내쉬었다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_business_trip_or_cafe",
+          "path": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.resolution_complete.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_business_trip_or_cafe",
+          "nodeId": "resolution_complete",
           "layer": "reality"
         },
         "placeholders": [],
@@ -11907,7 +12272,7 @@
       },
       "scenes.common.day_03_business_trip_or_cafe.purpose": {
         "key": "scenes.common.day_03_business_trip_or_cafe.purpose",
-        "source": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 남은 업무를 다루는 답변에서 사실과 실행 가능성을 먼저 확인하는 민경의 대화 성향을 재확인한다.",
+        "source": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 업무를 수습하는 동안에는 사실과 실행 가능성을 먼저 확인하고 해결 뒤에는 구체적인 부담 인정을 받아들이는 민경의 상황별 대화 순서를 재확인한다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -20740,8 +21105,27 @@
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.after_workout.reality.line": "네, 운동을 다시 시작하셨군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.",
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.perceived.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.reality.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.perceived.line": "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.reality.line": "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.perceived.line": "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.reality.line": "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.perceived.line": "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.reality.line": "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠.",
       "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.perceived.line": "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요.",
       "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.reality.line": "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.action": "해결이 끝난 뒤 민경이 감당한 구체적인 부담을 인정하고, 쉴지는 민경이 정하도록 묻는다.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.interpretation": "일을 끝낸 뒤 드러난 부담을 정확히 짚으면 민경도 업무 밖의 마음을 조금 더 보여 줄 거라고 생각한다.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.label": "“세 쟁점을 끝까지 나눠 확인하느라 신경 많이 쓰셨겠어요. 이제 다 끝났는데, 잠깐 쉬시겠어요?”라고 묻는다",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.action": "이미 담당과 다음 확인 시각이 정리된 업무에 새 확인표를 추가하겠다고, 필요 여부를 묻지 않고 통보한다.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.interpretation": "해결책을 한 단계 더 준비하면 민경이 끝까지 믿고 맡길 사람으로 볼 거라고 생각한다.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.label": "“다음 확인표도 제가 새로 만들어 둘게요. 이제는 신경 쓰지 마세요.”라고 말한다",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.action": "완료된 항목을 사실대로 확인하고 추가적인 감정 질문 없이 업무 대화를 끝낸다.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.interpretation": "일을 정확히 닫고 먼저 물러나면 민경이 다음 대화를 기다릴 거라고 생각한다.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.label": "“세 건 모두 담당과 다음 확인 시각까지 정리됐습니다. 오늘은 여기서 마치죠.”라고 말한다",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.prompt": "업무 정리를 마친 민경에게 어떻게 말할까?",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.stimulus": "세 쟁점의 담당과 다음 확인 시각을 정리한 민경이 노트북을 닫고 짧게 숨을 내쉬었다.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.perceived.line": "세 쟁점에 마지막 확인이 붙자 민경은 노트북을 닫고 짧게 숨을 내쉬었다. 일을 끝낸 뒤에야 내게 보여 주는 틈처럼 느껴졌다.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.reality.line": "거래처 승인 회신, 수정 범위, 공개 일정의 담당과 다음 확인 시각이 모두 정리됐다. 민경은 노트북을 닫고 짧게 숨을 내쉬었다.",
       "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.action": "업무 정리보다 민경의 피로를 먼저 짚고 휴식을 제안한다.",
       "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.interpretation": "민경의 피로를 먼저 알아주면 업무 밖의 속마음도 조금은 보여 줄 거라고 생각한다.",
       "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.label": "“오늘 일정이 길었는데 많이 피곤하셨겠어요. 잠깐 쉬었다 하죠.”라고 말한다",
@@ -20761,7 +21145,7 @@
       "scenes.common.day_03_business_trip_or_cafe.nodes.takeover_response.reality.line": "세 가지를 전부 맡으시면 승인 범위와 제 담당이 섞입니다. 확인한 범위만 말씀해 주세요. 나머지는 제가 정리하겠습니다.",
       "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.perceived.line": "정리가 끝날 무렵, 서아와 민경이 각자 주말에 들를 장소를 이야기했다. 서로 다른 취향을 더 알아볼 기회처럼 들렸다.",
       "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line": "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다.",
-      "scenes.common.day_03_business_trip_or_cafe.purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 남은 업무를 다루는 답변에서 사실과 실행 가능성을 먼저 확인하는 민경의 대화 성향을 재확인한다.",
+      "scenes.common.day_03_business_trip_or_cafe.purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 업무를 수습하는 동안에는 사실과 실행 가능성을 먼저 확인하고 해결 뒤에는 구체적인 부담 인정을 받아들이는 민경의 상황별 대화 순서를 재확인한다.",
       "scenes.common.day_03_business_trip_or_cafe.title": "돌아온 뒤 남은 말",
       "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_grooming.perceived.line": "주말에도 뵙네요. 요즘은 주말 옷도 조금 신경 써 보려 합니다. 정장보다 조합이 더 어렵더군요. 이 차림도 무난해 보입니까?",
       "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_grooming.reality.line": "주말에도 뵙네요. 요즘은 주말 옷도 조금 신경 써 보려 합니다. 정장보다 조합이 더 어렵더군요. 이 차림도 무난해 보입니까?",
@@ -21794,8 +22178,27 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.after_workout.reality.line": "네, 운동을 다시 시작하셨군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.perceived.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.reality.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.perceived.line": "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.reality.line": "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.perceived.line": "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.reality.line": "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.perceived.line": "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.reality.line": "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.perceived.line": "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.reality.line": "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.action": "해결이 끝난 뒤 민경이 감당한 구체적인 부담을 인정하고, 쉴지는 민경이 정하도록 묻는다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.interpretation": "일을 끝낸 뒤 드러난 부담을 정확히 짚으면 민경도 업무 밖의 마음을 조금 더 보여 줄 거라고 생각한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.label": "“세 쟁점을 끝까지 나눠 확인하느라 신경 많이 쓰셨겠어요. 이제 다 끝났는데, 잠깐 쉬시겠어요?”라고 묻는다",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.action": "이미 담당과 다음 확인 시각이 정리된 업무에 새 확인표를 추가하겠다고, 필요 여부를 묻지 않고 통보한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.interpretation": "해결책을 한 단계 더 준비하면 민경이 끝까지 믿고 맡길 사람으로 볼 거라고 생각한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.label": "“다음 확인표도 제가 새로 만들어 둘게요. 이제는 신경 쓰지 마세요.”라고 말한다",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.action": "완료된 항목을 사실대로 확인하고 추가적인 감정 질문 없이 업무 대화를 끝낸다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.interpretation": "일을 정확히 닫고 먼저 물러나면 민경이 다음 대화를 기다릴 거라고 생각한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.label": "“세 건 모두 담당과 다음 확인 시각까지 정리됐습니다. 오늘은 여기서 마치죠.”라고 말한다",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.prompt": "업무 정리를 마친 민경에게 어떻게 말할까?",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.stimulus": "세 쟁점의 담당과 다음 확인 시각을 정리한 민경이 노트북을 닫고 짧게 숨을 내쉬었다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.perceived.line": "세 쟁점에 마지막 확인이 붙자 민경은 노트북을 닫고 짧게 숨을 내쉬었다. 일을 끝낸 뒤에야 내게 보여 주는 틈처럼 느껴졌다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.reality.line": "거래처 승인 회신, 수정 범위, 공개 일정의 담당과 다음 확인 시각이 모두 정리됐다. 민경은 노트북을 닫고 짧게 숨을 내쉬었다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.action": "업무 정리보다 민경의 피로를 먼저 짚고 휴식을 제안한다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.interpretation": "민경의 피로를 먼저 알아주면 업무 밖의 속마음도 조금은 보여 줄 거라고 생각한다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.label": "“오늘 일정이 길었는데 많이 피곤하셨겠어요. 잠깐 쉬었다 하죠.”라고 말한다",
@@ -21815,7 +22218,7 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.takeover_response.reality.line": "세 가지를 전부 맡으시면 승인 범위와 제 담당이 섞입니다. 확인한 범위만 말씀해 주세요. 나머지는 제가 정리하겠습니다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.perceived.line": "정리가 끝날 무렵, 서아와 민경이 각자 주말에 들를 장소를 이야기했다. 서로 다른 취향을 더 알아볼 기회처럼 들렸다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line": "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다.",
-        "scenes.common.day_03_business_trip_or_cafe.purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 남은 업무를 다루는 답변에서 사실과 실행 가능성을 먼저 확인하는 민경의 대화 성향을 재확인한다.",
+        "scenes.common.day_03_business_trip_or_cafe.purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 업무를 수습하는 동안에는 사실과 실행 가능성을 먼저 확인하고 해결 뒤에는 구체적인 부담 인정을 받아들이는 민경의 상황별 대화 순서를 재확인한다.",
         "scenes.common.day_03_business_trip_or_cafe.title": "돌아온 뒤 남은 말",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_grooming.perceived.line": "주말에도 뵙네요. 요즘은 주말 옷도 조금 신경 써 보려 합니다. 정장보다 조합이 더 어렵더군요. 이 차림도 무난해 보입니까?",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_grooming.reality.line": "주말에도 뵙네요. 요즘은 주말 옷도 조금 신경 써 보려 합니다. 정장보다 조합이 더 어렵더군요. 이 차림도 무난해 보입니까?",
@@ -22847,8 +23250,27 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.after_workout.reality.line": "네, 운동을 다시 시작하셨군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.perceived.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.reality.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.perceived.line": "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.reality.line": "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.perceived.line": "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.reality.line": "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.perceived.line": "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.reality.line": "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.perceived.line": "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.reality.line": "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.action": "해결이 끝난 뒤 민경이 감당한 구체적인 부담을 인정하고, 쉴지는 민경이 정하도록 묻는다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.interpretation": "일을 끝낸 뒤 드러난 부담을 정확히 짚으면 민경도 업무 밖의 마음을 조금 더 보여 줄 거라고 생각한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.label": "“세 쟁점을 끝까지 나눠 확인하느라 신경 많이 쓰셨겠어요. 이제 다 끝났는데, 잠깐 쉬시겠어요?”라고 묻는다",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.action": "이미 담당과 다음 확인 시각이 정리된 업무에 새 확인표를 추가하겠다고, 필요 여부를 묻지 않고 통보한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.interpretation": "해결책을 한 단계 더 준비하면 민경이 끝까지 믿고 맡길 사람으로 볼 거라고 생각한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.label": "“다음 확인표도 제가 새로 만들어 둘게요. 이제는 신경 쓰지 마세요.”라고 말한다",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.action": "완료된 항목을 사실대로 확인하고 추가적인 감정 질문 없이 업무 대화를 끝낸다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.interpretation": "일을 정확히 닫고 먼저 물러나면 민경이 다음 대화를 기다릴 거라고 생각한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.label": "“세 건 모두 담당과 다음 확인 시각까지 정리됐습니다. 오늘은 여기서 마치죠.”라고 말한다",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.prompt": "업무 정리를 마친 민경에게 어떻게 말할까?",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.stimulus": "세 쟁점의 담당과 다음 확인 시각을 정리한 민경이 노트북을 닫고 짧게 숨을 내쉬었다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.perceived.line": "세 쟁점에 마지막 확인이 붙자 민경은 노트북을 닫고 짧게 숨을 내쉬었다. 일을 끝낸 뒤에야 내게 보여 주는 틈처럼 느껴졌다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.reality.line": "거래처 승인 회신, 수정 범위, 공개 일정의 담당과 다음 확인 시각이 모두 정리됐다. 민경은 노트북을 닫고 짧게 숨을 내쉬었다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.action": "업무 정리보다 민경의 피로를 먼저 짚고 휴식을 제안한다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.interpretation": "민경의 피로를 먼저 알아주면 업무 밖의 속마음도 조금은 보여 줄 거라고 생각한다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.label": "“오늘 일정이 길었는데 많이 피곤하셨겠어요. 잠깐 쉬었다 하죠.”라고 말한다",
@@ -22868,7 +23290,7 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.takeover_response.reality.line": "세 가지를 전부 맡으시면 승인 범위와 제 담당이 섞입니다. 확인한 범위만 말씀해 주세요. 나머지는 제가 정리하겠습니다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.perceived.line": "정리가 끝날 무렵, 서아와 민경이 각자 주말에 들를 장소를 이야기했다. 서로 다른 취향을 더 알아볼 기회처럼 들렸다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line": "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다.",
-        "scenes.common.day_03_business_trip_or_cafe.purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 남은 업무를 다루는 답변에서 사실과 실행 가능성을 먼저 확인하는 민경의 대화 성향을 재확인한다.",
+        "scenes.common.day_03_business_trip_or_cafe.purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 업무를 수습하는 동안에는 사실과 실행 가능성을 먼저 확인하고 해결 뒤에는 구체적인 부담 인정을 받아들이는 민경의 상황별 대화 순서를 재확인한다.",
         "scenes.common.day_03_business_trip_or_cafe.title": "돌아온 뒤 남은 말",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_grooming.perceived.line": "주말에도 뵙네요. 요즘은 주말 옷도 조금 신경 써 보려 합니다. 정장보다 조합이 더 어렵더군요. 이 차림도 무난해 보입니까?",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_grooming.reality.line": "주말에도 뵙네요. 요즘은 주말 옷도 조금 신경 써 보려 합니다. 정장보다 조합이 더 어렵더군요. 이 차림도 무난해 보입니까?",
@@ -24140,8 +24562,27 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.after_workout.reality.line": "네, 운동을 다시 시작하셨군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.perceived.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.reality.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.perceived.line": "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.reality.line": "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.perceived.line": "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.reality.line": "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.perceived.line": "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.reality.line": "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.perceived.line": "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.reality.line": "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.action": "해결이 끝난 뒤 민경이 감당한 구체적인 부담을 인정하고, 쉴지는 민경이 정하도록 묻는다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.interpretation": "일을 끝낸 뒤 드러난 부담을 정확히 짚으면 민경도 업무 밖의 마음을 조금 더 보여 줄 거라고 생각한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.label": "“세 쟁점을 끝까지 나눠 확인하느라 신경 많이 쓰셨겠어요. 이제 다 끝났는데, 잠깐 쉬시겠어요?”라고 묻는다",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.action": "이미 담당과 다음 확인 시각이 정리된 업무에 새 확인표를 추가하겠다고, 필요 여부를 묻지 않고 통보한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.interpretation": "해결책을 한 단계 더 준비하면 민경이 끝까지 믿고 맡길 사람으로 볼 거라고 생각한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.label": "“다음 확인표도 제가 새로 만들어 둘게요. 이제는 신경 쓰지 마세요.”라고 말한다",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.action": "완료된 항목을 사실대로 확인하고 추가적인 감정 질문 없이 업무 대화를 끝낸다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.interpretation": "일을 정확히 닫고 먼저 물러나면 민경이 다음 대화를 기다릴 거라고 생각한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.label": "“세 건 모두 담당과 다음 확인 시각까지 정리됐습니다. 오늘은 여기서 마치죠.”라고 말한다",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.prompt": "업무 정리를 마친 민경에게 어떻게 말할까?",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.stimulus": "세 쟁점의 담당과 다음 확인 시각을 정리한 민경이 노트북을 닫고 짧게 숨을 내쉬었다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.perceived.line": "세 쟁점에 마지막 확인이 붙자 민경은 노트북을 닫고 짧게 숨을 내쉬었다. 일을 끝낸 뒤에야 내게 보여 주는 틈처럼 느껴졌다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.reality.line": "거래처 승인 회신, 수정 범위, 공개 일정의 담당과 다음 확인 시각이 모두 정리됐다. 민경은 노트북을 닫고 짧게 숨을 내쉬었다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.action": "업무 정리보다 민경의 피로를 먼저 짚고 휴식을 제안한다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.interpretation": "민경의 피로를 먼저 알아주면 업무 밖의 속마음도 조금은 보여 줄 거라고 생각한다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.label": "“오늘 일정이 길었는데 많이 피곤하셨겠어요. 잠깐 쉬었다 하죠.”라고 말한다",
@@ -24161,7 +24602,7 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.takeover_response.reality.line": "세 가지를 전부 맡으시면 승인 범위와 제 담당이 섞입니다. 확인한 범위만 말씀해 주세요. 나머지는 제가 정리하겠습니다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.perceived.line": "정리가 끝날 무렵, 서아와 민경이 각자 주말에 들를 장소를 이야기했다. 서로 다른 취향을 더 알아볼 기회처럼 들렸다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line": "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다.",
-        "scenes.common.day_03_business_trip_or_cafe.purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 남은 업무를 다루는 답변에서 사실과 실행 가능성을 먼저 확인하는 민경의 대화 성향을 재확인한다.",
+        "scenes.common.day_03_business_trip_or_cafe.purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 업무를 수습하는 동안에는 사실과 실행 가능성을 먼저 확인하고 해결 뒤에는 구체적인 부담 인정을 받아들이는 민경의 상황별 대화 순서를 재확인한다.",
         "scenes.common.day_03_business_trip_or_cafe.title": "돌아온 뒤 남은 말",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_grooming.perceived.line": "주말에도 뵙네요. 요즘은 주말 옷도 조금 신경 써 보려 합니다. 정장보다 조합이 더 어렵더군요. 이 차림도 무난해 보입니까?",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_grooming.reality.line": "주말에도 뵙네요. 요즘은 주말 옷도 조금 신경 써 보려 합니다. 정장보다 조합이 더 어렵더군요. 이 차림도 무난해 보입니까?",
@@ -25193,8 +25634,27 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.after_workout.reality.line": "네, 운동을 다시 시작하셨군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.perceived.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.reality.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.perceived.line": "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.reality.line": "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.perceived.line": "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.reality.line": "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.perceived.line": "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.reality.line": "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.perceived.line": "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.reality.line": "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.action": "해결이 끝난 뒤 민경이 감당한 구체적인 부담을 인정하고, 쉴지는 민경이 정하도록 묻는다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.interpretation": "일을 끝낸 뒤 드러난 부담을 정확히 짚으면 민경도 업무 밖의 마음을 조금 더 보여 줄 거라고 생각한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.label": "“세 쟁점을 끝까지 나눠 확인하느라 신경 많이 쓰셨겠어요. 이제 다 끝났는데, 잠깐 쉬시겠어요?”라고 묻는다",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.action": "이미 담당과 다음 확인 시각이 정리된 업무에 새 확인표를 추가하겠다고, 필요 여부를 묻지 않고 통보한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.interpretation": "해결책을 한 단계 더 준비하면 민경이 끝까지 믿고 맡길 사람으로 볼 거라고 생각한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.label": "“다음 확인표도 제가 새로 만들어 둘게요. 이제는 신경 쓰지 마세요.”라고 말한다",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.action": "완료된 항목을 사실대로 확인하고 추가적인 감정 질문 없이 업무 대화를 끝낸다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.interpretation": "일을 정확히 닫고 먼저 물러나면 민경이 다음 대화를 기다릴 거라고 생각한다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.label": "“세 건 모두 담당과 다음 확인 시각까지 정리됐습니다. 오늘은 여기서 마치죠.”라고 말한다",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.prompt": "업무 정리를 마친 민경에게 어떻게 말할까?",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.stimulus": "세 쟁점의 담당과 다음 확인 시각을 정리한 민경이 노트북을 닫고 짧게 숨을 내쉬었다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.perceived.line": "세 쟁점에 마지막 확인이 붙자 민경은 노트북을 닫고 짧게 숨을 내쉬었다. 일을 끝낸 뒤에야 내게 보여 주는 틈처럼 느껴졌다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.reality.line": "거래처 승인 회신, 수정 범위, 공개 일정의 담당과 다음 확인 시각이 모두 정리됐다. 민경은 노트북을 닫고 짧게 숨을 내쉬었다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.action": "업무 정리보다 민경의 피로를 먼저 짚고 휴식을 제안한다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.interpretation": "민경의 피로를 먼저 알아주면 업무 밖의 속마음도 조금은 보여 줄 거라고 생각한다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.label": "“오늘 일정이 길었는데 많이 피곤하셨겠어요. 잠깐 쉬었다 하죠.”라고 말한다",
@@ -25214,7 +25674,7 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.takeover_response.reality.line": "세 가지를 전부 맡으시면 승인 범위와 제 담당이 섞입니다. 확인한 범위만 말씀해 주세요. 나머지는 제가 정리하겠습니다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.perceived.line": "정리가 끝날 무렵, 서아와 민경이 각자 주말에 들를 장소를 이야기했다. 서로 다른 취향을 더 알아볼 기회처럼 들렸다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line": "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다.",
-        "scenes.common.day_03_business_trip_or_cafe.purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 남은 업무를 다루는 답변에서 사실과 실행 가능성을 먼저 확인하는 민경의 대화 성향을 재확인한다.",
+        "scenes.common.day_03_business_trip_or_cafe.purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 업무를 수습하는 동안에는 사실과 실행 가능성을 먼저 확인하고 해결 뒤에는 구체적인 부담 인정을 받아들이는 민경의 상황별 대화 순서를 재확인한다.",
         "scenes.common.day_03_business_trip_or_cafe.title": "돌아온 뒤 남은 말",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_grooming.perceived.line": "주말에도 뵙네요. 요즘은 주말 옷도 조금 신경 써 보려 합니다. 정장보다 조합이 더 어렵더군요. 이 차림도 무난해 보입니까?",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_grooming.reality.line": "주말에도 뵙네요. 요즘은 주말 옷도 조금 신경 써 보려 합니다. 정장보다 조합이 더 어렵더군요. 이 차림도 무난해 보입니까?",
@@ -25658,10 +26118,10 @@
     },
     "coverage": {
       "ko": {
-        "direct": 1051,
-        "resolved": 1051,
-        "translated": 1051,
-        "total": 1051,
+        "direct": 1070,
+        "resolved": 1070,
+        "translated": 1070,
+        "total": 1070,
         "ratio": 1.0,
         "fallback_used": [],
         "missing": [],
@@ -25698,8 +26158,8 @@
             "total": 8
           },
           "scene": {
-            "direct": 659,
-            "total": 659
+            "direct": 678,
+            "total": 678
           },
           "thread": {
             "direct": 2,
@@ -25717,10 +26177,10 @@
       },
       "en": {
         "direct": 231,
-        "resolved": 1051,
+        "resolved": 1070,
         "translated": 231,
-        "total": 1051,
-        "ratio": 0.2198,
+        "total": 1070,
+        "ratio": 0.2159,
         "fallback_used": [
           "campaign.main.acts.collisions.purpose",
           "campaign.main.acts.crisis.purpose",
@@ -26174,8 +26634,27 @@
           "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.after_workout.reality.line",
           "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.perceived.line",
           "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.reality.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.perceived.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.reality.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.perceived.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.reality.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.perceived.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.reality.line",
           "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.perceived.line",
           "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.reality.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.action",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.interpretation",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.label",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.action",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.interpretation",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.label",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.action",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.interpretation",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.label",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.prompt",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.stimulus",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.perceived.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.reality.line",
           "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.action",
           "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.interpretation",
           "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.label",
@@ -26996,8 +27475,27 @@
           "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.after_workout.reality.line",
           "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.perceived.line",
           "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.reality.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.perceived.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.reality.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.perceived.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.reality.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.perceived.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.reality.line",
           "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.perceived.line",
           "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.reality.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.action",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.interpretation",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.label",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.action",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.interpretation",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.label",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.action",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.interpretation",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.label",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.prompt",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.stimulus",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.perceived.line",
+          "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.reality.line",
           "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.action",
           "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.interpretation",
           "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.label",
@@ -27399,7 +27897,7 @@
           },
           "scene": {
             "direct": 28,
-            "total": 659
+            "total": 678
           },
           "thread": {
             "direct": 0,
@@ -32031,6 +32529,9 @@
           "kind": "choice",
           "prompt": "잘못된 발표 파일 앞에서 어떻게 회의를 수습할까?",
           "stimulus": "서아가 이전 버전의 발표 파일을 연 뒤 사과하고 말을 잇지 못했다.",
+          "interaction_context": {
+            "kind": "support"
+          },
           "options": [
             {
               "id": "acknowledge_and_ask",
@@ -32641,7 +33142,7 @@
       "sequence": 4,
       "location": "office_break_room",
       "time": "afternoon",
-      "purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 남은 업무를 다루는 답변에서 사실과 실행 가능성을 먼저 확인하는 민경의 대화 성향을 재확인한다.",
+      "purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 업무를 수습하는 동안에는 사실과 실행 가능성을 먼저 확인하고 해결 뒤에는 구체적인 부담 인정을 받아들이는 민경의 상황별 대화 순서를 재확인한다.",
       "cast": [
         "han_do_yoon",
         "yoon_seo_a",
@@ -32670,6 +33171,11 @@
         "structure_response",
         "fatigue_response",
         "takeover_response",
+        "resolution_complete",
+        "post_resolution_choice",
+        "after_resolution_empathy_response",
+        "after_resolution_close_response",
+        "after_resolution_overwork_response",
         "activity_callback_inner",
         "weekend_clues",
         "leave"
@@ -32920,6 +33426,9 @@
           "kind": "choice",
           "prompt": "민경이 남은 쟁점 세 가지부터 정리하자고 한 말에 어떻게 답할까?",
           "stimulus": "민경은 짧은 대화를 마치고 오늘 남은 쟁점 세 가지를 먼저 보자고 했다.",
+          "interaction_context": {
+            "kind": "coordination"
+          },
           "options": [
             {
               "id": "structure_issues",
@@ -33003,7 +33512,7 @@
             "line": "좋습니다. 그 순서면 같은 설명을 두 번 확인할 필요가 없겠네요. 수정 범위와 공개 일정은 제가 정리하겠습니다.",
             "intent": "documentation"
           },
-          "next": "weekend_clues"
+          "next": "resolution_complete"
         },
         "fatigue_response": {
           "id": "fatigue_response",
@@ -33020,7 +33529,7 @@
             "line": "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요.",
             "intent": "work_only"
           },
-          "next": "weekend_clues"
+          "next": "resolution_complete"
         },
         "takeover_response": {
           "id": "takeover_response",
@@ -33035,6 +33544,148 @@
             "atmosphere": "procedural",
             "expression": "actual_focused",
             "line": "세 가지를 전부 맡으시면 승인 범위와 제 담당이 섞입니다. 확인한 범위만 말씀해 주세요. 나머지는 제가 정리하겠습니다.",
+            "intent": "documentation"
+          },
+          "next": "resolution_complete"
+        },
+        "resolution_complete": {
+          "id": "resolution_complete",
+          "kind": "dual_narration",
+          "perceived": {
+            "atmosphere": "playful_tension",
+            "line": "세 쟁점에 마지막 확인이 붙자 민경은 노트북을 닫고 짧게 숨을 내쉬었다. 일을 끝낸 뒤에야 내게 보여 주는 틈처럼 느껴졌다."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "line": "거래처 승인 회신, 수정 범위, 공개 일정의 담당과 다음 확인 시각이 모두 정리됐다. 민경은 노트북을 닫고 짧게 숨을 내쉬었다.",
+            "intent": "work_only"
+          },
+          "next": "post_resolution_choice"
+        },
+        "post_resolution_choice": {
+          "id": "post_resolution_choice",
+          "kind": "choice",
+          "prompt": "업무 정리를 마친 민경에게 어떻게 말할까?",
+          "stimulus": "세 쟁점의 담당과 다음 확인 시각을 정리한 민경이 노트북을 닫고 짧게 숨을 내쉬었다.",
+          "interaction_context": {
+            "kind": "support"
+          },
+          "options": [
+            {
+              "id": "acknowledge_after_resolution",
+              "label": "“세 쟁점을 끝까지 나눠 확인하느라 신경 많이 쓰셨겠어요. 이제 다 끝났는데, 잠깐 쉬시겠어요?”라고 묻는다",
+              "interpretation": "일을 끝낸 뒤 드러난 부담을 정확히 짚으면 민경도 업무 밖의 마음을 조금 더 보여 줄 거라고 생각한다.",
+              "action": "해결이 끝난 뒤 민경이 감당한 구체적인 부담을 인정하고, 쉴지는 민경이 정하도록 묻는다.",
+              "push_pull": {
+                "target": "cha_min_kyung",
+                "action": "approach",
+                "intensity": 12,
+                "base_score": 4
+              },
+              "interaction": {
+                "target": "cha_min_kyung",
+                "support_styles": [
+                  "emotional_validation",
+                  "ask_before_helping",
+                  "autonomy_return"
+                ]
+              },
+              "conditions": [],
+              "effects": [],
+              "next": "after_resolution_empathy_response"
+            },
+            {
+              "id": "close_with_facts",
+              "label": "“세 건 모두 담당과 다음 확인 시각까지 정리됐습니다. 오늘은 여기서 마치죠.”라고 말한다",
+              "interpretation": "일을 정확히 닫고 먼저 물러나면 민경이 다음 대화를 기다릴 거라고 생각한다.",
+              "action": "완료된 항목을 사실대로 확인하고 추가적인 감정 질문 없이 업무 대화를 끝낸다.",
+              "push_pull": {
+                "target": "cha_min_kyung",
+                "action": "space",
+                "intensity": 12,
+                "base_score": 4
+              },
+              "interaction": {
+                "target": "cha_min_kyung",
+                "support_styles": [
+                  "factual_clarification"
+                ]
+              },
+              "conditions": [],
+              "effects": [],
+              "next": "after_resolution_close_response"
+            },
+            {
+              "id": "add_more_work",
+              "label": "“다음 확인표도 제가 새로 만들어 둘게요. 이제는 신경 쓰지 마세요.”라고 말한다",
+              "interpretation": "해결책을 한 단계 더 준비하면 민경이 끝까지 믿고 맡길 사람으로 볼 거라고 생각한다.",
+              "action": "이미 담당과 다음 확인 시각이 정리된 업무에 새 확인표를 추가하겠다고, 필요 여부를 묻지 않고 통보한다.",
+              "push_pull": {
+                "target": "cha_min_kyung",
+                "action": "approach",
+                "intensity": 12,
+                "base_score": 4
+              },
+              "interaction": {
+                "target": "cha_min_kyung",
+                "support_styles": [
+                  "practical_resolution",
+                  "concise_reassurance"
+                ]
+              },
+              "conditions": [],
+              "effects": [],
+              "next": "after_resolution_overwork_response"
+            }
+          ]
+        },
+        "after_resolution_empathy_response": {
+          "id": "after_resolution_empathy_response",
+          "kind": "dual_dialogue",
+          "speaker": "cha_min_kyung",
+          "perceived": {
+            "atmosphere": "playful_tension",
+            "expression": "subjective_challenging",
+            "line": "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "expression": "actual_focused",
+            "line": "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다.",
+            "intent": "courtesy"
+          },
+          "next": "weekend_clues"
+        },
+        "after_resolution_close_response": {
+          "id": "after_resolution_close_response",
+          "kind": "dual_dialogue",
+          "speaker": "cha_min_kyung",
+          "perceived": {
+            "atmosphere": "procedural",
+            "expression": "subjective_challenging",
+            "line": "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "expression": "actual_focused",
+            "line": "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠.",
+            "intent": "work_only"
+          },
+          "next": "weekend_clues"
+        },
+        "after_resolution_overwork_response": {
+          "id": "after_resolution_overwork_response",
+          "kind": "dual_dialogue",
+          "speaker": "cha_min_kyung",
+          "perceived": {
+            "atmosphere": "guarded_office",
+            "expression": "subjective_challenging",
+            "line": "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "expression": "actual_skeptical",
+            "line": "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠.",
             "intent": "documentation"
           },
           "next": "weekend_clues"
@@ -34216,6 +34867,9 @@
           "kind": "choice",
           "prompt": "돌아가라는 요구와 현장 신고에 어떻게 대응할까?",
           "stimulus": "민경이 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+          "interaction_context": {
+            "kind": "boundary"
+          },
           "options": [
             {
               "id": "accept_separation",
@@ -34226,6 +34880,12 @@
                 "action": "literal",
                 "intensity": 12,
                 "base_score": 4
+              },
+              "interaction": {
+                "target": "cha_min_kyung",
+                "support_styles": [
+                  "literal_respect"
+                ]
               },
               "conditions": [],
               "effects": [
@@ -34299,6 +34959,9 @@
           "kind": "choice",
           "prompt": "분리 조치 뒤 한도윤은 오늘 밤의 일을 어떻게 받아들일까?",
           "stimulus": "경찰이 두 사람을 분리한 뒤 축적된 기록이 부족해 한도윤을 돌려보냈다.",
+          "interaction_context": {
+            "kind": "not_applicable"
+          },
           "options": [
             {
               "id": "choose_betrayal",
@@ -34347,6 +35010,9 @@
           "kind": "choice",
           "prompt": "경찰과 주변 사람들이 도착하자 어떻게 행동할까?",
           "stimulus": "돌아가라는 요구를 무시한 뒤 사이렌과 사람들의 기척이 가까워졌다.",
+          "interaction_context": {
+            "kind": "not_applicable"
+          },
           "options": [
             {
               "id": "remain",
@@ -35126,6 +35792,9 @@
           "kind": "choice",
           "prompt": "돌아가라는 요구와 현장 신고에 어떻게 대응할까?",
           "stimulus": "서아가 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+          "interaction_context": {
+            "kind": "boundary"
+          },
           "options": [
             {
               "id": "accept_separation",
@@ -35136,6 +35805,12 @@
                 "action": "literal",
                 "intensity": 12,
                 "base_score": 4
+              },
+              "interaction": {
+                "target": "yoon_seo_a",
+                "support_styles": [
+                  "literal_respect"
+                ]
               },
               "conditions": [],
               "effects": [
@@ -35209,6 +35884,9 @@
           "kind": "choice",
           "prompt": "분리 조치 뒤 한도윤은 오늘 밤의 일을 어떻게 받아들일까?",
           "stimulus": "경찰이 두 사람을 분리한 뒤 축적된 기록이 부족해 한도윤을 돌려보냈다.",
+          "interaction_context": {
+            "kind": "not_applicable"
+          },
           "options": [
             {
               "id": "choose_betrayal",
@@ -35257,6 +35935,9 @@
           "kind": "choice",
           "prompt": "경찰과 주변 사람들이 도착하자 어떻게 행동할까?",
           "stimulus": "돌아가라는 요구를 무시한 뒤 사이렌과 사람들의 기척이 가까워졌다.",
+          "interaction_context": {
+            "kind": "not_applicable"
+          },
           "options": [
             {
               "id": "remain",
@@ -35900,6 +36581,9 @@
           "kind": "choice",
           "prompt": "업무 외 연락을 하지 말라는 민경의 요청에 어떻게 답할까?",
           "stimulus": "민경이 ‘업무 외 연락은 하지 말아 주세요’라고 명확히 말했다.",
+          "interaction_context": {
+            "kind": "boundary"
+          },
           "options": [
             {
               "id": "mirror_push",
@@ -35965,6 +36649,12 @@
                 "action": "literal",
                 "intensity": 12,
                 "base_score": 4
+              },
+              "interaction": {
+                "target": "cha_min_kyung",
+                "support_styles": [
+                  "literal_respect"
+                ]
               },
               "conditions": [],
               "effects": [
@@ -36140,6 +36830,9 @@
           "kind": "choice",
           "prompt": "서아가 함께 있는 회의에서 민경에게 어떻게 행동할까?",
           "stimulus": "민경이 서아를 회의록 담당으로 배석시키며 둘만의 회의를 피했다.",
+          "interaction_context": {
+            "kind": "boundary"
+          },
           "options": [
             {
               "id": "public_tease",
@@ -36560,6 +37253,9 @@
           "kind": "choice",
           "prompt": "자료 전달 방식을 분명히 한 서아에게 어떻게 답할까?",
           "stimulus": "서아가 ‘자료는 메일로 보내고 제 자리로 오지 말라’고 말했다.",
+          "interaction_context": {
+            "kind": "boundary"
+          },
           "options": [
             {
               "id": "match_push",
@@ -36655,6 +37351,12 @@
                 "action": "literal",
                 "intensity": 12,
                 "base_score": 4
+              },
+              "interaction": {
+                "target": "yoon_seo_a",
+                "support_styles": [
+                  "literal_respect"
+                ]
               },
               "conditions": [],
               "effects": [
@@ -36886,6 +37588,9 @@
           "kind": "choice",
           "prompt": "휴게실에서 다시 마주친 서아에게 어떻게 반응할까?",
           "stimulus": "며칠간 사적인 접촉이 없던 뒤, 서아가 휴게실에서 ‘안녕하세요’라고 인사했다.",
+          "interaction_context": {
+            "kind": "boundary"
+          },
           "options": [
             {
               "id": "interpret_pull",
@@ -36981,6 +37686,12 @@
                 "action": "literal",
                 "intensity": 12,
                 "base_score": 4
+              },
+              "interaction": {
+                "target": "yoon_seo_a",
+                "support_styles": [
+                  "literal_respect"
+                ]
               },
               "conditions": [],
               "effects": [

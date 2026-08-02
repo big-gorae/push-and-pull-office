@@ -52,12 +52,12 @@
 46. `protagonist_interpretation`과 `inner_thought` 필드는 사용하지 않는다. 생각이 필요하면 직전 사건 뒤에 `kind: dual_dialogue`, `presentation_flags: [inner_voice]`, 레이어별 `speakers`를 가진 별도 노드를 둔다.
 47. `inner_voice`에서 레이어 화자가 인물이면 문장을 괄호 `(`, `)`로 감싸고 설명문이 아니라 그 인물이 실제로 속으로 말하는 듯한 자연스러운 구어체로 쓴다. 화자가 없는 권위적 서술은 `null`을 명시하고 괄호 없이 쓴다.
 48. 내레이션에는 화면용 화자 이름을 만들지 않는다. `나레이션`을 가상의 캐릭터나 이름표로 사용하지 않는다.
-49. 모든 선택 노드는 상대가 방금 한 말이나 행동을 중립적으로 요약한 `stimulus`를 가진다. 플레이어용 `prompt`와 `label`에는 `밀기`, `당기기`, `밀당`, `push`, `pull` 같은 시스템 방향을 노출하지 않는다.
+49. 모든 선택 노드는 상대가 방금 한 말이나 행동을 중립적으로 요약한 `stimulus`와 저작 문맥을 분류하는 `interaction_context.kind`를 가진다. 플레이어용 `prompt`와 `label`에는 `밀기`, `당기기`, `밀당`, `push`, `pull` 같은 시스템 방향을 노출하지 않는다.
 50. 선택지 `label`은 주인공이 실제로 할 말·행동 또는 상대 의중에 대한 구체적 해석으로 쓴다. 시스템 방향과 수치 효과는 데이터와 디버깅 화면에만 남긴다.
 51. 캐릭터별 반응 화법 축은 내부적으로 `MBTI 요소`라고 부른다. F/T는 작가용 약칭으로 사용할 수 있지만, 실제 선택지를 판정할 때는 행동 기반 `interaction_preferences.support_order`, 현재 필요와 `context_overrides`를 확인한다.
 52. MBTI 요소의 일반 지원 화법이 인물과 상황에 맞으면 고유 반응, 새 정보 또는 후속 콜백으로 보상한다. 이를 실제 호감도, 자동 주도권 보너스 또는 숨은 악영향으로 계산하지 않는다. `manifest.self_development.expressions`에 선언된 보이는 표현 보너스만 예외다.
 53. 공감형·해결형 화법은 명시적인 경계를 협상하거나 뒤집지 못한다. 거절이나 접촉 중단 요청이 나오면 `literal_respect`가 MBTI 요소보다 우선한다.
-54. 같은 객관적 행동에서 화법만 다른 선택지를 둘 때도 상대의 답변, 공개 정보 또는 후속 콜백 중 하나는 달라야 한다. `push_pull` 값과 상태 효과만 바꿔 가짜 차이를 만들지 않는다.
+54. 같은 반응 대상을 향한 서로 다른 화법 선택은 대상이 실제 화자로 나오는 `reality` 답변, 공개 정보 또는 후속 콜백 중 하나가 달라야 한다. `interaction` 메타데이터나 `push_pull` 값과 상태 효과만 바꿔 가짜 차이를 만들지 않는다.
 55. 평범하고 존중적인 공감·사실 확인·해결 표현 자체를 의심도·비호감도·증거 증가의 원인으로 쓰지 않는다. 숨은 악영향은 반복 접촉, 권한 사용, 명시적 경계 침범 같은 객관적 행동에 연결한다.
 56. `visible.protagonist.self_development`와 `progress.self_development`는 일반 `conditions`에서 직접 읽지 않는다. 대사 variant와 선택지는 레지스트리 ID를 가리키는 `self_development.expression`만 사용한다. 직전 밤 활동을 회수할 때도 expression의 `requires.last_activity`만 사용한다.
 57. 자기계발 해금 선택지는 같은 선택 노드의 조건 없는 기준 선택지를 `equivalent_to`로 가리키고, 기준과 동일한 `push_pull` 및 `effects`를 선언하며, `converges_at` 노드로 합류한다. 두 분기의 `next`부터 합류점 직전까지는 상태 변화·조건 분기·추가 선택·이탈 없이 `dual_dialogue` 또는 `dual_narration`만 둘 수 있다.
@@ -65,12 +65,14 @@
 59. 자기계발 variant에는 조건 없는 기본 variant를, 자기계발 선택지에는 기능 동등한 기본 선택지를 반드시 남긴다. 피로와 능력치 때문에 경계 존중이나 사건 진행이 막혀서는 안 된다.
 60. 매력도는 한도윤의 자기평가이며 히로인의 사랑이나 객관적인 외모 평가로 서술하지 않는다. 게임 안에서 자기계발이 무효·가짜·장식용임을 설명하지 않는다.
 61. MBTI 요소의 인물별 지원 화법을 쓴 선택은 현재 `cast` 안에서 실제로 반응하는 캐릭터를 `interaction.target`에 선언한다. 밀당 계산 인물도 현재 `cast`에 있어야 한다. 계산 대상이 장면 루트의 기본 히로인과 다르면 별도로 `push_pull.target`을 선언하고 그 히로인의 시스템 경로를 `state_contract.writes`에 포함한다.
-62. `interaction.support_styles`에는 MBTI 요소가 실제 대사·행동으로 드러난 지원 화법만 선언한다. 이 메타데이터는 인물별 반응을 저작·검증하기 위한 것이며 자체 점수나 호감 보너스를 만들지 않는다.
+62. `interaction.support_styles`에는 MBTI 요소가 실제 대사·행동으로 드러난 지원 화법만 발화·행동 순서대로 선언한다. 첫 항목이 먼저 전달되는 중심 화법이다. 이 메타데이터는 인물별 반응을 저작·검증하기 위한 것이며 자체 점수나 호감 보너스를 만들지 않는다.
 63. `interaction.target`은 대화 반응 상대, `push_pull.target`은 한도윤이 밀당 대상으로 계산하는 히로인이다. 하나를 다른 하나의 기본값으로 사용하지 않으며, 어느 필드도 다른 인물의 명시적 요청·거절이나 장면의 객관적 결과를 덮어쓰지 않는다.
 64. 직전 밤 활동 콜백의 공통 문장은 `manifest.self_development.conversation_topics`의 완결된 한국어 문장 슬롯으로 관리한다. 조사나 어미만 떼어 조합하지 않으며, 장면별로 같은 활동 variant를 복제하지 않는다.
 65. 장면의 `self_development_template`은 `source: last_activity`만 사용하는 저작 전용 매크로다. 빌드는 이를 안정 ID를 가진 일반 대사 variant와 조건 없는 기본 variant로 펼치며, 런타임·세이브·번역 키가 매크로 자체를 참조하게 만들지 않는다.
 66. 직전 밤 활동은 다음 날 한도윤이 스몰토크에서 먼저 꺼내 자기관리·업무 감각을 어필하는 소재다. 상대가 한도윤의 말보다 먼저 체중 감소, 체형·외모 개선이나 매력 상승을 알아차리게 쓰지 않으며, 하룻밤 활동에서 객관적인 신체 변화를 추론하지 않는다.
 67. `last_activity` 콜백이 가리키는 표현은 `score_bonus: 0`을 유지한다. 대사와 현실 반응은 달라질 수 있지만 상태 효과, 밀당 결과, 사건과 엔딩에는 영향을 주지 않는다.
+68. `interaction_context.kind`는 `support`, `coordination`, `boundary`, `not_applicable` 중 하나다. `support`와 `coordination`에서는 모든 선택지에 명시적인 `interaction`을 쓰고, 한 선택 노드 안에 서로 다른 화법 순서가 최소 두 개 있어야 한다.
+69. `boundary`에는 `literal_respect`를 실제로 수행하는 선택지를 최소 하나 둔다. 침범 선택지는 성향 오답으로 위장하지 않는다. 인물 지원 화법을 판단하지 않는 내적 해석·사건 절차 선택은 `not_applicable`로 분류하고 `interaction`을 쓰지 않는다.
 
 ## 장면 작성 절차
 

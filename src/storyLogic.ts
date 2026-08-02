@@ -515,7 +515,16 @@ export function makeNode(kind: NodeKind, id: string, heroineId: string): StoryNo
       next: "",
     };
   }
-  if (kind === "choice") return { id, kind, prompt: "", stimulus: "", options: [] };
+  if (kind === "choice") {
+    return {
+      id,
+      kind,
+      interaction_context: { kind: "not_applicable" },
+      prompt: "",
+      stimulus: "",
+      options: [],
+    };
+  }
   if (kind === "state_gate") return { id, kind, transitions: [{ default: true, node: "" }] };
   if (kind === "effect") return { id, kind, effects: [], next: "" };
   return { id, kind: "exit", transitions: [{ default: true, ending: true, ending_id: `draft.${id}` }] };

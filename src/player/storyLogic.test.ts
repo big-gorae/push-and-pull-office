@@ -10,6 +10,7 @@ import {
   deriveStateContract,
   effectiveSpeaker,
   inspectTimelineEvent,
+  makeNode,
   resolveDialogueNode,
   setPath,
 } from "../storyLogic";
@@ -17,6 +18,12 @@ import {
 const runtime = runtimeJson as unknown as Runtime;
 
 describe("condition conformance", () => {
+  it("classifies newly authored choice nodes as interaction not applicable", () => {
+    expect(makeNode("choice", "new_choice", "yoon_seo_a").interaction_context).toEqual({
+      kind: "not_applicable",
+    });
+  });
+
   it("derives push-pull state paths for every heroine targeted in a shared scene", () => {
     const scene = structuredClone(runtime.scenes["common.day_02_practical_meeting"]);
     const contract = deriveStateContract(scene, "yoon_seo_a", runtime);

@@ -97,6 +97,8 @@ nodes:
     kind: choice
     prompt: 휴게실에서 다시 마주친 서아에게 어떻게 반응할까?
     stimulus: 며칠간 사적인 접촉이 없던 뒤, 서아가 휴게실에서 ‘안녕하세요’라고 인사했다.
+    interaction_context:
+      kind: boundary
     options:
       - id: interpret_pull
         label: 퇴근 후 둘이 식사하자고 다시 제안한다
@@ -138,6 +140,9 @@ nodes:
         interpretation: 그녀의 인사를 평범한 직장 인사로 받아들인다.
         action: 관계에 의미를 부여하지 않고 자리를 떠난다.
         push_pull: {action: literal, intensity: 12, base_score: 4}
+        interaction:
+          target: yoon_seo_a
+          support_styles: [literal_respect]
         conditions: []
         effects:
           - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -8}
