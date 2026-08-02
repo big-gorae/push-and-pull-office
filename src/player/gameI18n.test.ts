@@ -40,6 +40,14 @@ describe("GameLocalizer", () => {
     expect(i18n.story("missing.stable.key", source)).toBe(source);
   });
 
+  it("shows newly saved source text immediately in the default locale only", () => {
+    const key = "scenes.common.scene.nodes.greeting.perceived.line";
+    const overrides = { [key]: "게임 안에서 고친 문장" };
+
+    expect(new GameLocalizer(runtime, "ko", overrides).story(key, "원래 문장")).toBe("게임 안에서 고친 문장");
+    expect(new GameLocalizer(runtime, "en", overrides).story(key, "원래 문장")).not.toBe("게임 안에서 고친 문장");
+  });
+
   it("keeps the default variant segment when the source node owns variants", () => {
     expect(dialogueKey("common.scene", "callback", "default", "reality", "line", true)).toBe(
       "scenes.common.scene.nodes.callback.variants.default.reality.line",

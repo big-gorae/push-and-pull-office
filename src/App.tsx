@@ -7,6 +7,7 @@ import CharacterEditor from "./CharacterEditor";
 import ProjectSettingsEditor, { type SettingsKind, type SettingsRequest } from "./ProjectSettingsEditor";
 import QuickOpen, { type QuickOpenItem } from "./QuickOpen";
 import DuplicateDialog from "./DuplicateDialog";
+import { rememberAuthoringRoot } from "./player/storyAuthoring";
 import {
   pushPullPositionLabel,
   pushPullTargetLabel,
@@ -1391,6 +1392,16 @@ export default function App() {
     }
   };
 
+  const launchAuthoringPlay = () => {
+    if (!root || busy || dirty || hasPendingDocument) {
+      setStatus("저장 중인 문서를 모두 반영한 뒤 게임 편집 모드를 열어 주세요.");
+      return;
+    }
+    rememberAuthoringRoot(root);
+    window.location.hash = "#/play?authoring=1";
+    window.location.reload();
+  };
+
   const switchWorkspace = (next: Workspace) => {
     workspaceRef.current = next;
     if (next === "scene" && draft && payload) {
@@ -1582,6 +1593,7 @@ export default function App() {
       <div className="project-status"><strong>{runtime.project.title}</strong><span className={documentActivity.phase}>{documentActivity.phase === "saved" ? "✓" : "●"} {saveStateLabel}</span><span className={errorCount ? "error" : ""}>{errorCount} 오류</span></div>
       <div className="top-actions">
         <button type="button" className="quick-open-button" onClick={() => setQuickOpenVisible(true)} title="모든 스토리 문서 빠른 열기 (⌘P)">⌕ 빠른 열기 <kbd>⌘P</kbd></button>
+        <button type="button" onClick={launchAuthoringPlay} disabled={busy || dirty || hasPendingDocument} title="실제 게임 화면에서 원본 대사를 편집합니다">▶ 게임에서 대사 편집</button>
         <button type="button" onClick={selectProject} disabled={busy}>프로젝트 열기</button>
         {workspace === "scene" && <button type="button" onClick={undo} disabled={!history.past.length || busy} title="실행 취소 (⌘Z)">↶</button>}
         {workspace === "scene" && <button type="button" onClick={redo} disabled={!history.future.length || busy} title="다시 실행 (⇧⌘Z)">↷</button>}

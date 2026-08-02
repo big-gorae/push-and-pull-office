@@ -20,7 +20,10 @@ from story_editor_bridge import (  # noqa: E402
     revision,
     save_document,
     save_scene,
+    save_story_text,
+    story_text_owner,
     validate_scene,
+    value_hash,
     yaml_text_for_scene,
 )
 from story_harness import StoryProject  # noqa: E402
@@ -478,6 +481,130 @@ class StoryEditorBridgeTests(unittest.TestCase):
             scene = project.build_bundle()["scenes"]["seo_a.email_request"]
             with self.assertRaisesRegex(RuntimeError, "REVISION_CONFLICT"):
                 save_scene(root, {"scene": scene, "revision": "0" * 64})
+        finally:
+            temporary.cleanup()
+
+    def test_story_text_owner_resolves_direct_dialogue_source(self):
+        owner = story_text_owner(
+            ROOT,
+            "scenes.seo_a.email_request.nodes.request.reality.line",
+        )
+
+        self.assertTrue(owner["editable"])
+        self.assertEqual("direct_yaml", owner["kind"])
+        self.assertEqual("story/scenes/seo_a/email_request.yaml", owner["relativePath"])
+        self.assertEqual("nodes.request.reality.line", owner["fieldPath"])
+        self.assertGreater(owner["sources"][0]["line"], 0)
+        self.assertEqual(value_hash(owner["currentValue"]), owner["currentValueHash"])
+
+    def test_story_text_owner_rejects_compiled_template_as_single_source(self):
+        owner = story_text_owner(
+            ROOT,
+            "scenes.common.day_02_practical_meeting.nodes."
+            "day_one_activity_reaction.variants.after_workout.reality.line",
+        )
+
+        self.assertFalse(owner["editable"])
+        self.assertEqual("composed_template", owner["kind"])
+        self.assertEqual("MULTIPLE_SOURCE_OWNERS", owner["reason"])
+        self.assertEqual(2, len(owner["sources"]))
+        self.assertEqual(
+            {
+                "story/scenes/common/day_02_practical_meeting.yaml",
+                "story/manifest.yaml",
+            },
+            {source["relativePath"] for source in owner["sources"]},
+        )
+
+    def test_save_story_text_updates_only_target_scalar_and_runtime(self):
+        temporary, root = self.make_project_copy()
+        try:
+            keys = [
+                "scenes.seo_a.email_request.nodes.request.perceived.line",
+                "scenes.seo_a.email_request.nodes.request.reality.line",
+            ]
+            owners = [story_text_owner(root, key) for key in keys]
+            target = root / owners[0]["relativePath"]
+            target.write_text("# dialogue-edit-sentinel\n" + target.read_text(encoding="utf-8"), encoding="utf-8")
+            owners = [story_text_owner(root, key) for key in keys]
+            result = save_story_text(root, {
+                "edits": [{
+                    "localization_key": owner["key"],
+                    "expected_revision": owner["revision"],
+                    "expected_value_hash": owner["currentValueHash"],
+                    "next_value": "수정된 업무 대사입니다.",
+                } for owner in owners],
+            })
+
+            self.assertTrue(result["saved"])
+            self.assertIn("# dialogue-edit-sentinel", target.read_text(encoding="utf-8"))
+            self.assertEqual("수정된 업무 대사입니다.", result["owner"]["currentValue"])
+            runtime_node = result["runtime"]["scenes"]["seo_a.email_request"]["nodes"]["request"]
+            self.assertEqual("수정된 업무 대사입니다.", runtime_node["perceived"]["line"])
+            self.assertEqual("수정된 업무 대사입니다.", runtime_node["reality"]["line"])
+        finally:
+            temporary.cleanup()
+
+    def test_save_story_text_updates_choice_label_without_mechanics(self):
+        temporary, root = self.make_project_copy()
+        try:
+            key = (
+                "scenes.seo_a.email_request.nodes.interpret.options."
+                "match_push.label"
+            )
+            owner = story_text_owner(root, key)
+            before = StoryProject(root / "story").build_bundle()["scenes"]["seo_a.email_request"]["nodes"]["interpret"]
+            result = save_story_text(root, {
+                "localization_key": key,
+                "expected_revision": owner["revision"],
+                "expected_value_hash": owner["currentValueHash"],
+                "next_value": "알겠다고 답하고 필요한 자료만 묻는다",
+            })
+
+            self.assertTrue(result["saved"])
+            after = result["runtime"]["scenes"]["seo_a.email_request"]["nodes"]["interpret"]
+            before_option = next(option for option in before["options"] if option["id"] == "match_push")
+            after_option = next(option for option in after["options"] if option["id"] == "match_push")
+            self.assertEqual("알겠다고 답하고 필요한 자료만 묻는다", after_option["label"])
+            self.assertEqual(before_option["effects"], after_option["effects"])
+            self.assertEqual(before_option["push_pull"], after_option["push_pull"])
+        finally:
+            temporary.cleanup()
+
+    def test_save_story_text_rejects_stale_revision_and_value(self):
+        temporary, root = self.make_project_copy()
+        try:
+            key = "scenes.seo_a.email_request.nodes.request.reality.line"
+            owner = story_text_owner(root, key)
+            with self.assertRaisesRegex(RuntimeError, "REVISION_CONFLICT"):
+                save_story_text(root, {
+                    "localization_key": key,
+                    "expected_revision": "0" * 64,
+                    "expected_value_hash": owner["currentValueHash"],
+                    "next_value": "저장되면 안 되는 대사",
+                })
+            with self.assertRaisesRegex(RuntimeError, "VALUE_CONFLICT"):
+                save_story_text(root, {
+                    "localization_key": key,
+                    "expected_revision": owner["revision"],
+                    "expected_value_hash": "0" * 64,
+                    "next_value": "저장되면 안 되는 대사",
+                })
+        finally:
+            temporary.cleanup()
+
+    def test_save_story_text_preserves_ui_placeholders(self):
+        temporary, root = self.make_project_copy()
+        try:
+            key = "deadline.days"
+            owner = story_text_owner(root, key)
+            with self.assertRaisesRegex(RuntimeError, "placeholders must be preserved"):
+                save_story_text(root, {
+                    "localization_key": key,
+                    "expected_revision": owner["revision"],
+                    "expected_value_hash": owner["currentValueHash"],
+                    "next_value": "남은 날짜를 제거한 문구",
+                })
         finally:
             temporary.cleanup()
 

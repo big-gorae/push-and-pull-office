@@ -185,6 +185,30 @@ fn save_document(
 }
 
 #[tauri::command]
+fn get_story_text_owner(
+    state: tauri::State<'_, EditorState>,
+    root: String,
+    localization_key: String,
+) -> Result<Value, String> {
+    let root = allowed_root(&state, &root)?;
+    run_bridge(
+        &root,
+        "text-owner",
+        Some(json!({ "localization_key": localization_key })),
+    )
+}
+
+#[tauri::command]
+fn save_story_text(
+    state: tauri::State<'_, EditorState>,
+    root: String,
+    edits: Value,
+) -> Result<Value, String> {
+    let root = allowed_root(&state, &root)?;
+    run_bridge(&root, "save-text", Some(json!({ "edits": edits })))
+}
+
+#[tauri::command]
 fn duplicate_scene(
     state: tauri::State<'_, EditorState>,
     root: String,
@@ -317,6 +341,56 @@ fn reveal_in_file_manager(
     Ok(())
 }
 
+#[tauri::command]
+fn open_source_location(
+    state: tauri::State<'_, EditorState>,
+    root: String,
+    relative_path: String,
+) -> Result<(), String> {
+    let root = allowed_root(&state, &root)?;
+    let relative = PathBuf::from(&relative_path);
+    if relative.is_absolute() {
+        return Err("프로젝트 안의 상대 경로만 열 수 있습니다.".into());
+    }
+    let target = root
+        .join(relative)
+        .canonicalize()
+        .map_err(|error| format!("원본 파일을 찾을 수 없습니다: {error}"))?;
+    let story_root = root
+        .join("story")
+        .canonicalize()
+        .map_err(|error| format!("story 폴더를 열 수 없습니다: {error}"))?;
+    if !target.starts_with(&story_root) || !target.is_file() {
+        return Err("story 폴더 안의 원본 파일만 열 수 있습니다.".into());
+    }
+
+    #[cfg(target_os = "macos")]
+    let mut command = {
+        let mut command = Command::new("open");
+        command.arg(&target);
+        command
+    };
+
+    #[cfg(target_os = "windows")]
+    let mut command = {
+        let mut command = Command::new("cmd");
+        command.args(["/C", "start", ""]).arg(&target);
+        command
+    };
+
+    #[cfg(all(not(target_os = "macos"), not(target_os = "windows")))]
+    let mut command = {
+        let mut command = Command::new("xdg-open");
+        command.arg(&target);
+        command
+    };
+
+    command
+        .spawn()
+        .map_err(|error| format!("원본 파일을 열 수 없습니다: {error}"))?;
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -329,11 +403,14 @@ pub fn run() {
             validate_scene,
             save_scene,
             save_document,
+            get_story_text_owner,
+            save_story_text,
             duplicate_scene,
             duplicate_event,
             build_runtime,
             read_asset,
             reveal_in_file_manager,
+            open_source_location,
         ])
         .run(tauri::generate_context!())
         .expect("error while running the story editor");

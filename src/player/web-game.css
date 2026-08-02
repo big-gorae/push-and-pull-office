@@ -732,6 +732,36 @@ button { color: inherit; }
 .vn-backlog article span { color: var(--vn-accent); font-size: .65rem; font-weight: 900; }
 .vn-backlog article p { margin: 6px 0; color: var(--vn-ink-strong); font-family: "Gowun Dodum", sans-serif; font-weight: 700; line-height: 1.6; }
 .vn-backlog article small { color: var(--vn-muted); }
+.vn-backlog-edit { min-height: 30px; padding: 0 var(--vn-space-3); border: 1px solid #efbdd2; border-radius: var(--vn-radius-sm); background: white; color: var(--vn-accent-strong); font-size: var(--vn-type-xs); font-weight: 800; cursor: pointer; }
+
+.vn-authoring-button { border-color: #f09bc0 !important; background: linear-gradient(135deg, #fff2f8, #fff9ed) !important; color: #a63168 !important; font-weight: 900 !important; }
+.vn-flow-authoring-list { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--vn-space-1); margin-top: var(--vn-space-2); }
+.vn-flow-authoring-list button { min-height: 30px; padding: 0 var(--vn-space-3); border: 1px solid rgba(255,255,255,.8); border-radius: var(--vn-radius-sm); background: rgba(255,255,255,.88); color: var(--vn-accent-strong); font-size: var(--vn-type-xs); cursor: pointer; }
+.vn-night-authoring { margin-top: var(--vn-space-2); padding: var(--vn-space-2) var(--vn-space-3); border: 1px solid #f09bc0; border-radius: var(--vn-radius-sm); cursor: pointer; }
+.vn-debug-editor-return { width: 100%; min-height: 36px; border: 1px solid rgba(255,188,215,.55) !important; border-radius: var(--vn-radius-sm); background: rgba(255,133,180,.18) !important; color: #ffd7e7 !important; font-weight: 900; cursor: pointer; }
+
+.vn-story-editor { display: grid; gap: var(--vn-space-3); }
+.vn-story-editor-status, .vn-authoring-warning { margin: 0; padding: var(--vn-space-3) var(--vn-space-4); border-radius: var(--vn-radius-md); background: #fff6fa; color: var(--vn-ink); line-height: 1.5; }
+.vn-authoring-warning { border: 1px solid #f2c16f; background: #fff9e9; color: #835812; font-weight: 800; }
+.vn-story-editor > section { display: grid; gap: var(--vn-space-2); padding: var(--vn-space-4); border: 1px solid var(--vn-line); border-radius: var(--vn-radius-md); background: white; }
+.vn-story-editor > section > header { display: grid; grid-template-columns: auto minmax(0,1fr); align-items: center; gap: var(--vn-space-3); }
+.vn-story-editor > section > header strong { color: var(--vn-accent-strong); font-size: var(--vn-type-sm); }
+.vn-story-editor code { overflow-wrap: anywhere; color: var(--vn-muted); font-size: var(--vn-type-xs); }
+.vn-story-editor textarea { width: 100%; resize: vertical; padding: var(--vn-space-3); border: 2px solid #efc2d5; border-radius: var(--vn-radius-sm); outline: 0; background: #fffbfd; color: var(--vn-ink-strong); font: 700 1rem/1.65 "Gowun Dodum", sans-serif; }
+.vn-story-editor textarea:focus { border-color: var(--vn-accent); box-shadow: 0 0 0 4px var(--vn-accent-soft); }
+.vn-story-editor blockquote { margin: 0; padding: var(--vn-space-3); border-left: 4px solid #edb2cc; background: #fff8fb; color: var(--vn-ink-strong); line-height: 1.6; }
+.vn-story-source-list { display: grid; gap: var(--vn-space-1); }
+.vn-story-source-list > div { display: grid; grid-template-columns: minmax(0,1fr) auto auto; align-items: center; gap: var(--vn-space-2); padding-top: var(--vn-space-2); border-top: 1px dashed var(--vn-line); }
+.vn-story-source-list button, .vn-story-editor > footer button { min-height: 36px; padding: 0 var(--vn-space-3); border: 1px solid var(--vn-line); border-radius: var(--vn-radius-sm); background: white; color: var(--vn-ink); font-weight: 800; cursor: pointer; }
+.vn-story-editor > footer { position: sticky; bottom: calc(-1 * var(--vn-panel-padding)); display: flex; justify-content: flex-end; gap: var(--vn-space-2); padding: var(--vn-space-3) 0 0; background: linear-gradient(transparent, var(--vn-panel-solid) 25%); }
+.vn-story-editor > footer button.primary { border-color: transparent; background: linear-gradient(135deg, var(--vn-accent), #e36fa5); color: white; }
+.vn-story-editor button:disabled { opacity: .45; cursor: not-allowed; }
+
+@media (max-width: 680px) {
+  .vn-story-editor > section > header, .vn-story-source-list > div { grid-template-columns: 1fr; }
+  .vn-story-editor > footer { flex-wrap: wrap; }
+  .vn-story-editor > footer button { flex: 1; }
+}
 .vn-empty { color: var(--vn-muted); text-align: center; }
 .vn-settings { display: grid; gap: 6px; }
 .vn-settings > label { display: grid; grid-template-columns: minmax(150px, 1fr) minmax(120px, 1fr) 45px; align-items: center; gap: 12px; padding: 15px 0; border-bottom: 1px solid var(--vn-line); }
