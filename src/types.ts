@@ -1,6 +1,14 @@
 export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 export type NodeKind = "dual_dialogue" | "dual_narration" | "choice" | "state_gate" | "effect" | "exit";
 export type ViewMode = "perceived" | "reality";
+export type SupportStyle =
+  | "emotional_validation"
+  | "factual_clarification"
+  | "practical_resolution"
+  | "ask_before_helping"
+  | "autonomy_return"
+  | "concise_reassurance"
+  | "literal_respect";
 export type TimeSlot = "morning" | "lunch" | "afternoon" | "after_work";
 export type EventType = "anchor" | "heroine" | "company" | "offscreen" | "ending";
 export type EventAvailability = "automatic" | "player" | "hidden";
@@ -44,6 +52,7 @@ export type SelfDevelopmentRequirement = {
   stat?: SelfDevelopmentStat;
   minimum?: number;
   fatigue_lte?: number;
+  last_activity?: string;
 };
 
 export type SelfDevelopmentChoiceUse = {
@@ -115,6 +124,10 @@ export type ChoiceOption = {
   interpretation: string;
   action: string;
   push_pull: PushPullConfig;
+  interaction?: {
+    target: string;
+    support_styles: SupportStyle[];
+  };
   self_development?: SelfDevelopmentChoiceUse;
   conditions: Condition[];
   effects: Effect[];
@@ -122,6 +135,7 @@ export type ChoiceOption = {
 };
 
 export type PushPullConfig = {
+  target?: string;
   action: "approach" | "space" | "literal";
   intensity: number;
   base_score: number;
@@ -258,6 +272,13 @@ export type Character = {
     palette?: string[];
     silhouette?: string;
     props?: string[];
+  };
+  interaction_preferences?: {
+    authoring_shorthand?: string;
+    support_order: SupportStyle[];
+    prefers: string[];
+    resists: string[];
+    context_overrides: string[];
   };
   expressions?: Record<string, { layer: ViewMode; emotion: string; description: string }>;
   emotion_rules?: Array<{

@@ -1,0 +1,10 @@
+schema_version: 1
+id: role.assistant_manager
+kind: role
+company: company.dawon_living
+name: 주임급
+rank: 30
+people_manager: false
+can_approve: false
+can_lead_project: false
+description: 반복 실무를 독립적으로 처리하고 사원급 구성원의 업무 적응을 돕지만 인사 권한은 없다.

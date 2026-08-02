@@ -1,8 +1,0 @@
-schema_version: 1
-id: team.product_planning
-kind: team
-company: company.dawon_living
-name: 상품기획팀
-function: 상품 정보, 제안 자료, 표시 문구와 출시 요건 관리
-lead_member: member.oh_se_jin
-member_ids: [member.oh_se_jin, member.yoon_seo_a]

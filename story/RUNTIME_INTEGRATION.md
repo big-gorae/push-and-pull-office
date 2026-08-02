@@ -191,14 +191,24 @@ progress.flags.story_mode.yoo_jin_intervention → 공략 불가 특수 엔딩 �
 
 ```yaml
 push_pull:
+  target: cha_min_kyung # 생략하면 장면 루트의 히로인
   action: approach # approach | space | literal
   intensity: 12    # 8..16
   base_score: 4    # 2..5
+interaction:
+  target: cha_min_kyung
+  support_styles: [factual_clarification, practical_resolution]
 ```
 
-`push_pull`은 선택지에 표시하지 않는다. 런타임은 이 값으로 전역 리듬 상태를 갱신한다. 다른 인물로 이동하거나 사건 마감을 넘기면 콤보와 활성 득점선을 초기화하되 위치는 유지한다.
+`push_pull`과 `interaction`은 선택지에 표시하지 않는다. 런타임은 `push_pull.target`만 밀당 계산 인물로 사용하며, 생략된 경우에만 장면 루트의 히로인을 사용한다. 계산 인물은 현재 장면 `cast` 안에 있어야 한다. `interaction.target`은 실제 화법을 받아 반응하는 인물이고 `support_styles`는 반응 저작·검수용 메타데이터다. 비공략 조연도 반응 대상이 될 수 있지만, 런타임은 `interaction.target`을 점수 대상의 대체값으로 사용하거나 그 인물의 히로인 상태를 생성하지 않는다. 지원 화법 메타데이터 자체는 주도권·호감·숨은 수치에 아무 효과도 주지 않는다.
 
-자기계발 해금 선택지는 `self_development.expression`, 같은 선택 노드의 `equivalent_to`, 합류 노드 `converges_at`을 선언한다. 요구 수치와 `score_bonus`는 `manifest.self_development.expressions`가 소유한다. 해금 선택지는 기준 선택지와 `push_pull` 및 `effects`가 같아야 하며, 성공한 `score`/`turn` 판정에만 `0~3`의 보이는 주도권 보너스를 더한다. 위치·콤보·활성 득점선·숨은 반복 패턴 효과와 엔딩 결과에는 이 보너스를 사용하지 않으며, 보이는 주도권 `visible.heroines.<id>.initiative`는 일반 조건에서 읽지 않는다.
+명시적인 요청·거절·접촉 중단이 나온 선택에서는 인물의 평상시 순서보다 `literal_respect`를 우선한다. 이 화법은 요청을 그대로 지킨다는 저작 계약이지 점수 보너스가 아니며, `literal` 계산으로 한도윤의 흐름이 끊겨도 현실의 경계 존중에 숨은 악영향을 자동 생성하지 않는다.
+
+런타임은 장면의 일반 `effects`를 먼저 적용하고 `push_pull.target ?? route.heroine`에 리듬 결과를 적용한다. 여러 선택이 서로 다른 계산 인물을 가진 공용 장면에 진입할 때는 선택 전에 콤보 대상을 미리 바꾸지 않는다. 실제 선택 뒤 계산 인물이 달라졌을 때만 기존 흐름을 끊고 새 인물의 흐름을 시작한다. 다른 인물로 확정 이동하거나 사건 마감을 넘기면 콤보와 활성 득점선을 초기화하되 위치는 유지한다.
+
+이름이 비슷하지만 `option.push_pull.target`은 계산할 **인물 ID**이고, `progress.flags.push_pull.target`은 현재 향하는 **득점선 방향**(`pull`, `push`, `none`)이다. 현재 콤보 인물은 `progress.flags.push_pull.heroine`에 저장한다.
+
+자기계발 해금 선택지는 `self_development.expression`, 같은 선택 노드의 `equivalent_to`, 합류 노드 `converges_at`을 선언한다. 요구 수치, 최근 활동 ID와 `score_bonus`는 `manifest.self_development.expressions`가 소유한다. `requires.last_activity`는 hydrated `progress.self_development.last_activity`와 정확히 비교하며, 직전 밤 선택을 회수하는 대사 표현은 `score_bonus: 0`으로 둔다. 해금 선택지는 기준 선택지와 `push_pull` 및 `effects`가 같아야 하며, 성공한 `score`/`turn` 판정에만 `0~3`의 보이는 주도권 보너스를 더한다. 위치·콤보·활성 득점선·숨은 반복 패턴 효과와 엔딩 결과에는 이 보너스를 사용하지 않는다. 보이는 주도권과 `visible.protagonist.self_development`·`progress.self_development`는 일반 조건에서 읽지 않는다.
 
 최초 엔딩 이후 `밀당 주도권`은 `통제 욕구`, `현재 콤보`는 `통제 시도 연쇄`, 리듬 게이지는 `접근 시도/거리 둠`으로 라벨을 교체한다.
 

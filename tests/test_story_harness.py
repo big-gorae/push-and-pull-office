@@ -252,6 +252,107 @@ class StoryHarnessTests(unittest.TestCase):
             expression.clear()
             expression.update(original)
 
+    def test_self_development_registry_rejects_unknown_last_activity(self):
+        expression = self.project.manifest["self_development"]["expressions"]["feedback.last_workout"]
+        original = copy.deepcopy(expression)
+        try:
+            expression["requires"] = {"last_activity": "unknown_activity"}
+            issues = []
+            self.project._validate_self_development(issues)
+            self.assertTrue(any(
+                "last_activity must reference a known self-development activity" in issue.message
+                for issue in issues
+            ))
+        finally:
+            expression.clear()
+            expression.update(original)
+
+    def test_self_development_last_activity_requirement_reads_progress_state(self):
+        state = self.project.initial_state()
+        self.assertFalse(
+            self_development_expression_matches(self.project, state, "feedback.last_workout")
+        )
+        set_path(state, "progress.self_development.last_activity", "workout")
+        self.assertTrue(
+            self_development_expression_matches(self.project, state, "feedback.last_workout")
+        )
+        set_path(state, "progress.self_development.last_activity", "grooming")
+        self.assertFalse(
+            self_development_expression_matches(self.project, state, "feedback.last_workout")
+        )
+
+    def test_week_one_daily_callbacks_recover_each_previous_night_activity_without_bonus(self):
+        activity_variants = {
+            "workout": "after_workout",
+            "grooming": "after_grooming",
+            "ott": "after_ott",
+            "reels": "after_reels",
+            "sleep": "after_sleep",
+        }
+        callback_nodes = (
+            ("common.day_02_practical_meeting", "day_one_activity_reaction"),
+            ("common.day_03_business_trip_or_cafe", "activity_callback"),
+            ("common.day_04_weekend_encounter", "activity_callback"),
+            ("common.day_05_weekend_reflection", "activity_callback"),
+        )
+        activities = {
+            activity["id"]: activity
+            for activity in self.project.manifest["self_development"]["activities"]
+        }
+
+        for activity_id, expected_variant in activity_variants.items():
+            self.assertEqual({"perceived", "reality"}, set(activities[activity_id]["reflection_keys"]))
+            expression = self.project.manifest["self_development"]["expressions"][
+                f"feedback.last_{activity_id}"
+            ]
+            self.assertEqual(0, expression["score_bonus"])
+
+            state = self.project.initial_state()
+            set_path(state, "progress.self_development.last_activity", activity_id)
+            for scene_id, node_id in callback_nodes:
+                node = next(
+                    item for item in self.project.scenes[scene_id]["nodes"]
+                    if item["id"] == node_id
+                )
+                self.assertEqual(
+                    expected_variant,
+                    resolve_dialogue_variant(self.project, state, node)[0],
+                )
+
+        empty_state = self.project.initial_state()
+        for scene_id, node_id in callback_nodes:
+            node = next(
+                item for item in self.project.scenes[scene_id]["nodes"]
+                if item["id"] == node_id
+            )
+            self.assertEqual("default", resolve_dialogue_variant(self.project, empty_state, node)[0])
+
+    def test_self_development_last_activity_requires_state_contract_read(self):
+        path = "progress.self_development.last_activity"
+        use = {"expression": "feedback.last_workout"}
+        issues = []
+        self.project._validate_self_development_use(
+            issues,
+            "test",
+            use,
+            kind="variant",
+            reads=set(),
+        )
+        self.assertTrue(any(
+            path in issue.message and "state_contract.reads" in issue.message
+            for issue in issues
+        ))
+
+        issues = []
+        self.project._validate_self_development_use(
+            issues,
+            "test",
+            use,
+            kind="variant",
+            reads={path},
+        )
+        self.assertEqual([], issues)
+
     def test_self_development_bounds_must_match_player_runtime(self):
         path = "visible.protagonist.self_development.appeal"
         spec = self.project.manifest["stats"][path]
@@ -279,6 +380,17 @@ class StoryHarnessTests(unittest.TestCase):
                 "value": 2,
             }],
             {"visible.protagonist.self_development.stats.stamina"},
+        )
+        self.assertTrue(any("forbidden in general conditions" in issue.message for issue in issues))
+
+    def test_general_conditions_cannot_read_self_development_progress(self):
+        path = "progress.self_development.last_activity"
+        issues = []
+        self.project._validate_conditions(
+            issues,
+            "test",
+            [{"path": path, "op": "eq", "value": "workout"}],
+            {path},
         )
         self.assertTrue(any("forbidden in general conditions" in issue.message for issue in issues))
 
@@ -753,6 +865,157 @@ class StoryHarnessTests(unittest.TestCase):
         issues = self.project.validate()
         self.assertTrue(any("not declared in state_contract.writes" in issue.message for issue in issues))
 
+    def test_choice_interaction_rejects_unknown_target_and_support_style(self):
+        scene = self.project.scenes["common.day_02_practical_meeting"]
+        choice = next(node for node in scene["nodes"] if node["id"] == "recovery_choice")
+        option = next(item for item in choice["options"] if item["id"] == "define_and_fix")
+        original = copy.deepcopy(option["interaction"])
+        try:
+            option["interaction"] = {
+                "target": "unknown_character",
+                "support_styles": ["instant_romance"],
+            }
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("unknown interaction target" in message for message in messages))
+            self.assertTrue(any("unknown interaction support style" in message for message in messages))
+        finally:
+            option["interaction"] = original
+
+    def test_choice_interaction_accepts_a_non_route_cast_character(self):
+        scene = self.project.scenes["common.day_02_practical_meeting"]
+        choice = next(node for node in scene["nodes"] if node["id"] == "recovery_choice")
+        option = next(item for item in choice["options"] if item["id"] == "define_and_fix")
+        original = copy.deepcopy(option["interaction"])
+        try:
+            option["interaction"] = {
+                "target": "kang_yoo_jin",
+                "support_styles": ["factual_clarification", "literal_respect"],
+            }
+            self.assertEqual([], self.project.validate())
+        finally:
+            option["interaction"] = original
+
+    def test_choice_interaction_reports_malformed_support_style_without_crashing(self):
+        scene = self.project.scenes["common.day_02_practical_meeting"]
+        choice = next(node for node in scene["nodes"] if node["id"] == "recovery_choice")
+        option = next(item for item in choice["options"] if item["id"] == "define_and_fix")
+        original = copy.deepcopy(option["interaction"])
+        try:
+            option["interaction"] = {
+                "target": "cha_min_kyung",
+                "support_styles": [{"invalid": True}],
+            }
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("support style must be a non-empty string" in message for message in messages))
+        finally:
+            option["interaction"] = original
+
+    def test_choice_targets_report_malformed_values_without_crashing(self):
+        scene = self.project.scenes["common.day_02_practical_meeting"]
+        choice = next(node for node in scene["nodes"] if node["id"] == "recovery_choice")
+        option = next(item for item in choice["options"] if item["id"] == "define_and_fix")
+        original_push_pull = copy.deepcopy(option["push_pull"])
+        original_interaction = copy.deepcopy(option["interaction"])
+        try:
+            option["push_pull"]["target"] = {"invalid": True}
+            option["interaction"]["target"] = ["cha_min_kyung"]
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertIn("push_pull target must be a valid character id", messages)
+            self.assertIn("interaction target must be a valid character id", messages)
+
+            option["push_pull"]["target"] = None
+            option["interaction"]["target"] = None
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertIn("push_pull target must be a valid character id", messages)
+            self.assertIn("interaction target must be a valid character id", messages)
+        finally:
+            option["push_pull"] = original_push_pull
+            option["interaction"] = original_interaction
+
+    def test_push_pull_target_requires_known_cast_heroine_and_declared_state_paths(self):
+        scene = self.project.scenes["common.day_02_practical_meeting"]
+        choice = next(node for node in scene["nodes"] if node["id"] == "recovery_choice")
+        option = next(item for item in choice["options"] if item["id"] == "define_and_fix")
+        original_target = option["push_pull"]["target"]
+        try:
+            option["push_pull"]["target"] = "unknown_character"
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("unknown push_pull target" in message for message in messages))
+
+            option["push_pull"]["target"] = "im_soo_yeon"
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("push_pull target has no heroine state" in message for message in messages))
+
+            option["push_pull"]["target"] = "cha_min_kyung"
+            scene["cast"].remove("cha_min_kyung")
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("push_pull target is not in scene cast" in message for message in messages))
+            scene["cast"].append("cha_min_kyung")
+
+            path = "visible.heroines.cha_min_kyung.initiative"
+            scene["state_contract"]["writes"].remove(path)
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any(path in message and "state_contract.writes" in message for message in messages))
+            scene["state_contract"]["writes"].append(path)
+
+            option["effects"].append({
+                "path": "visible.heroines.yoon_seo_a.initiative",
+                "op": "add",
+                "value": 1,
+            })
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any(
+                "push_pull choice must not manually write compatibility stat" in message
+                and "visible.heroines.yoon_seo_a.initiative" in message
+                for message in messages
+            ))
+            option["effects"].pop()
+        finally:
+            option["push_pull"]["target"] = original_target
+            option["effects"] = [
+                effect for effect in option["effects"]
+                if effect.get("path") != "visible.heroines.yoon_seo_a.initiative"
+            ]
+            if "cha_min_kyung" not in scene["cast"]:
+                scene["cast"].append("cha_min_kyung")
+            path = "visible.heroines.cha_min_kyung.initiative"
+            if path not in scene["state_contract"]["writes"]:
+                scene["state_contract"]["writes"].append(path)
+
+    def test_interaction_target_requires_cast_preferences_and_unique_styles(self):
+        scene = self.project.scenes["common.day_02_practical_meeting"]
+        choice = next(node for node in scene["nodes"] if node["id"] == "recovery_choice")
+        option = next(item for item in choice["options"] if item["id"] == "define_and_fix")
+        original = copy.deepcopy(option["interaction"])
+        try:
+            option["interaction"]["target"] = "im_soo_yeon"
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("interaction target is not in scene cast" in message for message in messages))
+
+            option["interaction"]["target"] = "han_do_yoon"
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("interaction target has no interaction_preferences" in message for message in messages))
+
+            option["interaction"] = {
+                "target": "cha_min_kyung",
+                "support_styles": ["factual_clarification", "factual_clarification"],
+            }
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("interaction support_styles must be unique" in message for message in messages))
+        finally:
+            option["interaction"] = original
+
+    def test_character_interaction_preferences_reject_unknown_and_duplicate_styles(self):
+        character = self.project.characters["yoon_seo_a"]
+        original = copy.deepcopy(character["interaction_preferences"])
+        try:
+            character["interaction_preferences"]["support_order"] = ["not_a_style", "not_a_style"]
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("unknown support style" in message for message in messages))
+            self.assertTrue(any("support_order styles must be unique" in message for message in messages))
+        finally:
+            character["interaction_preferences"] = original
+
     def test_invalid_expression_layer_is_rejected(self):
         scene = self.project.scenes["seo_a.email_request"]
         node = next(item for item in scene["nodes"] if item["id"] == "request")
@@ -778,6 +1041,48 @@ class StoryHarnessTests(unittest.TestCase):
         stats = result["final_state"]["hidden"]["heroines"]["yoon_seo_a"]
         self.assertEqual(2, stats["evidence_count"])
         self.assertGreaterEqual(stats["dislike"], 25)
+
+    def test_common_scene_push_pull_target_updates_min_kyung_only(self):
+        result = Simulator(
+            self.project,
+            "seo_a",
+            {"common.day_02_practical_meeting": "define_and_fix"},
+            "first",
+        ).run(stop_before_scene="seo_a.email_request")
+        self.assertEqual("seo_a.email_request", result["stopped_at"])
+        final_state = result["final_state"]
+        self.assertEqual(50, final_state["visible"]["heroines"]["yoon_seo_a"]["initiative"])
+        self.assertEqual(54, final_state["visible"]["heroines"]["cha_min_kyung"]["initiative"])
+        self.assertEqual("cha_min_kyung", push_pull_state(final_state)["heroine"])
+        self.assertEqual("none", final_state["progress"]["flags"]["story_mode"]["target"])
+        self.assertEqual("factual_resolution", final_state["progress"]["flags"]["story_mode"]["day_02_response"])
+
+    def test_interaction_metadata_does_not_change_push_pull_or_hidden_state(self):
+        scene = self.project.scenes["common.day_02_practical_meeting"]
+        choice = next(node for node in scene["nodes"] if node["id"] == "recovery_choice")
+        option = next(item for item in choice["options"] if item["id"] == "define_and_fix")
+        original = copy.deepcopy(option["interaction"])
+        with_interaction = Simulator(
+            self.project,
+            "seo_a",
+            {"common.day_02_practical_meeting": "define_and_fix"},
+            "first",
+        ).run(stop_before_scene="seo_a.email_request")
+        try:
+            option.pop("interaction")
+            without_interaction = Simulator(
+                self.project,
+                "seo_a",
+                {"common.day_02_practical_meeting": "define_and_fix"},
+                "first",
+            ).run(stop_before_scene="seo_a.email_request")
+        finally:
+            option["interaction"] = original
+
+        self.assertEqual(with_interaction["final_state"], without_interaction["final_state"])
+        with_choice = next(item for item in with_interaction["trace"] if item.get("type") == "choice")
+        without_choice = next(item for item in without_interaction["trace"] if item.get("type") == "choice")
+        self.assertEqual(with_choice["push_pull"], without_choice["push_pull"])
 
     def test_literal_seo_a_choices_reach_ambiguous_ending(self):
         result = Simulator(
@@ -1050,6 +1355,19 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual(16, bundle["self_development"]["max_night_day"])
         self.assertIn("stamina.workout_answer", bundle["self_development"]["expressions"])
 
+        preferences = bundle["characters"]["cha_min_kyung"]["interaction_preferences"]
+        self.assertEqual("factual_clarification", preferences["support_order"][0])
+        shared_choice = bundle["scenes"]["common.day_02_practical_meeting"]["nodes"]["recovery_choice"]
+        factual = next(option for option in shared_choice["options"] if option["id"] == "define_and_fix")
+        self.assertEqual(
+            {
+                "target": "cha_min_kyung",
+                "support_styles": ["factual_clarification", "practical_resolution"],
+            },
+            factual["interaction"],
+        )
+        self.assertEqual("cha_min_kyung", factual["push_pull"]["target"])
+
     def test_runtime_build_contains_time_first_collections(self):
         bundle = self.project.build_bundle()
         self.assertEqual(17, bundle["campaigns"]["main"]["total_days"])
@@ -1110,6 +1428,8 @@ class StoryHarnessTests(unittest.TestCase):
             "member.yoon_seo_a",
             world["story_character_members"]["yoon_seo_a"],
         )
+        self.assertEqual("오세진", world["entities"]["member.oh_se_jin"]["name"])
+        self.assertEqual("오차장", world["entities"]["member.oh_se_jin"]["display_name"])
         self.assertNotIn("_source", world["entities"]["member.oh_se_jin"])
 
     def test_world_bible_rejects_unknown_team_and_inconsistent_membership(self):
@@ -1128,7 +1448,7 @@ class StoryHarnessTests(unittest.TestCase):
         cases = [
             ("role.manager", "company", "company.unknown", "unknown company reference"),
             ("member.yoon_seo_a", "role", "role.unknown", "unknown role reference"),
-            ("team.product_planning", "lead_member", "member.unknown", "unknown member reference"),
+            ("team.sales_planning", "lead_member", "member.unknown", "unknown member reference"),
         ]
         for entity_id, field, invalid_value, expected in cases:
             with self.subTest(field=field):
@@ -1259,7 +1579,7 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertIn(stimulus_key, localization["entries"])
         self.assertFalse(any("protagonist_interpretation" in key or "inner_thought" in key for key in localization["entries"]))
         self.assertEqual(
-            "오세진",
+            "오차장",
             localization["entries"]["world.members.member.oh_se_jin.display_name"]["source"],
         )
 
@@ -1331,10 +1651,21 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertIn("perceived", first_node["variants"][0])
         self.assertIn("reality", first_node["variants"][0])
         self.assertIn("authoring_rules", context)
+        self.assertIn("literal_respect", context["allowed_system"]["support_styles"])
+        self.assertEqual(
+            ["emotional_validation", "ask_before_helping", "autonomy_return", "practical_resolution"],
+            context["cast"]["yoon_seo_a"]["interaction_preferences"]["support_order"],
+        )
         self.assertEqual(
             {"perceived": "han_do_yoon", "reality": "yoon_seo_a"},
             context["effective_speakers"]["request_inner"],
         )
+
+        shared_context = self.project.context_package("common.day_02_practical_meeting")
+        recovery = next(node for node in shared_context["scene"]["nodes"] if node["id"] == "recovery_choice")
+        factual = next(option for option in recovery["options"] if option["id"] == "define_and_fix")
+        self.assertEqual("cha_min_kyung", factual["interaction"]["target"])
+        self.assertEqual("cha_min_kyung", factual["push_pull"]["target"])
 
     def test_branch_simulation_produces_exact_context_state(self):
         result = Simulator(

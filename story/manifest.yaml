@@ -206,6 +206,7 @@ initial_state:
         heroine: ""
       story_mode:
         target: none
+        day_02_response: none
         final_interpretation: undecided
         home_incident: none
         yoo_jin_intervention: false
@@ -261,6 +262,21 @@ self_development:
       fatigue_delta: -4
       stat_deltas: {}
   expressions:
+    feedback.last_workout:
+      requires: {last_activity: workout}
+      score_bonus: 0
+    feedback.last_grooming:
+      requires: {last_activity: grooming}
+      score_bonus: 0
+    feedback.last_ott:
+      requires: {last_activity: ott}
+      score_bonus: 0
+    feedback.last_reels:
+      requires: {last_activity: reels}
+      score_bonus: 0
+    feedback.last_sleep:
+      requires: {last_activity: sleep}
+      score_bonus: 0
     stamina.change_notice:
       requires: {appeal_gte: 32, stat: stamina, minimum: 2, fatigue_lte: 4}
       score_bonus: 0

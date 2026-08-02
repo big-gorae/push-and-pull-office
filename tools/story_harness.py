@@ -38,6 +38,15 @@ NO_DEFAULT = object()
 VALID_CONDITION_OPS = {"eq", "ne", "gt", "gte", "lt", "lte", "contains", "not_contains", "exists", "not_exists"}
 VALID_EFFECT_OPS = {"set", "add", "append_unique", "remove"}
 VALID_PUSH_PULL_ACTIONS = {"approach", "space", "literal"}
+VALID_SUPPORT_STYLES = {
+    "emotional_validation",
+    "factual_clarification",
+    "practical_resolution",
+    "ask_before_helping",
+    "autonomy_return",
+    "concise_reassurance",
+    "literal_respect",
+}
 SELF_DEVELOPMENT_STATE_PREFIX = "visible.protagonist.self_development"
 SELF_DEVELOPMENT_PROGRESS_PREFIX = "progress.self_development"
 SELF_DEVELOPMENT_STAT_ORDER = ("stamina", "appearance", "humor", "taste")
@@ -46,7 +55,10 @@ SELF_DEVELOPMENT_MAX_SCORE_BONUS = 3
 SELF_DEVELOPMENT_BOUNDS = {
     f"{SELF_DEVELOPMENT_STATE_PREFIX}.appeal": (0, 100),
     f"{SELF_DEVELOPMENT_STATE_PREFIX}.fatigue": (0, 6),
-    **{f"{SELF_DEVELOPMENT_STATE_PREFIX}.stats.{stat}": (0, 5) for stat in SELF_DEVELOPMENT_STAT_ORDER},
+    **{
+        f"{SELF_DEVELOPMENT_STATE_PREFIX}.stats.{stat}": (0, 5)
+        for stat in SELF_DEVELOPMENT_STAT_ORDER
+    },
 }
 PUSH_PULL_LIMIT = 100
 PUSH_PULL_OPTIMAL_LIMIT = 56
@@ -333,10 +345,10 @@ class StoryProject:
             self._error(issues, location, "max_night_day must be an integer inside the campaign")
 
         activities = config.get("activities")
+        activity_ids: Set[str] = set()
         if not isinstance(activities, list) or not activities:
             self._error(issues, location, "activities must be a non-empty list")
         else:
-            activity_ids: Set[str] = set()
             for index, activity in enumerate(activities):
                 activity_location = f"{location}.activities[{index}]"
                 if not isinstance(activity, dict):
@@ -347,7 +359,8 @@ class StoryProject:
                     self._error(issues, activity_location, f"invalid activity id: {activity_id}")
                 elif activity_id in activity_ids:
                     self._error(issues, activity_location, f"duplicate activity id: {activity_id}")
-                activity_ids.add(activity_id)
+                else:
+                    activity_ids.add(activity_id)
                 for key in ("title_key", "description_key", "reflection_keys", "appeal_delta", "fatigue_delta", "stat_deltas"):
                     if key not in activity:
                         self._error(issues, activity_location, f"required key is missing: {key}")
@@ -394,7 +407,9 @@ class StoryProject:
             if not isinstance(requires, dict) or not requires:
                 self._error(issues, expression_location, "expression requires must be a non-empty mapping")
             else:
-                unknown_requirements = sorted(set(requires) - {"appeal_gte", "stat", "minimum", "fatigue_lte"})
+                unknown_requirements = sorted(
+                    set(requires) - {"appeal_gte", "stat", "minimum", "fatigue_lte", "last_activity"}
+                )
                 for key in unknown_requirements:
                     self._error(issues, expression_location, f"unknown expression requirement: {key}")
                 appeal_gte = requires.get("appeal_gte")
@@ -417,6 +432,14 @@ class StoryProject:
                     not isinstance(fatigue_lte, int) or isinstance(fatigue_lte, bool) or not 0 <= fatigue_lte <= 6
                 ):
                     self._error(issues, expression_location, "fatigue_lte must be an integer from 0 to 6")
+                if "last_activity" in requires:
+                    last_activity = requires.get("last_activity")
+                    if not isinstance(last_activity, str) or last_activity not in activity_ids:
+                        self._error(
+                            issues,
+                            expression_location,
+                            f"last_activity must reference a known self-development activity: {last_activity}",
+                        )
             score_bonus = expression.get("score_bonus")
             if (
                 not isinstance(score_bonus, int)
@@ -669,6 +692,63 @@ class StoryProject:
                 self._warning(issues, location, "visual.concept_art is not set")
             elif not (PROJECT_ROOT / concept_art).is_file():
                 self._error(issues, location, f"concept art file does not exist: {concept_art}")
+            preferences = character.get("interaction_preferences")
+            if preferences is not None:
+                preferences_location = f"{location}#interaction_preferences"
+                if not isinstance(preferences, dict):
+                    self._error(issues, preferences_location, "interaction_preferences must be a mapping")
+                else:
+                    allowed_preference_keys = {
+                        "authoring_shorthand",
+                        "support_order",
+                        "prefers",
+                        "resists",
+                        "context_overrides",
+                    }
+                    for key in sorted(set(preferences) - allowed_preference_keys):
+                        self._error(issues, preferences_location, f"unknown interaction_preferences key: {key}")
+                    for key in ("support_order", "prefers", "resists", "context_overrides"):
+                        if key not in preferences:
+                            self._error(issues, preferences_location, f"required key is missing: {key}")
+                    shorthand = preferences.get("authoring_shorthand")
+                    if shorthand is not None and (not isinstance(shorthand, str) or not shorthand):
+                        self._error(issues, preferences_location, "authoring_shorthand must be a non-empty string")
+                    support_order = preferences.get("support_order")
+                    if not isinstance(support_order, list) or len(support_order) < 2:
+                        self._error(issues, preferences_location, "support_order must contain at least two styles")
+                    else:
+                        malformed_styles = [
+                            index for index, style in enumerate(support_order)
+                            if not isinstance(style, str) or not style
+                        ]
+                        for style_index in malformed_styles:
+                            self._error(
+                                issues,
+                                f"{preferences_location}.support_order[{style_index}]",
+                                "support style must be a non-empty string",
+                            )
+                        if not malformed_styles:
+                            unknown_styles = sorted(set(support_order) - VALID_SUPPORT_STYLES)
+                            if unknown_styles:
+                                self._error(
+                                    issues,
+                                    preferences_location,
+                                    f"unknown support style: {', '.join(unknown_styles)}",
+                                )
+                            if len(support_order) != len(set(support_order)):
+                                self._error(issues, preferences_location, "support_order styles must be unique")
+                    for key in ("prefers", "resists", "context_overrides"):
+                        values = preferences.get(key)
+                        if not isinstance(values, list):
+                            self._error(issues, preferences_location, f"{key} must be a list")
+                            continue
+                        for value_index, value in enumerate(values):
+                            if not isinstance(value, str) or not value:
+                                self._error(
+                                    issues,
+                                    f"{preferences_location}.{key}[{value_index}]",
+                                    f"{key} entries must be non-empty strings",
+                                )
             expressions = character.get("expressions", {})
             if not isinstance(expressions, dict):
                 self._error(issues, location, "expressions must be a mapping")
@@ -994,7 +1074,7 @@ class StoryProject:
             "role": {"company", "name", "rank", "people_manager", "can_approve", "can_lead_project", "description"},
             "team": {"company", "name", "function", "lead_member", "member_ids"},
             "member": {
-                "company", "display_name", "team", "role", "title", "manager", "employment",
+                "company", "name", "display_name", "team", "role", "title", "manager", "employment",
                 "presentation", "route_eligible", "responsibilities",
             },
             "project": {
@@ -1597,6 +1677,13 @@ class StoryProject:
                 if not isinstance(push_pull, dict):
                     self._error(issues, option_location, "push_pull mapping is required")
                 else:
+                    unknown_push_pull_keys = sorted(set(push_pull) - {"target", "action", "intensity", "base_score"})
+                    if unknown_push_pull_keys:
+                        self._error(
+                            issues,
+                            option_location,
+                            f"unknown push_pull key: {', '.join(unknown_push_pull_keys)}",
+                        )
                     if push_pull.get("action") not in VALID_PUSH_PULL_ACTIONS:
                         self._error(issues, option_location, f"invalid push_pull action: {push_pull.get('action')}")
                     intensity = push_pull.get("intensity")
@@ -1606,6 +1693,67 @@ class StoryProject:
                     if not isinstance(base_score, int) or not 2 <= base_score <= 5:
                         self._error(issues, option_location, "push_pull base_score must be an integer from 2 to 5")
                     heroine = self.routes.get(scene.get("route"), {}).get("heroine")
+                    if "target" in push_pull:
+                        push_pull_target = push_pull.get("target")
+                        if not self.id_is_valid(push_pull_target):
+                            self._error(issues, option_location, "push_pull target must be a valid character id")
+                        elif push_pull_target not in self.characters:
+                            self._error(issues, option_location, f"unknown push_pull target: {push_pull_target}")
+                        elif push_pull_target not in self.manifest.get("initial_state", {}).get("visible", {}).get("heroines", {}):
+                            self._error(issues, option_location, f"push_pull target has no heroine state: {push_pull_target}")
+                        else:
+                            heroine = push_pull_target
+                    if (
+                        heroine in self.characters
+                        and heroine in self.manifest.get("initial_state", {}).get("visible", {}).get("heroines", {})
+                        and heroine not in scene.get("cast", [])
+                    ):
+                        self._error(issues, option_location, f"push_pull target is not in scene cast: {heroine}")
+                    interaction = option.get("interaction")
+                    if interaction is not None:
+                        if not isinstance(interaction, dict):
+                            self._error(issues, option_location, "interaction must be a mapping")
+                        else:
+                            unknown_interaction_keys = sorted(set(interaction) - {"target", "support_styles"})
+                            if unknown_interaction_keys:
+                                self._error(
+                                    issues,
+                                    option_location,
+                                    f"unknown interaction key: {', '.join(unknown_interaction_keys)}",
+                                )
+                            target = interaction.get("target")
+                            if not self.id_is_valid(target):
+                                self._error(issues, option_location, "interaction target must be a valid character id")
+                            elif target not in self.characters:
+                                self._error(issues, option_location, f"unknown interaction target: {target}")
+                            elif target not in scene.get("cast", []):
+                                self._error(issues, option_location, f"interaction target is not in scene cast: {target}")
+                            elif not isinstance(self.characters[target].get("interaction_preferences"), dict):
+                                self._error(issues, option_location, f"interaction target has no interaction_preferences: {target}")
+                            support_styles = interaction.get("support_styles")
+                            if not isinstance(support_styles, list) or not support_styles:
+                                self._error(issues, option_location, "interaction support_styles must be a non-empty list")
+                            else:
+                                malformed_styles = [
+                                    index for index, style in enumerate(support_styles)
+                                    if not isinstance(style, str) or not style
+                                ]
+                                for style_index in malformed_styles:
+                                    self._error(
+                                        issues,
+                                        f"{option_location}#interaction.support_styles[{style_index}]",
+                                        "interaction support style must be a non-empty string",
+                                    )
+                                if not malformed_styles:
+                                    unknown_styles = sorted(set(support_styles) - VALID_SUPPORT_STYLES)
+                                    if unknown_styles:
+                                        self._error(
+                                            issues,
+                                            option_location,
+                                            f"unknown interaction support style: {', '.join(unknown_styles)}",
+                                        )
+                                    if len(support_styles) != len(set(support_styles)):
+                                        self._error(issues, option_location, "interaction support_styles must be unique")
                     system_paths = [
                         "progress.flags.push_pull",
                         f"visible.heroines.{heroine}.initiative",
@@ -1619,9 +1767,9 @@ class StoryProject:
                         if path not in writes:
                             self._error(issues, option_location, f"push_pull system path is not declared in state_contract.writes: {path}")
                     forbidden = {
-                        f"visible.heroines.{heroine}.affection",
-                        f"visible.heroines.{heroine}.initiative",
-                        f"visible.heroines.{heroine}.perceived_state",
+                        f"visible.heroines.{character_id}.{field}"
+                        for character_id in self.manifest.get("initial_state", {}).get("visible", {}).get("heroines", {})
+                        for field in ("affection", "initiative", "perceived_state")
                     }
                     for effect in option.get("effects", []):
                         if effect.get("path") in forbidden:
@@ -1679,6 +1827,8 @@ class StoryProject:
                     required_paths.append(f"{SELF_DEVELOPMENT_STATE_PREFIX}.stats.{requires['stat']}")
                 if "fatigue_lte" in requires:
                     required_paths.append(f"{SELF_DEVELOPMENT_STATE_PREFIX}.fatigue")
+                if "last_activity" in requires:
+                    required_paths.append(f"{SELF_DEVELOPMENT_PROGRESS_PREFIX}.last_activity")
             for path in required_paths:
                 if path not in reads:
                     self._error(
@@ -1987,9 +2137,9 @@ class StoryProject:
                 continue
             path = condition.get("path")
             op = condition.get("op")
-            if isinstance(path, str) and (
-                path == SELF_DEVELOPMENT_STATE_PREFIX
-                or path.startswith(f"{SELF_DEVELOPMENT_STATE_PREFIX}.")
+            if isinstance(path, str) and any(
+                path == prefix or path.startswith(f"{prefix}.")
+                for prefix in (SELF_DEVELOPMENT_STATE_PREFIX, SELF_DEVELOPMENT_PROGRESS_PREFIX)
             ):
                 self._error(
                     issues,
@@ -2339,6 +2489,7 @@ class StoryProject:
                 "stats": self.manifest.get("stats"),
                 "condition_ops": sorted(VALID_CONDITION_OPS),
                 "effect_ops": sorted(VALID_EFFECT_OPS),
+                "support_styles": sorted(VALID_SUPPORT_STYLES),
             },
             "route": clean_source(route),
             "scene": clean_source(scene),
@@ -2920,6 +3071,11 @@ def self_development_expression_matches(
         fatigue = _number_value(profile.get("fatigue"))
         threshold = _number_value(fatigue_lte)
         if fatigue is None or threshold is None or fatigue > threshold:
+            return False
+    if "last_activity" in requires:
+        expected_activity = requires.get("last_activity")
+        actual_activity = get_path(state, f"{SELF_DEVELOPMENT_PROGRESS_PREFIX}.last_activity", MISSING)
+        if not isinstance(expected_activity, str) or actual_activity != expected_activity:
             return False
     return True
 
@@ -3836,7 +3992,7 @@ class Simulator:
                 push_pull_result = resolve_push_pull(
                     self.project,
                     self.state,
-                    self.route["heroine"],
+                    selected.get("push_pull", {}).get("target", self.route["heroine"]),
                     selected["push_pull"],
                     score_bonus,
                 )
@@ -3989,7 +4145,7 @@ def explore_route(
                 resolve_push_pull(
                     project,
                     next_state,
-                    route["heroine"],
+                    option.get("push_pull", {}).get("target", route["heroine"]),
                     option["push_pull"],
                     score_bonus,
                 )

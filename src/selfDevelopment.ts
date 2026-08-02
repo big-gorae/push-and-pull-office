@@ -261,12 +261,15 @@ export class SelfDevelopmentProfile {
 export class ExpressionEligibilityPolicy {
   private readonly expressions: ReadonlyMap<string, SelfDevelopmentExpression>;
   private readonly fallbackProfile: SelfDevelopmentState;
+  private readonly fallbackProgress: SelfDevelopmentProgress;
 
   constructor(
     expressions: Record<string, SelfDevelopmentExpression>,
     fallbackProfile: SelfDevelopmentState = DEFAULT_PROFILE,
+    fallbackProgress: SelfDevelopmentProgress = DEFAULT_PROGRESS,
   ) {
     this.fallbackProfile = SelfDevelopmentProfile.hydrate(fallbackProfile, DEFAULT_PROFILE).snapshot();
+    this.fallbackProgress = hydrateProgress(fallbackProgress, DEFAULT_PROGRESS);
     this.expressions = new Map(Object.entries(expressions || {}).map(([id, expression]) => [
       id,
       {
@@ -279,8 +282,14 @@ export class ExpressionEligibilityPolicy {
   isEligible(state: RuntimeState, expressionId: string): boolean {
     const expression = this.expressions.get(expressionId);
     if (!expression) return false;
-    return SelfDevelopmentProfile.hydrate(rawProfile(state), this.fallbackProfile)
-      .meets(expression.requires);
+    if (!SelfDevelopmentProfile.hydrate(rawProfile(state), this.fallbackProfile)
+      .meets(expression.requires)) return false;
+
+    const requiredLastActivity = expression.requires.last_activity;
+    if (requiredLastActivity === undefined) return true;
+    if (typeof requiredLastActivity !== "string" || !requiredLastActivity) return false;
+    return hydrateProgress(rawProgress(state), this.fallbackProgress).last_activity
+      === requiredLastActivity;
   }
 
   scoreBonus(state: RuntimeState, expressionId: string): number {
@@ -322,7 +331,11 @@ export class SelfDevelopmentService {
       activities.set(activity.id, cloneActivity(activity));
     });
     this.activities = activities;
-    this.eligibility = new ExpressionEligibilityPolicy(config.expressions || {}, this.initialProfile);
+    this.eligibility = new ExpressionEligibilityPolicy(
+      config.expressions || {},
+      this.initialProfile,
+      this.initialProgress,
+    );
   }
 
   hydrate(state: RuntimeState): RuntimeState {

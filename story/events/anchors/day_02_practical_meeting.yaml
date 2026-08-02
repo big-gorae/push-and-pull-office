@@ -9,7 +9,11 @@ priority: 100
 availability: automatic
 completion: return_to_timeline
 participants: [han_do_yoon, yoon_seo_a, cha_min_kyung, kang_yoo_jin]
-requires: {events: [], conditions: []}
+location: meeting_room
+scene: common.day_02_practical_meeting
+requires:
+  events: [anchor.day_01_parent_pressure]
+  conditions: []
 on_seen: {effects: []}
 on_missed: {effects: []}
 presentation:

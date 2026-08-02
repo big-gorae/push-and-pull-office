@@ -5,8 +5,12 @@ heroine: yoon_seo_a
 mode: base
 summary: 사회적 미소와 동결 반응을 수줍은 밀당으로 오해하는 첫 번째 루트.
 unlock_conditions: []
-entry_scene: seo_a.email_request
+entry_scene: common.day_02_practical_meeting
 scene_order:
+  - common.day_02_practical_meeting
+  - common.day_03_business_trip_or_cafe
+  - common.day_04_weekend_encounter
+  - common.day_05_weekend_reflection
   - seo_a.email_request
   - seo_a.relief_smile
 endings:

@@ -1,0 +1,10 @@
+schema_version: 1
+id: role.deputy_general_manager
+kind: role
+company: company.dawon_living
+name: 차장급
+rank: 70
+people_manager: true
+can_approve: true
+can_lead_project: true
+description: 팀장 아래에서 여러 실무 영역과 중간 관리자를 조율하고 위임받은 승인 권한을 행사한다.

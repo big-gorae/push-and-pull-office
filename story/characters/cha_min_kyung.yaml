@@ -2,7 +2,7 @@ schema_version: 1
 id: cha_min_kyung
 display_name: 차민경
 age: 28
-role: 마케팅팀 대리 겸 프로젝트 실무 책임자
+role: 브랜드마케팅팀 대리 겸 프로젝트 실무 책임자
 narrative_role: main_heroine
 summary: 직접 선을 긋고 후배를 보호하지만 과거 회사의 신고 축소를 목격해 기록을 우선하는 인물.
 immutable_facts:
@@ -16,6 +16,21 @@ voice:
     - 감정이 높아질수록 목소리보다 단어가 더 정확해진다.
   forbidden:
     - 명확한 거절 뒤 장난처럼 웃어 넘기기
+interaction_preferences:
+  authoring_shorthand: T 성향을 떠올리되 사실과 실행 가능성을 먼저 확인하는 지원 순서로만 사용한다.
+  support_order:
+    - factual_clarification
+    - practical_resolution
+    - autonomy_return
+    - concise_reassurance
+  prefers:
+    - 영향 범위와 근거가 분명한 설명
+    - 실행 가능한 대안을 준비하되 최종 결정권을 돌려주는 제안
+  resists:
+    - 조치 없이 걱정하지 말라는 막연한 안심
+    - 승인 없이 일을 대신 처리하고 완료 사실만 통보하는 행동
+  context_overrides:
+    - 문제를 수습한 뒤에는 감정과 부담을 짧고 정확하게 인정받아야 대화를 이어 갈 수 있다.
 visual:
   concept_art: assets/concept-art/cha-min-kyung.png
   palette: [burgundy, charcoal, black]
@@ -42,6 +57,10 @@ expressions:
     layer: reality
     emotion: resolve
     description: 서아와 한도윤 사이에 서서 주변 목격자를 확인한다.
+  actual_focused:
+    layer: reality
+    emotion: focus
+    description: 오류 범위와 복구 순서를 빠르게 정리하는 업무 집중 표정.
   actual_exhausted:
     layer: reality
     emotion: exhaustion

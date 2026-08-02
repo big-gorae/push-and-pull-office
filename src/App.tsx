@@ -49,6 +49,7 @@ import type {
   RuntimeState,
   Scene,
   StoryNode,
+  SupportStyle,
   Transition,
   ValidationIssue,
   ViewMode,
@@ -62,6 +63,16 @@ const NODE_LABELS: Record<NodeKind, string> = {
   effect: "상태 효과",
   exit: "장면 이탈",
 };
+
+const SUPPORT_STYLE_OPTIONS: Array<{ id: SupportStyle; label: string }> = [
+  { id: "emotional_validation", label: "감정 인정" },
+  { id: "factual_clarification", label: "사실 확인" },
+  { id: "practical_resolution", label: "실행 가능한 해결" },
+  { id: "ask_before_helping", label: "돕기 전 질문" },
+  { id: "autonomy_return", label: "선택권 반환" },
+  { id: "concise_reassurance", label: "짧고 구체적인 안심" },
+  { id: "literal_respect", label: "말의 원문 존중" },
+];
 
 const STATE_LABELS: Record<string, string> = { push: "밀기", pull: "당기기", neutral: "중립" };
 
@@ -353,6 +364,54 @@ function ChoiceEditor({ runtime, scene, node, onChange }: { runtime: Runtime; sc
           <Field label="플레이어 문구" wide><TextInput value={option.label} onChange={(event) => updateOption(index, { label: event.target.value })} /></Field>
           <Field label="주인공 해석" wide><TextArea value={option.interpretation} onChange={(event) => updateOption(index, { interpretation: event.target.value })} /></Field>
           <Field label="실제로 하는 행동" wide><TextArea value={option.action} onChange={(event) => updateOption(index, { action: event.target.value })} /></Field>
+          <Field label="대화 반응 대상">
+            <select
+              value={option.interaction?.target || ""}
+              onChange={(event) => updateOption(index, {
+                interaction: event.target.value
+                  ? { target: event.target.value, support_styles: option.interaction?.support_styles || [] }
+                  : undefined,
+              })}
+            >
+              <option value="">화법 메타데이터 없음</option>
+              {Object.values(runtime.characters)
+                .filter((character) => scene.cast.includes(character.id))
+                .map((character) => <option value={character.id} key={character.id}>{character.display_name}</option>)}
+            </select>
+          </Field>
+          <Field label="지원 화법" wide>
+            <select
+              multiple
+              size={4}
+              value={option.interaction?.support_styles || []}
+              onChange={(event) => {
+                const support_styles = Array.from(event.currentTarget.selectedOptions)
+                  .map((selected) => selected.value as SupportStyle);
+                const target = option.interaction?.target || runtime.routes[scene.route]?.heroine;
+                updateOption(index, {
+                  interaction: target ? { target, support_styles } : undefined,
+                });
+              }}
+            >
+              {SUPPORT_STYLE_OPTIONS.map((style) => <option value={style.id} key={style.id}>{style.label} · {style.id}</option>)}
+            </select>
+          </Field>
+          <Field label="밀당 계산 대상">
+            <select
+              value={option.push_pull?.target || ""}
+              onChange={(event) => {
+                const push_pull = { ...(option.push_pull || { action: "literal" as const, intensity: 12, base_score: 4 }) };
+                if (event.target.value) push_pull.target = event.target.value;
+                else delete push_pull.target;
+                updateOption(index, { push_pull });
+              }}
+            >
+              <option value="">루트 기본 · {runtime.characters[runtime.routes[scene.route]?.heroine]?.display_name || "미지정"}</option>
+              {Object.values(runtime.characters)
+                .filter((character) => Boolean(runtime.initial_state.visible.heroines[character.id]))
+                .map((character) => <option value={character.id} key={character.id}>{character.display_name}</option>)}
+            </select>
+          </Field>
           <Field label="밀당 방향">
             <select
               value={option.push_pull?.action || "literal"}
@@ -720,10 +779,13 @@ function Preview({
   image?: string;
 }) {
   const route = runtime.routes[scene.route];
-  const heroine = route.heroine;
+  const baseHeroine = route.heroine;
+  const rhythmState = readPushPullState(state);
+  const heroine = rhythmState.heroine && state.visible.heroines[rhythmState.heroine]
+    ? rhythmState.heroine
+    : baseHeroine;
   const visible = state.visible.heroines[heroine];
   const hidden = state.hidden.heroines[heroine];
-  const rhythmState = readPushPullState(state);
   const [pushPullResult, setPushPullResult] = useState<PushPullResult | null>(null);
   const emotion = deriveEmotion(runtime.characters[heroine], hidden);
   const selected = scene.nodes[selectedNodeId];
@@ -765,7 +827,7 @@ function Preview({
       ? selfDevelopmentSystem(runtime).eligibility.scoreBonus(state, option.self_development.expression)
       : 0;
     option.effects.forEach((effect) => applyEffect(runtime, next, effect));
-    const result = resolvePushPull(next, heroine, option.push_pull, { visibleScoreBonus });
+    const result = resolvePushPull(next, option.push_pull?.target || baseHeroine, option.push_pull, { visibleScoreBonus });
     setPushPullResult(result);
     onState(next);
   };

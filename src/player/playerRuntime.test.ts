@@ -84,12 +84,32 @@ describe("web player campaign runtime", () => {
     session = finishSelfDevelopmentNight(runtime, session);
     expect(session.state.progress.time).toMatchObject({ day: 2, slot: "morning" });
     expect(session.state.progress.events.seen).toContain("anchor.day_02_practical_meeting");
+    expect(session.phase).toBe("scene");
+    expect(session.sceneId).toBe("common.day_02_practical_meeting");
+    session = finishCurrentScene(session);
+    expect(session.phase).toBe("timeline");
 
-    session = advanceMeaningfulMoment(session);
-    for (let index = 0; index < 24; index += 1) {
-      if (session.state.progress.time.day === 7 && session.state.progress.time.slot === "lunch") break;
-      session = advanceMeaningfulMoment(session);
+    const weekOneCallbackScenes: string[] = [];
+    for (let index = 0; index < 64; index += 1) {
+      if (
+        session.phase === "timeline"
+        && session.state.progress.time.day === 7
+        && session.state.progress.time.slot === "lunch"
+      ) break;
+      if (session.phase === "scene") {
+        if (session.sceneId?.startsWith("common.day_0")) {
+          weekOneCallbackScenes.push(session.sceneId);
+        }
+        session = finishCurrentScene(session);
+      } else {
+        session = advanceMeaningfulMoment(session);
+      }
     }
+    expect(weekOneCallbackScenes).toEqual([
+      "common.day_03_business_trip_or_cafe",
+      "common.day_04_weekend_encounter",
+      "common.day_05_weekend_reflection",
+    ]);
     expect(session.state.progress.time).toMatchObject({ day: 7, slot: "lunch" });
     expect(availableTimelineEvents(runtime, session).map((event) => event.id)).toContain("seo_a.email_request");
   });
@@ -172,6 +192,65 @@ describe("web player campaign runtime", () => {
       hiddenDelta: ordinary.lastFeedback?.hiddenDelta,
     });
     expect(promoted.state.hidden).toEqual(ordinary.state.hidden);
+  });
+
+  it("applies a common-scene choice to its declared push-pull target", () => {
+    const session = createSession(runtime, "seo_a");
+    session.phase = "scene";
+    session.sceneId = "common.day_02_practical_meeting";
+    session.nodeId = "recovery_choice";
+    session.routeId = "seo_a";
+    const seoAInitiative = session.state.visible.heroines.yoon_seo_a.initiative;
+    const minKyungInitiative = session.state.visible.heroines.cha_min_kyung.initiative;
+
+    const selected = selectOption(runtime, session, "define_and_fix");
+
+    expect(selected.state.visible.heroines.yoon_seo_a.initiative).toBe(seoAInitiative);
+    expect(selected.state.visible.heroines.cha_min_kyung.initiative).toBeGreaterThan(minKyungInitiative);
+    expect(readPushPullState(selected.state)).toMatchObject({
+      heroine: "cha_min_kyung",
+      combo: 1,
+      position: -12,
+    });
+    expect(selected.state.progress.flags.story_mode).toMatchObject({
+      target: "none",
+      day_02_response: "factual_resolution",
+    });
+  });
+
+  it("preserves a matching combo when entering a shared scene with multiple push-pull targets", () => {
+    const session = createCampaignSession(runtime);
+    session.phase = "timeline";
+    session.preparedTimeKey = undefined;
+    session.state.progress.time = { day: 2, act: 1, slot: "morning" };
+    session.state.progress.events.seen = [
+      "anchor.day_01_company_meeting",
+      "anchor.day_01_parent_pressure",
+    ];
+    session.state.progress.flags.push_pull = {
+      combo: 2,
+      position: -24,
+      target: "pull",
+      last_action: "approach",
+      heroine: "cha_min_kyung",
+    };
+
+    const entered = prepareTimeSlot(runtime, session);
+    expect(entered.phase).toBe("scene");
+    expect(entered.sceneId).toBe("common.day_02_practical_meeting");
+    expect(readPushPullState(entered.state)).toMatchObject({
+      heroine: "cha_min_kyung",
+      combo: 2,
+      position: -24,
+    });
+
+    const atChoice = { ...entered, nodeId: "recovery_choice" };
+    const selected = selectOption(runtime, atChoice, "define_and_fix");
+    expect(readPushPullState(selected.state)).toMatchObject({
+      heroine: "cha_min_kyung",
+      combo: 3,
+      position: -36,
+    });
   });
 
   it("selects a self-development dialogue variant only for an eligible profile", () => {

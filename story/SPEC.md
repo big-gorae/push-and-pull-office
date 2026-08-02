@@ -280,6 +280,25 @@ reality:
 
 `push_pull`은 제작·런타임 전용 분류이며 일반 선택지 화면과 결과 연출에는 노출하지 않는다. 선택지별 방향·강도와 계산 결과는 명시적으로 켠 디버깅 모드에서만 표시한다. `action`은 `approach`, `space`, `literal`, `intensity`는 `8~16`, `base_score`는 `2~5`를 사용한다. 런타임은 장면의 일반 `effects`를 먼저 적용한 뒤 이 메타데이터로 위치, 콤보, 득점선, 주도권과 반복 패턴 효과를 계산한다. 장면 효과에서 `affection`, `perceived_state`, `initiative`를 수동으로 변경하지 않는다.
 
+인물별 지원 화법을 쓴 선택은 `interaction`을 선언한다. 여러 공략 인물이 함께 있어 밀당 계산 대상도 장면 루트의 기본 히로인과 다르면 `push_pull.target`을 별도로 선언한다.
+
+```yaml
+push_pull:
+  target: cha_min_kyung
+  action: approach
+  intensity: 12
+  base_score: 4
+interaction:
+  target: cha_min_kyung
+  support_styles:
+    - factual_clarification
+    - practical_resolution
+```
+
+`interaction.target`은 실제로 그 화법을 받아 반응하는 인물이며 현재 장면 `cast` 안의 캐릭터를 가리킨다. 공략 불가 조연도 자신의 `interaction_preferences`가 있으면 대상이 될 수 있다. `support_styles`는 실제 대사와 행동에 사용한 지원 화법을 기록하는 비노출 저작 메타데이터다. 인물별 고유 반응을 검토하는 데 사용하며 그 자체로 호감도·주도권·숨은 수치를 가감하지 않는다.
+
+`push_pull.target`은 밀당 위치·콤보·주도권과 반복 패턴을 어느 히로인에게 적용할지 정한다. 생략하면 장면 루트의 히로인을 사용한다. 명시 여부와 관계없이 계산 인물은 현재 장면 `cast` 안에 있어야 한다. 다른 인물을 지정했다면 그 인물의 주도권과 숨은 반복 패턴 경로도 `state_contract.writes`에 선언한다. 대화 반응 대상과 밀당 계산 대상은 같을 수 있지만 의미가 다르므로 런타임은 두 필드를 서로 대신 사용하지 않는다.
+
 자기계발로 여는 표현은 일반 `conditions` 대신 전용 메타데이터를 사용한다.
 
 ```yaml
@@ -289,9 +308,9 @@ self_development:
   converges_at: after_choice
 ```
 
-`manifest.self_development.expressions`가 매력도·능력치·피로 요구와 `score_bonus`를 소유한다. 해금 선택지는 같은 선택 노드의 조건 없는 기준 선택지를 `equivalent_to`로 가리키고, 기준과 같은 `push_pull` 및 `effects`를 사용하며, 짧은 고유 대사 뒤 `converges_at`으로 합류해야 한다. 두 분기의 `next`부터 합류점 직전까지는 `dual_dialogue`와 `dual_narration`만 허용하며 `effect`, `state_gate`, `choice`, `exit`를 둘 수 없다. 보너스는 밀당의 `score` 또는 `turn` 판정이 성립할 때만 보이는 주도권에 `0~3`을 더한다. 위치, 콤보, 득점선, hidden 상태, 사건과 엔딩 판정은 바꾸지 않으며, 보이는 주도권 `visible.heroines.<id>.initiative`는 일반 조건에서 읽을 수 없다.
+`manifest.self_development.expressions`가 매력도·능력치·피로·최근 활동 요구와 `score_bonus`를 소유한다. `requires.last_activity`는 알려진 활동 ID 하나를 가리키며 `progress.self_development.last_activity`와 정확히 일치할 때만 표현을 연다. 직전 밤 선택을 다음 날 짧게 회수하는 대사에는 `score_bonus: 0`을 사용한다. 해금 선택지는 같은 선택 노드의 조건 없는 기준 선택지를 `equivalent_to`로 가리키고, 기준과 같은 `push_pull` 및 `effects`를 사용하며, 짧은 고유 대사 뒤 `converges_at`으로 합류해야 한다. 두 분기의 `next`부터 합류점 직전까지는 `dual_dialogue`와 `dual_narration`만 허용하며 `effect`, `state_gate`, `choice`, `exit`를 둘 수 없다. 보너스는 밀당의 `score` 또는 `turn` 판정이 성립할 때만 보이는 주도권에 `0~3`을 더한다. 위치, 콤보, 득점선, hidden 상태, 사건과 엔딩 판정은 바꾸지 않으며, 보이는 주도권 `visible.heroines.<id>.initiative`는 일반 조건에서 읽을 수 없다.
 
-대사 variant는 `self_development: {expression: <id>}`만 선언할 수 있다. 기본 variant는 항상 하나 남기며 자기계발 조건을 붙이지 않는다. 자기계발 상태 경로는 일반 장면·사건·엔딩 조건에서 직접 읽지 않는다.
+대사 variant는 `self_development: {expression: <id>}`만 선언할 수 있다. 기본 variant는 항상 하나 남기며 자기계발 조건을 붙이지 않는다. `visible.protagonist.self_development`와 `progress.self_development` 경로는 일반 장면·사건·엔딩 조건에서 직접 읽지 않는다.
 
 ## 10. 전이 우선순위
 
@@ -327,7 +346,37 @@ state_contract:
 
 하네스는 조건에서 읽는 경로와 효과에서 쓰는 경로가 계약에 없으면 오류로 처리한다. 이 계약은 게임 코드의 의존성과 AI 컨텍스트를 동시에 제한한다.
 
-## 12. 캐릭터 감정 규칙
+## 12. 캐릭터 상호작용 선호와 감정 규칙
+
+공략 대상과 주요 대화 상대는 `interaction_preferences`에 지원을 받아들이는 기본 순서를 기록할 수 있다.
+
+```yaml
+interaction_preferences:
+  authoring_shorthand: F 성향을 떠올리되 감정 인정부터 시작하는 지원 순서로만 사용한다.
+  support_order:
+    - emotional_validation
+    - ask_before_helping
+    - autonomy_return
+    - practical_resolution
+  prefers:
+    - 놀람이나 부담을 먼저 구체적으로 알아차리는 말
+  resists:
+    - 동의를 묻지 않고 결정을 대신하는 해결책
+  context_overrides:
+    - 마감이 임박하면 복구 행동을 먼저 요청할 수 있다.
+```
+
+`authoring_shorthand`는 작가 참고용이며 플레이어에게 성격 검사 결과나 정답표로 노출하지 않는다. `support_order`는 평상시 기본값이고 현재 상황, 명시적인 요청과 거절이 항상 우선한다. 순서에 맞는 대화는 고유 반응, 정보와 후속 콜백을 만들지만 실제 호감도·주도권 보너스·숨은 악영향을 자동으로 바꾸지 않는다. 장면 선택지의 객관적인 거리와 타이밍은 계속 `push_pull`에서 별도로 판정한다.
+
+지원 화법의 안정 ID는 다음과 같다.
+
+- `emotional_validation`: 감정과 부담을 구체적으로 인정한다.
+- `factual_clarification`: 사실, 영향 범위와 근거를 확인한다.
+- `practical_resolution`: 실행 가능한 해결책을 제시한다.
+- `ask_before_helping`: 도움의 필요와 범위를 먼저 묻는다.
+- `autonomy_return`: 최종 결정권을 상대에게 돌려준다.
+- `concise_reassurance`: 근거와 조치 뒤에 짧게 안심시킨다.
+- `literal_respect`: 명시적인 말, 요청과 거절을 그대로 존중한다.
 
 인물 파일은 수치를 감정으로 해석한다.
 
@@ -441,6 +490,7 @@ company.*
 ```
 
 - `team.member_ids`와 `member.team`은 양방향으로 일치해야 한다.
+- `member.name`은 설정상 본명이고 `member.display_name`은 플레이어가 보는 호칭이다. 텍스트 전용 동료는 `오차장`, `문부장`처럼 성과 직급을 결합한 짧은 호칭을 사용한다.
 - `member.manager`는 같은 회사의 더 높은 랭크이며 인원 관리 권한이 있어야 하고 보고 순환은 금지한다.
 - `presentation: illustrated`는 스토리 캐릭터 하나와 연결된다. `text_only`는 스토리 캐릭터·일러스트 캐스트·공략 라우트를 가질 수 없다.
 - `route_eligible`은 `illustrated`이고 연결 캐릭터가 `main_heroine`인 멤버에게만 허용한다.

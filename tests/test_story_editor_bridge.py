@@ -33,13 +33,17 @@ class StoryEditorBridgeTests(unittest.TestCase):
 
     def test_load_project_includes_runtime_documents_and_revisions(self):
         result = load_project(ROOT)
-        self.assertEqual(10, len(result["runtime"]["scenes"]))
-        self.assertEqual(10, len(result["documents"]["scenes"]))
+        self.assertEqual(14, len(result["runtime"]["scenes"]))
+        self.assertEqual(14, len(result["documents"]["scenes"]))
         self.assertEqual([], result["issues"])
         self.assertEqual(64, len(result["documents"]["scenes"]["seo_a.email_request"]["revision"]))
         self.assertEqual(24, len(result["documents"]["events"]))
         self.assertIn("common.day_01_company_meeting", result["documents"]["scenes"])
         self.assertIn("common.day_01_parent_pressure", result["documents"]["scenes"])
+        self.assertIn("common.day_02_practical_meeting", result["documents"]["scenes"])
+        self.assertIn("common.day_03_business_trip_or_cafe", result["documents"]["scenes"])
+        self.assertIn("common.day_04_weekend_encounter", result["documents"]["scenes"])
+        self.assertIn("common.day_05_weekend_reflection", result["documents"]["scenes"])
         self.assertIn("anchor.day_01_parent_pressure", result["documents"]["events"])
         self.assertIn("main", result["documents"]["campaigns"])
         self.assertEqual({"ko", "en"}, set(result["documents"]["locales"]))
@@ -135,6 +139,42 @@ class StoryEditorBridgeTests(unittest.TestCase):
             ],
             scene["state_contract"]["writes"],
         )
+
+    def test_state_contract_includes_every_explicit_push_pull_target(self):
+        scene = {
+            "state_contract": {
+                "reads": [],
+                "writes": ["visible.heroines.yoon_seo_a.initiative"],
+            },
+            "entry_conditions": [],
+            "nodes": [{
+                "kind": "choice",
+                "options": [
+                    {
+                        "push_pull": {"action": "approach", "intensity": 12, "base_score": 4},
+                        "conditions": [],
+                        "effects": [],
+                    },
+                    {
+                        "push_pull": {
+                            "target": "cha_min_kyung",
+                            "action": "approach",
+                            "intensity": 12,
+                            "base_score": 4,
+                        },
+                        "conditions": [],
+                        "effects": [],
+                    },
+                ],
+            }],
+        }
+        derive_state_contract(scene)
+        writes = scene["state_contract"]["writes"]
+        for heroine in ("yoon_seo_a", "cha_min_kyung"):
+            self.assertIn(f"visible.heroines.{heroine}.initiative", writes)
+            self.assertIn(f"hidden.heroines.{heroine}.suspicion", writes)
+            self.assertIn(f"hidden.heroines.{heroine}.dislike", writes)
+            self.assertIn(f"hidden.heroines.{heroine}.evidence_count", writes)
 
     def test_state_contract_includes_expression_registry_requirements(self):
         scene = {
@@ -439,7 +479,15 @@ class StoryEditorBridgeTests(unittest.TestCase):
             self.assertEqual("자료는 메일로 복사본", result["runtime"]["scenes"]["seo_a.email_request_copy"]["title"])
             order = result["runtime"]["routes"]["seo_a"]["scene_order"]
             self.assertEqual(
-                ["seo_a.email_request", "seo_a.email_request_copy", "seo_a.relief_smile"],
+                [
+                    "common.day_02_practical_meeting",
+                    "common.day_03_business_trip_or_cafe",
+                    "common.day_04_weekend_encounter",
+                    "common.day_05_weekend_reflection",
+                    "seo_a.email_request",
+                    "seo_a.email_request_copy",
+                    "seo_a.relief_smile",
+                ],
                 order,
             )
             target = root / result["scene"]["path"]

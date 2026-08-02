@@ -602,17 +602,20 @@ function RhythmGauge({ session, debugMode, i18n }: { session: PlayerSession; deb
 function GameHud({ session, debugMode, onMode, onMenu, i18n }: { session: PlayerSession; debugMode: boolean; onMode: () => void; onMenu: () => void; i18n: GameLocalizer }) {
   const scene = runtime.scenes[session.sceneId];
   const route = runtime.routes[session.routeId];
-  const heroine = session.state.visible.heroines[route?.heroine];
   const rhythm = readPushPullState(session.state);
+  const heroineId = rhythm.heroine || route?.heroine;
+  const heroine = heroineId ? session.state.visible.heroines[heroineId] : undefined;
   const reality = session.mode === "reality";
   const isCommonScene = scene?.id.startsWith("common.") ?? false;
+  const hasChoice = scene ? Object.values(scene.nodes).some((node) => node.kind === "choice") : false;
+  const showPushPull = !isCommonScene || hasChoice;
   return <header className="vn-game-hud">
     <div className="vn-day">
       <span>DAY {String(session.state.progress.time.day).padStart(2, "0")}</span>
       <strong>{slotLabel(i18n, session.state.progress.time.slot)}</strong>
       <small>{scene ? sceneTitle(i18n, scene.id) : ""}</small>
     </div>
-    {debugMode && !isCommonScene && <div className="vn-stats">
+    {debugMode && showPushPull && <div className="vn-stats">
       <div><span>{i18n.ui(reality ? "hud.control" : "hud.initiative")}</span><strong>{heroine?.initiative ?? 0}</strong><small>/ 100</small><i className="vn-initiative-line"><b style={{ width: `${heroine?.initiative ?? 0}%` }} /></i></div>
       {rhythm.combo > 0 && <div className={rhythm.combo >= 3 ? "hot" : ""}><span>{i18n.ui(reality ? "hud.controlCombo" : "hud.combo")}</span><strong>×{rhythm.combo}</strong></div>}
     </div>}
@@ -1091,7 +1094,10 @@ export default function WebGame() {
   const choiceStimulus = node.kind === "choice"
     ? i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.stimulus`, node.stimulus || triggerSummary?.line || "")
     : "";
-  const isCommonScene = runtime.scenes[session.sceneId]?.id.startsWith("common.") ?? false;
+  const scene = runtime.scenes[session.sceneId];
+  const isCommonScene = scene?.id.startsWith("common.") ?? false;
+  const hasChoice = scene ? Object.values(scene.nodes).some((candidate) => candidate.kind === "choice") : false;
+  const showPushPull = !isCommonScene || hasChoice;
   const clickStage = (event: MouseEvent) => {
     if ((event.target as HTMLElement).closest("button, input, .vn-debug-panel")) return;
     advance();
@@ -1125,7 +1131,7 @@ export default function WebGame() {
   >
     <Stage session={session} node={node} settings={settings} i18n={i18n} />
     <GameHud session={session} debugMode={settings.debugMode} onMode={changeMode} onMenu={() => setOverlay("menu")} i18n={i18n} />
-    {!isCommonScene && <RhythmGauge session={session} debugMode={settings.debugMode} i18n={i18n} />}
+    {showPushPull && <RhythmGauge session={session} debugMode={settings.debugMode} i18n={i18n} />}
     {settings.debugMode && <DebugPanel settings={settings} canStepBack={debugHistory.length > 0} onSettings={setSettings} onStepBack={stepBack} i18n={i18n} />}
 
     {node.kind === "choice" && !uiHidden && <section className="vn-choices" aria-label={i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.prompt`, node.prompt || "")} onKeyDown={choiceKeyDown}>

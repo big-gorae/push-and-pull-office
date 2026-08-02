@@ -61,6 +61,16 @@ const CONFIG: SelfDevelopmentConfig = {
       requires: { stat: "appearance", minimum: 2, fatigue_lte: 4 },
       score_bonus: 0,
     },
+    "stamina.recent_workout_answer": {
+      requires: {
+        appeal_gte: 32,
+        stat: "stamina",
+        minimum: 2,
+        fatigue_lte: 4,
+        last_activity: "workout",
+      },
+      score_bonus: 3,
+    },
   },
 };
 
@@ -137,10 +147,17 @@ describe("self-development domain", () => {
     expect(service.eligibility.scoreBonus(state, "stamina.workout_answer")).toBe(2);
     expect(service.eligibility.isEligible(state, "appearance.change_notice")).toBe(true);
     expect(service.eligibility.scoreBonus(state, "appearance.change_notice")).toBe(0);
+    expect(service.eligibility.isEligible(state, "stamina.recent_workout_answer")).toBe(false);
+    expect(service.eligibility.scoreBonus(state, "stamina.recent_workout_answer")).toBe(0);
     expect(service.eligibility.isEligible(state, "missing.expression")).toBe(false);
+
+    state.progress.self_development.last_activity = "workout";
+    expect(service.eligibility.isEligible(state, "stamina.recent_workout_answer")).toBe(true);
+    expect(service.eligibility.scoreBonus(state, "stamina.recent_workout_answer")).toBe(3);
 
     state.visible.protagonist.self_development.fatigue = 5;
     expect(service.eligibility.isEligible(state, "stamina.workout_answer")).toBe(false);
+    expect(service.eligibility.isEligible(state, "stamina.recent_workout_answer")).toBe(false);
     expect(service.eligibility.scoreBonus(state, "stamina.workout_answer")).toBe(0);
   });
 
@@ -151,6 +168,13 @@ describe("self-development domain", () => {
       fatigue: 2,
     });
     expect(profile.meets({ appeal_gte: 40, stat: "stamina", minimum: 3, fatigue_lte: 2 })).toBe(true);
+    expect(profile.meets({
+      appeal_gte: 40,
+      stat: "stamina",
+      minimum: 3,
+      fatigue_lte: 2,
+      last_activity: "workout",
+    })).toBe(true);
     expect(profile.snapshot()).not.toBe(profile.snapshot());
 
     const policy = new ExpressionEligibilityPolicy(CONFIG.expressions, INITIAL_PROFILE);
@@ -158,6 +182,9 @@ describe("self-development domain", () => {
     const state = stateAtNight(runtime);
     state.visible.protagonist.self_development = profile.snapshot();
     expect(policy.scoreBonus(state, "stamina.workout_answer")).toBe(2);
+    expect(policy.scoreBonus(state, "stamina.recent_workout_answer")).toBe(0);
+    state.progress.self_development.last_activity = "workout";
+    expect(policy.scoreBonus(state, "stamina.recent_workout_answer")).toBe(3);
   });
 
   it("reports activity availability without allowing fatigue to overflow", () => {

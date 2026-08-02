@@ -2,10 +2,11 @@ schema_version: 1
 id: member.moon_ji_hye
 kind: member
 company: company.dawon_living
-display_name: 문지혜
-team: team.brand_design
+name: 문지혜
+display_name: 문부장
+team: team.marketing
 role: role.department_head
-title: 팀장
+title: 부장·팀장
 manager: null
 employment: permanent
 presentation: text_only

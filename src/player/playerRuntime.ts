@@ -266,8 +266,21 @@ function markEventSeen(runtime: Runtime, session: PlayerSession, event: Timeline
 
 function eventHeroine(runtime: Runtime, event: TimelineEvent): string | undefined {
   if (event.scene) {
-    const routeId = runtime.scenes[event.scene]?.route;
+    const scene = runtime.scenes[event.scene];
+    const routeId = scene?.route;
     const routeHeroine = routeId ? runtime.routes[routeId]?.heroine : undefined;
+    const choiceTargets = new Set<string>();
+    if (scene) {
+      Object.values(scene.nodes).forEach((node) => {
+        (node.options || []).forEach((option) => {
+          if (!option.push_pull) return;
+          const target = option.push_pull.target || routeHeroine;
+          if (target) choiceTargets.add(target);
+        });
+      });
+    }
+    if (choiceTargets.size > 1) return undefined;
+    if (choiceTargets.size === 1) return [...choiceTargets][0];
     if (routeHeroine) return routeHeroine;
   }
   return (event.participants || []).find((id) => Boolean(runtime.initial_state.visible.heroines[id]));
@@ -484,7 +497,7 @@ export function selectOption(runtime: Runtime, value: PlayerSession, optionId: s
   option.effects.forEach((effect) => applyEffect(runtime, session.state, effect));
   const sceneRoute = runtime.scenes[session.sceneId]?.route;
   const route = runtime.routes[sceneRoute || session.routeId];
-  const heroine = route?.heroine;
+  const heroine = option.push_pull?.target || route?.heroine;
   if (heroine && session.state.visible.heroines[heroine] && option.push_pull) {
     session.lastFeedback = resolvePushPull(session.state, heroine, option.push_pull, { visibleScoreBonus });
   }

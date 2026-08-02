@@ -90,10 +90,35 @@
         "interpretation": {"type": "string"},
         "action": {"type": "string"},
         "push_pull": {"$ref": "#/$defs/push_pull"},
+        "interaction": {"$ref": "#/$defs/interaction"},
         "self_development": {"$ref": "#/$defs/self_development_choice"},
         "conditions": {"type": "array", "items": {"$ref": "#/$defs/condition"}},
         "effects": {"type": "array", "items": {"$ref": "#/$defs/effect"}},
         "next": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "interaction": {
+      "type": "object",
+      "required": ["target", "support_styles"],
+      "properties": {
+        "target": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
+        "support_styles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "emotional_validation",
+              "factual_clarification",
+              "practical_resolution",
+              "ask_before_helping",
+              "autonomy_return",
+              "concise_reassurance",
+              "literal_respect"
+            ]
+          }
+        }
       },
       "additionalProperties": false
     },
@@ -119,6 +144,7 @@
       "type": "object",
       "required": ["action", "intensity", "base_score"],
       "properties": {
+        "target": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
         "action": {"enum": ["approach", "space", "literal"]},
         "intensity": {"type": "integer", "minimum": 8, "maximum": 16},
         "base_score": {"type": "integer", "minimum": 2, "maximum": 5}

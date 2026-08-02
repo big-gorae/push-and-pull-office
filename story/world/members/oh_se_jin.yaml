@@ -2,11 +2,12 @@ schema_version: 1
 id: member.oh_se_jin
 kind: member
 company: company.dawon_living
-display_name: 오세진
-team: team.product_planning
-role: role.department_head
-title: 팀장
-manager: null
+name: 오세진
+display_name: 오차장
+team: team.sales_planning
+role: role.deputy_general_manager
+title: 차장
+manager: member.park_jae_hyun
 employment: permanent
 presentation: text_only
 route_eligible: false

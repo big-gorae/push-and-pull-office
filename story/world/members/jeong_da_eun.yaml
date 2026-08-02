@@ -2,10 +2,11 @@ schema_version: 1
 id: member.jeong_da_eun
 kind: member
 company: company.dawon_living
-display_name: 정다은
+name: 정다은
+display_name: 정주임
 team: team.marketing
-role: role.coordinator
-title: 사원
+role: role.assistant_manager
+title: 주임
 manager: member.lee_su_hyeon
 employment: permanent
 presentation: text_only

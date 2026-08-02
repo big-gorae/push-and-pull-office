@@ -127,7 +127,17 @@ def unique(values: Iterable[str]) -> List[str]:
     return result
 
 
-def push_pull_heroine(scene: Mapping[str, Any]) -> str | None:
+def push_pull_heroines(scene: Mapping[str, Any]) -> List[str]:
+    heroines = []
+    for node in scene.get("nodes", []):
+        if not isinstance(node, Mapping):
+            continue
+        for option in node.get("options", []):
+            if not isinstance(option, Mapping):
+                continue
+            push_pull = option.get("push_pull")
+            if isinstance(push_pull, Mapping) and isinstance(push_pull.get("target"), str):
+                heroines.append(push_pull["target"])
     candidates = []
     contract = scene.get("state_contract", {})
     if isinstance(contract, Mapping):
@@ -136,8 +146,8 @@ def push_pull_heroine(scene: Mapping[str, Any]) -> str | None:
     for path in candidates:
         match = re.match(r"^(?:visible|hidden)\.heroines\.([a-z][a-z0-9_]*)\.", str(path))
         if match:
-            return match.group(1)
-    return None
+            heroines.append(match.group(1))
+    return unique(heroines)
 
 
 def self_development_expressions(target: Path) -> Mapping[str, Any]:
@@ -204,17 +214,18 @@ def derive_state_contract(
         if isinstance(node, Mapping)
         for option in node.get("options", [])
     )
-    heroine = push_pull_heroine(scene) if uses_push_pull else None
-    if heroine:
+    heroines = push_pull_heroines(scene) if uses_push_pull else []
+    if heroines:
         reads = unique([*reads, "progress.flags.push_pull"])
-        writes = unique([
-            *writes,
-            "progress.flags.push_pull",
-            f"visible.heroines.{heroine}.initiative",
-            f"hidden.heroines.{heroine}.suspicion",
-            f"hidden.heroines.{heroine}.dislike",
-            f"hidden.heroines.{heroine}.evidence_count",
-        ])
+        writes = unique([*writes, "progress.flags.push_pull"])
+        for heroine in heroines:
+            writes = unique([
+                *writes,
+                f"visible.heroines.{heroine}.initiative",
+                f"hidden.heroines.{heroine}.suspicion",
+                f"hidden.heroines.{heroine}.dislike",
+                f"hidden.heroines.{heroine}.evidence_count",
+            ])
     scene["state_contract"] = {"reads": reads, "writes": writes}
 
 

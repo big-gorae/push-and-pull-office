@@ -8,6 +8,9 @@ duration: 1
 priority: 100
 availability: automatic
 completion: return_to_timeline
+participants: [han_do_yoon]
+location: outside_cafe
+scene: common.day_05_weekend_reflection
 requires:
   events: [anchor.day_04_weekend_encounter]
   conditions: []

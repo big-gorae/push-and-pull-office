@@ -2,10 +2,11 @@ schema_version: 1
 id: member.shin_hye_rim
 kind: member
 company: company.dawon_living
-display_name: 신혜림
+name: 신혜림
+display_name: 신차장
 team: team.people_operations
-role: role.department_head
-title: 팀장
+role: role.deputy_general_manager
+title: 차장·인사운영 책임자
 manager: null
 employment: permanent
 presentation: text_only

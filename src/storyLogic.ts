@@ -469,20 +469,25 @@ export function deriveStateContract(
   });
   const usesPushPull = Object.values(scene.nodes).some((node) =>
     node.kind === "choice" && (node.options || []).some((option) => Boolean(option.push_pull)));
-  if (usesPushPull && heroineId) {
+  if (usesPushPull) {
     const pushPullPath = "progress.flags.push_pull";
-    const initiativePath = `visible.heroines.${heroineId}.initiative`;
-    const hiddenPrefix = `hidden.heroines.${heroineId}`;
     if (!reads.includes(pushPullPath)) reads.push(pushPullPath);
-    [
-      pushPullPath,
-      initiativePath,
-      `${hiddenPrefix}.suspicion`,
-      `${hiddenPrefix}.dislike`,
-      `${hiddenPrefix}.evidence_count`,
+    if (!writes.includes(pushPullPath)) writes.push(pushPullPath);
+    const targets = new Set<string>();
+    if (heroineId) targets.add(heroineId);
+    Object.values(scene.nodes).forEach((node) => {
+      (node.options || []).forEach((option) => {
+        if (option.push_pull?.target) targets.add(option.push_pull.target);
+      });
+    });
+    targets.forEach((target) => [
+      `visible.heroines.${target}.initiative`,
+      `hidden.heroines.${target}.suspicion`,
+      `hidden.heroines.${target}.dislike`,
+      `hidden.heroines.${target}.evidence_count`,
     ].forEach((path) => {
       if (!writes.includes(path)) writes.push(path);
-    });
+    }));
   }
   return { reads, writes };
 }
