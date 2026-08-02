@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "characterId": "cha_min_kyung",
+  "order": 20,
+  "subject": "female",
+  "accent": "#a55261",
+  "defaultLookId": "office",
+  "looks": [
+    {
+      "id": "office",
+      "label": "기본 오피스",
+      "identityTags": [
+        "adult",
+        "sleek chin-length black bob",
+        "large almond-shaped reddish-brown eyes",
+        "angular oval face",
+        "long eyelashes",
+        "small nose",
+        "soft full lips",
+        "mole under eye",
+        "A single tiny dark beauty mark sits just below the outer corner of her left eye above the cheekbone.",
+        "hair tucked behind one ear",
+        "high cheekbones",
+        "defined tapered jawline",
+        "dark straight eyebrows",
+        "tall woman",
+        "athletic curvy build",
+        "narrow waist",
+        "1.2::large breasts::",
+        "breasts"
+      ],
+      "outfitTags": [
+        "charcoal tailored blazer",
+        "burgundy silk blouse",
+        "black tailored slacks",
+        "thin metal earrings",
+        "burgundy lipstick",
+        "metal pen"
+      ],
+      "fullBodyOnlyTags": ["black low heels"],
+      "characterUndesiredTags": [
+        "child",
+        "loli",
+        "middle-aged woman",
+        "muscular woman",
+        "petite",
+        "short stature",
+        "round face",
+        "long hair",
+        "ponytail",
+        "blonde hair",
+        "blue eyes",
+        "shy",
+        "timid",
+        "blushing",
+        "multiple moles",
+        "flat chest",
+        "small breasts",
+        "school uniform",
+        "miniskirt",
+        "seductive pose"
+      ],
+      "defaultSituationId": "reference_skeptical",
+      "situations": [
+        {
+          "id": "reference_skeptical",
+          "label": "기본 사실 확인",
+          "description": "한쪽 눈썹을 올리고 발언의 적절성을 확인합니다.",
+          "expressionId": "actual_skeptical",
+          "basePresetId": "sprite_full_body",
+          "tags": ["holding a metal pen", "standing upright with one hand on her hip", "one eyebrow raised", "skeptical expression", "direct gaze"]
+        },
+        {
+          "id": "meeting_fact_check",
+          "label": "회의 중 사실 확인",
+          "description": "회의 자리에서 근거와 발언을 정확히 짚습니다.",
+          "expressionId": "actual_skeptical",
+          "basePresetId": "meeting_room",
+          "tags": ["holding a metal pen above a closed notebook", "upright posture", "one eyebrow raised", "skeptical expression", "looking at someone outside the frame"]
+        },
+        {
+          "id": "cold_boundary",
+          "label": "차갑게 선 긋기",
+          "description": "턱이 굳고 시선이 차가워지지만 자세는 무너지지 않습니다.",
+          "expressionId": "actual_disgust",
+          "basePresetId": "meeting_room",
+          "tags": ["standing still", "clenched jaw", "narrowed eyes", "cold gaze", "looking at someone just off camera"]
+        },
+        {
+          "id": "protect_coworker",
+          "label": "후배 앞을 가로막기",
+          "description": "화면 밖의 후배 앞에 서서 접근을 차단합니다.",
+          "expressionId": "actual_protective",
+          "basePresetId": "office_hallway",
+          "tags": ["stepping in front of a coworker just outside the frame", "firm stance", "serious expression", "looking sideways at the approaching person"]
+        },
+        {
+          "id": "exhausted_alone",
+          "label": "혼자 남은 뒤의 피로",
+          "description": "회의가 끝난 뒤에만 굳은 어깨가 내려갑니다.",
+          "expressionId": "actual_exhausted",
+          "basePresetId": "meeting_room",
+          "tags": ["alone in the meeting room", "holding a closed laptop", "tired eyes", "lowered shoulders", "looking down"]
+        },
+        {
+          "id": "perceived_challenge",
+          "label": "주관 화면 · 도발",
+          "description": "사실 확인 시선을 긴장감을 즐기는 도발로 오해합니다.",
+          "expressionId": "subjective_challenging",
+          "basePresetId": "meeting_room",
+          "tags": ["challenging gaze", "slight confident smile", "one eyebrow raised", "upright posture", "looking directly at the viewer"]
+        },
+        {
+          "id": "perceived_jealous",
+          "label": "주관 화면 · 질투",
+          "description": "굳은 표정을 다른 여성을 향한 질투로 오해합니다.",
+          "expressionId": "subjective_jealous",
+          "basePresetId": "office_hallway",
+          "tags": ["restrained jealous expression", "tight closed mouth", "looking toward someone outside the frame", "arms crossed", "upright posture"]
+        }
+      ]
+    }
+  ]
+}

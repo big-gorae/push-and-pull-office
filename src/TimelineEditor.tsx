@@ -11,6 +11,7 @@ import {
   setPath,
 } from "./storyLogic";
 import { breakPushPullFlow, readPushPullState, writePushPullState, type PushPullTarget } from "./pushPull";
+import { campaignInitialState } from "./player/gameModes";
 import type {
   ProjectPayload,
   DocumentActivity,
@@ -88,11 +89,14 @@ export default function TimelineEditor({
   onDocumentActivity,
 }: Props) {
   const runtime = payload.runtime;
-  const campaign = Object.values(runtime.campaigns)[0];
+  const [campaignId, setCampaignId] = useState("main");
+  const campaign = runtime.campaigns[campaignId];
   const [week, setWeek] = useState(0);
   const [selectedDay, setSelectedDay] = useState(state.progress.time.day);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot>(state.progress.time.slot);
-  const [selectedEventId, setSelectedEventId] = useState(Object.keys(runtime.events)[0] || "");
+  const [selectedEventId, setSelectedEventId] = useState(
+    Object.values(runtime.events).find((event) => event.campaign_id === "main")?.id || "",
+  );
   const [eventDraft, setEventDraft] = useState<TimelineEvent | null>(selectedEventId ? clone(runtime.events[selectedEventId]) : null);
   const [eventRevision, setEventRevision] = useState(selectedEventId ? payload.documents.events[selectedEventId]?.revision || "" : "");
   const [eventDirty, setEventDirty] = useState(false);
@@ -113,16 +117,13 @@ export default function TimelineEditor({
   const act = campaign.acts.find((item) => selectedDay >= item.days[0] && selectedDay <= item.days[1]);
   const selectedEvent = selectedEventId ? runtime.events[selectedEventId] : undefined;
   const verdict = selectedEvent ? inspectTimelineEvent(runtime, selectedEvent, state, selectedDay, selectedSlot) : undefined;
-  const modeIds = useMemo(() => Array.from(new Set([
-    ...state.progress.unlocked_modes,
-    ...Object.values(runtime.meta).flatMap((document) => document.unlock_rules.map((rule) => rule.mode)),
-  ])), [runtime.meta, state.progress.unlocked_modes]);
+  const modeIds = useMemo(() => Object.keys(runtime.game_modes), [runtime.game_modes]);
   const memoryIds = useMemo(() => Array.from(new Set(
-    Object.values(runtime.events).flatMap((event) => [
+    Object.values(runtime.events).filter((event) => event.campaign_id === campaignId).flatMap((event) => [
       ...event.on_seen.effects,
       ...event.on_missed.effects,
     ]).filter((effect) => effect.path === "progress.memories").map((effect) => String(effect.value)),
-  )), [runtime.events]);
+  )), [campaignId, runtime.events]);
   const visibleTeasers = Object.values(runtime.meta).flatMap((document) => document.mode_teasers || []).filter((teaser) => conditionsMatch(state, teaser.conditions));
 
   const selectEvent = (eventId: string) => {
@@ -151,6 +152,7 @@ export default function TimelineEditor({
       }
     }
     setSelectedEventId(eventId);
+    setCampaignId(event.campaign_id);
     setEventDraft(next);
     setEventRevision(revision);
     setEventDirty(recovered);
@@ -158,6 +160,29 @@ export default function TimelineEditor({
     const day = Math.max(event.window.days[0], Math.min(selectedDay, event.window.days[1]));
     setSelectedDay(day);
     setSelectedSlot(event.window.slots[0]);
+  };
+
+  const selectCampaign = (nextCampaignId: string) => {
+    if (nextCampaignId === campaignId) return;
+    if (eventDirty && !window.confirm("저장하지 않은 이벤트 변경을 버리고 캠페인을 바꿀까요?")) return;
+    if (selectedEventId) localStorage.removeItem(`love-office-event-draft:${payload.root}:${selectedEventId}`);
+    const nextEvent = Object.values(runtime.events).find((event) => event.campaign_id === nextCampaignId);
+    setCampaignId(nextCampaignId);
+    onState(campaignInitialState(runtime, nextCampaignId));
+    if (nextEvent) {
+      setSelectedEventId(nextEvent.id);
+      setEventDraft(clone(nextEvent));
+      setEventRevision(payload.documents.events[nextEvent.id]?.revision || "");
+      setEventDirty(false);
+      setSaveError(false);
+      setSelectedDay(nextEvent.window.days[0]);
+      setSelectedSlot(nextEvent.window.slots[0]);
+    } else {
+      setSelectedEventId("");
+      setEventDraft(null);
+      setEventRevision("");
+      setEventDirty(false);
+    }
   };
 
   useEffect(() => {
@@ -312,6 +337,7 @@ export default function TimelineEditor({
     setTimelineTime(next, selectedDay, selectedSlot);
     let missedCount = 0;
     Object.values(runtime.events).forEach((event) => {
+      if (event.campaign_id !== campaignId) return;
       if (next.progress.events.seen.includes(event.id) || next.progress.events.missed.includes(event.id)) return;
       if (selectedDay <= event.window.deadline_day) return;
       event.on_missed.effects.forEach((effect) => applyEffect(runtime, next, effect));
@@ -321,6 +347,7 @@ export default function TimelineEditor({
     });
     if (missedCount > 0) breakPushPullFlow(next);
     const candidates = Object.values(runtime.events)
+      .filter((event) => event.campaign_id === campaignId)
       .filter((event) => ["automatic", "hidden"].includes(event.availability))
       .filter((event) => inspectTimelineEvent(runtime, event, next, selectedDay, selectedSlot).eligible)
       .sort((a, b) => b.priority - a.priority);
@@ -334,7 +361,7 @@ export default function TimelineEditor({
       automaticCount += 1;
     });
     onState(next);
-    const playerCount = Object.values(runtime.events).filter((event) => event.availability === "player" && inspectTimelineEvent(runtime, event, next, selectedDay, selectedSlot).eligible).length;
+    const playerCount = Object.values(runtime.events).filter((event) => event.campaign_id === campaignId && event.availability === "player" && inspectTimelineEvent(runtime, event, next, selectedDay, selectedSlot).eligible).length;
     onStatus(`${selectedDay}일 ${SLOT_LABELS[selectedSlot]} 실행 · 자동 ${automaticCount}개 · 선택 가능 ${playerCount}개 · 만료 ${missedCount}개`);
   };
 
@@ -371,6 +398,7 @@ export default function TimelineEditor({
           <p>{act?.title} · {act?.purpose}</p>
         </div>
         <div className="timeline-controls">
+          <label className="campaign-picker"><span>캠페인</span><select value={campaignId} onChange={(event) => selectCampaign(event.target.value)}>{Object.values(runtime.campaigns).map((item) => <option value={item.id} key={item.id}>{item.title}</option>)}</select></label>
           <div className="segmented" aria-label="시간표 시점">
             <button type="button" className={mode === "perceived" ? "active" : ""} onClick={() => onMode("perceived")}>주인공 인식</button>
             <button type="button" className={mode === "reality" ? "active" : ""} onClick={() => onMode("reality")}>실제 시간선</button>
@@ -391,7 +419,7 @@ export default function TimelineEditor({
         {lanes.map((lane) => <div className="timeline-lane" key={lane.id}>
           <div className={`lane-label ${lane.kind}`}><strong>{lane.title}</strong><small>{lane.kind === "truth" ? "클리어 후 공개" : lane.kind === "world" ? "고정 사건" : "인물 스레드"}</small></div>
           {days.map((day) => <div className={day === selectedDay ? "timeline-cell selected" : "timeline-cell"} key={`${lane.id}-${day}`}>
-            {eventsForDay(runtime.events, day).filter((event) => event.lane === lane.id).map((event) => {
+            {eventsForDay(runtime.events, day).filter((event) => event.campaign_id === campaignId && event.lane === lane.id).map((event) => {
               const check = timelineStatus(runtime, event, state, day);
               const presentation = event.presentation[mode];
               return <button
@@ -421,13 +449,13 @@ export default function TimelineEditor({
 
     <aside className="timeline-inspector">
       <div className="inspector-section time-simulator">
-        <div className="inspector-heading"><div><p className="eyebrow">SIMULATOR</p><h3>현재 시각 판정</h3></div><button type="button" onClick={() => onState(clone(runtime.initial_state))}>초기화</button></div>
+        <div className="inspector-heading"><div><p className="eyebrow">SIMULATOR</p><h3>현재 시각 판정</h3></div><button type="button" onClick={() => onState(campaignInitialState(runtime, campaignId))}>초기화</button></div>
         <div className="time-pickers">
           <label><span>날짜</span><input type="number" min="1" max={campaign.total_days} value={selectedDay} onChange={(event) => setSelectedDay(Math.max(1, Math.min(campaign.total_days, Number(event.target.value))))} /></label>
           <label><span>시간대</span><select value={selectedSlot} onChange={(event) => setSelectedSlot(event.target.value as TimeSlot)}>{campaign.slots.map((slot) => <option value={slot} key={slot}>{SLOT_LABELS[slot]}</option>)}</select></label>
         </div>
         <button type="button" className="primary-button full-button" onClick={runTimeSlot}>이 시간대 실행</button>
-        <div className="sim-state-summary"><span>본 사건 {state.progress.events.seen.length}</span><span>놓친 사건 {state.progress.events.missed.length}</span><span>기억 {state.progress.memories.length}</span></div>
+        <div className="sim-state-summary"><span>본 사건 {state.progress.events.seen.filter((id) => runtime.events[id]?.campaign_id === campaignId).length}</span><span>놓친 사건 {state.progress.events.missed.filter((id) => runtime.events[id]?.campaign_id === campaignId).length}</span><span>기억 {state.progress.memories.length}</span></div>
       </div>
 
       <div className="inspector-section heroine-state">
@@ -463,6 +491,7 @@ export default function TimelineEditor({
         </div>
         <label><span>제목</span><input value={eventDraft.title} onChange={(event) => updateEvent((draft) => { draft.title = event.target.value; })} /></label>
         <div className="event-field-grid">
+          <label><span>캠페인</span><select value={eventDraft.campaign_id} onChange={(event) => { const nextCampaign = runtime.campaigns[event.target.value]; setCampaignId(nextCampaign.id); updateEvent((draft) => { draft.campaign_id = nextCampaign.id; draft.lane = nextCampaign.lanes[0].id; }); }}>{Object.values(runtime.campaigns).map((item) => <option value={item.id} key={item.id}>{item.title}</option>)}</select></label>
           <label><span>종류</span><select value={eventDraft.type} onChange={(event) => updateEvent((draft) => { draft.type = event.target.value as TimelineEvent["type"]; })}>{runtime.enums.event_type.map((value) => <option value={value} key={value}>{EVENT_TYPE_LABELS[value as TimelineEvent["type"]] || value}</option>)}</select></label>
           <label><span>레인</span><select value={eventDraft.lane} onChange={(event) => updateEvent((draft) => { draft.lane = event.target.value; })}>{campaign.lanes.map((lane) => <option value={lane.id} key={lane.id}>{lane.title}</option>)}</select></label>
           <label><span>발생 방식</span><select value={eventDraft.availability} onChange={(event) => updateEvent((draft) => { draft.availability = event.target.value as TimelineEvent["availability"]; })}>{runtime.enums.event_availability.map((value) => <option value={value} key={value}>{AVAILABILITY_LABELS[value as TimelineEvent["availability"]] || value}</option>)}</select></label>
@@ -480,11 +509,11 @@ export default function TimelineEditor({
           <summary>연결·진행 고급 설정</summary>
           <div className="event-field-grid">
             <label><span>이벤트 ID</span><input value={eventDraft.id} readOnly /></label>
-            <label><span>스레드</span><select value={eventDraft.thread || ""} onChange={(event) => updateEvent((draft) => { draft.thread = event.target.value || undefined; })}><option value="">스레드 없음</option>{Object.values(runtime.threads).map((thread) => <option value={thread.id} key={thread.id}>{thread.title}</option>)}</select></label>
+            <label><span>스레드</span><select value={eventDraft.thread || ""} onChange={(event) => updateEvent((draft) => { draft.thread = event.target.value || undefined; })}><option value="">스레드 없음</option>{Object.values(runtime.threads).filter((thread) => thread.campaign_id === eventDraft.campaign_id).map((thread) => <option value={thread.id} key={thread.id}>{thread.title}</option>)}</select></label>
             <label><span>스레드 순서</span><input type="number" value={eventDraft.sequence || 0} onChange={(event) => updateEvent((draft) => { draft.sequence = Number(event.target.value) || undefined; })} /></label>
             <label><span>독점 그룹</span><input placeholder="같은 그룹 중 하나만 발생" value={eventDraft.exclusive_group || ""} onChange={(event) => updateEvent((draft) => { draft.exclusive_group = event.target.value || undefined; })} /></label>
             <label><span>장면 종료 후</span><select value={eventDraft.completion} onChange={(event) => updateEvent((draft) => { draft.completion = event.target.value as TimelineEvent["completion"]; })}><option value="return_to_timeline">시간표로 복귀</option><option value="honor_scene_exit">장면의 이탈 분기 따름</option></select></label>
-            <label><span>놓치면 이어질 사건</span><select value={eventDraft.on_missed.trigger_event || ""} onChange={(event) => updateEvent((draft) => { draft.on_missed.trigger_event = event.target.value || undefined; })}><option value="">연쇄 사건 없음</option>{Object.values(runtime.events).filter((item) => item.id !== eventDraft.id).map((item) => <option value={item.id} key={item.id}>{item.title} · {item.id}</option>)}</select></label>
+            <label><span>놓치면 이어질 사건</span><select value={eventDraft.on_missed.trigger_event || ""} onChange={(event) => updateEvent((draft) => { draft.on_missed.trigger_event = event.target.value || undefined; })}><option value="">연쇄 사건 없음</option>{Object.values(runtime.events).filter((item) => item.campaign_id === eventDraft.campaign_id && item.id !== eventDraft.id).map((item) => <option value={item.id} key={item.id}>{item.title} · {item.id}</option>)}</select></label>
           </div>
           <fieldset className="participant-picker"><legend>참여 인물</legend>{Object.values(runtime.characters).map((character) => <label key={character.id}><input type="checkbox" checked={(eventDraft.participants || []).includes(character.id)} onChange={(event) => updateEvent((draft) => { const participants = draft.participants || []; draft.participants = event.target.checked ? [...participants, character.id] : participants.filter((id) => id !== character.id); })} />{character.display_name}</label>)}</fieldset>
         </details>

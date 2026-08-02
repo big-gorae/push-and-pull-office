@@ -2,16 +2,19 @@ schema_version: 1
 id: company.dawon_living
 kind: company
 name: 다원리빙
-industry: lifestyle_consumer_goods
+industry: home_cafe_small_kitchen_appliances
 scale: mid_sized
 headcount_band: 300_499
 headquarters: 서울
-description: 자체 생활용품 브랜드와 유통사 협업 상품을 기획·영업·홍보하는 중견 소비재 기업.
+description: 홈카페용 소형 주방가전과 관련 액세서리를 기획해 백화점·편집숍·온라인몰에 유통하고 팝업과 크리에이터 협업으로 홍보하는 중견 소비재 기업.
 team_ids:
   - team.sales_planning
   - team.marketing
   - team.people_operations
 operating_facts:
+  - 주력 제품은 커피메이커·전기포트·미니오븐 같은 홈카페용 소형 주방가전과 텀블러·수납용품 같은 관련 액세서리다.
+  - 신제품 출시는 유통사 입점, 오프라인 팝업, 제품 촬영과 인플루언서 콘텐츠 공개 일정을 함께 맞춰 진행한다.
+  - 제품 사양, 안전·표시 문구, 대여 샘플과 콘텐츠 버전은 담당자와 수정 시각이 남는 공유 기록으로 관리한다.
   - 캠페인 프로젝트는 영업기획팀과 브랜드마케팅팀이 공동으로 운영한다.
   - 핵심 거래처 일정과 승인 기록은 영업기획팀이 보관한다.
   - 프로젝트 회의록과 버전 기록은 공유 문서로 남긴다.

@@ -48,7 +48,7 @@ function advanceMeaningfulMoment(value: PlayerSession): PlayerSession {
 
 describe("web player campaign runtime", () => {
   it("starts at day one and advances only to meaningful timeline moments", () => {
-    let session = createCampaignSession(runtime);
+    let session = createCampaignSession(runtime, "base");
     const initialHidden = structuredClone(session.state.hidden);
     const initialVisible = structuredClone(session.state.visible);
     expect(session.phase).toBe("scene");
@@ -115,7 +115,7 @@ describe("web player campaign runtime", () => {
   });
 
   it("returns to the timeline after a return_to_timeline event instead of chaining its route", () => {
-    let session = createCampaignSession(runtime);
+    let session = createCampaignSession(runtime, "base");
     session = finishCurrentScene(session);
     for (let index = 0; index < 24; index += 1) {
       session = advanceMeaningfulMoment(session);
@@ -124,7 +124,7 @@ describe("web player campaign runtime", () => {
     }
     session = startTimelineEvent(runtime, session, "seo_a.email_request");
     expect(session.phase).toBe("scene");
-    expect(session.version).toBe(4);
+    expect(session.version).toBe(5);
 
     session = finishCurrentScene(session);
     expect(session.phase).toBe("timeline");
@@ -133,7 +133,7 @@ describe("web player campaign runtime", () => {
     expect(session.state.progress.events.seen).not.toContain("seo_a.relief_smile");
     const dialogue = session.backlog.find((entry) => entry.kind === "dialogue");
     expect(dialogue?.variantId).toBe("default");
-    expect(dialogue?.modeAtPresentation).toBe("perceived");
+    expect(dialogue?.layerAtPresentation).toBe("perceived");
     expect(dialogue).not.toHaveProperty("text");
   });
 
@@ -219,7 +219,7 @@ describe("web player campaign runtime", () => {
   });
 
   it("preserves a matching combo when entering a shared scene with multiple push-pull targets", () => {
-    const session = createCampaignSession(runtime);
+    const session = createCampaignSession(runtime, "base");
     session.phase = "timeline";
     session.preparedTimeKey = undefined;
     session.state.progress.time = { day: 2, act: 1, slot: "morning" };
@@ -269,7 +269,7 @@ describe("web player campaign runtime", () => {
 
   it("does not mark an event seen when its scene entry condition fails", () => {
     const copy = structuredClone(runtime);
-    const source = Object.values(copy.events).find((candidate) => candidate.scene)!;
+    const source = copy.events["seo_a.email_request"];
     const event = structuredClone(source);
     event.id = "test.entry.blocked";
     event.availability = "player";
@@ -279,7 +279,7 @@ describe("web player campaign runtime", () => {
     copy.events[event.id] = event;
     const scene = copy.scenes[event.scene!];
     scene.entry_conditions = [{ path: "progress.time.day", op: "gte", value: 99 }];
-    let session = createCampaignSession(copy);
+    let session = createCampaignSession(copy, "base");
     session.phase = "timeline";
     session.preparedTimeKey = "1:morning";
     session.state.progress.time = { day: 1, act: 1, slot: "morning" };
@@ -304,7 +304,7 @@ describe("web player campaign runtime", () => {
   });
 
   it("expires a skipped event after its deadline and applies the missed record", () => {
-    let session = createCampaignSession(runtime);
+    let session = createCampaignSession(runtime, "base");
     session = finishCurrentScene(session);
     for (let index = 0; index < 40; index += 1) {
       session = advanceMeaningfulMoment(session);
@@ -317,7 +317,7 @@ describe("web player campaign runtime", () => {
   });
 
   it("breaks the current combo when choosing an event for another heroine", () => {
-    let session = createCampaignSession(runtime);
+    let session = createCampaignSession(runtime, "base");
     session.phase = "timeline";
     session.preparedTimeKey = undefined;
     session.state.progress.time = { day: 7, act: 2, slot: "after_work" };
@@ -335,7 +335,7 @@ describe("web player campaign runtime", () => {
   });
 
   it("chooses the higher-priority ending inside an exclusive ending group", () => {
-    const session = createCampaignSession(runtime);
+    const session = createCampaignSession(runtime, "base");
     session.phase = "timeline";
     session.preparedTimeKey = undefined;
     session.state.progress.time = { day: 17, act: 3, slot: "after_work" };
@@ -356,7 +356,7 @@ describe("web player campaign runtime", () => {
   });
 
   it("persists route clear and mode unlocks when an ending is reached", () => {
-    const session = createCampaignSession(runtime);
+    const session = createCampaignSession(runtime, "base");
     session.phase = "timeline";
     session.preparedTimeKey = undefined;
     session.state.progress.time = { day: 17, act: 3, slot: "after_work" };
@@ -378,7 +378,7 @@ describe("web player campaign runtime", () => {
   });
 
   it("does not award a route clear when the calendar ends without a narrative ending", () => {
-    let session = createCampaignSession(runtime);
+    let session = createCampaignSession(runtime, "base");
     session.phase = "timeline";
     session.routeId = "seo_a";
     session.preparedTimeKey = "17:after_work";

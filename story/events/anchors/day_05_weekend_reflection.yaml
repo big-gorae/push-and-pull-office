@@ -1,4 +1,5 @@
 schema_version: 1
+campaign_id: main
 id: anchor.day_05_weekend_reflection
 title: 두 번째 주말의 우연
 type: anchor

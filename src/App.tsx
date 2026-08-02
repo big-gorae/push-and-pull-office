@@ -117,10 +117,14 @@ function nodePreview(node: StoryNode): string {
 }
 
 function storyRoutes(runtime: Runtime) {
-  const laneOrder = new Map(Object.values(runtime.campaigns)[0]?.lanes.map((lane, index) => [lane.id, index]) || []);
+  const campaignOrder = new Map(Object.keys(runtime.campaigns).map((id, index) => [id, index]));
   return Object.values(runtime.routes).sort((left, right) => {
-    const leftLane = Object.values(runtime.threads).find((thread) => thread.heroine === left.heroine)?.lane;
-    const rightLane = Object.values(runtime.threads).find((thread) => thread.heroine === right.heroine)?.lane;
+    const campaignDelta = (campaignOrder.get(left.campaign_id) ?? 999) - (campaignOrder.get(right.campaign_id) ?? 999);
+    if (campaignDelta !== 0) return campaignDelta;
+    const campaign = runtime.campaigns[left.campaign_id];
+    const laneOrder = new Map(campaign?.lanes.map((lane, index) => [lane.id, index]) || []);
+    const leftLane = Object.values(runtime.threads).find((thread) => thread.campaign_id === left.campaign_id && thread.heroine === left.heroine)?.lane;
+    const rightLane = Object.values(runtime.threads).find((thread) => thread.campaign_id === right.campaign_id && thread.heroine === right.heroine)?.lane;
     return (laneOrder.get(leftLane || "") ?? 999) - (laneOrder.get(rightLane || "") ?? 999);
   });
 }
@@ -1308,8 +1312,9 @@ export default function App() {
       };
     });
     const events = Object.values(runtime.events).map((event) => {
-      const lane = Object.values(runtime.campaigns)[0]?.lanes.find((item) => item.id === event.lane)?.title || event.lane;
-      const context = `${event.window.days[0]}~${event.window.days[1]}일 · ${lane}${event.scene ? ` · ${runtime.scenes[event.scene]?.title || event.scene}` : ""}`;
+      const campaign = runtime.campaigns[event.campaign_id];
+      const lane = campaign?.lanes.find((item) => item.id === event.lane)?.title || event.lane;
+      const context = `${campaign?.title || event.campaign_id} · ${event.window.days[0]}~${event.window.days[1]}일 · ${lane}${event.scene ? ` · ${runtime.scenes[event.scene]?.title || event.scene}` : ""}`;
       return {
         id: event.id,
         kind: "event" as const,
@@ -1333,9 +1338,9 @@ export default function App() {
       id: route.id,
       kind: "route" as const,
       title: route.title,
-      context: `${runtime.characters[route.heroine]?.display_name || route.heroine} · 스토리 ${route.scene_order.length} · 엔딩 ${route.endings.length}`,
+      context: `${runtime.campaigns[route.campaign_id]?.title || route.campaign_id} · ${runtime.characters[route.heroine]?.display_name || route.heroine} · 스토리 ${route.scene_order.length} · 엔딩 ${route.endings.length}`,
       path: payload.documents.routes[route.id]?.path || "",
-      search: `${route.id} ${route.title} ${route.summary} ${route.mode} ${route.scene_order.join(" ")} ${route.endings.map((ending) => `${ending.scene} ${ending.outcome}`).join(" ")}`.toLocaleLowerCase(),
+      search: `${route.id} ${route.title} ${route.summary} ${route.campaign_id} ${route.scene_order.join(" ")} ${route.endings.map((ending) => `${ending.scene} ${ending.outcome}`).join(" ")}`.toLocaleLowerCase(),
     }));
     const visualItems = Object.values(runtime.visuals).map((visual) => {
       const title = visual.character ? runtime.characters[visual.character]?.display_name || visual.id : runtime.localization.source_strings[visual.title_key || ""] || visual.title_key || visual.id;
@@ -1361,15 +1366,15 @@ export default function App() {
       id: thread.id,
       kind: "thread" as const,
       title: thread.title,
-      context: `${thread.events.length}개 사건 · ${thread.lane}`,
+      context: `${runtime.campaigns[thread.campaign_id]?.title || thread.campaign_id} · ${thread.events.length}개 사건 · ${thread.lane}`,
       path: payload.documents.threads[thread.id]?.path || "",
       search: `${thread.id} ${thread.title} ${thread.lane} ${thread.events.join(" ")}`.toLocaleLowerCase(),
     }));
     const metaItems = Object.values(runtime.meta).map((meta) => ({
       id: meta.id,
       kind: "meta" as const,
-      title: "모드 해금과 예고",
-      context: `${meta.unlock_rules.length}개 해금 · ${meta.mode_teasers?.length || 0}개 예고`,
+      title: "회차 예고",
+      context: `${meta.mode_teasers?.length || 0}개 예고 · 모드 해금은 game_modes.yaml`,
       path: payload.documents.meta[meta.id]?.path || "",
       search: `${meta.id} ${meta.unlock_rules.map((rule) => `${rule.id} ${rule.mode} ${rule.reward}`).join(" ")} ${(meta.mode_teasers || []).flatMap((teaser) => teaser.reveals.map((reveal) => `${reveal.mode} ${reveal.title} ${reveal.teaser}`)).join(" ")}`.toLocaleLowerCase(),
     }));

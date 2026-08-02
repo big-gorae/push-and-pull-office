@@ -1,4 +1,5 @@
 schema_version: 1
+campaign_id: main
 id: anchor.day_03_business_trip_or_cafe
 title: 출장 또는 단둘의 점심
 type: anchor

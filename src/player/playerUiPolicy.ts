@@ -1,9 +1,10 @@
-import type { ChoiceOption, ResolvedCharacterVisual } from "../types";
+import type { ChoiceOption, GameModeId, ResolvedCharacterVisual, Runtime } from "../types";
 import type { TimelineLogEntry } from "./playerRuntime";
 import type { PlayerProfile } from "./playerStorage";
+import { resolveModeAccess } from "./gameModes";
 
-export function modeUnlocked(profile: PlayerProfile, mode: "truth_view" | "survivor_view"): boolean {
-  return profile.unlockedModes.includes(mode) || profile.clearedRoutes.length > 0;
+export function modeUnlocked(runtime: Runtime, profile: PlayerProfile, mode: GameModeId): boolean {
+  return resolveModeAccess(runtime, mode, profile) !== "locked";
 }
 
 export function speakingCharacters(characters: ResolvedCharacterVisual[]): ResolvedCharacterVisual[] {

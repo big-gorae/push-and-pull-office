@@ -22,16 +22,25 @@ import {
   type NightPhaseActivityResult,
   type NightPhaseSelection,
 } from "./nightPhase";
+import {
+  campaignInitialState,
+  isGameModeId,
+  modeDefinition,
+  refreshUnlockedModes,
+  resolveModeAccess,
+  type ModeProfile,
+} from "./gameModes";
 import type {
   ChoiceOption,
   Condition,
+  GameModeId,
   Runtime,
   RuntimeState,
   StoryNode,
   TimelineEvent,
   TimeSlot,
   Transition,
-  ViewMode,
+  ViewLayer,
 } from "../types";
 
 export type BacklogEntry = {
@@ -42,7 +51,7 @@ export type BacklogEntry = {
   speakerId?: string;
   optionId?: string;
   variantId?: string;
-  modeAtPresentation: ViewMode;
+  layerAtPresentation: ViewLayer;
 };
 
 export type TimelineLogEntry = {
@@ -55,13 +64,15 @@ export type TimelineLogEntry = {
 };
 
 export type PlayerSession = {
-  version: 4;
+  version: 5;
   phase: "timeline" | "scene" | "self_development" | "complete";
+  gameModeId: GameModeId;
   campaignId: string;
+  continuityId: string;
   routeId: string;
   sceneId: string;
   nodeId: string;
-  mode: ViewMode;
+  viewLayer: ViewLayer;
   state: RuntimeState;
   backlog: BacklogEntry[];
   choices: Array<{ sceneId: string; nodeId: string; optionId: string }>;
@@ -79,14 +90,27 @@ export type PlayerSession = {
   endingId?: string;
 };
 
+export type StartGameError =
+  | "unknown_mode"
+  | "locked"
+  | "coming_soon"
+  | "missing_campaign"
+  | "invalid_entry_event";
+
+export type StartGameResult =
+  | { ok: true; session: PlayerSession }
+  | { ok: false; code: StartGameError };
+
 const MAX_AUTOMATIC_NODES = 100;
 
 function readId(sceneId: string, nodeId: string): string {
   return `${sceneId}:${nodeId}`;
 }
 
-function firstCampaignId(runtime: Runtime): string {
-  return Object.keys(runtime.campaigns)[0] || "main";
+function requireCampaign(runtime: Runtime, campaignId: string) {
+  const campaign = runtime.campaigns[campaignId];
+  if (!campaign) throw new Error(`unknown-campaign:${campaignId}`);
+  return campaign;
 }
 
 function finishEnding(runtime: Runtime, session: PlayerSession, endingId: string, grantRouteClear = false): void {
@@ -96,18 +120,18 @@ function finishEnding(runtime: Runtime, session: PlayerSession, endingId: string
   if (grantRouteClear && session.routeId && !session.state.progress.cleared_routes.includes(session.routeId)) {
     session.state.progress.cleared_routes.push(session.routeId);
   }
-  Object.values(runtime.meta).flatMap((document) => document.unlock_rules || []).forEach((rule) => {
-    if (!conditionsMatch(session.state, rule.conditions || [])) return;
-    if (!session.state.progress.unlocked_modes.includes(rule.mode)) {
-      session.state.progress.unlocked_modes.push(rule.mode);
-    }
-  });
+  refreshUnlockedModes(runtime, session.state);
 }
 
 function enterScene(runtime: Runtime, session: PlayerSession, sceneId: string): boolean {
   const scene = runtime.scenes[sceneId];
   if (!scene) {
     finishEnding(runtime, session, `missing-scene:${sceneId}`);
+    return false;
+  }
+  const route = runtime.routes[scene.route];
+  if (!route || route.campaign_id !== session.campaignId) {
+    finishEnding(runtime, session, `cross-campaign-scene:${sceneId}`);
     return false;
   }
   const decision = canEnterScene(runtime, session.state, sceneId);
@@ -180,18 +204,25 @@ export function settleSession(runtime: Runtime, value: PlayerSession): PlayerSes
   return session;
 }
 
-export function createSession(runtime: Runtime, routeId: string, mode: ViewMode = "perceived"): PlayerSession {
-  const route = runtime.routes[routeId] || Object.values(runtime.routes)[0];
+export function createSession(runtime: Runtime, routeId: string, viewLayer: ViewLayer = "perceived"): PlayerSession {
+  const route = runtime.routes[routeId];
   if (!route) throw new Error("플레이할 루트가 없습니다.");
+  const gameModeId: GameModeId = viewLayer === "reality" ? "truth_view" : "base";
+  const definition = modeDefinition(runtime, gameModeId);
+  if (!definition || definition.campaign_id !== route.campaign_id) {
+    throw new Error(`route-mode-campaign-mismatch:${routeId}:${gameModeId}`);
+  }
   const initial: PlayerSession = {
-    version: 4,
+    version: 5,
     phase: "scene",
-    campaignId: firstCampaignId(runtime),
+    gameModeId,
+    campaignId: route.campaign_id,
+    continuityId: definition.continuity_id,
     routeId: route.id,
     sceneId: route.entry_scene,
     nodeId: runtime.scenes[route.entry_scene]?.start_node || "",
-    mode,
-    state: clone(runtime.initial_state),
+    viewLayer,
+    state: campaignInitialState(runtime, route.campaign_id),
     backlog: [],
     choices: [],
     readNodes: [],
@@ -206,9 +237,13 @@ export function createSession(runtime: Runtime, routeId: string, mode: ViewMode 
   return settleSession(runtime, initial);
 }
 
-export function normalizePlayerSession(value: PlayerSession, runtime?: Runtime): PlayerSession {
-  const legacy = value as PlayerSession & Partial<Pick<PlayerSession, "phase" | "campaignId" | "timelineLog">> & {
+export function normalizePlayerSession(value: unknown, runtime?: Runtime): PlayerSession {
+  if (!value || typeof value !== "object") throw new Error("invalid-player-session");
+  const legacy = clone(value) as Omit<Partial<PlayerSession>, "version" | "backlog"> & {
+    version?: number;
+    mode?: ViewLayer;
     backlog?: Array<Partial<BacklogEntry> & {
+      modeAtPresentation?: ViewLayer;
       speaker?: string;
       text?: string;
       interpretation?: string;
@@ -218,11 +253,54 @@ export function normalizePlayerSession(value: PlayerSession, runtime?: Runtime):
       realityInterpretation?: string;
     }>;
   };
+  if (typeof legacy.version === "number" && legacy.version > 5) {
+    throw new Error(`unsupported-player-session-version:${legacy.version}`);
+  }
+  const isCurrentVersion = legacy.version === 5;
+  const isV4 = legacy.version === 4;
+  if (isCurrentVersion && !legacy.campaignId) throw new Error("missing-campaign-identity");
+  if (isCurrentVersion && !isGameModeId(legacy.gameModeId)) throw new Error(`unknown-game-mode:${String(legacy.gameModeId)}`);
+  if (isCurrentVersion && !legacy.continuityId) throw new Error("missing-continuity-identity");
+  if (isCurrentVersion && !legacy.viewLayer) throw new Error("missing-view-layer");
+  if (isV4 && !legacy.campaignId) throw new Error("missing-v4-campaign-identity");
+  if (isV4 && legacy.mode !== "perceived" && legacy.mode !== "reality") throw new Error("missing-v4-view-layer");
+  const campaignId = legacy.campaignId || "main";
+  const migratedModeId = legacy.mode === "reality" ? "truth_view" : "base";
+  const gameModeId = isGameModeId(legacy.gameModeId) ? legacy.gameModeId : migratedModeId;
+  const definition = runtime?.game_modes[gameModeId];
+  if (runtime && !runtime.campaigns[campaignId]) throw new Error(`unknown-campaign:${campaignId}`);
+  if (runtime && !definition) throw new Error(`unknown-game-mode:${gameModeId}`);
+  if (definition && definition.campaign_id !== campaignId) {
+    throw new Error(`mode-campaign-mismatch:${gameModeId}:${campaignId}`);
+  }
+  if (definition && legacy.continuityId && legacy.continuityId !== definition.continuity_id) {
+    throw new Error(`continuity-mismatch:${gameModeId}:${legacy.continuityId}`);
+  }
+  if (runtime && legacy.routeId && runtime.routes[legacy.routeId]?.campaign_id !== campaignId) {
+    throw new Error(`route-campaign-mismatch:${legacy.routeId}:${campaignId}`);
+  }
+  if (runtime && legacy.currentEventId && runtime.events[legacy.currentEventId]?.campaign_id !== campaignId) {
+    throw new Error(`event-campaign-mismatch:${legacy.currentEventId}:${campaignId}`);
+  }
+  const viewLayer = legacy.viewLayer || legacy.mode || definition?.initial_layer || "perceived";
+  if (definition?.layer_policy === "fixed" && viewLayer !== definition.initial_layer) {
+    throw new Error(`fixed-layer-mismatch:${gameModeId}:${viewLayer}`);
+  }
+  if (!legacy.state) throw new Error("missing-player-session-state");
   const normalized: PlayerSession = {
-    ...legacy,
-    version: 4,
+    ...(legacy as PlayerSession),
+    version: 5,
     phase: legacy.phase || (legacy.endingId ? "complete" : "scene"),
-    campaignId: legacy.campaignId || "main",
+    gameModeId,
+    campaignId,
+    continuityId: legacy.continuityId || definition?.continuity_id || "main",
+    routeId: legacy.routeId || "",
+    sceneId: legacy.sceneId || "",
+    nodeId: legacy.nodeId || "",
+    viewLayer,
+    state: legacy.state,
+    choices: legacy.choices || [],
+    readNodes: legacy.readNodes || [],
     timelineLog: legacy.timelineLog || [],
     backlog: (legacy.backlog || []).map((entry) => ({
       id: entry.id || "",
@@ -232,9 +310,13 @@ export function normalizePlayerSession(value: PlayerSession, runtime?: Runtime):
       ...(entry.speakerId ? { speakerId: entry.speakerId } : {}),
       ...(entry.optionId ? { optionId: entry.optionId } : {}),
       ...(entry.variantId ? { variantId: entry.variantId } : {}),
-      modeAtPresentation: entry.modeAtPresentation || legacy.mode || "perceived",
+      layerAtPresentation: entry.layerAtPresentation
+        || (entry as { modeAtPresentation?: ViewLayer }).modeAtPresentation
+        || legacy.mode
+        || viewLayer,
     })),
   };
+  delete (normalized as PlayerSession & { mode?: ViewLayer }).mode;
   if (runtime) selfDevelopmentSystem(runtime).hydrate(normalized.state);
   return normalized;
 }
@@ -302,6 +384,7 @@ function enterTimelineEvent(runtime: Runtime, session: PlayerSession, event: Tim
 function automaticCandidates(runtime: Runtime, session: PlayerSession): TimelineEvent[] {
   const { day, slot } = session.state.progress.time;
   return Object.values(runtime.events)
+    .filter((event) => event.campaign_id === session.campaignId)
     .filter((event) => event.availability === "automatic" || event.availability === "hidden")
     .filter((event) => inspectTimelineEvent(runtime, event, session.state, day, slot).eligible)
     .filter((event) => !event.scene || canEnterScene(runtime, session.state, event.scene).allowed)
@@ -312,8 +395,7 @@ export function prepareTimeSlot(runtime: Runtime, value: PlayerSession): PlayerS
   const session = normalizePlayerSession(clone(value), runtime);
   if (session.phase === "complete" || session.phase === "self_development") return session;
   session.phase = "timeline";
-  const campaign = runtime.campaigns[session.campaignId] || Object.values(runtime.campaigns)[0];
-  if (!campaign) return session;
+  const campaign = requireCampaign(runtime, session.campaignId);
   const { day, slot } = session.state.progress.time;
   session.state.progress.time.act = campaignAct(campaign, day);
   const key = timeKey(session.state);
@@ -321,16 +403,18 @@ export function prepareTimeSlot(runtime: Runtime, value: PlayerSession): PlayerS
   session.preparedTimeKey = key;
 
   let missedAny = false;
-  Object.values(runtime.events).forEach((event) => {
-    const events = session.state.progress.events;
-    if (events.seen.includes(event.id) || events.missed.includes(event.id)) return;
-    if (day <= event.window.deadline_day) return;
-    event.on_missed.effects.forEach((effect) => applyEffect(runtime, session.state, effect));
-    events.missed.push(event.id);
-    if (!events.expired.includes(event.id)) events.expired.push(event.id);
-    appendTimelineLog(session, event, "missed");
-    missedAny = true;
-  });
+  Object.values(runtime.events)
+    .filter((event) => event.campaign_id === session.campaignId)
+    .forEach((event) => {
+      const events = session.state.progress.events;
+      if (events.seen.includes(event.id) || events.missed.includes(event.id)) return;
+      if (day <= event.window.deadline_day) return;
+      event.on_missed.effects.forEach((effect) => applyEffect(runtime, session.state, effect));
+      events.missed.push(event.id);
+      if (!events.expired.includes(event.id)) events.expired.push(event.id);
+      appendTimelineLog(session, event, "missed");
+      missedAny = true;
+    });
   if (missedAny) breakPushPullFlow(session.state);
 
   const occupied = new Set<string>();
@@ -346,36 +430,93 @@ export function prepareTimeSlot(runtime: Runtime, value: PlayerSession): PlayerS
 
 export function createCampaignSession(
   runtime: Runtime,
-  mode: ViewMode = "perceived",
+  gameModeId: GameModeId,
   carry?: Pick<RuntimeState["progress"], "cleared_routes" | "unlocked_modes" | "memories">,
 ): PlayerSession {
-  const campaignId = firstCampaignId(runtime);
-  const state = clone(runtime.initial_state);
+  const definition = modeDefinition(runtime, gameModeId);
+  if (!definition) throw new Error(`unknown-game-mode:${gameModeId}`);
+  if (definition.content_status !== "playable") throw new Error(`mode-not-playable:${gameModeId}`);
+  if (!definition.campaign_id) throw new Error(`mode-missing-campaign:${gameModeId}`);
+  const campaignId = definition.campaign_id;
+  const campaign = requireCampaign(runtime, campaignId);
+  const state = campaignInitialState(runtime, campaignId);
   if (carry) {
     state.progress.cleared_routes = [...carry.cleared_routes];
     state.progress.unlocked_modes = [...carry.unlocked_modes];
     state.progress.memories = [...carry.memories];
   }
-  return prepareTimeSlot(runtime, {
-    version: 4,
+  refreshUnlockedModes(runtime, state);
+  const session: PlayerSession = {
+    version: 5,
     phase: "timeline",
+    gameModeId,
     campaignId,
+    continuityId: definition.continuity_id,
     routeId: "",
     sceneId: "",
     nodeId: "",
-    mode,
+    viewLayer: definition.initial_layer,
     state,
     backlog: [],
     choices: [],
     readNodes: [],
     timelineLog: [],
-  });
+  };
+  selfDevelopmentSystem(runtime).hydrate(session.state);
+  session.state.progress.time.act = campaignAct(campaign, session.state.progress.time.day);
+  const entryEvent = runtime.events[campaign.entry_event_id];
+  const { day, slot } = session.state.progress.time;
+  if (
+    !entryEvent
+    || entryEvent.campaign_id !== campaignId
+    || entryEvent.availability !== "automatic"
+    || !inspectTimelineEvent(runtime, entryEvent, session.state, day, slot).eligible
+    || !enterTimelineEvent(runtime, session, entryEvent)
+  ) {
+    throw new Error(`invalid-entry-event:${campaign.entry_event_id}`);
+  }
+  session.preparedTimeKey = timeKey(session.state);
+  return session.phase === "scene" ? settleSession(runtime, session) : session;
+}
+
+export function startGameMode(
+  runtime: Runtime,
+  profile: ModeProfile,
+  gameModeId: GameModeId,
+): StartGameResult {
+  const definition = modeDefinition(runtime, gameModeId);
+  if (!definition) return { ok: false, code: "unknown_mode" };
+  const access = resolveModeAccess(runtime, gameModeId, profile);
+  if (access === "locked") return { ok: false, code: "locked" };
+  if (access === "coming_soon") return { ok: false, code: "coming_soon" };
+  if (!definition.campaign_id || !runtime.campaigns[definition.campaign_id]) {
+    return { ok: false, code: "missing_campaign" };
+  }
+  try {
+    return {
+      ok: true,
+      session: createCampaignSession(runtime, gameModeId, {
+        cleared_routes: profile.clearedRoutes,
+        unlocked_modes: profile.unlockedModes,
+        memories: profile.memories,
+      }),
+    };
+  } catch (error) {
+    if (error instanceof Error && error.message.startsWith("invalid-entry-event:")) {
+      return { ok: false, code: "invalid_entry_event" };
+    }
+    if (error instanceof Error && error.message.includes("campaign")) {
+      return { ok: false, code: "missing_campaign" };
+    }
+    throw error;
+  }
 }
 
 export function availableTimelineEvents(runtime: Runtime, session: PlayerSession): TimelineEvent[] {
   if (session.phase !== "timeline") return [];
   const { day, slot } = session.state.progress.time;
   return Object.values(runtime.events)
+    .filter((event) => event.campaign_id === session.campaignId)
     .filter((event) => event.availability === "player")
     .filter((event) => inspectTimelineEvent(runtime, event, session.state, day, slot).eligible)
     .filter((event) => !event.scene || canEnterScene(runtime, session.state, event.scene).allowed)
@@ -393,13 +534,12 @@ export function startTimelineEvent(runtime: Runtime, value: PlayerSession, event
 export function advanceTimeline(runtime: Runtime, value: PlayerSession): PlayerSession {
   const session = normalizePlayerSession(clone(value), runtime);
   if (session.phase !== "timeline") return session;
-  const campaign = runtime.campaigns[session.campaignId] || Object.values(runtime.campaigns)[0];
-  if (!campaign) return session;
+  const campaign = requireCampaign(runtime, session.campaignId);
   const currentSlot = campaign.slots.indexOf(session.state.progress.time.slot);
   const atLastSlot = currentSlot < 0 || currentSlot === campaign.slots.length - 1;
   if (atLastSlot) {
     const coordinator = nightPhaseCoordinator(runtime);
-    if (coordinator.shouldStart(session.state)) {
+    if (campaign.systems.self_development && coordinator.shouldStart(session.state)) {
       session.phase = "self_development";
       session.nightPhase = coordinator.start(session.state);
       session.lastFeedback = undefined;
@@ -421,15 +561,15 @@ export function advanceTimeline(runtime: Runtime, value: PlayerSession): PlayerS
 
 export function advanceToNextMoment(runtime: Runtime, value: PlayerSession): PlayerSession {
   let session = normalizePlayerSession(clone(value), runtime);
-  const campaign = runtime.campaigns[session.campaignId] || Object.values(runtime.campaigns)[0];
-  const safetyLimit = Math.max(1, (campaign?.total_days || 17) * (campaign?.slots.length || 4) + 1);
+  const campaign = requireCampaign(runtime, session.campaignId);
+  const safetyLimit = Math.max(1, campaign.total_days * campaign.slots.length + 1);
   let previousLogCount = session.timelineLog.length;
   for (let index = 0; index < safetyLimit; index += 1) {
     session = advanceTimeline(runtime, session);
     if (session.phase !== "timeline") return session;
     if (availableTimelineEvents(runtime, session).length > 0) return session;
     const visibleNewLog = session.timelineLog.slice(previousLogCount).some((entry) =>
-      entry.status === "missed" || session.mode === "reality" || entry.availability !== "hidden");
+      entry.status === "missed" || session.viewLayer === "reality" || entry.availability !== "hidden");
     if (visibleNewLog) return session;
     previousLogCount = session.timelineLog.length;
   }
@@ -460,9 +600,9 @@ function logCurrent(runtime: Runtime, session: PlayerSession): void {
     kind: node.kind === "dual_dialogue" ? "dialogue" : "narration",
     sceneId: session.sceneId,
     nodeId: node.id,
-    speakerId: effectiveSpeaker(resolved.node, session.mode),
+    speakerId: effectiveSpeaker(resolved.node, session.viewLayer),
     variantId: resolved.variantId,
-    modeAtPresentation: session.mode,
+    layerAtPresentation: session.viewLayer,
   });
   const key = readId(session.sceneId, node.id);
   if (!session.readNodes.includes(key)) session.readNodes.push(key);
@@ -507,7 +647,7 @@ export function selectOption(runtime: Runtime, value: PlayerSession, optionId: s
     sceneId: session.sceneId,
     nodeId: node.id,
     optionId: option.id,
-    modeAtPresentation: session.mode,
+    layerAtPresentation: session.viewLayer,
   });
   session.choices.push({ sceneId: session.sceneId, nodeId: node.id, optionId: option.id });
   const key = readId(session.sceneId, node.id);
@@ -534,10 +674,6 @@ export function finishSelfDevelopmentNight(runtime: Runtime, value: PlayerSessio
   session.phase = "timeline";
   session.nightPhase = undefined;
   return advanceTimeline(runtime, session);
-}
-
-export function setViewMode(value: PlayerSession, mode: ViewMode): PlayerSession {
-  return { ...value, mode };
 }
 
 export function nodeRead(session: PlayerSession): boolean {

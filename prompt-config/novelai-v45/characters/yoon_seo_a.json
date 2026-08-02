@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "characterId": "yoon_seo_a",
+  "order": 10,
+  "subject": "female",
+  "accent": "#9fb8d8",
+  "defaultLookId": "office",
+  "looks": [
+    {
+      "id": "office",
+      "label": "기본 오피스",
+      "identityTags": [
+        "adult",
+        "long dark brown hair",
+        "large brown eyes",
+        "oval face",
+        "long eyelashes",
+        "small nose",
+        "soft full lips",
+        "softly wavy hair",
+        "soft side-swept bangs",
+        "thin natural eyebrows",
+        "slender adult build",
+        "short stature",
+        "narrow waist",
+        "1.2::large breasts::",
+        "breasts"
+      ],
+      "outfitTags": [
+        "ivory cardigan",
+        "pale blue collared blouse",
+        "navy knee-length flared skirt",
+        "navy employee lanyard",
+        "cat-sticker notebook"
+      ],
+      "fullBodyOnlyTags": ["black loafers"],
+      "characterUndesiredTags": [
+        "child",
+        "loli",
+        "schoolgirl",
+        "school uniform",
+        "middle-aged woman",
+        "tall woman",
+        "muscular woman",
+        "short hair",
+        "bob cut",
+        "blonde hair",
+        "blue eyes",
+        "seductive smile",
+        "flat chest",
+        "small breasts"
+      ],
+      "defaultSituationId": "reference_social_smile",
+      "situations": [
+        {
+          "id": "reference_social_smile",
+          "label": "기본 사회적 미소",
+          "description": "갈등을 빨리 끝내려는 얇은 미소와 경계 자세.",
+          "expressionId": "actual_social_smile",
+          "basePresetId": "sprite_full_body",
+          "tags": ["standing with her elbows close to her body", "holding the notebook close to her chest", "subtle closed-mouth social smile", "subtle eye smile", "raised lower eyelids", "slightly raised cheeks", "slightly asymmetric upturned mouth corners", "slightly raised shoulders", "looking slightly toward the office exit"]
+        },
+        {
+          "id": "tense_at_doorway",
+          "label": "출입문을 확인하는 긴장",
+          "description": "휴대전화를 쥔 채 복도와 출입문을 확인합니다.",
+          "expressionId": "actual_tense",
+          "basePresetId": "office_hallway",
+          "tags": ["holding a smartphone with both hands", "tense", "raised shoulders", "closed mouth", "looking toward the office doorway"]
+        },
+        {
+          "id": "relief_with_coworker",
+          "label": "동료 옆에서 안도",
+          "description": "접근이 멈춘 뒤 어깨와 호흡이 잠시 풀립니다.",
+          "expressionId": "actual_relief",
+          "basePresetId": "office_hallway",
+          "tags": ["holding a tumbler at waist level", "relieved", "smiling eyes", "crescent-shaped half-closed eyes", "raised cheeks", "wide warm smile", "visible upper teeth", "subtle gummy smile", "slightly asymmetric upturned mouth corners", "relaxed shoulders", "looking toward a nearby coworker outside the frame"]
+        },
+        {
+          "id": "exhausted_at_desk",
+          "label": "책상 앞의 피로",
+          "description": "수면 부족과 반복되는 주변 확인이 드러납니다.",
+          "expressionId": "actual_exhausted",
+          "basePresetId": "office_desk",
+          "tags": ["seated at her desk", "tired eyes", "subtle under-eye shadows", "lowered shoulders", "looking down at her phone"]
+        },
+        {
+          "id": "perceived_shy",
+          "label": "주관 화면 · 수줍음",
+          "description": "도윤이 긴장을 연애적 수줍음으로 오해한 화면입니다.",
+          "expressionId": "subjective_shy",
+          "basePresetId": "office_hallway",
+          "tags": ["closed-mouth shy smile", "subtle eye smile", "raised lower eyelids", "slightly raised cheeks", "slightly asymmetric upturned mouth corners", "faint blush", "looking away", "holding the notebook close to her chest", "slightly turned shoulders"]
+        },
+        {
+          "id": "perceived_relieved_smile",
+          "label": "주관 화면 · 돌아온 미소",
+          "description": "안도한 표정을 자신에게 다시 다가오는 미소로 오해합니다.",
+          "expressionId": "subjective_relieved_smile",
+          "basePresetId": "office_desk",
+          "tags": ["relieved smile", "smiling eyes", "crescent-shaped half-closed eyes", "raised cheeks", "visible upper teeth", "subtle gummy smile", "slightly asymmetric upturned mouth corners", "relaxed shoulders", "turning slightly toward the viewer", "hands loosely around a tumbler"]
+        }
+      ]
+    }
+  ]
+}

@@ -10,7 +10,7 @@
     ]
   },
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "700215984646c2fec2fabecca3edc8a038c0fe4e2e33f705ce57178dff808493",
+  "source_sha256": "80b352a60e2c5569285e0eca9cf5d56e820bd575e3b33c2adc4c608862fd2ecf",
   "enums": {
     "perceived_state": [
       "push",
@@ -434,6 +434,77 @@
           "home_incident": "none",
           "yoo_jin_intervention": false
         }
+      }
+    }
+  },
+  "game_modes": {
+    "base": {
+      "campaign_id": "main",
+      "continuity_id": "main",
+      "initial_layer": "perceived",
+      "layer_policy": "fixed",
+      "content_status": "playable",
+      "unlock": {
+        "always": true
+      }
+    },
+    "truth_view": {
+      "campaign_id": "main",
+      "continuity_id": "main",
+      "initial_layer": "reality",
+      "layer_policy": "fixed",
+      "content_status": "playable",
+      "unlock": {
+        "any": [
+          {
+            "conditions": [
+              {
+                "path": "progress.cleared_routes",
+                "op": "contains",
+                "value": "seo_a"
+              }
+            ]
+          },
+          {
+            "conditions": [
+              {
+                "path": "progress.cleared_routes",
+                "op": "contains",
+                "value": "min_kyung"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "survivor_view": {
+      "campaign_id": null,
+      "planned_campaign_id": "survivor",
+      "continuity_id": "survivor",
+      "initial_layer": "reality",
+      "layer_policy": "fixed",
+      "content_status": "coming_soon",
+      "unlock": {
+        "any": [
+          {
+            "conditions": [
+              {
+                "path": "progress.cleared_routes",
+                "op": "contains",
+                "value": "seo_a"
+              }
+            ]
+          },
+          {
+            "conditions": [
+              {
+                "path": "progress.cleared_routes",
+                "op": "contains",
+                "value": "min_kyung"
+              }
+            ]
+          }
+        ]
       }
     }
   },
@@ -6167,7 +6238,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.assignments.reality.line",
-        "source": "민경이 전체 일정을 이끌고, 한도윤은 거래처 승인, 오 차장은 상품 문구, 서아는 자료와 회의록, 정 주임은 캠페인 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다.",
+        "source": "민경이 전체 일정과 인플루언서 연락을 이끌고, 한도윤은 바이어 승인, 오 차장은 제품 사양과 문구, 서아는 사양표·샘플 목록·회의록, 정 주임은 팝업 운영 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -6745,7 +6816,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.min_kyung_question.perceived.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.min_kyung_question.perceived.line",
-        "source": "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
+        "source": "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -6765,7 +6836,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.min_kyung_question.reality.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.min_kyung_question.reality.line",
-        "source": "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
+        "source": "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -6825,7 +6896,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line",
-        "source": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
+        "source": "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -6845,7 +6916,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line",
-        "source": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
+        "source": "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -6865,7 +6936,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line",
-        "source": "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "source": "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -6885,7 +6956,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line",
-        "source": "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "source": "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -7145,7 +7216,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.perceived.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.perceived.line",
-        "source": "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다.",
+        "source": "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -7165,7 +7236,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.reality.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.reality.line",
-        "source": "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다.",
+        "source": "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -7225,7 +7296,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.perceived.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.perceived.line",
-        "source": "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다.",
+        "source": "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -7245,7 +7316,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.reality.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.reality.line",
-        "source": "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다.",
+        "source": "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -8391,7 +8462,7 @@
       },
       "scenes.common.day_02_practical_meeting.nodes.agenda.perceived.line": {
         "key": "scenes.common.day_02_practical_meeting.nodes.agenda.perceived.line",
-        "source": "윤서아 사원 발표 뒤에 거래처 승인 일정과 디자인 버전을 확인하겠습니다.",
+        "source": "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -8411,7 +8482,7 @@
       },
       "scenes.common.day_02_practical_meeting.nodes.agenda.reality.line": {
         "key": "scenes.common.day_02_practical_meeting.nodes.agenda.reality.line",
-        "source": "윤서아 사원 발표 뒤에 거래처 승인 일정과 디자인 버전을 확인하겠습니다.",
+        "source": "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -9590,7 +9661,7 @@
       },
       "scenes.common.day_02_practical_meeting.nodes.opening.reality.line": {
         "key": "scenes.common.day_02_practical_meeting.nodes.opening.reality.line",
-        "source": "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 자료와 일정을 점검하기 위해 모였다.",
+        "source": "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 제품 사양과 캠페인 일정을 점검하기 위해 모였다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -10031,7 +10102,7 @@
       },
       "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.perceived.line": {
         "key": "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.perceived.line",
-        "source": "아, 네. 먼저 하루담 봄 캠페인의 상품 구성부터 말씀드리겠습니다.",
+        "source": "아, 네. 먼저 하루담 봄 홈카페 라인의 커피메이커·전기포트·미니오븐 구성부터 말씀드리겠습니다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -10051,7 +10122,7 @@
       },
       "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.reality.line": {
         "key": "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.reality.line",
-        "source": "아, 네. 먼저 하루담 봄 캠페인의 상품 구성부터 말씀드리겠습니다.",
+        "source": "아, 네. 먼저 하루담 봄 홈카페 라인의 커피메이커·전기포트·미니오븐 구성부터 말씀드리겠습니다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -10151,7 +10222,7 @@
       },
       "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.perceived.line": {
         "key": "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.perceived.line",
-        "source": "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다.",
+        "source": "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -10171,7 +10242,7 @@
       },
       "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.reality.line": {
         "key": "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.reality.line",
-        "source": "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다.",
+        "source": "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -10467,7 +10538,7 @@
       },
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.perceived.line": {
         "key": "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.perceived.line",
-        "source": "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
+        "source": "그 코미디 대사는 크리에이터 브리프 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -10488,7 +10559,7 @@
       },
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.reality.line": {
         "key": "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.reality.line",
-        "source": "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
+        "source": "그 코미디 대사는 크리에이터 브리프 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -10509,7 +10580,7 @@
       },
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.perceived.line": {
         "key": "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.perceived.line",
-        "source": "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠.",
+        "source": "홈카페 숏폼 조회수와 실제 구매 유입은 다릅니다. 크리에이터별 원본 수치부터 같이 보죠.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -10530,7 +10601,7 @@
       },
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.reality.line": {
         "key": "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.reality.line",
-        "source": "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠.",
+        "source": "홈카페 숏폼 조회수와 실제 구매 유입은 다릅니다. 크리에이터별 원본 수치부터 같이 보죠.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -10593,7 +10664,7 @@
       },
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.perceived.line": {
         "key": "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.perceived.line",
-        "source": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다.",
+        "source": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 샘플 목록은 제가 테이블에 펼치겠습니다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -10614,7 +10685,7 @@
       },
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.reality.line": {
         "key": "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.reality.line",
-        "source": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다.",
+        "source": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 샘플 목록은 제가 테이블에 펼치겠습니다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -10635,7 +10706,7 @@
       },
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.perceived.line": {
         "key": "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.perceived.line",
-        "source": "돌아왔으면 오늘 확인한 쟁점부터 정리하죠.",
+        "source": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -10656,7 +10727,7 @@
       },
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.reality.line": {
         "key": "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.reality.line",
-        "source": "돌아왔으면 오늘 확인한 쟁점부터 정리하죠.",
+        "source": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -10948,7 +11019,7 @@
       },
       "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.reality.line": {
         "key": "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.reality.line",
-        "source": "금요일 업무 일정에 따라 한도윤은 동료 한 명과 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다.",
+        "source": "금요일 업무 일정에 따라 한도윤은 동료 한 명과 유통사 쇼룸 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -19071,7 +19142,7 @@
       "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": "(새 프로젝트라… 내 능력도 보여 주고, 사람들도 천천히 알아볼 기회겠군.)",
       "scenes.common.day_01_company_meeting.nodes.arrival_inner.reality.line": "참석자들은 배포 자료와 일정표를 확인한 뒤 각자 맡은 일을 시작할 차례였다.",
       "scenes.common.day_01_company_meeting.nodes.assignments.perceived.line": "서아는 세심했고, 민경은 정확했으며, 유진은 거리낌이 없었다. 첫 회의치고는 각자의 색이 분명한 팀이었다.",
-      "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": "민경이 전체 일정을 이끌고, 한도윤은 거래처 승인, 오 차장은 상품 문구, 서아는 자료와 회의록, 정 주임은 캠페인 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다.",
+      "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": "민경이 전체 일정과 인플루언서 연락을 이끌고, 한도윤은 바이어 승인, 오 차장은 제품 사양과 문구, 서아는 사양표·샘플 목록·회의록, 정 주임은 팝업 운영 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다.",
       "scenes.common.day_01_company_meeting.nodes.assignments_inner.perceived.line": "(세 사람 모두 자기 장점이 뚜렷하군. 내 앞이라 더 신경 쓴 걸까?)",
       "scenes.common.day_01_company_meeting.nodes.assignments_inner.reality.line": "참석자들은 배정된 역할을 확인했고, 다음 회의 전까지 담당별 산출물을 준비하기로 했다.",
       "scenes.common.day_01_company_meeting.nodes.do_yoon_accepts_correction.perceived.line": "확인했습니다. 회의록에는 세 종으로 정리하죠. 수정된 시각도 같이 남겨 주세요.",
@@ -19100,14 +19171,14 @@
       "scenes.common.day_01_company_meeting.nodes.min_kyung_closing.reality.line": "승인 회신이 오면 일정표부터 다시 맞추겠습니다. 확인 메일은 저도 참조해 주세요.",
       "scenes.common.day_01_company_meeting.nodes.min_kyung_closing_inner.perceived.line": "(내 판단을 믿으면서도 다음 움직임은 함께 맞추겠다는 거군.)",
       "scenes.common.day_01_company_meeting.nodes.min_kyung_closing_inner.reality.line": "(회신을 직접 봐야 일정이 바뀌어도 내가 책임지고 관리할 수 있어.)",
-      "scenes.common.day_01_company_meeting.nodes.min_kyung_question.perceived.line": "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
-      "scenes.common.day_01_company_meeting.nodes.min_kyung_question.reality.line": "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
+      "scenes.common.day_01_company_meeting.nodes.min_kyung_question.perceived.line": "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
+      "scenes.common.day_01_company_meeting.nodes.min_kyung_question.reality.line": "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
       "scenes.common.day_01_company_meeting.nodes.min_kyung_question_inner.perceived.line": "(시작부터 핵심을 찌르네. 내 실력을 한번 보겠다는 건가?)",
       "scenes.common.day_01_company_meeting.nodes.min_kyung_question_inner.reality.line": "(승인이 늦으면 제작 일정이 다 밀려. 근거는 지금 확인해야 해.)",
-      "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
-      "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
-      "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
-      "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+      "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
+      "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
+      "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+      "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
       "scenes.common.day_01_company_meeting.nodes.seo_a_closing.perceived.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
       "scenes.common.day_01_company_meeting.nodes.seo_a_closing.reality.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
       "scenes.common.day_01_company_meeting.nodes.seo_a_closing_inner.perceived.line": "(내가 불편하지 않게 끝까지 챙겨 주려는 건가. 책임감도 있고 세심하네.)",
@@ -19120,12 +19191,12 @@
       "scenes.common.day_01_company_meeting.nodes.seo_a_materials.reality.line": "과장님, 이걸로 먼저 보세요. 저는 화면으로 봐도 돼요.",
       "scenes.common.day_01_company_meeting.nodes.seo_a_materials_inner.perceived.line": "(내 자료가 빠진 걸 제일 먼저 알아챘네. 자기 몫까지 내주고, 꽤 세심한데.)",
       "scenes.common.day_01_company_meeting.nodes.seo_a_materials_inner.reality.line": "(한 부가 모자라네. 내가 화면으로 보면 회의는 안 늦겠지.)",
-      "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.perceived.line": "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다.",
-      "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.reality.line": "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다.",
+      "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.perceived.line": "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다.",
+      "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.reality.line": "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다.",
       "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing_inner.perceived.line": "(나와 같은 기준으로 맞춰 일하겠다는 단호한 약속처럼 들리네.)",
       "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing_inner.reality.line": "(잘못된 파일이 다시 돌지 않게 전달 경로를 확실히 해 둬야지.)",
-      "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.perceived.line": "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다.",
-      "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.reality.line": "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다.",
+      "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.perceived.line": "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다.",
+      "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.reality.line": "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다.",
       "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction_inner.perceived.line": "(계속 보고 있었군. 작은 오류라도 핑계 삼아 말을 거는 게 꽤 당돌하네.)",
       "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction_inner.reality.line": "(네 종으로 남으면 회의록도 발주도 틀어진다. 지금 바로 고쳐야 해.)",
       "scenes.common.day_01_company_meeting.nodes.yoo_jin_timestamp.perceived.line": "오늘 오전 8시 42분에 수정했습니다. 공유 문서에도 같은 내용으로 반영했습니다.",
@@ -19184,8 +19255,8 @@
       "scenes.common.day_01_parent_pressure.nodes.remember_seo_a_inner.reality.line": "(회의를 늦추지 않으려고 내 자료를 건넨 것뿐이야.)",
       "scenes.common.day_01_parent_pressure.purpose": "부모의 결혼 재촉을 계기로 한도윤이 오전에 만난 서아와 민경의 업무상 첫인상을 결혼 후보 평가로 다시 분류하기 시작한다.",
       "scenes.common.day_01_parent_pressure.title": "올해는 사람 좀 만나",
-      "scenes.common.day_02_practical_meeting.nodes.agenda.perceived.line": "윤서아 사원 발표 뒤에 거래처 승인 일정과 디자인 버전을 확인하겠습니다.",
-      "scenes.common.day_02_practical_meeting.nodes.agenda.reality.line": "윤서아 사원 발표 뒤에 거래처 승인 일정과 디자인 버전을 확인하겠습니다.",
+      "scenes.common.day_02_practical_meeting.nodes.agenda.perceived.line": "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다.",
+      "scenes.common.day_02_practical_meeting.nodes.agenda.reality.line": "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다.",
       "scenes.common.day_02_practical_meeting.nodes.closing.perceived.line": "작은 실수 하나였지만, 누구에게 어떤 방식으로 손을 내미느냐에 따라 회의의 공기가 달라졌다.",
       "scenes.common.day_02_practical_meeting.nodes.closing.reality.line": "최신 파일로 발표를 마친 뒤 참석자들은 수정 범위, 담당자와 다음 마감을 확인하고 각자의 업무로 돌아갔다.",
       "scenes.common.day_02_practical_meeting.nodes.day_one_activity_reaction.variants.after_grooming.perceived.line": "과장님, 오늘 넥타이 색이 달라졌네요. 아, 참석자표는 여기 있습니다.",
@@ -19243,7 +19314,7 @@
       "scenes.common.day_02_practical_meeting.nodes.meeting_ends.perceived.line": "회의가 끝나자 서아가 다른 사람보다 한발 늦게 나를 따라 복도로 나왔다.",
       "scenes.common.day_02_practical_meeting.nodes.meeting_ends.reality.line": "민경이 담당자와 다음 마감을 확인해 회의를 끝냈다. 복도로 나온 서아가 한도윤에게 수습을 도와준 일에 관해 말을 걸었다.",
       "scenes.common.day_02_practical_meeting.nodes.opening.perceived.line": "목요일 오전, 전날보다 구체적인 실무 점검 회의가 시작됐다. 오늘은 각자의 실력이 더 가까이서 보일 차례였다.",
-      "scenes.common.day_02_practical_meeting.nodes.opening.reality.line": "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 자료와 일정을 점검하기 위해 모였다.",
+      "scenes.common.day_02_practical_meeting.nodes.opening.reality.line": "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 제품 사양과 캠페인 일정을 점검하기 위해 모였다.",
       "scenes.common.day_02_practical_meeting.nodes.presentation_resumes.perceived.line": "서아는 내가 만들어 준 틈을 놓치지 않고 발표를 끝까지 이어 갔다.",
       "scenes.common.day_02_practical_meeting.nodes.presentation_resumes.reality.line": "최신 파일로 교체한 뒤 서아가 3쪽부터 발표를 재개했고, 예정된 질문까지 직접 답했다.",
       "scenes.common.day_02_practical_meeting.nodes.recovery_choice.options.acknowledge_and_ask.action": "서아의 당황을 인정하고 직접 발표를 계속할지 묻는다.",
@@ -19266,14 +19337,14 @@
       "scenes.common.day_02_practical_meeting.nodes.roles_min_kyung.reality.line": "그렇게 나누죠. 발표는 윤 사원, 파일 교체는 한 과장님. 바뀐 시각은 회의록에 남기겠습니다.",
       "scenes.common.day_02_practical_meeting.nodes.roles_seo_a.perceived.line": "제가 계속하겠습니다. 파일만 바꿔 주세요. 3쪽부터 바로 이어 갈게요.",
       "scenes.common.day_02_practical_meeting.nodes.roles_seo_a.reality.line": "제가 계속하겠습니다. 파일만 바꿔 주세요. 3쪽부터 바로 이어 갈게요.",
-      "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.perceived.line": "아, 네. 먼저 하루담 봄 캠페인의 상품 구성부터 말씀드리겠습니다.",
-      "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.reality.line": "아, 네. 먼저 하루담 봄 캠페인의 상품 구성부터 말씀드리겠습니다.",
+      "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.perceived.line": "아, 네. 먼저 하루담 봄 홈카페 라인의 커피메이커·전기포트·미니오븐 구성부터 말씀드리겠습니다.",
+      "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.reality.line": "아, 네. 먼저 하루담 봄 홈카페 라인의 커피메이커·전기포트·미니오븐 구성부터 말씀드리겠습니다.",
       "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes.perceived.line": "죄송합니다. 제가 파일을 잘못 열어서…… 잠시만요.",
       "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes.reality.line": "죄송합니다. 제가 파일을 잘못 열어서…… 잠시만요.",
       "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes_inner.perceived.line": "(당황해서 나를 보는군. 이럴 때 어떻게 잡아 주느냐가 중요하지.)",
       "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes_inner.reality.line": "(다들 기다리는데 어떡하지. 또 틀리면 발표를 못 맡길 거라고 생각할 거야.)",
-      "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.perceived.line": "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다.",
-      "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.reality.line": "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다.",
+      "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.perceived.line": "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다.",
+      "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.reality.line": "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다.",
       "scenes.common.day_02_practical_meeting.nodes.takeover_min_kyung.perceived.line": "내용은 맞습니다. 다만 발표 담당은 윤 사원입니다. 최신 파일로 바꾸고 본인에게 다시 넘기죠.",
       "scenes.common.day_02_practical_meeting.nodes.takeover_min_kyung.reality.line": "내용은 맞습니다. 다만 발표 담당은 윤 사원입니다. 최신 파일로 바꾸고 본인에게 다시 넘기죠.",
       "scenes.common.day_02_practical_meeting.nodes.takeover_seo_a.perceived.line": "아…… 네. 파일이 바뀌면 제가 계속하겠습니다.",
@@ -19288,16 +19359,16 @@
       "scenes.common.day_02_practical_meeting.title": "잘못 열린 발표 파일",
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_grooming.perceived.line": "오늘 거래처 미팅 복장은 문제없었습니다. 사원증만 바로 하세요.",
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_grooming.reality.line": "오늘 거래처 미팅 복장은 문제없었습니다. 사원증만 바로 하세요.",
-      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.perceived.line": "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
-      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.reality.line": "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
-      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.perceived.line": "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠.",
-      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.reality.line": "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.perceived.line": "그 코미디 대사는 크리에이터 브리프 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.reality.line": "그 코미디 대사는 크리에이터 브리프 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.perceived.line": "홈카페 숏폼 조회수와 실제 구매 유입은 다릅니다. 크리에이터별 원본 수치부터 같이 보죠.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.reality.line": "홈카페 숏폼 조회수와 실제 구매 유입은 다릅니다. 크리에이터별 원본 수치부터 같이 보죠.",
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_sleep.perceived.line": "오늘은 일찍 움직인 덕분에 시간이 남네요. 마감 전에 쟁점 세 개 확인하죠.",
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_sleep.reality.line": "오늘은 일찍 움직인 덕분에 시간이 남네요. 마감 전에 쟁점 세 개 확인하죠.",
-      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.perceived.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다.",
-      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.reality.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다.",
-      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.perceived.line": "돌아왔으면 오늘 확인한 쟁점부터 정리하죠.",
-      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.reality.line": "돌아왔으면 오늘 확인한 쟁점부터 정리하죠.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.perceived.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 샘플 목록은 제가 테이블에 펼치겠습니다.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.reality.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 샘플 목록은 제가 테이블에 펼치겠습니다.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.perceived.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.reality.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.after_grooming.perceived.line": "(거래처에서도 내 인상이 괜찮았다는 걸 굳이 확인해 주는군.)",
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.after_grooming.reality.line": "(외부 미팅 복장에는 문제가 없었고, 지금은 뒤집힌 사원증만 바로 하면 돼.)",
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.after_ott.perceived.line": "(내가 꺼낸 화제를 기억하면서 자연스럽게 둘만의 대화로 이어 가네.)",
@@ -19311,7 +19382,7 @@
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.default.perceived.line": "(회사 밖에서 본 뒤라 대화의 호흡도 조금 달라졌군.)",
       "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.default.reality.line": "(오늘 확인한 내용과 다음 마감만 정리하면 돼.)",
       "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.perceived.line": "금요일의 업무 외출과 짧은 휴식이 끝난 뒤에도, 회사 밖에서 나눈 말은 사무실 안보다 조금 오래 남았다.",
-      "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.reality.line": "금요일 업무 일정에 따라 한도윤은 동료 한 명과 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다.",
+      "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.reality.line": "금요일 업무 일정에 따라 한도윤은 동료 한 명과 유통사 쇼룸 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다.",
       "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.perceived.line": "정리가 끝날 무렵, 서아와 민경이 각자 주말에 들를 장소를 이야기했다. 서로 다른 취향을 더 알아볼 기회처럼 들렸다.",
       "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line": "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다.",
       "scenes.common.day_03_business_trip_or_cafe.purpose": "전날 밤 활동이 업무 밖 대화의 작은 재료로 돌아오되 실제 관계 상태에는 영향을 주지 않는다.",
@@ -20060,7 +20131,7 @@
         "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": "(새 프로젝트라… 내 능력도 보여 주고, 사람들도 천천히 알아볼 기회겠군.)",
         "scenes.common.day_01_company_meeting.nodes.arrival_inner.reality.line": "참석자들은 배포 자료와 일정표를 확인한 뒤 각자 맡은 일을 시작할 차례였다.",
         "scenes.common.day_01_company_meeting.nodes.assignments.perceived.line": "서아는 세심했고, 민경은 정확했으며, 유진은 거리낌이 없었다. 첫 회의치고는 각자의 색이 분명한 팀이었다.",
-        "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": "민경이 전체 일정을 이끌고, 한도윤은 거래처 승인, 오 차장은 상품 문구, 서아는 자료와 회의록, 정 주임은 캠페인 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다.",
+        "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": "민경이 전체 일정과 인플루언서 연락을 이끌고, 한도윤은 바이어 승인, 오 차장은 제품 사양과 문구, 서아는 사양표·샘플 목록·회의록, 정 주임은 팝업 운영 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다.",
         "scenes.common.day_01_company_meeting.nodes.assignments_inner.perceived.line": "(세 사람 모두 자기 장점이 뚜렷하군. 내 앞이라 더 신경 쓴 걸까?)",
         "scenes.common.day_01_company_meeting.nodes.assignments_inner.reality.line": "참석자들은 배정된 역할을 확인했고, 다음 회의 전까지 담당별 산출물을 준비하기로 했다.",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_accepts_correction.perceived.line": "확인했습니다. 회의록에는 세 종으로 정리하죠. 수정된 시각도 같이 남겨 주세요.",
@@ -20089,14 +20160,14 @@
         "scenes.common.day_01_company_meeting.nodes.min_kyung_closing.reality.line": "승인 회신이 오면 일정표부터 다시 맞추겠습니다. 확인 메일은 저도 참조해 주세요.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_closing_inner.perceived.line": "(내 판단을 믿으면서도 다음 움직임은 함께 맞추겠다는 거군.)",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_closing_inner.reality.line": "(회신을 직접 봐야 일정이 바뀌어도 내가 책임지고 관리할 수 있어.)",
-        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.perceived.line": "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
-        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.reality.line": "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
+        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.perceived.line": "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
+        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.reality.line": "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_question_inner.perceived.line": "(시작부터 핵심을 찌르네. 내 실력을 한번 보겠다는 건가?)",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_question_inner.reality.line": "(승인이 늦으면 제작 일정이 다 밀려. 근거는 지금 확인해야 해.)",
-        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.perceived.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.reality.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing_inner.perceived.line": "(내가 불편하지 않게 끝까지 챙겨 주려는 건가. 책임감도 있고 세심하네.)",
@@ -20109,12 +20180,12 @@
         "scenes.common.day_01_company_meeting.nodes.seo_a_materials.reality.line": "과장님, 이걸로 먼저 보세요. 저는 화면으로 봐도 돼요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_materials_inner.perceived.line": "(내 자료가 빠진 걸 제일 먼저 알아챘네. 자기 몫까지 내주고, 꽤 세심한데.)",
         "scenes.common.day_01_company_meeting.nodes.seo_a_materials_inner.reality.line": "(한 부가 모자라네. 내가 화면으로 보면 회의는 안 늦겠지.)",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.perceived.line": "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다.",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.reality.line": "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.perceived.line": "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.reality.line": "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다.",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing_inner.perceived.line": "(나와 같은 기준으로 맞춰 일하겠다는 단호한 약속처럼 들리네.)",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing_inner.reality.line": "(잘못된 파일이 다시 돌지 않게 전달 경로를 확실히 해 둬야지.)",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.perceived.line": "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다.",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.reality.line": "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.perceived.line": "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.reality.line": "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다.",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction_inner.perceived.line": "(계속 보고 있었군. 작은 오류라도 핑계 삼아 말을 거는 게 꽤 당돌하네.)",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction_inner.reality.line": "(네 종으로 남으면 회의록도 발주도 틀어진다. 지금 바로 고쳐야 해.)",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_timestamp.perceived.line": "오늘 오전 8시 42분에 수정했습니다. 공유 문서에도 같은 내용으로 반영했습니다.",
@@ -20173,8 +20244,8 @@
         "scenes.common.day_01_parent_pressure.nodes.remember_seo_a_inner.reality.line": "(회의를 늦추지 않으려고 내 자료를 건넨 것뿐이야.)",
         "scenes.common.day_01_parent_pressure.purpose": "부모의 결혼 재촉을 계기로 한도윤이 오전에 만난 서아와 민경의 업무상 첫인상을 결혼 후보 평가로 다시 분류하기 시작한다.",
         "scenes.common.day_01_parent_pressure.title": "올해는 사람 좀 만나",
-        "scenes.common.day_02_practical_meeting.nodes.agenda.perceived.line": "윤서아 사원 발표 뒤에 거래처 승인 일정과 디자인 버전을 확인하겠습니다.",
-        "scenes.common.day_02_practical_meeting.nodes.agenda.reality.line": "윤서아 사원 발표 뒤에 거래처 승인 일정과 디자인 버전을 확인하겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.agenda.perceived.line": "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.agenda.reality.line": "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다.",
         "scenes.common.day_02_practical_meeting.nodes.closing.perceived.line": "작은 실수 하나였지만, 누구에게 어떤 방식으로 손을 내미느냐에 따라 회의의 공기가 달라졌다.",
         "scenes.common.day_02_practical_meeting.nodes.closing.reality.line": "최신 파일로 발표를 마친 뒤 참석자들은 수정 범위, 담당자와 다음 마감을 확인하고 각자의 업무로 돌아갔다.",
         "scenes.common.day_02_practical_meeting.nodes.day_one_activity_reaction.variants.after_grooming.perceived.line": "과장님, 오늘 넥타이 색이 달라졌네요. 아, 참석자표는 여기 있습니다.",
@@ -20232,7 +20303,7 @@
         "scenes.common.day_02_practical_meeting.nodes.meeting_ends.perceived.line": "회의가 끝나자 서아가 다른 사람보다 한발 늦게 나를 따라 복도로 나왔다.",
         "scenes.common.day_02_practical_meeting.nodes.meeting_ends.reality.line": "민경이 담당자와 다음 마감을 확인해 회의를 끝냈다. 복도로 나온 서아가 한도윤에게 수습을 도와준 일에 관해 말을 걸었다.",
         "scenes.common.day_02_practical_meeting.nodes.opening.perceived.line": "목요일 오전, 전날보다 구체적인 실무 점검 회의가 시작됐다. 오늘은 각자의 실력이 더 가까이서 보일 차례였다.",
-        "scenes.common.day_02_practical_meeting.nodes.opening.reality.line": "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 자료와 일정을 점검하기 위해 모였다.",
+        "scenes.common.day_02_practical_meeting.nodes.opening.reality.line": "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 제품 사양과 캠페인 일정을 점검하기 위해 모였다.",
         "scenes.common.day_02_practical_meeting.nodes.presentation_resumes.perceived.line": "서아는 내가 만들어 준 틈을 놓치지 않고 발표를 끝까지 이어 갔다.",
         "scenes.common.day_02_practical_meeting.nodes.presentation_resumes.reality.line": "최신 파일로 교체한 뒤 서아가 3쪽부터 발표를 재개했고, 예정된 질문까지 직접 답했다.",
         "scenes.common.day_02_practical_meeting.nodes.recovery_choice.options.acknowledge_and_ask.action": "서아의 당황을 인정하고 직접 발표를 계속할지 묻는다.",
@@ -20255,14 +20326,14 @@
         "scenes.common.day_02_practical_meeting.nodes.roles_min_kyung.reality.line": "그렇게 나누죠. 발표는 윤 사원, 파일 교체는 한 과장님. 바뀐 시각은 회의록에 남기겠습니다.",
         "scenes.common.day_02_practical_meeting.nodes.roles_seo_a.perceived.line": "제가 계속하겠습니다. 파일만 바꿔 주세요. 3쪽부터 바로 이어 갈게요.",
         "scenes.common.day_02_practical_meeting.nodes.roles_seo_a.reality.line": "제가 계속하겠습니다. 파일만 바꿔 주세요. 3쪽부터 바로 이어 갈게요.",
-        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.perceived.line": "아, 네. 먼저 하루담 봄 캠페인의 상품 구성부터 말씀드리겠습니다.",
-        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.reality.line": "아, 네. 먼저 하루담 봄 캠페인의 상품 구성부터 말씀드리겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.perceived.line": "아, 네. 먼저 하루담 봄 홈카페 라인의 커피메이커·전기포트·미니오븐 구성부터 말씀드리겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.reality.line": "아, 네. 먼저 하루담 봄 홈카페 라인의 커피메이커·전기포트·미니오븐 구성부터 말씀드리겠습니다.",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes.perceived.line": "죄송합니다. 제가 파일을 잘못 열어서…… 잠시만요.",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes.reality.line": "죄송합니다. 제가 파일을 잘못 열어서…… 잠시만요.",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes_inner.perceived.line": "(당황해서 나를 보는군. 이럴 때 어떻게 잡아 주느냐가 중요하지.)",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes_inner.reality.line": "(다들 기다리는데 어떡하지. 또 틀리면 발표를 못 맡길 거라고 생각할 거야.)",
-        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.perceived.line": "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다.",
-        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.reality.line": "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다.",
+        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.perceived.line": "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다.",
+        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.reality.line": "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다.",
         "scenes.common.day_02_practical_meeting.nodes.takeover_min_kyung.perceived.line": "내용은 맞습니다. 다만 발표 담당은 윤 사원입니다. 최신 파일로 바꾸고 본인에게 다시 넘기죠.",
         "scenes.common.day_02_practical_meeting.nodes.takeover_min_kyung.reality.line": "내용은 맞습니다. 다만 발표 담당은 윤 사원입니다. 최신 파일로 바꾸고 본인에게 다시 넘기죠.",
         "scenes.common.day_02_practical_meeting.nodes.takeover_seo_a.perceived.line": "아…… 네. 파일이 바뀌면 제가 계속하겠습니다.",
@@ -20277,16 +20348,16 @@
         "scenes.common.day_02_practical_meeting.title": "잘못 열린 발표 파일",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_grooming.perceived.line": "오늘 거래처 미팅 복장은 문제없었습니다. 사원증만 바로 하세요.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_grooming.reality.line": "오늘 거래처 미팅 복장은 문제없었습니다. 사원증만 바로 하세요.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.perceived.line": "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.reality.line": "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.perceived.line": "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.reality.line": "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.perceived.line": "그 코미디 대사는 크리에이터 브리프 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.reality.line": "그 코미디 대사는 크리에이터 브리프 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.perceived.line": "홈카페 숏폼 조회수와 실제 구매 유입은 다릅니다. 크리에이터별 원본 수치부터 같이 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.reality.line": "홈카페 숏폼 조회수와 실제 구매 유입은 다릅니다. 크리에이터별 원본 수치부터 같이 보죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_sleep.perceived.line": "오늘은 일찍 움직인 덕분에 시간이 남네요. 마감 전에 쟁점 세 개 확인하죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_sleep.reality.line": "오늘은 일찍 움직인 덕분에 시간이 남네요. 마감 전에 쟁점 세 개 확인하죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.perceived.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.reality.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.perceived.line": "돌아왔으면 오늘 확인한 쟁점부터 정리하죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.reality.line": "돌아왔으면 오늘 확인한 쟁점부터 정리하죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.perceived.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 샘플 목록은 제가 테이블에 펼치겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.reality.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 샘플 목록은 제가 테이블에 펼치겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.perceived.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.reality.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.after_grooming.perceived.line": "(거래처에서도 내 인상이 괜찮았다는 걸 굳이 확인해 주는군.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.after_grooming.reality.line": "(외부 미팅 복장에는 문제가 없었고, 지금은 뒤집힌 사원증만 바로 하면 돼.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.after_ott.perceived.line": "(내가 꺼낸 화제를 기억하면서 자연스럽게 둘만의 대화로 이어 가네.)",
@@ -20300,7 +20371,7 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.default.perceived.line": "(회사 밖에서 본 뒤라 대화의 호흡도 조금 달라졌군.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.default.reality.line": "(오늘 확인한 내용과 다음 마감만 정리하면 돼.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.perceived.line": "금요일의 업무 외출과 짧은 휴식이 끝난 뒤에도, 회사 밖에서 나눈 말은 사무실 안보다 조금 오래 남았다.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.reality.line": "금요일 업무 일정에 따라 한도윤은 동료 한 명과 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.reality.line": "금요일 업무 일정에 따라 한도윤은 동료 한 명과 유통사 쇼룸 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.perceived.line": "정리가 끝날 무렵, 서아와 민경이 각자 주말에 들를 장소를 이야기했다. 서로 다른 취향을 더 알아볼 기회처럼 들렸다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line": "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다.",
         "scenes.common.day_03_business_trip_or_cafe.purpose": "전날 밤 활동이 업무 밖 대화의 작은 재료로 돌아오되 실제 관계 상태에는 영향을 주지 않는다.",
@@ -21048,7 +21119,7 @@
         "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": "(새 프로젝트라… 내 능력도 보여 주고, 사람들도 천천히 알아볼 기회겠군.)",
         "scenes.common.day_01_company_meeting.nodes.arrival_inner.reality.line": "참석자들은 배포 자료와 일정표를 확인한 뒤 각자 맡은 일을 시작할 차례였다.",
         "scenes.common.day_01_company_meeting.nodes.assignments.perceived.line": "서아는 세심했고, 민경은 정확했으며, 유진은 거리낌이 없었다. 첫 회의치고는 각자의 색이 분명한 팀이었다.",
-        "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": "민경이 전체 일정을 이끌고, 한도윤은 거래처 승인, 오 차장은 상품 문구, 서아는 자료와 회의록, 정 주임은 캠페인 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다.",
+        "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": "민경이 전체 일정과 인플루언서 연락을 이끌고, 한도윤은 바이어 승인, 오 차장은 제품 사양과 문구, 서아는 사양표·샘플 목록·회의록, 정 주임은 팝업 운영 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다.",
         "scenes.common.day_01_company_meeting.nodes.assignments_inner.perceived.line": "(세 사람 모두 자기 장점이 뚜렷하군. 내 앞이라 더 신경 쓴 걸까?)",
         "scenes.common.day_01_company_meeting.nodes.assignments_inner.reality.line": "참석자들은 배정된 역할을 확인했고, 다음 회의 전까지 담당별 산출물을 준비하기로 했다.",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_accepts_correction.perceived.line": "확인했습니다. 회의록에는 세 종으로 정리하죠. 수정된 시각도 같이 남겨 주세요.",
@@ -21077,14 +21148,14 @@
         "scenes.common.day_01_company_meeting.nodes.min_kyung_closing.reality.line": "승인 회신이 오면 일정표부터 다시 맞추겠습니다. 확인 메일은 저도 참조해 주세요.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_closing_inner.perceived.line": "(내 판단을 믿으면서도 다음 움직임은 함께 맞추겠다는 거군.)",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_closing_inner.reality.line": "(회신을 직접 봐야 일정이 바뀌어도 내가 책임지고 관리할 수 있어.)",
-        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.perceived.line": "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
-        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.reality.line": "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
+        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.perceived.line": "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
+        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.reality.line": "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_question_inner.perceived.line": "(시작부터 핵심을 찌르네. 내 실력을 한번 보겠다는 건가?)",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_question_inner.reality.line": "(승인이 늦으면 제작 일정이 다 밀려. 근거는 지금 확인해야 해.)",
-        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.perceived.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.reality.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing_inner.perceived.line": "(내가 불편하지 않게 끝까지 챙겨 주려는 건가. 책임감도 있고 세심하네.)",
@@ -21097,12 +21168,12 @@
         "scenes.common.day_01_company_meeting.nodes.seo_a_materials.reality.line": "과장님, 이걸로 먼저 보세요. 저는 화면으로 봐도 돼요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_materials_inner.perceived.line": "(내 자료가 빠진 걸 제일 먼저 알아챘네. 자기 몫까지 내주고, 꽤 세심한데.)",
         "scenes.common.day_01_company_meeting.nodes.seo_a_materials_inner.reality.line": "(한 부가 모자라네. 내가 화면으로 보면 회의는 안 늦겠지.)",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.perceived.line": "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다.",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.reality.line": "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.perceived.line": "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.reality.line": "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다.",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing_inner.perceived.line": "(나와 같은 기준으로 맞춰 일하겠다는 단호한 약속처럼 들리네.)",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing_inner.reality.line": "(잘못된 파일이 다시 돌지 않게 전달 경로를 확실히 해 둬야지.)",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.perceived.line": "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다.",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.reality.line": "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.perceived.line": "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.reality.line": "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다.",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction_inner.perceived.line": "(계속 보고 있었군. 작은 오류라도 핑계 삼아 말을 거는 게 꽤 당돌하네.)",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction_inner.reality.line": "(네 종으로 남으면 회의록도 발주도 틀어진다. 지금 바로 고쳐야 해.)",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_timestamp.perceived.line": "오늘 오전 8시 42분에 수정했습니다. 공유 문서에도 같은 내용으로 반영했습니다.",
@@ -21161,8 +21232,8 @@
         "scenes.common.day_01_parent_pressure.nodes.remember_seo_a_inner.reality.line": "(회의를 늦추지 않으려고 내 자료를 건넨 것뿐이야.)",
         "scenes.common.day_01_parent_pressure.purpose": "부모의 결혼 재촉을 계기로 한도윤이 오전에 만난 서아와 민경의 업무상 첫인상을 결혼 후보 평가로 다시 분류하기 시작한다.",
         "scenes.common.day_01_parent_pressure.title": "올해는 사람 좀 만나",
-        "scenes.common.day_02_practical_meeting.nodes.agenda.perceived.line": "윤서아 사원 발표 뒤에 거래처 승인 일정과 디자인 버전을 확인하겠습니다.",
-        "scenes.common.day_02_practical_meeting.nodes.agenda.reality.line": "윤서아 사원 발표 뒤에 거래처 승인 일정과 디자인 버전을 확인하겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.agenda.perceived.line": "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.agenda.reality.line": "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다.",
         "scenes.common.day_02_practical_meeting.nodes.closing.perceived.line": "작은 실수 하나였지만, 누구에게 어떤 방식으로 손을 내미느냐에 따라 회의의 공기가 달라졌다.",
         "scenes.common.day_02_practical_meeting.nodes.closing.reality.line": "최신 파일로 발표를 마친 뒤 참석자들은 수정 범위, 담당자와 다음 마감을 확인하고 각자의 업무로 돌아갔다.",
         "scenes.common.day_02_practical_meeting.nodes.day_one_activity_reaction.variants.after_grooming.perceived.line": "과장님, 오늘 넥타이 색이 달라졌네요. 아, 참석자표는 여기 있습니다.",
@@ -21220,7 +21291,7 @@
         "scenes.common.day_02_practical_meeting.nodes.meeting_ends.perceived.line": "회의가 끝나자 서아가 다른 사람보다 한발 늦게 나를 따라 복도로 나왔다.",
         "scenes.common.day_02_practical_meeting.nodes.meeting_ends.reality.line": "민경이 담당자와 다음 마감을 확인해 회의를 끝냈다. 복도로 나온 서아가 한도윤에게 수습을 도와준 일에 관해 말을 걸었다.",
         "scenes.common.day_02_practical_meeting.nodes.opening.perceived.line": "목요일 오전, 전날보다 구체적인 실무 점검 회의가 시작됐다. 오늘은 각자의 실력이 더 가까이서 보일 차례였다.",
-        "scenes.common.day_02_practical_meeting.nodes.opening.reality.line": "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 자료와 일정을 점검하기 위해 모였다.",
+        "scenes.common.day_02_practical_meeting.nodes.opening.reality.line": "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 제품 사양과 캠페인 일정을 점검하기 위해 모였다.",
         "scenes.common.day_02_practical_meeting.nodes.presentation_resumes.perceived.line": "서아는 내가 만들어 준 틈을 놓치지 않고 발표를 끝까지 이어 갔다.",
         "scenes.common.day_02_practical_meeting.nodes.presentation_resumes.reality.line": "최신 파일로 교체한 뒤 서아가 3쪽부터 발표를 재개했고, 예정된 질문까지 직접 답했다.",
         "scenes.common.day_02_practical_meeting.nodes.recovery_choice.options.acknowledge_and_ask.action": "서아의 당황을 인정하고 직접 발표를 계속할지 묻는다.",
@@ -21243,14 +21314,14 @@
         "scenes.common.day_02_practical_meeting.nodes.roles_min_kyung.reality.line": "그렇게 나누죠. 발표는 윤 사원, 파일 교체는 한 과장님. 바뀐 시각은 회의록에 남기겠습니다.",
         "scenes.common.day_02_practical_meeting.nodes.roles_seo_a.perceived.line": "제가 계속하겠습니다. 파일만 바꿔 주세요. 3쪽부터 바로 이어 갈게요.",
         "scenes.common.day_02_practical_meeting.nodes.roles_seo_a.reality.line": "제가 계속하겠습니다. 파일만 바꿔 주세요. 3쪽부터 바로 이어 갈게요.",
-        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.perceived.line": "아, 네. 먼저 하루담 봄 캠페인의 상품 구성부터 말씀드리겠습니다.",
-        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.reality.line": "아, 네. 먼저 하루담 봄 캠페인의 상품 구성부터 말씀드리겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.perceived.line": "아, 네. 먼저 하루담 봄 홈카페 라인의 커피메이커·전기포트·미니오븐 구성부터 말씀드리겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.reality.line": "아, 네. 먼저 하루담 봄 홈카페 라인의 커피메이커·전기포트·미니오븐 구성부터 말씀드리겠습니다.",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes.perceived.line": "죄송합니다. 제가 파일을 잘못 열어서…… 잠시만요.",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes.reality.line": "죄송합니다. 제가 파일을 잘못 열어서…… 잠시만요.",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes_inner.perceived.line": "(당황해서 나를 보는군. 이럴 때 어떻게 잡아 주느냐가 중요하지.)",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes_inner.reality.line": "(다들 기다리는데 어떡하지. 또 틀리면 발표를 못 맡길 거라고 생각할 거야.)",
-        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.perceived.line": "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다.",
-        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.reality.line": "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다.",
+        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.perceived.line": "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다.",
+        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.reality.line": "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다.",
         "scenes.common.day_02_practical_meeting.nodes.takeover_min_kyung.perceived.line": "내용은 맞습니다. 다만 발표 담당은 윤 사원입니다. 최신 파일로 바꾸고 본인에게 다시 넘기죠.",
         "scenes.common.day_02_practical_meeting.nodes.takeover_min_kyung.reality.line": "내용은 맞습니다. 다만 발표 담당은 윤 사원입니다. 최신 파일로 바꾸고 본인에게 다시 넘기죠.",
         "scenes.common.day_02_practical_meeting.nodes.takeover_seo_a.perceived.line": "아…… 네. 파일이 바뀌면 제가 계속하겠습니다.",
@@ -21265,16 +21336,16 @@
         "scenes.common.day_02_practical_meeting.title": "잘못 열린 발표 파일",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_grooming.perceived.line": "오늘 거래처 미팅 복장은 문제없었습니다. 사원증만 바로 하세요.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_grooming.reality.line": "오늘 거래처 미팅 복장은 문제없었습니다. 사원증만 바로 하세요.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.perceived.line": "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.reality.line": "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.perceived.line": "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.reality.line": "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.perceived.line": "그 코미디 대사는 크리에이터 브리프 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.reality.line": "그 코미디 대사는 크리에이터 브리프 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.perceived.line": "홈카페 숏폼 조회수와 실제 구매 유입은 다릅니다. 크리에이터별 원본 수치부터 같이 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.reality.line": "홈카페 숏폼 조회수와 실제 구매 유입은 다릅니다. 크리에이터별 원본 수치부터 같이 보죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_sleep.perceived.line": "오늘은 일찍 움직인 덕분에 시간이 남네요. 마감 전에 쟁점 세 개 확인하죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_sleep.reality.line": "오늘은 일찍 움직인 덕분에 시간이 남네요. 마감 전에 쟁점 세 개 확인하죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.perceived.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.reality.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.perceived.line": "돌아왔으면 오늘 확인한 쟁점부터 정리하죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.reality.line": "돌아왔으면 오늘 확인한 쟁점부터 정리하죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.perceived.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 샘플 목록은 제가 테이블에 펼치겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.reality.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 샘플 목록은 제가 테이블에 펼치겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.perceived.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.reality.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.after_grooming.perceived.line": "(거래처에서도 내 인상이 괜찮았다는 걸 굳이 확인해 주는군.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.after_grooming.reality.line": "(외부 미팅 복장에는 문제가 없었고, 지금은 뒤집힌 사원증만 바로 하면 돼.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.after_ott.perceived.line": "(내가 꺼낸 화제를 기억하면서 자연스럽게 둘만의 대화로 이어 가네.)",
@@ -21288,7 +21359,7 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.default.perceived.line": "(회사 밖에서 본 뒤라 대화의 호흡도 조금 달라졌군.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.default.reality.line": "(오늘 확인한 내용과 다음 마감만 정리하면 돼.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.perceived.line": "금요일의 업무 외출과 짧은 휴식이 끝난 뒤에도, 회사 밖에서 나눈 말은 사무실 안보다 조금 오래 남았다.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.reality.line": "금요일 업무 일정에 따라 한도윤은 동료 한 명과 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.reality.line": "금요일 업무 일정에 따라 한도윤은 동료 한 명과 유통사 쇼룸 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.perceived.line": "정리가 끝날 무렵, 서아와 민경이 각자 주말에 들를 장소를 이야기했다. 서로 다른 취향을 더 알아볼 기회처럼 들렸다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line": "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다.",
         "scenes.common.day_03_business_trip_or_cafe.purpose": "전날 밤 활동이 업무 밖 대화의 작은 재료로 돌아오되 실제 관계 상태에는 영향을 주지 않는다.",
@@ -22276,7 +22347,7 @@
         "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": "(새 프로젝트라… 내 능력도 보여 주고, 사람들도 천천히 알아볼 기회겠군.)",
         "scenes.common.day_01_company_meeting.nodes.arrival_inner.reality.line": "참석자들은 배포 자료와 일정표를 확인한 뒤 각자 맡은 일을 시작할 차례였다.",
         "scenes.common.day_01_company_meeting.nodes.assignments.perceived.line": "서아는 세심했고, 민경은 정확했으며, 유진은 거리낌이 없었다. 첫 회의치고는 각자의 색이 분명한 팀이었다.",
-        "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": "민경이 전체 일정을 이끌고, 한도윤은 거래처 승인, 오 차장은 상품 문구, 서아는 자료와 회의록, 정 주임은 캠페인 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다.",
+        "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": "민경이 전체 일정과 인플루언서 연락을 이끌고, 한도윤은 바이어 승인, 오 차장은 제품 사양과 문구, 서아는 사양표·샘플 목록·회의록, 정 주임은 팝업 운영 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다.",
         "scenes.common.day_01_company_meeting.nodes.assignments_inner.perceived.line": "(세 사람 모두 자기 장점이 뚜렷하군. 내 앞이라 더 신경 쓴 걸까?)",
         "scenes.common.day_01_company_meeting.nodes.assignments_inner.reality.line": "참석자들은 배정된 역할을 확인했고, 다음 회의 전까지 담당별 산출물을 준비하기로 했다.",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_accepts_correction.perceived.line": "확인했습니다. 회의록에는 세 종으로 정리하죠. 수정된 시각도 같이 남겨 주세요.",
@@ -22305,14 +22376,14 @@
         "scenes.common.day_01_company_meeting.nodes.min_kyung_closing.reality.line": "승인 회신이 오면 일정표부터 다시 맞추겠습니다. 확인 메일은 저도 참조해 주세요.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_closing_inner.perceived.line": "(내 판단을 믿으면서도 다음 움직임은 함께 맞추겠다는 거군.)",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_closing_inner.reality.line": "(회신을 직접 봐야 일정이 바뀌어도 내가 책임지고 관리할 수 있어.)",
-        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.perceived.line": "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
-        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.reality.line": "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
+        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.perceived.line": "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
+        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.reality.line": "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_question_inner.perceived.line": "(시작부터 핵심을 찌르네. 내 실력을 한번 보겠다는 건가?)",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_question_inner.reality.line": "(승인이 늦으면 제작 일정이 다 밀려. 근거는 지금 확인해야 해.)",
-        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.perceived.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.reality.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing_inner.perceived.line": "(내가 불편하지 않게 끝까지 챙겨 주려는 건가. 책임감도 있고 세심하네.)",
@@ -22325,12 +22396,12 @@
         "scenes.common.day_01_company_meeting.nodes.seo_a_materials.reality.line": "과장님, 이걸로 먼저 보세요. 저는 화면으로 봐도 돼요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_materials_inner.perceived.line": "(내 자료가 빠진 걸 제일 먼저 알아챘네. 자기 몫까지 내주고, 꽤 세심한데.)",
         "scenes.common.day_01_company_meeting.nodes.seo_a_materials_inner.reality.line": "(한 부가 모자라네. 내가 화면으로 보면 회의는 안 늦겠지.)",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.perceived.line": "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다.",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.reality.line": "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.perceived.line": "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.reality.line": "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다.",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing_inner.perceived.line": "(나와 같은 기준으로 맞춰 일하겠다는 단호한 약속처럼 들리네.)",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing_inner.reality.line": "(잘못된 파일이 다시 돌지 않게 전달 경로를 확실히 해 둬야지.)",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.perceived.line": "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다.",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.reality.line": "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.perceived.line": "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.reality.line": "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다.",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction_inner.perceived.line": "(계속 보고 있었군. 작은 오류라도 핑계 삼아 말을 거는 게 꽤 당돌하네.)",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction_inner.reality.line": "(네 종으로 남으면 회의록도 발주도 틀어진다. 지금 바로 고쳐야 해.)",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_timestamp.perceived.line": "오늘 오전 8시 42분에 수정했습니다. 공유 문서에도 같은 내용으로 반영했습니다.",
@@ -22389,8 +22460,8 @@
         "scenes.common.day_01_parent_pressure.nodes.remember_seo_a_inner.reality.line": "(회의를 늦추지 않으려고 내 자료를 건넨 것뿐이야.)",
         "scenes.common.day_01_parent_pressure.purpose": "부모의 결혼 재촉을 계기로 한도윤이 오전에 만난 서아와 민경의 업무상 첫인상을 결혼 후보 평가로 다시 분류하기 시작한다.",
         "scenes.common.day_01_parent_pressure.title": "올해는 사람 좀 만나",
-        "scenes.common.day_02_practical_meeting.nodes.agenda.perceived.line": "윤서아 사원 발표 뒤에 거래처 승인 일정과 디자인 버전을 확인하겠습니다.",
-        "scenes.common.day_02_practical_meeting.nodes.agenda.reality.line": "윤서아 사원 발표 뒤에 거래처 승인 일정과 디자인 버전을 확인하겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.agenda.perceived.line": "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.agenda.reality.line": "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다.",
         "scenes.common.day_02_practical_meeting.nodes.closing.perceived.line": "작은 실수 하나였지만, 누구에게 어떤 방식으로 손을 내미느냐에 따라 회의의 공기가 달라졌다.",
         "scenes.common.day_02_practical_meeting.nodes.closing.reality.line": "최신 파일로 발표를 마친 뒤 참석자들은 수정 범위, 담당자와 다음 마감을 확인하고 각자의 업무로 돌아갔다.",
         "scenes.common.day_02_practical_meeting.nodes.day_one_activity_reaction.variants.after_grooming.perceived.line": "과장님, 오늘 넥타이 색이 달라졌네요. 아, 참석자표는 여기 있습니다.",
@@ -22448,7 +22519,7 @@
         "scenes.common.day_02_practical_meeting.nodes.meeting_ends.perceived.line": "회의가 끝나자 서아가 다른 사람보다 한발 늦게 나를 따라 복도로 나왔다.",
         "scenes.common.day_02_practical_meeting.nodes.meeting_ends.reality.line": "민경이 담당자와 다음 마감을 확인해 회의를 끝냈다. 복도로 나온 서아가 한도윤에게 수습을 도와준 일에 관해 말을 걸었다.",
         "scenes.common.day_02_practical_meeting.nodes.opening.perceived.line": "목요일 오전, 전날보다 구체적인 실무 점검 회의가 시작됐다. 오늘은 각자의 실력이 더 가까이서 보일 차례였다.",
-        "scenes.common.day_02_practical_meeting.nodes.opening.reality.line": "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 자료와 일정을 점검하기 위해 모였다.",
+        "scenes.common.day_02_practical_meeting.nodes.opening.reality.line": "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 제품 사양과 캠페인 일정을 점검하기 위해 모였다.",
         "scenes.common.day_02_practical_meeting.nodes.presentation_resumes.perceived.line": "서아는 내가 만들어 준 틈을 놓치지 않고 발표를 끝까지 이어 갔다.",
         "scenes.common.day_02_practical_meeting.nodes.presentation_resumes.reality.line": "최신 파일로 교체한 뒤 서아가 3쪽부터 발표를 재개했고, 예정된 질문까지 직접 답했다.",
         "scenes.common.day_02_practical_meeting.nodes.recovery_choice.options.acknowledge_and_ask.action": "서아의 당황을 인정하고 직접 발표를 계속할지 묻는다.",
@@ -22471,14 +22542,14 @@
         "scenes.common.day_02_practical_meeting.nodes.roles_min_kyung.reality.line": "그렇게 나누죠. 발표는 윤 사원, 파일 교체는 한 과장님. 바뀐 시각은 회의록에 남기겠습니다.",
         "scenes.common.day_02_practical_meeting.nodes.roles_seo_a.perceived.line": "제가 계속하겠습니다. 파일만 바꿔 주세요. 3쪽부터 바로 이어 갈게요.",
         "scenes.common.day_02_practical_meeting.nodes.roles_seo_a.reality.line": "제가 계속하겠습니다. 파일만 바꿔 주세요. 3쪽부터 바로 이어 갈게요.",
-        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.perceived.line": "아, 네. 먼저 하루담 봄 캠페인의 상품 구성부터 말씀드리겠습니다.",
-        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.reality.line": "아, 네. 먼저 하루담 봄 캠페인의 상품 구성부터 말씀드리겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.perceived.line": "아, 네. 먼저 하루담 봄 홈카페 라인의 커피메이커·전기포트·미니오븐 구성부터 말씀드리겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.reality.line": "아, 네. 먼저 하루담 봄 홈카페 라인의 커피메이커·전기포트·미니오븐 구성부터 말씀드리겠습니다.",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes.perceived.line": "죄송합니다. 제가 파일을 잘못 열어서…… 잠시만요.",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes.reality.line": "죄송합니다. 제가 파일을 잘못 열어서…… 잠시만요.",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes_inner.perceived.line": "(당황해서 나를 보는군. 이럴 때 어떻게 잡아 주느냐가 중요하지.)",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes_inner.reality.line": "(다들 기다리는데 어떡하지. 또 틀리면 발표를 못 맡길 거라고 생각할 거야.)",
-        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.perceived.line": "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다.",
-        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.reality.line": "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다.",
+        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.perceived.line": "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다.",
+        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.reality.line": "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다.",
         "scenes.common.day_02_practical_meeting.nodes.takeover_min_kyung.perceived.line": "내용은 맞습니다. 다만 발표 담당은 윤 사원입니다. 최신 파일로 바꾸고 본인에게 다시 넘기죠.",
         "scenes.common.day_02_practical_meeting.nodes.takeover_min_kyung.reality.line": "내용은 맞습니다. 다만 발표 담당은 윤 사원입니다. 최신 파일로 바꾸고 본인에게 다시 넘기죠.",
         "scenes.common.day_02_practical_meeting.nodes.takeover_seo_a.perceived.line": "아…… 네. 파일이 바뀌면 제가 계속하겠습니다.",
@@ -22493,16 +22564,16 @@
         "scenes.common.day_02_practical_meeting.title": "잘못 열린 발표 파일",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_grooming.perceived.line": "오늘 거래처 미팅 복장은 문제없었습니다. 사원증만 바로 하세요.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_grooming.reality.line": "오늘 거래처 미팅 복장은 문제없었습니다. 사원증만 바로 하세요.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.perceived.line": "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.reality.line": "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.perceived.line": "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.reality.line": "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.perceived.line": "그 코미디 대사는 크리에이터 브리프 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.reality.line": "그 코미디 대사는 크리에이터 브리프 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.perceived.line": "홈카페 숏폼 조회수와 실제 구매 유입은 다릅니다. 크리에이터별 원본 수치부터 같이 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.reality.line": "홈카페 숏폼 조회수와 실제 구매 유입은 다릅니다. 크리에이터별 원본 수치부터 같이 보죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_sleep.perceived.line": "오늘은 일찍 움직인 덕분에 시간이 남네요. 마감 전에 쟁점 세 개 확인하죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_sleep.reality.line": "오늘은 일찍 움직인 덕분에 시간이 남네요. 마감 전에 쟁점 세 개 확인하죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.perceived.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.reality.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.perceived.line": "돌아왔으면 오늘 확인한 쟁점부터 정리하죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.reality.line": "돌아왔으면 오늘 확인한 쟁점부터 정리하죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.perceived.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 샘플 목록은 제가 테이블에 펼치겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.reality.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 샘플 목록은 제가 테이블에 펼치겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.perceived.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.reality.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.after_grooming.perceived.line": "(거래처에서도 내 인상이 괜찮았다는 걸 굳이 확인해 주는군.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.after_grooming.reality.line": "(외부 미팅 복장에는 문제가 없었고, 지금은 뒤집힌 사원증만 바로 하면 돼.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.after_ott.perceived.line": "(내가 꺼낸 화제를 기억하면서 자연스럽게 둘만의 대화로 이어 가네.)",
@@ -22516,7 +22587,7 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.default.perceived.line": "(회사 밖에서 본 뒤라 대화의 호흡도 조금 달라졌군.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.default.reality.line": "(오늘 확인한 내용과 다음 마감만 정리하면 돼.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.perceived.line": "금요일의 업무 외출과 짧은 휴식이 끝난 뒤에도, 회사 밖에서 나눈 말은 사무실 안보다 조금 오래 남았다.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.reality.line": "금요일 업무 일정에 따라 한도윤은 동료 한 명과 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.reality.line": "금요일 업무 일정에 따라 한도윤은 동료 한 명과 유통사 쇼룸 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.perceived.line": "정리가 끝날 무렵, 서아와 민경이 각자 주말에 들를 장소를 이야기했다. 서로 다른 취향을 더 알아볼 기회처럼 들렸다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line": "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다.",
         "scenes.common.day_03_business_trip_or_cafe.purpose": "전날 밤 활동이 업무 밖 대화의 작은 재료로 돌아오되 실제 관계 상태에는 영향을 주지 않는다.",
@@ -23264,7 +23335,7 @@
         "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": "(새 프로젝트라… 내 능력도 보여 주고, 사람들도 천천히 알아볼 기회겠군.)",
         "scenes.common.day_01_company_meeting.nodes.arrival_inner.reality.line": "참석자들은 배포 자료와 일정표를 확인한 뒤 각자 맡은 일을 시작할 차례였다.",
         "scenes.common.day_01_company_meeting.nodes.assignments.perceived.line": "서아는 세심했고, 민경은 정확했으며, 유진은 거리낌이 없었다. 첫 회의치고는 각자의 색이 분명한 팀이었다.",
-        "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": "민경이 전체 일정을 이끌고, 한도윤은 거래처 승인, 오 차장은 상품 문구, 서아는 자료와 회의록, 정 주임은 캠페인 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다.",
+        "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": "민경이 전체 일정과 인플루언서 연락을 이끌고, 한도윤은 바이어 승인, 오 차장은 제품 사양과 문구, 서아는 사양표·샘플 목록·회의록, 정 주임은 팝업 운영 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다.",
         "scenes.common.day_01_company_meeting.nodes.assignments_inner.perceived.line": "(세 사람 모두 자기 장점이 뚜렷하군. 내 앞이라 더 신경 쓴 걸까?)",
         "scenes.common.day_01_company_meeting.nodes.assignments_inner.reality.line": "참석자들은 배정된 역할을 확인했고, 다음 회의 전까지 담당별 산출물을 준비하기로 했다.",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_accepts_correction.perceived.line": "확인했습니다. 회의록에는 세 종으로 정리하죠. 수정된 시각도 같이 남겨 주세요.",
@@ -23293,14 +23364,14 @@
         "scenes.common.day_01_company_meeting.nodes.min_kyung_closing.reality.line": "승인 회신이 오면 일정표부터 다시 맞추겠습니다. 확인 메일은 저도 참조해 주세요.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_closing_inner.perceived.line": "(내 판단을 믿으면서도 다음 움직임은 함께 맞추겠다는 거군.)",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_closing_inner.reality.line": "(회신을 직접 봐야 일정이 바뀌어도 내가 책임지고 관리할 수 있어.)",
-        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.perceived.line": "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
-        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.reality.line": "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
+        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.perceived.line": "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
+        "scenes.common.day_01_company_meeting.nodes.min_kyung_question.reality.line": "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_question_inner.perceived.line": "(시작부터 핵심을 찌르네. 내 실력을 한번 보겠다는 건가?)",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_question_inner.reality.line": "(승인이 늦으면 제작 일정이 다 밀려. 근거는 지금 확인해야 해.)",
-        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.perceived.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.reality.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing_inner.perceived.line": "(내가 불편하지 않게 끝까지 챙겨 주려는 건가. 책임감도 있고 세심하네.)",
@@ -23313,12 +23384,12 @@
         "scenes.common.day_01_company_meeting.nodes.seo_a_materials.reality.line": "과장님, 이걸로 먼저 보세요. 저는 화면으로 봐도 돼요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_materials_inner.perceived.line": "(내 자료가 빠진 걸 제일 먼저 알아챘네. 자기 몫까지 내주고, 꽤 세심한데.)",
         "scenes.common.day_01_company_meeting.nodes.seo_a_materials_inner.reality.line": "(한 부가 모자라네. 내가 화면으로 보면 회의는 안 늦겠지.)",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.perceived.line": "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다.",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.reality.line": "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.perceived.line": "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing.reality.line": "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다.",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing_inner.perceived.line": "(나와 같은 기준으로 맞춰 일하겠다는 단호한 약속처럼 들리네.)",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_closing_inner.reality.line": "(잘못된 파일이 다시 돌지 않게 전달 경로를 확실히 해 둬야지.)",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.perceived.line": "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다.",
-        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.reality.line": "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.perceived.line": "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다.",
+        "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction.reality.line": "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다.",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction_inner.perceived.line": "(계속 보고 있었군. 작은 오류라도 핑계 삼아 말을 거는 게 꽤 당돌하네.)",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_correction_inner.reality.line": "(네 종으로 남으면 회의록도 발주도 틀어진다. 지금 바로 고쳐야 해.)",
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_timestamp.perceived.line": "오늘 오전 8시 42분에 수정했습니다. 공유 문서에도 같은 내용으로 반영했습니다.",
@@ -23377,8 +23448,8 @@
         "scenes.common.day_01_parent_pressure.nodes.remember_seo_a_inner.reality.line": "(회의를 늦추지 않으려고 내 자료를 건넨 것뿐이야.)",
         "scenes.common.day_01_parent_pressure.purpose": "부모의 결혼 재촉을 계기로 한도윤이 오전에 만난 서아와 민경의 업무상 첫인상을 결혼 후보 평가로 다시 분류하기 시작한다.",
         "scenes.common.day_01_parent_pressure.title": "올해는 사람 좀 만나",
-        "scenes.common.day_02_practical_meeting.nodes.agenda.perceived.line": "윤서아 사원 발표 뒤에 거래처 승인 일정과 디자인 버전을 확인하겠습니다.",
-        "scenes.common.day_02_practical_meeting.nodes.agenda.reality.line": "윤서아 사원 발표 뒤에 거래처 승인 일정과 디자인 버전을 확인하겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.agenda.perceived.line": "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.agenda.reality.line": "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다.",
         "scenes.common.day_02_practical_meeting.nodes.closing.perceived.line": "작은 실수 하나였지만, 누구에게 어떤 방식으로 손을 내미느냐에 따라 회의의 공기가 달라졌다.",
         "scenes.common.day_02_practical_meeting.nodes.closing.reality.line": "최신 파일로 발표를 마친 뒤 참석자들은 수정 범위, 담당자와 다음 마감을 확인하고 각자의 업무로 돌아갔다.",
         "scenes.common.day_02_practical_meeting.nodes.day_one_activity_reaction.variants.after_grooming.perceived.line": "과장님, 오늘 넥타이 색이 달라졌네요. 아, 참석자표는 여기 있습니다.",
@@ -23436,7 +23507,7 @@
         "scenes.common.day_02_practical_meeting.nodes.meeting_ends.perceived.line": "회의가 끝나자 서아가 다른 사람보다 한발 늦게 나를 따라 복도로 나왔다.",
         "scenes.common.day_02_practical_meeting.nodes.meeting_ends.reality.line": "민경이 담당자와 다음 마감을 확인해 회의를 끝냈다. 복도로 나온 서아가 한도윤에게 수습을 도와준 일에 관해 말을 걸었다.",
         "scenes.common.day_02_practical_meeting.nodes.opening.perceived.line": "목요일 오전, 전날보다 구체적인 실무 점검 회의가 시작됐다. 오늘은 각자의 실력이 더 가까이서 보일 차례였다.",
-        "scenes.common.day_02_practical_meeting.nodes.opening.reality.line": "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 자료와 일정을 점검하기 위해 모였다.",
+        "scenes.common.day_02_practical_meeting.nodes.opening.reality.line": "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 제품 사양과 캠페인 일정을 점검하기 위해 모였다.",
         "scenes.common.day_02_practical_meeting.nodes.presentation_resumes.perceived.line": "서아는 내가 만들어 준 틈을 놓치지 않고 발표를 끝까지 이어 갔다.",
         "scenes.common.day_02_practical_meeting.nodes.presentation_resumes.reality.line": "최신 파일로 교체한 뒤 서아가 3쪽부터 발표를 재개했고, 예정된 질문까지 직접 답했다.",
         "scenes.common.day_02_practical_meeting.nodes.recovery_choice.options.acknowledge_and_ask.action": "서아의 당황을 인정하고 직접 발표를 계속할지 묻는다.",
@@ -23459,14 +23530,14 @@
         "scenes.common.day_02_practical_meeting.nodes.roles_min_kyung.reality.line": "그렇게 나누죠. 발표는 윤 사원, 파일 교체는 한 과장님. 바뀐 시각은 회의록에 남기겠습니다.",
         "scenes.common.day_02_practical_meeting.nodes.roles_seo_a.perceived.line": "제가 계속하겠습니다. 파일만 바꿔 주세요. 3쪽부터 바로 이어 갈게요.",
         "scenes.common.day_02_practical_meeting.nodes.roles_seo_a.reality.line": "제가 계속하겠습니다. 파일만 바꿔 주세요. 3쪽부터 바로 이어 갈게요.",
-        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.perceived.line": "아, 네. 먼저 하루담 봄 캠페인의 상품 구성부터 말씀드리겠습니다.",
-        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.reality.line": "아, 네. 먼저 하루담 봄 캠페인의 상품 구성부터 말씀드리겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.perceived.line": "아, 네. 먼저 하루담 봄 홈카페 라인의 커피메이커·전기포트·미니오븐 구성부터 말씀드리겠습니다.",
+        "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.reality.line": "아, 네. 먼저 하루담 봄 홈카페 라인의 커피메이커·전기포트·미니오븐 구성부터 말씀드리겠습니다.",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes.perceived.line": "죄송합니다. 제가 파일을 잘못 열어서…… 잠시만요.",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes.reality.line": "죄송합니다. 제가 파일을 잘못 열어서…… 잠시만요.",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes_inner.perceived.line": "(당황해서 나를 보는군. 이럴 때 어떻게 잡아 주느냐가 중요하지.)",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes_inner.reality.line": "(다들 기다리는데 어떡하지. 또 틀리면 발표를 못 맡길 거라고 생각할 거야.)",
-        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.perceived.line": "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다.",
-        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.reality.line": "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다.",
+        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.perceived.line": "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다.",
+        "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.reality.line": "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다.",
         "scenes.common.day_02_practical_meeting.nodes.takeover_min_kyung.perceived.line": "내용은 맞습니다. 다만 발표 담당은 윤 사원입니다. 최신 파일로 바꾸고 본인에게 다시 넘기죠.",
         "scenes.common.day_02_practical_meeting.nodes.takeover_min_kyung.reality.line": "내용은 맞습니다. 다만 발표 담당은 윤 사원입니다. 최신 파일로 바꾸고 본인에게 다시 넘기죠.",
         "scenes.common.day_02_practical_meeting.nodes.takeover_seo_a.perceived.line": "아…… 네. 파일이 바뀌면 제가 계속하겠습니다.",
@@ -23481,16 +23552,16 @@
         "scenes.common.day_02_practical_meeting.title": "잘못 열린 발표 파일",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_grooming.perceived.line": "오늘 거래처 미팅 복장은 문제없었습니다. 사원증만 바로 하세요.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_grooming.reality.line": "오늘 거래처 미팅 복장은 문제없었습니다. 사원증만 바로 하세요.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.perceived.line": "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.reality.line": "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.perceived.line": "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.reality.line": "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.perceived.line": "그 코미디 대사는 크리에이터 브리프 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_ott.reality.line": "그 코미디 대사는 크리에이터 브리프 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.perceived.line": "홈카페 숏폼 조회수와 실제 구매 유입은 다릅니다. 크리에이터별 원본 수치부터 같이 보죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_reels.reality.line": "홈카페 숏폼 조회수와 실제 구매 유입은 다릅니다. 크리에이터별 원본 수치부터 같이 보죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_sleep.perceived.line": "오늘은 일찍 움직인 덕분에 시간이 남네요. 마감 전에 쟁점 세 개 확인하죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_sleep.reality.line": "오늘은 일찍 움직인 덕분에 시간이 남네요. 마감 전에 쟁점 세 개 확인하죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.perceived.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.reality.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.perceived.line": "돌아왔으면 오늘 확인한 쟁점부터 정리하죠.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.reality.line": "돌아왔으면 오늘 확인한 쟁점부터 정리하죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.perceived.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 샘플 목록은 제가 테이블에 펼치겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.after_workout.reality.line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 샘플 목록은 제가 테이블에 펼치겠습니다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.perceived.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback.variants.default.reality.line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.after_grooming.perceived.line": "(거래처에서도 내 인상이 괜찮았다는 걸 굳이 확인해 주는군.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.after_grooming.reality.line": "(외부 미팅 복장에는 문제가 없었고, 지금은 뒤집힌 사원증만 바로 하면 돼.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.after_ott.perceived.line": "(내가 꺼낸 화제를 기억하면서 자연스럽게 둘만의 대화로 이어 가네.)",
@@ -23504,7 +23575,7 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.default.perceived.line": "(회사 밖에서 본 뒤라 대화의 호흡도 조금 달라졌군.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_callback_inner.variants.default.reality.line": "(오늘 확인한 내용과 다음 마감만 정리하면 돼.)",
         "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.perceived.line": "금요일의 업무 외출과 짧은 휴식이 끝난 뒤에도, 회사 밖에서 나눈 말은 사무실 안보다 조금 오래 남았다.",
-        "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.reality.line": "금요일 업무 일정에 따라 한도윤은 동료 한 명과 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다.",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.reality.line": "금요일 업무 일정에 따라 한도윤은 동료 한 명과 유통사 쇼룸 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.perceived.line": "정리가 끝날 무렵, 서아와 민경이 각자 주말에 들를 장소를 이야기했다. 서로 다른 취향을 더 알아볼 기회처럼 들렸다.",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line": "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다.",
         "scenes.common.day_03_business_trip_or_cafe.purpose": "전날 밤 활동이 업무 밖 대화의 작은 재료로 돌아오되 실제 관계 상태에는 영향을 주지 않는다.",
@@ -25561,6 +25632,11 @@
       "schema_version": 1,
       "id": "main",
       "title": "오피스의 신호들",
+      "entry_event_id": "anchor.day_01_company_meeting",
+      "initial_state_patch": {},
+      "systems": {
+        "self_development": true
+      },
       "total_days": 17,
       "slots": [
         "morning",
@@ -25664,7 +25740,8 @@
       "immutable_facts": [
         "한도윤의 접근을 고난도 밀당으로 즐기지 않는다.",
         "도전적인 표정은 유혹이 아니라 불쾌함과 사실 확인이다.",
-        "섹시한 외형과 피해 사이에는 인과관계가 없다."
+        "섹시한 외형과 피해 사이에는 인과관계가 없다.",
+        "하루담 홈카페 프로젝트에서 인플루언서·크리에이터 협업의 실무 연락과 공개 일정 조율을 맡는다."
       ],
       "voice": {
         "register": "짧고 정확한 존댓말",
@@ -26241,6 +26318,7 @@
   "events": {
     "anchor.day_01_company_meeting": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "anchor.day_01_company_meeting",
       "title": "신규 프로젝트 킥오프",
       "type": "anchor",
@@ -26290,6 +26368,7 @@
     },
     "anchor.day_01_parent_pressure": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "anchor.day_01_parent_pressure",
       "title": "올해는 사람 좀 만나",
       "type": "anchor",
@@ -26338,6 +26417,7 @@
     },
     "anchor.day_02_practical_meeting": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "anchor.day_02_practical_meeting",
       "title": "첫 실무 회의와 서아의 발표 실수",
       "type": "anchor",
@@ -26389,6 +26469,7 @@
     },
     "anchor.day_02_project_dinner": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "anchor.day_02_project_dinner",
       "title": "프로젝트 기념 회식",
       "type": "anchor",
@@ -26438,6 +26519,7 @@
     },
     "anchor.day_03_business_trip_or_cafe": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "anchor.day_03_business_trip_or_cafe",
       "title": "출장 또는 단둘의 점심",
       "type": "anchor",
@@ -26488,6 +26570,7 @@
     },
     "anchor.day_04_weekend_encounter": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "anchor.day_04_weekend_encounter",
       "title": "첫 번째 주말의 우연",
       "type": "anchor",
@@ -26536,6 +26619,7 @@
     },
     "anchor.day_05_weekend_reflection": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "anchor.day_05_weekend_reflection",
       "title": "두 번째 주말의 우연",
       "type": "anchor",
@@ -26584,6 +26668,7 @@
     },
     "anchor.day_10_hr_notice": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "anchor.day_10_hr_notice",
       "title": "인사팀 상담 절차 안내",
       "type": "company",
@@ -26625,6 +26710,7 @@
     },
     "anchor.day_13_secret_romance": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "anchor.day_13_secret_romance",
       "title": "비밀 사내연애",
       "type": "anchor",
@@ -26673,6 +26759,7 @@
     },
     "anchor.day_14_triangle": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "anchor.day_14_triangle",
       "title": "삼각관계의 기척",
       "type": "anchor",
@@ -26721,6 +26808,7 @@
     },
     "anchor.day_15_closing_meeting": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "anchor.day_15_closing_meeting",
       "title": "마지막으로 따뜻한 날",
       "type": "anchor",
@@ -26762,6 +26850,7 @@
     },
     "anchor.day_16_office_rumor": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "anchor.day_16_office_rumor",
       "title": "회사에 퍼진 우리 이야기",
       "type": "anchor",
@@ -26810,6 +26899,7 @@
     },
     "anchor.day_17_home_surprise": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "anchor.day_17_home_surprise",
       "title": "여자친구 집 서프라이즈 준비",
       "type": "anchor",
@@ -26857,6 +26947,7 @@
     },
     "min_kyung.ending_coverup": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "min_kyung.ending_coverup",
       "title": "차민경 파국 분기",
       "type": "ending",
@@ -26916,6 +27007,7 @@
     },
     "min_kyung.ending_report": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "min_kyung.ending_report",
       "title": "차민경 — 신랑의 얼굴",
       "type": "ending",
@@ -26985,6 +27077,7 @@
     },
     "seo_a.ending_ambiguous": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "seo_a.ending_ambiguous",
       "title": "윤서아 파국 분기",
       "type": "ending",
@@ -27044,6 +27137,7 @@
     },
     "seo_a.ending_report": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "seo_a.ending_report",
       "title": "윤서아 — 신랑의 얼굴",
       "type": "ending",
@@ -27113,6 +27207,7 @@
     },
     "min_kyung.explicit_boundary": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "min_kyung.explicit_boundary",
       "title": "업무 외 연락 금지",
       "type": "heroine",
@@ -27162,6 +27257,7 @@
     },
     "min_kyung.witness_meeting": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "min_kyung.witness_meeting",
       "title": "둘만 남지 않는 회의",
       "type": "heroine",
@@ -27220,6 +27316,7 @@
     },
     "seo_a.email_request": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "seo_a.email_request",
       "title": "메일로 보내 주세요",
       "type": "heroine",
@@ -27276,6 +27373,7 @@
     },
     "seo_a.relief_smile": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "seo_a.relief_smile",
       "title": "안도한 아침 인사",
       "type": "heroine",
@@ -27333,6 +27431,7 @@
     },
     "offscreen.past_case_date_mismatch": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "offscreen.past_case_date_mismatch",
       "title": "과거 사건 날짜의 불일치",
       "type": "offscreen",
@@ -27390,6 +27489,7 @@
     },
     "offscreen.seo_a_consults_min_kyung": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "offscreen.seo_a_consults_min_kyung",
       "title": "서아가 민경에게 처음 말한 날",
       "type": "offscreen",
@@ -27448,6 +27548,7 @@
     },
     "offscreen.witnesses_compare_notes": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "offscreen.witnesses_compare_notes",
       "title": "서로 다른 기록이 연결된 점심",
       "type": "offscreen",
@@ -28052,6 +28153,7 @@
   "threads": {
     "min_kyung": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "min_kyung",
       "title": "차민경의 기록과 목격자",
       "lane": "cha_min_kyung",
@@ -28065,6 +28167,7 @@
     },
     "seo_a": {
       "schema_version": 1,
+      "campaign_id": "main",
       "id": "seo_a",
       "title": "윤서아의 잃어버리는 일상",
       "lane": "yoon_seo_a",
@@ -28082,9 +28185,7 @@
       "schema_version": 1,
       "id": "story_mode",
       "unlock_rules": [],
-      "stable_mode_id": "base",
       "display_name": "스토리 모드",
-      "campaign": "main",
       "ending_day": 17,
       "routeable_heroines": [
         "yoon_seo_a",
@@ -28223,56 +28324,7 @@
         "truth_view": "속마음 모드",
         "survivor_view": "어나더 스토리"
       },
-      "unlock_rules": [
-        {
-          "id": "revelation_after_seo_a",
-          "mode": "truth_view",
-          "reward": "그녀들의 일상과 속마음을 들어 보아요.",
-          "conditions": [
-            {
-              "path": "progress.cleared_routes",
-              "op": "contains",
-              "value": "seo_a"
-            }
-          ]
-        },
-        {
-          "id": "revelation_after_min_kyung",
-          "mode": "truth_view",
-          "reward": "그녀들의 일상과 속마음을 들어 보아요.",
-          "conditions": [
-            {
-              "path": "progress.cleared_routes",
-              "op": "contains",
-              "value": "min_kyung"
-            }
-          ]
-        },
-        {
-          "id": "survival_after_seo_a",
-          "mode": "survivor_view",
-          "reward": "새로운 그녀로 새로운 이야기를 만들어 보아요.",
-          "conditions": [
-            {
-              "path": "progress.cleared_routes",
-              "op": "contains",
-              "value": "seo_a"
-            }
-          ]
-        },
-        {
-          "id": "survival_after_min_kyung",
-          "mode": "survivor_view",
-          "reward": "새로운 그녀로 새로운 이야기를 만들어 보아요.",
-          "conditions": [
-            {
-              "path": "progress.cleared_routes",
-              "op": "contains",
-              "value": "min_kyung"
-            }
-          ]
-        }
-      ],
+      "unlock_rules": [],
       "mode_teasers": [
         {
           "id": "after_first_clear",
@@ -28388,7 +28440,7 @@
       "id": "min_kyung",
       "title": "명확한 선",
       "heroine": "cha_min_kyung",
-      "mode": "base",
+      "campaign_id": "main",
       "summary": "분명한 거절조차 도전적인 밀당으로 번역되는 두 번째 루트.",
       "unlock_conditions": [],
       "entry_scene": "min_kyung.explicit_boundary",
@@ -28412,7 +28464,7 @@
       "id": "seo_a",
       "title": "말하지 못한 거절",
       "heroine": "yoon_seo_a",
-      "mode": "base",
+      "campaign_id": "main",
       "summary": "사회적 미소와 동결 반응을 수줍은 밀당으로 오해하는 첫 번째 루트.",
       "unlock_conditions": [],
       "entry_scene": "common.day_02_practical_meeting",
@@ -28568,11 +28620,11 @@
           "speaker": "member.oh_se_jin",
           "perceived": {
             "atmosphere": "procedural",
-            "line": "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
+            "line": "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
           },
           "reality": {
             "atmosphere": "procedural",
-            "line": "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+            "line": "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
             "intent": "work_only"
           },
           "next": "seo_a_materials"
@@ -28698,12 +28750,12 @@
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
-            "line": "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?"
+            "line": "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?"
           },
           "reality": {
             "atmosphere": "procedural",
             "expression": "actual_skeptical",
-            "line": "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
+            "line": "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?",
             "intent": "documentation"
           },
           "next": "min_kyung_question_inner"
@@ -28812,12 +28864,12 @@
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_bold_flirt",
-            "line": "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다."
+            "line": "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다."
           },
           "reality": {
             "atmosphere": "procedural",
             "expression": "actual_fact_check",
-            "line": "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다.",
+            "line": "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다.",
             "intent": "documentation"
           },
           "next": "yoo_jin_correction_inner"
@@ -28925,11 +28977,11 @@
           "speaker": "member.moon_ji_hye",
           "perceived": {
             "atmosphere": "procedural",
-            "line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요."
+            "line": "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요."
           },
           "reality": {
             "atmosphere": "procedural",
-            "line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
+            "line": "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
             "intent": "work_only"
           },
           "next": "assignments"
@@ -28943,7 +28995,7 @@
           },
           "reality": {
             "atmosphere": "procedural",
-            "line": "민경이 전체 일정을 이끌고, 한도윤은 거래처 승인, 오 차장은 상품 문구, 서아는 자료와 회의록, 정 주임은 캠페인 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다.",
+            "line": "민경이 전체 일정과 인플루언서 연락을 이끌고, 한도윤은 바이어 승인, 오 차장은 제품 사양과 문구, 서아는 사양표·샘플 목록·회의록, 정 주임은 팝업 운영 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다.",
             "intent": "work_only"
           },
           "next": "assignments_inner"
@@ -29052,12 +29104,12 @@
           "perceived": {
             "atmosphere": "procedural",
             "expression": "subjective_bold_flirt",
-            "line": "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다."
+            "line": "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다."
           },
           "reality": {
             "atmosphere": "procedural",
             "expression": "actual_procedural",
-            "line": "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다.",
+            "line": "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다.",
             "intent": "documentation"
           },
           "next": "yoo_jin_closing_inner"
@@ -29758,7 +29810,7 @@
           },
           "reality": {
             "atmosphere": "procedural",
-            "line": "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 자료와 일정을 점검하기 위해 모였다.",
+            "line": "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 제품 사양과 캠페인 일정을 점검하기 위해 모였다.",
             "intent": "work_only"
           },
           "next": "day_one_activity_reaction"
@@ -29989,11 +30041,11 @@
           "speaker": "member.jeong_da_eun",
           "perceived": {
             "atmosphere": "procedural",
-            "line": "윤서아 사원 발표 뒤에 거래처 승인 일정과 디자인 버전을 확인하겠습니다."
+            "line": "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다."
           },
           "reality": {
             "atmosphere": "procedural",
-            "line": "윤서아 사원 발표 뒤에 거래처 승인 일정과 디자인 버전을 확인하겠습니다.",
+            "line": "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다.",
             "intent": "documentation"
           },
           "next": "seo_a_begins"
@@ -30005,12 +30057,12 @@
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_shy",
-            "line": "아, 네. 먼저 하루담 봄 캠페인의 상품 구성부터 말씀드리겠습니다."
+            "line": "아, 네. 먼저 하루담 봄 홈카페 라인의 커피메이커·전기포트·미니오븐 구성부터 말씀드리겠습니다."
           },
           "reality": {
             "atmosphere": "procedural",
             "expression": "actual_social_smile",
-            "line": "아, 네. 먼저 하루담 봄 캠페인의 상품 구성부터 말씀드리겠습니다.",
+            "line": "아, 네. 먼저 하루담 봄 홈카페 라인의 커피메이커·전기포트·미니오븐 구성부터 말씀드리겠습니다.",
             "intent": "work_only"
           },
           "next": "wrong_slide"
@@ -30441,12 +30493,12 @@
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
-            "line": "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다."
+            "line": "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다."
           },
           "reality": {
             "atmosphere": "procedural",
             "expression": "actual_waiting_smile",
-            "line": "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다.",
+            "line": "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다.",
             "intent": "self_promotion"
           },
           "next": "takeover_min_kyung"
@@ -30716,7 +30768,7 @@
           },
           "reality": {
             "atmosphere": "procedural",
-            "line": "금요일 업무 일정에 따라 한도윤은 동료 한 명과 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다.",
+            "line": "금요일 업무 일정에 따라 한도윤은 동료 한 명과 유통사 쇼룸 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다.",
             "intent": "work_only"
           },
           "next": "activity_callback"
@@ -30735,12 +30787,12 @@
               "perceived": {
                 "atmosphere": "playful_tension",
                 "expression": "subjective_challenging",
-                "line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다."
+                "line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 샘플 목록은 제가 테이블에 펼치겠습니다."
               },
               "reality": {
                 "atmosphere": "procedural",
                 "expression": "actual_focused",
-                "line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다.",
+                "line": "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 샘플 목록은 제가 테이블에 펼치겠습니다.",
                 "intent": "work_only"
               }
             },
@@ -30771,12 +30823,12 @@
               "perceived": {
                 "atmosphere": "playful_tension",
                 "expression": "subjective_challenging",
-                "line": "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠."
+                "line": "그 코미디 대사는 크리에이터 브리프 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠."
               },
               "reality": {
                 "atmosphere": "procedural",
                 "expression": "actual_focused",
-                "line": "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
+                "line": "그 코미디 대사는 크리에이터 브리프 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠.",
                 "intent": "work_only"
               }
             },
@@ -30789,12 +30841,12 @@
               "perceived": {
                 "atmosphere": "playful_tension",
                 "expression": "subjective_challenging",
-                "line": "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠."
+                "line": "홈카페 숏폼 조회수와 실제 구매 유입은 다릅니다. 크리에이터별 원본 수치부터 같이 보죠."
               },
               "reality": {
                 "atmosphere": "procedural",
                 "expression": "actual_focused",
-                "line": "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠.",
+                "line": "홈카페 숏폼 조회수와 실제 구매 유입은 다릅니다. 크리에이터별 원본 수치부터 같이 보죠.",
                 "intent": "documentation"
               }
             },
@@ -30822,12 +30874,12 @@
               "perceived": {
                 "atmosphere": "procedural",
                 "expression": "subjective_challenging",
-                "line": "돌아왔으면 오늘 확인한 쟁점부터 정리하죠."
+                "line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠."
               },
               "reality": {
                 "atmosphere": "procedural",
                 "expression": "actual_focused",
-                "line": "돌아왔으면 오늘 확인한 쟁점부터 정리하죠.",
+                "line": "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.",
                 "intent": "work_only"
               }
             }
@@ -31598,8 +31650,7 @@
           "progress.flags.push_pull",
           "progress.flags.story_mode.final_interpretation",
           "progress.flags.story_mode.home_incident",
-          "progress.cleared_routes",
-          "progress.unlocked_modes"
+          "progress.cleared_routes"
         ]
       },
       "start_node": "complete",
@@ -31640,16 +31691,6 @@
               "path": "progress.cleared_routes",
               "op": "append_unique",
               "value": "min_kyung"
-            },
-            {
-              "path": "progress.unlocked_modes",
-              "op": "append_unique",
-              "value": "truth_view"
-            },
-            {
-              "path": "progress.unlocked_modes",
-              "op": "append_unique",
-              "value": "survivor_view"
             }
           ],
           "next": "leave_request"
@@ -32199,7 +32240,6 @@
         ],
         "writes": [
           "progress.cleared_routes",
-          "progress.unlocked_modes",
           "progress.memories",
           "progress.flags.story_mode.home_incident"
         ]
@@ -32231,16 +32271,6 @@
               "path": "progress.cleared_routes",
               "op": "append_unique",
               "value": "min_kyung"
-            },
-            {
-              "path": "progress.unlocked_modes",
-              "op": "append_unique",
-              "value": "truth_view"
-            },
-            {
-              "path": "progress.unlocked_modes",
-              "op": "append_unique",
-              "value": "survivor_view"
             },
             {
               "path": "progress.flags.story_mode.home_incident",
@@ -32530,8 +32560,7 @@
           "progress.flags.push_pull",
           "progress.flags.story_mode.final_interpretation",
           "progress.flags.story_mode.home_incident",
-          "progress.cleared_routes",
-          "progress.unlocked_modes"
+          "progress.cleared_routes"
         ]
       },
       "start_node": "complete",
@@ -32572,16 +32601,6 @@
               "path": "progress.cleared_routes",
               "op": "append_unique",
               "value": "seo_a"
-            },
-            {
-              "path": "progress.unlocked_modes",
-              "op": "append_unique",
-              "value": "truth_view"
-            },
-            {
-              "path": "progress.unlocked_modes",
-              "op": "append_unique",
-              "value": "survivor_view"
             }
           ],
           "next": "leave_request"
@@ -33131,7 +33150,6 @@
         ],
         "writes": [
           "progress.cleared_routes",
-          "progress.unlocked_modes",
           "progress.memories",
           "progress.flags.story_mode.home_incident"
         ]
@@ -33163,16 +33181,6 @@
               "path": "progress.cleared_routes",
               "op": "append_unique",
               "value": "seo_a"
-            },
-            {
-              "path": "progress.unlocked_modes",
-              "op": "append_unique",
-              "value": "truth_view"
-            },
-            {
-              "path": "progress.unlocked_modes",
-              "op": "append_unique",
-              "value": "survivor_view"
             },
             {
               "path": "progress.flags.story_mode.home_incident",
@@ -34695,17 +34703,20 @@
         "id": "company.dawon_living",
         "kind": "company",
         "name": "다원리빙",
-        "industry": "lifestyle_consumer_goods",
+        "industry": "home_cafe_small_kitchen_appliances",
         "scale": "mid_sized",
         "headcount_band": 300499,
         "headquarters": "서울",
-        "description": "자체 생활용품 브랜드와 유통사 협업 상품을 기획·영업·홍보하는 중견 소비재 기업.",
+        "description": "홈카페용 소형 주방가전과 관련 액세서리를 기획해 백화점·편집숍·온라인몰에 유통하고 팝업과 크리에이터 협업으로 홍보하는 중견 소비재 기업.",
         "team_ids": [
           "team.sales_planning",
           "team.marketing",
           "team.people_operations"
         ],
         "operating_facts": [
+          "주력 제품은 커피메이커·전기포트·미니오븐 같은 홈카페용 소형 주방가전과 텀블러·수납용품 같은 관련 액세서리다.",
+          "신제품 출시는 유통사 입점, 오프라인 팝업, 제품 촬영과 인플루언서 콘텐츠 공개 일정을 함께 맞춰 진행한다.",
+          "제품 사양, 안전·표시 문구, 대여 샘플과 콘텐츠 버전은 담당자와 수정 시각이 남는 공유 기록으로 관리한다.",
           "캠페인 프로젝트는 영업기획팀과 브랜드마케팅팀이 공동으로 운영한다.",
           "핵심 거래처 일정과 승인 기록은 영업기획팀이 보관한다.",
           "프로젝트 회의록과 버전 기록은 공유 문서로 남긴다.",
@@ -34791,7 +34802,8 @@
         "responsibilities": [
           "project_operations",
           "master_schedule",
-          "marketing_strategy"
+          "marketing_strategy",
+          "influencer_partnerships"
         ]
       },
       "member.han_do_yoon": {
@@ -34854,7 +34866,8 @@
         "responsibilities": [
           "design_production",
           "asset_versioning",
-          "fact_check"
+          "fact_check",
+          "product_claim_asset_check"
         ]
       },
       "member.lee_hyeon_woo": {
@@ -35000,7 +35013,9 @@
         "responsibilities": [
           "meeting_materials",
           "minutes",
-          "product_data"
+          "product_data",
+          "product_spec_sheets",
+          "sample_inventory"
         ]
       },
       "project.harudam_spring_campaign": {
@@ -35008,9 +35023,9 @@
         "id": "project.harudam_spring_campaign",
         "kind": "project",
         "company": "company.dawon_living",
-        "name": "하루담 봄 리빙 캠페인",
-        "project_type": "integrated_retail_campaign",
-        "summary": "생활용품 브랜드 하루담의 봄 판매 캠페인을 위해 영업기획팀과 브랜드마케팅팀이 거래처 승인, 상품 자료, 캠페인 일정과 디자인 버전을 함께 관리하는 공동 프로젝트.",
+        "name": "하루담 봄 홈카페 캠페인",
+        "project_type": "home_cafe_appliance_launch",
+        "summary": "하루담의 커피메이커·전기포트·미니오븐 봄 라인을 백화점과 팝업에 출시하고 인플루언서 콘텐츠를 공개하기 위해 영업기획팀과 브랜드마케팅팀이 입점 승인, 제품 사양, 샘플, 일정과 디자인 버전을 함께 관리하는 공동 프로젝트.",
         "owner_team": "team.marketing",
         "participating_teams": [
           "team.sales_planning",
@@ -35023,25 +35038,31 @@
             "id": "deliverable.client_approval",
             "owner_team": "team.sales_planning",
             "approver_role": "role.manager",
-            "description": "거래처 사전 검토와 1차 승인 일정"
+            "description": "백화점·편집숍 바이어 사전 검토와 1차 입점 승인 일정"
           },
           {
             "id": "deliverable.product_packet",
             "owner_team": "team.sales_planning",
             "approver_role": "role.deputy_general_manager",
-            "description": "상품 정보와 표시 문구 패킷"
+            "description": "모델별 제품 사양, 안전·표시 문구와 대여 샘플 목록"
           },
           {
             "id": "deliverable.campaign_plan",
             "owner_team": "team.marketing",
             "approver_role": "role.department_head",
-            "description": "캠페인 마스터 일정과 매체 계획"
+            "description": "팝업 운영, 매체 집행과 인플루언서 콘텐츠 공개를 묶은 캠페인 마스터 일정"
+          },
+          {
+            "id": "deliverable.influencer_brief",
+            "owner_team": "team.marketing",
+            "approver_role": "role.deputy_general_manager",
+            "description": "홈카페 크리에이터별 제품 대여 목록, 콘텐츠 요구사항과 공개 일정 브리프"
           },
           {
             "id": "deliverable.creative_set",
             "owner_team": "team.marketing",
             "approver_role": "role.department_head",
-            "description": "최종안 1종과 매체별 변형 2종"
+            "description": "홈카페 키 비주얼 최종안 1종과 팝업·인플루언서용 변형 2종"
           }
         ],
         "assignments": [
@@ -35157,7 +35178,7 @@
         "kind": "team",
         "company": "company.dawon_living",
         "name": "브랜드마케팅팀",
-        "function": "캠페인 전략, 전체 일정, 매체 집행, 디자인 제작과 브랜드 품질 관리",
+        "function": "홈카페 신제품 캠페인 전략, 팝업·인플루언서 공개 일정, 디자인 제작과 브랜드 품질 관리",
         "lead_member": "member.moon_ji_hye",
         "member_ids": [
           "member.moon_ji_hye",
@@ -35185,7 +35206,7 @@
         "kind": "team",
         "company": "company.dawon_living",
         "name": "영업기획팀",
-        "function": "거래처 조율, 매출 계획, 상품 자료, 승인 일정과 상업 조건 관리",
+        "function": "유통사 바이어 조율, 매출 계획, 소형 주방가전 사양·샘플 자료, 입점 승인 일정과 상업 조건 관리",
         "lead_member": "member.park_jae_hyun",
         "member_ids": [
           "member.park_jae_hyun",

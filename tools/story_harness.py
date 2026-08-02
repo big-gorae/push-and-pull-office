@@ -135,6 +135,17 @@ def contains_explicit_choice_direction(value: Any) -> bool:
     )
 
 
+def deep_merge(base: Mapping[str, Any], patch: Mapping[str, Any]) -> Dict[str, Any]:
+    """Deeply merge mappings while replacing arrays and scalar values."""
+    result = copy.deepcopy(dict(base))
+    for key, value in patch.items():
+        if isinstance(value, Mapping) and isinstance(result.get(key), Mapping):
+            result[key] = deep_merge(result[key], value)
+        else:
+            result[key] = copy.deepcopy(value)
+    return result
+
+
 class UniqueKeyLoader(yaml.SafeLoader):
     """YAML loader that rejects duplicate mapping keys instead of silently overwriting."""
 
@@ -179,6 +190,11 @@ class StoryProject:
         if not isinstance(ui_pattern, str):
             raise RuntimeError("manifest files.ui is required")
         self.ui = self._load_yaml(self.story_root / ui_pattern)
+        game_modes_pattern = self.manifest.get("files", {}).get("game_modes")
+        if not isinstance(game_modes_pattern, str):
+            raise RuntimeError("manifest files.game_modes is required")
+        self.game_modes_document = self._load_yaml(self.story_root / game_modes_pattern)
+        self.game_modes = self.game_modes_document.get("modes", {})
         self.campaigns = self._load_kind("campaigns")
         self.characters = self._load_kind("characters")
         self.events = self._load_kind("events")
@@ -225,6 +241,15 @@ class StoryProject:
     def initial_state(self) -> Dict[str, Any]:
         return copy.deepcopy(self.manifest.get("initial_state", {}))
 
+    def campaign_initial_state(self, campaign_id: str) -> Dict[str, Any]:
+        campaign = self.campaigns.get(campaign_id)
+        if campaign is None:
+            raise RuntimeError(f"unknown campaign: {campaign_id}")
+        patch = campaign.get("initial_state_patch", {})
+        if not isinstance(patch, Mapping):
+            raise RuntimeError(f"campaign initial_state_patch must be a mapping: {campaign_id}")
+        return deep_merge(self.initial_state(), patch)
+
     def id_is_valid(self, value: Any) -> bool:
         if not isinstance(value, str):
             return False
@@ -254,6 +279,7 @@ class StoryProject:
     def validate(self, profile: str = "development") -> List[Issue]:
         issues: List[Issue] = []
         self._validate_manifest(issues)
+        self._validate_game_modes(issues)
         self._validate_self_development(issues)
         self._validate_campaigns(issues)
         self._validate_characters(issues)
@@ -311,6 +337,98 @@ class StoryProject:
                 continue
             self._validate_value_against_spec(issues, location, path, value, spec)
 
+    def _validate_game_modes(self, issues: List[Issue]) -> None:
+        location = relative_source(self.game_modes_document.get("_source", "story/game_modes.yaml"))
+        if self.game_modes_document.get("schema_version") != 1:
+            self._error(issues, location, "game mode registry schema_version must be 1")
+        if self.game_modes_document.get("id") != "game_modes":
+            self._error(issues, location, "game mode registry id must be game_modes")
+        if not isinstance(self.game_modes, dict):
+            self._error(issues, location, "modes must be a mapping")
+            return
+        required_ids = {"base", "truth_view", "survivor_view"}
+        actual_ids = set(self.game_modes)
+        if actual_ids != required_ids:
+            self._error(
+                issues,
+                location,
+                f"game mode registry must contain exactly {sorted(required_ids)}, got {sorted(actual_ids)}",
+            )
+        for mode_id, mode in self.game_modes.items():
+            mode_location = f"{location}#modes.{mode_id}"
+            if not isinstance(mode, dict):
+                self._error(issues, mode_location, "mode definition must be a mapping")
+                continue
+            allowed_keys = {"campaign_id", "planned_campaign_id", "continuity_id", "initial_layer", "layer_policy", "content_status", "unlock"}
+            for key in sorted(set(mode) - allowed_keys):
+                self._error(issues, mode_location, f"unknown mode property: {key}")
+            for key in ("campaign_id", "continuity_id", "initial_layer", "layer_policy", "content_status", "unlock"):
+                if key not in mode:
+                    self._error(issues, mode_location, f"required key is missing: {key}")
+            campaign_id = mode.get("campaign_id")
+            content_status = mode.get("content_status")
+            if content_status not in {"playable", "coming_soon"}:
+                self._error(issues, mode_location, f"unknown content_status: {content_status}")
+            if content_status == "playable":
+                if not isinstance(campaign_id, str) or campaign_id not in self.campaigns:
+                    self._error(issues, mode_location, f"playable mode requires a known campaign: {campaign_id}")
+            elif campaign_id is not None and campaign_id not in self.campaigns:
+                self._error(issues, mode_location, f"unknown campaign: {campaign_id}")
+            if mode.get("initial_layer") not in {"perceived", "reality"}:
+                self._error(issues, mode_location, f"unknown initial_layer: {mode.get('initial_layer')}")
+            if mode.get("layer_policy") not in {"fixed", "switchable"}:
+                self._error(issues, mode_location, f"unknown layer_policy: {mode.get('layer_policy')}")
+            if not self.id_is_valid(mode.get("continuity_id")):
+                self._error(issues, mode_location, "continuity_id must be a valid stable id")
+            unlock = mode.get("unlock")
+            if not isinstance(unlock, dict):
+                self._error(issues, mode_location, "unlock must be a mapping")
+            elif unlock.get("always") is True:
+                if set(unlock) != {"always"}:
+                    self._error(issues, mode_location, "always unlock must not declare other keys")
+            else:
+                groups = unlock.get("any")
+                if not isinstance(groups, list) or not groups:
+                    self._error(issues, mode_location, "unlock requires always: true or a non-empty any list")
+                else:
+                    for index, group in enumerate(groups):
+                        group_location = f"{mode_location}.unlock.any[{index}]"
+                        if not isinstance(group, dict):
+                            self._error(issues, group_location, "unlock group must be a mapping")
+                            continue
+                        self._validate_conditions(issues, group_location, group.get("conditions", []), None)
+
+        base = self.game_modes.get("base", {})
+        truth = self.game_modes.get("truth_view", {})
+        survivor = self.game_modes.get("survivor_view", {})
+        if base.get("campaign_id") != "main" or truth.get("campaign_id") != "main":
+            self._error(issues, location, "base and truth_view must reference the stable main campaign")
+        if base.get("content_status") != "playable" or truth.get("content_status") != "playable":
+            self._error(issues, location, "base and truth_view must remain playable")
+        if survivor.get("content_status") != "coming_soon" or survivor.get("campaign_id") is not None:
+            self._error(issues, location, "survivor_view must remain coming_soon without a campaign until implemented")
+        if survivor.get("planned_campaign_id") != "survivor":
+            self._error(issues, location, "survivor_view must reserve planned_campaign_id survivor")
+        if base.get("continuity_id") != truth.get("continuity_id"):
+            self._error(issues, location, "base and truth_view must share one continuity")
+        if base.get("initial_layer") != "perceived" or truth.get("initial_layer") != "reality":
+            self._error(issues, location, "base must start perceived and truth_view must start reality")
+        if survivor.get("continuity_id") == base.get("continuity_id"):
+            self._error(issues, location, "survivor_view must use a separate continuity")
+        approved_post_clear_unlock = {
+            "any": [
+                {"conditions": [{"path": "progress.cleared_routes", "op": "contains", "value": "seo_a"}]},
+                {"conditions": [{"path": "progress.cleared_routes", "op": "contains", "value": "min_kyung"}]},
+            ]
+        }
+        if base.get("unlock") != {"always": True}:
+            self._error(issues, location, "base must always be unlocked")
+        if truth.get("unlock") != approved_post_clear_unlock or survivor.get("unlock") != approved_post_clear_unlock:
+            self._error(issues, location, "truth_view and survivor_view must unlock after either approved main route clear")
+        for mode_id, mode in self.game_modes.items():
+            if mode.get("layer_policy") != "fixed":
+                self._error(issues, f"{location}#modes.{mode_id}", "approved player modes must use a fixed layer")
+
     def _validate_self_development(self, issues: List[Issue]) -> None:
         location = f"{relative_source(self.manifest.get('_source', 'manifest.yaml'))}#self_development"
         config = self.manifest.get("self_development")
@@ -333,16 +451,22 @@ class StoryProject:
                     f"{path} must keep runtime bounds {minimum}..{maximum}",
                 )
 
-        campaign = next(iter(self.campaigns.values()), {})
-        total_days = campaign.get("total_days", 0)
+        enabled_campaigns = [
+            campaign for campaign in self.campaigns.values()
+            if campaign.get("systems", {}).get("self_development") is True
+        ]
         max_night_day = config.get("max_night_day")
         if (
             not isinstance(max_night_day, int)
             or isinstance(max_night_day, bool)
             or max_night_day < 1
-            or (isinstance(total_days, int) and total_days > 0 and max_night_day > total_days)
+            or any(
+                isinstance(campaign.get("total_days"), int)
+                and max_night_day > campaign["total_days"]
+                for campaign in enabled_campaigns
+            )
         ):
-            self._error(issues, location, "max_night_day must be an integer inside the campaign")
+            self._error(issues, location, "max_night_day must be inside every campaign that enables self-development")
 
         activities = config.get("activities")
         activity_ids: Set[str] = set()
@@ -470,14 +594,19 @@ class StoryProject:
                 self._error(issues, location, f"{path} is above maximum {spec['max']}")
 
     def _validate_campaigns(self, issues: List[Issue]) -> None:
-        if len(self.campaigns) != 1:
-            self._error(issues, "story/campaigns", "exactly one campaign is required")
+        if not self.campaigns:
+            self._error(issues, "story/campaigns", "at least one campaign is required")
         valid_slots = self.manifest.get("enums", {}).get("time_slot", [])
         for campaign_id, campaign in self.campaigns.items():
             location = relative_source(campaign.get("_source", campaign_id))
-            for key in ("title", "total_days", "slots", "choice_slots", "acts", "lanes"):
+            for key in ("title", "entry_event_id", "initial_state_patch", "systems", "total_days", "slots", "choice_slots", "acts", "lanes"):
                 if key not in campaign:
                     self._error(issues, location, f"required key is missing: {key}")
+            if not isinstance(campaign.get("initial_state_patch"), dict):
+                self._error(issues, location, "initial_state_patch must be a mapping")
+            systems = campaign.get("systems")
+            if not isinstance(systems, dict) or not isinstance(systems.get("self_development"), bool):
+                self._error(issues, location, "systems.self_development must be a boolean")
             total_days = campaign.get("total_days")
             if not isinstance(total_days, int) or total_days < 1:
                 self._error(issues, location, "total_days must be a positive integer")
@@ -508,6 +637,42 @@ class StoryProject:
             lane_ids = [lane.get("id") for lane in campaign.get("lanes", []) if isinstance(lane, dict)]
             if len(lane_ids) != len(set(lane_ids)):
                 self._error(issues, location, "campaign lane ids must be unique")
+            try:
+                initial_state = self.campaign_initial_state(campaign_id)
+            except RuntimeError as exc:
+                self._error(issues, location, str(exc))
+                initial_state = None
+            if initial_state is not None:
+                for path, value in walk_leaves(initial_state):
+                    spec = self.path_spec(path)
+                    if spec is None:
+                        self._error(issues, location, f"campaign initial state path is not declared: {path}")
+                    else:
+                        self._validate_value_against_spec(issues, location, path, value, spec)
+            entry_event_id = campaign.get("entry_event_id")
+            entry_event = self.events.get(entry_event_id)
+            if entry_event is None:
+                self._error(issues, location, f"unknown entry_event_id: {entry_event_id}")
+            else:
+                if entry_event.get("campaign_id") != campaign_id:
+                    self._error(issues, location, "entry event must belong to its campaign")
+                if entry_event.get("availability") != "automatic":
+                    self._error(issues, location, "entry event must be automatic")
+                if initial_state is not None:
+                    time = initial_state.get("progress", {}).get("time", {})
+                    window = entry_event.get("window", {})
+                    day = time.get("day")
+                    slot = time.get("slot")
+                    days = window.get("days", [])
+                    if len(days) != 2 or not isinstance(day, int) or not days[0] <= day <= days[1] or slot not in window.get("slots", []):
+                        self._error(issues, location, "entry event must be scheduled at the campaign initial time")
+                    if entry_event.get("requires", {}).get("events"):
+                        self._error(issues, location, "entry event cannot require earlier events")
+                    if not conditions_match(initial_state, entry_event.get("requires", {}).get("conditions", [])):
+                        self._error(issues, location, "entry event conditions do not match the campaign initial state")
+                    scene_id = entry_event.get("scene")
+                    if scene_id and not can_enter_scene(self, initial_state, scene_id)["allowed"]:
+                        self._error(issues, location, "entry event scene is not reachable from the campaign initial state")
 
     def _validate_event_effects(self, issues: List[Issue], location: str, effects: Any) -> None:
         if not isinstance(effects, list):
@@ -532,18 +697,22 @@ class StoryProject:
             self._validate_conditions(issues, item_location, effect.get("conditions", []), None)
 
     def _validate_events(self, issues: List[Issue]) -> None:
-        campaign = next(iter(self.campaigns.values()), {})
-        total_days = campaign.get("total_days", 0)
-        valid_slots = set(campaign.get("slots", []))
-        valid_lanes = {lane.get("id") for lane in campaign.get("lanes", []) if isinstance(lane, dict)}
         event_types = set(self.manifest.get("enums", {}).get("event_type", []))
         availability_values = set(self.manifest.get("enums", {}).get("event_availability", []))
         completion_values = set(self.manifest.get("enums", {}).get("event_completion", []))
         for event_id, event in self.events.items():
             location = relative_source(event.get("_source", event_id))
-            for key in ("title", "type", "lane", "window", "duration", "priority", "availability", "presentation"):
+            for key in ("campaign_id", "title", "type", "lane", "window", "duration", "priority", "availability", "presentation"):
                 if key not in event:
                     self._error(issues, location, f"required key is missing: {key}")
+            campaign_id = event.get("campaign_id")
+            campaign = self.campaigns.get(campaign_id)
+            if campaign is None:
+                self._error(issues, location, f"unknown event campaign: {campaign_id}")
+                campaign = {}
+            total_days = campaign.get("total_days", 0)
+            valid_slots = set(campaign.get("slots", []))
+            valid_lanes = {lane.get("id") for lane in campaign.get("lanes", []) if isinstance(lane, dict)}
             if event.get("type") not in event_types:
                 self._error(issues, location, f"unknown event type: {event.get('type')}")
             if event.get("lane") not in valid_lanes:
@@ -582,6 +751,10 @@ class StoryProject:
             scene_id = event.get("scene")
             if scene_id and scene_id not in self.scenes:
                 self._error(issues, location, f"unknown scene: {scene_id}")
+            elif scene_id:
+                route_id = self.scenes[scene_id].get("route")
+                if self.routes.get(route_id, {}).get("campaign_id") != campaign_id:
+                    self._error(issues, location, f"event scene belongs to another campaign: {scene_id}")
             if event.get("type") in {"heroine", "ending"} and not scene_id:
                 self._error(issues, location, "heroine and ending events require scene")
             for character_id in event.get("participants", []):
@@ -598,12 +771,16 @@ class StoryProject:
                 for required_id in requires.get("events", []):
                     if required_id not in self.events:
                         self._error(issues, location, f"unknown required event: {required_id}")
+                    elif self.events[required_id].get("campaign_id") != campaign_id:
+                        self._error(issues, location, f"required event belongs to another campaign: {required_id}")
             self._validate_event_effects(issues, f"{location}#on_seen", event.get("on_seen", {}).get("effects", []))
             missed = event.get("on_missed", {})
             self._validate_event_effects(issues, f"{location}#on_missed", missed.get("effects", []))
             trigger_id = missed.get("trigger_event")
             if trigger_id and trigger_id not in self.events:
                 self._error(issues, location, f"unknown on_missed trigger event: {trigger_id}")
+            elif trigger_id and self.events[trigger_id].get("campaign_id") != campaign_id:
+                self._error(issues, location, f"on_missed trigger belongs to another campaign: {trigger_id}")
             presentation = event.get("presentation", {})
             for layer in ("perceived", "reality"):
                 if not isinstance(presentation.get(layer), dict) or not presentation[layer].get("title") or not presentation[layer].get("summary"):
@@ -612,9 +789,15 @@ class StoryProject:
     def _validate_threads(self, issues: List[Issue]) -> None:
         for thread_id, thread in self.threads.items():
             location = relative_source(thread.get("_source", thread_id))
-            for key in ("title", "lane", "events"):
+            for key in ("campaign_id", "title", "lane", "events"):
                 if key not in thread:
                     self._error(issues, location, f"required key is missing: {key}")
+            campaign_id = thread.get("campaign_id")
+            campaign = self.campaigns.get(campaign_id)
+            if campaign is None:
+                self._error(issues, location, f"unknown thread campaign: {campaign_id}")
+            elif thread.get("lane") not in {lane.get("id") for lane in campaign.get("lanes", []) if isinstance(lane, dict)}:
+                self._error(issues, location, f"thread lane does not belong to campaign: {thread.get('lane')}")
             event_ids = thread.get("events", [])
             if not isinstance(event_ids, list) or not event_ids:
                 self._error(issues, location, "thread events must be a non-empty list")
@@ -626,6 +809,8 @@ class StoryProject:
                     self._error(issues, location, f"unknown thread event: {event_id}")
                 elif self.events[event_id].get("thread") != thread_id:
                     self._error(issues, location, f"event {event_id} does not point back to thread {thread_id}")
+                elif self.events[event_id].get("campaign_id") != campaign_id:
+                    self._error(issues, location, f"thread event belongs to another campaign: {event_id}")
 
     def _validate_meta(self, issues: List[Issue]) -> None:
         for meta_id, meta in self.meta.items():
@@ -634,6 +819,8 @@ class StoryProject:
             if not isinstance(rules, list):
                 self._error(issues, location, "unlock_rules must be a list")
                 continue
+            if rules:
+                self._error(issues, location, "unlock_rules is retired; define game mode access in story/game_modes.yaml")
             for index, rule in enumerate(rules):
                 rule_location = f"{location}#unlock_rules[{index}]"
                 if not self.id_is_valid(rule.get("id")):
@@ -653,30 +840,8 @@ class StoryProject:
                     for reveal in reveals:
                         if not reveal.get("mode") or not reveal.get("title") or not reveal.get("teaser"):
                             self._error(issues, teaser_location, "each teaser reveal requires mode, title and teaser")
-            if meta_id == "unlocks" and isinstance(rules, list):
-                for route_id, route in self.routes.items():
-                    if route.get("mode") != "base":
-                        continue
-                    for required_mode in ("truth_view", "survivor_view"):
-                        covered = any(
-                            rule.get("mode") == required_mode
-                            and any(
-                                condition.get("path") == "progress.cleared_routes"
-                                and condition.get("op") == "contains"
-                                and condition.get("value") == route_id
-                                for condition in rule.get("conditions", [])
-                                if isinstance(condition, dict)
-                            )
-                            for rule in rules
-                            if isinstance(rule, dict)
-                        )
-                        if not covered:
-                            self._error(
-                                issues,
-                                location,
-                                f"base route {route_id} must unlock {required_mode} after its first ending",
-                            )
-
+                        elif reveal.get("mode") not in self.game_modes:
+                            self._error(issues, teaser_location, f"teaser references unknown game mode: {reveal.get('mode')}")
     def _validate_characters(self, issues: List[Issue]) -> None:
         for character_id, character in self.characters.items():
             location = relative_source(character.get("_source", character_id))
@@ -1490,9 +1655,12 @@ class StoryProject:
             location = relative_source(route.get("_source", route_id))
             if not self.id_is_valid(route_id):
                 self._error(issues, location, f"invalid route id: {route_id}")
-            for key in ("title", "heroine", "mode", "entry_scene", "scene_order", "endings"):
+            for key in ("title", "heroine", "campaign_id", "entry_scene", "scene_order", "endings"):
                 if key not in route:
                     self._error(issues, location, f"required key is missing: {key}")
+            campaign_id = route.get("campaign_id")
+            if campaign_id not in self.campaigns:
+                self._error(issues, location, f"unknown route campaign: {campaign_id}")
             if route.get("heroine") not in self.characters:
                 self._error(issues, location, f"unknown heroine: {route.get('heroine')}")
             if route.get("entry_scene") not in self.scenes:
@@ -2269,7 +2437,7 @@ class StoryProject:
         for event_id in self.events:
             visit(event_id, [])
 
-        occupied: Dict[Tuple[str, int, str], Tuple[str, str | None]] = {}
+        occupied: Dict[Tuple[str, str, int, str], Tuple[str, str | None]] = {}
         for event_id, event in self.events.items():
             window = event.get("window", {})
             days = window.get("days", [])
@@ -2277,7 +2445,7 @@ class StoryProject:
             if len(days) != 2 or days[0] != days[1] or event.get("availability") == "player":
                 continue
             for slot in slots:
-                key = (event.get("lane"), days[0], slot)
+                key = (event.get("campaign_id"), event.get("lane"), days[0], slot)
                 previous = occupied.get(key)
                 group = event.get("exclusive_group")
                 if previous and previous[1] != group:
@@ -2381,7 +2549,7 @@ class StoryProject:
         }
 
     def build_bundle(self) -> Dict[str, Any]:
-        source_paths = [self.manifest_path]
+        source_paths = [self.manifest_path, Path(self.game_modes_document["_source"])]
         source_paths.append(Path(self.ui["_source"]))
         for collection in (
             self.campaigns,
@@ -2425,6 +2593,7 @@ class StoryProject:
             "stats": self.manifest.get("stats"),
             "self_development": copy.deepcopy(self.manifest.get("self_development", {})),
             "initial_state": self.initial_state(),
+            "game_modes": copy.deepcopy(self.game_modes),
             "localization": self.localization_bundle(),
             "campaigns": campaigns,
             "characters": characters,
@@ -2987,6 +3156,22 @@ def condition_matches(state: Mapping[str, Any], condition: Mapping[str, Any]) ->
 
 def conditions_match(state: Mapping[str, Any], conditions: Sequence[Mapping[str, Any]]) -> bool:
     return all(condition_matches(state, condition) for condition in conditions)
+
+
+def refresh_game_mode_unlocks(project: StoryProject, state: MutableMapping[str, Any]) -> List[str]:
+    """Project the registry's unlock rules into legacy-compatible progress state."""
+    unlocked: List[str] = []
+    existing = set(get_path(state, "progress.unlocked_modes", []) or [])
+    for mode_id, mode in project.game_modes.items():
+        unlock = mode.get("unlock", {})
+        allowed = mode_id in existing or unlock.get("always") is True or any(
+            conditions_match(state, group.get("conditions", []))
+            for group in unlock.get("any", [])
+        )
+        if allowed:
+            unlocked.append(mode_id)
+    set_path(state, "progress.unlocked_modes", unlocked)
+    return unlocked
 
 
 def apply_effect(project: StoryProject, state: MutableMapping[str, Any], effect: Mapping[str, Any]) -> bool:
@@ -3753,10 +3938,13 @@ def can_enter_scene(project: StoryProject, state: Mapping[str, Any], scene_id: s
 class TimelineScheduler:
     """Deterministic event availability and offscreen progression for authoring/runtime."""
 
-    def __init__(self, project: StoryProject, state: Optional[Dict[str, Any]] = None):
+    def __init__(self, project: StoryProject, campaign_id: str, state: Optional[Dict[str, Any]] = None):
         self.project = project
-        self.campaign = clean_source(next(iter(project.campaigns.values())))
-        self.state = copy.deepcopy(state if state is not None else project.initial_state())
+        if campaign_id not in project.campaigns:
+            raise RuntimeError(f"unknown campaign: {campaign_id}")
+        self.campaign_id = campaign_id
+        self.campaign = clean_source(project.campaigns[campaign_id])
+        self.state = copy.deepcopy(state if state is not None else project.campaign_initial_state(campaign_id))
         self.trace: List[Dict[str, Any]] = []
 
     def _event_lists(self) -> Tuple[List[str], List[str], List[str]]:
@@ -3770,6 +3958,8 @@ class TimelineScheduler:
 
     def inspect_event(self, event_id: str, day: int, slot: str) -> Dict[str, Any]:
         event = self.project.events[event_id]
+        if event.get("campaign_id") != self.campaign_id:
+            return {"event": event_id, "status": "foreign", "reasons": ["다른 캠페인 사건"], "eligible": False}
         seen, missed, expired = self._event_lists()
         window = event.get("window", {})
         days = window.get("days", [1, 1])
@@ -3817,12 +4007,14 @@ class TimelineScheduler:
             raise RuntimeError(f"unknown time slot: {slot}")
         result = []
         for event_id, event in self.project.events.items():
+            if event.get("campaign_id") != self.campaign_id:
+                continue
             item = self.inspect_event(event_id, day, slot)
             item["priority"] = event.get("priority", 0)
             item["availability"] = event.get("availability")
             item["lane"] = event.get("lane")
             result.append(item)
-        order = {"eligible": 0, "blocked": 1, "upcoming": 2, "seen": 3, "missed": 4}
+        order = {"eligible": 0, "blocked": 1, "upcoming": 2, "seen": 3, "missed": 4, "foreign": 5}
         return sorted(result, key=lambda item: (order.get(item["status"], 9), -item["priority"], item["event"]))
 
     def apply_event(self, event_id: str, day: int, slot: str, automatic: bool = False) -> Dict[str, Any]:
@@ -3853,6 +4045,8 @@ class TimelineScheduler:
         processed = []
         seen, missed, expired = self._event_lists()
         for event_id, event in self.project.events.items():
+            if event.get("campaign_id") != self.campaign_id:
+                continue
             if event_id in seen or event_id in missed:
                 continue
             window = event.get("window", {})
@@ -3915,7 +4109,9 @@ class Simulator:
         self.route = project.routes[route_id]
         self.choices = dict(choices)
         self.strategy = strategy
-        self.state = copy.deepcopy(state if state is not None else project.initial_state())
+        self.state = copy.deepcopy(
+            state if state is not None else project.campaign_initial_state(self.route["campaign_id"])
+        )
         self.trace: List[Dict[str, Any]] = []
 
     def run(self, max_steps: int = 500, stop_before_scene: Optional[str] = None) -> Dict[str, Any]:
@@ -4034,6 +4230,7 @@ class Simulator:
                 )
                 if transition.get("ending") is True:
                     ending_id = transition["ending_id"]
+                    refresh_game_mode_unlocks(self.project, self.state)
                     self.trace.append({"type": "ending", "scene": scene_id, "ending": ending_id})
                     break
                 next_scene = transition["scene"]
@@ -4078,7 +4275,9 @@ def explore_route(
     if route_id not in project.routes:
         raise RuntimeError(f"unknown route: {route_id}")
     route = project.routes[route_id]
-    initial_state = copy.deepcopy(state if state is not None else project.initial_state())
+    initial_state = copy.deepcopy(
+        state if state is not None else project.campaign_initial_state(route["campaign_id"])
+    )
     if not conditions_match(initial_state, route.get("unlock_conditions", [])):
         raise RuntimeError(f"route is locked for current state: {route_id}")
 
@@ -4433,7 +4632,8 @@ def command_build(project: StoryProject, args: argparse.Namespace) -> int:
 def command_simulate(project: StoryProject, args: argparse.Namespace) -> int:
     if args.route not in project.routes:
         raise RuntimeError(f"unknown route: {args.route}")
-    state = parse_state_overrides(args.state, project.initial_state())
+    campaign_id = project.routes[args.route]["campaign_id"]
+    state = parse_state_overrides(args.state, project.campaign_initial_state(campaign_id))
     simulator = Simulator(project, args.route, parse_choice_overrides(args.choose), args.strategy, state)
     result = simulator.run(max_steps=args.max_steps)
     if args.json:
@@ -4460,8 +4660,12 @@ def command_explore(project: StoryProject, args: argparse.Namespace) -> int:
 
 
 def command_night(project: StoryProject, args: argparse.Namespace) -> int:
-    state = parse_state_overrides(args.state, project.initial_state())
-    campaign = next(iter(project.campaigns.values()), {})
+    campaign = project.campaigns.get(args.campaign)
+    if campaign is None:
+        raise RuntimeError(f"unknown campaign: {args.campaign}")
+    if campaign.get("systems", {}).get("self_development") is not True:
+        raise RuntimeError(f"self-development is disabled for campaign: {args.campaign}")
+    state = parse_state_overrides(args.state, project.campaign_initial_state(args.campaign))
     set_path(state, "progress.time.day", args.day)
     set_path(state, "progress.time.slot", "after_work")
     set_path(state, "progress.time.act", campaign_act(campaign, args.day))
@@ -4528,8 +4732,8 @@ def command_night(project: StoryProject, args: argparse.Namespace) -> int:
 
 
 def command_timeline(project: StoryProject, args: argparse.Namespace) -> int:
-    state = parse_state_overrides(args.state, project.initial_state())
-    scheduler = TimelineScheduler(project, state)
+    state = parse_state_overrides(args.state, project.campaign_initial_state(args.campaign))
+    scheduler = TimelineScheduler(project, args.campaign, state)
     if args.process_automatic:
         scheduler.process_automatic(args.day, args.slot)
     result = {
@@ -4552,7 +4756,13 @@ def command_timeline(project: StoryProject, args: argparse.Namespace) -> int:
 
 
 def command_context(project: StoryProject, args: argparse.Namespace) -> int:
-    state = parse_state_overrides(args.state, project.initial_state())
+    scene = project.scenes.get(args.scene)
+    if scene is None:
+        raise RuntimeError(f"unknown scene: {args.scene}")
+    route = project.routes.get(args.from_route or scene.get("route"))
+    if route is None:
+        raise RuntimeError(f"cannot resolve campaign for scene: {args.scene}")
+    state = parse_state_overrides(args.state, project.campaign_initial_state(route["campaign_id"]))
     branch_trace = []
     if args.from_route:
         if args.from_route not in project.routes:
@@ -4688,6 +4898,7 @@ def build_parser() -> argparse.ArgumentParser:
         "night",
         help="inspect or perform a nightly self-development activity",
     )
+    night_parser.add_argument("--campaign", required=True)
     night_parser.add_argument("--day", type=int, required=True)
     night_parser.add_argument("--activity")
     night_parser.add_argument("--state", action="append", default=[], help="PATH=JSON")
@@ -4695,6 +4906,7 @@ def build_parser() -> argparse.ArgumentParser:
     night_parser.set_defaults(func=command_night)
 
     timeline_parser = subparsers.add_parser("timeline", help="inspect scheduled events at a day and slot")
+    timeline_parser.add_argument("--campaign", required=True)
     timeline_parser.add_argument("--day", type=int, required=True)
     timeline_parser.add_argument("--slot", required=True)
     timeline_parser.add_argument("--state", action="append", default=[], help="PATH=JSON")

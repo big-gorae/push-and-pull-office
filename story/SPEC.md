@@ -65,6 +65,8 @@ progress:
 
 `truth_view`는 유저에게 `속마음 모드`, `survivor_view`는 `어나더 스토리`로 표시하는 안정 ID다. 서아나 민경 루트의 첫 엔딩을 보면 둘을 동시에 해금한다. 속마음 모드의 안내 문구는 `그녀들의 일상과 속마음을 들어 보아요`, 어나더 스토리의 안내 문구는 `새로운 그녀로 새로운 이야기를 만들어 보아요`로 고정한다. `survivor_view` 캠페인의 플레이어 캐릭터는 후속 결정 전까지 스토리 데이터에 고정하지 않는다.
 
+게임 모드와 표시 레이어는 서로 다른 값이다. `base`, `truth_view`, `survivor_view`는 `GameModeId`이고 `perceived`, `reality`는 `ViewLayer`다. 게임 모드의 캠페인·연속성·시작 레이어·콘텐츠 상태·해금 조건은 `story/game_modes.yaml` 한 곳에서 관리한다. 일반 플레이 중 모드나 레이어를 바꾸지 않으며, 디버그 레이어 미리보기는 세션에 저장하지 않는다.
+
 생존 모드는 스토리 모드의 실제 시간선이나 후일담이 아니라 별도의 평행세계 캠페인이다. 스토리 모드와 같은 출발 상황, 날짜 모티프와 한도윤의 행동 패턴을 재사용해 첫 플레이와 공감대를 만들 수 있지만, 피해자의 선택에 따라 사건의 순서·내용과 결말은 스토리 모드에서 독립적으로 갈라질 수 있다. 스토리 모드 장면의 객관적 진실은 `truth_view`가 담당하며, `survivor_view`의 사건을 스토리 모드에서 누락된 사실로 소급하지 않는다.
 
 한도윤의 지속적 공격성은 피해자의 선택 결과가 아니다. 플레이어는 한도윤을 최대한 자극하지 않는 동시에 이미 벌어지는 행동의 물리적 증거를 확보·보존해야 한다. 증거를 위해 폭력을 직접 유도하는 선택은 작성하지 않는다.
@@ -113,11 +115,17 @@ campaign → day → slot → eligible event → scene → node
 - 런타임은 다음 의미 있는 사건으로 자동 진행하고 날짜가 바뀔 때만 짧은 전환 연출을 재생한다.
 - 같은 시간대에 선택 가능한 사건이 여럿이면 타임라인 카드가 아니라 장면 안의 대사·상황 요약과 선택지로 고르게 한다.
 - 1~16일의 `after_work` 사건 처리가 끝나면 날짜를 넘기기 전에 자기계발 밤 페이즈를 하루 한 번 연다. 17일은 최종 사건과 엔딩에 집중한다.
+- 캠페인은 안정 ID, `entry_event_id`, `initial_state_patch`와 활성 시스템을 선언한다.
+- 사건, 루트와 스레드는 `campaign_id`를 필수로 선언한다. 장면의 캠페인은 소속 루트에서 파생한다.
+- 런타임과 제작 도구는 캠페인 컬렉션의 첫 항목을 기본값으로 사용하지 않는다.
+- 사건의 선행 사건, 놓침 연쇄, 연결 장면과 스레드는 같은 캠페인 안에서만 참조한다.
+- manifest의 초기 상태를 복제한 뒤 캠페인의 `initial_state_patch`를 깊게 병합한다. 프로필에서는 완료 루트, 해금 모드와 회상만 명시적으로 가져온다.
 
 ## 5. 시간 이벤트
 
 ```yaml
 id: seo_a.email_request
+campaign_id: main
 type: heroine
 lane: yoon_seo_a
 window: {days: [2, 3], slots: [lunch], deadline_day: 3}
@@ -312,6 +320,46 @@ self_development:
 
 대사 variant는 `self_development: {expression: <id>}`만 선언할 수 있다. 기본 variant는 항상 하나 남기며 자기계발 조건을 붙이지 않는다. `visible.protagonist.self_development`와 `progress.self_development` 경로는 일반 장면·사건·엔딩 조건에서 직접 읽지 않는다.
 
+직전 밤 활동을 다음 날 스몰토크로 회수할 때는 같은 다섯 활동 variant를 장면마다 복제하지 않고 저작 전용 `self_development_template`을 사용할 수 있다. 활동별 공통 소재는 `manifest.self_development.conversation_topics`가 소유한다.
+
+```yaml
+self_development:
+  conversation_topics:
+    workout:
+      variant_id: after_workout
+      expression: feedback.last_workout
+      slots:
+        formal_opener: "요즘 운동을 다시 시작했습니다."
+        formal_pitch: "앉아 있는 시간이 길어서 체력부터 챙기려고요."
+```
+
+`slots`의 값은 조사나 어미 조각이 아니라 그대로 발화할 수 있는 완결된 한국어 문장으로 작성한다. 장면 템플릿이 참조하는 모든 `{{slot_id}}`는 모든 대화 소재에 존재해야 하며, 알 수 없거나 비어 있는 슬롯은 빌드 오류다. `variant_id`와 `expression`은 배포 뒤 유지하고, `expression`은 해당 활동을 `requires.last_activity`로 요구하면서 `score_bonus: 0`인 표현을 가리킨다.
+
+```yaml
+- id: activity_pitch
+  kind: dual_dialogue
+  speaker: han_do_yoon
+  perceived:
+    atmosphere: warm_office
+    line: "오늘은 가볍게 안부만 묻는다."
+  reality:
+    atmosphere: neutral_office
+    line: "오늘은 가볍게 안부만 묻는다."
+    intent: work_only
+  self_development_template:
+    source: last_activity
+    perceived:
+      line: "{{formal_opener}} {{formal_pitch}}"
+    reality:
+      line: "{{formal_opener}} {{formal_pitch}}"
+      intent: self_promotion
+  next: activity_response
+```
+
+`source`는 `last_activity`만 허용한다. 제공한 각 레이어 overlay에는 `line`이 필수이며, `perceived`는 `atmosphere`, `expression`, `line`을, `reality`는 여기에 `intent`까지 더해 같은 이름의 기본 레이어 스칼라를 덮어쓸 수 있다. 공통 speaker 또는 레이어별 speakers는 노드에만 남아 템플릿이 바꾸지 못한다. 생략한 스칼라는 기본 노드 값을 상속하고, 기본 `perceived`·`reality` 전체는 활동이 없을 때 사용할 조건 없는 fallback이다. 따라서 평소 업무 대사의 현실 intent가 `work_only`여도 활동 variant만 `self_promotion`으로 구분할 수 있다. 빌드는 각 `conversation_topics` 항목을 `variant_id`와 `self_development.expression`을 가진 일반 대사 variant로 펼치고 fallback은 안정 ID `default`인 기본 variant로 만든 뒤, 저작 매크로를 런타임 출력에서 제거한다. 따라서 런타임 대사 선택, 백로그, 세이브와 번역은 기존의 안정 variant ID만 다룬다.
+
+활동 콜백은 상대가 먼저 외모 변화를 알아보는 보상이 아니다. 한도윤이 운동·옷차림·OTT·짧은 영상·수면을 스몰토크나 자기소개 소재로 먼저 꺼내고, 상대는 그 발화에만 상황에 맞게 반응한다. 특히 하룻밤 활동만으로 체중 감소, 체형 변화나 객관적인 매력 상승을 서술하지 않는다. 생성된 콜백은 문구와 짧은 현실 반응만 바꾸며 `effects`, 밀당 점수, 사건과 엔딩에는 영향을 주지 않는다.
+
 ## 10. 전이 우선순위
 
 `state_gate`와 `exit`의 전이는 위에서 아래로 평가하며 처음 참인 항목을 사용한다. 마지막에는 조건 없는 `default: true` 전이가 정확히 하나 있어야 한다.
@@ -452,14 +500,17 @@ variants:
 
 `build` 명령은 YAML을 하나의 JSON으로 합친다.
 
-- 캠페인, 이벤트, 스레드, 메타, 캐릭터, 비주얼 객체, 루트와 장면을 ID 맵으로 변환
+- 게임 모드, 캠페인, 이벤트, 스레드, 메타, 캐릭터, 비주얼 객체, 루트와 장면을 ID 맵으로 변환
 - UI를 포함한 단일 문자열 레지스트리, locale fallback 카탈로그와 번역 coverage 포함
 - 별도 `build/localization-report.json` 생성
 - visual 상속을 해석한 구체 객체와 자산 경로 포함
 - 원본 파일 위치를 `_source`에 기록
 - manifest 초기 상태, 수치 정의와 `self_development` 활동·표현 레지스트리 포함
+- `self_development_template`을 manifest의 대화 소재로 치환해 안정 ID의 일반 대사 variant로 확장하고 저작 매크로 제거
 - 빌드 시각과 원본 해시 기록
 - 게임 엔진은 YAML이 아니라 생성된 JSON만 읽어도 된다.
+
+모드 레지스트리는 런타임의 `game_modes` 맵으로 빌드한다. `playable` 모드는 존재하는 캠페인을 참조해야 하고, `coming_soon` 모드는 캠페인 없이 예약 ID만 가질 수 있다. 캠페인별 이벤트 컬렉션은 `campaign_id`로 필터링하며 다른 캠페인의 사건을 실행하거나 만료 처리하지 않는다.
 
 ## 16. AI 컨텍스트 패키지
 

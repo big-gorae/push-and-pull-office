@@ -137,9 +137,9 @@
 python3 tools/story_harness.py validate
 python3 -m unittest discover -s tests -v
 python3 tools/story_harness.py build
-python3 tools/story_harness.py night --day 1
-python3 tools/story_harness.py night --day 1 --activity workout --json
-python3 tools/story_harness.py timeline --day 5 --slot after_work --process-automatic
+python3 tools/story_harness.py night --campaign main --day 1
+python3 tools/story_harness.py night --campaign main --day 1 --activity workout --json
+python3 tools/story_harness.py timeline --campaign main --day 5 --slot after_work --process-automatic
 python3 tools/story_harness.py context \
   --scene seo_a.relief_smile \
   --from-route seo_a \

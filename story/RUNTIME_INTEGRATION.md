@@ -3,7 +3,7 @@
 ## 데이터 흐름
 
 ```text
-campaigns/events/threads/meta/characters/routes/scenes/locales/visuals YAML
+game_modes/campaigns/events/threads/meta/characters/routes/scenes/locales/visuals YAML
         │
         ├─ validate: 시간 범위·충돌·의존성·참조·그래프·이중 레이어 검사
         ├─ timeline: 제작·디버깅용 사건 후보·차단 이유·오프스크린 진행 재현
@@ -23,20 +23,24 @@ build/story-runtime.json
 
 ```json
 {
-  "schema_version": 4,
-  "current_event": "seo_a.relief_smile",
-  "current_scene": "seo_a.relief_smile",
-  "current_node": "response_choice",
+  "version": 5,
+  "gameModeId": "base",
+  "campaignId": "main",
+  "continuityId": "main",
+  "viewLayer": "perceived",
+  "currentEventId": "seo_a.relief_smile",
+  "sceneId": "seo_a.relief_smile",
+  "nodeId": "response_choice",
   "state": {
     "visible": {},
     "hidden": {},
     "progress": {}
   },
-  "choice_history": [
+  "choices": [
     {
-      "scene": "seo_a.email_request",
-      "node": "interpret",
-      "option": "pull_harder"
+      "sceneId": "seo_a.email_request",
+      "nodeId": "interpret",
+      "optionId": "pull_harder"
     }
   ],
   "backlog": [
@@ -44,7 +48,7 @@ build/story-runtime.json
       "sceneId": "seo_a.email_request",
       "nodeId": "request",
       "variantId": "default",
-      "modeAtPresentation": "perceived"
+      "layerAtPresentation": "perceived"
     }
   ]
 }
@@ -55,13 +59,14 @@ build/story-runtime.json
 - 수치 범위 제한은 런타임과 하네스가 동일한 manifest 정의를 사용한다.
 - `state.progress.time`, `events.seen/missed/expired`, `memories`도 세이브에 포함한다.
 - 표시 문자열과 번역 결과는 저장하지 않는다. 불러오기·백로그는 저장된 ID로 현재 locale에서 다시 해석한다.
-- v2·v3 저장은 읽을 때 자기계발 기본 상태를 보충하고, 다시 저장할 때 v4 ID 구조로 정규화한다. 과거 저장의 번역 문자열 필드는 읽기 호환에만 사용한다.
+- v2·v3 저장은 읽을 때 자기계발 기본 상태를 보충하고, v4의 `mode`는 `base`/`truth_view` 게임 모드와 `main` 캠페인으로 명시적으로 변환한다.
+- v5 저장은 `gameModeId`, `campaignId`, `continuityId`, `viewLayer`가 모두 있어야 한다. 알 수 없는 캠페인·모드, 고정 레이어 불일치, 미래 버전은 임의의 첫 캠페인으로 대체하지 않고 로드를 거부한다. 원본 localStorage 값은 그대로 보존한다.
 
 슬롯 자체는 세션과 별도로 번역 독립적인 미리보기 ID만 저장한다.
 
 ```json
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "savedAt": 1730000000000,
   "preview": {
     "kind": "scene",
@@ -71,14 +76,17 @@ build/story-runtime.json
     "sceneId": "seo_a.email_request",
     "nodeId": "request",
     "variantId": "default",
-    "mode": "perceived"
+    "gameModeId": "base",
+    "campaignId": "main",
+    "continuityId": "main",
+    "viewLayer": "perceived"
   },
   "session": {}
 }
 ```
 
 `preview`를 목록이 열리는 시점의 locale로 해석하므로, 저장 후 언어를 바꿔도 제목과 대사가 즉시 함께 바뀐다.
-`preview.kind`는 `timeline`, `scene`, `self_development`, `ending` 중 하나이며 밤의 선택·결과 상태도 같은 v4 세션에서 이어서 불러온다.
+`preview.kind`는 `timeline`, `scene`, `self_development`, `ending` 중 하나이며 밤의 선택·결과 상태도 같은 v5 세션에서 이어서 불러온다. preview의 모드·캠페인 정체성은 정규화가 끝난 session에서 다시 계산한다.
 
 ## 시간 이벤트 처리
 

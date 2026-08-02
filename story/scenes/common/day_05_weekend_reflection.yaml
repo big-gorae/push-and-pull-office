@@ -6,7 +6,7 @@ chapter: 1
 sequence: 6
 location: outside_cafe
 time: afternoon
-purpose: 두 번째 주말 조우에서도 전날 밤 활동이 짧게 회수되지만 두 사람 모두 각자의 만남을 한 번의 우연으로 받아들인다.
+purpose: 두 번째 주말 조우에서도 한도윤이 전날 밤에 준비한 소재를 먼저 꺼내지만 두 사람 모두 각자의 만남을 한 번의 우연으로 받아들인다.
 cast: [han_do_yoon]
 entry_conditions: []
 state_contract:
@@ -27,67 +27,41 @@ nodes:
     next: activity_callback
 
   - id: activity_callback
+    kind: dual_dialogue
+    speaker: han_do_yoon
+    perceived:
+      atmosphere: warm_romance
+      expression: subjective_confident
+      line: "주말에도 뵙네요. 이틀 연속 회사 사람을 밖에서 볼 줄은 몰랐습니다."
+    reality:
+      atmosphere: procedural
+      expression: actual_waiting_smile
+      line: "주말에도 뵙네요. 이틀 연속 회사 사람을 밖에서 볼 줄은 몰랐습니다."
+      intent: courtesy
+    self_development_template:
+      source: last_activity
+      perceived:
+        line: "{{weekend_pitch}}"
+      reality:
+        line: "{{weekend_pitch}}"
+        intent: self_promotion
+    next: activity_response
+
+  - id: activity_response
     kind: dual_narration
-    variants:
-      - id: after_workout
-        priority: 100
-        self_development: {expression: feedback.last_workout}
-        perceived:
-          atmosphere: warm_romance
-          line: "계단에서 한도윤이 잠시 다리를 풀자 동료는 ‘엘리베이터는 저쪽이에요. 천천히 올라오세요’라고 말했다."
-        reality:
-          atmosphere: procedural
-          line: "계단에서 한도윤이 잠시 다리를 풀자 동료는 ‘엘리베이터는 저쪽이에요. 천천히 올라오세요’라고 말했다."
-          intent: courtesy
-      - id: after_grooming
-        priority: 90
-        self_development: {expression: feedback.last_grooming}
-        perceived:
-          atmosphere: warm_romance
-          line: "동료는 ‘정장이 아니니까 회사에서 뵐 때랑 분위기가 많이 다르네요’라고 말했다."
-        reality:
-          atmosphere: procedural
-          line: "동료는 ‘정장이 아니니까 회사에서 뵐 때랑 분위기가 많이 다르네요’라고 말했다."
-          intent: courtesy
-      - id: after_ott
-        priority: 80
-        self_development: {expression: feedback.last_ott}
-        perceived:
-          atmosphere: warm_romance
-          line: "한도윤이 코미디 대사를 다시 쓰자 동료는 ‘그 대사는 아는데, 지금 쓰는 장면은 조금 이상한데요’라고 웃었다."
-        reality:
-          atmosphere: procedural
-          line: "한도윤이 코미디 대사를 다시 쓰자 동료는 ‘그 대사는 아는데, 지금 쓰는 장면은 조금 이상한데요’라고 웃었다."
-          intent: courtesy
-      - id: after_reels
-        priority: 70
-        self_development: {expression: feedback.last_reels}
-        perceived:
-          atmosphere: warm_romance
-          line: "동료는 진열된 상품을 보며 ‘영상 속 포장과 실제 포장은 조금 다르네요’라고 말했다."
-        reality:
-          atmosphere: procedural
-          line: "동료는 진열된 상품을 보며 ‘영상 속 포장과 실제 포장은 조금 다르네요’라고 말했다."
-          intent: courtesy
-      - id: after_sleep
-        priority: 60
-        self_development: {expression: feedback.last_sleep}
-        perceived:
-          atmosphere: warm_romance
-          line: "동료는 ‘저도 사람 적을 때 보려고 이 시간에 왔어요’라고 말했다."
-        reality:
-          atmosphere: procedural
-          line: "동료는 ‘저도 사람 적을 때 보려고 이 시간에 왔어요’라고 말했다."
-          intent: courtesy
-      - id: default
-        default: true
-        perceived:
-          atmosphere: warm_romance
-          line: "동료는 ‘주말에도 뵙네요’라고 가볍게 인사했다."
-        reality:
-          atmosphere: procedural
-          line: "동료는 ‘주말에도 뵙네요’라고 가볍게 인사했다."
-          intent: courtesy
+    perceived:
+      atmosphere: warm_romance
+      line: "동료는 ‘주말에도 뵙네요’라고 가볍게 인사했다."
+    reality:
+      atmosphere: procedural
+      line: "동료는 ‘주말에도 뵙네요’라고 가볍게 인사했다."
+      intent: courtesy
+    self_development_template:
+      source: last_activity
+      perceived:
+        line: "동료는 ‘{{weekend_answer}} 저는 이쪽부터 볼게요.’라고 짧게 답했다."
+      reality:
+        line: "동료는 ‘{{weekend_answer}} 저는 이쪽부터 볼게요.’라고 짧게 답했다."
     next: activity_callback_inner
 
   - id: activity_callback_inner
@@ -96,36 +70,19 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
-    variants:
-      - id: after_workout
-        priority: 100
-        self_development: {expression: feedback.last_workout}
-        perceived: {atmosphere: warm_romance, line: "(내 속도에 맞춰 기다려 주다니, 회사 밖에서는 더 다정하군.)"}
-        reality: {atmosphere: procedural, line: "잠시 멈춘 동료에게 가까운 이동 수단을 알려 준 짧은 배려였다.", intent: courtesy}
-      - id: after_grooming
-        priority: 90
-        self_development: {expression: feedback.last_grooming}
-        perceived: {atmosphere: warm_romance, line: "(사적인 모습의 분위기까지 구체적으로 보고 있었네.)"}
-        reality: {atmosphere: procedural, line: "평일 정장과 주말 차림이 다르다는 사실을 말했을 뿐이었다.", intent: courtesy}
-      - id: after_ott
-        priority: 80
-        self_development: {expression: feedback.last_ott}
-        perceived: {atmosphere: warm_romance, line: "(농담의 타이밍까지 짚어 주는 걸 보면 대화를 더 이어 가고 싶은 거겠지.)"}
-        reality: {atmosphere: procedural, line: "맥락에 맞지 않는 유행어를 가볍게 바로잡고 웃은 것이었다.", intent: courtesy}
-      - id: after_reels
-        priority: 70
-        self_development: {expression: feedback.last_reels}
-        perceived: {atmosphere: warm_romance, line: "(둘 다 같은 영상을 기억하니 취향도 생각보다 가까울 수 있겠어.)"}
-        reality: {atmosphere: procedural, line: "온라인 영상과 눈앞의 상품 차이를 비교한 평범한 관찰이었다.", intent: courtesy}
-      - id: after_sleep
-        priority: 60
-        self_development: {expression: feedback.last_sleep}
-        perceived: {atmosphere: warm_romance, line: "(사람 없는 시간을 좋아하는 것까지 나와 잘 맞는군.)"}
-        reality: {atmosphere: procedural, line: "붐비는 시간을 피하려고 일찍 나온 두 동료의 일정이 우연히 겹쳤다.", intent: courtesy}
-      - id: default
-        default: true
-        perceived: {atmosphere: warm_romance, line: "(두 번째 우연까지 자연스럽게 이어지니 이번 주말은 흐름이 좋군.)"}
-        reality: {atmosphere: procedural, line: "서로 다른 두 동료가 각자 한 번씩 한도윤과 우연히 마주쳤을 뿐이었다.", intent: courtesy}
+    perceived:
+      atmosphere: warm_romance
+      line: "(두 번째 우연까지 자연스럽게 이어지니 이번 주말은 흐름이 좋군.)"
+    reality:
+      atmosphere: procedural
+      line: "서로 다른 두 동료가 각자 한 번씩 한도윤과 우연히 마주쳤을 뿐이었다."
+      intent: courtesy
+    self_development_template:
+      source: last_activity
+      perceived:
+        line: "(두 번째 우연에서도 내가 준비한 화제가 자연스럽게 통하는군. {{perceived_self_image}})"
+      reality:
+        line: "{{reality_limit}} 동료는 눈앞의 질문이나 관찰에 짧게 답한 뒤 각자 둘러보기로 했다."
     next: goodbye
 
   - id: goodbye

@@ -701,6 +701,10 @@ button { color: inherit; }
 .vn-debug-panel header span { color: #ffbcd7; font-size: var(--vn-type-xs); font-weight: 900; letter-spacing: .12em; }
 .vn-debug-panel header button { min-height: 32px; padding: 0 var(--vn-space-3); border: 1px solid rgba(255,255,255,.2); border-radius: var(--vn-radius-sm); background: rgba(255,255,255,.1); color: white; font-size: var(--vn-type-xs); cursor: pointer; }
 .vn-debug-panel button:disabled { opacity: .35; cursor: not-allowed; }
+.vn-debug-identity { display: grid; grid-template-columns: 1fr 1fr; gap: 5px var(--vn-space-2); margin: 0; padding: var(--vn-space-2); border: 1px solid rgba(255,255,255,.14); border-radius: var(--vn-radius-sm); background: rgba(0,0,0,.14); }
+.vn-debug-identity div { min-width: 0; }
+.vn-debug-identity dt { color: #ffbcd7; font-size: 9px; font-weight: 900; letter-spacing: .08em; }
+.vn-debug-identity dd { overflow: hidden; margin: 2px 0 0; color: white; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
 .vn-debug-panel label { display: grid; grid-template-columns: 92px 1fr 42px; align-items: center; gap: var(--vn-space-2); min-height: 30px; }
 .vn-debug-panel label span, .vn-debug-panel output { font-size: var(--vn-type-xs); }
 .vn-debug-panel output { text-align: right; }

@@ -70,10 +70,10 @@ nodes:
     speaker: member.oh_se_jin
     perceived:
       atmosphere: procedural
-      line: "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
+      line: "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
     reality:
       atmosphere: procedural
-      line: "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
+      line: "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
       intent: work_only
     next: seo_a_materials
   - id: seo_a_materials
@@ -169,11 +169,11 @@ nodes:
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
-      line: "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?"
+      line: "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?"
     reality:
       atmosphere: procedural
       expression: actual_skeptical
-      line: "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?"
+      line: "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?"
       intent: documentation
     next: min_kyung_question_inner
 
@@ -256,11 +256,11 @@ nodes:
     perceived:
       atmosphere: playful_tension
       expression: subjective_bold_flirt
-      line: "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다."
+      line: "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다."
     reality:
       atmosphere: procedural
       expression: actual_fact_check
-      line: "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다."
+      line: "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다."
       intent: documentation
     next: yoo_jin_correction_inner
 
@@ -343,10 +343,10 @@ nodes:
     speaker: member.moon_ji_hye
     perceived:
       atmosphere: procedural
-      line: "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요."
+      line: "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요."
     reality:
       atmosphere: procedural
-      line: "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요."
+      line: "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요."
       intent: work_only
     next: assignments
   - id: assignments
@@ -356,7 +356,7 @@ nodes:
       line: "서아는 세심했고, 민경은 정확했으며, 유진은 거리낌이 없었다. 첫 회의치고는 각자의 색이 분명한 팀이었다."
     reality:
       atmosphere: procedural
-      line: "민경이 전체 일정을 이끌고, 한도윤은 거래처 승인, 오 차장은 상품 문구, 서아는 자료와 회의록, 정 주임은 캠페인 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다."
+      line: "민경이 전체 일정과 인플루언서 연락을 이끌고, 한도윤은 바이어 승인, 오 차장은 제품 사양과 문구, 서아는 사양표·샘플 목록·회의록, 정 주임은 팝업 운영 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다."
       intent: work_only
     next: assignments_inner
 
@@ -439,11 +439,11 @@ nodes:
     perceived:
       atmosphere: procedural
       expression: subjective_bold_flirt
-      line: "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다."
+      line: "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다."
     reality:
       atmosphere: procedural
       expression: actual_procedural
-      line: "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다."
+      line: "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다."
       intent: documentation
     next: yoo_jin_closing_inner
 

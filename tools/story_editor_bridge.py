@@ -207,6 +207,8 @@ def derive_state_contract(
             )
         if "fatigue_lte" in requirement:
             required_paths.append("visible.protagonist.self_development.fatigue")
+        if "last_activity" in requirement:
+            required_paths.append("progress.self_development.last_activity")
         reads = unique([*reads, *required_paths])
     uses_push_pull = any(
         isinstance(option, Mapping) and isinstance(option.get("push_pull"), Mapping)

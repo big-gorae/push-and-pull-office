@@ -463,6 +463,9 @@ export function deriveStateContract(
     if (requirement.fatigue_lte !== undefined) {
       selfDevelopmentPaths.add("visible.protagonist.self_development.fatigue");
     }
+    if (requirement.last_activity !== undefined) {
+      selfDevelopmentPaths.add("progress.self_development.last_activity");
+    }
   });
   selfDevelopmentPaths.forEach((path) => {
     if (!reads.includes(path)) reads.push(path);

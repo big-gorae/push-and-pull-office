@@ -1,4 +1,5 @@
 schema_version: 1
+campaign_id: main
 id: anchor.day_10_hr_notice
 title: 인사팀 상담 절차 안내
 type: company

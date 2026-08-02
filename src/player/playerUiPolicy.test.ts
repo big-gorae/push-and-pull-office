@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
+import runtimeJson from "../../build/story-runtime.json";
 import { PUSH_PULL_OPTIMAL_LIMIT, pushPullPositionLabel } from "../pushPull";
-import type { ChoiceOption, ResolvedCharacterVisual } from "../types";
+import type { ChoiceOption, ResolvedCharacterVisual, Runtime } from "../types";
 import type { TimelineLogEntry } from "./playerRuntime";
 import {
   choiceDebugEffect,
@@ -10,15 +11,17 @@ import {
   visibleTimelineLogs,
 } from "./playerUiPolicy";
 
+const runtime = runtimeJson as unknown as Runtime;
+
 describe("player UI policy", () => {
   it("locks both extra modes until the first ending and accepts the persisted unlock", () => {
     const fresh = { clearedRoutes: [], unlockedModes: ["base"], memories: [] };
-    expect(modeUnlocked(fresh, "truth_view")).toBe(false);
-    expect(modeUnlocked(fresh, "survivor_view")).toBe(false);
+    expect(modeUnlocked(runtime, fresh, "truth_view")).toBe(false);
+    expect(modeUnlocked(runtime, fresh, "survivor_view")).toBe(false);
 
     const cleared = { ...fresh, clearedRoutes: ["seo_a"] };
-    expect(modeUnlocked(cleared, "truth_view")).toBe(true);
-    expect(modeUnlocked(cleared, "survivor_view")).toBe(true);
+    expect(modeUnlocked(runtime, cleared, "truth_view")).toBe(true);
+    expect(modeUnlocked(runtime, cleared, "survivor_view")).toBe(true);
   });
 
   it("renders only the active non-protagonist speaker", () => {

@@ -4,6 +4,8 @@
 
 현재 게임에 실제로 들어간 사건과 장면의 박제 목록은 [`docs/story-implemented-baseline.md`](../docs/story-implemented-baseline.md)를 따른다. 문서에만 있고 `story/`의 이벤트·장면 YAML에 연결되지 않은 사건은 구현된 스토리로 간주하지 않는다.
 
+회사 업무 에피소드를 새로 구상할 때는 [`docs/story-home-cafe-event-candidates.md`](../docs/story-home-cafe-event-candidates.md)의 홈카페·소형 주방가전 사건 후보를 검토한다. 후보 문서는 아이디어 뱅크이며, 실제 사건으로 채택하려면 월드 바이블과 이벤트·장면 YAML에 별도로 반영해야 한다.
+
 ## 디렉터리
 
 ```text
@@ -36,8 +38,8 @@ python3 tools/story_harness.py validate
 python3 tools/story_harness.py build
 python3 tools/story_harness.py simulate --route seo_a --strategy first
 python3 tools/story_harness.py explore --route seo_a
-python3 tools/story_harness.py night --day 1 --activity workout
-python3 tools/story_harness.py timeline --day 5 --slot after_work --process-automatic
+python3 tools/story_harness.py night --campaign main --day 1 --activity workout
+python3 tools/story_harness.py timeline --campaign main --day 5 --slot after_work --process-automatic
 python3 tools/story_harness.py context --scene seo_a.email_request
 python3 -m unittest discover -s tests -v
 ```

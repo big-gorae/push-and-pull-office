@@ -1,4 +1,5 @@
 schema_version: 1
+campaign_id: main
 id: anchor.day_02_practical_meeting
 title: 첫 실무 회의와 서아의 발표 실수
 type: anchor

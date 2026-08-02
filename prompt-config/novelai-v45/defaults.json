@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "model": "NovelAI Diffusion V4.5 Full",
+  "settings": {
+    "qualityTags": true,
+    "ucPreset": "Human Focus V4.5 Full",
+    "guidance": "5–6",
+    "steps": "28 이하에서 탐색 후 Enhance",
+    "samplers": ["DPM++ 2M", "Euler Ancestral"]
+  },
+  "styleTags": ["game cg", "year 2024"],
+  "manualQualityTags": ["masterpiece", "very aesthetic", "no text"],
+  "sharedUndesiredTags": [
+    "3d",
+    "photorealistic",
+    "plastic skin",
+    "glossy skin",
+    "wet skin",
+    "heterochromia",
+    "multicolored eyes",
+    "exposed breasts",
+    "nipples",
+    "impossible clothes",
+    "overdesigned clothes",
+    "excessive jewelry",
+    "sparkles",
+    "floating particles",
+    "bloom",
+    "lens flare",
+    "rim light",
+    "bokeh",
+    "fisheye",
+    "dutch angle",
+    "text",
+    "signature",
+    "artist name",
+    "extra people"
+  ],
+  "basePresets": [
+    {
+      "id": "sprite_full_body",
+      "label": "전신 설정화",
+      "description": "단순 배경에서 전신과 의상 실루엣을 확인합니다.",
+      "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
+      "tags": ["full body", "eye-level", "three-quarter view", "simple warm gray background"]
+    },
+    {
+      "id": "office_desk",
+      "label": "오피스 책상",
+      "description": "업무 중 자연스러운 손동작과 시선을 만듭니다.",
+      "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
+      "tags": ["cowboy shot", "eye-level", "off-center composition", "modern Korean office desk", "mixed window light and fluorescent light"]
+    },
+    {
+      "id": "meeting_room",
+      "label": "회의실",
+      "description": "사실 확인·대치·발표 장면에 사용합니다.",
+      "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
+      "tags": ["cowboy shot", "eye-level", "off-center composition", "modern Korean meeting room", "neutral overhead office light"]
+    },
+    {
+      "id": "office_hallway",
+      "label": "오피스 복도",
+      "description": "출입문과 거리감이 중요한 장면에 사용합니다.",
+      "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
+      "tags": ["cowboy shot", "eye-level", "off-center composition", "modern Korean office hallway", "mixed fluorescent light and window light"]
+    },
+    {
+      "id": "design_review",
+      "label": "디자인 리뷰",
+      "description": "태블릿과 발표 자료를 확인하는 디자인팀 장면입니다.",
+      "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
+      "tags": ["cowboy shot", "eye-level", "off-center composition", "modern brand design studio", "presentation screen glow", "soft office ambient light"]
+    },
+    {
+      "id": "bookstore",
+      "label": "독립서점",
+      "description": "과거 서점 근무 장면을 생활광으로 표현합니다.",
+      "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
+      "tags": ["cowboy shot", "eye-level", "off-center composition", "small independent bookstore", "wooden bookshelves", "soft daylight from storefront window"]
+    },
+    {
+      "id": "testimony_room",
+      "label": "진술 기록",
+      "description": "현재의 수연이 자신의 문장으로 기록을 남기는 장면입니다.",
+      "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
+      "tags": ["upper body", "eye-level", "quiet interview room", "plain table", "soft even indoor light", "uncluttered background"]
+    },
+    {
+      "id": "memory_bookstore",
+      "label": "미화된 서점 기억",
+      "description": "한도윤의 주관 화면에서만 쓰는 따뜻한 기억 장면입니다.",
+      "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
+      "tags": ["cowboy shot", "eye-level", "small independent bookstore", "warm afternoon backlight", "soft nostalgic atmosphere"]
+    }
+  ]
+}

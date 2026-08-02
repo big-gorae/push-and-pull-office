@@ -1,6 +1,10 @@
 schema_version: 1
 id: main
 title: 오피스의 신호들
+entry_event_id: anchor.day_01_company_meeting
+initial_state_patch: {}
+systems:
+  self_development: true
 total_days: 17
 slots: [morning, lunch, afternoon, after_work]
 choice_slots: [lunch, after_work]

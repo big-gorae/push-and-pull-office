@@ -1,6 +1,14 @@
 export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+export type DeepPartial<T> = T extends Array<infer Item>
+  ? Array<DeepPartial<Item>>
+  : T extends object ? { [Key in keyof T]?: DeepPartial<T[Key]> } : T;
 export type NodeKind = "dual_dialogue" | "dual_narration" | "choice" | "state_gate" | "effect" | "exit";
-export type ViewMode = "perceived" | "reality";
+export type GameModeId = "base" | "truth_view" | "survivor_view";
+export type ViewLayer = "perceived" | "reality";
+/** @deprecated Use ViewLayer. Kept temporarily for editor-facing compatibility. */
+export type ViewMode = ViewLayer;
+export type LayerPolicy = "fixed" | "switchable";
+export type ContentStatus = "playable" | "coming_soon";
 export type SupportStyle =
   | "emotional_validation"
   | "factual_clarification"
@@ -187,7 +195,7 @@ export type Route = {
   id: string;
   title: string;
   heroine: string;
-  mode: "base" | "truth_view" | "survivor_view";
+  campaign_id: string;
   summary: string;
   unlock_conditions: Condition[];
   entry_scene: string;
@@ -199,6 +207,9 @@ export type Campaign = {
   schema_version: number;
   id: string;
   title: string;
+  entry_event_id: string;
+  initial_state_patch: DeepPartial<RuntimeState>;
+  systems: { self_development: boolean };
   total_days: number;
   slots: TimeSlot[];
   choice_slots: TimeSlot[];
@@ -213,6 +224,7 @@ export type Campaign = {
 export type TimelineEvent = {
   schema_version: number;
   id: string;
+  campaign_id: string;
   title: string;
   type: EventType;
   lane: string;
@@ -236,6 +248,7 @@ export type TimelineEvent = {
 export type TimelineThread = {
   schema_version: number;
   id: string;
+  campaign_id: string;
   title: string;
   lane: string;
   heroine?: string;
@@ -251,6 +264,20 @@ export type MetaDocument = {
     conditions: Condition[];
     reveals: Array<{ mode: string; title: string; teaser: string }>;
   }>;
+};
+
+export type GameModeUnlock =
+  | { always: true }
+  | { any: Array<{ conditions: Condition[] }> };
+
+export type GameModeDefinition = {
+  campaign_id: string | null;
+  planned_campaign_id?: string;
+  continuity_id: string;
+  initial_layer: ViewLayer;
+  layer_policy: LayerPolicy;
+  content_status: ContentStatus;
+  unlock: GameModeUnlock;
 };
 
 export type Character = {
@@ -456,6 +483,7 @@ export type Runtime = {
   stats: Record<string, { type: string; min?: number; max?: number; values?: string[]; description: string }>;
   self_development: SelfDevelopmentConfig;
   initial_state: RuntimeState;
+  game_modes: Record<GameModeId, GameModeDefinition>;
   localization: LocalizationBundle;
   campaigns: Record<string, Campaign>;
   characters: Record<string, Character>;

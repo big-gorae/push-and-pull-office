@@ -1,4 +1,5 @@
 schema_version: 1
+campaign_id: main
 id: min_kyung.explicit_boundary
 title: 업무 외 연락 금지
 type: heroine

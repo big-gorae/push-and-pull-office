@@ -205,6 +205,28 @@ class StoryEditorBridgeTests(unittest.TestCase):
             scene["state_contract"]["reads"],
         )
 
+    def test_state_contract_includes_last_activity_expression_requirement(self):
+        scene = {
+            "entry_conditions": [],
+            "nodes": [{
+                "kind": "dual_dialogue",
+                "variants": [{
+                    "self_development": {"expression": "feedback.last_workout"},
+                }],
+            }],
+        }
+
+        derive_state_contract(scene, {
+            "feedback.last_workout": {
+                "requires": {"last_activity": "workout"},
+            },
+        })
+
+        self.assertEqual(
+            ["progress.self_development.last_activity"],
+            scene["state_contract"]["reads"],
+        )
+
     def test_validate_scene_does_not_modify_source(self):
         temporary, root = self.make_project_copy()
         try:

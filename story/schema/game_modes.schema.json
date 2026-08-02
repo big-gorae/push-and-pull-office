@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "game_modes.schema.json",
+  "title": "Love Office Game Modes",
+  "type": "object",
+  "required": ["schema_version", "id", "modes"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "id": { "const": "game_modes" },
+    "modes": {
+      "type": "object",
+      "required": ["base", "truth_view", "survivor_view"],
+      "properties": {
+        "base": { "$ref": "#/$defs/mode" },
+        "truth_view": { "$ref": "#/$defs/mode" },
+        "survivor_view": { "$ref": "#/$defs/mode" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "condition": {
+      "type": "object",
+      "required": ["path", "op"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "op": { "enum": ["eq", "ne", "gt", "gte", "lt", "lte", "contains", "not_contains", "exists", "not_exists"] },
+        "value": {}
+      },
+      "additionalProperties": false
+    },
+    "unlockGroup": {
+      "type": "object",
+      "required": ["conditions"],
+      "properties": {
+        "conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/condition" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "unlock": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["always"],
+          "properties": { "always": { "const": true } },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["any"],
+          "properties": {
+            "any": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/unlockGroup" }
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "mode": {
+      "type": "object",
+      "required": ["campaign_id", "continuity_id", "initial_layer", "layer_policy", "content_status", "unlock"],
+      "properties": {
+        "campaign_id": { "type": ["string", "null"], "pattern": "^[a-z][a-z0-9_.]*$" },
+        "planned_campaign_id": { "type": "string", "pattern": "^[a-z][a-z0-9_.]*$" },
+        "continuity_id": { "type": "string", "pattern": "^[a-z][a-z0-9_.]*$" },
+        "initial_layer": { "enum": ["perceived", "reality"] },
+        "layer_policy": { "enum": ["fixed", "switchable"] },
+        "content_status": { "enum": ["playable", "coming_soon"] },
+        "unlock": { "$ref": "#/$defs/unlock" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

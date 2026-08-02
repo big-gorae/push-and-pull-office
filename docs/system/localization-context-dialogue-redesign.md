@@ -494,7 +494,7 @@ type BacklogEntryV3 = {
   variantId?: string;
   optionId?: string;
   speakerId?: string;
-  modeAtPresentation: ViewMode;
+  layerAtPresentation: ViewLayer;
 };
 ```
 
@@ -506,7 +506,7 @@ type BacklogEntryV3 = {
 
 v2 세이브를 읽을 때 다음 순서로 v3 preview를 만든다.
 
-1. `session.sceneId`, `session.nodeId`, `session.mode` 사용
+1. v4의 `session.sceneId`, `session.nodeId`, `session.mode`를 읽어 v5의 `gameModeId`, `campaignId`, `continuityId`, `viewLayer`로 변환
 2. 현재 상태로 variant를 다시 계산하되 기존 장면은 `default` 사용
 3. legacy `timeline` 미리보기면 마지막 내부 사건 로그와 현재 day/slot 사용하되 플레이어용 타임라인 화면은 열지 않음
 4. 기존 `sceneTitle`, `line`은 마이그레이션 실패 시 표시하는 legacy fallback으로만 보존

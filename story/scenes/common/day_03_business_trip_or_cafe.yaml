@@ -6,7 +6,7 @@ chapter: 1
 sequence: 4
 location: office_break_room
 time: afternoon
-purpose: 전날 밤 활동이 업무 밖 대화의 작은 재료로 돌아오되 실제 관계 상태에는 영향을 주지 않는다.
+purpose: 한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필로 먼저 꺼내지만 실제 관계 상태에는 영향을 주지 않는다.
 cast: [han_do_yoon, yoon_seo_a, cha_min_kyung]
 entry_conditions: []
 state_contract:
@@ -22,85 +22,51 @@ nodes:
       line: "금요일의 업무 외출과 짧은 휴식이 끝난 뒤에도, 회사 밖에서 나눈 말은 사무실 안보다 조금 오래 남았다."
     reality:
       atmosphere: procedural
-      line: "금요일 업무 일정에 따라 한도윤은 동료 한 명과 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다."
+      line: "금요일 업무 일정에 따라 한도윤은 동료 한 명과 유통사 쇼룸 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다."
       intent: work_only
     next: activity_callback
 
   - id: activity_callback
     kind: dual_dialogue
+    speaker: han_do_yoon
+    perceived:
+      atmosphere: procedural
+      expression: subjective_confident
+      line: "돌아왔으니 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠."
+    reality:
+      atmosphere: procedural
+      expression: actual_waiting_smile
+      line: "돌아왔으니 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠."
+      intent: work_only
+    self_development_template:
+      source: last_activity
+      perceived:
+        atmosphere: playful_tension
+        line: "{{office_pitch}}"
+      reality:
+        line: "{{office_pitch}}"
+        intent: self_promotion
+    next: activity_response
+
+  - id: activity_response
+    kind: dual_dialogue
     speaker: cha_min_kyung
-    variants:
-      - id: after_workout
-        priority: 100
-        self_development: {expression: feedback.last_workout}
-        perceived:
-          atmosphere: playful_tension
-          expression: subjective_challenging
-          line: "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다."
-        reality:
-          atmosphere: procedural
-          expression: actual_focused
-          line: "어깨가 뻐근하면 가방은 내려놓으세요. 확인할 자료는 제가 테이블에 펼치겠습니다."
-          intent: work_only
-      - id: after_grooming
-        priority: 90
-        self_development: {expression: feedback.last_grooming}
-        perceived:
-          atmosphere: playful_tension
-          expression: subjective_challenging
-          line: "오늘 거래처 미팅 복장은 문제없었습니다. 사원증만 바로 하세요."
-        reality:
-          atmosphere: procedural
-          expression: actual_focused
-          line: "오늘 거래처 미팅 복장은 문제없었습니다. 사원증만 바로 하세요."
-          intent: work_only
-      - id: after_ott
-        priority: 80
-        self_development: {expression: feedback.last_ott}
-        perceived:
-          atmosphere: playful_tension
-          expression: subjective_challenging
-          line: "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠."
-        reality:
-          atmosphere: procedural
-          expression: actual_focused
-          line: "그 코미디 대사는 광고 회의에서도 나왔습니다. 이제 오늘 남은 쟁점 세 개 보죠."
-          intent: work_only
-      - id: after_reels
-        priority: 70
-        self_development: {expression: feedback.last_reels}
-        perceived:
-          atmosphere: playful_tension
-          expression: subjective_challenging
-          line: "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠."
-        reality:
-          atmosphere: procedural
-          expression: actual_focused
-          line: "짧은 영상 조회수와 실제 구매 유입은 다릅니다. 원본 수치부터 같이 보죠."
-          intent: documentation
-      - id: after_sleep
-        priority: 60
-        self_development: {expression: feedback.last_sleep}
-        perceived:
-          atmosphere: playful_tension
-          expression: subjective_challenging
-          line: "오늘은 일찍 움직인 덕분에 시간이 남네요. 마감 전에 쟁점 세 개 확인하죠."
-        reality:
-          atmosphere: procedural
-          expression: actual_focused
-          line: "오늘은 일찍 움직인 덕분에 시간이 남네요. 마감 전에 쟁점 세 개 확인하죠."
-          intent: work_only
-      - id: default
-        default: true
-        perceived:
-          atmosphere: procedural
-          expression: subjective_challenging
-          line: "돌아왔으면 오늘 확인한 쟁점부터 정리하죠."
-        reality:
-          atmosphere: procedural
-          expression: actual_focused
-          line: "돌아왔으면 오늘 확인한 쟁점부터 정리하죠."
-          intent: work_only
+    perceived:
+      atmosphere: procedural
+      expression: subjective_challenging
+      line: "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠."
+    reality:
+      atmosphere: procedural
+      expression: actual_focused
+      line: "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠."
+      intent: work_only
+    self_development_template:
+      source: last_activity
+      perceived:
+        atmosphere: playful_tension
+        line: "{{acknowledgement}} 그건 됐고, 오늘 남은 쟁점 세 개부터 보죠."
+      reality:
+        line: "{{acknowledgement}} 그건 됐고, 오늘 남은 쟁점 세 개부터 보죠."
     next: activity_callback_inner
 
   - id: activity_callback_inner
@@ -109,66 +75,20 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: cha_min_kyung
-    variants:
-      - id: after_workout
-        priority: 100
-        self_development: {expression: feedback.last_workout}
-        perceived:
-          atmosphere: playful_tension
-          line: (내 몸 상태를 보고 먼저 일을 나눠 맡는군. 역시 호흡이 빠르네.)
-        reality:
-          atmosphere: procedural
-          line: (가방을 내려놓게 하고 자료부터 펼치면 정리를 바로 시작할 수 있어.)
-          intent: work_only
-      - id: after_grooming
-        priority: 90
-        self_development: {expression: feedback.last_grooming}
-        perceived:
-          atmosphere: playful_tension
-          line: (거래처에서도 내 인상이 괜찮았다는 걸 굳이 확인해 주는군.)
-        reality:
-          atmosphere: procedural
-          line: (외부 미팅 복장에는 문제가 없었고, 지금은 뒤집힌 사원증만 바로 하면 돼.)
-          intent: work_only
-      - id: after_ott
-        priority: 80
-        self_development: {expression: feedback.last_ott}
-        perceived:
-          atmosphere: playful_tension
-          line: (내가 꺼낸 화제를 기억하면서 자연스럽게 둘만의 대화로 이어 가네.)
-        reality:
-          atmosphere: procedural
-          line: (회의에서 이미 나온 유행어야. 잡담을 닫고 남은 안건을 보자.)
-          intent: work_only
-      - id: after_reels
-        priority: 70
-        self_development: {expression: feedback.last_reels}
-        perceived:
-          atmosphere: playful_tension
-          line: (유행을 아는 나와 숫자까지 깊게 이야기해 보고 싶은 모양이군.)
-        reality:
-          atmosphere: procedural
-          line: (조회수만 보고 결론 내리면 안 돼. 구매 유입 수치부터 확인하자.)
-          intent: documentation
-      - id: after_sleep
-        priority: 60
-        self_development: {expression: feedback.last_sleep}
-        perceived:
-          atmosphere: playful_tension
-          line: (여유가 생긴 시간을 나와 더 쓰기로 한 거군.)
-        reality:
-          atmosphere: procedural
-          line: (남은 시간을 쓰면 퇴근 전까지 쟁점을 닫을 수 있어.)
-          intent: work_only
-      - id: default
-        default: true
-        perceived:
-          atmosphere: procedural
-          line: (회사 밖에서 본 뒤라 대화의 호흡도 조금 달라졌군.)
-        reality:
-          atmosphere: procedural
-          line: (오늘 확인한 내용과 다음 마감만 정리하면 돼.)
-          intent: work_only
+    perceived:
+      atmosphere: procedural
+      line: (회사 밖에서 본 뒤라 대화의 호흡도 조금 달라졌군.)
+    reality:
+      atmosphere: procedural
+      line: (오늘 확인한 내용과 다음 마감만 정리하면 돼.)
+      intent: work_only
+    self_development_template:
+      source: last_activity
+      perceived:
+        atmosphere: playful_tension
+        line: "(말은 차갑지만 내가 꺼낸 화제는 바로 알아들었군. {{perceived_self_image}})"
+      reality:
+        line: "({{reality_response_thought}} 잡담은 여기까지 하고 남은 안건부터 보자.)"
     next: weekend_clues
 
   - id: weekend_clues

@@ -1,4 +1,5 @@
 schema_version: 1
+campaign_id: main
 id: anchor.day_01_company_meeting
 title: 신규 프로젝트 킥오프
 type: anchor

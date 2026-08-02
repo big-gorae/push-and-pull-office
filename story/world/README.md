@@ -23,6 +23,10 @@
 
 `route_eligible: true`는 `illustrated` 멤버이며 연결된 스토리 캐릭터가 `main_heroine`일 때만 허용한다. 라우트의 `heroine`은 반드시 그 조건을 만족하는 멤버와 연결돼야 한다.
 
+## 사업 도메인과 사건 후보
+
+다원리빙의 사업 도메인은 홈카페용 소형 주방가전이다. 현재 제품·유통·프로젝트 사실은 `companies/`, `projects/`, `teams/`, `members/`의 YAML을 따른다. 후속 회사 장면을 구상할 때는 [`docs/story-home-cafe-event-candidates.md`](../../docs/story-home-cafe-event-candidates.md)의 후보를 먼저 검토한다. 해당 문서의 후보는 `story/events/`와 `story/scenes/`에 연결되기 전까지 구현된 사건이나 확정된 시간선이 아니다.
+
 ## 장면 연결
 
 공식 킥오프처럼 직무·권한을 검증해야 하는 회의는 장면에 다음을 선언한다.

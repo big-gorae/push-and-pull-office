@@ -3,10 +3,11 @@
   "$id": "event.schema.json",
   "title": "Love Office Timeline Event",
   "type": "object",
-  "required": ["schema_version", "id", "title", "type", "lane", "window", "duration", "priority", "availability", "completion", "requires", "on_seen", "on_missed", "presentation"],
+  "required": ["schema_version", "id", "campaign_id", "title", "type", "lane", "window", "duration", "priority", "availability", "completion", "requires", "on_seen", "on_missed", "presentation"],
   "properties": {
     "schema_version": { "const": 1 },
     "id": { "type": "string", "pattern": "^[a-z][a-z0-9_.]*$" },
+    "campaign_id": { "type": "string", "pattern": "^[a-z][a-z0-9_.]*$" },
     "title": { "type": "string", "minLength": 1 },
     "type": { "enum": ["anchor", "heroine", "company", "offscreen", "ending"] },
     "lane": { "type": "string", "minLength": 1 },
@@ -41,6 +42,7 @@
       }
     }
   },
+  "additionalProperties": false,
   "$defs": {
     "presentation": {
       "type": "object",
@@ -49,4 +51,3 @@
     }
   }
 }
-

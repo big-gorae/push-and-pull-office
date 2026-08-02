@@ -1,4 +1,5 @@
 schema_version: 1
+campaign_id: main
 id: anchor.day_16_office_rumor
 title: 회사에 퍼진 우리 이야기
 type: anchor

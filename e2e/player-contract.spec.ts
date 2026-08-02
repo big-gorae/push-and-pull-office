@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 const SETTINGS_KEY = "love-office:web-player:settings";
 const PROFILE_KEY = "love-office:web-player:profile";
+const AUTOSAVE_KEY = "love-office:web-player:autosave";
 
 async function setDeterministicSettings(page: Page, debugMode = false) {
   await page.addInitScript(({ key, debug }) => {
@@ -77,6 +78,26 @@ test("first ending profile unlocks both post-ending modes", async ({ page }) => 
   await expect(page.getByRole("button", { name: /어나더 스토리/ })).toBeEnabled();
 });
 
+test("mode selection fixes the view layer and separates coming-soon content", async ({ page }) => {
+  await page.addInitScript(({ key }) => {
+    localStorage.setItem(key, JSON.stringify({
+      clearedRoutes: ["seo_a"],
+      unlockedModes: ["base"],
+      memories: [],
+    }));
+  }, { key: PROFILE_KEY });
+  await page.goto("/");
+  await page.getByRole("button", { name: "새 게임" }).click();
+  await page.getByRole("button", { name: /어나더 스토리/ }).click();
+  await expect(page.locator(".vn-toast")).toHaveText("어나더 스토리의 첫 장면은 준비 중이에요.");
+  await expect(page.locator(".vn-route-screen")).toBeVisible();
+
+  await page.getByRole("button", { name: /속마음 모드/ }).click();
+  await expect(page.locator(".vn-game.reality")).toBeVisible();
+  await expect(page.getByRole("button", { name: "주인공 인식" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "실제 시간선" })).toHaveCount(0);
+});
+
 test("game flow hides authoring UI and debug restores controlled inspection", async ({ page }) => {
   test.setTimeout(60_000);
   await setDeterministicSettings(page, true);
@@ -89,6 +110,15 @@ test("game flow hides authoring UI and debug restores controlled inspection", as
   await expect(page.getByText("17일", { exact: false })).toHaveCount(0);
   await expect(page.locator(".vn-debug-panel")).toBeVisible();
   await expect(page.locator(".vn-debug-panel input[type=range]")).toHaveCount(3);
+  await expect(page.locator(".vn-debug-identity")).toContainText("MODEbase");
+  await expect(page.locator(".vn-debug-identity")).toContainText("CAMPAIGNmain");
+  await expect(page.locator(".vn-debug-identity")).toContainText("CONTINUITYmain");
+  await expect(page.locator(".vn-debug-identity")).toContainText("LAYERperceived");
+  await page.locator(".vn-mode-button").first().click();
+  await expect(page.locator(".vn-debug-identity")).toContainText("LAYERperceived → reality (preview)");
+  const persistedLayer = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) || "null")?.session?.viewLayer, AUTOSAVE_KEY);
+  expect(persistedLayer).toBe("perceived");
+  await page.locator(".vn-mode-button").first().click();
 
   await expect(page.locator(".vn-nameplate")).toHaveCount(0);
   await expect(page.locator(".vn-character")).toHaveCount(0);

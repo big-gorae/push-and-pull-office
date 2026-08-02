@@ -131,7 +131,7 @@ class StoryHarnessTests(unittest.TestCase):
                     ], self.project)
                     expected_scene = target_id if case["expected_transition"] == "target" else fallback_id
                     self.assertEqual(expected_scene, transition["scene"])
-                    verdict = TimelineScheduler(self.project, state).inspect_event(
+                    verdict = TimelineScheduler(self.project, event["campaign_id"], state).inspect_event(
                         event_id,
                         case["state_patch"]["value"],
                         "morning",
@@ -658,7 +658,7 @@ class StoryHarnessTests(unittest.TestCase):
         with redirect_stdout(output):
             exit_code = command_night(
                 self.project,
-                SimpleNamespace(day=1, activity="workout", state=[], json=True),
+                SimpleNamespace(campaign="main", day=1, activity="workout", state=[], json=True),
             )
         payload = json.loads(output.getvalue())
         self.assertEqual(0, exit_code)
@@ -1173,19 +1173,20 @@ class StoryHarnessTests(unittest.TestCase):
                 self.assertIn("survivor_view", progress["unlocked_modes"])
                 self.assertNotIn("collapse", progress["unlocked_modes"])
 
-    def test_every_base_route_has_both_post_ending_unlock_rules(self):
-        unlocks = self.project.meta["unlocks"]
-        removed = unlocks["unlock_rules"].pop()
+    def test_game_mode_registry_keeps_both_approved_post_clear_unlocks(self):
+        survivor_unlock = self.project.game_modes["survivor_view"]["unlock"]["any"]
+        removed = survivor_unlock.pop()
         try:
             issues = []
-            self.project._validate_meta(issues)
-            self.assertTrue(any("must unlock survivor_view" in issue.message for issue in issues))
+            self.project._validate_game_modes(issues)
+            self.assertTrue(any("must unlock after either approved main route clear" in issue.message for issue in issues))
         finally:
-            unlocks["unlock_rules"].append(removed)
+            survivor_unlock.append(removed)
 
     def test_retired_collapse_route_is_absent(self):
         self.assertNotIn("yoo_jin", self.project.routes)
-        self.assertFalse(any(route.get("mode") == "collapse" for route in self.project.routes.values()))
+        self.assertTrue(all(route.get("campaign_id") == "main" for route in self.project.routes.values()))
+        self.assertTrue(all("mode" not in route for route in self.project.routes.values()))
 
     def test_emotion_is_derived_from_hidden_stats(self):
         state = self.project.initial_state()
@@ -1400,6 +1401,11 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual([9, 10], bundle["events"]["seo_a.relief_smile"]["window"]["days"])
         self.assertEqual([9, 10], bundle["events"]["min_kyung.witness_meeting"]["window"]["days"])
         self.assertEqual({"seo_a", "min_kyung"}, set(bundle["threads"]))
+        self.assertEqual({"base", "truth_view", "survivor_view"}, set(bundle["game_modes"]))
+        self.assertEqual("main", bundle["game_modes"]["base"]["campaign_id"])
+        self.assertEqual("reality", bundle["game_modes"]["truth_view"]["initial_layer"])
+        self.assertEqual("coming_soon", bundle["game_modes"]["survivor_view"]["content_status"])
+        self.assertIsNone(bundle["game_modes"]["survivor_view"]["campaign_id"])
         self.assertIn("unlocks", bundle["meta"])
         reveals = bundle["meta"]["unlocks"]["mode_teasers"][0]["reveals"]
         self.assertEqual(["truth_view", "survivor_view"], [reveal["mode"] for reveal in reveals])
@@ -1547,7 +1553,7 @@ class StoryHarnessTests(unittest.TestCase):
             context = self.project.context_package("common.day_01_company_meeting")
             world = context["world_context"]
             self.assertEqual(
-                "하루담 봄 리빙 캠페인",
+                "하루담 봄 홈카페 캠페인",
                 world["projects"]["project.harudam_spring_campaign"]["name"],
             )
             self.assertEqual(7, len(world["participants"]))
@@ -1615,12 +1621,12 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual(["yoon_seo_a"], [item["character"] for item in reality_inner["characters"]])
 
     def test_timeline_scheduler_does_not_expose_retired_collapse_events(self):
-        scheduler = TimelineScheduler(self.project)
+        scheduler = TimelineScheduler(self.project, "main")
         self.assertNotIn("yoo_jin.fact_check", scheduler.project.events)
         self.assertFalse(any(event.get("thread") == "yoo_jin" for event in scheduler.project.events.values()))
 
     def test_missed_event_triggers_hidden_offscreen_progression(self):
-        scheduler = TimelineScheduler(self.project)
+        scheduler = TimelineScheduler(self.project, "main")
         applied = scheduler.process_automatic(9, "after_work")
         self.assertIn("seo_a.email_request", scheduler.state["progress"]["events"]["missed"])
         self.assertIn("offscreen.seo_a_consults_min_kyung", [item["event"] for item in applied])
@@ -1636,7 +1642,7 @@ class StoryHarnessTests(unittest.TestCase):
         state["hidden"]["heroines"]["yoon_seo_a"]["evidence_count"] = 2
         state["hidden"]["heroines"]["yoon_seo_a"]["dislike"] = 30
         state["progress"]["flags"]["story_mode"]["target"] = "yoon_seo_a"
-        scheduler = TimelineScheduler(self.project, state)
+        scheduler = TimelineScheduler(self.project, "main", state)
         applied = scheduler.process_automatic(17, "after_work")
         event_ids = [item["event"] for item in applied]
         self.assertIn("seo_a.ending_report", event_ids)

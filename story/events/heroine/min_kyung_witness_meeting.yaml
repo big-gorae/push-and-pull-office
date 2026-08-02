@@ -1,4 +1,5 @@
 schema_version: 1
+campaign_id: main
 id: min_kyung.witness_meeting
 title: 둘만 남지 않는 회의
 type: heroine

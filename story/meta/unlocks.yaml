@@ -4,27 +4,7 @@ mode_labels:
   base: 스토리 모드
   truth_view: 속마음 모드
   survivor_view: 어나더 스토리
-unlock_rules:
-  - id: revelation_after_seo_a
-    mode: truth_view
-    reward: 그녀들의 일상과 속마음을 들어 보아요.
-    conditions:
-      - {path: progress.cleared_routes, op: contains, value: seo_a}
-  - id: revelation_after_min_kyung
-    mode: truth_view
-    reward: 그녀들의 일상과 속마음을 들어 보아요.
-    conditions:
-      - {path: progress.cleared_routes, op: contains, value: min_kyung}
-  - id: survival_after_seo_a
-    mode: survivor_view
-    reward: 새로운 그녀로 새로운 이야기를 만들어 보아요.
-    conditions:
-      - {path: progress.cleared_routes, op: contains, value: seo_a}
-  - id: survival_after_min_kyung
-    mode: survivor_view
-    reward: 새로운 그녀로 새로운 이야기를 만들어 보아요.
-    conditions:
-      - {path: progress.cleared_routes, op: contains, value: min_kyung}
+unlock_rules: []
 mode_teasers:
   - id: after_first_clear
     conditions:

@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "characterId": "im_soo_yeon",
+  "order": 40,
+  "subject": "female",
+  "accent": "#879267",
+  "defaultLookId": "current",
+  "looks": [
+    {
+      "id": "current",
+      "label": "현재 · 단발과 안경",
+      "identityTags": [
+        "adult",
+        "short softly wavy brown hair",
+        "thin round glasses",
+        "large calm amber-brown eyes",
+        "soft oval face",
+        "long eyelashes",
+        "small nose",
+        "soft full lips",
+        "subtle smile lines at the outer eyes",
+        "natural curvy adult build",
+        "narrow waist",
+        "1.2::large breasts::",
+        "breasts"
+      ],
+      "outfitTags": [
+        "olive green long cardigan",
+        "faded cream cotton blouse",
+        "long brown A-line skirt",
+        "book",
+        "plain bookmark"
+      ],
+      "fullBodyOnlyTags": ["brown loafers"],
+      "characterUndesiredTags": [
+        "child",
+        "loli",
+        "middle-aged woman",
+        "muscular woman",
+        "teenager",
+        "flat chest",
+        "small breasts",
+        "long hair",
+        "ponytail",
+        "office suit",
+        "employee lanyard",
+        "high heels",
+        "miniskirt",
+        "idol outfit",
+        "glamorous makeup",
+        "seductive pose"
+      ],
+      "defaultSituationId": "reference_guarded",
+      "situations": [
+        {
+          "id": "reference_guarded",
+          "label": "현재 기본 모습",
+          "description": "짧은 머리와 안경, 실용적인 옷차림의 현재 모습입니다.",
+          "expressionId": "actual_guarded",
+          "basePresetId": "sprite_full_body",
+          "tags": ["holding a book close to her body", "guarded posture", "closed mouth", "glancing toward the doorway"]
+        },
+        {
+          "id": "current_guarded",
+          "label": "조용히 출입문 확인",
+          "description": "자신의 안전을 확인하며 대화를 이어 갑니다.",
+          "expressionId": "actual_guarded",
+          "basePresetId": "testimony_room",
+          "tags": ["holding the book close to her body", "guarded posture", "closed mouth", "glancing toward the room entrance"]
+        },
+        {
+          "id": "current_testimony",
+          "label": "자기 문장으로 진술",
+          "description": "현재의 삶을 지키며 과거 사건을 기록합니다.",
+          "expressionId": "actual_testimony",
+          "basePresetId": "testimony_room",
+          "tags": ["holding an old postcard with its address removed", "determined expression", "steady direct gaze", "upright seated posture"]
+        }
+      ]
+    },
+    {
+      "id": "past_bookstore",
+      "label": "과거 · 서점 근무",
+      "identityTags": [
+        "adult",
+        "shoulder-length naturally wavy brown hair",
+        "large calm amber-brown eyes",
+        "soft oval face",
+        "long eyelashes",
+        "small nose",
+        "soft full lips",
+        "no glasses",
+        "subtle smile lines at the outer eyes",
+        "natural curvy adult build",
+        "narrow waist",
+        "1.2::large breasts::",
+        "breasts"
+      ],
+      "outfitTags": [
+        "olive cardigan",
+        "faded cream cotton shirt",
+        "long brown skirt",
+        "old independent-bookstore name tag",
+        "book",
+        "plain bookmark"
+      ],
+      "fullBodyOnlyTags": ["practical flat shoes"],
+      "characterUndesiredTags": [
+        "child",
+        "loli",
+        "middle-aged woman",
+        "muscular woman",
+        "teenager",
+        "flat chest",
+        "small breasts",
+        "short hair",
+        "glasses",
+        "office suit",
+        "employee lanyard",
+        "high heels",
+        "miniskirt",
+        "idol outfit",
+        "glamorous makeup"
+      ],
+      "defaultSituationId": "bookstore_service",
+      "situations": [
+        {
+          "id": "bookstore_service",
+          "label": "서점 손님 응대",
+          "description": "모든 손님에게 제공하는 따뜻한 업무 표정입니다.",
+          "expressionId": "actual_customer_service",
+          "basePresetId": "bookstore",
+          "tags": ["holding a book at waist level", "polite closed-mouth smile", "relaxed professional posture", "looking toward a customer outside the frame"]
+        },
+        {
+          "id": "bookstore_guarded",
+          "label": "반복 방문 뒤 경계",
+          "description": "책을 품에 안고 출입문과 동료를 확인합니다.",
+          "expressionId": "actual_guarded",
+          "basePresetId": "bookstore",
+          "tags": ["holding the book close to her body", "guarded posture", "closed mouth", "glancing toward the shop entrance"]
+        },
+        {
+          "id": "perceived_first_love",
+          "label": "주관 화면 · 첫사랑 기억",
+          "description": "손님 응대 친절을 자신만을 향한 첫사랑처럼 재구성한 화면입니다.",
+          "expressionId": "subjective_first_love",
+          "basePresetId": "memory_bookstore",
+          "tags": ["warm gentle smile", "soft eyes", "looking toward the viewer", "holding a book against her chest", "nostalgic pose"]
+        }
+      ]
+    }
+  ]
+}

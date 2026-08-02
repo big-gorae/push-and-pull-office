@@ -54,12 +54,12 @@ describe("locale-independent save schema", () => {
     });
   });
 
-  it("normalizes every first route clear into both post-ending mode unlocks", () => {
+  it("preserves explicit profile unlocks without inventing them from route clears", () => {
     expect(normalizePlayerProfile({
       clearedRoutes: ["future_route"],
       unlockedModes: ["base"],
       memories: [],
-    }).unlockedModes).toEqual(["base", "truth_view", "survivor_view"]);
+    }).unlockedModes).toEqual(["base"]);
   });
 
   it("stores only stable preview identifiers and rerenders the same slot in another locale", () => {
@@ -68,7 +68,10 @@ describe("locale-independent save schema", () => {
       kind: "scene",
       sceneId: "seo_a.email_request",
       nodeId: "request",
-      mode: "perceived",
+      gameModeId: "base",
+      campaignId: "main",
+      continuityId: "main",
+      viewLayer: "perceived",
     });
     expect(slot).not.toHaveProperty("sceneTitle");
     expect(slot).not.toHaveProperty("line");
@@ -84,12 +87,13 @@ describe("locale-independent save schema", () => {
 
   it("stores and localizes the nightly self-development preview", () => {
     const slot = sessionSlot(sessionAtNightPlan());
-    expect(slot.schema_version).toBe(4);
+    expect(slot.schema_version).toBe(5);
     expect(slot.preview).toMatchObject({
       kind: "self_development",
       day: 1,
       slot: "after_work",
-      mode: "perceived",
+      gameModeId: "base",
+      viewLayer: "perceived",
     });
 
     const korean = savePreview(slot, new GameLocalizer(runtime, "ko"));
@@ -100,7 +104,7 @@ describe("locale-independent save schema", () => {
   });
 
   it("normalizes a v2 slot without rewriting it and drops translated backlog caches", () => {
-    const session = sessionAtTranslatedScene() as PlayerSession & {
+    const session = sessionAtTranslatedScene() as unknown as Omit<PlayerSession, "backlog"> & {
       backlog: Array<Record<string, unknown>>;
     };
     session.backlog = [{
@@ -120,10 +124,10 @@ describe("locale-independent save schema", () => {
       nodeId: session.nodeId,
       sceneTitle: "옛 장면 제목",
       line: "옛 대사",
-      session,
+      session: session as unknown as PlayerSession,
     };
     const migrated = normalizeSaveSlot(legacy, runtime);
-    expect(migrated?.schema_version).toBe(4);
+    expect(migrated?.schema_version).toBe(5);
     expect(migrated?.preview.variantId).toBe("default");
     expect(migrated?.legacy).toEqual({ sceneTitle: "옛 장면 제목", line: "옛 대사" });
     expect(migrated?.session.backlog[0]).not.toHaveProperty("text");
@@ -133,5 +137,84 @@ describe("locale-independent save schema", () => {
     expect(rewritten).not.toHaveProperty("legacy");
     expect(JSON.stringify(rewritten)).not.toContain("옛 대사");
     expect(JSON.stringify(rewritten)).not.toContain("옛 번역 문자열");
+  });
+
+  it("migrates a v4 reality session to the truth game mode identity", () => {
+    const current = createSession(runtime, "seo_a", "reality");
+    const legacy = structuredClone(current) as unknown as Record<string, unknown>;
+    legacy.version = 4;
+    legacy.mode = "reality";
+    delete legacy.gameModeId;
+    delete legacy.continuityId;
+    delete legacy.viewLayer;
+    const original = structuredClone(legacy);
+    const migrated = normalizeSaveSlot({ schema_version: 4, savedAt: 456, session: legacy }, runtime);
+    expect(legacy).toEqual(original);
+    expect(migrated?.session).toMatchObject({
+      version: 5,
+      gameModeId: "truth_view",
+      campaignId: "main",
+      continuityId: "main",
+      viewLayer: "reality",
+    });
+    expect(migrated?.preview).toMatchObject({
+      gameModeId: "truth_view",
+      campaignId: "main",
+      continuityId: "main",
+      viewLayer: "reality",
+    });
+  });
+
+  it("keeps pre-v4 saves compatible by assigning the only historical main campaign", () => {
+    const current = sessionAtTranslatedScene();
+    const legacy = structuredClone(current) as unknown as Record<string, unknown>;
+    legacy.version = 3;
+    legacy.mode = "perceived";
+    delete legacy.gameModeId;
+    delete legacy.campaignId;
+    delete legacy.continuityId;
+    delete legacy.viewLayer;
+    const migrated = normalizeSaveSlot({ schema_version: 3, savedAt: 455, session: legacy }, runtime);
+    expect(migrated?.session).toMatchObject({
+      version: 5,
+      gameModeId: "base",
+      campaignId: "main",
+      continuityId: "main",
+      viewLayer: "perceived",
+    });
+  });
+
+  it("rejects incompatible current and future saves instead of choosing a campaign fallback", () => {
+    const current = sessionAtTranslatedScene();
+    const missingCampaign = structuredClone(current) as unknown as Record<string, unknown>;
+    delete missingCampaign.campaignId;
+    expect(normalizeSaveSlot({ schema_version: 5, savedAt: 1, session: missingCampaign }, runtime)).toBeUndefined();
+
+    const unknownCampaign = structuredClone(current);
+    unknownCampaign.campaignId = "missing";
+    expect(normalizeSaveSlot({ schema_version: 5, savedAt: 2, session: unknownCampaign }, runtime)).toBeUndefined();
+    expect(normalizeSaveSlot({ schema_version: 6, savedAt: 3, session: current }, runtime)).toBeUndefined();
+
+    const incompleteV4 = structuredClone(current) as unknown as Record<string, unknown>;
+    incompleteV4.version = 4;
+    incompleteV4.mode = "perceived";
+    delete incompleteV4.gameModeId;
+    delete incompleteV4.campaignId;
+    delete incompleteV4.continuityId;
+    delete incompleteV4.viewLayer;
+    expect(normalizeSaveSlot({ schema_version: 4, savedAt: 4, session: incompleteV4 }, runtime)).toBeUndefined();
+  });
+
+  it("derives v5 preview identity from the normalized session", () => {
+    const current = sessionAtTranslatedScene();
+    const migrated = normalizeSaveSlot({
+      ...sessionSlot(current),
+      preview: {
+        ...sessionSlot(current).preview,
+        gameModeId: "truth_view",
+        viewLayer: "reality",
+      },
+    }, runtime);
+    expect(migrated?.preview).toMatchObject({ gameModeId: "base", viewLayer: "perceived" });
   });
 });
