@@ -82,3 +82,11 @@
 - Every choice node has a neutral `stimulus` summary. Player-facing prompts and labels describe concrete words, actions, or nuanced interpretations; they never reveal `push`, `pull`, `밀기`, `당기기`, or `밀당`. Direction and numeric effects are Debug Mode only.
 - Keep the push-pull bar high-contrast above the lower-right dialogue area, use the shared wider optimal range, and do not display “적정 범위 안” copy.
 - Put spacing, typography, radii, control sizes, and nameplate/button alignment in the central player design tokens instead of one-off component values.
+
+## Player-facing UX writing
+
+- Keep system phases inside the visual-novel dialogue flow whenever the player can understand them through situation, dialogue, choices, and immediate feedback. Do not replace an ordinary story moment with a separate dashboard or explanatory card page.
+- Rich scene dialogue is welcome, but permanent UI copy must be minimal. Add headings, subtitles, descriptions, badges, and help text only when the player cannot make the current decision without them.
+- Do not explain authorial intent, thematic meaning, future callbacks, or why a system matters in player-facing copy. Let later dialogue and changed choices reveal the relationship.
+- When a choice needs numeric context, show the compact current state at the decision point and keep option text to the concrete action plus concise mechanical deltas.
+- Night activity begins with Han Do-yoon arriving home and speaking to himself in the ordinary dialogue presentation. After the line, offer exactly `workout`, `reading`, `ott`, and `sleep`; high fatigue replaces the choice with the forced `solo_drinking` beat.

@@ -20,6 +20,7 @@ import { selfDevelopmentSystem } from "../selfDevelopment";
 import {
   nightPhaseCoordinator,
   type NightPhaseActivityResult,
+  type NightPhaseIntro,
   type NightPhaseSelection,
 } from "./nightPhase";
 import {
@@ -80,7 +81,7 @@ export type PlayerSession = {
   timelineLog: TimelineLogEntry[];
   currentEventId?: string;
   preparedTimeKey?: string;
-  nightPhase?: NightPhaseSelection | NightPhaseActivityResult;
+  nightPhase?: NightPhaseIntro | NightPhaseSelection | NightPhaseActivityResult;
   lastFeedback?: PushPullResult;
   lastEntryDecision?: {
     sceneId: string;
@@ -664,6 +665,13 @@ export function selectSelfDevelopmentActivity(
   const session = normalizePlayerSession(clone(value), runtime);
   if (session.phase !== "self_development" || session.nightPhase?.status !== "selecting") return session;
   session.nightPhase = nightPhaseCoordinator(runtime).choose(session.state, activityId);
+  return session;
+}
+
+export function beginSelfDevelopmentNight(runtime: Runtime, value: PlayerSession): PlayerSession {
+  const session = normalizePlayerSession(clone(value), runtime);
+  if (session.phase !== "self_development" || session.nightPhase?.status !== "intro") return session;
+  session.nightPhase = nightPhaseCoordinator(runtime).continueIntro(session.state, session.nightPhase);
   return session;
 }
 

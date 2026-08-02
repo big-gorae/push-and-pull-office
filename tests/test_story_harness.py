@@ -218,25 +218,27 @@ class StoryHarnessTests(unittest.TestCase):
             node["reality"] = original_reality
             scene["state_contract"]["reads"].remove("derived.characters.yoon_seo_a.emotion")
 
-    def test_self_development_variant_uses_expression_requirement(self):
+    def test_self_development_profile_unlocks_expression_without_overnight_body_notice(self):
         node = next(
             item for item in self.project.scenes["seo_a.email_request"]["nodes"]
             if item["id"] == "appearance_observation"
         )
         base_state = self.project.initial_state()
         self.assertEqual("default", resolve_dialogue_variant(self.project, base_state, node)[0])
+        self.assertNotIn("variants", node)
+        self.assertNotIn("살이", node["reality"]["line"])
         self.assertFalse(
-            self_development_expression_matches(self.project, base_state, "stamina.change_notice")
+            self_development_expression_matches(self.project, base_state, "health.workout_answer")
         )
 
         maximum_state = maximum_self_development_state(self.project, base_state)
         self.assertTrue(
-            self_development_expression_matches(self.project, maximum_state, "stamina.change_notice")
+            self_development_expression_matches(self.project, maximum_state, "health.workout_answer")
         )
-        self.assertEqual("noticed_change", resolve_dialogue_variant(self.project, maximum_state, node)[0])
+        self.assertEqual("default", resolve_dialogue_variant(self.project, maximum_state, node)[0])
 
     def test_self_development_registry_validates_requirements_and_score_bonus(self):
-        expression = self.project.manifest["self_development"]["expressions"]["stamina.workout_answer"]
+        expression = self.project.manifest["self_development"]["expressions"]["health.workout_answer"]
         original = copy.deepcopy(expression)
         try:
             expression["requires"] = {"stat": "unknown", "fatigue_lte": 7}
@@ -276,7 +278,7 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertTrue(
             self_development_expression_matches(self.project, state, "feedback.last_workout")
         )
-        set_path(state, "progress.self_development.last_activity", "grooming")
+        set_path(state, "progress.self_development.last_activity", "reading")
         self.assertFalse(
             self_development_expression_matches(self.project, state, "feedback.last_workout")
         )
@@ -284,10 +286,10 @@ class StoryHarnessTests(unittest.TestCase):
     def test_week_one_daily_callbacks_recover_each_previous_night_activity_without_bonus(self):
         activity_variants = {
             "workout": "after_workout",
-            "grooming": "after_grooming",
+            "reading": "after_reading",
             "ott": "after_ott",
-            "reels": "after_reels",
             "sleep": "after_sleep",
+            "solo_drinking": "after_solo_drinking",
         }
         callback_nodes = (
             ("common.day_02_practical_meeting", "day_one_activity_reaction"),
@@ -375,11 +377,11 @@ class StoryHarnessTests(unittest.TestCase):
             issues,
             "test",
             [{
-                "path": "visible.protagonist.self_development.stats.stamina",
+                "path": "visible.protagonist.self_development.stats.health",
                 "op": "gte",
                 "value": 2,
             }],
-            {"visible.protagonist.self_development.stats.stamina"},
+            {"visible.protagonist.self_development.stats.health"},
         )
         self.assertTrue(any("forbidden in general conditions" in issue.message for issue in issues))
 
@@ -516,11 +518,12 @@ class StoryHarnessTests(unittest.TestCase):
 
     def test_self_development_metadata_rejects_unknown_expression(self):
         scene = self.project.scenes["seo_a.email_request"]
-        node = next(item for item in scene["nodes"] if item["id"] == "appearance_observation")
-        use = node["variants"][0]["self_development"]
+        node = next(item for item in scene["nodes"] if item["id"] == "interpret")
+        option = next(item for item in node["options"] if item["id"] == "mention_workout_and_step_back")
+        use = option["self_development"]
         original = use["expression"]
         try:
-            use["expression"] = "stamina.unknown"
+            use["expression"] = "health.unknown"
             issues = []
             self.project._validate_scenes(issues)
             self.assertTrue(any("unknown self-development expression" in issue.message for issue in issues))
@@ -536,7 +539,7 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual(
             {
                 "appeal": 30,
-                "stats": {"stamina": 0, "appearance": 0, "humor": 0, "taste": 0},
+                "stats": {"health": 0, "appearance": 0, "humor": 0, "intelligence": 0},
                 "fatigue": 1,
             },
             service.profile(state),
@@ -548,7 +551,7 @@ class StoryHarnessTests(unittest.TestCase):
 
         state["visible"]["protagonist"]["self_development"] = {
             "appeal": 500,
-            "stats": {"stamina": -2, "appearance": 9, "humor": 2.9, "taste": float("nan")},
+            "stats": {"stamina": 3, "health": -2, "appearance": 9, "humor": 2.9, "intelligence": float("nan")},
             "fatigue": float("inf"),
         }
         state["progress"]["self_development"] = {
@@ -560,7 +563,7 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual(
             {
                 "appeal": 100,
-                "stats": {"stamina": 0, "appearance": 5, "humor": 2, "taste": 0},
+                "stats": {"health": 0, "appearance": 5, "humor": 2, "intelligence": 0},
                 "fatigue": 1,
             },
             service.profile(state),
@@ -577,9 +580,11 @@ class StoryHarnessTests(unittest.TestCase):
         service = SelfDevelopmentService(self.project)
         coordinator = NightPhaseCoordinator(service)
 
-        selecting = coordinator.start(state)
+        intro = coordinator.start(state)
+        self.assertEqual("intro", intro["status"])
+        selecting = coordinator.continue_intro(state, intro)
         self.assertEqual("selecting", selecting["status"])
-        self.assertEqual(5, len(selecting["options"]))
+        self.assertEqual(4, len(selecting["options"]))
         self.assertTrue(all(option["available"] for option in selecting["options"]))
         with self.assertRaises(NightPhaseError) as unfinished:
             coordinator.finish(state)
@@ -589,17 +594,17 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual("result", selected["status"])
         self.assertEqual(3, selected["result"]["appeal_delta"])
         self.assertEqual(2, selected["result"]["fatigue_delta"])
-        self.assertEqual({"stamina": 2, "appearance": 1}, selected["result"]["stat_deltas"])
+        self.assertEqual({"health": 2, "appearance": 1}, selected["result"]["stat_deltas"])
         self.assertEqual(
             {
                 "appeal": 33,
-                "stats": {"stamina": 2, "appearance": 1, "humor": 0, "taste": 0},
+                "stats": {"health": 2, "appearance": 1, "humor": 0, "intelligence": 0},
                 "fatigue": 3,
             },
             selected["profile"],
         )
         self.assertTrue(
-            self_development_expression_matches(self.project, state, "stamina.workout_answer")
+            self_development_expression_matches(self.project, state, "health.workout_answer")
         )
 
         finished = coordinator.finish(state)
@@ -631,12 +636,18 @@ class StoryHarnessTests(unittest.TestCase):
         set_path(state, "visible.protagonist.self_development.fatigue", 5)
         options = {item["activity"]["id"]: item for item in service.activity_options(state)}
         self.assertEqual("fatigue_limit", options["workout"]["reason"])
-        self.assertTrue(options["grooming"]["available"])
+        self.assertTrue(options["reading"]["available"])
         self.assertTrue(options["sleep"]["available"])
 
         service.activities["workout"]["fatigue_lte"] = 5
         overflow = {item["activity"]["id"]: item for item in service.activity_options(state)}
         self.assertEqual("fatigue_overflow", overflow["workout"]["reason"])
+
+        intro = NightPhaseCoordinator(service).start(state)
+        self.assertEqual("solo_drinking", intro["forced_activity_id"])
+        forced = NightPhaseCoordinator(service).continue_intro(state, intro)
+        self.assertEqual("solo_drinking", forced["result"]["activity"])
+        self.assertEqual(-2, forced["result"]["fatigue_delta"])
 
     def test_self_development_result_reports_actual_clamped_deltas(self):
         service = SelfDevelopmentService(self.project)
@@ -644,12 +655,12 @@ class StoryHarnessTests(unittest.TestCase):
         set_path(state, "progress.time.slot", "after_work")
         set_path(state, "visible.protagonist.self_development.appeal", 99)
         set_path(state, "visible.protagonist.self_development.fatigue", 4)
-        set_path(state, "visible.protagonist.self_development.stats.stamina", 4)
+        set_path(state, "visible.protagonist.self_development.stats.health", 4)
         set_path(state, "visible.protagonist.self_development.stats.appearance", 5)
         result = service.perform_activity(state, "workout", 1)
         self.assertEqual(1, result["appeal_delta"])
         self.assertEqual(2, result["fatigue_delta"])
-        self.assertEqual({"stamina": 1, "appearance": 0}, result["stat_deltas"])
+        self.assertEqual({"health": 1, "appearance": 0}, result["stat_deltas"])
         self.assertEqual(100, result["after"]["appeal"])
         self.assertEqual(6, result["after"]["fatigue"])
 
@@ -1404,7 +1415,7 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual("appearance_observation", scene["node_order"][0])
         self.assertIn("source_sha256", bundle)
         self.assertEqual(16, bundle["self_development"]["max_night_day"])
-        self.assertIn("stamina.workout_answer", bundle["self_development"]["expressions"])
+        self.assertIn("health.workout_answer", bundle["self_development"]["expressions"])
 
         preferences = bundle["characters"]["cha_min_kyung"]["interaction_preferences"]
         self.assertEqual("factual_clarification", preferences["support_order"][0])
@@ -1704,8 +1715,8 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual({"han_do_yoon", "yoon_seo_a"}, set(context["cast"]))
         self.assertNotIn("cha_min_kyung", context["cast"])
         first_node = context["scene"]["nodes"][0]
-        self.assertIn("perceived", first_node["variants"][0])
-        self.assertIn("reality", first_node["variants"][0])
+        self.assertIn("perceived", first_node)
+        self.assertIn("reality", first_node)
         self.assertIn("authoring_rules", context)
         self.assertIn("literal_respect", context["allowed_system"]["support_styles"])
         self.assertEqual(

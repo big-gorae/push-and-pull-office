@@ -177,7 +177,7 @@ progress.flags.push_pull.last_action  → 최근 이동 방향
 progress.flags.push_pull.heroine      → 현재 흐름의 대상 인물
 
 visible.protagonist.self_development.appeal           → 밤 화면의 매력도
-visible.protagonist.self_development.stats.<stat>      → 체력 | 외모 | 유머 | 취향
+visible.protagonist.self_development.stats.<stat>      → 건강 | 외모 | 유머 | 지성
 visible.protagonist.self_development.fatigue           → 피로도
 progress.self_development.completed_days               → 밤 활동을 마친 날짜
 progress.self_development.activity_history             → 선택한 활동 ID 기록

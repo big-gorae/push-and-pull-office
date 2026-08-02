@@ -38,10 +38,10 @@ class StoryTemplateIntegrationTests(unittest.TestCase):
         self.assertEqual(
             [
                 "after_workout",
-                "after_grooming",
+                "after_reading",
                 "after_ott",
-                "after_reels",
                 "after_sleep",
+                "after_solo_drinking",
                 "default",
             ],
             [variant["id"] for variant in compiled_node["variants"]],
@@ -62,7 +62,7 @@ class StoryTemplateIntegrationTests(unittest.TestCase):
         self.assertEqual("after_workout", variant_id)
         self.assertEqual(
             "오늘도 잘 부탁합니다. 요즘 운동을 다시 시작했습니다. "
-            "앉아 있는 시간이 길어서 체력부터 챙기려고요. 그럼 참석자표부터 볼까요?",
+            "앉아 있는 시간이 길어서 건강부터 챙기려고요. 그럼 참석자표부터 볼까요?",
             resolved["reality"]["line"],
         )
         self.assertEqual("self_promotion", resolved["reality"]["intent"])
@@ -83,7 +83,7 @@ class StoryTemplateIntegrationTests(unittest.TestCase):
         )
         self.assertEqual(
             "오늘도 잘 부탁합니다. 요즘 운동을 다시 시작했습니다. "
-            "앉아 있는 시간이 길어서 체력부터 챙기려고요. 그럼 참석자표부터 볼까요?",
+            "앉아 있는 시간이 길어서 건강부터 챙기려고요. 그럼 참석자표부터 볼까요?",
             entries[key]["source"],
         )
 

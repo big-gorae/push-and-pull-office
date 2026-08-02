@@ -54,8 +54,8 @@ VALID_SUPPORT_STYLES = {
 }
 SELF_DEVELOPMENT_STATE_PREFIX = "visible.protagonist.self_development"
 SELF_DEVELOPMENT_PROGRESS_PREFIX = "progress.self_development"
-SELF_DEVELOPMENT_STAT_ORDER = ("stamina", "appearance", "humor", "taste")
-SELF_DEVELOPMENT_STATS = {"stamina", "appearance", "humor", "taste"}
+SELF_DEVELOPMENT_STAT_ORDER = ("health", "appearance", "humor", "intelligence")
+SELF_DEVELOPMENT_STATS = {"health", "appearance", "humor", "intelligence"}
 SELF_DEVELOPMENT_MAX_SCORE_BONUS = 3
 SELF_DEVELOPMENT_BOUNDS = {
     f"{SELF_DEVELOPMENT_STATE_PREFIX}.appeal": (0, 100),
@@ -505,6 +505,9 @@ class StoryProject:
                 for key in ("title_key", "description_key", "reflection_keys", "appeal_delta", "fatigue_delta", "stat_deltas"):
                     if key not in activity:
                         self._error(issues, activity_location, f"required key is missing: {key}")
+                selectable = activity.get("selectable", True)
+                if not isinstance(selectable, bool):
+                    self._error(issues, activity_location, "selectable must be a boolean")
                 reflection_keys = activity.get("reflection_keys")
                 if not isinstance(reflection_keys, dict) or not all(
                     isinstance(reflection_keys.get(mode), str) and reflection_keys.get(mode)
@@ -520,6 +523,11 @@ class StoryProject:
                     not isinstance(fatigue_lte, int) or isinstance(fatigue_lte, bool) or not 0 <= fatigue_lte <= 6
                 ):
                     self._error(issues, activity_location, "fatigue_lte must be an integer from 0 to 6")
+                fatigue_gte = activity.get("fatigue_gte")
+                if fatigue_gte is not None and (
+                    not isinstance(fatigue_gte, int) or isinstance(fatigue_gte, bool) or not 0 <= fatigue_gte <= 6
+                ):
+                    self._error(issues, activity_location, "fatigue_gte must be an integer from 0 to 6")
                 stat_deltas = activity.get("stat_deltas")
                 if not isinstance(stat_deltas, dict):
                     self._error(issues, activity_location, "stat_deltas must be a mapping")
@@ -529,6 +537,27 @@ class StoryProject:
                             self._error(issues, activity_location, f"unknown self-development stat: {stat}")
                         if not isinstance(delta, int) or isinstance(delta, bool):
                             self._error(issues, activity_location, f"stat delta must be an integer: {stat}")
+
+            selectable_ids = {
+                activity.get("id") for activity in activities
+                if isinstance(activity, Mapping) and activity.get("selectable", True) is not False
+            }
+            if selectable_ids != {"workout", "reading", "ott", "sleep"}:
+                self._error(
+                    issues,
+                    location,
+                    "selectable night activities must be exactly workout, reading, ott, and sleep",
+                )
+            forced = [
+                activity for activity in activities
+                if isinstance(activity, Mapping) and activity.get("selectable") is False
+            ]
+            if len(forced) != 1 or forced[0].get("id") != "solo_drinking" or forced[0].get("fatigue_gte") != 5:
+                self._error(
+                    issues,
+                    location,
+                    "high fatigue must force solo_drinking at fatigue 5 or above",
+                )
 
         expressions = config.get("expressions")
         if not isinstance(expressions, dict) or not expressions:
@@ -3533,6 +3562,8 @@ class SelfDevelopmentService:
         _, fatigue_max = self._stat_bounds(f"{SELF_DEVELOPMENT_STATE_PREFIX}.fatigue", 0, 6)
         result = []
         for activity in self.activities.values():
+            if activity.get("selectable", True) is False:
+                continue
             reason = None
             if slot != "after_work":
                 reason = "not_after_work"
@@ -3548,6 +3579,13 @@ class SelfDevelopmentService:
                     or profile["fatigue"] > fatigue_lte
                 ):
                     reason = "fatigue_limit"
+                fatigue_gte = activity.get("fatigue_gte")
+                if reason is None and fatigue_gte is not None and (
+                    not isinstance(fatigue_gte, int)
+                    or isinstance(fatigue_gte, bool)
+                    or profile["fatigue"] < fatigue_gte
+                ):
+                    reason = "fatigue_minimum"
                 fatigue_delta = activity.get("fatigue_delta", 0)
                 if reason is None and isinstance(fatigue_delta, int) and fatigue_delta > 0:
                     if profile["fatigue"] + fatigue_delta > fatigue_max:
@@ -3558,6 +3596,23 @@ class SelfDevelopmentService:
                 **({"reason": reason} if reason else {}),
             })
         return result
+
+    def forced_activity(self, state: MutableMapping[str, Any]) -> Optional[Dict[str, Any]]:
+        self.hydrate(state)
+        profile = self.profile(state)
+        for activity in self.activities.values():
+            if activity.get("selectable", True) is not False:
+                continue
+            fatigue_gte = activity.get("fatigue_gte")
+            fatigue_lte = activity.get("fatigue_lte")
+            if not isinstance(fatigue_gte, int) or isinstance(fatigue_gte, bool):
+                continue
+            if profile["fatigue"] < fatigue_gte:
+                continue
+            if isinstance(fatigue_lte, int) and not isinstance(fatigue_lte, bool) and profile["fatigue"] > fatigue_lte:
+                continue
+            return copy.deepcopy(activity)
+        return None
 
     def perform_activity(
         self,
@@ -3577,12 +3632,22 @@ class SelfDevelopmentService:
         activity = self.activities.get(activity_id)
         if activity is None:
             raise SelfDevelopmentError("unknown_activity", f"unknown self-development activity: {activity_id}")
+        progress = self.progress(state)
+        slot = get_path(state, "progress.time.slot", None)
         option = next(
             (item for item in self.activity_options(state) if item["activity"]["id"] == activity_id),
             None,
         )
-        if not option or not option["available"]:
-            code = option.get("reason", "outside_night_window") if option else "outside_night_window"
+        forced = self.forced_activity(state)
+        if slot != "after_work":
+            code = "not_after_work"
+        elif day in progress["completed_days"]:
+            code = "already_completed"
+        elif activity.get("selectable", True) is False:
+            code = None if forced and forced.get("id") == activity_id else "fatigue_minimum"
+        else:
+            code = None if option and option["available"] else option.get("reason", "outside_night_window") if option else "outside_night_window"
+        if code:
             raise SelfDevelopmentError(
                 code,
                 f"self-development activity {activity_id} is unavailable: {code}",
@@ -3658,12 +3723,33 @@ class NightPhaseCoordinator:
             and not isinstance(day, bool)
             and 1 <= day <= self.service.max_night_day
             and day not in progress["completed_days"]
-            and any(option["available"] for option in self.service.activity_options(state))
+            and (
+                self.service.forced_activity(state) is not None
+                or any(option["available"] for option in self.service.activity_options(state))
+            )
         )
 
     def start(self, state: MutableMapping[str, Any]) -> Dict[str, Any]:
         if not self.should_start(state):
             raise NightPhaseError("not_available", "night phase is unavailable in the current state")
+        forced = self.service.forced_activity(state)
+        return {
+            "status": "intro",
+            "day": get_path(state, "progress.time.day", None),
+            "profile": self.service.profile(state),
+            **({"forced_activity_id": forced["id"]} if forced else {}),
+        }
+
+    def continue_intro(
+        self,
+        state: MutableMapping[str, Any],
+        phase: Mapping[str, Any],
+    ) -> Dict[str, Any]:
+        if not self.should_start(state) or phase.get("day") != get_path(state, "progress.time.day", None):
+            raise NightPhaseError("not_available", "night phase is unavailable in the current state")
+        forced = self.service.forced_activity(state)
+        if phase.get("forced_activity_id") and forced and phase["forced_activity_id"] == forced["id"]:
+            return self._choose_forced(state, forced["id"])
         return {
             "status": "selecting",
             "day": get_path(state, "progress.time.day", None),
@@ -3674,6 +3760,22 @@ class NightPhaseCoordinator:
     def choose(self, state: MutableMapping[str, Any], activity_id: str) -> Dict[str, Any]:
         if not self.should_start(state):
             raise NightPhaseError("not_available", "night phase is unavailable in the current state")
+        day = get_path(state, "progress.time.day", None)
+        option = next(
+            (item for item in self.service.activity_options(state) if item["activity"]["id"] == activity_id),
+            None,
+        )
+        if not option or not option["available"]:
+            raise NightPhaseError("not_available", "selected night activity is unavailable")
+        result = self.service.perform_activity(state, activity_id, day)
+        return {
+            "status": "result",
+            "day": day,
+            "profile": copy.deepcopy(result["after"]),
+            "result": result,
+        }
+
+    def _choose_forced(self, state: MutableMapping[str, Any], activity_id: str) -> Dict[str, Any]:
         day = get_path(state, "progress.time.day", None)
         result = self.service.perform_activity(state, activity_id, day)
         return {
@@ -4762,11 +4864,21 @@ def command_night(project: StoryProject, args: argparse.Namespace) -> int:
     profile_before = service.profile(state)
     options = service.activity_options(state)
     available_before = coordinator.should_start(state)
-    status = "selecting" if available_before else "unavailable"
+    status = "intro" if available_before else "unavailable"
     result = None
     finished = None
+    phase = None
 
-    if args.activity:
+    if available_before:
+        intro = coordinator.start(state)
+        phase = coordinator.continue_intro(state, intro)
+        status = phase["status"]
+        if status == "result":
+            result = phase["result"]
+            finished = coordinator.finish(state)
+            status = finished["status"]
+
+    if args.activity and status == "selecting":
         if not available_before:
             raise NightPhaseError(
                 "not_available",

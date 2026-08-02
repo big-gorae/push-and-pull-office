@@ -53,7 +53,7 @@ export type Layer = {
   intent?: string;
 };
 
-export type SelfDevelopmentStat = "stamina" | "appearance" | "humor" | "taste";
+export type SelfDevelopmentStat = "health" | "appearance" | "humor" | "intelligence";
 
 export type SelfDevelopmentRequirement = {
   appeal_gte?: number;
@@ -83,10 +83,12 @@ export type SelfDevelopmentActivity = {
   title_key: string;
   description_key: string;
   reflection_keys: Record<ViewMode, string>;
+  selectable?: boolean;
   appeal_delta: number;
   fatigue_delta: number;
   stat_deltas: Partial<Record<SelfDevelopmentStat, number>>;
   fatigue_lte?: number;
+  fatigue_gte?: number;
 };
 
 export type SelfDevelopmentConfig = {
