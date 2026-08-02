@@ -308,7 +308,7 @@ function TitleScreen({
   return <main className="vn-title">
     <img
       className="vn-title-key-art"
-      src="/og.png"
+      src={`${import.meta.env.BASE_URL}og.png`}
       alt=""
       aria-hidden="true"
     />
