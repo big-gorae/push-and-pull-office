@@ -558,11 +558,16 @@ def sequence_item(sequence: Any, item_id: str, field_name: str) -> MutableMappin
     raise RuntimeError(f"FIELD_NOT_EDITABLE: unknown {field_name} id: {item_id}")
 
 
-def resolve_yaml_text_field(document: MutableMapping[str, Any], field_path: str) -> tuple[MutableMapping[str, Any], str]:
+def resolve_yaml_text_field(
+    document: MutableMapping[str, Any],
+    field_path: str,
+    *,
+    allow_missing_string: bool = False,
+) -> tuple[MutableMapping[str, Any], str]:
     if field_path.startswith("strings."):
         strings = document.get("strings")
         key = field_path.removeprefix("strings.")
-        if not isinstance(strings, MutableMapping) or key not in strings:
+        if not isinstance(strings, MutableMapping) or (key not in strings and not allow_missing_string):
             raise RuntimeError(f"FIELD_NOT_EDITABLE: unknown UI string: {key}")
         return strings, key
 
@@ -589,21 +594,44 @@ def resolve_yaml_text_field(document: MutableMapping[str, Any], field_path: str)
     return current, parts[-1]
 
 
-def yaml_source_locator(target: Path, field_path: str) -> Dict[str, Any]:
+def yaml_source_locator(target: Path, field_path: str, *, allow_missing_string: bool = False) -> Dict[str, Any]:
     with target.open("r", encoding="utf-8") as handle:
         document = YAML_RT.load(handle)
     if not isinstance(document, MutableMapping):
         raise RuntimeError(f"FIELD_NOT_EDITABLE: YAML root is not a mapping: {target}")
-    parent, field = resolve_yaml_text_field(document, field_path)
+    parent, field = resolve_yaml_text_field(
+        document,
+        field_path,
+        allow_missing_string=allow_missing_string,
+    )
     line = None
     column = None
     try:
-        position = parent.lc.key(field)
+        position = parent.lc.key(field) if field in parent else document.lc.key("strings")
         if position is not None:
             line, column = position[0] + 1, position[1] + 1
     except (AttributeError, KeyError, TypeError):
         pass
     return {"fieldPath": field_path, "line": line, "column": column}
+
+
+def editable_source_descriptor(root: Path, target: Path, field_path: str, label: str) -> Dict[str, Any]:
+    with target.open("r", encoding="utf-8") as handle:
+        document = YAML_RT.load(handle)
+    if not isinstance(document, MutableMapping):
+        raise RuntimeError(f"FIELD_NOT_EDITABLE: YAML root is not a mapping: {target}")
+    parent, field = resolve_yaml_text_field(document, field_path)
+    current_value = str(parent[field])
+    return {
+        "label": label,
+        "relativePath": str(target.relative_to(root)),
+        **yaml_source_locator(target, field_path),
+        "editable": True,
+        "currentValue": current_value,
+        "currentValueHash": value_hash(current_value),
+        "revision": revision(target),
+        "placeholders": text_placeholders(current_value),
+    }
 
 
 def raw_scene_node(project: StoryProject, scene_id: str, node_id: str) -> Mapping[str, Any] | None:
@@ -628,38 +656,84 @@ def composed_template_owner(
     slots = sorted(set(re.findall(r"\{\{([a-z][a-z0-9_]*)\}\}", template_line or "")))
     scene_target = Path(project.scenes[scene_id]["_source"]).resolve()
     scene_field = f"nodes.{node_id}.self_development_template.{layer}.line"
-    sources = [{
-        "label": "장면 공통 문장",
-        "relativePath": str(scene_target.relative_to(root)),
-        **yaml_source_locator(scene_target, scene_field),
-    }]
+    sources = [editable_source_descriptor(root, scene_target, scene_field, "장면 공통 문장")]
     manifest_target = project.manifest_path.resolve()
     topic_slots = project.manifest.get("self_development", {}).get("conversation_topics", {}).get(activity_id, {}).get("slots", {})
     for slot in slots:
         if slot not in topic_slots:
             continue
         manifest_field = f"self_development.conversation_topics.{activity_id}.slots.{slot}"
-        sources.append({
-            "label": f"{activity_id} · {slot}",
-            "relativePath": str(manifest_target.relative_to(root)),
-            **yaml_source_locator(manifest_target, manifest_field),
-        })
+        sources.append(editable_source_descriptor(
+            root,
+            manifest_target,
+            manifest_field,
+            f"{activity_id} · {slot}",
+        ))
     return {
         "key": entry["key"],
         "kind": "composed_template",
         "editable": False,
         "reason": "MULTIPLE_SOURCE_OWNERS",
+        "locale": project.manifest.get("project", {}).get("default_language", "ko"),
         "currentValue": entry["source"],
         "sources": sources,
     }
 
 
-def story_text_owner(root: Path, localization_key: str) -> Dict[str, Any]:
+def story_text_owner(root: Path, localization_key: str, locale: str | None = None) -> Dict[str, Any]:
     root = root.resolve()
     project = StoryProject(root / "story")
     entry = collect_localizable_entries(project).get(localization_key)
     if entry is None:
         raise RuntimeError(f"UNKNOWN_STORY_TEXT: {localization_key}")
+    project_settings = project.manifest.get("project", {})
+    default_locale = project_settings.get("default_language", "ko")
+    supported_locales = project_settings.get("supported_languages", [default_locale])
+    selected_locale = locale or default_locale
+    if selected_locale not in supported_locales:
+        raise RuntimeError(f"UNKNOWN_LOCALE: {selected_locale}")
+
+    if selected_locale != default_locale:
+        locale_document = project.locales.get(selected_locale)
+        if not locale_document:
+            raise RuntimeError(f"UNKNOWN_LOCALE: {selected_locale}")
+        strings = locale_document.get("strings", {})
+        if not isinstance(strings, Mapping):
+            raise RuntimeError(f"FIELD_NOT_EDITABLE: locale strings are invalid: {selected_locale}")
+        target = Path(locale_document["_source"]).resolve()
+        field_path = f"strings.{localization_key}"
+        translation_exists = localization_key in strings
+        current_value = str(strings.get(localization_key, entry["source"]))
+        source = {
+            "label": f"{selected_locale} 번역 YAML",
+            "relativePath": str(target.relative_to(root)),
+            **yaml_source_locator(target, field_path, allow_missing_string=True),
+            "editable": True,
+            "currentValue": current_value,
+            "currentValueHash": value_hash(current_value),
+            "revision": revision(target),
+            "placeholders": entry.get("placeholders", []),
+        }
+        return {
+            "key": localization_key,
+            "kind": "direct_yaml",
+            "documentKind": "locale",
+            "documentId": selected_locale,
+            "locale": selected_locale,
+            "isTranslation": True,
+            "translationExists": translation_exists,
+            "sourceValue": entry["source"],
+            "relativePath": str(target.relative_to(root)),
+            "fieldPath": field_path,
+            "revision": revision(target),
+            "currentValue": current_value,
+            "currentValueHash": value_hash(current_value),
+            "editable": True,
+            "sources": [source],
+            "maxLength": entry.get("maxLength"),
+            "placeholders": entry.get("placeholders", []),
+        }
+
     document = entry["sourceDocument"]
     kind = str(document.get("kind"))
     field_path = str(document.get("fieldPath"))
@@ -684,6 +758,7 @@ def story_text_owner(root: Path, localization_key: str) -> Dict[str, Any]:
             "kind": "generated",
             "editable": False,
             "reason": "FIELD_NOT_EDITABLE",
+            "locale": selected_locale,
             "currentValue": entry["source"],
             "sources": [source],
         }
@@ -699,6 +774,9 @@ def story_text_owner(root: Path, localization_key: str) -> Dict[str, Any]:
         "kind": "direct_yaml",
         "documentKind": kind,
         "documentId": document.get("id"),
+        "locale": selected_locale,
+        "isTranslation": False,
+        "translationExists": True,
         "relativePath": str(target.relative_to(root)),
         "fieldPath": field_path,
         "revision": revision(target),
@@ -717,62 +795,138 @@ def save_story_text(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
     edits = raw_edits if isinstance(raw_edits, Sequence) and not isinstance(raw_edits, (str, bytes)) else [payload]
     if not edits:
         raise RuntimeError("story text payload has no edits")
-    prepared: List[tuple[Dict[str, Any], str]] = []
-    seen_keys: set[str] = set()
+    prepared: List[Dict[str, Any]] = []
+    seen_fields: set[tuple[str, str]] = set()
+    owner_requests: List[tuple[str, str | None]] = []
     for edit in edits:
         if not isinstance(edit, Mapping):
             raise RuntimeError("story text payload is invalid")
         localization_key = edit.get("localization_key")
+        locale = edit.get("locale")
         expected_revision = edit.get("expected_revision")
         expected_value_hash = edit.get("expected_value_hash")
         next_value = edit.get("next_value")
-        if not all(isinstance(value, str) for value in (localization_key, expected_revision, expected_value_hash, next_value)):
+        delete = edit.get("delete") is True
+        if not all(isinstance(value, str) for value in (localization_key, expected_revision, expected_value_hash)):
             raise RuntimeError("story text payload is invalid")
-        if not next_value.strip():
+        if locale is not None and not isinstance(locale, str):
+            raise RuntimeError("story text payload has an invalid locale")
+        if not delete and (not isinstance(next_value, str) or not next_value.strip()):
             raise RuntimeError("VALIDATION_FAILED: text must not be empty")
-        if localization_key in seen_keys:
-            raise RuntimeError(f"VALIDATION_FAILED: duplicate text edit: {localization_key}")
-        seen_keys.add(localization_key)
-        owner = story_text_owner(root, localization_key)
-        if not owner.get("editable") or owner.get("kind") != "direct_yaml":
-            raise RuntimeError(f"{owner.get('reason', 'FIELD_NOT_EDITABLE')}: text has no single editable source")
-        if owner["revision"] != expected_revision:
+        owner = story_text_owner(root, localization_key, locale)
+        source_relative_path = edit.get("source_relative_path")
+        source_field_path = edit.get("source_field_path")
+        source_edit = source_relative_path is not None or source_field_path is not None
+        if source_edit:
+            if not isinstance(source_relative_path, str) or not isinstance(source_field_path, str):
+                raise RuntimeError("story text source edit is invalid")
+            source = next((candidate for candidate in owner.get("sources", [])
+                if candidate.get("relativePath") == source_relative_path
+                and candidate.get("fieldPath") == source_field_path), None)
+            if not source or not source.get("editable"):
+                raise RuntimeError("FIELD_NOT_EDITABLE: source is not owned by this story text")
+            relative_path = source_relative_path
+            field_path = source_field_path
+            current_value = source.get("currentValue")
+            current_revision = source.get("revision")
+            current_value_hash = source.get("currentValueHash")
+            placeholders = source.get("placeholders", [])
+            max_length = source.get("maxLength")
+            field_exists = True
+            if delete:
+                raise RuntimeError("FIELD_NOT_EDITABLE: source fields cannot be deleted")
+        else:
+            if not owner.get("editable") or owner.get("kind") != "direct_yaml":
+                raise RuntimeError(f"{owner.get('reason', 'FIELD_NOT_EDITABLE')}: text has no single editable source")
+            relative_path = owner["relativePath"]
+            field_path = owner["fieldPath"]
+            current_value = owner["currentValue"]
+            current_revision = owner["revision"]
+            current_value_hash = owner["currentValueHash"]
+            placeholders = owner.get("placeholders", [])
+            max_length = owner.get("maxLength")
+            field_exists = bool(owner.get("translationExists", True))
+            if delete and (owner.get("documentKind") != "locale" or not field_exists):
+                raise RuntimeError("FIELD_NOT_EDITABLE: only an existing translation may be removed")
+
+        if current_revision != expected_revision:
             raise RuntimeError("REVISION_CONFLICT: source file changed outside the game")
-        if owner["currentValueHash"] != expected_value_hash:
+        if current_value_hash != expected_value_hash:
             raise RuntimeError("VALUE_CONFLICT: source text changed outside the game")
-        if text_placeholders(next_value) != sorted(owner.get("placeholders", [])):
+        if not delete and text_placeholders(next_value) != sorted(placeholders):
             raise RuntimeError("VALIDATION_FAILED: placeholders must be preserved")
-        max_length = owner.get("maxLength")
-        if isinstance(max_length, int) and len(next_value) > max_length:
+        if not delete and isinstance(max_length, int) and len(next_value) > max_length:
             raise RuntimeError(f"VALIDATION_FAILED: text exceeds {max_length} characters")
-        prepared.append((owner, next_value))
-
-    relative_paths = {owner["relativePath"] for owner, _ in prepared}
-    if len(relative_paths) != 1:
-        raise RuntimeError("FIELD_NOT_EDITABLE: one save may update only one YAML document")
-    target = (root / prepared[0][0]["relativePath"]).resolve()
-
-    before = target.read_text(encoding="utf-8")
-    with target.open("r", encoding="utf-8") as handle:
-        document = YAML_RT.load(handle)
-    if not isinstance(document, MutableMapping):
-        raise RuntimeError("FIELD_NOT_EDITABLE: YAML root is not a mapping")
-    for owner, next_value in prepared:
-        parent, field = resolve_yaml_text_field(document, owner["fieldPath"])
-        current = parent[field]
-        parent[field] = type(current)(next_value) if isinstance(current, ScalarString) else next_value
+        identity = (relative_path, field_path)
+        if identity in seen_fields:
+            raise RuntimeError(f"VALIDATION_FAILED: duplicate text edit: {relative_path} · {field_path}")
+        seen_fields.add(identity)
+        prepared.append({
+            "localizationKey": localization_key,
+            "locale": locale,
+            "owner": owner,
+            "relativePath": relative_path,
+            "fieldPath": field_path,
+            "beforeValue": current_value,
+            "beforeExists": field_exists,
+            "nextValue": None if delete else next_value,
+            "delete": delete,
+            "allowMissingString": owner.get("documentKind") == "locale" and not field_exists,
+            "sourceEdit": source_edit,
+        })
+        request_identity = (localization_key, locale)
+        if request_identity not in owner_requests:
+            owner_requests.append(request_identity)
 
     from io import StringIO
 
-    buffer = StringIO()
-    YAML_RT.dump(document, buffer)
-    yaml_text = buffer.getvalue()
-    issues = validate_candidate(root, target.relative_to(root), yaml_text)
-    if any(issue["severity"] == "error" for issue in issues):
-        return {"saved": False, "errorCode": "VALIDATION_FAILED", "issues": issues, "owners": [owner for owner, _ in prepared]}
+    documents: Dict[str, MutableMapping[str, Any]] = {}
+    before_text: Dict[str, str] = {}
+    for relative_path in sorted({edit["relativePath"] for edit in prepared}):
+        target = (root / relative_path).resolve()
+        story_root = (root / "story").resolve()
+        if story_root not in target.parents or not target.is_file():
+            raise RuntimeError("FIELD_NOT_EDITABLE: source path escaped story root")
+        before_text[relative_path] = target.read_text(encoding="utf-8")
+        with target.open("r", encoding="utf-8") as handle:
+            document = YAML_RT.load(handle)
+        if not isinstance(document, MutableMapping):
+            raise RuntimeError("FIELD_NOT_EDITABLE: YAML root is not a mapping")
+        documents[relative_path] = document
 
-    atomic_write_text(target, yaml_text)
+    for edit in prepared:
+        document = documents[edit["relativePath"]]
+        parent, field = resolve_yaml_text_field(
+            document,
+            edit["fieldPath"],
+            allow_missing_string=edit["allowMissingString"],
+        )
+        if edit["delete"]:
+            del parent[field]
+            continue
+        current = parent.get(field)
+        next_value = edit["nextValue"]
+        parent[field] = type(current)(next_value) if isinstance(current, ScalarString) else next_value
+
+    candidates: Dict[Path, str] = {}
+    for relative_path, document in documents.items():
+        buffer = StringIO()
+        YAML_RT.dump(document, buffer)
+        candidates[Path(relative_path)] = buffer.getvalue()
+    issues = validate_candidates(root, candidates)
+    if any(issue["severity"] == "error" for issue in issues):
+        return {
+            "saved": False,
+            "errorCode": "VALIDATION_FAILED",
+            "issues": issues,
+            "owners": [story_text_owner(root, key, locale) for key, locale in owner_requests],
+        }
+
+    written_paths: List[str] = []
     try:
+        for relative_path, yaml_text in sorted((str(path), text) for path, text in candidates.items()):
+            atomic_write_text(root / relative_path, yaml_text)
+            written_paths.append(relative_path)
         project = StoryProject(root / "story")
         project_issues = project.validate()
         if any(issue.severity == "error" for issue in project_issues):
@@ -780,15 +934,27 @@ def save_story_text(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
         bundle = project.build_bundle()
         atomic_write_text(runtime_output_path(root, project), render_json(bundle))
     except Exception:
-        atomic_write_text(target, before)
+        for relative_path in written_paths:
+            atomic_write_text(root / relative_path, before_text[relative_path])
         raise
-    updated_owners = [story_text_owner(root, owner["key"]) for owner, _ in prepared]
+    updated_owners = [story_text_owner(root, key, locale) for key, locale in owner_requests]
     return {
         "saved": True,
         "issues": [issue_json(issue) for issue in project_issues],
         "runtime": bundle,
         "owner": updated_owners[0],
         "owners": updated_owners,
+        "changes": [{
+            "localizationKey": edit["localizationKey"],
+            "locale": edit["locale"],
+            "relativePath": edit["relativePath"],
+            "fieldPath": edit["fieldPath"],
+            "beforeValue": edit["beforeValue"],
+            "beforeExists": edit["beforeExists"],
+            "afterValue": edit["nextValue"],
+            "afterExists": not edit["delete"],
+            "sourceEdit": edit["sourceEdit"],
+        } for edit in prepared],
     }
 
 
@@ -1134,9 +1300,12 @@ def main() -> int:
         result = duplicate_event(root, payload)
     elif args.command == "text-owner":
         localization_key = payload.get("localization_key")
+        locale = payload.get("locale")
         if not isinstance(localization_key, str):
             raise RuntimeError("localization_key is required")
-        result = story_text_owner(root, localization_key)
+        if locale is not None and not isinstance(locale, str):
+            raise RuntimeError("locale must be a string")
+        result = story_text_owner(root, localization_key, locale)
     elif args.command == "save-text":
         result = save_story_text(root, payload)
     else:

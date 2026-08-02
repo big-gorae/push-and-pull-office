@@ -53,7 +53,7 @@
 | 구현 | [웹 미연시 플레이어 설계](web-game-player-design.md) | 타임라인 런타임, 저장·불러오기, 백로그, 오토·스킵 |
 | 구현 | [다국어·상황별 대사 관리](localization-context-dialogue-redesign.md) | 단일 레지스트리, fallback, variant와 v3 ID 세이브 |
 | 부분 구현 | [Tauri 스토리 에디터 설계](tauri-story-editor-design.md) | 구조화 편집과 안전 저장은 구현, 일부 최종 인수 조건은 잔존 |
-| 부분 구현 | [인게임 대사 편집 모드](ingame-dialogue-editing.md) | Tauri에서 대사·선택지·사건·백로그 안전 저장과 합성 문구 원본 열기 구현 |
+| 구현 | [인게임 대사 편집 모드](ingame-dialogue-editing.md) | Tauri에서 원문·번역·합성 원본을 검증 저장하고 즉시 반영하며, 정확한 source open·draft·충돌 보호 Undo 지원 |
 | 구현 | [매력도와 저녁·밤 페이즈](charm-evening-night-system.md) | 핵심 자기계발 상태·밤 활동·표현 선택지 구현, 관심 메모는 후속 확장 |
 | 미구현 | [생존 모드 확정안](survival-mode.md) | 해금 메타만 존재하고 별도 캠페인·주인공·장면 없음 |
 

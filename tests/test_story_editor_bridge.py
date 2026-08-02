@@ -608,6 +608,122 @@ class StoryEditorBridgeTests(unittest.TestCase):
         finally:
             temporary.cleanup()
 
+    def test_save_story_translation_creates_and_undo_removes_locale_scalar(self):
+        temporary, root = self.make_project_copy()
+        try:
+            key = (
+                "scenes.common.day_02_practical_meeting.nodes."
+                "day_one_activity_reaction.variants.after_workout.reality.line"
+            )
+            owner = story_text_owner(root, key, "en")
+            self.assertFalse(owner["translationExists"])
+            result = save_story_text(root, {
+                "localization_key": key,
+                "locale": "en",
+                "expected_revision": owner["revision"],
+                "expected_value_hash": owner["currentValueHash"],
+                "next_value": "I started working out again. Shall we check the attendee list?",
+            })
+
+            self.assertTrue(result["saved"])
+            updated = result["owner"]
+            self.assertTrue(updated["translationExists"])
+            self.assertEqual(
+                "I started working out again. Shall we check the attendee list?",
+                result["runtime"]["localization"]["direct_catalogs"]["en"][key],
+            )
+            undo = save_story_text(root, {
+                "localization_key": key,
+                "locale": "en",
+                "expected_revision": updated["revision"],
+                "expected_value_hash": updated["currentValueHash"],
+                "delete": True,
+            })
+
+            self.assertTrue(undo["saved"])
+            self.assertFalse(undo["owner"]["translationExists"])
+            self.assertNotIn(key, undo["runtime"]["localization"]["direct_catalogs"]["en"])
+        finally:
+            temporary.cleanup()
+
+    def test_save_composed_template_sources_rebuilds_generated_variant(self):
+        temporary, root = self.make_project_copy()
+        try:
+            base = (
+                "scenes.common.day_02_practical_meeting.nodes."
+                "day_one_activity_reaction.variants.after_workout"
+            )
+            owners = [
+                story_text_owner(root, f"{base}.perceived.line"),
+                story_text_owner(root, f"{base}.reality.line"),
+            ]
+            original_variant = next(
+                item for item in StoryProject(root / "story").build_bundle()
+                ["scenes"]["common.day_02_practical_meeting"]
+                ["nodes"]["day_one_activity_reaction"]["variants"]
+                if item["id"] == "after_workout"
+            )
+            source_by_field = {}
+            for owner in owners:
+                for source in owner["sources"]:
+                    source_by_field[(source["relativePath"], source["fieldPath"])] = (owner, source)
+            edits = []
+            for (relative_path, field_path), (owner, source) in source_by_field.items():
+                if field_path.endswith("perceived.line") or field_path.endswith("reality.line"):
+                    next_value = "회의를 시작하죠. {{office_pitch}} 참석자표를 확인할까요?"
+                else:
+                    next_value = "어젯밤 가볍게 운동해서 오늘은 몸이 한결 가볍습니다."
+                edits.append({
+                    "localization_key": owner["key"],
+                    "source_relative_path": relative_path,
+                    "source_field_path": field_path,
+                    "expected_revision": source["revision"],
+                    "expected_value_hash": source["currentValueHash"],
+                    "next_value": next_value,
+                })
+
+            result = save_story_text(root, {"edits": edits})
+
+            self.assertTrue(result["saved"])
+            variant = next(
+                item for item in result["runtime"]["scenes"]["common.day_02_practical_meeting"]
+                ["nodes"]["day_one_activity_reaction"]["variants"]
+                if item["id"] == "after_workout"
+            )
+            expected = "회의를 시작하죠. 어젯밤 가볍게 운동해서 오늘은 몸이 한결 가볍습니다. 참석자표를 확인할까요?"
+            self.assertEqual(expected, variant["perceived"]["line"])
+            self.assertEqual(expected, variant["reality"]["line"])
+            self.assertEqual(3, len(result["changes"]))
+
+            refreshed = {
+                owner["key"]: owner for owner in result["owners"]
+            }
+            undo_edits = []
+            for change in result["changes"]:
+                source = next(
+                    item for item in refreshed[change["localizationKey"]]["sources"]
+                    if item["relativePath"] == change["relativePath"]
+                    and item["fieldPath"] == change["fieldPath"]
+                )
+                undo_edits.append({
+                    "localization_key": change["localizationKey"],
+                    "source_relative_path": change["relativePath"],
+                    "source_field_path": change["fieldPath"],
+                    "expected_revision": source["revision"],
+                    "expected_value_hash": source["currentValueHash"],
+                    "next_value": change["beforeValue"],
+                })
+            undone = save_story_text(root, {"edits": undo_edits})
+            restored = next(
+                item for item in undone["runtime"]["scenes"]["common.day_02_practical_meeting"]
+                ["nodes"]["day_one_activity_reaction"]["variants"]
+                if item["id"] == "after_workout"
+            )
+            self.assertEqual(original_variant["perceived"]["line"], restored["perceived"]["line"])
+            self.assertEqual(original_variant["reality"]["line"], restored["reality"]["line"])
+        finally:
+            temporary.cleanup()
+
     def test_save_timeline_event_round_trips_and_rebuilds_runtime(self):
         temporary, root = self.make_project_copy()
         try:

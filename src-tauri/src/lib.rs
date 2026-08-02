@@ -13,6 +13,10 @@ struct EditorState {
     allowed_roots: Mutex<HashSet<PathBuf>>,
 }
 
+fn source_editor_is_allowed(editor: &str) -> bool {
+    ["system", "vscode", "cursor", "zed"].contains(&editor)
+}
+
 fn project_root(path: &str) -> Result<PathBuf, String> {
     let root = PathBuf::from(path)
         .canonicalize()
@@ -189,12 +193,13 @@ fn get_story_text_owner(
     state: tauri::State<'_, EditorState>,
     root: String,
     localization_key: String,
+    locale: Option<String>,
 ) -> Result<Value, String> {
     let root = allowed_root(&state, &root)?;
     run_bridge(
         &root,
         "text-owner",
-        Some(json!({ "localization_key": localization_key })),
+        Some(json!({ "localization_key": localization_key, "locale": locale })),
     )
 }
 
@@ -346,6 +351,9 @@ fn open_source_location(
     state: tauri::State<'_, EditorState>,
     root: String,
     relative_path: String,
+    line: Option<u32>,
+    column: Option<u32>,
+    editor: Option<String>,
 ) -> Result<(), String> {
     let root = allowed_root(&state, &root)?;
     let relative = PathBuf::from(&relative_path);
@@ -362,6 +370,40 @@ fn open_source_location(
         .map_err(|error| format!("story 폴더를 열 수 없습니다: {error}"))?;
     if !target.starts_with(&story_root) || !target.is_file() {
         return Err("story 폴더 안의 원본 파일만 열 수 있습니다.".into());
+    }
+
+    let editor = editor.unwrap_or_else(|| "system".to_string());
+    if !source_editor_is_allowed(&editor) {
+        return Err("허용되지 않은 원본 편집기입니다.".into());
+    }
+    if editor != "system" {
+        let location = format!(
+            "{}:{}:{}",
+            target.display(),
+            line.unwrap_or(1).max(1),
+            column.unwrap_or(1).max(1)
+        );
+        let mut editor_command = match editor.as_str() {
+            "vscode" => {
+                let mut command = Command::new("code");
+                command.arg("--goto").arg(&location);
+                command
+            }
+            "cursor" => {
+                let mut command = Command::new("cursor");
+                command.arg("--goto").arg(&location);
+                command
+            }
+            "zed" => {
+                let mut command = Command::new("zed");
+                command.arg(&location);
+                command
+            }
+            _ => unreachable!(),
+        };
+        if editor_command.spawn().is_ok() {
+            return Ok(());
+        }
     }
 
     #[cfg(target_os = "macos")]
@@ -414,4 +456,17 @@ pub fn run() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running the story editor");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::source_editor_is_allowed;
+
+    #[test]
+    fn source_editor_rejects_free_form_commands() {
+        assert!(source_editor_is_allowed("system"));
+        assert!(source_editor_is_allowed("vscode"));
+        assert!(!source_editor_is_allowed("sh -c touch /tmp/unsafe"));
+        assert!(!source_editor_is_allowed("/Applications/Unknown.app"));
+    }
 }

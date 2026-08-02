@@ -69,11 +69,20 @@ import {
   authoringRoot,
   copySourceLocator,
   getStoryTextOwner,
+  inverseStoryTextEdits,
   openStorySource,
+  readSourceEditor,
+  revealStorySource,
   returnToStoryEditor,
+  runtimeTextValues,
   saveStoryText,
   sourceLocator,
+  writeSourceEditor,
+  type SourceEditor,
+  type StoryTextEdit,
   type StoryTextOwner,
+  type StoryTextSaveResult,
+  type StoryTextSource,
 } from "./storyAuthoring";
 import "./web-game.css";
 
@@ -298,6 +307,45 @@ function Modal({
   </div>;
 }
 
+type StoryTextUndo = {
+  edits: StoryTextEdit[];
+  keys: string[];
+  locale: GameLocale;
+};
+
+type OwnedStorySource = {
+  ownerKey: string;
+  source: StoryTextSource;
+};
+
+function storySourceId(source: StoryTextSource): string {
+  return `${source.relativePath}::${source.fieldPath}`;
+}
+
+function editableComposedSources(owners: StoryTextOwner[]): OwnedStorySource[] {
+  const unique = new Map<string, OwnedStorySource>();
+  owners.forEach((owner) => owner.sources.forEach((source) => {
+    if (owner.kind === "composed_template" && source.editable && !unique.has(storySourceId(source))) {
+      unique.set(storySourceId(source), { ownerKey: owner.key, source });
+    }
+  }));
+  return [...unique.values()];
+}
+
+function storyOwnersFingerprint(owners: StoryTextOwner[]): string {
+  return JSON.stringify(owners.map((owner) => ({
+    key: owner.key,
+    revision: owner.revision,
+    currentValueHash: owner.currentValueHash,
+    sources: owner.sources.map((source) => [
+      source.relativePath,
+      source.fieldPath,
+      source.revision,
+      source.currentValueHash,
+    ]),
+  })));
+}
+
 function StoryTextEditor({
   root,
   keys,
@@ -309,49 +357,119 @@ function StoryTextEditor({
   root: string;
   keys: string[];
   locale: GameLocale;
-  onSaved: (values: Record<string, string>) => void;
+  onSaved: (result: StoryTextSaveResult, undo: StoryTextUndo, editedLocale: GameLocale) => void;
   onClose: () => void;
   i18n: GameLocalizer;
 }) {
+  const [editingLocale, setEditingLocale] = useState(locale);
   const [owners, setOwners] = useState<StoryTextOwner[]>([]);
   const [values, setValues] = useState<Record<string, string>>({});
+  const [sourceValues, setSourceValues] = useState<Record<string, string>>({});
+  const [sourceEditor, setSourceEditor] = useState<SourceEditor>(() => readSourceEditor());
   const [busy, setBusy] = useState(true);
   const [message, setMessage] = useState("원본 위치를 찾는 중…");
+  const composedSources = useMemo(() => editableComposedSources(owners), [owners]);
+  const draftKey = useMemo(
+    () => `love-office:story-text-draft:${encodeURIComponent(root)}:${editingLocale}:${keys.join("|")}`,
+    [editingLocale, keys, root],
+  );
+
+  const installOwners = useCallback((loaded: StoryTextOwner[]) => {
+    setOwners(loaded);
+    setValues(Object.fromEntries(loaded.map((owner) => [owner.key, owner.currentValue])));
+    setSourceValues(Object.fromEntries(editableComposedSources(loaded).map(({ source }) => [
+      storySourceId(source),
+      source.currentValue || "",
+    ])));
+  }, []);
 
   const load = useCallback(async () => {
     setBusy(true);
     setMessage("원본 위치를 찾는 중…");
     try {
-      const loaded = await Promise.all(keys.map((key) => getStoryTextOwner(root, key)));
-      setOwners(loaded);
-      setValues(Object.fromEntries(loaded.map((owner) => [owner.key, owner.currentValue])));
-      setMessage(loaded.some((owner) => !owner.editable)
-        ? "합성 문구는 원본이 여러 곳입니다. 아래 원본 열기 버튼으로 직접 수정할 수 있습니다."
-        : "저장하면 YAML과 게임 런타임을 함께 검증해 반영합니다.");
+      const loaded = await Promise.all(keys.map((key) => getStoryTextOwner(root, key, editingLocale)));
+      installOwners(loaded);
+      let recoveredDraft = false;
+      try {
+        const rawDraft = window.localStorage.getItem(draftKey);
+        if (rawDraft) {
+          const draft = JSON.parse(rawDraft) as { fingerprint?: string; values?: Record<string, string>; sourceValues?: Record<string, string> };
+          if (draft.fingerprint === storyOwnersFingerprint(loaded)) {
+            setValues((current) => ({ ...current, ...draft.values }));
+            setSourceValues((current) => ({ ...current, ...draft.sourceValues }));
+            recoveredDraft = true;
+          } else window.localStorage.removeItem(draftKey);
+        }
+      } catch {
+        // Restricted WebViews may not expose localStorage; editing still works without draft recovery.
+      }
+      const hasComposed = loaded.some((owner) => owner.kind === "composed_template");
+      const missingTranslations = loaded.filter((owner) => owner.isTranslation && !owner.translationExists).length;
+      setMessage(recoveredDraft
+        ? "저장하지 않은 인게임 편집 초안을 복구했습니다."
+        : hasComposed
+        ? "합성 문장을 만드는 장면 템플릿과 활동 문구를 각각 수정할 수 있습니다. 저장 전 placeholder와 전체 스토리를 검증합니다."
+        : missingTranslations
+          ? `${missingTranslations}개 문장은 아직 직접 번역이 없습니다. 현재 원문을 바탕으로 새 번역을 만들 수 있습니다.`
+          : "저장하면 YAML과 게임 런타임을 함께 검증해 현재 화면에 반영합니다.");
     } catch (error) {
       setMessage(`원본을 찾지 못했습니다: ${String(error)}`);
     } finally {
       setBusy(false);
     }
-  }, [keys, root]);
+  }, [draftKey, editingLocale, installOwners, keys, root]);
 
   useEffect(() => { void load(); }, [load]);
 
+  const directChanged = owners.filter((owner) => owner.editable && values[owner.key] !== owner.currentValue);
+  const sourceChanged = composedSources.filter(({ source }) =>
+    sourceValues[storySourceId(source)] !== source.currentValue);
+  const hasChanges = directChanged.length > 0 || sourceChanged.length > 0;
+
+  useEffect(() => {
+    if (busy || !owners.length) return;
+    try {
+      if (!hasChanges) {
+        window.localStorage.removeItem(draftKey);
+        return;
+      }
+      window.localStorage.setItem(draftKey, JSON.stringify({
+        fingerprint: storyOwnersFingerprint(owners),
+        values,
+        sourceValues,
+      }));
+    } catch {
+      // A failed draft cache must never block the authoritative YAML workflow.
+    }
+  }, [busy, draftKey, hasChanges, owners, sourceValues, values]);
+
   const save = async () => {
-    const changed = owners.filter((owner) => owner.editable && values[owner.key] !== owner.currentValue);
-    if (!changed.length) {
+    if (!hasChanges) {
       setMessage("변경된 문장이 없습니다.");
       return;
     }
-    setBusy(true);
-    setMessage("전체 스토리를 검증하고 저장하는 중…");
-    try {
-      const result = await saveStoryText(root, changed.map((owner) => ({
+    const edits: StoryTextEdit[] = [
+      ...directChanged.map((owner) => ({
         localization_key: owner.key,
+        locale: editingLocale,
         expected_revision: owner.revision!,
         expected_value_hash: owner.currentValueHash!,
         next_value: values[owner.key],
-      })));
+      })),
+      ...sourceChanged.map(({ ownerKey, source }) => ({
+        localization_key: ownerKey,
+        locale: editingLocale,
+        source_relative_path: source.relativePath,
+        source_field_path: source.fieldPath,
+        expected_revision: source.revision!,
+        expected_value_hash: source.currentValueHash!,
+        next_value: sourceValues[storySourceId(source)],
+      })),
+    ];
+    setBusy(true);
+    setMessage("전체 스토리를 검증하고 저장하는 중…");
+    try {
+      const result = await saveStoryText(root, edits);
       if (!result.saved) {
         const errors = result.issues.filter((issue) => issue.severity === "error");
         setMessage(errors.length
@@ -359,19 +477,16 @@ function StoryTextEditor({
           : "검증 오류로 저장하지 않았습니다.");
         return;
       }
-      onSaved(Object.fromEntries(changed.map((owner) => [owner.key, values[owner.key]])));
-      try {
-        const refreshed = await Promise.all(keys.map((key) => getStoryTextOwner(root, key)));
-        setOwners(refreshed);
-        setValues(Object.fromEntries(refreshed.map((owner) => [owner.key, owner.currentValue])));
-        setMessage("저장 완료 · 원본 YAML과 현재 게임 화면에 반영했습니다.");
-      } catch {
-        setMessage("저장은 완료했습니다. 다음 편집 전에 원본을 다시 불러와 주세요.");
-      }
+      const refreshed = await Promise.all(keys.map((key) => getStoryTextOwner(root, key, editingLocale)));
+      const undoEdits = inverseStoryTextEdits(result.changes || [], refreshed, editingLocale);
+      installOwners(refreshed);
+      try { window.localStorage.removeItem(draftKey); } catch { /* YAML save already succeeded. */ }
+      onSaved(result, { edits: undoEdits, keys, locale: editingLocale }, editingLocale);
+      setMessage("저장 완료 · 실제 원본과 현재 게임 화면에 반영했습니다. 화면의 ‘마지막 문구 저장 취소’로 되돌릴 수 있습니다.");
     } catch (error) {
       const text = String(error);
       setMessage(text.includes("REVISION_CONFLICT") || text.includes("VALUE_CONFLICT")
-        ? "외부에서 원본이 변경되었습니다. 다시 불러온 뒤 비교해 주세요."
+        ? "외부에서 원본이 변경되었습니다. 초안은 유지했습니다. 다시 불러온 뒤 비교해 주세요."
         : `저장하지 못했습니다: ${text}`);
     } finally {
       setBusy(false);
@@ -389,30 +504,59 @@ function StoryTextEditor({
     return () => window.removeEventListener("keydown", handleKey);
   });
 
+  const openSource = (source: StoryTextSource) => void openStorySource(root, source, sourceEditor);
+  const updateSourceEditor = (editor: SourceEditor) => {
+    setSourceEditor(editor);
+    writeSourceEditor(editor);
+  };
+
   return <Modal title="인게임 원본 문구 편집" onClose={onClose} i18n={i18n} wide>
     <div className="vn-story-editor">
-      {locale !== runtime.localization.default_locale && <div className="vn-authoring-warning">현재 번역 화면이 아니라 기본 한국어 원본을 편집합니다.</div>}
+      <div className="vn-authoring-toolbar">
+        <div className="vn-authoring-locales" aria-label="편집 언어">
+          {gameLocales(runtime).map((candidate) => <button type="button" className={editingLocale === candidate ? "active" : ""} disabled={busy} onClick={() => { setBusy(true); setEditingLocale(candidate); }} key={candidate}>
+            {candidate === runtime.localization.default_locale ? "한국어 원본" : `${i18n.localeName(candidate)} 번역`}
+          </button>)}
+        </div>
+        <label>원본 열기<select value={sourceEditor} onChange={(event) => updateSourceEditor(event.target.value as SourceEditor)}>
+          <option value="system">시스템 기본 앱</option>
+          <option value="vscode">VS Code · 정확한 줄</option>
+          <option value="cursor">Cursor · 정확한 줄</option>
+          <option value="zed">Zed · 정확한 줄</option>
+        </select></label>
+      </div>
       <p className="vn-story-editor-status" role="status">{message}</p>
       {owners.map((owner) => <section className={owner.editable ? "editable" : "fallback"} key={owner.key}>
-        <header><strong>{owner.editable ? "직접 편집" : "원본 파일 편집"}</strong><code>{owner.key}</code></header>
+        <header><strong>{owner.isTranslation ? (owner.translationExists ? `${editingLocale} 번역 편집` : `${editingLocale} 새 번역`) : owner.editable ? "직접 편집" : "합성 문구"}</strong><code>{owner.key}</code></header>
+        {owner.isTranslation && !owner.translationExists && <small className="vn-translation-fallback">현재 한국어 원문: {owner.sourceValue}</small>}
         {owner.editable && <textarea
+          autoFocus={owner.key === owners.find((candidate) => candidate.editable)?.key}
           rows={Math.max(3, Math.min(9, (values[owner.key]?.split("\n").length || 1) + 2))}
           value={values[owner.key] || ""}
           maxLength={owner.maxLength}
           onChange={(event) => setValues((current) => ({ ...current, [owner.key]: event.target.value }))}
           disabled={busy}
         />}
-        {!owner.editable && <blockquote>{owner.currentValue}</blockquote>}
-        <div className="vn-story-source-list">{owner.sources.map((source) => <div key={`${source.relativePath}:${source.fieldPath}`}>
+        {!owner.editable && owner.kind !== "composed_template" && <blockquote>{owner.currentValue}</blockquote>}
+        <div className="vn-story-source-list">{owner.sources.filter((source) => owner.kind !== "composed_template" || !source.editable).map((source) => <div key={storySourceId(source)}>
           <code>{sourceLocator(source)}</code>
-          <button type="button" onClick={() => void openStorySource(root, source.relativePath)}>원본 파일 열기</button>
+          <button type="button" onClick={() => openSource(source)}>원본 파일 열기</button>
+          <button type="button" onClick={() => void revealStorySource(root, source)}>Finder에서 보기</button>
           <button type="button" onClick={() => void copySourceLocator(source)}>위치 복사</button>
         </div>)}</div>
       </section>)}
+      {composedSources.length > 0 && <section className="vn-composed-source-editor">
+        <header><strong>합성 원본 구조화 편집</strong><code>완성 variant를 덮어쓰지 않고 실제 조합 원본만 수정합니다.</code></header>
+        {composedSources.map(({ source }) => <label key={storySourceId(source)}>
+          <span><strong>{source.label}</strong><code>{sourceLocator(source)}</code></span>
+          <textarea autoFocus={!owners.some((owner) => owner.editable) && source === composedSources[0]?.source} rows={4} value={sourceValues[storySourceId(source)] || ""} onChange={(event) => setSourceValues((current) => ({ ...current, [storySourceId(source)]: event.target.value }))} disabled={busy} />
+          <span className="vn-composed-source-actions"><button type="button" onClick={() => openSource(source)}>원본 파일 열기</button><button type="button" onClick={() => void revealStorySource(root, source)}>Finder에서 보기</button><button type="button" onClick={() => void copySourceLocator(source)}>위치 복사</button></span>
+        </label>)}
+      </section>}
       <footer>
         <button type="button" onClick={() => void load()} disabled={busy}>원본 다시 불러오기</button>
         <button type="button" onClick={onClose}>닫기</button>
-        <button type="button" className="primary" onClick={() => void save()} disabled={busy || !owners.some((owner) => owner.editable)}>{locale === runtime.localization.default_locale ? "저장" : "한국어 원본 저장"} <kbd>⌘↵</kbd></button>
+        <button type="button" className="primary" onClick={() => void save()} disabled={busy || !hasChanges}>{editingLocale === runtime.localization.default_locale ? "원본 저장" : `${editingLocale} 번역 저장`} <kbd>⌘↵</kbd></button>
       </footer>
     </div>
   </Modal>;
@@ -574,6 +718,7 @@ function FlowScreen({
         `events.${pendingEvent.id}.presentation.reality.title`,
         `events.${pendingEvent.id}.presentation.reality.summary`,
       ])}>사건 문구 편집</button>}
+      {debugMode && onEditText && <button type="button" className="vn-authoring-button" onClick={() => onEditText(["flow.continue"])}>진행 문구 편집</button>}
     </section>}
 
     {!pendingEvent && events.length > 0 && <section className="vn-flow-choices" aria-label={i18n.ui("flow.choicePrompt")}>
@@ -593,6 +738,7 @@ function FlowScreen({
         </button>
       </div>
       {debugMode && onEditText && <div className="vn-flow-authoring-list">
+        <button type="button" onClick={() => onEditText(["flow.choiceContext", "flow.choicePrompt", "flow.passAction", "flow.passCopy"])}>이 화면 공통 문구</button>
         {events.map((event) => <button type="button" key={event.id} onClick={() => onEditText([
           `events.${event.id}.title`,
           `events.${event.id}.presentation.perceived.title`,
@@ -671,6 +817,13 @@ function SelfDevelopmentScreen({
   const visibleTextKeys = [
     "selfDevelopment.title",
     "selfDevelopment.subtitle",
+    "selfDevelopment.appeal",
+    "selfDevelopment.fatigue",
+    "selfDevelopment.choose",
+    "selfDevelopment.blocked",
+    "selfDevelopment.result",
+    "selfDevelopment.continue",
+    ...SELF_DEVELOPMENT_STATS.map((stat) => `selfDevelopment.stat.${stat}`),
     ...(night?.status === "selecting" ? options.flatMap((option) => [
       option.activity.title_key,
       option.activity.description_key,
@@ -946,6 +1099,8 @@ export default function WebGame() {
   const [dayTransition, setDayTransition] = useState<{ from: number; to: number; next: PlayerSession }>();
   const [textEditKeys, setTextEditKeys] = useState<string[]>([]);
   const [sourceOverrides, setSourceOverrides] = useState<Record<string, string>>({});
+  const [lastTextUndo, setLastTextUndo] = useState<StoryTextUndo>();
+  const [undoBusy, setUndoBusy] = useState(false);
   const toastTimer = useRef<number | undefined>(undefined);
   const i18n = useMemo(() => new GameLocalizer(runtime, settings.locale, sourceOverrides), [settings.locale, sourceOverrides]);
   const activeViewLayer = session
@@ -977,8 +1132,39 @@ export default function WebGame() {
     toastTimer.current = window.setTimeout(() => setToast(""), 1800);
   }, []);
 
+  const applySavedRuntimeText = useCallback((result: StoryTextSaveResult, keys: string[], locale: GameLocale) => {
+    if (!result.runtime) return;
+    const values = runtimeTextValues(result.runtime, keys, locale);
+    setSourceOverrides((current) => ({
+      ...current,
+      ...Object.fromEntries(Object.entries(values).map(([key, value]) => [`${locale}:${key}`, value])),
+    }));
+  }, []);
+
+  const undoStoryText = useCallback(async () => {
+    if (!projectRoot || !lastTextUndo || undoBusy) return;
+    setUndoBusy(true);
+    try {
+      const result = await saveStoryText(projectRoot, lastTextUndo.edits);
+      if (!result.saved) {
+        notify(result.issues.find((issue) => issue.severity === "error")?.message || "문구 저장 취소가 검증을 통과하지 못했습니다.");
+        return;
+      }
+      applySavedRuntimeText(result, lastTextUndo.keys, lastTextUndo.locale);
+      setLastTextUndo(undefined);
+      notify("마지막 문구 저장을 실제 원본과 화면에서 되돌렸습니다.");
+    } catch (error) {
+      const text = String(error);
+      notify(text.includes("CONFLICT") ? "원본이 외부에서 바뀌어 자동으로 되돌리지 않았습니다." : `문구 저장 취소 실패: ${text}`);
+    } finally {
+      setUndoBusy(false);
+    }
+  }, [applySavedRuntimeText, lastTextUndo, notify, projectRoot, undoBusy]);
+
   const editStoryText = useCallback((keys: string[]) => {
     if (!projectRoot || !keys.length) return;
+    setAuto(false);
+    setSkip(false);
     setTextEditKeys([...new Set(keys)]);
     setOverlay("text-edit");
   }, [projectRoot]);
@@ -1255,11 +1441,17 @@ export default function WebGame() {
       root={projectRoot}
       keys={textEditKeys}
       locale={settings.locale}
-      onSaved={(values) => setSourceOverrides((current) => ({ ...current, ...values }))}
+      onSaved={(result, undo, editedLocale) => {
+        applySavedRuntimeText(result, textEditKeys, editedLocale);
+        setLastTextUndo(undo.edits.length ? undo : undefined);
+      }}
       onClose={closeStoryTextEditor}
       i18n={i18n}
     />}
   </> : null;
+  const authoringUndoButton = projectRoot && lastTextUndo
+    ? <button type="button" className="vn-authoring-undo" onClick={() => void undoStoryText()} disabled={undoBusy}>{undoBusy ? "되돌리는 중…" : "↶ 마지막 문구 저장 취소"}</button>
+    : null;
 
   if (screen === "title") {
     return <div className={settings.reducedMotion ? "vn-reduced-motion" : ""}>
@@ -1278,6 +1470,9 @@ export default function WebGame() {
   if (dayTransition) {
     return <div className={settings.reducedMotion ? "vn-reduced-motion" : ""}>
       <DayTransition from={dayTransition.from} to={dayTransition.to} i18n={i18n} />
+      {projectRoot && settings.debugMode && <button type="button" className="vn-screen-authoring" onClick={() => editStoryText(["dayChange.label"])}>날짜 전환 문구 편집</button>}
+      {authoringUndoButton}
+      {overlays}
     </div>;
   }
 
@@ -1297,6 +1492,7 @@ export default function WebGame() {
         onEditText={projectRoot && settings.debugMode ? editStoryText : undefined}
         i18n={i18n}
       />
+      {authoringUndoButton}
       {toast && <div className="vn-toast">{toast}</div>}
       {overlays}
     </div>;
@@ -1314,6 +1510,7 @@ export default function WebGame() {
         onEditText={projectRoot && settings.debugMode ? editStoryText : undefined}
         i18n={i18n}
       />
+      {authoringUndoButton}
       {toast && <div className="vn-toast">{toast}</div>}
       {overlays}
     </div>;
@@ -1322,12 +1519,28 @@ export default function WebGame() {
   if (session.phase === "complete") {
     const truthUnlocked = session.state.progress.unlocked_modes.includes("truth_view");
     const route = runtime.routes[session.routeId];
+    const endingTextKeys = [
+      ...(route ? [`routes.${route.id}.title`] : []),
+      "ending.label",
+      session.endingId === "campaign.complete" ? "ending.incomplete" : "ending.complete",
+      "ending.day",
+      "ending.events",
+      "ending.choices",
+      "ending.newMode",
+      "ending.unlocked",
+      "ending.unlockedCopy",
+      "ending.restart",
+      "ending.toTitle",
+    ];
     return <main className={`vn-ending-screen ${activeViewLayer}`}>
       <div className="vn-ending-record"><span>{i18n.ui("ending.label")}</span><h1>{route ? i18n.story(`routes.${route.id}.title`, route.title) : i18n.ui("ending.defaultTitle")}</h1><p>{i18n.ui(session.endingId === "campaign.complete" ? "ending.incomplete" : "ending.complete")}</p>
         <div className="vn-ending-meta"><span>{i18n.ui("ending.day", { day: session.state.progress.time.day })}</span><span>{i18n.ui("ending.events", { count: session.state.progress.events.seen.length })}</span><span>{i18n.ui("ending.choices", { count: session.choices.length })}</span></div>
         {truthUnlocked && <section><small>{i18n.ui("ending.newMode")}</small><strong>{i18n.ui("ending.unlocked")}</strong><p>{i18n.ui("ending.unlockedCopy")}</p></section>}
         <div className="vn-ending-actions"><button type="button" onClick={() => setScreen("new-game")}>{i18n.ui("ending.restart")}</button><button type="button" onClick={() => { setScreen("title"); setSession(undefined); }}>{i18n.ui("ending.toTitle")}</button></div>
       </div>
+      {projectRoot && settings.debugMode && <button type="button" className="vn-screen-authoring" onClick={() => editStoryText(endingTextKeys)}>엔딩 화면 문구 편집</button>}
+      {authoringUndoButton}
+      {overlays}
     </main>;
   }
 
@@ -1339,8 +1552,11 @@ export default function WebGame() {
   const speaker = i18n.characterName(effectiveSpeaker(node, activeViewLayer || session.viewLayer));
   const displayedText = revealed ? fullText : fullText.slice(0, visibleCharacters);
   const options = availableOptions(runtime, session);
+  const dialogueEditLayerOrder: readonly ViewLayer[] = activeViewLayer === "reality"
+    ? ["reality", "perceived"]
+    : ["perceived", "reality"];
   const currentDialogueEditKeys = node.kind === "dual_dialogue" || node.kind === "dual_narration"
-    ? (["perceived", "reality"] as const).flatMap((mode) => nodeLayer(node, mode)?.line ? [dialogueKey(
+    ? dialogueEditLayerOrder.flatMap((mode) => nodeLayer(node, mode)?.line ? [dialogueKey(
       session.sceneId,
       node.id,
       resolvedDialogue?.variantId,
@@ -1402,7 +1618,7 @@ export default function WebGame() {
     <Stage session={displaySession || session} node={node} settings={settings} i18n={i18n} />
     <GameHud session={displaySession || session} debugMode={settings.debugMode} onMode={changeMode} onMenu={() => setOverlay("menu")} i18n={i18n} />
     {showPushPull && <RhythmGauge session={displaySession || session} debugMode={settings.debugMode} i18n={i18n} />}
-    {settings.debugMode && <DebugPanel session={session} previewLayer={activeViewLayer || session.viewLayer} settings={settings} canStepBack={debugHistory.length > 0} onSettings={setSettings} onStepBack={stepBack} onReturnToEditor={projectRoot ? returnToStoryEditor : undefined} i18n={i18n} />}
+    {settings.debugMode && <DebugPanel session={session} previewLayer={activeViewLayer || session.viewLayer} settings={settings} canStepBack={debugHistory.length > 0} onSettings={setSettings} onStepBack={stepBack} onReturnToEditor={projectRoot ? () => returnToStoryEditor({ sceneId: session.sceneId, nodeId: node.id }) : undefined} i18n={i18n} />}
 
     {node.kind === "choice" && !uiHidden && <section className="vn-choices" aria-label={i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.prompt`, node.prompt || "")} onKeyDown={choiceKeyDown}>
       <div className="vn-choice-context"><span>{triggerSummary?.speaker || i18n.ui("flow.choiceContext")}</span><strong>{choiceStimulus}</strong></div>
@@ -1443,6 +1659,7 @@ export default function WebGame() {
     </section>}
 
     {uiHidden && <button type="button" className="vn-show-ui" onClick={() => setUiHidden(false)}>{i18n.ui("menu.show")}</button>}
+    {authoringUndoButton}
     {toast && <div className="vn-toast">{toast}</div>}
     {overlays}
   </main>;

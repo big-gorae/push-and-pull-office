@@ -48,6 +48,14 @@ describe("GameLocalizer", () => {
     expect(new GameLocalizer(runtime, "en", overrides).story(key, "원래 문장")).not.toBe("게임 안에서 고친 문장");
   });
 
+  it("applies a hot edit only to the matching locale", () => {
+    const key = "scenes.seo_a.email_request.nodes.request.reality.line";
+    const overrides = { [`en:${key}`]: "Edited English line" };
+
+    expect(new GameLocalizer(runtime, "en", overrides).story(key, "원래 문장")).toBe("Edited English line");
+    expect(new GameLocalizer(runtime, "ko", overrides).story(key, "원래 문장")).not.toBe("Edited English line");
+  });
+
   it("keeps the default variant segment when the source node owns variants", () => {
     expect(dialogueKey("common.scene", "callback", "default", "reality", "line", true)).toBe(
       "scenes.common.scene.nodes.callback.variants.default.reality.line",

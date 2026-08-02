@@ -7,7 +7,7 @@ import CharacterEditor from "./CharacterEditor";
 import ProjectSettingsEditor, { type SettingsKind, type SettingsRequest } from "./ProjectSettingsEditor";
 import QuickOpen, { type QuickOpenItem } from "./QuickOpen";
 import DuplicateDialog from "./DuplicateDialog";
-import { rememberAuthoringRoot } from "./player/storyAuthoring";
+import { consumeAuthoringTarget, rememberAuthoringRoot } from "./player/storyAuthoring";
 import {
   pushPullPositionLabel,
   pushPullTargetLabel,
@@ -1063,8 +1063,21 @@ export default function App() {
       setLocale(project.runtime.localization.default_locale);
       setIssues(project.issues);
       const firstRoute = storyRoutes(project.runtime)[0];
-      const recoveredDraft = loadScene(project, firstRoute.entry_scene, true);
-      if (!recoveredDraft) setStatus(`${Object.keys(project.runtime.scenes).length}개 장면을 불러왔습니다.`);
+      const authoringTarget = consumeAuthoringTarget();
+      const sceneId = authoringTarget && project.runtime.scenes[authoringTarget.sceneId]
+        ? authoringTarget.sceneId
+        : firstRoute.entry_scene;
+      const recoveredDraft = loadScene(project, sceneId, true);
+      if (authoringTarget?.nodeId && project.runtime.scenes[sceneId]?.nodes[authoringTarget.nodeId]) {
+        setSelectedNodeId(authoringTarget.nodeId);
+      }
+      if (authoringTarget) {
+        workspaceRef.current = "scene";
+        setWorkspace("scene");
+      }
+      if (!recoveredDraft) setStatus(authoringTarget
+        ? `게임에서 보던 ${sceneId}${authoringTarget.nodeId ? ` · ${authoringTarget.nodeId}` : ""} 원본을 열었습니다.`
+        : `${Object.keys(project.runtime.scenes).length}개 장면을 불러왔습니다.`);
     } catch (error) {
       setStatus(`프로젝트를 열 수 없습니다: ${String(error)}`);
     } finally {

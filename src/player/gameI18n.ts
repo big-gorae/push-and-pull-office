@@ -33,6 +33,8 @@ export class GameLocalizer {
   }
 
   private resolve(key: string, source?: string): string {
+    const localizedOverride = this.sourceOverrides[`${this.locale}:${key}`];
+    if (localizedOverride !== undefined) return localizedOverride;
     if (this.locale === this.runtime.localization.default_locale && key in this.sourceOverrides) {
       return this.sourceOverrides[key];
     }
