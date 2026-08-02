@@ -11,14 +11,17 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from story_editor_bridge import (  # noqa: E402
+    YAML_RT,
     derive_state_contract,
     duplicate_event,
     duplicate_scene,
     load_project,
+    preserve_source_template_nodes,
     revision,
     save_document,
     save_scene,
     validate_scene,
+    yaml_text_for_scene,
 )
 from story_harness import StoryProject  # noqa: E402
 
@@ -259,6 +262,212 @@ class StoryEditorBridgeTests(unittest.TestCase):
             self.assertIn("GUI에서 바꾼 제목", text)
             self.assertTrue((root / "build" / "story-runtime.json").is_file())
             self.assertEqual([], StoryProject(root / "story").validate())
+        finally:
+            temporary.cleanup()
+
+    def test_runtime_template_variants_do_not_replace_source_authoring_macro(self):
+        with tempfile.TemporaryDirectory() as raw_temp:
+            root = Path(raw_temp)
+            target = root / "story" / "scenes" / "template_scene.yaml"
+            target.parent.mkdir(parents=True)
+            (root / "story" / "manifest.yaml").write_text(
+                "self_development:\n"
+                "  expressions:\n"
+                "    feedback.last_workout:\n"
+                "      requires:\n"
+                "        last_activity: workout\n",
+                encoding="utf-8",
+            )
+            target.write_text(
+                "id: common.template_scene\n"
+                "title: 원래 제목\n"
+                "state_contract:\n"
+                "  reads: [progress.self_development.last_activity]\n"
+                "  writes: []\n"
+                "nodes:\n"
+                "  - id: callback\n"
+                "    kind: dual_dialogue\n"
+                "    speaker: han_do_yoon\n"
+                "    perceived:\n"
+                "      atmosphere: procedural\n"
+                "      line: 원래 기본 인지 대사\n"
+                "    reality:\n"
+                "      atmosphere: procedural\n"
+                "      line: 원래 기본 현실 대사\n"
+                "      intent: work_only\n"
+                "    # authoring-template-sentinel\n"
+                "    self_development_template:\n"
+                "      source: last_activity\n"
+                "      perceived:\n"
+                "        line: '{{office_pitch}}'\n"
+                "      reality:\n"
+                "        line: '{{office_pitch}}'\n"
+                "        intent: self_promotion\n"
+                "    next: finish\n"
+                "  - id: finish\n"
+                "    kind: dual_narration\n"
+                "    perceived:\n"
+                "      atmosphere: procedural\n"
+                "      line: 원래 일반 노드 대사\n"
+                "    reality:\n"
+                "      atmosphere: procedural\n"
+                "      line: 원래 일반 노드 대사\n"
+                "      intent: work_only\n"
+                "    next: exit\n"
+                "  - id: exit\n"
+                "    kind: exit\n"
+                "    transitions: []\n",
+                encoding="utf-8",
+            )
+            runtime_scene = {
+                "id": "common.template_scene",
+                "title": "에디터에서 바꾼 제목",
+                "state_contract": {
+                    "reads": ["progress.self_development.last_activity"],
+                    "writes": [],
+                },
+                "nodes": [
+                    {
+                        "id": "callback",
+                        "kind": "dual_dialogue",
+                        "speaker": "han_do_yoon",
+                        "presentation_flags": ["inner_voice"],
+                        "variants": [
+                            {
+                                "id": "after_workout",
+                                "self_development": {"expression": "feedback.last_workout"},
+                                "perceived": {
+                                    "atmosphere": "warm_romance",
+                                    "line": "생성된 운동 인지 대사",
+                                },
+                                "reality": {
+                                    "atmosphere": "procedural",
+                                    "line": "생성된 운동 현실 대사",
+                                    "intent": "self_promotion",
+                                },
+                            },
+                            {
+                                "id": "default",
+                                "default": True,
+                                "perceived": {
+                                    "atmosphere": "procedural",
+                                    "line": "런타임 기본 인지 대사",
+                                },
+                                "reality": {
+                                    "atmosphere": "procedural",
+                                    "line": "런타임 기본 현실 대사",
+                                    "intent": "work_only",
+                                },
+                            },
+                        ],
+                        "next": "finish_edited",
+                    },
+                    {
+                        "id": "finish",
+                        "kind": "dual_narration",
+                        "perceived": {
+                            "atmosphere": "procedural",
+                            "line": "에디터에서 바꾼 일반 노드 대사",
+                        },
+                        "reality": {
+                            "atmosphere": "procedural",
+                            "line": "에디터에서 바꾼 일반 노드 대사",
+                            "intent": "work_only",
+                        },
+                        "next": "exit",
+                    },
+                    {"id": "exit", "kind": "exit", "transitions": []},
+                ],
+            }
+
+            yaml_text = yaml_text_for_scene(target, runtime_scene)
+            parsed = YAML_RT.load(yaml_text)
+            nodes = {node["id"]: node for node in parsed["nodes"]}
+            callback = nodes["callback"]
+
+            self.assertEqual("에디터에서 바꾼 제목", parsed["title"])
+            self.assertNotIn("variants", callback)
+            self.assertEqual("원래 기본 인지 대사", callback["perceived"]["line"])
+            self.assertEqual("원래 기본 현실 대사", callback["reality"]["line"])
+            self.assertEqual(
+                "{{office_pitch}}",
+                callback["self_development_template"]["perceived"]["line"],
+            )
+            self.assertIn("# authoring-template-sentinel", yaml_text)
+            self.assertEqual(["inner_voice"], callback["presentation_flags"])
+            self.assertEqual("finish_edited", callback["next"])
+            self.assertEqual(
+                "에디터에서 바꾼 일반 노드 대사",
+                nodes["finish"]["perceived"]["line"],
+            )
+
+    def test_source_template_edits_are_not_treated_as_compiled_runtime_nodes(self):
+        existing = {
+            "nodes": [{
+                "id": "callback",
+                "perceived": {"line": "기존 기본 대사"},
+                "reality": {"line": "기존 기본 대사"},
+                "self_development_template": {
+                    "source": "last_activity",
+                    "perceived": {"line": "{{office_pitch}}"},
+                },
+            }],
+        }
+        updated = {
+            "nodes": [{
+                "id": "callback",
+                "perceived": {"line": "수정한 기본 대사"},
+                "reality": {"line": "수정한 기본 대사"},
+                "self_development_template": {
+                    "source": "last_activity",
+                    "perceived": {"line": "{{weekend_pitch}}"},
+                },
+            }],
+        }
+
+        preserve_source_template_nodes(existing, updated)
+
+        node = updated["nodes"][0]
+        self.assertEqual("수정한 기본 대사", node["perceived"]["line"])
+        self.assertEqual(
+            "{{weekend_pitch}}",
+            node["self_development_template"]["perceived"]["line"],
+        )
+
+    def test_load_project_reports_invalid_template_without_rebuilding(self):
+        temporary, root = self.make_project_copy()
+        try:
+            target = root / "story/scenes/common/day_02_practical_meeting.yaml"
+            source = target.read_text(encoding="utf-8")
+            target.write_text(
+                source.replace("{{office_pitch}}", "{{missing_slot}}", 1),
+                encoding="utf-8",
+            )
+
+            result = load_project(root)
+
+            self.assertEqual({}, result["runtime"])
+            self.assertTrue(any(
+                "unknown template slots: missing_slot" in issue["message"]
+                for issue in result["issues"]
+            ))
+        finally:
+            temporary.cleanup()
+
+    def test_generated_template_variant_edits_are_rejected_explicitly(self):
+        temporary, root = self.make_project_copy()
+        try:
+            project = StoryProject(root / "story")
+            scene = project.build_bundle()["scenes"]["common.day_02_practical_meeting"]
+            clean_yaml = yaml_text_for_scene(target := root / "story/scenes/common/day_02_practical_meeting.yaml", scene)
+            self.assertIn("self_development_template:", clean_yaml)
+            self.assertNotIn("variants:", clean_yaml.split("  - id: agenda", 1)[0])
+
+            callback = scene["nodes"]["day_one_activity_reaction"]
+            callback["variants"][0]["reality"]["line"] = "에디터에서 바꾼 생성 대사"
+
+            with self.assertRaisesRegex(RuntimeError, "TEMPLATE_VARIANTS_READ_ONLY"):
+                yaml_text_for_scene(target, scene)
         finally:
             temporary.cleanup()
 

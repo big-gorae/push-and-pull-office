@@ -41,9 +41,9 @@ nodes:
     self_development_template:
       source: last_activity
       perceived:
-        line: "{{weekend_pitch}}"
+        line: "주말에도 뵙네요. {{weekend_pitch}}"
       reality:
-        line: "{{weekend_pitch}}"
+        line: "주말에도 뵙네요. {{weekend_pitch}}"
         intent: self_promotion
     next: activity_response
 
@@ -59,9 +59,9 @@ nodes:
     self_development_template:
       source: last_activity
       perceived:
-        line: "동료는 ‘{{weekend_answer}} 저는 먼저 둘러볼게요.’라고 짧게 답했다."
+        line: "동료는 ‘{{weekend_answer}}’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다."
       reality:
-        line: "동료는 ‘{{weekend_answer}} 저는 먼저 둘러볼게요.’라고 짧게 답했다."
+        line: "동료는 ‘{{weekend_answer}}’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다."
     next: activity_callback_inner
 
   - id: activity_callback_inner

@@ -133,12 +133,26 @@ function choiceTriggerSummary(session: PlayerSession, i18n: GameLocalizer): { sp
   if (!sourceLayer?.line) return undefined;
   return {
     speaker: i18n.characterName(effectiveSpeaker(resolved.node, entry.layerAtPresentation)),
-    line: i18n.story(dialogueKey(entry.sceneId, entry.nodeId, resolved.variantId, entry.layerAtPresentation, "line"), sourceLayer.line),
+    line: i18n.story(dialogueKey(
+      entry.sceneId,
+      entry.nodeId,
+      resolved.variantId,
+      entry.layerAtPresentation,
+      "line",
+      Boolean(sourceNode.variants?.length),
+    ), sourceLayer.line),
   };
 }
 
-function dialogueKey(sceneId: string, nodeId: string, variantId: string | undefined, mode: ViewLayer, field: string): string {
-  const variant = variantId && variantId !== "default" ? `.variants.${variantId}` : "";
+export function dialogueKey(
+  sceneId: string,
+  nodeId: string,
+  variantId: string | undefined,
+  mode: ViewLayer,
+  field: string,
+  hasVariants = false,
+): string {
+  const variant = variantId && (variantId !== "default" || hasVariants) ? `.variants.${variantId}` : "";
   return `scenes.${sceneId}.nodes.${nodeId}${variant}.${mode}.${field}`;
 }
 
@@ -235,7 +249,14 @@ export function savePreview(slot: ReadableSaveSlot, i18n: GameLocalizer): { titl
     const resolved = resolveDialogueNode(runtime, session.state, node, preview.variantId);
     const layer = nodeLayer(resolved.node, preview.viewLayer);
     if (layer?.line) {
-      line = i18n.story(dialogueKey(scene?.id || preview.sceneId || "", node.id, resolved.variantId, preview.viewLayer, "line"), layer.line);
+      line = i18n.story(dialogueKey(
+        scene?.id || preview.sceneId || "",
+        node.id,
+        resolved.variantId,
+        preview.viewLayer,
+        "line",
+        Boolean(node.variants?.length),
+      ), layer.line);
     }
   }
   return {
@@ -768,7 +789,14 @@ export default function WebGame() {
   const node = resolvedDialogue?.node || rawNode;
   const layer = activeViewLayer ? nodeLayer(node, activeViewLayer) : undefined;
   const fullText = session && node && layer?.line
-    ? i18n.story(dialogueKey(session.sceneId, node.id, resolvedDialogue?.variantId, activeViewLayer!, "line"), layer.line)
+    ? i18n.story(dialogueKey(
+      session.sceneId,
+      node.id,
+      resolvedDialogue?.variantId,
+      activeViewLayer!,
+      "line",
+      Boolean(rawNode?.variants?.length),
+    ), layer.line)
     : "";
 
   const notify = useCallback((message: string) => {
@@ -1005,7 +1033,14 @@ export default function WebGame() {
           : resolvedLayer?.line || entry.nodeId;
         const text = entry.kind === "choice" && entry.optionId
           ? i18n.story(`scenes.${entry.sceneId}.nodes.${entry.nodeId}.options.${entry.optionId}.label`, sourceText)
-          : i18n.story(dialogueKey(entry.sceneId, entry.nodeId, resolved?.variantId || entry.variantId, entryLayer, "line"), sourceText);
+          : i18n.story(dialogueKey(
+            entry.sceneId,
+            entry.nodeId,
+            resolved?.variantId || entry.variantId,
+            entryLayer,
+            "line",
+            Boolean(sourceNode?.variants?.length),
+          ), sourceText);
         const backlogSpeakerId = resolved ? effectiveSpeaker(resolved.node, entryLayer) : entry.speakerId;
         const speakerName = backlogSpeakerId
           ? i18n.characterName(backlogSpeakerId)

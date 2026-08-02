@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const e2ePort = Number(process.env.PLAYWRIGHT_PORT ?? 1421);
+const e2eBaseUrl = `http://127.0.0.1:${e2ePort}`;
+
 export default defineConfig({
   testDir: "./e2e",
   outputDir: "test-results",
@@ -12,7 +15,7 @@ export default defineConfig({
     ? [["github"], ["html", { open: "never", outputFolder: "playwright-report" }]]
     : "list",
   use: {
-    baseURL: "http://127.0.0.1:1420",
+    baseURL: e2eBaseUrl,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
@@ -29,9 +32,9 @@ export default defineConfig({
   },
   projects: [{ name: "chromium-linux", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: "npm run dev",
-    url: "http://127.0.0.1:1420",
-    reuseExistingServer: !process.env.CI,
+    command: `npm run dev -- --port ${e2ePort}`,
+    url: e2eBaseUrl,
+    reuseExistingServer: false,
     timeout: 120_000,
   },
 });

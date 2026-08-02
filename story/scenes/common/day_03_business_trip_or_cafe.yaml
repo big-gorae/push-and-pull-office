@@ -6,13 +6,19 @@ chapter: 1
 sequence: 4
 location: office_break_room
 time: afternoon
-purpose: 한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필로 먼저 꺼내지만 실제 관계 상태에는 영향을 주지 않는다.
+purpose: 한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 남은 업무를 다루는 답변에서 사실과 실행 가능성을 먼저 확인하는 민경의 대화 성향을 재확인한다.
 cast: [han_do_yoon, yoon_seo_a, cha_min_kyung]
 entry_conditions: []
 state_contract:
   reads:
     - progress.self_development.last_activity
-  writes: []
+    - progress.flags.push_pull
+  writes:
+    - visible.heroines.cha_min_kyung.initiative
+    - hidden.heroines.cha_min_kyung.suspicion
+    - hidden.heroines.cha_min_kyung.dislike
+    - hidden.heroines.cha_min_kyung.evidence_count
+    - progress.flags.push_pull
 start_node: return_to_office
 nodes:
   - id: return_to_office
@@ -22,7 +28,7 @@ nodes:
       line: "금요일의 업무 외출과 짧은 휴식이 끝난 뒤에도, 회사 밖에서 나눈 말은 사무실 안보다 조금 오래 남았다."
     reality:
       atmosphere: procedural
-      line: "금요일 업무 일정에 따라 한도윤은 동료 한 명과 유통사 쇼룸 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다."
+      line: "금요일 업무 일정에 따라 한도윤은 동료 한 명과 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다."
       intent: work_only
     next: activity_callback
 
@@ -42,9 +48,9 @@ nodes:
       source: last_activity
       perceived:
         atmosphere: playful_tension
-        line: "{{office_pitch}}"
+        line: "돌아왔으니 정리하기 전에 하나만. {{office_pitch}} 그럼 오늘 남은 쟁점부터 보죠."
       reality:
-        line: "{{office_pitch}}"
+        line: "돌아왔으니 정리하기 전에 하나만. {{office_pitch}} 그럼 오늘 남은 쟁점부터 보죠."
         intent: self_promotion
     next: activity_response
 
@@ -64,10 +70,91 @@ nodes:
       source: last_activity
       perceived:
         atmosphere: playful_tension
-        line: "{{acknowledgement}} 그건 됐고, 오늘 남은 쟁점 세 개부터 보죠."
+        line: "네, {{acknowledgement}} 지금은 오늘 남은 쟁점 세 개부터 보죠."
       reality:
-        line: "{{acknowledgement}} 그건 됐고, 오늘 남은 쟁점 세 개부터 보죠."
+        line: "네, {{acknowledgement}} 지금은 오늘 남은 쟁점 세 개부터 보죠."
     next: activity_callback_inner
+
+  - id: response_choice
+    kind: choice
+    prompt: 민경이 남은 쟁점 세 가지부터 정리하자고 한 말에 어떻게 답할까?
+    stimulus: 민경은 짧은 대화를 마치고 오늘 남은 쟁점 세 가지를 먼저 보자고 했다.
+    options:
+      - id: structure_issues
+        label: “거래처 승인 회신, 수정 범위, 공개 일정으로 나누죠. 제가 확인한 범위부터 말씀드릴 테니, 나머지 순서는 차 대리가 정해 주세요.”라고 답한다
+        interpretation: 쟁점과 순서를 정확히 맞추면 민경과 일하는 호흡도 더 가까워질 거라고 생각한다.
+        action: 남은 쟁점을 세 범위로 나누고 확인된 사실부터 공유한 뒤, 나머지 순서는 민경이 정하도록 제안한다.
+        push_pull: {target: cha_min_kyung, action: approach, intensity: 12, base_score: 4}
+        interaction:
+          target: cha_min_kyung
+          support_styles: [factual_clarification, practical_resolution, autonomy_return]
+        conditions: []
+        effects: []
+        next: structure_response
+      - id: acknowledge_fatigue
+        label: “오늘 일정이 길었는데 많이 피곤하셨겠어요. 잠깐 쉬었다 하죠.”라고 말한다
+        interpretation: 민경의 피로를 먼저 알아주면 업무 밖의 속마음도 조금은 보여 줄 거라고 생각한다.
+        action: 업무 정리보다 민경의 피로를 먼저 짚고 휴식을 제안한다.
+        push_pull: {target: cha_min_kyung, action: space, intensity: 12, base_score: 4}
+        interaction:
+          target: cha_min_kyung
+          support_styles: [emotional_validation]
+        conditions: []
+        effects: []
+        next: fatigue_response
+      - id: take_all_issues
+        label: “세 가지는 제가 전부 정리해서 공유하겠습니다.”라고 말한다
+        interpretation: 남은 일까지 과감하게 맡으면 민경에게 든든한 사람으로 보일 거라고 생각한다.
+        action: 담당 범위를 확인하지 않고 남은 쟁점 세 가지를 모두 대신 정리하겠다고 통보한다.
+        push_pull: {target: cha_min_kyung, action: approach, intensity: 16, base_score: 4}
+        interaction:
+          target: cha_min_kyung
+          support_styles: [practical_resolution]
+        conditions: []
+        effects: []
+        next: takeover_response
+
+  - id: structure_response
+    kind: dual_dialogue
+    speaker: cha_min_kyung
+    perceived:
+      atmosphere: playful_tension
+      expression: subjective_challenging
+      line: "좋습니다. 그 순서면 같은 설명을 두 번 확인할 필요가 없겠네요. 수정 범위와 공개 일정은 제가 정리하겠습니다."
+    reality:
+      atmosphere: procedural
+      expression: actual_focused
+      line: "좋습니다. 그 순서면 같은 설명을 두 번 확인할 필요가 없겠네요. 수정 범위와 공개 일정은 제가 정리하겠습니다."
+      intent: documentation
+    next: weekend_clues
+
+  - id: fatigue_response
+    kind: dual_dialogue
+    speaker: cha_min_kyung
+    perceived:
+      atmosphere: playful_tension
+      expression: subjective_challenging
+      line: "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요."
+    reality:
+      atmosphere: procedural
+      expression: actual_focused
+      line: "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요."
+      intent: work_only
+    next: weekend_clues
+
+  - id: takeover_response
+    kind: dual_dialogue
+    speaker: cha_min_kyung
+    perceived:
+      atmosphere: guarded_office
+      expression: subjective_challenging
+      line: "세 가지를 전부 맡으시면 승인 범위와 제 담당이 섞입니다. 확인한 범위만 말씀해 주세요. 나머지는 제가 정리하겠습니다."
+    reality:
+      atmosphere: procedural
+      expression: actual_focused
+      line: "세 가지를 전부 맡으시면 승인 범위와 제 담당이 섞입니다. 확인한 범위만 말씀해 주세요. 나머지는 제가 정리하겠습니다."
+      intent: documentation
+    next: weekend_clues
 
   - id: activity_callback_inner
     kind: dual_dialogue
@@ -86,10 +173,10 @@ nodes:
       source: last_activity
       perceived:
         atmosphere: playful_tension
-        line: "(말은 차갑지만 내가 꺼낸 화제는 바로 알아들었군. {{perceived_self_image}})"
+        line: "(짧게 받았지만 내가 꺼낸 화제는 바로 알아들었군. {{perceived_self_image}})"
       reality:
         line: "({{reality_response_thought}} 잡담은 여기까지 하고 남은 안건부터 보자.)"
-    next: weekend_clues
+    next: response_choice
 
   - id: weekend_clues
     kind: dual_narration

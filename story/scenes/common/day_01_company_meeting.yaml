@@ -70,10 +70,10 @@ nodes:
     speaker: member.oh_se_jin
     perceived:
       atmosphere: procedural
-      line: "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
+      line: "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
     reality:
       atmosphere: procedural
-      line: "커피메이커·전기포트·미니오븐의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
+      line: "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
       intent: work_only
     next: seo_a_materials
   - id: seo_a_materials
@@ -343,10 +343,10 @@ nodes:
     speaker: member.moon_ji_hye
     perceived:
       atmosphere: procedural
-      line: "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요."
+      line: "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요."
     reality:
       atmosphere: procedural
-      line: "브랜드마케팅팀은 키 비주얼 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요."
+      line: "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요."
       intent: work_only
     next: assignments
   - id: assignments
@@ -356,7 +356,7 @@ nodes:
       line: "서아는 세심했고, 민경은 정확했으며, 유진은 거리낌이 없었다. 첫 회의치고는 각자의 색이 분명한 팀이었다."
     reality:
       atmosphere: procedural
-      line: "민경이 전체 일정과 인플루언서 연락을 이끌고, 한도윤은 바이어 승인, 오 차장은 제품 사양과 문구, 서아는 사양표·샘플 목록·회의록, 정 주임은 팝업 운영 일정, 문 부장과 유진은 디자인 승인과 버전 관리를 나눠 맡았다."
+      line: "참석자들은 바이어 승인, 제품 자료, 캠페인 일정과 제작 파일을 담당별로 나눴다."
       intent: work_only
     next: assignments_inner
 

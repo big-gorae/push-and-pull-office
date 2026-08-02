@@ -267,9 +267,9 @@ self_development:
       expression: feedback.last_workout
       slots:
         office_pitch: "요즘 운동을 다시 시작했습니다. 앉아 있는 시간이 길어서 체력부터 챙기려고요."
-        weekend_pitch: "요즘 운동을 다시 시작했습니다. 주말에는 걷는 것도 괜찮더군요. 여기 근처에도 가볍게 걸을 만한 데가 있습니까?"
+        weekend_pitch: "요즘 운동을 다시 시작했습니다. 주말에는 가볍게 걷는 것도 괜찮더군요. 이 근처도 산책하기 괜찮나요?"
         acknowledgement: "운동을 다시 시작하셨군요."
-        weekend_answer: "저쪽 길은 평탄해서 가볍게 걷기 괜찮아요."
+        weekend_answer: "이 근처는 차가 많지 않아 걷기 괜찮은 편이에요."
         perceived_self_image: "꾸준히 자기관리하는 사람이라는 인상은 남았겠지."
         reality_response_thought: "과장님이 운동을 다시 시작했다는 말을 먼저 꺼내셨네."
         reality_limit: "한 번 운동했다는 자기보고일 뿐, 외형이나 체력의 변화가 확인된 것은 아니었다."
@@ -278,20 +278,20 @@ self_development:
       expression: feedback.last_grooming
       slots:
         office_pitch: "요즘 출근 전에 옷 매무새를 한 번 더 보고 있습니다. 거래처 앞에서는 첫인상도 업무의 일부잖아요."
-        weekend_pitch: "요즘은 주말 옷도 조금 신경 써 보려 합니다. 정장보다 색을 고르기가 더 어렵더군요. 이런 색이면 무난합니까?"
+        weekend_pitch: "요즘은 주말 옷도 조금 신경 써 보려 합니다. 정장보다 조합이 더 어렵더군요. 이 차림도 무난해 보입니까?"
         acknowledgement: "출근할 때 옷차림을 더 신경 쓰시는군요."
-        weekend_answer: "그 색이면 어느 옷에나 무난하게 어울릴 것 같아요."
+        weekend_answer: "편하게 입은 주말 차림으로 보여요."
         perceived_self_image: "업무 밖에서도 인상을 챙기는 사람으로 보였겠지."
         reality_response_thought: "과장님이 요즘 옷차림을 신경 쓴다는 말을 먼저 꺼내셨네."
-        reality_limit: "옷차림을 신경 썼다는 자기보고일 뿐, 상대가 매력을 평가한 것은 아니었다."
+        reality_limit: "옷차림을 신경 쓴 사실과 짧은 코디 답변일 뿐, 상대가 매력을 평가한 것은 아니었다."
     ott:
       variant_id: after_ott
       expression: feedback.last_ott
       slots:
-        office_pitch: "요즘 다들 그 사내 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. 유행하는 대화 정도는 알아둬야 할 것 같아서요."
-        weekend_pitch: "요즘 다들 그 사내 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. 그 유명한 대사는 원래 어느 장면에 나옵니까?"
-        acknowledgement: "그 사내 코미디를 보셨군요."
-        weekend_answer: "그 대사는 시즌 초반 회식 장면에 나왔을 거예요."
+        office_pitch: "요즘 다들 《퇴근은 내일》이라는 회사 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. 요즘 화제 정도는 알아둬야 할 것 같아서요."
+        weekend_pitch: "요즘 다들 《퇴근은 내일》이라는 회사 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. ‘회의는 끝났지만 내 마음은 야근 중입니다’라는 대사는 원래 어느 장면에 나옵니까?"
+        acknowledgement: "《퇴근은 내일》을 보셨군요."
+        weekend_answer: "그 대사는 첫 회 회식 장면에 나와요."
         perceived_self_image: "세대가 다른 사람과도 화제를 맞출 줄 안다는 인상은 남았겠지."
         reality_response_thought: "과장님이 전날 본 코미디를 대화 소재로 먼저 꺼내셨네."
         reality_limit: "대중적인 콘텐츠를 뒤늦게 봤다는 말일 뿐, 취향이 맞는다는 증거는 아니었다."
@@ -300,9 +300,9 @@ self_development:
       expression: feedback.last_reels
       slots:
         office_pitch: "요즘 짧은 영상은 전개가 정말 빠르더군요. 어제 몇 개 찾아봤습니다. 캠페인 감각을 놓치면 안 되니까요."
-        weekend_pitch: "요즘 짧은 영상은 전개가 정말 빠르더군요. 영상에서 본 것과 실제 포장이 꽤 다르네요."
-        acknowledgement: "요즘 퍼진 짧은 영상들을 찾아보셨군요."
-        weekend_answer: "화면 조명 때문에 실제 포장과 색이 다르게 보일 수도 있어요."
+        weekend_pitch: "요즘 짧은 영상은 전개가 정말 빠르더군요. 어제 몇 개 찾아봤는데, 막상 밖에 나오니 화면보다 눈에 들어오는 게 많네요."
+        acknowledgement: "요즘 유행하는 짧은 영상도 찾아보셨군요."
+        weekend_answer: "직접 보면 영상과 인상이 다를 때가 있죠."
         perceived_self_image: "요즘 감각을 놓치지 않는 상사로 보였겠지."
         reality_response_thought: "과장님이 전날 본 짧은 영상을 대화 소재로 먼저 꺼내셨네."
         reality_limit: "몇 개의 영상을 봤다는 말일 뿐, 트렌드 이해도가 검증된 것은 아니었다."
@@ -310,13 +310,13 @@ self_development:
       variant_id: after_sleep
       expression: feedback.last_sleep
       slots:
-        office_pitch: "요즘은 밤을 줄이고 아침 컨디션을 챙겨 보려고 합니다. 집중력 관리도 실력이라고 생각해서요."
-        weekend_pitch: "요즘은 밤을 줄이고 아침 컨디션을 챙겨 보려고 합니다. 사람 적을 때 움직이니 여유가 있네요."
-        acknowledgement: "요즘은 일찍 주무시는군요."
-        weekend_answer: "이 시간대는 원래 한산해서 천천히 보기 좋아요."
+        office_pitch: "요즘은 늦게까지 깨어 있는 시간을 줄이고 아침 컨디션을 챙겨 보려고 합니다. 집중력 관리도 실력이라고 생각해서요."
+        weekend_pitch: "요즘은 늦게까지 깨어 있는 시간을 줄이고 아침 컨디션을 챙겨 보려고 합니다. 일찍 움직이니 한결 여유롭네요."
+        acknowledgement: "생활 리듬을 챙기시는군요."
+        weekend_answer: "주말에는 조금 일찍 움직이면 여유 있게 둘러볼 수 있죠."
         perceived_self_image: "자기 리듬을 관리할 줄 아는 사람으로 보였겠지."
-        reality_response_thought: "과장님이 전날 일찍 잤다는 생활 습관을 먼저 꺼내셨네."
-        reality_limit: "전날 일찍 잤다는 일정 이야기일 뿐, 지속적인 자기관리의 증거는 아니었다."
+        reality_response_thought: "과장님이 생활 리듬을 챙겨 보겠다는 말을 먼저 꺼내셨네."
+        reality_limit: "생활 리듬을 챙겨 보겠다는 자기보고일 뿐, 지속적인 자기관리의 증거는 아니었다."
   expressions:
     feedback.last_workout:
       requires: {last_activity: workout}

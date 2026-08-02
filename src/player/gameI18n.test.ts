@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import runtimeJson from "../../build/story-runtime.json";
 import type { Runtime } from "../types";
+import { dialogueKey } from "./WebGame";
 import { GameLocalizer, gameLocales } from "./gameI18n";
 
 const runtime = runtimeJson as unknown as Runtime;
@@ -37,6 +38,15 @@ describe("GameLocalizer", () => {
     const source = "번역되지 않은 한국어 원문";
 
     expect(i18n.story("missing.stable.key", source)).toBe(source);
+  });
+
+  it("keeps the default variant segment when the source node owns variants", () => {
+    expect(dialogueKey("common.scene", "callback", "default", "reality", "line", true)).toBe(
+      "scenes.common.scene.nodes.callback.variants.default.reality.line",
+    );
+    expect(dialogueKey("common.scene", "callback", "default", "reality", "line")).toBe(
+      "scenes.common.scene.nodes.callback.reality.line",
+    );
   });
 
   it("discovers locales from runtime data without a code allowlist", () => {

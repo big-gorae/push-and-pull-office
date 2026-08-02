@@ -187,6 +187,16 @@ class SelfDevelopmentDialogueCompilerTests(unittest.TestCase):
         ):
             compile_dialogue_node(node, make_config())
 
+    def test_template_is_rejected_on_non_dialogue_nodes(self):
+        node = make_node()
+        node["kind"] = "choice"
+
+        with self.assertRaisesRegex(
+            SelfDevelopmentDialogueTemplateError,
+            "only valid on dual dialogue or narration nodes",
+        ):
+            compile_dialogue_node(node, make_config())
+
     def test_one_layer_overlay_leaves_the_other_activity_layer_unchanged(self):
         node = make_node()
         del node["self_development_template"]["perceived"]

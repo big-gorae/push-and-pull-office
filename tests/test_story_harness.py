@@ -1048,14 +1048,64 @@ class StoryHarnessTests(unittest.TestCase):
             "seo_a",
             {"common.day_02_practical_meeting": "define_and_fix"},
             "first",
-        ).run(stop_before_scene="seo_a.email_request")
-        self.assertEqual("seo_a.email_request", result["stopped_at"])
+        ).run(stop_before_scene="common.day_03_business_trip_or_cafe")
+        self.assertEqual("common.day_03_business_trip_or_cafe", result["stopped_at"])
         final_state = result["final_state"]
         self.assertEqual(50, final_state["visible"]["heroines"]["yoon_seo_a"]["initiative"])
         self.assertEqual(54, final_state["visible"]["heroines"]["cha_min_kyung"]["initiative"])
         self.assertEqual("cha_min_kyung", push_pull_state(final_state)["heroine"])
         self.assertEqual("none", final_state["progress"]["flags"]["story_mode"]["target"])
         self.assertEqual("factual_resolution", final_state["progress"]["flags"]["story_mode"]["day_02_response"])
+
+    def test_day_three_min_kyung_mbti_choices_have_distinct_reactions_without_direct_effects(self):
+        scene = self.project.scenes["common.day_03_business_trip_or_cafe"]
+        choice = next(node for node in scene["nodes"] if node["id"] == "response_choice")
+        options = {option["id"]: option for option in choice["options"]}
+
+        self.assertEqual(
+            {
+                "structure_issues": ["factual_clarification", "practical_resolution", "autonomy_return"],
+                "acknowledge_fatigue": ["emotional_validation"],
+                "take_all_issues": ["practical_resolution"],
+            },
+            {
+                option_id: option["interaction"]["support_styles"]
+                for option_id, option in options.items()
+            },
+        )
+        for option in options.values():
+            self.assertEqual("cha_min_kyung", option["interaction"]["target"])
+            self.assertEqual("cha_min_kyung", option["push_pull"]["target"])
+            self.assertEqual([], option["effects"])
+
+        response_lines = {
+            next(node for node in scene["nodes"] if node["id"] == option["next"])["reality"]["line"]
+            for option in options.values()
+        }
+        self.assertEqual(3, len(response_lines))
+
+    def test_day_three_common_choice_switches_push_pull_target_to_min_kyung(self):
+        result = Simulator(
+            self.project,
+            "seo_a",
+            {
+                "common.day_02_practical_meeting": "acknowledge_and_ask",
+                "common.day_03_business_trip_or_cafe": "structure_issues",
+            },
+            "first",
+        ).run(stop_before_scene="common.day_04_weekend_encounter")
+        self.assertEqual("common.day_04_weekend_encounter", result["stopped_at"])
+
+        final_state = result["final_state"]
+        self.assertEqual(54, final_state["visible"]["heroines"]["yoon_seo_a"]["initiative"])
+        self.assertEqual(54, final_state["visible"]["heroines"]["cha_min_kyung"]["initiative"])
+        self.assertEqual("cha_min_kyung", push_pull_state(final_state)["heroine"])
+        self.assertEqual(
+            self.project.campaign_initial_state(
+                self.project.routes["seo_a"]["campaign_id"]
+            )["hidden"]["heroines"]["cha_min_kyung"],
+            final_state["hidden"]["heroines"]["cha_min_kyung"],
+        )
 
     def test_interaction_metadata_does_not_change_push_pull_or_hidden_state(self):
         scene = self.project.scenes["common.day_02_practical_meeting"]

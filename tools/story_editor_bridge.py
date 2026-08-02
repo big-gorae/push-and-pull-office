@@ -22,6 +22,7 @@ from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Sequence
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
+from self_development_dialogue import SelfDevelopmentDialogueCompiler
 from story_harness import StoryProject, write_json
 
 
@@ -81,9 +82,15 @@ def load_project(root: Path) -> Dict[str, Any]:
     root = root.resolve()
     project = StoryProject(root / "story")
     issues = project.validate()
-    bundle = project.build_bundle()
-    if not any(issue.severity == "error" for issue in issues):
-        write_json(runtime_output_path(root, project), bundle)
+    output = runtime_output_path(root, project)
+    if any(issue.severity == "error" for issue in issues):
+        try:
+            bundle = json.loads(output.read_text(encoding="utf-8")) if output.is_file() else {}
+        except (OSError, json.JSONDecodeError):
+            bundle = {}
+    else:
+        bundle = project.build_bundle()
+        write_json(output, bundle)
     return {
         "root": str(root),
         "runtime": bundle,
@@ -150,7 +157,7 @@ def push_pull_heroines(scene: Mapping[str, Any]) -> List[str]:
     return unique(heroines)
 
 
-def self_development_expressions(target: Path) -> Mapping[str, Any]:
+def self_development_config(target: Path) -> Mapping[str, Any]:
     story_root = next((parent for parent in target.parents if parent.name == "story"), None)
     if story_root is None:
         return {}
@@ -162,7 +169,13 @@ def self_development_expressions(target: Path) -> Mapping[str, Any]:
     if not isinstance(manifest, Mapping):
         return {}
     config = manifest.get("self_development", {})
-    return config.get("expressions", {}) if isinstance(config, Mapping) else {}
+    return config if isinstance(config, Mapping) else {}
+
+
+def self_development_expressions(target: Path) -> Mapping[str, Any]:
+    config = self_development_config(target)
+    expressions = config.get("expressions", {})
+    return expressions if isinstance(expressions, Mapping) else {}
 
 
 def derive_state_contract(
@@ -280,12 +293,93 @@ def merge_round_trip(existing: Any, updated: Any, key: str | None = None) -> Any
     return copy.deepcopy(updated)
 
 
+def preserve_source_template_nodes(
+    existing_scene: Mapping[str, Any],
+    updated_scene: MutableMapping[str, Any],
+) -> None:
+    """Keep authoring macros out of the runtime-scene round trip.
+
+    The editor receives compiled runtime nodes, where a source
+    ``self_development_template`` and its fallback layers have been replaced by
+    generated ``variants``.  Those variants are runtime output, not editable
+    story source.  Restore only the authoring-owned fields while leaving the
+    rest of each updated node (for example ``next`` or presentation metadata)
+    available to the normal round-trip merge.
+    """
+
+    existing_nodes = existing_scene.get("nodes")
+    updated_nodes = updated_scene.get("nodes")
+    if not isinstance(existing_nodes, Sequence) or isinstance(existing_nodes, (str, bytes)):
+        return
+    if not isinstance(updated_nodes, Sequence) or isinstance(updated_nodes, (str, bytes)):
+        return
+
+    existing_by_id = {
+        node["id"]: node
+        for node in existing_nodes
+        if isinstance(node, Mapping) and isinstance(node.get("id"), str)
+    }
+    for updated_node in updated_nodes:
+        if not isinstance(updated_node, MutableMapping) or not isinstance(updated_node.get("id"), str):
+            continue
+        existing_node = existing_by_id.get(updated_node["id"])
+        if not isinstance(existing_node, Mapping) or "self_development_template" not in existing_node:
+            continue
+        if "variants" not in updated_node:
+            continue
+
+        updated_node.pop("variants", None)
+        for field in ("perceived", "reality", "self_development_template"):
+            if field in existing_node:
+                updated_node[field] = copy.deepcopy(existing_node[field])
+
+
+def reject_modified_generated_template_variants(
+    existing_scene: Mapping[str, Any],
+    updated_scene: Mapping[str, Any],
+    self_development: Mapping[str, Any],
+) -> None:
+    """Reject editor writes to generated variants instead of silently losing them."""
+    if not isinstance(self_development.get("conversation_topics"), Mapping):
+        return
+    existing_nodes = existing_scene.get("nodes")
+    updated_nodes = updated_scene.get("nodes")
+    if not isinstance(existing_nodes, Sequence) or isinstance(existing_nodes, (str, bytes)):
+        return
+    if not isinstance(updated_nodes, Sequence) or isinstance(updated_nodes, (str, bytes)):
+        return
+
+    compiler = SelfDevelopmentDialogueCompiler(self_development)
+    expected_by_id = {
+        node["id"]: compiler.compile_node(node)
+        for node in existing_nodes
+        if isinstance(node, Mapping)
+        and isinstance(node.get("id"), str)
+        and "self_development_template" in node
+    }
+    for updated_node in updated_nodes:
+        if not isinstance(updated_node, Mapping) or not isinstance(updated_node.get("id"), str):
+            continue
+        expected = expected_by_id.get(updated_node["id"])
+        if expected is None or "variants" not in updated_node:
+            continue
+        if updated_node.get("variants") != expected.get("variants"):
+            raise RuntimeError(
+                "TEMPLATE_VARIANTS_READ_ONLY: generated activity dialogue variants must be edited "
+                "through self_development_template or manifest conversation_topics"
+            )
+
+
 def yaml_text_for_scene(target: Path, scene: Mapping[str, Any]) -> str:
     with target.open("r", encoding="utf-8") as handle:
         current = YAML_RT.load(handle)
     if not isinstance(current, CommentedMap):
         raise RuntimeError(f"YAML root must be a mapping: {target}")
-    merged = merge_round_trip(current, prepare_scene(scene, self_development_expressions(target)))
+    self_development = self_development_config(target)
+    prepared = prepare_scene(scene, self_development.get("expressions", {}))
+    reject_modified_generated_template_variants(current, prepared, self_development)
+    preserve_source_template_nodes(current, prepared)
+    merged = merge_round_trip(current, prepared)
     from io import StringIO
 
     buffer = StringIO()

@@ -43,10 +43,10 @@ nodes:
     kind: dual_narration
     perceived:
       atmosphere: procedural
-      line: "목요일 오전, 전날보다 구체적인 실무 점검 회의가 시작됐다. 오늘은 각자의 실력이 더 가까이서 보일 차례였다."
+      line: "목요일 오전, 전날보다 구체적인 실무 점검 회의를 앞두고 사람들이 모였다. 오늘은 각자의 실력이 더 가까이서 보일 차례였다."
     reality:
       atmosphere: procedural
-      line: "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 제품 사양과 캠페인 일정을 점검하기 위해 모였다."
+      line: "목요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 전날 확정한 제품 사양과 캠페인 일정을 점검할 회의실에 모였다."
       intent: work_only
     next: day_one_activity_reaction
 
@@ -66,9 +66,9 @@ nodes:
       source: last_activity
       perceived:
         atmosphere: warm_romance
-        line: "{{office_pitch}}"
+        line: "오늘도 잘 부탁합니다. {{office_pitch}} 그럼 참석자표부터 볼까요?"
       reality:
-        line: "{{office_pitch}}"
+        line: "오늘도 잘 부탁합니다. {{office_pitch}} 그럼 참석자표부터 볼까요?"
         intent: self_promotion
     next: day_one_activity_response
 
@@ -88,9 +88,9 @@ nodes:
       source: last_activity
       perceived:
         atmosphere: warm_romance
-        line: "{{acknowledgement}} 참석자표는 여기 있습니다."
+        line: "아, {{acknowledgement}} 참석자표는 여기 있습니다."
       reality:
-        line: "{{acknowledgement}} 참석자표는 여기 있습니다."
+        line: "아, {{acknowledgement}} 참석자표는 여기 있습니다."
         intent: courtesy
     next: day_one_activity_reaction_inner
 
@@ -113,7 +113,7 @@ nodes:
         atmosphere: warm_romance
         line: "(내가 먼저 화제를 꺼내니 자연스럽게 받아 줬어. {{perceived_self_image}})"
       reality:
-        line: "({{reality_response_thought}} 상사의 잡담에 짧게 맞장구치고 참석자표를 건네자.)"
+        line: "({{reality_response_thought}} 일단 맞장구치고 참석자표부터 드리자.)"
         intent: courtesy
     next: agenda
 
@@ -444,11 +444,11 @@ nodes:
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
-      line: "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다."
+      line: "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다."
     reality:
       atmosphere: procedural
       expression: actual_waiting_smile
-      line: "제가 이어서 설명하죠. 여기서 바뀐 건 커피메이커·전기포트·미니오븐의 세트 구성입니다."
+      line: "제가 이어서 설명하죠. 여기서 바뀐 건 봄 기획 세트의 구성입니다."
       intent: self_promotion
     next: takeover_min_kyung
 

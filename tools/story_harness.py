@@ -30,6 +30,11 @@ from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Optional,
 
 import yaml
 
+from self_development_dialogue import (
+    SelfDevelopmentDialogueCompiler,
+    SelfDevelopmentDialogueTemplateError,
+)
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_STORY_ROOT = PROJECT_ROOT / "story"
@@ -205,6 +210,18 @@ class StoryProject:
         self.routes = self._load_kind("routes")
         self.scenes = self._load_kind("scenes")
         self.world = self._load_kind("world")
+        raw_self_development = self.manifest.get("self_development", {})
+        self.self_development_dialogue = SelfDevelopmentDialogueCompiler(
+            raw_self_development if isinstance(raw_self_development, Mapping) else {}
+        )
+
+    def compile_dialogue_node(self, node: Mapping[str, Any]) -> Dict[str, Any]:
+        """Expand an authoring callback template into ordinary runtime variants."""
+        return self.self_development_dialogue.compile_node(node)
+
+    def compile_scene_dialogue(self, scene: Mapping[str, Any]) -> Dict[str, Any]:
+        """Compile all authoring callback templates in one scene without mutating it."""
+        return self.self_development_dialogue.compile_scene(scene)
 
     @staticmethod
     def _load_yaml(path: Path) -> Dict[str, Any]:
@@ -575,6 +592,66 @@ class StoryProject:
                     expression_location,
                     f"score_bonus must be an integer from 0 to {SELF_DEVELOPMENT_MAX_SCORE_BONUS}",
                 )
+
+        conversation_topics = config.get("conversation_topics")
+        if not isinstance(conversation_topics, dict):
+            self._error(issues, location, "conversation_topics must be a mapping")
+            return
+        unknown_topic_ids = sorted(set(conversation_topics) - activity_ids)
+        missing_topic_ids = sorted(activity_ids - set(conversation_topics))
+        if unknown_topic_ids:
+            self._error(
+                issues,
+                location,
+                f"conversation_topics reference unknown activities: {unknown_topic_ids}",
+            )
+        if missing_topic_ids:
+            self._error(
+                issues,
+                location,
+                f"conversation_topics are missing activities: {missing_topic_ids}",
+            )
+        for activity_id in sorted(activity_ids & set(conversation_topics)):
+            topic_location = f"{location}.conversation_topics.{activity_id}"
+            topic = conversation_topics.get(activity_id)
+            if not isinstance(topic, dict):
+                self._error(issues, topic_location, "conversation topic must be a mapping")
+                continue
+            for key in sorted(set(topic) - {"variant_id", "expression", "slots"}):
+                self._error(issues, topic_location, f"unknown conversation topic key: {key}")
+            expected_variant_id = f"after_{activity_id}"
+            if topic.get("variant_id") != expected_variant_id:
+                self._error(
+                    issues,
+                    topic_location,
+                    f"variant_id must remain {expected_variant_id}",
+                )
+            expression_id = topic.get("expression")
+            expression = expressions.get(expression_id) if isinstance(expression_id, str) else None
+            if not isinstance(expression, dict):
+                self._error(issues, topic_location, f"unknown conversation topic expression: {expression_id}")
+            else:
+                if expression.get("requires") != {"last_activity": activity_id}:
+                    self._error(
+                        issues,
+                        topic_location,
+                        "conversation topic expression must require only its matching last_activity",
+                    )
+                if expression.get("score_bonus") != 0:
+                    self._error(
+                        issues,
+                        topic_location,
+                        "conversation topic expression score_bonus must remain 0",
+                    )
+            slots = topic.get("slots")
+            if not isinstance(slots, dict) or not slots:
+                self._error(issues, topic_location, "slots must be a non-empty mapping")
+                continue
+            for slot_id, sentence in slots.items():
+                if not isinstance(slot_id, str) or not re.fullmatch(r"[a-z][a-z0-9_]*", slot_id):
+                    self._error(issues, topic_location, f"invalid conversation slot id: {slot_id}")
+                if not isinstance(sentence, str) or not sentence.strip():
+                    self._error(issues, topic_location, f"conversation slot must be a non-empty string: {slot_id}")
 
     def _validate_value_against_spec(self, issues: List[Issue], location: str, path: str, value: Any, spec: Mapping[str, Any]) -> None:
         value_type = spec.get("type")
@@ -960,7 +1037,7 @@ class StoryProject:
             self._error(issues, relative_source(self.ui.get("_source", "story/ui.yaml")), "UI strings must be a non-empty mapping")
         try:
             entries = collect_localizable_entries(self)
-        except RuntimeError as error:
+        except (RuntimeError, SelfDevelopmentDialogueTemplateError) as error:
             self._error(issues, "story/localization", str(error))
             return
         quality = self.manifest.get("localization_quality", {})
@@ -1680,6 +1757,11 @@ class StoryProject:
         valid_kinds = set(self.manifest.get("enums", {}).get("node_kind", []))
         for scene_id, scene in self.scenes.items():
             location = relative_source(scene.get("_source", scene_id))
+            try:
+                compiled_scene = self.compile_scene_dialogue(scene)
+            except SelfDevelopmentDialogueTemplateError as exc:
+                self._error(issues, location, str(exc))
+                compiled_scene = scene
             if not self.id_is_valid(scene_id):
                 self._error(issues, location, f"invalid scene id: {scene_id}")
             for key in ("title", "route", "purpose", "cast", "state_contract", "start_node", "nodes"):
@@ -1704,7 +1786,7 @@ class StoryProject:
                     self._error(issues, f"{location}#state_contract", f"derived state is read-only: {path}")
 
             self._validate_conditions(issues, f"{location}#entry_conditions", scene.get("entry_conditions", []), reads)
-            nodes = scene.get("nodes", [])
+            nodes = compiled_scene.get("nodes", [])
             if not isinstance(nodes, list) or not nodes:
                 self._error(issues, location, "nodes must be a non-empty list")
                 continue
@@ -2579,11 +2661,13 @@ class StoryProject:
         routes = {item_id: clean_source(data) for item_id, data in self.routes.items()}
         scenes: Dict[str, Dict[str, Any]] = {}
         for item_id, data in self.scenes.items():
-            compiled = clean_source(data)
+            compiled = clean_source(self.compile_scene_dialogue(data))
             nodes = compiled.pop("nodes", [])
             compiled["node_order"] = [node["id"] for node in nodes]
             compiled["nodes"] = {node["id"]: node for node in nodes}
             scenes[item_id] = compiled
+        runtime_self_development = copy.deepcopy(self.manifest.get("self_development", {}))
+        runtime_self_development.pop("conversation_topics", None)
         return {
             "schema_version": self.manifest.get("schema_version"),
             "project": self.manifest.get("project"),
@@ -2591,7 +2675,7 @@ class StoryProject:
             "source_sha256": digest.hexdigest(),
             "enums": self.manifest.get("enums"),
             "stats": self.manifest.get("stats"),
-            "self_development": copy.deepcopy(self.manifest.get("self_development", {})),
+            "self_development": runtime_self_development,
             "initial_state": self.initial_state(),
             "game_modes": copy.deepcopy(self.game_modes),
             "localization": self.localization_bundle(),
@@ -2656,6 +2740,7 @@ class StoryProject:
             "allowed_system": {
                 "enums": self.manifest.get("enums"),
                 "stats": self.manifest.get("stats"),
+                "self_development": copy.deepcopy(self.manifest.get("self_development", {})),
                 "condition_ops": sorted(VALID_CONDITION_OPS),
                 "effect_ops": sorted(VALID_EFFECT_OPS),
                 "support_styles": sorted(VALID_SUPPORT_STYLES),
@@ -2991,6 +3076,7 @@ def collect_localizable_entries(project: StoryProject) -> Dict[str, Dict[str, An
     for scene_id, scene in project.scenes.items():
         base = f"scenes.{scene_id}"
         source = scene.get("_source", scene_id)
+        scene = project.compile_scene_dialogue(scene)
         scene_context = {"sceneId": scene_id}
         add(f"{base}.title", scene.get("title"), domain="scene", kind="scene", item_id=scene_id, source=source, field_path="title", context=scene_context, max_length=100)
         add(f"{base}.purpose", scene.get("purpose"), domain="scene", kind="scene", item_id=scene_id, source=source, field_path="purpose", context=scene_context, max_length=240)
@@ -3867,6 +3953,7 @@ def resolve_dialogue_variant(
     state: Mapping[str, Any],
     node: Mapping[str, Any],
 ) -> Tuple[str, Mapping[str, Any]]:
+    node = project.compile_dialogue_node(node)
     variants = node.get("variants")
     if not isinstance(variants, list) or not variants:
         selected_id = "default"

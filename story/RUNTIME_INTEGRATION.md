@@ -218,6 +218,8 @@ interaction:
 
 자기계발 해금 선택지는 `self_development.expression`, 같은 선택 노드의 `equivalent_to`, 합류 노드 `converges_at`을 선언한다. 요구 수치, 최근 활동 ID와 `score_bonus`는 `manifest.self_development.expressions`가 소유한다. `requires.last_activity`는 hydrated `progress.self_development.last_activity`와 정확히 비교하며, 직전 밤 선택을 회수하는 대사 표현은 `score_bonus: 0`으로 둔다. 해금 선택지는 기준 선택지와 `push_pull` 및 `effects`가 같아야 하며, 성공한 `score`/`turn` 판정에만 `0~3`의 보이는 주도권 보너스를 더한다. 위치·콤보·활성 득점선·숨은 반복 패턴 효과와 엔딩 결과에는 이 보너스를 사용하지 않는다. 보이는 주도권과 `visible.protagonist.self_development`·`progress.self_development`는 일반 조건에서 읽지 않는다.
 
+직전 밤 활동의 스몰토크는 저작 원본에서 `self_development_template`과 `manifest.self_development.conversation_topics`를 사용한다. 스토리 빌더는 이를 일반 `variants.after_*`와 `default`로 미리 확장하고 매크로와 대화 소재 레지스트리를 런타임 JSON에서 제거한다. 따라서 플레이어 resolver, 세이브, 백로그와 localization key는 기존 variant 계약을 그대로 사용하며, 원본 YAML만 중복 없는 템플릿 형태를 유지한다. 에디터 브리지는 생성 variant를 YAML에 역류시키지 않고, 생성 문구를 직접 고친 저장은 명시적으로 거부한다. 공통 문구는 manifest 슬롯에서, 장면 문맥은 원본 템플릿에서 수정한다.
+
 최초 엔딩 이후 `밀당 주도권`은 `통제 욕구`, `현재 콤보`는 `통제 시도 연쇄`, 리듬 게이지는 `접근 시도/거리 둠`으로 라벨을 교체한다.
 
 리듬 막대는 대사창 바로 위 오른쪽에 충분한 폭과 대비로 배치한다. 적정 구간은 기존보다 넓은 시각 영역으로 표현하되 `중앙 적정 범위 안` 같은 설명 문구를 화면에 반복하지 않는다. 선택지별 `approach`/`space`/`literal`, 강도, 수치 합산과 숨은 효과는 디버깅 모드를 명시적으로 켰을 때만 표시한다.

@@ -58,6 +58,10 @@ class SelfDevelopmentDialogueCompiler:
             return compiled
 
         node_id = str(node.get("id", "<unknown>"))
+        if node.get("kind") not in {"dual_dialogue", "dual_narration"}:
+            raise SelfDevelopmentDialogueTemplateError(
+                f"node {node_id}: self_development_template is only valid on dual dialogue or narration nodes"
+            )
         template = self._validate_template(raw_template, node_id)
         if "variants" in node:
             raise SelfDevelopmentDialogueTemplateError(
