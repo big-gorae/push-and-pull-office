@@ -5,7 +5,11 @@
 - Use the GitHub account big-gorae exclusively for this repository's commits, pushes, pull requests, and GitHub API or CLI operations.
 - Keep the repository-local Git identity set to big-gorae with 293377911+big-gorae@users.noreply.github.com; never fall back to the global binary-ho identity.
 - Keep origin pointed at https://github.com/big-gorae/push-and-pull-office.git.
-- Before any remote publication, verify that the active GitHub CLI account is big-gorae. If it is not authenticated, stop and authenticate or switch to big-gorae; never publish this repository through another account.
+- This checkout stores its project-only GitHub CLI configuration under the common Git directory at `private-gh`. Every agent session and linked worktree must resolve it with `love_office_gh_dir="$(git rev-parse --git-common-dir)/private-gh"` and run GitHub CLI commands as `GH_CONFIG_DIR="$love_office_gh_dir" gh ...`. Do not rely on the global GitHub CLI account.
+- Normal `git fetch`, `git pull`, and `git push` commands use the repository-local credential helper already recorded in the common Git config. Do not clear, replace, or bypass that helper. Verify it with `git config --show-origin --get-all credential.helper` when authentication behavior is uncertain.
+- Before any remote publication, run `GH_CONFIG_DIR="$love_office_gh_dir" gh auth status` with network access and verify that the active account is big-gorae. A restricted sandbox can make a valid token look invalid because the GitHub API is unreachable; retry with the session's approved network escalation before diagnosing token expiry.
+- If the project-only authentication is genuinely missing or expired, authenticate only that directory with `GH_CONFIG_DIR="$love_office_gh_dir" gh auth login -h github.com --git-protocol https --web`. Never switch this repository to another account and never copy tokens into tracked files, shell output, logs, or documentation.
+- The project-only authentication is shared by sessions using this same repository's common Git directory, but it is not committed. A fresh clone must perform the project-only login once before publishing.
 
 ## `전부 반영` publishing workflow
 
