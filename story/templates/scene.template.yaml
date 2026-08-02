@@ -59,7 +59,16 @@ nodes:
         label: "플레이어가 보는 선택지"
         interpretation: "한도윤이 믿는 의미"
         action: "객관적으로 발생하는 행동"
-        push_pull: {action: approach, intensity: 12, base_score: 4}
+        push_pull:
+          # target: another_heroine_id # 루트 히로인과 다를 때만. 현재 cast의 히로인이어야 한다.
+          action: approach
+          intensity: 12
+          base_score: 4
+        # 지원 화법을 실제로 사용한 선택에만 interaction을 추가한다.
+        # interaction:
+        #   target: heroine_id # 실제 반응하는 현재 cast 인물
+        #   support_styles: [emotional_validation, ask_before_helping]
+        # 명시적인 요청·거절을 그대로 존중하는 선택이면 literal_respect를 우선한다.
         conditions: []
         effects:
           - path: hidden.heroines.heroine_id.suspicion

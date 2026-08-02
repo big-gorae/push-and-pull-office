@@ -21,7 +21,7 @@ describe("NovelAI prompt catalog", () => {
     expect(seoA).toMatchObject({
       displayName: "윤서아",
       age: 24,
-      role: "상품기획팀 계약직 사원",
+      role: "영업기획팀 계약직 사원",
       conceptArt: "assets/concept-art/yoon-seo-a.png",
     });
     expect(seoA?.variants[0].identityTags).toContain("long dark brown hair");
@@ -318,21 +318,49 @@ describe("NovelAI prompt composition", () => {
     expect(allPromptConfig).not.toMatch(/baek\s*ji[- ]?heon|백지헌/i);
   });
 
-  it("pins Cha Min-kyung's single beauty mark below the outer eye corner", () => {
+  it("pins Cha Min-kyung's two beauty marks and keeps her cold expression composed", () => {
     const catalog = loadPromptCatalog();
     const minKyung = catalog.characters.find(({ id }) => id === "cha_min_kyung");
     const variant = minKyung?.variants[0];
+    const defaultSituation = variant?.situations.find(({ id }) => id === "reference_skeptical");
 
-    expect(variant?.identityTags).toContain("mole under eye");
+    expect(variant?.identityTags).toContain("1.35::mole under eye::");
     expect(variant?.identityTags).toContain(
-      "A single tiny dark beauty mark sits just below the outer corner of her left eye above the cheekbone.",
+      "One tiny dark beauty mark sits just below the outer corner of her left eye above the cheekbone.",
     );
-    expect(variant?.characterUndesiredTags).toContain("multiple moles");
-    expect(variant?.characterUndesiredTags).not.toContain("mole under eye");
+    expect(variant?.identityTags).toContain("1.35::mole on collarbone::");
+    expect(variant?.identityTags).toContain(
+      "A second tiny dark beauty mark sits at the left base of her neck, just below the collarbone on her upper chest.",
+    );
+    expect(variant?.outfits[0]?.tags).toEqual(expect.arrayContaining(["v-neck", "collarbone"]));
+    expect(variant?.characterUndesiredTags).not.toContain("multiple moles");
+    expect(defaultSituation).toMatchObject({ basePresetId: "character_upper_body" });
+    expect(defaultSituation?.tags).toEqual(expect.arrayContaining([
+      "neutral face",
+      "calm eyes",
+      "relaxed eyebrows",
+      "closed mouth",
+      "direct gaze",
+    ]));
+
+    const harshExpressionTags = [
+      "one eyebrow raised",
+      "skeptical expression",
+      "clenched jaw",
+      "narrowed eyes",
+      "cold gaze",
+      "challenging gaze",
+      "tight closed mouth",
+    ];
+    const allSituationTags = variant?.situations.flatMap(({ tags }) => tags) ?? [];
+    for (const tag of harshExpressionTags) {
+      expect(allSituationTags).not.toContain(tag);
+    }
 
     for (const character of catalog.characters.filter(({ id }) => id !== "cha_min_kyung")) {
       for (const look of character.variants) {
-        expect(look.identityTags).not.toContain("mole under eye");
+        expect(look.identityTags.join(", ")).not.toContain("mole under eye");
+        expect(look.identityTags.join(", ")).not.toContain("mole on collarbone");
       }
     }
 
@@ -341,9 +369,14 @@ describe("NovelAI prompt composition", () => {
       variantId: "office",
       situationId: "reference_skeptical",
     });
-    expect(prompt.character).toContain("mole under eye");
+    expect(prompt.base).toContain("upper body");
+    expect(prompt.character).toContain("1.35::mole under eye::");
     expect(prompt.character).toContain("outer corner of her left eye above the cheekbone");
-    expect(prompt.uc).toContain("multiple moles");
+    expect(prompt.character).toContain("1.35::mole on collarbone::");
+    expect(prompt.character).toContain("just below the collarbone on her upper chest");
+    expect(prompt.uc).not.toContain("multiple moles");
+    expect(prompt.uc).toContain("narrow eyes");
+    expect(prompt.uc).toContain("v-shaped eyebrows");
   });
 
   it("copies only the supplied art style and never its character or battle content", () => {

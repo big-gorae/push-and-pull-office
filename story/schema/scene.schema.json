@@ -90,10 +90,35 @@
         "interpretation": {"type": "string"},
         "action": {"type": "string"},
         "push_pull": {"$ref": "#/$defs/push_pull"},
+        "interaction": {"$ref": "#/$defs/interaction"},
         "self_development": {"$ref": "#/$defs/self_development_choice"},
         "conditions": {"type": "array", "items": {"$ref": "#/$defs/condition"}},
         "effects": {"type": "array", "items": {"$ref": "#/$defs/effect"}},
         "next": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "interaction": {
+      "type": "object",
+      "required": ["target", "support_styles"],
+      "properties": {
+        "target": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
+        "support_styles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "emotional_validation",
+              "factual_clarification",
+              "practical_resolution",
+              "ask_before_helping",
+              "autonomy_return",
+              "concise_reassurance",
+              "literal_respect"
+            ]
+          }
+        }
       },
       "additionalProperties": false
     },
@@ -115,10 +140,46 @@
       },
       "additionalProperties": false
     },
+    "self_development_template_perceived": {
+      "type": "object",
+      "required": ["line"],
+      "properties": {
+        "atmosphere": {"type": "string"},
+        "expression": {"type": "string"},
+        "line": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "self_development_template_reality": {
+      "type": "object",
+      "required": ["line"],
+      "properties": {
+        "atmosphere": {"type": "string"},
+        "expression": {"type": "string"},
+        "line": {"type": "string", "minLength": 1},
+        "intent": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "self_development_template": {
+      "type": "object",
+      "required": ["source"],
+      "properties": {
+        "source": {"const": "last_activity"},
+        "perceived": {"$ref": "#/$defs/self_development_template_perceived"},
+        "reality": {"$ref": "#/$defs/self_development_template_reality"}
+      },
+      "anyOf": [
+        {"required": ["perceived"]},
+        {"required": ["reality"]}
+      ],
+      "additionalProperties": false
+    },
     "push_pull": {
       "type": "object",
       "required": ["action", "intensity", "base_score"],
       "properties": {
+        "target": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
         "action": {"enum": ["approach", "space", "literal"]},
         "intensity": {"type": "integer", "minimum": 8, "maximum": 16},
         "base_score": {"type": "integer", "minimum": 2, "maximum": 5}
@@ -162,6 +223,7 @@
         "perceived": {"$ref": "#/$defs/perceived"},
         "reality": {"$ref": "#/$defs/reality"},
         "variants": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/dialogue_variant"}},
+        "self_development_template": {"$ref": "#/$defs/self_development_template"},
         "prompt": {"type": "string"},
         "stimulus": {"type": "string", "minLength": 1},
         "options": {"type": "array", "items": {"$ref": "#/$defs/option"}},
@@ -184,7 +246,11 @@
         {"if": {"properties": {"kind": {"const": "choice"}}}, "then": {"required": ["prompt", "stimulus", "options"]}},
         {"if": {"properties": {"kind": {"const": "state_gate"}}}, "then": {"required": ["transitions"]}},
         {"if": {"properties": {"kind": {"const": "effect"}}}, "then": {"required": ["effects", "next"]}},
-        {"if": {"properties": {"kind": {"const": "exit"}}}, "then": {"required": ["transitions"]}}
+        {"if": {"properties": {"kind": {"const": "exit"}}}, "then": {"required": ["transitions"]}},
+        {"if": {"required": ["self_development_template"]}, "then": {
+          "required": ["perceived", "reality"],
+          "properties": {"kind": {"enum": ["dual_dialogue", "dual_narration"]}}
+        }}
       ],
       "additionalProperties": false
     }

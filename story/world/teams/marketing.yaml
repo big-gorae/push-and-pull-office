@@ -2,7 +2,7 @@ schema_version: 1
 id: team.marketing
 kind: team
 company: company.dawon_living
-name: 마케팅팀
-function: 캠페인 전략, 전체 일정, 매체 집행과 성과 분석
-lead_member: member.lee_su_hyeon
-member_ids: [member.lee_su_hyeon, member.cha_min_kyung, member.jeong_da_eun]
+name: 브랜드마케팅팀
+function: 홈카페 신제품 캠페인 전략, 팝업·인플루언서 공개 일정, 디자인 제작과 브랜드 품질 관리
+lead_member: member.moon_ji_hye
+member_ids: [member.moon_ji_hye, member.lee_su_hyeon, member.cha_min_kyung, member.kang_yoo_jin, member.jeong_da_eun]

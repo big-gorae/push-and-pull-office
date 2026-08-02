@@ -1,4 +1,5 @@
 schema_version: 1
+campaign_id: main
 id: anchor.day_14_triangle
 title: 삼각관계의 기척
 type: anchor

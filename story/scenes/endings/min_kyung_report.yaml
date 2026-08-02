@@ -15,7 +15,6 @@ state_contract:
     - progress.memories
   writes:
     - progress.cleared_routes
-    - progress.unlocked_modes
     - progress.memories
     - progress.flags.story_mode.home_incident
 start_node: complete
@@ -24,8 +23,6 @@ nodes:
     kind: effect
     effects:
       - {path: progress.cleared_routes, op: append_unique, value: min_kyung}
-      - {path: progress.unlocked_modes, op: append_unique, value: truth_view}
-      - {path: progress.unlocked_modes, op: append_unique, value: survivor_view}
       - {path: progress.flags.story_mode.home_incident, op: set, value: reported}
     next: leave_request
 

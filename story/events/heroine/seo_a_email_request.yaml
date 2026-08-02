@@ -1,4 +1,5 @@
 schema_version: 1
+campaign_id: main
 id: seo_a.email_request
 title: 메일로 보내 주세요
 type: heroine

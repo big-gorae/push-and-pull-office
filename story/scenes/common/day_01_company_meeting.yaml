@@ -33,7 +33,7 @@ nodes:
       line: "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 낯선 팀이 한자리에 모이면 사람의 장점도 평소보다 선명하게 보이는 법이다."
     reality:
       atmosphere: procedural
-      line: "수요일 오전, 영업기획·상품기획·마케팅·브랜드디자인 실무자들이 신규 프로젝트 킥오프를 위해 회의실에 모였다."
+      line: "수요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 신규 프로젝트 킥오프를 위해 회의실에 모였다."
       intent: work_only
     next: arrival_inner
 
@@ -58,10 +58,10 @@ nodes:
     speaker: member.jeong_da_eun
     perceived:
       atmosphere: procedural
-      line: "상품기획 오세진 팀장님, 디자인 문지혜 팀장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다."
+      line: "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다."
     reality:
       atmosphere: procedural
-      line: "상품기획 오세진 팀장님, 디자인 문지혜 팀장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다."
+      line: "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다."
       intent: documentation
     next: oh_se_jin_scope
 
@@ -70,10 +70,10 @@ nodes:
     speaker: member.oh_se_jin
     perceived:
       atmosphere: procedural
-      line: "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
+      line: "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
     reality:
       atmosphere: procedural
-      line: "상품 정보와 표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
+      line: "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
       intent: work_only
     next: seo_a_materials
   - id: seo_a_materials
@@ -111,11 +111,11 @@ nodes:
     perceived:
       atmosphere: procedural
       expression: subjective_confident
-      line: "고마워요. 윤서아 씨 맞죠? 출력은 회의 끝나고 해도 됩니다."
+      line: "고마워요, 윤서아 씨. 한 부가 부족한 걸 바로 챙겨 줬네요. 저는 이걸로 보고, 추가 출력은 회의 끝나고 해도 됩니다."
     reality:
       atmosphere: procedural
       expression: actual_waiting_smile
-      line: "고마워요. 윤서아 씨 맞죠? 출력은 회의 끝나고 해도 됩니다."
+      line: "고마워요, 윤서아 씨. 한 부가 부족한 걸 바로 챙겨 줬네요. 저는 이걸로 보고, 추가 출력은 회의 끝나고 해도 됩니다."
       intent: courtesy
     next: do_yoon_thanks_inner
 
@@ -128,7 +128,7 @@ nodes:
       reality: han_do_yoon
     perceived:
       atmosphere: procedural
-      line: (이름까지 불러 주면 긴장도 풀리겠지. 여유 있는 상사처럼 보였을 거야.)
+      line: (먼저 챙긴 걸 알아주고 이름까지 불렀으니 긴장도 풀리겠지. 여유 있는 상사처럼 보였을 거야.)
     reality:
       atmosphere: procedural
       line: (사원증에 윤서아라고 적혀 있었지. 자료도 생겼으니 시작하자.)
@@ -140,11 +140,11 @@ nodes:
     perceived:
       atmosphere: procedural
       expression: subjective_shy
-      line: "아, 네. 상품기획팀 윤서아입니다. 빠진 자료는 회의 끝나고 바로 출력해 둘게요."
+      line: "아, 네. 감사합니다. 지금은 회의에 집중하고, 빠진 자료는 끝나고 제가 확인할게요."
     reality:
       atmosphere: procedural
       expression: actual_social_smile
-      line: "아, 네. 상품기획팀 윤서아입니다. 빠진 자료는 회의 끝나고 바로 출력해 둘게요."
+      line: "아, 네. 감사합니다. 지금은 회의에 집중하고, 빠진 자료는 끝나고 제가 확인할게요."
       intent: work_only
     next: seo_a_introduction_inner
 
@@ -157,10 +157,10 @@ nodes:
       reality: yoon_seo_a
     perceived:
       atmosphere: procedural
-      line: (이름을 기억해 줘서 반가운가? 다시 또렷이 소개하는 게 파릇파릇해서 귀엽네.)
+      line: (먼저 챙긴 걸 알아주니 안심했군. 내 앞에서는 표정이 금방 풀리네.)
     reality:
       atmosphere: procedural
-      line: (첫 회의부터 준비를 빼먹은 사람처럼 보이면 안 돼. 끝나자마자 출력해 두자.)
+      line: (챙긴 걸 바로 알아주고 실수부터 따지지 않아서 다행이다. 지금은 회의에 집중하고, 끝나고 빠진 수량을 다시 확인하자.)
       intent: work_only
     next: min_kyung_question
   - id: min_kyung_question
@@ -169,11 +169,11 @@ nodes:
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
-      line: "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?"
+      line: "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?"
     reality:
       atmosphere: procedural
       expression: actual_skeptical
-      line: "한 과장님, 거래처 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?"
+      line: "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?"
       intent: documentation
     next: min_kyung_question_inner
 
@@ -256,11 +256,11 @@ nodes:
     perceived:
       atmosphere: playful_tension
       expression: subjective_bold_flirt
-      line: "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다."
+      line: "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다."
     reality:
       atmosphere: procedural
       expression: actual_fact_check
-      line: "한 과장님, 디자인 시안은 네 종이 아니라 세 종입니다. 최종안 한 종과 매체별 변형 두 종입니다."
+      line: "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다."
       intent: documentation
     next: yoo_jin_correction_inner
 
@@ -343,10 +343,10 @@ nodes:
     speaker: member.moon_ji_hye
     perceived:
       atmosphere: procedural
-      line: "디자인팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요."
+      line: "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요."
     reality:
       atmosphere: procedural
-      line: "디자인팀은 세 종 기준으로 제작 시간을 확보했습니다. 상품 문구가 확정되면 강유진 대리에게 넘겨 주세요."
+      line: "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요."
       intent: work_only
     next: assignments
   - id: assignments
@@ -356,7 +356,7 @@ nodes:
       line: "서아는 세심했고, 민경은 정확했으며, 유진은 거리낌이 없었다. 첫 회의치고는 각자의 색이 분명한 팀이었다."
     reality:
       atmosphere: procedural
-      line: "민경이 전체 일정을 이끌고, 한도윤은 거래처 승인, 오세진은 상품 문구, 서아는 자료와 회의록, 정다은은 캠페인 일정, 문지혜와 유진은 디자인 승인과 버전 관리를 나눠 맡았다."
+      line: "참석자들은 바이어 승인, 제품 자료, 캠페인 일정과 제작 파일을 담당별로 나눴다."
       intent: work_only
     next: assignments_inner
 
@@ -372,7 +372,7 @@ nodes:
       line: (세 사람 모두 자기 장점이 뚜렷하군. 내 앞이라 더 신경 쓴 걸까?)
     reality:
       atmosphere: procedural
-      line: 참석자들은 배정된 역할을 확인했고, 다음 회의 전까지 각 팀의 산출물을 준비하기로 했다.
+      line: 참석자들은 배정된 역할을 확인했고, 다음 회의 전까지 담당별 산출물을 준비하기로 했다.
       intent: work_only
     next: seo_a_closing
   - id: seo_a_closing
@@ -439,11 +439,11 @@ nodes:
     perceived:
       atmosphere: procedural
       expression: subjective_bold_flirt
-      line: "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다."
+      line: "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다."
     reality:
       atmosphere: procedural
       expression: actual_procedural
-      line: "수치가 바뀌면 디자인팀에도 같은 버전으로 전달해 주세요. 이전 파일은 사용하지 않겠습니다."
+      line: "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다."
       intent: documentation
     next: yoo_jin_closing_inner
 

@@ -2,6 +2,7 @@ schema_version: 1
 id: member.cha_min_kyung
 kind: member
 company: company.dawon_living
+name: 차민경
 display_name: 차민경
 team: team.marketing
 role: role.senior_associate
@@ -11,4 +12,4 @@ employment: permanent
 presentation: illustrated
 story_character: cha_min_kyung
 route_eligible: true
-responsibilities: [project_operations, master_schedule, marketing_strategy]
+responsibilities: [project_operations, master_schedule, marketing_strategy, influencer_partnerships]

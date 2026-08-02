@@ -3,11 +3,19 @@
   "$id": "campaign.schema.json",
   "title": "Love Office Campaign",
   "type": "object",
-  "required": ["schema_version", "id", "title", "total_days", "slots", "choice_slots", "acts", "lanes"],
+  "required": ["schema_version", "id", "title", "entry_event_id", "initial_state_patch", "systems", "total_days", "slots", "choice_slots", "acts", "lanes"],
   "properties": {
     "schema_version": { "const": 1 },
     "id": { "type": "string", "pattern": "^[a-z][a-z0-9_.]*$" },
     "title": { "type": "string", "minLength": 1 },
+    "entry_event_id": { "type": "string", "pattern": "^[a-z][a-z0-9_.]*$" },
+    "initial_state_patch": { "type": "object" },
+    "systems": {
+      "type": "object",
+      "required": ["self_development"],
+      "properties": { "self_development": { "type": "boolean" } },
+      "additionalProperties": false
+    },
     "total_days": { "type": "integer", "minimum": 1 },
     "slots": {
       "type": "array",
@@ -50,5 +58,6 @@
         }
       }
     }
-  }
+  },
+  "additionalProperties": false
 }

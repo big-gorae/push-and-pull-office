@@ -2,16 +2,14 @@ schema_version: 1
 id: meeting.cross_function_kickoff
 kind: meeting
 company: company.dawon_living
-name: 다부서 프로젝트 킥오프
+name: 공동 프로젝트 킥오프
 formality: formal
 minimum_participants: 6
 maximum_participants: 12
 minimum_text_only_participants: 2
 required_teams:
   - team.sales_planning
-  - team.product_planning
   - team.marketing
-  - team.brand_design
 required_responsibilities:
   - project_lead
   - commercial_owner
@@ -20,5 +18,5 @@ required_responsibilities:
 allowed_unassigned_participants: false
 notes:
   - 실무 리드가 일정과 회의 진행을 맡는다.
-  - 영업·상품·마케팅·디자인 각 영역의 책임자 또는 승인 권한자가 참석한다.
+  - 영업기획팀과 브랜드마케팅팀에서 업무 영역별 책임자 또는 승인 권한자가 참석한다.
   - 회의록 담당과 실행 코디네이터를 포함하므로 공략 인물만 회의에 있지 않는다.

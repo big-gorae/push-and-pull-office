@@ -7,6 +7,7 @@ import {
   canEnterScene,
   chooseSceneTransition,
   conditionMatches,
+  deriveStateContract,
   effectiveSpeaker,
   inspectTimelineEvent,
   resolveDialogueNode,
@@ -16,6 +17,40 @@ import {
 const runtime = runtimeJson as unknown as Runtime;
 
 describe("condition conformance", () => {
+  it("derives push-pull state paths for every heroine targeted in a shared scene", () => {
+    const scene = structuredClone(runtime.scenes["common.day_02_practical_meeting"]);
+    const contract = deriveStateContract(scene, "yoon_seo_a", runtime);
+    for (const heroine of ["yoon_seo_a", "cha_min_kyung"]) {
+      expect(contract.writes).toContain(`visible.heroines.${heroine}.initiative`);
+      expect(contract.writes).toContain(`hidden.heroines.${heroine}.suspicion`);
+      expect(contract.writes).toContain(`hidden.heroines.${heroine}.dislike`);
+      expect(contract.writes).toContain(`hidden.heroines.${heroine}.evidence_count`);
+    }
+  });
+
+  it("derives the last-activity progress path required by a self-development expression", () => {
+    const scene = structuredClone(runtime.scenes["common.day_02_practical_meeting"]);
+    scene.nodes = {
+      activity_callback: {
+        id: "activity_callback",
+        kind: "dual_dialogue",
+        speaker: "han_do_yoon",
+        variants: [{
+          id: "after_workout",
+          self_development: { expression: "feedback.last_workout" },
+          perceived: { line: "운동을 다시 시작했습니다." },
+          reality: { line: "운동을 다시 시작했습니다." },
+        }],
+        next: "done",
+      },
+      done: { id: "done", kind: "exit", transitions: [{ ending: true }] },
+    };
+
+    const contract = deriveStateContract(scene, "yoon_seo_a", runtime);
+
+    expect(contract.reads).toContain("progress.self_development.last_activity");
+  });
+
   it.each(fixture.cases)("$id", ({ state, condition, expected }) => {
     expect(conditionMatches(state as never, condition as Condition)).toBe(expected);
   });

@@ -2,34 +2,36 @@ schema_version: 1
 id: project.harudam_spring_campaign
 kind: project
 company: company.dawon_living
-name: 하루담 봄 리빙 캠페인
-project_type: integrated_retail_campaign
-summary: 생활용품 브랜드 하루담의 봄 판매 캠페인을 위해 거래처 승인, 상품 자료, 마케팅 일정과 디자인 버전을 통합하는 다부서 프로젝트.
+name: 하루담 봄 홈카페 캠페인
+project_type: home_cafe_appliance_launch
+summary: 하루담의 커피메이커·전기포트·미니오븐 봄 라인을 백화점과 팝업에 출시하고 인플루언서 콘텐츠를 공개하기 위해 영업기획팀과 브랜드마케팅팀이 입점 승인, 제품 사양, 샘플, 일정과 디자인 버전을 함께 관리하는 공동 프로젝트.
 owner_team: team.marketing
 participating_teams:
   - team.sales_planning
-  - team.product_planning
   - team.marketing
-  - team.brand_design
 sponsor_member: member.park_jae_hyun
 lead_member: member.cha_min_kyung
 deliverables:
   - id: deliverable.client_approval
     owner_team: team.sales_planning
     approver_role: role.manager
-    description: 거래처 사전 검토와 1차 승인 일정
+    description: 백화점·편집숍 바이어 사전 검토와 1차 입점 승인 일정
   - id: deliverable.product_packet
-    owner_team: team.product_planning
-    approver_role: role.department_head
-    description: 상품 정보와 표시 문구 패킷
+    owner_team: team.sales_planning
+    approver_role: role.deputy_general_manager
+    description: 모델별 제품 사양, 안전·표시 문구와 대여 샘플 목록
   - id: deliverable.campaign_plan
     owner_team: team.marketing
     approver_role: role.department_head
-    description: 캠페인 마스터 일정과 매체 계획
+    description: 팝업 운영, 매체 집행과 인플루언서 콘텐츠 공개를 묶은 캠페인 마스터 일정
+  - id: deliverable.influencer_brief
+    owner_team: team.marketing
+    approver_role: role.deputy_general_manager
+    description: 홈카페 크리에이터별 제품 대여 목록, 콘텐츠 요구사항과 공개 일정 브리프
   - id: deliverable.creative_set
-    owner_team: team.brand_design
+    owner_team: team.marketing
     approver_role: role.department_head
-    description: 최종안 1종과 매체별 변형 2종
+    description: 홈카페 키 비주얼 최종안 1종과 팝업·인플루언서용 변형 2종
 assignments:
   - {responsibility: project_lead, member: member.cha_min_kyung}
   - {responsibility: commercial_owner, member: member.han_do_yoon}

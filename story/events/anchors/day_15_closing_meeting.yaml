@@ -1,4 +1,5 @@
 schema_version: 1
+campaign_id: main
 id: anchor.day_15_closing_meeting
 title: 마지막으로 따뜻한 날
 type: anchor

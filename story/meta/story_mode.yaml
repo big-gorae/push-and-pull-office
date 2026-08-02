@@ -1,9 +1,7 @@
 schema_version: 1
 id: story_mode
 unlock_rules: []
-stable_mode_id: base
 display_name: 스토리 모드
-campaign: main
 ending_day: 17
 routeable_heroines: [yoon_seo_a, cha_min_kyung]
 unrouteable_heroine: kang_yoo_jin

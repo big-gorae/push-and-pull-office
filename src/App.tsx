@@ -49,6 +49,7 @@ import type {
   RuntimeState,
   Scene,
   StoryNode,
+  SupportStyle,
   Transition,
   ValidationIssue,
   ViewMode,
@@ -62,6 +63,16 @@ const NODE_LABELS: Record<NodeKind, string> = {
   effect: "상태 효과",
   exit: "장면 이탈",
 };
+
+const SUPPORT_STYLE_OPTIONS: Array<{ id: SupportStyle; label: string }> = [
+  { id: "emotional_validation", label: "감정 인정" },
+  { id: "factual_clarification", label: "사실 확인" },
+  { id: "practical_resolution", label: "실행 가능한 해결" },
+  { id: "ask_before_helping", label: "돕기 전 질문" },
+  { id: "autonomy_return", label: "선택권 반환" },
+  { id: "concise_reassurance", label: "짧고 구체적인 안심" },
+  { id: "literal_respect", label: "말의 원문 존중" },
+];
 
 const STATE_LABELS: Record<string, string> = { push: "밀기", pull: "당기기", neutral: "중립" };
 
@@ -106,10 +117,14 @@ function nodePreview(node: StoryNode): string {
 }
 
 function storyRoutes(runtime: Runtime) {
-  const laneOrder = new Map(Object.values(runtime.campaigns)[0]?.lanes.map((lane, index) => [lane.id, index]) || []);
+  const campaignOrder = new Map(Object.keys(runtime.campaigns).map((id, index) => [id, index]));
   return Object.values(runtime.routes).sort((left, right) => {
-    const leftLane = Object.values(runtime.threads).find((thread) => thread.heroine === left.heroine)?.lane;
-    const rightLane = Object.values(runtime.threads).find((thread) => thread.heroine === right.heroine)?.lane;
+    const campaignDelta = (campaignOrder.get(left.campaign_id) ?? 999) - (campaignOrder.get(right.campaign_id) ?? 999);
+    if (campaignDelta !== 0) return campaignDelta;
+    const campaign = runtime.campaigns[left.campaign_id];
+    const laneOrder = new Map(campaign?.lanes.map((lane, index) => [lane.id, index]) || []);
+    const leftLane = Object.values(runtime.threads).find((thread) => thread.campaign_id === left.campaign_id && thread.heroine === left.heroine)?.lane;
+    const rightLane = Object.values(runtime.threads).find((thread) => thread.campaign_id === right.campaign_id && thread.heroine === right.heroine)?.lane;
     return (laneOrder.get(leftLane || "") ?? 999) - (laneOrder.get(rightLane || "") ?? 999);
   });
 }
@@ -353,6 +368,54 @@ function ChoiceEditor({ runtime, scene, node, onChange }: { runtime: Runtime; sc
           <Field label="플레이어 문구" wide><TextInput value={option.label} onChange={(event) => updateOption(index, { label: event.target.value })} /></Field>
           <Field label="주인공 해석" wide><TextArea value={option.interpretation} onChange={(event) => updateOption(index, { interpretation: event.target.value })} /></Field>
           <Field label="실제로 하는 행동" wide><TextArea value={option.action} onChange={(event) => updateOption(index, { action: event.target.value })} /></Field>
+          <Field label="대화 반응 대상">
+            <select
+              value={option.interaction?.target || ""}
+              onChange={(event) => updateOption(index, {
+                interaction: event.target.value
+                  ? { target: event.target.value, support_styles: option.interaction?.support_styles || [] }
+                  : undefined,
+              })}
+            >
+              <option value="">화법 메타데이터 없음</option>
+              {Object.values(runtime.characters)
+                .filter((character) => scene.cast.includes(character.id))
+                .map((character) => <option value={character.id} key={character.id}>{character.display_name}</option>)}
+            </select>
+          </Field>
+          <Field label="지원 화법" wide>
+            <select
+              multiple
+              size={4}
+              value={option.interaction?.support_styles || []}
+              onChange={(event) => {
+                const support_styles = Array.from(event.currentTarget.selectedOptions)
+                  .map((selected) => selected.value as SupportStyle);
+                const target = option.interaction?.target || runtime.routes[scene.route]?.heroine;
+                updateOption(index, {
+                  interaction: target ? { target, support_styles } : undefined,
+                });
+              }}
+            >
+              {SUPPORT_STYLE_OPTIONS.map((style) => <option value={style.id} key={style.id}>{style.label} · {style.id}</option>)}
+            </select>
+          </Field>
+          <Field label="밀당 계산 대상">
+            <select
+              value={option.push_pull?.target || ""}
+              onChange={(event) => {
+                const push_pull = { ...(option.push_pull || { action: "literal" as const, intensity: 12, base_score: 4 }) };
+                if (event.target.value) push_pull.target = event.target.value;
+                else delete push_pull.target;
+                updateOption(index, { push_pull });
+              }}
+            >
+              <option value="">루트 기본 · {runtime.characters[runtime.routes[scene.route]?.heroine]?.display_name || "미지정"}</option>
+              {Object.values(runtime.characters)
+                .filter((character) => Boolean(runtime.initial_state.visible.heroines[character.id]))
+                .map((character) => <option value={character.id} key={character.id}>{character.display_name}</option>)}
+            </select>
+          </Field>
           <Field label="밀당 방향">
             <select
               value={option.push_pull?.action || "literal"}
@@ -720,10 +783,13 @@ function Preview({
   image?: string;
 }) {
   const route = runtime.routes[scene.route];
-  const heroine = route.heroine;
+  const baseHeroine = route.heroine;
+  const rhythmState = readPushPullState(state);
+  const heroine = rhythmState.heroine && state.visible.heroines[rhythmState.heroine]
+    ? rhythmState.heroine
+    : baseHeroine;
   const visible = state.visible.heroines[heroine];
   const hidden = state.hidden.heroines[heroine];
-  const rhythmState = readPushPullState(state);
   const [pushPullResult, setPushPullResult] = useState<PushPullResult | null>(null);
   const emotion = deriveEmotion(runtime.characters[heroine], hidden);
   const selected = scene.nodes[selectedNodeId];
@@ -765,7 +831,7 @@ function Preview({
       ? selfDevelopmentSystem(runtime).eligibility.scoreBonus(state, option.self_development.expression)
       : 0;
     option.effects.forEach((effect) => applyEffect(runtime, next, effect));
-    const result = resolvePushPull(next, heroine, option.push_pull, { visibleScoreBonus });
+    const result = resolvePushPull(next, option.push_pull?.target || baseHeroine, option.push_pull, { visibleScoreBonus });
     setPushPullResult(result);
     onState(next);
   };
@@ -1246,8 +1312,9 @@ export default function App() {
       };
     });
     const events = Object.values(runtime.events).map((event) => {
-      const lane = Object.values(runtime.campaigns)[0]?.lanes.find((item) => item.id === event.lane)?.title || event.lane;
-      const context = `${event.window.days[0]}~${event.window.days[1]}일 · ${lane}${event.scene ? ` · ${runtime.scenes[event.scene]?.title || event.scene}` : ""}`;
+      const campaign = runtime.campaigns[event.campaign_id];
+      const lane = campaign?.lanes.find((item) => item.id === event.lane)?.title || event.lane;
+      const context = `${campaign?.title || event.campaign_id} · ${event.window.days[0]}~${event.window.days[1]}일 · ${lane}${event.scene ? ` · ${runtime.scenes[event.scene]?.title || event.scene}` : ""}`;
       return {
         id: event.id,
         kind: "event" as const,
@@ -1271,9 +1338,9 @@ export default function App() {
       id: route.id,
       kind: "route" as const,
       title: route.title,
-      context: `${runtime.characters[route.heroine]?.display_name || route.heroine} · 스토리 ${route.scene_order.length} · 엔딩 ${route.endings.length}`,
+      context: `${runtime.campaigns[route.campaign_id]?.title || route.campaign_id} · ${runtime.characters[route.heroine]?.display_name || route.heroine} · 스토리 ${route.scene_order.length} · 엔딩 ${route.endings.length}`,
       path: payload.documents.routes[route.id]?.path || "",
-      search: `${route.id} ${route.title} ${route.summary} ${route.mode} ${route.scene_order.join(" ")} ${route.endings.map((ending) => `${ending.scene} ${ending.outcome}`).join(" ")}`.toLocaleLowerCase(),
+      search: `${route.id} ${route.title} ${route.summary} ${route.campaign_id} ${route.scene_order.join(" ")} ${route.endings.map((ending) => `${ending.scene} ${ending.outcome}`).join(" ")}`.toLocaleLowerCase(),
     }));
     const visualItems = Object.values(runtime.visuals).map((visual) => {
       const title = visual.character ? runtime.characters[visual.character]?.display_name || visual.id : runtime.localization.source_strings[visual.title_key || ""] || visual.title_key || visual.id;
@@ -1299,15 +1366,15 @@ export default function App() {
       id: thread.id,
       kind: "thread" as const,
       title: thread.title,
-      context: `${thread.events.length}개 사건 · ${thread.lane}`,
+      context: `${runtime.campaigns[thread.campaign_id]?.title || thread.campaign_id} · ${thread.events.length}개 사건 · ${thread.lane}`,
       path: payload.documents.threads[thread.id]?.path || "",
       search: `${thread.id} ${thread.title} ${thread.lane} ${thread.events.join(" ")}`.toLocaleLowerCase(),
     }));
     const metaItems = Object.values(runtime.meta).map((meta) => ({
       id: meta.id,
       kind: "meta" as const,
-      title: "모드 해금과 예고",
-      context: `${meta.unlock_rules.length}개 해금 · ${meta.mode_teasers?.length || 0}개 예고`,
+      title: "회차 예고",
+      context: `${meta.mode_teasers?.length || 0}개 예고 · 모드 해금은 game_modes.yaml`,
       path: payload.documents.meta[meta.id]?.path || "",
       search: `${meta.id} ${meta.unlock_rules.map((rule) => `${rule.id} ${rule.mode} ${rule.reward}`).join(" ")} ${(meta.mode_teasers || []).flatMap((teaser) => teaser.reveals.map((reveal) => `${reveal.mode} ${reveal.title} ${reveal.teaser}`)).join(" ")}`.toLocaleLowerCase(),
     }));

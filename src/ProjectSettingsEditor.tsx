@@ -34,12 +34,6 @@ type Props = {
   requestedDocument: SettingsRequest | null;
 };
 
-const MODE_LABELS: Record<Route["mode"], string> = {
-  base: "기본 루트",
-  truth_view: "속마음 모드",
-  survivor_view: "어나더 스토리",
-};
-
 const VISUAL_KIND_LABELS: Record<VisualObject["kind"], string> = {
   background_archetype: "배경 공통 규칙",
   background: "배경",
@@ -51,7 +45,7 @@ const SETTINGS_KIND_LABELS: Record<SettingsKind, string> = {
   campaign: "시간축",
   route: "루트",
   thread: "스레드",
-  meta: "해금",
+  meta: "회차 예고",
   visual: "비주얼",
 };
 
@@ -88,7 +82,7 @@ function parseLooseValue(value: string): JsonValue {
 function documentLabel(document: SettingsDocument, runtime: Runtime) {
   if ("scene_order" in document) return document.title;
   if ("acts" in document || "events" in document) return document.title;
-  if ("unlock_rules" in document) return "모드 해금과 예고";
+  if ("unlock_rules" in document) return "클리어 후 회차 예고";
   if (document.character) return runtime.characters[document.character]?.display_name || document.id;
   return runtime.localization.source_strings[document.title_key || ""] || document.title_key || document.id;
 }
@@ -184,7 +178,7 @@ function RouteEditor({ route, runtime, onChange }: { route: Route; runtime: Runt
   return <div className="settings-form-scroll">
     <fieldset><legend>루트 개요</legend><div className="form-grid">
       <label className="field"><span>루트 ID · 파일명과 참조 보호</span><input value={route.id} readOnly /></label>
-      <label className="field"><span>플레이 모드</span><select value={route.mode} onChange={(event) => update({ mode: event.target.value as Route["mode"] })}>{Object.entries(MODE_LABELS).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
+      <label className="field"><span>소속 캠페인</span><select value={route.campaign_id} onChange={(event) => update({ campaign_id: event.target.value })}>{Object.values(runtime.campaigns).map((campaign) => <option value={campaign.id} key={campaign.id}>{campaign.title} · {campaign.id}</option>)}</select></label>
       <label className="field"><span>표시 제목</span><input value={route.title} onChange={(event) => update({ title: event.target.value })} /></label>
       <label className="field"><span>중심 인물</span><select value={route.heroine} onChange={(event) => update({ heroine: event.target.value })}>{Object.values(runtime.characters).map((character) => <option value={character.id} key={character.id}>{character.display_name} · {character.id}</option>)}</select></label>
       <label className="field field-wide"><span>루트가 약속하는 경험</span><textarea rows={3} value={route.summary} onChange={(event) => update({ summary: event.target.value })} /></label>
@@ -222,7 +216,7 @@ function RouteEditor({ route, runtime, onChange }: { route: Route; runtime: Runt
   </div>;
 }
 
-function CampaignEditor({ campaign, onChange }: { campaign: Campaign; onChange: (campaign: Campaign) => void }) {
+function CampaignEditor({ campaign, runtime, onChange }: { campaign: Campaign; runtime: Runtime; onChange: (campaign: Campaign) => void }) {
   const update = (patch: Partial<Campaign>) => onChange({ ...campaign, ...patch });
   const toggleSlot = (field: "slots" | "choice_slots", slot: TimeSlot, checked: boolean) => {
     const current = campaign[field];
@@ -233,9 +227,12 @@ function CampaignEditor({ campaign, onChange }: { campaign: Campaign; onChange: 
     <fieldset><legend>캠페인 달력</legend><div className="form-grid">
       <label className="field"><span>캠페인 ID · 참조 보호</span><input value={campaign.id} readOnly /></label>
       <label className="field"><span>표시 제목</span><input value={campaign.title} onChange={(event) => update({ title: event.target.value })} /></label>
+      <label className="field"><span>진입 자동 사건</span><select value={campaign.entry_event_id} onChange={(event) => update({ entry_event_id: event.target.value })}>{Object.values(runtime.events).filter((item) => item.campaign_id === campaign.id && item.availability === "automatic").map((item) => <option value={item.id} key={item.id}>{item.title} · {item.id}</option>)}</select></label>
       <label className="field"><span>전체 일수</span><input type="number" min="1" value={campaign.total_days} onChange={(event) => update({ total_days: Number(event.target.value) })} /></label>
+      <label className="check-field field-wide"><input type="checkbox" checked={campaign.systems.self_development} onChange={(event) => update({ systems: { ...campaign.systems, self_development: event.target.checked } })} /><span>이 캠페인에서 자기계발 시스템 사용</span></label>
       <div className="field"><span>하루 시간대</span><div className="mode-checks wrap">{(Object.entries(SLOT_LABELS) as Array<[TimeSlot, string]>).map(([slot, label]) => <label key={slot}><input type="checkbox" checked={campaign.slots.includes(slot)} onChange={(event) => toggleSlot("slots", slot, event.target.checked)} />{label}</label>)}</div></div>
       <div className="field field-wide"><span>플레이어가 일정을 고르는 시간대</span><div className="mode-checks wrap">{(Object.entries(SLOT_LABELS) as Array<[TimeSlot, string]>).map(([slot, label]) => <label key={slot}><input type="checkbox" checked={campaign.choice_slots.includes(slot)} disabled={!campaign.slots.includes(slot)} onChange={(event) => toggleSlot("choice_slots", slot, event.target.checked)} />{label}</label>)}</div></div>
+      <label className="field field-wide"><span>초기 상태 패치 · JSON</span><textarea key={JSON.stringify(campaign.initial_state_patch)} rows={5} defaultValue={JSON.stringify(campaign.initial_state_patch, null, 2)} onBlur={(event) => { try { const parsed = JSON.parse(event.target.value) as Campaign["initial_state_patch"]; if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("initial state patch must be an object"); update({ initial_state_patch: parsed }); } catch { window.alert("초기 상태 패치는 올바른 JSON 객체여야 합니다."); event.target.value = JSON.stringify(campaign.initial_state_patch, null, 2); } }} /></label>
     </div></fieldset>
 
     <fieldset><legend>막 구성 ({campaign.acts.length})</legend><p className="settings-help">각 막이 담당하는 날짜와 서사 목적입니다. 날짜가 겹치거나 비면 검증 결과에서 바로 알려줍니다.</p><div className="settings-card-list">
@@ -257,9 +254,9 @@ function CampaignEditor({ campaign, onChange }: { campaign: Campaign; onChange: 
 }
 
 function ThreadEditor({ thread, runtime, onChange }: { thread: TimelineThread; runtime: Runtime; onChange: (thread: TimelineThread) => void }) {
-  const campaign = Object.values(runtime.campaigns)[0];
+  const campaign = runtime.campaigns[thread.campaign_id];
   const update = (patch: Partial<TimelineThread>) => onChange({ ...thread, ...patch });
-  const availableEvents = Object.values(runtime.events).filter((event) => !thread.events.includes(event.id) && (!event.thread || event.thread === thread.id));
+  const availableEvents = Object.values(runtime.events).filter((event) => event.campaign_id === thread.campaign_id && !thread.events.includes(event.id) && (!event.thread || event.thread === thread.id));
   const move = (index: number, offset: number) => {
     const target = index + offset;
     if (target < 0 || target >= thread.events.length) return;
@@ -270,6 +267,7 @@ function ThreadEditor({ thread, runtime, onChange }: { thread: TimelineThread; r
   return <div className="settings-form-scroll">
     <fieldset><legend>사건 스레드</legend><div className="form-grid">
       <label className="field"><span>스레드 ID · 사건 참조 보호</span><input value={thread.id} readOnly /></label>
+      <label className="field"><span>소속 캠페인</span><select value={thread.campaign_id} onChange={(event) => { const nextCampaign = runtime.campaigns[event.target.value]; update({ campaign_id: nextCampaign.id, lane: nextCampaign.lanes[0].id, events: thread.events.filter((id) => runtime.events[id]?.campaign_id === nextCampaign.id) }); }}>{Object.values(runtime.campaigns).map((item) => <option value={item.id} key={item.id}>{item.title} · {item.id}</option>)}</select></label>
       <label className="field"><span>표시 제목</span><input value={thread.title} onChange={(event) => update({ title: event.target.value })} /></label>
       <label className="field"><span>타임라인 레인</span><select value={thread.lane} onChange={(event) => update({ lane: event.target.value })}>{campaign?.lanes.map((lane) => <option value={lane.id} key={lane.id}>{lane.title} · {lane.id}</option>)}</select></label>
       <label className="field"><span>중심 인물</span><select value={thread.heroine || ""} onChange={(event) => update({ heroine: event.target.value || undefined })}><option value="">특정 인물 없음</option>{Object.values(runtime.characters).map((character) => <option value={character.id} key={character.id}>{character.display_name} · {character.id}</option>)}</select></label>
@@ -285,7 +283,7 @@ function MetaEditor({ meta, runtime, onChange }: { meta: MetaDocument; runtime: 
   const rules = meta.unlock_rules || [];
   const teasers = meta.mode_teasers || [];
   return <div className="settings-form-scroll">
-    <fieldset><legend>모드 해금 규칙 ({rules.length})</legend><p className="settings-help">조건을 모두 충족하면 모드를 열고 플레이어에게 보상을 안내합니다.</p><div className="settings-card-list">{rules.map((rule, index) => <section className="settings-card" key={`${rule.id}:${index}`}><header><strong>{rule.id}</strong><button type="button" className="icon-button danger" aria-label="해금 규칙 삭제" onClick={() => update({ unlock_rules: rules.filter((_, itemIndex) => itemIndex !== index) })}>×</button></header><div className="form-grid"><label className="field"><span>규칙 ID</span><input value={rule.id} onChange={(event) => { const next = clone(rules); next[index].id = event.target.value; update({ unlock_rules: next }); }} /></label><label className="field"><span>열리는 모드</span><input value={rule.mode} onChange={(event) => { const next = clone(rules); next[index].mode = event.target.value; update({ unlock_rules: next }); }} /></label><label className="field field-wide"><span>플레이어에게 보일 보상 설명</span><textarea rows={2} value={rule.reward} onChange={(event) => { const next = clone(rules); next[index].reward = event.target.value; update({ unlock_rules: next }); }} /></label></div><ConditionRows runtime={runtime} values={rule.conditions} onChange={(conditions) => { const next = clone(rules); next[index].conditions = conditions; update({ unlock_rules: next }); }} /></section>)}<button type="button" className="add-card-button" onClick={() => update({ unlock_rules: [...rules, { id: "new_unlock", mode: "truth_view", reward: "새 모드가 열립니다.", conditions: [] }] })}>＋ 해금 규칙 추가</button></div></fieldset>
+    <fieldset><legend>게임 모드 해금</legend><p className="settings-help">해금 조건과 콘텐츠 준비 상태의 권위 원본은 <code>story/game_modes.yaml</code>입니다. 이 문서에서는 플레이어에게 보여 줄 회차 예고만 편집합니다.</p>{rules.length > 0 && <p className="blocked-reasons">사용 중단된 unlock_rules가 {rules.length}개 남아 있어 저장 검증이 실패합니다. YAML에서 제거하세요.</p>}</fieldset>
 
     <fieldset><legend>클리어 후 다음 모드 예고 ({teasers.length})</legend><p className="settings-help">해금되는 콘텐츠를 제목과 한 문장으로 암시해 다음 플레이 동기를 만듭니다.</p><div className="settings-card-list">{teasers.map((teaser, teaserIndex) => <section className="settings-card" key={`${teaser.id}:${teaserIndex}`}><header><strong>{teaser.id}</strong><button type="button" className="icon-button danger" aria-label="예고 규칙 삭제" onClick={() => update({ mode_teasers: teasers.filter((_, index) => index !== teaserIndex) })}>×</button></header><label className="field"><span>예고 규칙 ID</span><input value={teaser.id} onChange={(event) => { const next = clone(teasers); next[teaserIndex].id = event.target.value; update({ mode_teasers: next }); }} /></label><ConditionRows runtime={runtime} values={teaser.conditions} onChange={(conditions) => { const next = clone(teasers); next[teaserIndex].conditions = conditions; update({ mode_teasers: next }); }} /><div className="reveal-list">{teaser.reveals.map((reveal, revealIndex) => <div className="reveal-row" key={`${reveal.mode}:${revealIndex}`}><label className="field"><span>모드</span><input value={reveal.mode} onChange={(event) => { const next = clone(teasers); next[teaserIndex].reveals[revealIndex].mode = event.target.value; update({ mode_teasers: next }); }} /></label><label className="field"><span>예고 제목</span><input value={reveal.title} onChange={(event) => { const next = clone(teasers); next[teaserIndex].reveals[revealIndex].title = event.target.value; update({ mode_teasers: next }); }} /></label><label className="field field-wide"><span>예고 문구</span><textarea rows={2} value={reveal.teaser} onChange={(event) => { const next = clone(teasers); next[teaserIndex].reveals[revealIndex].teaser = event.target.value; update({ mode_teasers: next }); }} /></label><button type="button" className="icon-button danger" disabled={teaser.reveals.length <= 1} aria-label="예고 항목 삭제" onClick={() => { const next = clone(teasers); next[teaserIndex].reveals = next[teaserIndex].reveals.filter((_, index) => index !== revealIndex); update({ mode_teasers: next }); }}>×</button></div>)}<button type="button" className="add-row-button" onClick={() => { const next = clone(teasers); next[teaserIndex].reveals.push({ mode: "survivor_view", title: "어나더 스토리", teaser: "새로운 그녀로 새로운 이야기를 만들어 보아요" }); update({ mode_teasers: next }); }}>＋ 예고 항목 추가</button></div></section>)}<button type="button" className="add-card-button" onClick={() => update({ mode_teasers: [...teasers, { id: "new_teaser", conditions: [], reveals: [{ mode: "survivor_view", title: "어나더 스토리", teaser: "새로운 그녀로 새로운 이야기를 만들어 보아요" }] }] })}>＋ 예고 규칙 추가</button></div></fieldset>
   </div>;
@@ -353,7 +351,7 @@ function VisualEditor({ visual, runtime, onChange, chooseAsset }: { visual: Visu
 
 export default function ProjectSettingsEditor({ active, payload, onPayload, onIssues, onStatus, onDocumentActivity, requestedDocument }: Props) {
   const runtime = payload.runtime;
-  const firstCampaign = Object.values(runtime.campaigns)[0];
+  const firstCampaign = runtime.campaigns.main;
   const [kind, setKind] = useState<SettingsKind>("campaign");
   const [selectedId, setSelectedId] = useState(firstCampaign?.id || "");
   const [draft, setDraft] = useState<SettingsDocument | null>(firstCampaign ? clone(firstCampaign) : null);
@@ -573,12 +571,12 @@ export default function ProjectSettingsEditor({ active, payload, onPayload, onIs
     <nav className="settings-list" aria-label="프로젝트 구조와 자산 문서">
       <div className="settings-kind-switch">{(Object.entries(SETTINGS_KIND_LABELS) as Array<[SettingsKind, string]>).map(([value, label]) => <button type="button" className={kind === value ? "active" : ""} key={value} onClick={() => openFirst(value)}>{label}</button>)}</div>
       <div className="panel-heading"><div><p className="eyebrow">PROJECT</p><h2>{SETTINGS_KIND_LABELS[kind]}</h2></div><span>{documents.length}개</span></div>
-      <div className="settings-document-list">{documents.map((document) => <button type="button" className={selectedId === document.id ? "settings-document active" : "settings-document"} key={document.id} onClick={() => selectDocument(kind, document.id)}><strong>{documentLabel(document, runtime)}</strong><span>{"scene_order" in document ? `${runtime.characters[document.heroine]?.display_name} · ${MODE_LABELS[document.mode]}` : "acts" in document ? `내부 일정 · ${document.slots.length}개 시간대` : "events" in document ? `${document.events.length}개 사건 · ${document.lane}` : "unlock_rules" in document ? `${document.unlock_rules.length}개 해금 · ${document.mode_teasers?.length || 0}개 예고` : `${VISUAL_KIND_LABELS[document.kind]}${document.extends ? ` · ${document.extends} 상속` : ""}`}</span><small>{document.id}</small></button>)}</div>
+      <div className="settings-document-list">{documents.map((document) => <button type="button" className={selectedId === document.id ? "settings-document active" : "settings-document"} key={document.id} onClick={() => selectDocument(kind, document.id)}><strong>{documentLabel(document, runtime)}</strong><span>{"scene_order" in document ? `${runtime.characters[document.heroine]?.display_name} · ${runtime.campaigns[document.campaign_id]?.title || document.campaign_id}` : "acts" in document ? `내부 일정 · ${document.slots.length}개 시간대` : "events" in document ? `${runtime.campaigns[document.campaign_id]?.title || document.campaign_id} · ${document.events.length}개 사건` : "unlock_rules" in document ? `${document.mode_teasers?.length || 0}개 예고 · 해금은 game_modes.yaml` : `${VISUAL_KIND_LABELS[document.kind]}${document.extends ? ` · ${document.extends} 상속` : ""}`}</span><small>{document.id}</small></button>)}</div>
     </nav>
 
     <section className="settings-editor-panel">
-      <header className="settings-editor-heading"><div><p className="eyebrow">{draft.id}</p><h2>{documentLabel(draft, runtime)}</h2><p>{kind === "campaign" ? "전체 날짜·시간대·막·타임라인 레인을 관리합니다." : kind === "route" ? "플레이 순서·해금·엔딩을 관리합니다." : kind === "thread" ? "시간 사건의 서사적 선후 관계를 관리합니다." : kind === "meta" ? "클리어 후 모드 해금과 다음 이야기 예고를 관리합니다." : "장면 조건이 어떤 실제 이미지로 해석되는지 관리합니다."}</p></div><div className="character-actions"><button type="button" onClick={undo} disabled={!history.past.length || saving} title="⌘Z">↶</button><button type="button" onClick={redo} disabled={!history.future.length || saving} title="⇧⌘Z">↷</button><button type="button" className="primary-button" onClick={save} disabled={!dirty || saving}>{saving ? "저장 중…" : "지금 저장 ⌘S"}</button></div></header>
-      {kind === "campaign" && "acts" in draft ? <CampaignEditor campaign={draft} onChange={(next) => applyDraft(next, draft)} />
+      <header className="settings-editor-heading"><div><p className="eyebrow">{draft.id}</p><h2>{documentLabel(draft, runtime)}</h2><p>{kind === "campaign" ? "전체 날짜·진입 사건·시스템·막·타임라인 레인을 관리합니다." : kind === "route" ? "플레이 순서·해금·엔딩을 관리합니다." : kind === "thread" ? "캠페인 안에서 시간 사건의 서사적 선후 관계를 관리합니다." : kind === "meta" ? "클리어 후 다음 이야기 예고를 관리합니다. 게임 모드 해금은 story/game_modes.yaml이 원본입니다." : "장면 조건이 어떤 실제 이미지로 해석되는지 관리합니다."}</p></div><div className="character-actions"><button type="button" onClick={undo} disabled={!history.past.length || saving} title="⌘Z">↶</button><button type="button" onClick={redo} disabled={!history.future.length || saving} title="⇧⌘Z">↷</button><button type="button" className="primary-button" onClick={save} disabled={!dirty || saving}>{saving ? "저장 중…" : "지금 저장 ⌘S"}</button></div></header>
+      {kind === "campaign" && "acts" in draft ? <CampaignEditor campaign={draft} runtime={runtime} onChange={(next) => applyDraft(next, draft)} />
         : kind === "route" && "scene_order" in draft ? <RouteEditor route={draft} runtime={runtime} onChange={(next) => applyDraft(next, draft)} />
           : kind === "thread" && "events" in draft ? <ThreadEditor thread={draft} runtime={runtime} onChange={(next) => applyDraft(next, draft)} />
             : kind === "meta" && "unlock_rules" in draft ? <MetaEditor meta={draft} runtime={runtime} onChange={(next) => applyDraft(next, draft)} />
@@ -589,8 +587,8 @@ export default function ProjectSettingsEditor({ active, payload, onPayload, onIs
       <p className="eyebrow">{kind === "visual" ? "ASSET PREVIEW" : "STRUCTURE PREVIEW"}</p>
       {kind === "campaign" && "acts" in draft ? <><h2>{draft.title}</h2><div className="campaign-mini-timeline" style={{ gridTemplateColumns: `repeat(${Math.max(1, draft.total_days)}, minmax(2px, 1fr))` }}>{draft.acts.map((act) => <section key={act.id} style={{ gridColumn: `${Math.max(1, act.days[0])} / ${Math.min(draft.total_days + 1, act.days[1] + 1)}` }}><strong>{act.number}막</strong><span>{act.title}</span><small>{act.days[0]}~{act.days[1]}일</small></section>)}</div><div className="lane-preview">{draft.lanes.map((lane) => <span className={lane.kind} key={lane.id}>{lane.title}<small>{lane.kind}</small></span>)}</div><p className="settings-preview-note">총 {draft.total_days}일 · 하루 {draft.slots.length}개 시간대 · {draft.choice_slots.length}개 선택 시간대</p></>
         : kind === "route" && "scene_order" in draft ? <><h2>{draft.title}</h2><div className="route-mini-flow">{draft.scene_order.map((id, index) => <div key={id}><span>{index + 1}</span><strong>{runtime.scenes[id]?.title || id}</strong><small>{id}</small></div>)}<div className="route-ending-branches">{draft.endings.map((ending) => <span key={`${ending.scene}:${ending.outcome}`}><strong>{runtime.scenes[ending.scene]?.title || ending.scene}</strong><small>{ending.outcome}</small></span>)}</div></div><p className="settings-preview-note">해금 조건 {draft.unlock_conditions.length}개 · 스토리 {draft.scene_order.length}개 · 엔딩 {draft.endings.length}개</p></>
-          : kind === "thread" && "events" in draft ? <><h2>{draft.title}</h2><div className="route-mini-flow">{draft.events.map((id, index) => <div key={id}><span>{index + 1}</span><strong>{runtime.events[id]?.title || id}</strong><small>{runtime.events[id]?.window.days.join("~")}일 · {id}</small></div>)}</div><p className="settings-preview-note">{draft.events.length}개 사건 · {Object.values(runtime.campaigns)[0]?.lanes.find((lane) => lane.id === draft.lane)?.title || draft.lane}</p></>
-            : kind === "meta" && "unlock_rules" in draft ? <><h2>클리어 이후의 약속</h2><div className="unlock-preview">{draft.unlock_rules.map((rule) => <section key={rule.id}><strong>{rule.mode}</strong><span>{rule.reward}</span><small>{rule.conditions.length}개 조건</small></section>)}</div><div className="unlock-preview teasers">{(draft.mode_teasers || []).flatMap((teaser) => teaser.reveals.map((reveal) => <section key={`${teaser.id}:${reveal.mode}`}><strong>{reveal.title}</strong><span>{reveal.teaser}</span><small>{reveal.mode}</small></section>))}</div></>
+          : kind === "thread" && "events" in draft ? <><h2>{draft.title}</h2><div className="route-mini-flow">{draft.events.map((id, index) => <div key={id}><span>{index + 1}</span><strong>{runtime.events[id]?.title || id}</strong><small>{runtime.events[id]?.window.days.join("~")}일 · {id}</small></div>)}</div><p className="settings-preview-note">{runtime.campaigns[draft.campaign_id]?.title} · {draft.events.length}개 사건 · {runtime.campaigns[draft.campaign_id]?.lanes.find((lane) => lane.id === draft.lane)?.title || draft.lane}</p></>
+            : kind === "meta" && "unlock_rules" in draft ? <><h2>클리어 이후의 약속</h2><p className="settings-preview-note">해금 판정은 story/game_modes.yaml에서 관리합니다.</p><div className="unlock-preview teasers">{(draft.mode_teasers || []).flatMap((teaser) => teaser.reveals.map((reveal) => <section key={`${teaser.id}:${reveal.mode}`}><strong>{reveal.title}</strong><span>{reveal.teaser}</span><small>{reveal.mode}</small></section>))}</div></>
               : "kind" in draft ? <><h2>{documentLabel(draft, runtime)}</h2><div className="settings-asset-preview">{previewAsset ? <img src={previewAsset} alt={`${documentLabel(draft, runtime)} 미리보기`} /> : <div className="image-placeholder">NO IMAGE</div>}</div><dl><div><dt>종류</dt><dd>{VISUAL_KIND_LABELS[draft.kind]}</dd></div><div><dt>상속</dt><dd>{draft.extends || "없음"}</dd></div><div><dt>렌더</dt><dd>{draft.render_strategy ? RENDER_LABELS[draft.render_strategy] : "상속"}</dd></div><div><dt>조건 이미지</dt><dd>{Object.keys(draft.variants || {}).length}개</dd></div></dl></> : null}
       <small className="document-path">{metaFor(kind, draft.id)?.path}</small>
     </aside>

@@ -80,7 +80,7 @@
     {"if": {"properties": {"kind": {"const": "company"}}}, "then": {"required": ["name", "industry", "scale", "team_ids", "operating_facts", "authoring_constraints"]}},
     {"if": {"properties": {"kind": {"const": "role"}}}, "then": {"required": ["company", "name", "rank", "people_manager", "can_approve", "can_lead_project", "description"]}},
     {"if": {"properties": {"kind": {"const": "team"}}}, "then": {"required": ["company", "name", "function", "lead_member", "member_ids"]}},
-    {"if": {"properties": {"kind": {"const": "member"}}}, "then": {"required": ["company", "display_name", "team", "role", "title", "manager", "employment", "presentation", "route_eligible", "responsibilities"]}},
+    {"if": {"properties": {"kind": {"const": "member"}}}, "then": {"required": ["company", "name", "display_name", "team", "role", "title", "manager", "employment", "presentation", "route_eligible", "responsibilities"]}},
     {"if": {"properties": {"kind": {"const": "project"}}}, "then": {"required": ["company", "name", "project_type", "summary", "owner_team", "participating_teams", "sponsor_member", "lead_member", "deliverables", "assignments"]}},
     {"if": {"properties": {"kind": {"const": "meeting"}}}, "then": {"required": ["company", "name", "formality", "minimum_participants", "maximum_participants", "minimum_text_only_participants", "required_teams", "required_responsibilities", "allowed_unassigned_participants"]}}
   ],

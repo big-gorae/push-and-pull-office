@@ -1,0 +1,119 @@
+schema_version: 1
+id: common.day_05_weekend_reflection
+title: 두 번째 주말의 우연
+route: seo_a
+chapter: 1
+sequence: 6
+location: outside_cafe
+time: afternoon
+purpose: 두 번째 주말 조우에서도 한도윤이 전날 밤에 준비한 소재를 먼저 꺼내지만 두 사람 모두 각자의 만남을 한 번의 우연으로 받아들인다.
+cast: [han_do_yoon]
+entry_conditions: []
+state_contract:
+  reads:
+    - progress.self_development.last_activity
+  writes: []
+start_node: encounter
+nodes:
+  - id: encounter
+    kind: dual_narration
+    perceived:
+      atmosphere: warm_romance
+      line: "일요일에는 전날 만나지 않은 다른 동료와 마주쳤다. 서로 다른 두 사람과 주말 취향이 하나씩 겹친 듯했다."
+    reality:
+      atmosphere: procedural
+      line: "일요일에는 토요일에 만나지 않은 다른 동료와 공공장소에서 마주쳤다. 두 사람은 서로의 조우를 아직 알지 못했다."
+      intent: courtesy
+    next: activity_callback
+
+  - id: activity_callback
+    kind: dual_dialogue
+    speaker: han_do_yoon
+    perceived:
+      atmosphere: warm_romance
+      expression: subjective_confident
+      line: "주말에도 뵙네요. 이틀 연속 회사 사람을 밖에서 볼 줄은 몰랐습니다."
+    reality:
+      atmosphere: procedural
+      expression: actual_waiting_smile
+      line: "주말에도 뵙네요. 이틀 연속 회사 사람을 밖에서 볼 줄은 몰랐습니다."
+      intent: courtesy
+    self_development_template:
+      source: last_activity
+      perceived:
+        line: "주말에도 뵙네요. 이틀 연속 회사 사람을 밖에서 볼 줄은 몰랐습니다. {{weekend_pitch}}"
+      reality:
+        line: "주말에도 뵙네요. 이틀 연속 회사 사람을 밖에서 볼 줄은 몰랐습니다. {{weekend_pitch}}"
+        intent: self_promotion
+    next: activity_response
+
+  - id: activity_response
+    kind: dual_narration
+    perceived:
+      atmosphere: warm_romance
+      line: "동료는 ‘주말에도 뵙네요’라고 가볍게 인사했다."
+    reality:
+      atmosphere: procedural
+      line: "동료는 ‘주말에도 뵙네요’라고 가볍게 인사했다."
+      intent: courtesy
+    self_development_template:
+      source: last_activity
+      perceived:
+        line: "동료는 ‘{{weekend_answer}}’라고 짧게 답한 뒤 다른 쪽을 먼저 보겠다고 말했다."
+      reality:
+        line: "동료는 ‘{{weekend_answer}}’라고 짧게 답한 뒤 다른 쪽을 먼저 보겠다고 말했다."
+    next: activity_callback_inner
+
+  - id: activity_callback_inner
+    kind: dual_dialogue
+    presentation_flags: [inner_voice]
+    speakers:
+      perceived: han_do_yoon
+      reality:
+    perceived:
+      atmosphere: warm_romance
+      line: "(두 번째 우연까지 자연스럽게 이어지니 이번 주말은 흐름이 좋군.)"
+    reality:
+      atmosphere: procedural
+      line: "서로 다른 두 동료가 각자 한 번씩 한도윤과 우연히 마주쳤을 뿐이었다."
+      intent: courtesy
+    self_development_template:
+      source: last_activity
+      perceived:
+        line: "(두 번째 우연에서도 내가 준비한 화제가 자연스럽게 통하는군. {{perceived_self_image}})"
+      reality:
+        line: "{{reality_limit}} 이 동료도 눈앞의 말에 답했을 뿐이며, 전날의 다른 동료와 이어지는 신호는 아니었다."
+    next: goodbye
+
+  - id: goodbye
+    kind: dual_narration
+    presentation_flags: [romance_insert]
+    perceived:
+      atmosphere: warm_romance
+      line: "두 번째 작별도 ‘월요일에 뵙겠습니다. 다음에 또 봬요.’라는 말로 남았다."
+    reality:
+      atmosphere: procedural
+      line: "두 번째 동료가 실제로 한 작별 인사는 ‘월요일에 뵙겠습니다.’였다."
+      intent: courtesy
+    next: week_close
+
+  - id: week_close
+    kind: dual_dialogue
+    presentation_flags: [inner_voice]
+    speakers:
+      perceived: han_do_yoon
+      reality:
+    perceived:
+      atmosphere: warm_romance
+      line: (회사에서 봤을 때와는 둘 다 느낌이 다르네. 조금 더 알아봐도 괜찮겠어.)
+    reality:
+      atmosphere: procedural
+      line: 한도윤은 두 번의 조우를 좋은 징조로 정리했지만, 두 동료는 각자의 만남을 서로 연결하지 않은 채 한 번의 우연으로 받아들였다.
+      intent: courtesy
+    next: leave
+
+  - id: leave
+    kind: exit
+    transitions:
+      - default: true
+        scene: seo_a.email_request

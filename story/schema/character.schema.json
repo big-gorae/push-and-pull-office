@@ -15,6 +15,33 @@
     "immutable_facts": {"type": "array", "items": {"type": "string"}},
     "voice": {"type": "object"},
     "visual": {"type": "object"},
+    "interaction_preferences": {
+      "type": "object",
+      "required": ["support_order", "prefers", "resists", "context_overrides"],
+      "properties": {
+        "authoring_shorthand": {"type": "string", "minLength": 1},
+        "support_order": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "emotional_validation",
+              "factual_clarification",
+              "practical_resolution",
+              "ask_before_helping",
+              "autonomy_return",
+              "concise_reassurance",
+              "literal_respect"
+            ]
+          }
+        },
+        "prefers": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "resists": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "context_overrides": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": false
+    },
     "expressions": {
       "type": "object",
       "additionalProperties": {

@@ -1,7 +1,7 @@
 import { normalizePlayerSession, type PlayerSession } from "./playerRuntime";
 import type { GameLocale } from "./gameI18n";
 import { resolveDialogueNode } from "../storyLogic";
-import type { Runtime, ViewMode } from "../types";
+import type { GameModeId, Runtime, ViewLayer } from "../types";
 
 export type PlayerSettings = {
   textSpeed: number;
@@ -15,7 +15,7 @@ export type PlayerSettings = {
 };
 
 export type SaveSlot = {
-  schema_version: 4;
+  schema_version: 5;
   savedAt: number;
   preview: {
     kind: "timeline" | "scene" | "self_development" | "ending";
@@ -25,7 +25,10 @@ export type SaveSlot = {
     sceneId?: string;
     nodeId?: string;
     variantId?: string;
-    mode: ViewMode;
+    gameModeId: GameModeId;
+    campaignId: string;
+    continuityId: string;
+    viewLayer: ViewLayer;
     endingId?: string;
   };
   session: PlayerSession;
@@ -141,8 +144,15 @@ type LegacySaveSlot = Partial<ReadableSaveSlot> & {
 export function normalizeSaveSlot(value: unknown, runtime?: Runtime): ReadableSaveSlot | undefined {
   if (!value || typeof value !== "object") return undefined;
   const slot = value as LegacySaveSlot;
+  if (typeof slot.schema_version === "number" && slot.schema_version > 5) return undefined;
   if (!slot.session || typeof slot.savedAt !== "number") return undefined;
-  const session = normalizePlayerSession(slot.session, runtime);
+  let session: PlayerSession;
+  try {
+    session = normalizePlayerSession(slot.session, runtime);
+  } catch {
+    // Keep the original localStorage record untouched so it can be recovered or exported later.
+    return undefined;
+  }
   const existing = slot.preview;
   const sceneId = existing?.sceneId || slot.sceneId || session.sceneId;
   const nodeId = existing?.nodeId || slot.nodeId || session.nodeId;
@@ -162,14 +172,17 @@ export function normalizeSaveSlot(value: unknown, runtime?: Runtime): ReadableSa
     sceneId,
     nodeId,
     variantId,
-    mode: existing?.mode || session.mode,
+    gameModeId: session.gameModeId,
+    campaignId: session.campaignId,
+    continuityId: session.continuityId,
+    viewLayer: session.viewLayer,
     endingId: existing?.endingId || session.endingId,
   } satisfies SaveSlot["preview"];
   const legacy = slot.legacy || (slot.sceneTitle || slot.line
     ? { sceneTitle: slot.sceneTitle, line: slot.line }
     : undefined);
   return {
-    schema_version: 4,
+    schema_version: 5,
     savedAt: slot.savedAt,
     preview,
     session,
@@ -198,7 +211,6 @@ export function normalizePlayerProfile(stored: Partial<PlayerProfile> | undefine
   profile.unlockedModes = Array.from(new Set([
     "base",
     ...profile.unlockedModes,
-    ...(profile.clearedRoutes.length > 0 ? ["truth_view", "survivor_view"] : []),
   ]));
   return profile;
 }

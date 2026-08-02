@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import runtimeJson from "../../build/story-runtime.json";
 import type { Runtime } from "../types";
+import { dialogueKey } from "./WebGame";
 import { GameLocalizer, gameLocales } from "./gameI18n";
 
 const runtime = runtimeJson as unknown as Runtime;
@@ -21,7 +22,7 @@ describe("GameLocalizer", () => {
     expect(i18n.ui("mode.survivor.copy")).toBe("새로운 그녀로 새로운 이야기를 만들어 보아요");
     expect(i18n.ui("app.kicker")).not.toContain("17");
     expect(i18n.characterName("yoon_seo_a")).toBe("윤서아");
-    expect(i18n.characterName("member.jeong_da_eun")).toBe("정다은");
+    expect(i18n.characterName("member.jeong_da_eun")).toBe("정주임");
   });
 
   it("switches UI and character names through one locale object", () => {
@@ -37,6 +38,15 @@ describe("GameLocalizer", () => {
     const source = "번역되지 않은 한국어 원문";
 
     expect(i18n.story("missing.stable.key", source)).toBe(source);
+  });
+
+  it("keeps the default variant segment when the source node owns variants", () => {
+    expect(dialogueKey("common.scene", "callback", "default", "reality", "line", true)).toBe(
+      "scenes.common.scene.nodes.callback.variants.default.reality.line",
+    );
+    expect(dialogueKey("common.scene", "callback", "default", "reality", "line")).toBe(
+      "scenes.common.scene.nodes.callback.reality.line",
+    );
   });
 
   it("discovers locales from runtime data without a code allowlist", () => {

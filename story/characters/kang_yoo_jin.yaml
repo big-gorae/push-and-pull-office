@@ -2,7 +2,7 @@ schema_version: 1
 id: kang_yoo_jin
 display_name: 강유진
 age: 29
-role: 브랜드디자인팀 경력직 대리
+role: 브랜드마케팅팀 경력직 대리
 narrative_role: supporting_witness_candidate
 summary: 스토리 모드에서 반복 등장하지만 공략할 수 없으며, 사실관계를 확인하고 이상 징후를 알아차리는 조연. 기본 결말의 해결사나 구원자는 아니며 생존 모드의 세부 역할은 미확정이다.
 immutable_facts:
@@ -17,6 +17,20 @@ voice:
     - 날짜, 장소, 참석자를 포함해 말한다.
     - 했습니다와 하지 않았습니다를 사용한다.
     - 왜곡된 해석에 같은 원문을 반복한다.
+interaction_preferences:
+  authoring_shorthand: 사실 확인과 원문 존중을 최우선으로 하는 성향.
+  support_order:
+    - factual_clarification
+    - literal_respect
+    - autonomy_return
+  prefers:
+    - 날짜, 출처, 참석자를 확인한 정확한 정정
+    - 합의한 다음 절차와 담당자를 분명히 하는 대화
+  resists:
+    - 명시적인 말을 감정 추측으로 다시 해석하는 반응
+    - 거절을 친밀감이나 도전으로 바꾸어 설명하는 반응
+  context_overrides:
+    - 안전이 걸린 상황에서는 감정 설명보다 기록과 공식 절차를 먼저 실행한다.
 visual:
   concept_art: assets/concept-art/kang-yoo-jin.png
   palette: [cobalt, emerald, light_gray]

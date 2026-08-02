@@ -1,4 +1,5 @@
 schema_version: 1
+campaign_id: main
 id: anchor.day_01_parent_pressure
 title: 올해는 사람 좀 만나
 type: anchor

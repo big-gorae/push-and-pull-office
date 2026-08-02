@@ -2,13 +2,14 @@ schema_version: 1
 id: member.kang_yoo_jin
 kind: member
 company: company.dawon_living
+name: 강유진
 display_name: 강유진
-team: team.brand_design
+team: team.marketing
 role: role.senior_associate
 title: 경력직 대리
-manager: member.moon_ji_hye
+manager: member.lee_su_hyeon
 employment: permanent
 presentation: illustrated
 story_character: kang_yoo_jin
 route_eligible: false
-responsibilities: [design_production, asset_versioning, fact_check]
+responsibilities: [design_production, asset_versioning, fact_check, product_claim_asset_check]

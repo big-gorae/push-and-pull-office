@@ -2,7 +2,9 @@ import { defineConfig } from "vite";
 import { sites } from "./build/sites-vite-plugin";
 
 export default defineConfig(async () => {
-  const isSiteBuild = process.env.VITE_APP_SURFACE === "game";
+  const isGameBuild = process.env.VITE_APP_SURFACE === "game";
+  const isGitHubPagesBuild = process.env.VITE_HOSTING_TARGET === "github-pages";
+  const isSiteBuild = isGameBuild && !isGitHubPagesBuild;
   const plugins = [];
 
   if (isSiteBuild) {
@@ -29,6 +31,9 @@ export default defineConfig(async () => {
   }
 
   return {
+    base: isGitHubPagesBuild
+      ? (process.env.VITE_BASE_PATH ?? "/push-and-pull-office/")
+      : "/",
     clearScreen: false,
     plugins,
     server: {

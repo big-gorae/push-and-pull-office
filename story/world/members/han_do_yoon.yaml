@@ -2,11 +2,12 @@ schema_version: 1
 id: member.han_do_yoon
 kind: member
 company: company.dawon_living
+name: 한도윤
 display_name: 한도윤
 team: team.sales_planning
 role: role.manager
 title: 과장
-manager: member.park_jae_hyun
+manager: member.oh_se_jin
 employment: permanent
 presentation: illustrated
 story_character: han_do_yoon

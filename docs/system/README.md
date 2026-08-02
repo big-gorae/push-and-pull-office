@@ -16,7 +16,7 @@
 5. 문서와 코드가 다르면 현재 구현 설명에는 코드와 생성 런타임을 우선하고, 문서는 차이를 명시한 뒤 수정한다.
 6. 스토리 장면의 사실과 대사는 시스템 문서에 복제하지 않고 안정 ID와 원본 문서만 참조한다.
 
-캐릭터 상호작용은 두 축으로 관리한다. `interaction.target/support_styles`는 실제 반응 상대와 지원 화법이고, `push_pull.target`은 한도윤의 리듬 계산 대상이다. 두 필드는 서로를 대신하지 않으며, 명시적인 요청·거절과 장면의 현실이 평상시 성향보다 우선한다. 기계 계약은 `story/SPEC.md`, `story/AI_AUTHORING_RULES.md`와 하네스가 소유한다.
+캐릭터 상호작용 중 반응 화법 축의 내부 명칭은 **MBTI 요소**다. `interaction.target/support_styles`는 실제 반응 상대와 행동으로 관찰되는 지원 화법이고, `push_pull.target`은 한도윤의 리듬 계산 대상이다. 두 필드는 서로를 대신하지 않으며, 명시적인 요청·거절에서는 `literal_respect`와 장면의 현실이 평상시 선호보다 우선한다. 일반 플레이어 화면에는 MBTI/F/T 명칭을 노출하지 않으며, 기계 계약은 `story/SPEC.md`, `story/AI_AUTHORING_RULES.md`와 하네스가 소유한다.
 
 ## 현재 자동화 운영 상태
 
@@ -48,7 +48,7 @@
 
 | 상태 | 문서 | 현재 구현 근거 또는 남은 범위 |
 |---|---|---|
-| 구현 | [밀당 시스템 설계](push-pull-system.md) | `src/pushPull.ts`, 캐릭터 `interaction_preferences`, 선택지 `interaction`, 독립된 `push_pull.target`, 하네스·플레이어 대상 회귀 테스트와 2일차 수직 슬라이스 |
+| 구현 | [밀당 시스템 설계](push-pull-system.md) | `src/pushPull.ts`, MBTI 요소 데이터인 `interaction_preferences`, 선택지 `interaction`, 독립된 `push_pull.target`, 하네스·플레이어 대상 회귀 테스트와 2일차 수직 슬라이스 |
 | 구현 | [밀당 UI/UX 설계](push-pull-ui-ux.md) | 리듬 막대, 선택 화면, 속마음 라벨, 디버그 표시 |
 | 구현 | [웹 미연시 플레이어 설계](web-game-player-design.md) | 타임라인 런타임, 저장·불러오기, 백로그, 오토·스킵 |
 | 구현 | [다국어·상황별 대사 관리](localization-context-dialogue-redesign.md) | 단일 레지스트리, fallback, variant와 v3 ID 세이브 |
@@ -61,7 +61,7 @@
 | 상태 | 이전 제안 번호 | 문서 | 핵심 목적 |
 |---|---:|---|---|
 | 미구현 | 1 | [게임 모드·캠페인 분리](game-mode-campaign-separation.md) | 스토리·속마음·어나더 스토리의 실행 상태와 연속성 분리 |
-| 부분 구현 | 3 | [캐릭터 반응·밀당 학습 피드백](push-pull-onboarding-feedback.md) | 지원 화법·두 대상·2일차 수직 슬라이스는 구현, 의미 이벤트·학습 플래그·전용 연출과 접근성은 남음 |
+| 부분 구현 | 3 | [MBTI 요소·밀당 학습 피드백](push-pull-onboarding-feedback.md) | MBTI 요소용 지원 화법·두 대상·2일차 수직 슬라이스는 구현, 의미 이벤트·학습 플래그·전용 연출과 접근성은 남음 |
 | 미구현 | 4 | [엔딩·회상 갤러리](ending-memory-gallery.md) | 엔딩 수집, 장면 재생과 두 레이어 비교 |
 | 미구현 | 5 | [세이브 호환·내보내기](save-versioning-export.md) | 스토리 개정 중 세이브 보호와 로컬 백업 |
 

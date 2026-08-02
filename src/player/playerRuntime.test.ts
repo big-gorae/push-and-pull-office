@@ -48,7 +48,7 @@ function advanceMeaningfulMoment(value: PlayerSession): PlayerSession {
 
 describe("web player campaign runtime", () => {
   it("starts at day one and advances only to meaningful timeline moments", () => {
-    let session = createCampaignSession(runtime);
+    let session = createCampaignSession(runtime, "base");
     const initialHidden = structuredClone(session.state.hidden);
     const initialVisible = structuredClone(session.state.visible);
     expect(session.phase).toBe("scene");
@@ -84,18 +84,38 @@ describe("web player campaign runtime", () => {
     session = finishSelfDevelopmentNight(runtime, session);
     expect(session.state.progress.time).toMatchObject({ day: 2, slot: "morning" });
     expect(session.state.progress.events.seen).toContain("anchor.day_02_practical_meeting");
+    expect(session.phase).toBe("scene");
+    expect(session.sceneId).toBe("common.day_02_practical_meeting");
+    session = finishCurrentScene(session);
+    expect(session.phase).toBe("timeline");
 
-    session = advanceMeaningfulMoment(session);
-    for (let index = 0; index < 24; index += 1) {
-      if (session.state.progress.time.day === 7 && session.state.progress.time.slot === "lunch") break;
-      session = advanceMeaningfulMoment(session);
+    const weekOneCallbackScenes: string[] = [];
+    for (let index = 0; index < 64; index += 1) {
+      if (
+        session.phase === "timeline"
+        && session.state.progress.time.day === 7
+        && session.state.progress.time.slot === "lunch"
+      ) break;
+      if (session.phase === "scene") {
+        if (session.sceneId?.startsWith("common.day_0")) {
+          weekOneCallbackScenes.push(session.sceneId);
+        }
+        session = finishCurrentScene(session);
+      } else {
+        session = advanceMeaningfulMoment(session);
+      }
     }
+    expect(weekOneCallbackScenes).toEqual([
+      "common.day_03_business_trip_or_cafe",
+      "common.day_04_weekend_encounter",
+      "common.day_05_weekend_reflection",
+    ]);
     expect(session.state.progress.time).toMatchObject({ day: 7, slot: "lunch" });
     expect(availableTimelineEvents(runtime, session).map((event) => event.id)).toContain("seo_a.email_request");
   });
 
   it("returns to the timeline after a return_to_timeline event instead of chaining its route", () => {
-    let session = createCampaignSession(runtime);
+    let session = createCampaignSession(runtime, "base");
     session = finishCurrentScene(session);
     for (let index = 0; index < 24; index += 1) {
       session = advanceMeaningfulMoment(session);
@@ -104,7 +124,7 @@ describe("web player campaign runtime", () => {
     }
     session = startTimelineEvent(runtime, session, "seo_a.email_request");
     expect(session.phase).toBe("scene");
-    expect(session.version).toBe(4);
+    expect(session.version).toBe(5);
 
     session = finishCurrentScene(session);
     expect(session.phase).toBe("timeline");
@@ -113,7 +133,7 @@ describe("web player campaign runtime", () => {
     expect(session.state.progress.events.seen).not.toContain("seo_a.relief_smile");
     const dialogue = session.backlog.find((entry) => entry.kind === "dialogue");
     expect(dialogue?.variantId).toBe("default");
-    expect(dialogue?.modeAtPresentation).toBe("perceived");
+    expect(dialogue?.layerAtPresentation).toBe("perceived");
     expect(dialogue).not.toHaveProperty("text");
   });
 
@@ -174,6 +194,65 @@ describe("web player campaign runtime", () => {
     expect(promoted.state.hidden).toEqual(ordinary.state.hidden);
   });
 
+  it("applies a common-scene choice to its declared push-pull target", () => {
+    const session = createSession(runtime, "seo_a");
+    session.phase = "scene";
+    session.sceneId = "common.day_02_practical_meeting";
+    session.nodeId = "recovery_choice";
+    session.routeId = "seo_a";
+    const seoAInitiative = session.state.visible.heroines.yoon_seo_a.initiative;
+    const minKyungInitiative = session.state.visible.heroines.cha_min_kyung.initiative;
+
+    const selected = selectOption(runtime, session, "define_and_fix");
+
+    expect(selected.state.visible.heroines.yoon_seo_a.initiative).toBe(seoAInitiative);
+    expect(selected.state.visible.heroines.cha_min_kyung.initiative).toBeGreaterThan(minKyungInitiative);
+    expect(readPushPullState(selected.state)).toMatchObject({
+      heroine: "cha_min_kyung",
+      combo: 1,
+      position: -12,
+    });
+    expect(selected.state.progress.flags.story_mode).toMatchObject({
+      target: "none",
+      day_02_response: "factual_resolution",
+    });
+  });
+
+  it("preserves a matching combo when entering a shared scene with multiple push-pull targets", () => {
+    const session = createCampaignSession(runtime, "base");
+    session.phase = "timeline";
+    session.preparedTimeKey = undefined;
+    session.state.progress.time = { day: 2, act: 1, slot: "morning" };
+    session.state.progress.events.seen = [
+      "anchor.day_01_company_meeting",
+      "anchor.day_01_parent_pressure",
+    ];
+    session.state.progress.flags.push_pull = {
+      combo: 2,
+      position: -24,
+      target: "pull",
+      last_action: "approach",
+      heroine: "cha_min_kyung",
+    };
+
+    const entered = prepareTimeSlot(runtime, session);
+    expect(entered.phase).toBe("scene");
+    expect(entered.sceneId).toBe("common.day_02_practical_meeting");
+    expect(readPushPullState(entered.state)).toMatchObject({
+      heroine: "cha_min_kyung",
+      combo: 2,
+      position: -24,
+    });
+
+    const atChoice = { ...entered, nodeId: "recovery_choice" };
+    const selected = selectOption(runtime, atChoice, "define_and_fix");
+    expect(readPushPullState(selected.state)).toMatchObject({
+      heroine: "cha_min_kyung",
+      combo: 3,
+      position: -36,
+    });
+  });
+
   it("selects a self-development dialogue variant only for an eligible profile", () => {
     const baseline = createSession(runtime, "seo_a");
     baseline.phase = "scene";
@@ -190,7 +269,7 @@ describe("web player campaign runtime", () => {
 
   it("does not mark an event seen when its scene entry condition fails", () => {
     const copy = structuredClone(runtime);
-    const source = Object.values(copy.events).find((candidate) => candidate.scene)!;
+    const source = copy.events["seo_a.email_request"];
     const event = structuredClone(source);
     event.id = "test.entry.blocked";
     event.availability = "player";
@@ -200,7 +279,7 @@ describe("web player campaign runtime", () => {
     copy.events[event.id] = event;
     const scene = copy.scenes[event.scene!];
     scene.entry_conditions = [{ path: "progress.time.day", op: "gte", value: 99 }];
-    let session = createCampaignSession(copy);
+    let session = createCampaignSession(copy, "base");
     session.phase = "timeline";
     session.preparedTimeKey = "1:morning";
     session.state.progress.time = { day: 1, act: 1, slot: "morning" };
@@ -225,7 +304,7 @@ describe("web player campaign runtime", () => {
   });
 
   it("expires a skipped event after its deadline and applies the missed record", () => {
-    let session = createCampaignSession(runtime);
+    let session = createCampaignSession(runtime, "base");
     session = finishCurrentScene(session);
     for (let index = 0; index < 40; index += 1) {
       session = advanceMeaningfulMoment(session);
@@ -238,7 +317,7 @@ describe("web player campaign runtime", () => {
   });
 
   it("breaks the current combo when choosing an event for another heroine", () => {
-    let session = createCampaignSession(runtime);
+    let session = createCampaignSession(runtime, "base");
     session.phase = "timeline";
     session.preparedTimeKey = undefined;
     session.state.progress.time = { day: 7, act: 2, slot: "after_work" };
@@ -256,7 +335,7 @@ describe("web player campaign runtime", () => {
   });
 
   it("chooses the higher-priority ending inside an exclusive ending group", () => {
-    const session = createCampaignSession(runtime);
+    const session = createCampaignSession(runtime, "base");
     session.phase = "timeline";
     session.preparedTimeKey = undefined;
     session.state.progress.time = { day: 17, act: 3, slot: "after_work" };
@@ -277,7 +356,7 @@ describe("web player campaign runtime", () => {
   });
 
   it("persists route clear and mode unlocks when an ending is reached", () => {
-    const session = createCampaignSession(runtime);
+    const session = createCampaignSession(runtime, "base");
     session.phase = "timeline";
     session.preparedTimeKey = undefined;
     session.state.progress.time = { day: 17, act: 3, slot: "after_work" };
@@ -299,7 +378,7 @@ describe("web player campaign runtime", () => {
   });
 
   it("does not award a route clear when the calendar ends without a narrative ending", () => {
-    let session = createCampaignSession(runtime);
+    let session = createCampaignSession(runtime, "base");
     session.phase = "timeline";
     session.routeId = "seo_a";
     session.preparedTimeKey = "17:after_work";

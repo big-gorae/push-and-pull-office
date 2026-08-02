@@ -1,0 +1,21 @@
+schema_version: 1
+id: meeting.cross_function_working_session
+kind: meeting
+company: company.dawon_living
+name: 공동 프로젝트 실무 점검 회의
+formality: formal
+minimum_participants: 6
+maximum_participants: 10
+minimum_text_only_participants: 2
+required_teams:
+  - team.sales_planning
+  - team.marketing
+required_responsibilities:
+  - project_lead
+  - commercial_owner
+  - product_owner
+  - creative_approver
+allowed_unassigned_participants: false
+notes:
+  - 킥오프 뒤 산출물의 버전, 일정과 담당 범위를 확인한다.
+  - 발표 담당자와 각 팀 실무 책임자가 함께 복구안을 결정한다.

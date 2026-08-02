@@ -1,4 +1,5 @@
 schema_version: 1
+campaign_id: main
 id: offscreen.past_case_date_mismatch
 title: 과거 사건 날짜의 불일치
 type: offscreen

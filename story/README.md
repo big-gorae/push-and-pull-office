@@ -4,6 +4,8 @@
 
 현재 게임에 실제로 들어간 사건과 장면의 박제 목록은 [`docs/story-implemented-baseline.md`](../docs/story-implemented-baseline.md)를 따른다. 문서에만 있고 `story/`의 이벤트·장면 YAML에 연결되지 않은 사건은 구현된 스토리로 간주하지 않는다.
 
+회사 업무 에피소드를 새로 구상할 때는 [`docs/story-home-cafe-event-candidates.md`](../docs/story-home-cafe-event-candidates.md)의 홈카페·소형 주방가전 사건 후보를 검토한다. 후보 문서는 아이디어 뱅크이며, 실제 사건으로 채택하려면 월드 바이블과 이벤트·장면 YAML에 별도로 반영해야 한다.
+
 ## 디렉터리
 
 ```text
@@ -20,7 +22,7 @@ story/
 ├── RUNTIME_INTEGRATION.md # 게임 엔진 처리·세이브·UI 계약
 ├── VERIFICATION.md        # 요구사항별 구현 및 테스트 증거
 ├── AI_AUTHORING_RULES.md  # AI 에이전트용 작성 계약
-├── characters/            # 인물별 감정 모델, 표정, 신고 규칙
+├── characters/            # 인물별 MBTI 요소(상호작용 선호), 감정 모델, 표정, 신고 규칙
 ├── routes/                # 루트 해금, 진입 장면, 엔딩
 ├── scenes/                # 실제 대사와 분기 노드 그래프
 ├── templates/             # 새 장면 작성 템플릿
@@ -36,8 +38,8 @@ python3 tools/story_harness.py validate
 python3 tools/story_harness.py build
 python3 tools/story_harness.py simulate --route seo_a --strategy first
 python3 tools/story_harness.py explore --route seo_a
-python3 tools/story_harness.py night --day 1 --activity workout
-python3 tools/story_harness.py timeline --day 5 --slot after_work --process-automatic
+python3 tools/story_harness.py night --campaign main --day 1 --activity workout
+python3 tools/story_harness.py timeline --campaign main --day 5 --slot after_work --process-automatic
 python3 tools/story_harness.py context --scene seo_a.email_request
 python3 -m unittest discover -s tests -v
 ```
@@ -70,15 +72,17 @@ python3 tools/story_harness.py context \
 
 1. `templates/scene.template.yaml`을 복사해 장면 ID와 루트를 정한다.
 2. 회사 장면이면 `world/README.md`와 `world/**/*.yaml`에서 소속·권한·참석자를 확인하고, 공식 회의에 `world_context`를 선언한다.
-3. 장면에서 읽고 쓸 상태를 `state_contract`에 먼저 선언한다.
-4. 각 대사 노드에 `perceived`와 `reality`를 모두 작성한다.
-5. 수치 변화는 선택지나 전이의 `effects`에서만 기록한다.
-6. 새 표정은 인물 파일의 `expressions`에 먼저 등록한다.
-7. 새 장소·시간·분위기가 기존 배경 규칙으로 해석되는지 확인하고, 필요하면 `visuals/backgrounds/`에 변형을 추가한다.
-8. 새 캐릭터는 콘셉트 아트만 직접 참조하지 말고 `visuals/characters/`의 구체 객체를 하나 만든다.
-9. 새 장면을 `events/`의 시간 이벤트에 연결하고, 필요한 경우 `threads/` 순서에도 등록한다.
-10. 번역은 원본 YAML을 바꾸지 않고 `locales/<언어>.yaml`에 안정적인 키로 덮어쓴다.
-11. `validate`, `timeline`, `night`, `simulate`, `build`, `context` 순서로 확인한다.
+3. MBTI 요소를 적용할 때 반응 상대의 행동 기반 `interaction_preferences`와 현재 상황 예외를 확인한다. F/T는 작가용 약칭으로만 사용하고, 명시적 요청·거절에는 `literal_respect`를 우선한다.
+4. 다인물 선택은 `interaction.target`의 반응 상대와 `push_pull.target`의 밀당 계산 인물을 따로 정한다. 둘 다 현재 `cast` 인물이어야 한다.
+5. 장면에서 읽고 쓸 상태를 `state_contract`에 먼저 선언한다. 루트 기본 히로인과 다른 계산 인물을 쓰면 그 인물의 시스템 경로도 포함한다.
+6. 각 대사 노드에 `perceived`와 `reality`를 모두 작성한다.
+7. 수치 변화는 선택지나 전이의 `effects`에서만 기록한다.
+8. 새 표정은 인물 파일의 `expressions`에 먼저 등록한다.
+9. 새 장소·시간·분위기가 기존 배경 규칙으로 해석되는지 확인하고, 필요하면 `visuals/backgrounds/`에 변형을 추가한다.
+10. 새 캐릭터는 콘셉트 아트만 직접 참조하지 말고 `visuals/characters/`의 구체 객체를 하나 만든다.
+11. 새 장면을 `events/`의 시간 이벤트에 연결하고, 필요한 경우 `threads/` 순서에도 등록한다.
+12. 번역은 원본 YAML을 바꾸지 않고 `locales/<언어>.yaml`에 안정적인 키로 덮어쓴다.
+13. `validate`, `timeline`, `night`, `simulate`, `explore`, `build`, `context` 순서로 확인한다. `explore`로 모든 선택지의 도달성과 실제 계산 대상을 확인한다.
 
 ## 원본 우선순위
 

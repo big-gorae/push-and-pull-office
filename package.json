@@ -10,6 +10,7 @@
     "dev": "VITE_APP_SURFACE=game vite --host 127.0.0.1 --port 1420",
     "dev:editor": "vite --host 127.0.0.1 --port 1420",
     "build": "tsc && vite build",
+    "build:pages": "VITE_APP_SURFACE=game VITE_HOSTING_TARGET=github-pages npm run build",
     "build:site": "VITE_APP_SURFACE=game npm run build",
     "test:player": "vitest run src/player",
     "test:prompts": "vitest run src/prompt-builder",

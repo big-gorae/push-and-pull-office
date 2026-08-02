@@ -14,6 +14,21 @@ voice:
   habits:
     - 책을 추천할 때 상대의 취향을 기억한다.
     - 현재 진술에서는 추측보다 경험한 사건의 순서를 말한다.
+interaction_preferences:
+  authoring_shorthand: 원문과 결정권을 보존해야 하는 생존자 중심 대화 성향.
+  support_order:
+    - literal_respect
+    - ask_before_helping
+    - autonomy_return
+    - factual_clarification
+  prefers:
+    - 경험한 사건의 순서를 의심하거나 미화하지 않고 기록하는 태도
+    - 진술 방식과 공개 범위를 먼저 묻고 선택권을 보장하는 지원
+  resists:
+    - 도움을 명분으로 직접 대면이나 화해를 요구하는 행동
+    - 고통의 의미와 이후 행동을 대신 결정하는 반응
+  context_overrides:
+    - 안전과 익명성이 걸린 상황에서는 대화보다 접촉 중단과 합의된 전달 방식을 우선한다.
 visual:
   concept_art: assets/concept-art/im-soo-yeon.png
   palette: [olive, brown, faded_cream]

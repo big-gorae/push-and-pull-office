@@ -1,4 +1,5 @@
 schema_version: 1
+campaign_id: main
 id: offscreen.witnesses_compare_notes
 title: 서로 다른 기록이 연결된 점심
 type: offscreen

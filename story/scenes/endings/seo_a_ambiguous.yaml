@@ -22,15 +22,12 @@ state_contract:
     - progress.flags.story_mode.final_interpretation
     - progress.flags.story_mode.home_incident
     - progress.cleared_routes
-    - progress.unlocked_modes
 start_node: complete
 nodes:
   - id: complete
     kind: effect
     effects:
       - {path: progress.cleared_routes, op: append_unique, value: seo_a}
-      - {path: progress.unlocked_modes, op: append_unique, value: truth_view}
-      - {path: progress.unlocked_modes, op: append_unique, value: survivor_view}
     next: leave_request
 
   - id: leave_request
