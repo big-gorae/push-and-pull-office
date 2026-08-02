@@ -25,7 +25,7 @@ describe("NovelAI prompt catalog", () => {
       conceptArt: "assets/concept-art/yoon-seo-a.png",
     });
     expect(seoA?.variants[0].identityTags).toContain("long dark brown hair");
-    expect(seoA?.variants[0].identityTags).toContain("large breasts");
+    expect(seoA?.variants[0].identityTags).toContain("1.2::large breasts::");
   });
 
   it("reports the source file and JSON path for an invalid reference", () => {
@@ -122,7 +122,7 @@ describe("NovelAI prompt composition", () => {
     expect(fullBody.base).toContain("1girl, solo, full body");
     expect(fullBody.character.startsWith("girl, adult, ")).toBe(true);
     expect(fullBody.character).toContain("long dark brown hair");
-    expect(fullBody.character).toContain("large breasts, breasts");
+    expect(fullBody.character).toContain("1.2::large breasts::, breasts");
     expect(fullBody.character).toContain("1.2::coffee cup, steam::");
     expect(fullBody.character).toContain("black loafers");
     expect(cropped.character).not.toContain("black loafers");
@@ -165,22 +165,108 @@ describe("NovelAI prompt composition", () => {
     expect(prompt.base).not.toContain("absurdres");
   });
 
-  it("keeps the adult bishoujo body direction in female character files only", () => {
+  it("uses concrete female facial morphology instead of a subjective beauty phrase", () => {
     const catalog = loadPromptCatalog();
+    const femaleFaceTags = [
+      "long eyelashes",
+      "small nose",
+      "soft full lips",
+    ];
+    const exactCount = (items: readonly string[], expected: string) => (
+      items.filter((item) => item === expected).length
+    );
 
     for (const character of catalog.characters) {
       for (const variant of character.variants) {
         if (character.subject === "female") {
-          expect(variant.identityTags).toContain("1.2::exceptionally beautiful face, refined elegant facial features::");
-          expect(variant.identityTags).toContain("large breasts");
-          expect(variant.identityTags).toContain("breasts");
+          for (const tag of femaleFaceTags) {
+            expect(exactCount(variant.identityTags, tag)).toBe(1);
+          }
+          expect(variant.identityTags.join(", ")).not.toContain("exceptionally beautiful");
+          expect(variant.identityTags.join(", ")).not.toContain("beautiful face");
+          expect(variant.identityTags).not.toContain("flat chest");
+          expect(variant.identityTags).not.toContain("small breasts");
           expect(variant.identityTags).not.toContain("girl");
           expect(variant.characterUndesiredTags).toContain("flat chest");
           expect(variant.characterUndesiredTags).toContain("small breasts");
-          expect(variant.characterUndesiredTags).not.toContain("large breasts");
+          for (const situation of variant.situations) {
+            const prompt = composePrompt(catalog, {
+              characterId: character.id,
+              variantId: variant.id,
+              situationId: situation.id,
+            });
+            const characterItems = splitPromptText(prompt.character);
+            const ucItems = splitPromptText(prompt.uc);
+            for (const tag of femaleFaceTags) {
+              expect(exactCount(characterItems, tag)).toBe(1);
+              expect(exactCount(ucItems, tag)).toBe(0);
+            }
+            expect(prompt.character).not.toContain("exceptionally beautiful");
+            expect(prompt.character).not.toContain("beautiful face");
+          }
         } else {
-          expect(variant.identityTags).not.toContain("large breasts");
+          for (const tag of femaleFaceTags) {
+            expect(exactCount(variant.identityTags, tag)).toBe(0);
+          }
           expect(variant.characterUndesiredTags).not.toContain("flat chest");
+          expect(variant.characterUndesiredTags).not.toContain("small breasts");
+        }
+      }
+    }
+  });
+
+  it("keeps the standard bust direction while isolating Kang Yoo-jin's extreme proportions", () => {
+    const catalog = loadPromptCatalog();
+    const standardBodyTags = ["narrow waist", "1.2::large breasts::", "breasts"];
+    const yooJinBodyTags = [
+      "curvy",
+      "1.3::narrow waist::",
+      "1.2::wide hips::",
+      "1.2::long legs::",
+      "slim legs",
+      "1.3::huge breasts::",
+      "breasts",
+    ];
+    const exactCount = (items: readonly string[], expected: string) => (
+      items.filter((item) => item === expected).length
+    );
+
+    for (const character of catalog.characters.filter(({ subject }) => subject === "female")) {
+      for (const variant of character.variants) {
+        const expectedTags = character.id === "kang_yoo_jin" ? yooJinBodyTags : standardBodyTags;
+        for (const tag of expectedTags) {
+          expect(exactCount(variant.identityTags, tag)).toBe(1);
+        }
+        expect(variant.identityTags).not.toContain("large breasts");
+        expect(variant.characterUndesiredTags).toContain("flat chest");
+        expect(variant.characterUndesiredTags).toContain("small breasts");
+
+        if (character.id === "kang_yoo_jin") {
+          expect(variant.identityTags).not.toContain("narrow waist");
+          expect(variant.identityTags).not.toContain("1.2::large breasts::");
+          expect(variant.identityTags).not.toContain("tall female");
+          expect(variant.outfits[0]?.tags).toContain("fitted cobalt blue button-up shirt");
+          expect(variant.outfits[0]?.tags).toContain("high-waisted light gray wide-leg trousers");
+          expect(variant.characterUndesiredTags).not.toContain("fragile build");
+          expect(variant.characterUndesiredTags).toContain("ribs");
+        } else {
+          for (const tag of yooJinBodyTags.filter((tag) => tag !== "breasts")) {
+            expect(variant.identityTags).not.toContain(tag);
+          }
+        }
+
+        for (const situation of variant.situations) {
+          const prompt = composePrompt(catalog, {
+            characterId: character.id,
+            variantId: variant.id,
+            situationId: situation.id,
+          });
+          const characterItems = splitPromptText(prompt.character);
+          const ucItems = splitPromptText(prompt.uc);
+          for (const tag of expectedTags) {
+            expect(exactCount(characterItems, tag)).toBe(1);
+            expect(exactCount(ucItems, tag)).toBe(0);
+          }
         }
       }
     }
@@ -193,6 +279,71 @@ describe("NovelAI prompt composition", () => {
     expect(catalog.sharedUndesiredTags).toContain("multicolored eyes");
     expect(catalog.sharedUndesiredTags).not.toContain("giant eyes");
     expect(catalog.sharedUndesiredTags).not.toContain("galaxy eyes");
+  });
+
+  it("keeps Yoon Seo-a's large eyes and applies her signature eye-smile only to smile situations", () => {
+    const catalog = loadPromptCatalog();
+    const seoA = catalog.characters.find(({ id }) => id === "yoon_seo_a");
+    const variant = seoA?.variants[0];
+    const socialSmile = variant?.situations.find(({ id }) => id === "reference_social_smile");
+    const relief = variant?.situations.find(({ id }) => id === "relief_with_coworker");
+    const tense = variant?.situations.find(({ id }) => id === "tense_at_doorway");
+
+    expect(variant?.identityTags).toContain("large brown eyes");
+    expect(socialSmile?.tags).toEqual(expect.arrayContaining([
+      "subtle eye smile",
+      "raised lower eyelids",
+      "slightly raised cheeks",
+      "slightly asymmetric upturned mouth corners",
+    ]));
+    expect(socialSmile?.tags).not.toContain("wide warm smile");
+    expect(socialSmile?.tags).not.toContain("visible upper teeth");
+    expect(socialSmile?.tags).not.toContain("subtle gummy smile");
+    expect(relief?.tags).toEqual(expect.arrayContaining([
+      "crescent-shaped half-closed eyes",
+      "visible upper teeth",
+      "subtle gummy smile",
+    ]));
+    expect(tense?.tags).not.toContain("smiling eyes");
+    expect(tense?.tags).not.toContain("subtle gummy smile");
+
+    const allPromptConfig = catalog.characters.flatMap((character) => (
+      character.variants.flatMap((look) => [
+        ...look.identityTags,
+        ...look.outfits.flatMap((outfit) => outfit.tags),
+        ...look.characterUndesiredTags,
+        ...look.situations.flatMap((situation) => situation.tags),
+      ])
+    )).join(", ");
+    expect(allPromptConfig).not.toMatch(/baek\s*ji[- ]?heon|백지헌/i);
+  });
+
+  it("pins Cha Min-kyung's single beauty mark below the outer eye corner", () => {
+    const catalog = loadPromptCatalog();
+    const minKyung = catalog.characters.find(({ id }) => id === "cha_min_kyung");
+    const variant = minKyung?.variants[0];
+
+    expect(variant?.identityTags).toContain("mole under eye");
+    expect(variant?.identityTags).toContain(
+      "A single tiny dark beauty mark sits just below the outer corner of her left eye above the cheekbone.",
+    );
+    expect(variant?.characterUndesiredTags).toContain("multiple moles");
+    expect(variant?.characterUndesiredTags).not.toContain("mole under eye");
+
+    for (const character of catalog.characters.filter(({ id }) => id !== "cha_min_kyung")) {
+      for (const look of character.variants) {
+        expect(look.identityTags).not.toContain("mole under eye");
+      }
+    }
+
+    const prompt = composePrompt(catalog, {
+      characterId: "cha_min_kyung",
+      variantId: "office",
+      situationId: "reference_skeptical",
+    });
+    expect(prompt.character).toContain("mole under eye");
+    expect(prompt.character).toContain("outer corner of her left eye above the cheekbone");
+    expect(prompt.uc).toContain("multiple moles");
   });
 
   it("copies only the supplied art style and never its character or battle content", () => {
