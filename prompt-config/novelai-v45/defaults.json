@@ -45,6 +45,13 @@
       "tags": ["full body", "eye-level", "three-quarter view", "simple warm gray background"]
     },
     {
+      "id": "character_upper_body",
+      "label": "상반신 얼굴·디테일",
+      "description": "얼굴과 목·쇄골처럼 작은 고유 특징을 확인합니다.",
+      "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
+      "tags": ["upper body", "eye-level", "three-quarter view", "simple warm gray background"]
+    },
+    {
       "id": "office_desk",
       "label": "오피스 책상",
       "description": "업무 중 자연스러운 손동작과 시선을 만듭니다.",

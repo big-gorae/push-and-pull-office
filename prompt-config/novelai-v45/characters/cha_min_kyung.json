@@ -13,18 +13,21 @@
         "adult",
         "sleek chin-length black bob",
         "large almond-shaped reddish-brown eyes",
-        "angular oval face",
+        "small oval face",
         "long eyelashes",
+        "pale skin",
         "small nose",
         "soft full lips",
-        "mole under eye",
-        "A single tiny dark beauty mark sits just below the outer corner of her left eye above the cheekbone.",
+        "subtle makeup",
+        "1.35::mole under eye::",
+        "One tiny dark beauty mark sits just below the outer corner of her left eye above the cheekbone.",
+        "1.35::mole on collarbone::",
+        "A second tiny dark beauty mark sits at the left base of her neck, just below the collarbone on her upper chest.",
         "hair tucked behind one ear",
-        "high cheekbones",
-        "defined tapered jawline",
-        "dark straight eyebrows",
+        "delicate v-shaped jawline",
+        "fine straight eyebrows",
         "tall woman",
-        "athletic curvy build",
+        "slender curvy build",
         "narrow waist",
         "1.2::large breasts::",
         "breasts"
@@ -32,9 +35,11 @@
       "outfitTags": [
         "charcoal tailored blazer",
         "burgundy silk blouse",
+        "v-neck",
+        "collarbone",
         "black tailored slacks",
         "thin metal earrings",
-        "burgundy lipstick",
+        "subtle burgundy lipstick",
         "metal pen"
       ],
       "fullBodyOnlyTags": ["black low heels"],
@@ -53,7 +58,16 @@
         "shy",
         "timid",
         "blushing",
-        "multiple moles",
+        "old woman",
+        "wrinkles",
+        "bags under eyes",
+        "narrow eyes",
+        "angry",
+        "scowl",
+        "furrowed brow",
+        "v-shaped eyebrows",
+        "smirk",
+        "heavy makeup",
         "flat chest",
         "small breasts",
         "school uniform",
@@ -64,11 +78,11 @@
       "situations": [
         {
           "id": "reference_skeptical",
-          "label": "기본 사실 확인",
-          "description": "한쪽 눈썹을 올리고 발언의 적절성을 확인합니다.",
+          "label": "기본 냉정한 사실 확인",
+          "description": "차갑고 침착하지만 적대적이지 않은 기본 표정입니다.",
           "expressionId": "actual_skeptical",
-          "basePresetId": "sprite_full_body",
-          "tags": ["holding a metal pen", "standing upright with one hand on her hip", "one eyebrow raised", "skeptical expression", "direct gaze"]
+          "basePresetId": "character_upper_body",
+          "tags": ["holding a metal pen", "upright relaxed posture", "neutral face", "calm eyes", "relaxed eyebrows", "closed mouth", "direct gaze"]
         },
         {
           "id": "meeting_fact_check",
@@ -76,15 +90,15 @@
           "description": "회의 자리에서 근거와 발언을 정확히 짚습니다.",
           "expressionId": "actual_skeptical",
           "basePresetId": "meeting_room",
-          "tags": ["holding a metal pen above a closed notebook", "upright posture", "one eyebrow raised", "skeptical expression", "looking at someone outside the frame"]
+          "tags": ["holding a metal pen above a closed notebook", "upright relaxed posture", "calm analytical expression", "relaxed eyebrows", "closed mouth", "steady gaze", "looking at someone outside the frame"]
         },
         {
           "id": "cold_boundary",
           "label": "차갑게 선 긋기",
-          "description": "턱이 굳고 시선이 차가워지지만 자세는 무너지지 않습니다.",
+          "description": "표정을 흐트러뜨리지 않은 채 조용하고 단호하게 거리를 둡니다.",
           "expressionId": "actual_disgust",
           "basePresetId": "meeting_room",
-          "tags": ["standing still", "clenched jaw", "narrowed eyes", "cold gaze", "looking at someone just off camera"]
+          "tags": ["standing still", "calm reserved expression", "steady cool gaze", "relaxed eyebrows", "closed mouth", "looking at someone just off camera"]
         },
         {
           "id": "protect_coworker",
@@ -92,7 +106,7 @@
           "description": "화면 밖의 후배 앞에 서서 접근을 차단합니다.",
           "expressionId": "actual_protective",
           "basePresetId": "office_hallway",
-          "tags": ["stepping in front of a coworker just outside the frame", "firm stance", "serious expression", "looking sideways at the approaching person"]
+          "tags": ["stepping in front of a coworker just outside the frame", "firm stance", "calm serious expression", "relaxed mouth", "steady sideways gaze"]
         },
         {
           "id": "exhausted_alone",
@@ -100,7 +114,7 @@
           "description": "회의가 끝난 뒤에만 굳은 어깨가 내려갑니다.",
           "expressionId": "actual_exhausted",
           "basePresetId": "meeting_room",
-          "tags": ["alone in the meeting room", "holding a closed laptop", "tired eyes", "lowered shoulders", "looking down"]
+          "tags": ["alone in the meeting room", "holding a closed laptop", "subtle fatigue", "softened gaze", "lowered shoulders", "looking down"]
         },
         {
           "id": "perceived_challenge",
@@ -108,7 +122,7 @@
           "description": "사실 확인 시선을 긴장감을 즐기는 도발로 오해합니다.",
           "expressionId": "subjective_challenging",
           "basePresetId": "meeting_room",
-          "tags": ["challenging gaze", "slight confident smile", "one eyebrow raised", "upright posture", "looking directly at the viewer"]
+          "tags": ["subtle confident smile", "calm direct gaze", "relaxed eyebrows", "upright posture", "looking directly at the viewer"]
         },
         {
           "id": "perceived_jealous",
@@ -116,7 +130,7 @@
           "description": "굳은 표정을 다른 여성을 향한 질투로 오해합니다.",
           "expressionId": "subjective_jealous",
           "basePresetId": "office_hallway",
-          "tags": ["restrained jealous expression", "tight closed mouth", "looking toward someone outside the frame", "arms crossed", "upright posture"]
+          "tags": ["reserved expression", "slightly averted gaze", "relaxed eyebrows", "closed mouth", "arms crossed", "upright posture"]
         }
       ]
     }
