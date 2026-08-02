@@ -21,6 +21,7 @@ run_story_checks() {
 
 run_player_checks() {
   npm run test:player
+  npm run test:prompts
   npm run build:site
 }
 
