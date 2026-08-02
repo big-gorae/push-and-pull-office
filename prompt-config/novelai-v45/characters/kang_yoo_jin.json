@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "characterId": "kang_yoo_jin",
+  "order": 30,
+  "subject": "female",
+  "accent": "#3979c5",
+  "defaultLookId": "office",
+  "looks": [
+    {
+      "id": "office",
+      "label": "기본 오피스",
+      "identityTags": [
+        "adult",
+        "1.2::exceptionally beautiful face, refined elegant facial features::",
+        "high dark brown ponytail",
+        "teal eyes",
+        "upturned eyes",
+        "lively face",
+        "shoulder-length hair tied high",
+        "expressive eyebrows",
+        "athletic curvy build",
+        "narrow waist",
+        "large breasts",
+        "breasts"
+      ],
+      "outfitTags": [
+        "cobalt blue button-up shirt",
+        "rolled-up sleeves",
+        "light gray wide-leg trousers",
+        "geometric earrings",
+        "cobalt employee lanyard",
+        "tablet",
+        "stylus"
+      ],
+      "fullBodyOnlyTags": ["neat loafers"],
+      "characterUndesiredTags": [
+        "child",
+        "loli",
+        "fragile build",
+        "slouching",
+        "shy",
+        "blushing",
+        "flat chest",
+        "small breasts",
+        "bob cut",
+        "low ponytail",
+        "black business suit",
+        "pencil skirt",
+        "miniskirt",
+        "high heels"
+      ],
+      "defaultSituationId": "reference_fact_check",
+      "situations": [
+        {
+          "id": "reference_fact_check",
+          "label": "기본 사실 확인",
+          "description": "태블릿 기록을 보며 오류를 짚는 기본 자세입니다.",
+          "expressionId": "actual_fact_check",
+          "basePresetId": "sprite_full_body",
+          "tags": ["holding a tablet and stylus", "upright posture", "one eyebrow raised", "skeptical expression", "looking at the tablet"]
+        },
+        {
+          "id": "design_fact_check",
+          "label": "디자인 리뷰 확인",
+          "description": "발표 자료의 날짜·출처·담당자를 확인합니다.",
+          "expressionId": "actual_fact_check",
+          "basePresetId": "design_review",
+          "tags": ["holding a tablet", "pointing at one line with a stylus", "one eyebrow raised", "focused skeptical expression", "looking at the presentation screen"]
+        },
+        {
+          "id": "direct_warning",
+          "label": "정면 경고",
+          "description": "모호하게 웃지 않고 경고 문장을 분명히 전달합니다.",
+          "expressionId": "actual_warning",
+          "basePresetId": "meeting_room",
+          "tags": ["holding the tablet at her side", "firm upright stance", "stern expression", "direct gaze", "pointing once with the stylus"]
+        },
+        {
+          "id": "procedural_record",
+          "label": "기록과 접수 절차",
+          "description": "감정 표현보다 기록 작성에 집중합니다.",
+          "expressionId": "actual_procedural",
+          "basePresetId": "office_desk",
+          "tags": ["writing on the tablet with a stylus", "focused", "closed mouth", "looking down at the record", "upright seated posture"]
+        },
+        {
+          "id": "worn_down_after_report",
+          "label": "묵살 뒤의 피로",
+          "description": "자신감은 남아 있지만 반복된 묵살로 지쳐 있습니다.",
+          "expressionId": "actual_worn_down",
+          "basePresetId": "office_desk",
+          "tags": ["holding the tablet against her side", "tired eyes", "restrained expression", "upright posture", "looking away"]
+        },
+        {
+          "id": "perceived_bold_flirt",
+          "label": "주관 화면 · 당돌한 호감",
+          "description": "정면 경고를 자신과 대등한 호감 표현으로 오해합니다.",
+          "expressionId": "subjective_bold_flirt",
+          "basePresetId": "design_review",
+          "tags": ["bold confident smile", "direct gaze", "one eyebrow raised", "holding a stylus near her shoulder", "upright posture"]
+        }
+      ]
+    }
+  ]
+}

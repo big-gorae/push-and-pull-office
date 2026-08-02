@@ -1,9 +1,12 @@
 import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 
-const isWebGame = import.meta.env.VITE_APP_SURFACE === "game"
+const isPromptBuilder = window.location.pathname.startsWith("/prompts")
+  || window.location.hash.startsWith("#/prompts");
+const isWebGame = !isPromptBuilder && (import.meta.env.VITE_APP_SURFACE === "game"
   || window.location.pathname.startsWith("/play")
-  || window.location.hash.startsWith("#/play");
+  || window.location.hash.startsWith("#/play"));
+const PromptBuilder = lazy(() => import("./prompt-builder/PromptBuilder"));
 const WebGame = lazy(() => import("./player/WebGame"));
 const EditorApp = lazy(async () => {
   await import("./styles.css");
@@ -13,7 +16,7 @@ const EditorApp = lazy(async () => {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Suspense fallback={<div style={{ minHeight: "100vh", background: "linear-gradient(145deg, #fff7fb, #fffbea)" }} />}>
-      {isWebGame ? <WebGame /> : <EditorApp />}
+      {isPromptBuilder ? <PromptBuilder /> : isWebGame ? <WebGame /> : <EditorApp />}
     </Suspense>
   </StrictMode>,
 );
