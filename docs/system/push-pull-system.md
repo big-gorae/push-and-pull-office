@@ -95,7 +95,9 @@
 
 대화 화법에는 별도 게이지를 만들지 않는다. 맞는 화법을 고르면 상대가 조금 더 구체적으로 답하고, 업무관·취향·현재 필요를 드러내며, 이후 장면에서 그 대화를 기억한다. 틀린 화법을 고르면 대답이 짧아지거나 상대가 사실과 요청을 바로잡는다. 이 차이가 다음 판단의 단서가 된다.
 
-장면 데이터는 선택지의 `interaction.target`과 `interaction.support_styles`로 화법 축을 기록한다. `interaction.target`은 실제로 반응하는 현재 `cast` 인물이고, `support_styles`는 실제 말과 행동에 들어간 화법이다. 여러 히로인이 함께 있는 공용 장면에서는 별도의 `push_pull.target`이 현재 `cast`의 누구에게 밀당 상태를 갱신할지 정한다. 대화 상대는 비공략 조연일 수도 있으므로 두 대상을 자동으로 같게 취급하지 않으며, 어느 필드도 일반 플레이어 화면에는 노출하지 않는다.
+장면 데이터는 선택 노드의 `interaction_context.kind`와 선택지의 `interaction.target`, `interaction.support_styles`로 화법 축을 기록한다. 문맥은 `support`, `coordination`, `boundary`, `not_applicable`로 나눈다. `interaction.target`은 실제로 반응하는 현재 `cast` 인물이고, `support_styles`는 실제 말과 행동에 들어간 화법을 전달 순서대로 적는다. 여러 히로인이 함께 있는 공용 장면에서는 별도의 `push_pull.target`이 현재 `cast`의 누구에게 밀당 상태를 갱신할지 정한다. 대화 상대는 비공략 조연일 수도 있으므로 두 대상을 자동으로 같게 취급하지 않으며, 어느 필드도 일반 플레이어 화면에는 노출하지 않는다.
+
+`support`와 `coordination` 선택은 모든 옵션의 반응 대상과 화법 순서를 명시하고, 같은 대상에게 다른 순서를 썼다면 실제 답변도 달라야 한다. `boundary`는 최소 한 개의 `literal_respect` 선택을 보장한다. 내적 해석이나 사건 절차인 `not_applicable`에는 인물 화법을 억지로 붙이지 않는다. 이 분류는 저작 누락을 막는 검수 계약이며 새 점수 엔진이 아니다.
 
 `option.push_pull.target`은 인물 ID다. 이름이 같은 `progress.flags.push_pull.target`은 현재 향하는 득점선 방향이고, 현재 콤보 인물은 `progress.flags.push_pull.heroine`에 저장한다.
 

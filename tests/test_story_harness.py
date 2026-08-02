@@ -804,6 +804,92 @@ class StoryHarnessTests(unittest.TestCase):
             node.clear()
             node.update(original)
 
+    def test_choice_requires_an_exact_interaction_context_kind(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        node = next(item for item in scene["nodes"] if item["id"] == "interpret")
+        original = copy.deepcopy(node["interaction_context"])
+        try:
+            node.pop("interaction_context")
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("choice interaction_context must be a mapping" in message for message in messages))
+
+            node["interaction_context"] = {"kind": "romance", "extra": True}
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("must contain exactly the key: kind" in message for message in messages))
+            self.assertTrue(any("invalid interaction_context kind" in message for message in messages))
+        finally:
+            node["interaction_context"] = original
+
+    def test_support_and_coordination_choices_require_interactions_and_distinct_orders(self):
+        scene = self.project.scenes["common.day_03_business_trip_or_cafe"]
+        node = next(item for item in scene["nodes"] if item["id"] == "response_choice")
+        original = copy.deepcopy(node["options"])
+        try:
+            node["options"][0].pop("interaction")
+            for option in node["options"][1:]:
+                option["interaction"]["support_styles"] = ["practical_resolution"]
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("coordination choice options require interaction metadata" in message for message in messages))
+            self.assertTrue(any("require at least two distinct ordered support style signatures" in message for message in messages))
+        finally:
+            node["options"] = original
+
+    def test_boundary_and_not_applicable_interaction_contracts_are_enforced(self):
+        boundary_scene = self.project.scenes["min_kyung.explicit_boundary"]
+        boundary = next(item for item in boundary_scene["nodes"] if item["id"] == "respond")
+        boundary_option = next(item for item in boundary["options"] if item["id"] == "accept_boundary")
+        original_boundary_interaction = copy.deepcopy(boundary_option["interaction"])
+        ending_scene = self.project.scenes["ending.min_kyung.coverup"]
+        interpretation = next(item for item in ending_scene["nodes"] if item["id"] == "interpretation_choice")
+        original_ending_options = copy.deepcopy(interpretation["options"])
+        try:
+            boundary_option.pop("interaction")
+            interpretation["options"][0]["interaction"] = {
+                "target": "cha_min_kyung",
+                "support_styles": ["emotional_validation"],
+            }
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("boundary choices require at least one literal_respect" in message for message in messages))
+            self.assertTrue(any("not_applicable choice options must not declare interaction" in message for message in messages))
+        finally:
+            boundary_option["interaction"] = original_boundary_interaction
+            interpretation["options"] = original_ending_options
+
+    def test_different_interaction_orders_require_distinct_target_reality_responses(self):
+        scene = self.project.scenes["common.day_03_business_trip_or_cafe"]
+        structure = next(item for item in scene["nodes"] if item["id"] == "structure_response")
+        fatigue = next(item for item in scene["nodes"] if item["id"] == "fatigue_response")
+        original_line = fatigue["reality"]["line"]
+        try:
+            fatigue["reality"]["line"] = structure["reality"]["line"]
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("must lead to distinct reality responses" in message for message in messages))
+        finally:
+            fatigue["reality"]["line"] = original_line
+
+    def test_interaction_branch_must_reach_the_declared_target_response(self):
+        scene = self.project.scenes["common.day_03_business_trip_or_cafe"]
+        node = next(item for item in scene["nodes"] if item["id"] == "post_resolution_choice")
+        option = next(item for item in node["options"] if item["id"] == "close_with_facts")
+        original_next = option["next"]
+        try:
+            scene["nodes"].append({
+                "id": "interaction_passthrough",
+                "kind": "effect",
+                "effects": [],
+                "next": original_next,
+            })
+            option["next"] = "interaction_passthrough"
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertFalse(any("must reach a reality response from target: cha_min_kyung" in message for message in messages))
+
+            option["next"] = "weekend_clues"
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("must reach a reality response from target: cha_min_kyung" in message for message in messages))
+        finally:
+            option["next"] = original_next
+            scene["nodes"] = [item for item in scene["nodes"] if item["id"] != "interaction_passthrough"]
+
     def test_new_scene_scaffold_uses_separate_inner_voice_contract(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "draft.yaml"
@@ -1062,6 +1148,7 @@ class StoryHarnessTests(unittest.TestCase):
         choice = next(node for node in scene["nodes"] if node["id"] == "response_choice")
         options = {option["id"]: option for option in choice["options"]}
 
+        self.assertEqual({"kind": "coordination"}, choice["interaction_context"])
         self.assertEqual(
             {
                 "structure_issues": ["factual_clarification", "practical_resolution", "autonomy_return"],
@@ -1084,13 +1171,42 @@ class StoryHarnessTests(unittest.TestCase):
         }
         self.assertEqual(3, len(response_lines))
 
+        follow_up = next(node for node in scene["nodes"] if node["id"] == "post_resolution_choice")
+        follow_up_options = {option["id"]: option for option in follow_up["options"]}
+        self.assertEqual({"kind": "support"}, follow_up["interaction_context"])
+        self.assertEqual(
+            {
+                "acknowledge_after_resolution": ["emotional_validation", "ask_before_helping", "autonomy_return"],
+                "close_with_facts": ["factual_clarification"],
+                "add_more_work": ["practical_resolution", "concise_reassurance"],
+            },
+            {
+                option_id: option["interaction"]["support_styles"]
+                for option_id, option in follow_up_options.items()
+            },
+        )
+        for option in follow_up_options.values():
+            self.assertEqual("cha_min_kyung", option["interaction"]["target"])
+            self.assertEqual("cha_min_kyung", option["push_pull"]["target"])
+            self.assertEqual([], option["effects"])
+
+        follow_up_response_lines = {
+            next(node for node in scene["nodes"] if node["id"] == option["next"])["reality"]["line"]
+            for option in follow_up_options.values()
+        }
+        self.assertEqual(3, len(follow_up_response_lines))
+        resolution = next(node for node in scene["nodes"] if node["id"] == "resolution_complete")
+        self.assertIn("모두 정리됐다", resolution["reality"]["line"])
+        self.assertIn("숨을 내쉬었다", resolution["reality"]["line"])
+
     def test_day_three_common_choice_switches_push_pull_target_to_min_kyung(self):
         result = Simulator(
             self.project,
             "seo_a",
             {
                 "common.day_02_practical_meeting": "acknowledge_and_ask",
-                "common.day_03_business_trip_or_cafe": "structure_issues",
+                "common.day_03_business_trip_or_cafe:response_choice": "structure_issues",
+                "common.day_03_business_trip_or_cafe:post_resolution_choice": "acknowledge_after_resolution",
             },
             "first",
         ).run(stop_before_scene="common.day_04_weekend_encounter")
@@ -1098,8 +1214,16 @@ class StoryHarnessTests(unittest.TestCase):
 
         final_state = result["final_state"]
         self.assertEqual(54, final_state["visible"]["heroines"]["yoon_seo_a"]["initiative"])
-        self.assertEqual(54, final_state["visible"]["heroines"]["cha_min_kyung"]["initiative"])
+        self.assertEqual(68, final_state["visible"]["heroines"]["cha_min_kyung"]["initiative"])
         self.assertEqual("cha_min_kyung", push_pull_state(final_state)["heroine"])
+        day_three_choices = [
+            item for item in result["trace"]
+            if item.get("type") == "choice" and item.get("scene") == "common.day_03_business_trip_or_cafe"
+        ]
+        self.assertEqual(
+            [("response_choice", "structure_issues"), ("post_resolution_choice", "acknowledge_after_resolution")],
+            [(item["node"], item["option"]) for item in day_three_choices],
+        )
         self.assertEqual(
             self.project.campaign_initial_state(
                 self.project.routes["seo_a"]["campaign_id"]
@@ -1409,6 +1533,7 @@ class StoryHarnessTests(unittest.TestCase):
         preferences = bundle["characters"]["cha_min_kyung"]["interaction_preferences"]
         self.assertEqual("factual_clarification", preferences["support_order"][0])
         shared_choice = bundle["scenes"]["common.day_02_practical_meeting"]["nodes"]["recovery_choice"]
+        self.assertEqual({"kind": "support"}, shared_choice["interaction_context"])
         factual = next(option for option in shared_choice["options"] if option["id"] == "define_and_fix")
         self.assertEqual(
             {
@@ -1709,6 +1834,10 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertIn("authoring_rules", context)
         self.assertIn("literal_respect", context["allowed_system"]["support_styles"])
         self.assertEqual(
+            ["boundary", "coordination", "not_applicable", "support"],
+            context["allowed_system"]["interaction_context_kinds"],
+        )
+        self.assertEqual(
             ["emotional_validation", "ask_before_helping", "autonomy_return", "practical_resolution"],
             context["cast"]["yoon_seo_a"]["interaction_preferences"]["support_order"],
         )
@@ -1719,6 +1848,7 @@ class StoryHarnessTests(unittest.TestCase):
 
         shared_context = self.project.context_package("common.day_02_practical_meeting")
         recovery = next(node for node in shared_context["scene"]["nodes"] if node["id"] == "recovery_choice")
+        self.assertEqual({"kind": "support"}, recovery["interaction_context"])
         factual = next(option for option in recovery["options"] if option["id"] == "define_and_fix")
         self.assertEqual("cha_min_kyung", factual["interaction"]["target"])
         self.assertEqual("cha_min_kyung", factual["push_pull"]["target"])

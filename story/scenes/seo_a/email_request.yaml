@@ -115,6 +115,8 @@ nodes:
     kind: choice
     prompt: 자료 전달 방식을 분명히 한 서아에게 어떻게 답할까?
     stimulus: 서아가 ‘자료는 메일로 보내고 제 자리로 오지 말라’고 말했다.
+    interaction_context:
+      kind: boundary
     options:
       - id: match_push
         label: 짧게 ‘알겠습니다’라고 답하고 며칠간 거리를 둔다
@@ -156,6 +158,9 @@ nodes:
         interpretation: 오늘은 연애보다 업무를 우선한다.
         action: 자료를 메일로 보내고 추가 접촉을 하지 않는다.
         push_pull: {action: literal, intensity: 12, base_score: 4}
+        interaction:
+          target: yoon_seo_a
+          support_styles: [literal_respect]
         conditions: []
         effects:
           - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -2}

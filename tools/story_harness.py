@@ -52,6 +52,12 @@ VALID_SUPPORT_STYLES = {
     "concise_reassurance",
     "literal_respect",
 }
+VALID_INTERACTION_CONTEXT_KINDS = {
+    "support",
+    "coordination",
+    "boundary",
+    "not_applicable",
+}
 SELF_DEVELOPMENT_STATE_PREFIX = "visible.protagonist.self_development"
 SELF_DEVELOPMENT_PROGRESS_PREFIX = "progress.self_development"
 SELF_DEVELOPMENT_STAT_ORDER = ("stamina", "appearance", "humor", "taste")
@@ -1810,6 +1816,7 @@ class StoryProject:
             if start_node not in node_map:
                 self._error(issues, location, f"unknown start_node: {start_node}")
             self._validate_local_links(issues, location, node_map)
+            self._validate_choice_interaction_contexts(issues, location, scene, node_map)
             self._validate_self_development_choice_equivalence(issues, location, node_map)
             if start_node in node_map:
                 reachable = local_reachable(node_map, start_node)
@@ -2042,6 +2049,214 @@ class StoryProject:
                 self._error(issues, location, "effect node requires next")
         elif kind == "exit":
             self._validate_transitions(issues, location, node.get("transitions"), reads, target_key="scene", allow_ending=True)
+
+    def _validate_choice_interaction_contexts(
+        self,
+        issues: List[Issue],
+        location: str,
+        scene: Mapping[str, Any],
+        node_map: Mapping[str, Mapping[str, Any]],
+    ) -> None:
+        """Validate whether and how each choice applies character interaction metadata."""
+        for node_id, node in node_map.items():
+            node_location = f"{location}#nodes.{node_id}"
+            if node.get("kind") != "choice":
+                if "interaction_context" in node:
+                    self._error(
+                        issues,
+                        node_location,
+                        "interaction_context is only allowed on choice nodes",
+                    )
+                continue
+
+            context = node.get("interaction_context")
+            if not isinstance(context, Mapping):
+                self._error(
+                    issues,
+                    node_location,
+                    "choice interaction_context must be a mapping containing exactly kind",
+                )
+                continue
+            if set(context) != {"kind"}:
+                self._error(
+                    issues,
+                    node_location,
+                    "choice interaction_context must contain exactly the key: kind",
+                )
+            context_kind = context.get("kind")
+            if (
+                not isinstance(context_kind, str)
+                or context_kind not in VALID_INTERACTION_CONTEXT_KINDS
+            ):
+                self._error(
+                    issues,
+                    node_location,
+                    f"invalid interaction_context kind: {context_kind}",
+                )
+                continue
+
+            options = node.get("options")
+            if not isinstance(options, list):
+                continue
+            option_rows = [
+                (index, option)
+                for index, option in enumerate(options)
+                if isinstance(option, Mapping)
+            ]
+
+            if context_kind in {"support", "coordination"}:
+                ordered_style_signatures: Set[Tuple[str, ...]] = set()
+                for option_index, option in option_rows:
+                    option_location = f"{node_location}.options[{option_index}]"
+                    interaction = option.get("interaction")
+                    if not isinstance(interaction, Mapping):
+                        self._error(
+                            issues,
+                            option_location,
+                            f"{context_kind} choice options require interaction metadata",
+                        )
+                        continue
+                    support_styles = interaction.get("support_styles")
+                    if (
+                        isinstance(support_styles, list)
+                        and support_styles
+                        and all(isinstance(style, str) and style for style in support_styles)
+                    ):
+                        ordered_style_signatures.add(tuple(support_styles))
+                if len(ordered_style_signatures) < 2:
+                    self._error(
+                        issues,
+                        node_location,
+                        f"{context_kind} choices require at least two distinct ordered support style signatures",
+                    )
+                self._validate_distinct_interaction_responses(
+                    issues,
+                    node_location,
+                    scene,
+                    node_map,
+                    option_rows,
+                )
+            elif context_kind == "boundary":
+                has_literal_respect = any(
+                    isinstance(option.get("interaction"), Mapping)
+                    and isinstance(option["interaction"].get("support_styles"), list)
+                    and "literal_respect" in option["interaction"]["support_styles"]
+                    for _, option in option_rows
+                )
+                if not has_literal_respect:
+                    self._error(
+                        issues,
+                        node_location,
+                        "boundary choices require at least one literal_respect interaction option",
+                    )
+            elif context_kind == "not_applicable":
+                for option_index, option in option_rows:
+                    if "interaction" in option:
+                        self._error(
+                            issues,
+                            f"{node_location}.options[{option_index}]",
+                            "not_applicable choice options must not declare interaction metadata",
+                        )
+
+    def _validate_distinct_interaction_responses(
+        self,
+        issues: List[Issue],
+        location: str,
+        scene: Mapping[str, Any],
+        node_map: Mapping[str, Mapping[str, Any]],
+        option_rows: Sequence[Tuple[int, Mapping[str, Any]]],
+    ) -> None:
+        """Require different support orders for one target to produce different reality replies."""
+        by_target: Dict[str, List[Tuple[int, Mapping[str, Any], Tuple[str, ...]]]] = {}
+        cast = scene.get("cast", [])
+        if not isinstance(cast, list):
+            cast = []
+        for option_index, option in option_rows:
+            interaction = option.get("interaction")
+            if not isinstance(interaction, Mapping):
+                continue
+            target = interaction.get("target")
+            support_styles = interaction.get("support_styles")
+            if (
+                not isinstance(target, str)
+                or target not in self.characters
+                or target not in cast
+                or not isinstance(support_styles, list)
+                or not support_styles
+                or not all(isinstance(style, str) and style for style in support_styles)
+            ):
+                continue
+            by_target.setdefault(target, []).append(
+                (option_index, option, tuple(support_styles))
+            )
+
+        for target, entries in by_target.items():
+            if len({style_signature for _, _, style_signature in entries}) < 2:
+                continue
+            resolved: List[Tuple[int, Tuple[str, ...], Tuple[str, ...]]] = []
+            for option_index, option, style_signature in entries:
+                response_signature = self._find_interaction_response_signature(
+                    node_map,
+                    option.get("next"),
+                    target,
+                )
+                option_location = f"{location}.options[{option_index}]"
+                if response_signature is None:
+                    self._error(
+                        issues,
+                        option_location,
+                        f"interaction branch must reach a reality response from target: {target}",
+                    )
+                    continue
+                for previous_index, previous_styles, previous_response in resolved:
+                    if previous_styles != style_signature and previous_response == response_signature:
+                        self._error(
+                            issues,
+                            option_location,
+                            "different ordered support style signatures for the same target must lead to "
+                            f"distinct reality responses: options[{previous_index}] and options[{option_index}] ({target})",
+                        )
+                        break
+                resolved.append((option_index, style_signature, response_signature))
+
+    @staticmethod
+    def _find_interaction_response_signature(
+        node_map: Mapping[str, Mapping[str, Any]],
+        start: Any,
+        target: str,
+    ) -> Optional[Tuple[str, ...]]:
+        current = start
+        visited: Set[str] = set()
+        while isinstance(current, str) and current in node_map and current not in visited:
+            visited.add(current)
+            node = node_map[current]
+            kind = node.get("kind")
+            if kind == "dual_dialogue" and effective_speaker(node, "reality") == target:
+                lines: Set[str] = set()
+                reality = node.get("reality")
+                if isinstance(reality, Mapping):
+                    line = reality.get("line")
+                    if isinstance(line, str) and line:
+                        lines.add(line)
+                variants = node.get("variants")
+                if isinstance(variants, list):
+                    for variant in variants:
+                        if not isinstance(variant, Mapping):
+                            continue
+                        variant_reality = variant.get("reality")
+                        if not isinstance(variant_reality, Mapping):
+                            continue
+                        line = variant_reality.get("line")
+                        if isinstance(line, str) and line:
+                            lines.add(line)
+                return tuple(sorted(lines)) if lines else None
+            if kind == "effect":
+                current = node.get("next")
+                continue
+            if kind not in {"dual_dialogue", "dual_narration"}:
+                return None
+            current = node.get("next")
+        return None
 
     def _validate_self_development_use(
         self,
@@ -2743,6 +2958,7 @@ class StoryProject:
                 "self_development": copy.deepcopy(self.manifest.get("self_development", {})),
                 "condition_ops": sorted(VALID_CONDITION_OPS),
                 "effect_ops": sorted(VALID_EFFECT_OPS),
+                "interaction_context_kinds": sorted(VALID_INTERACTION_CONTEXT_KINDS),
                 "support_styles": sorted(VALID_SUPPORT_STYLES),
             },
             "route": clean_source(route),

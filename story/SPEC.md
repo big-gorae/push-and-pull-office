@@ -267,6 +267,8 @@ reality:
   kind: choice
   prompt: "자료 전달 방식을 분명히 한 서아에게 어떻게 답할까?"
   stimulus: "서아가 자료는 메일로 보내고 자리로 오지 말라고 요청했다."
+  interaction_context:
+    kind: boundary
   options:
     - id: match_push
       label: "알겠다고 답하고 요청대로 자료만 메일로 보낸다"
@@ -286,6 +288,15 @@ reality:
 
 선택 노드의 `stimulus`는 선택을 촉발한 직전 말이나 행동을 사실 중심의 한 문장으로 요약한다. 선택 화면은 이 요약을 문맥으로 먼저 보여 준다. `label`은 플레이어가 실제로 말하거나 수행할 구체적인 선택지, `interpretation`은 주인공이 믿는 미묘한 의미, `action`은 객관적으로 발생하는 행동이다. 세 필드를 섞지 않으며 `label`이나 `prompt`에 `밀기`, `당기기`, `push`, `pull` 같은 제작 판정을 직접 쓰지 않는다.
 
+모든 선택 노드는 `interaction_context.kind`로 MBTI 요소의 적용 문맥을 분류한다.
+
+- `support`: 위로, 실수 수습, 개인적 부담처럼 상대가 도움을 받아들이는 순서를 판단한다.
+- `coordination`: 공동 업무의 사실, 실행안, 역할과 결정권을 조율한다.
+- `boundary`: 명시적인 요청·거절·거리 두기를 원문 그대로 존중할지 판단한다.
+- `not_applicable`: 인물 지원 화법을 판정하지 않는 내적 해석이나 사건 절차다.
+
+`support`와 `coordination`의 모든 선택지는 `interaction`을 선언하고 한 노드에 서로 다른 화법 순서를 최소 두 개 둔다. `boundary`에는 `literal_respect` 선택지가 최소 하나 있어야 하며, 침범 행동을 MBTI 요소의 오답처럼 태깅하지 않는다. `not_applicable`에는 `interaction`을 선언하지 않는다.
+
 `push_pull`은 제작·런타임 전용 분류이며 일반 선택지 화면과 결과 연출에는 노출하지 않는다. 선택지별 방향·강도와 계산 결과는 명시적으로 켠 디버깅 모드에서만 표시한다. `action`은 `approach`, `space`, `literal`, `intensity`는 `8~16`, `base_score`는 `2~5`를 사용한다. 런타임은 장면의 일반 `effects`를 먼저 적용한 뒤 이 메타데이터로 위치, 콤보, 득점선, 주도권과 반복 패턴 효과를 계산한다. 장면 효과에서 `affection`, `perceived_state`, `initiative`를 수동으로 변경하지 않는다.
 
 MBTI 요소의 인물별 지원 화법을 쓴 선택은 `interaction`을 선언한다. 여러 공략 인물이 함께 있어 밀당 계산 대상도 장면 루트의 기본 히로인과 다르면 `push_pull.target`을 별도로 선언한다.
@@ -303,7 +314,7 @@ interaction:
     - practical_resolution
 ```
 
-`interaction.target`은 실제로 그 화법을 받아 반응하는 인물이며 현재 장면 `cast` 안의 캐릭터를 가리킨다. 공략 불가 조연도 자신의 `interaction_preferences`가 있으면 대상이 될 수 있다. `support_styles`는 실제 대사와 행동에 사용한 지원 화법을 기록하는 비노출 저작 메타데이터다. 인물별 고유 반응을 검토하는 데 사용하며 그 자체로 호감도·주도권·숨은 수치를 가감하지 않는다.
+`interaction.target`은 실제로 그 화법을 받아 반응하는 인물이며 현재 장면 `cast` 안의 캐릭터를 가리킨다. 공략 불가 조연도 자신의 `interaction_preferences`가 있으면 대상이 될 수 있다. `support_styles`는 실제 대사와 행동에 사용한 지원 화법을 발화·행동 순서대로 기록하는 비노출 저작 메타데이터다. 첫 항목이 먼저 전달되는 중심 화법이며, 편집기와 빌드는 이 순서를 보존한다. 같은 대상에 서로 다른 화법 순서를 쓴 선택은 다음 선택이나 장면 종료 전에 대상의 서로 다른 실제 `reality` 반응을 제공해야 한다. 이 메타데이터는 인물별 고유 반응을 검토하는 데 사용하며 그 자체로 호감도·주도권·숨은 수치를 가감하지 않는다.
 
 `push_pull.target`은 밀당 위치·콤보·주도권과 반복 패턴을 어느 히로인에게 적용할지 정한다. 생략하면 장면 루트의 히로인을 사용한다. 명시 여부와 관계없이 계산 인물은 현재 장면 `cast` 안에 있어야 한다. 다른 인물을 지정했다면 그 인물의 주도권과 숨은 반복 패턴 경로도 `state_contract.writes`에 선언한다. 대화 반응 대상과 밀당 계산 대상은 같을 수 있지만 의미가 다르므로 런타임은 두 필드를 서로 대신 사용하지 않는다.
 

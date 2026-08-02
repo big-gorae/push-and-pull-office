@@ -17,6 +17,7 @@ export type SupportStyle =
   | "autonomy_return"
   | "concise_reassurance"
   | "literal_respect";
+export type InteractionContextKind = "support" | "coordination" | "boundary" | "not_applicable";
 export type TimeSlot = "morning" | "lunch" | "afternoon" | "after_work";
 export type EventType = "anchor" | "heroine" | "company" | "offscreen" | "ending";
 export type EventAvailability = "automatic" | "player" | "hidden";
@@ -152,6 +153,9 @@ export type PushPullConfig = {
 export type StoryNode = {
   id: string;
   kind: NodeKind;
+  interaction_context?: {
+    kind: InteractionContextKind;
+  };
   speaker?: string;
   speakers?: Partial<Record<ViewMode, string | null>>;
   perceived?: Layer;

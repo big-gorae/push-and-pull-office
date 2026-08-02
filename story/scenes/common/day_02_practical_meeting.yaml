@@ -190,6 +190,8 @@ nodes:
     kind: choice
     prompt: 잘못된 발표 파일 앞에서 어떻게 회의를 수습할까?
     stimulus: 서아가 이전 버전의 발표 파일을 연 뒤 사과하고 말을 잇지 못했다.
+    interaction_context:
+      kind: support
     options:
       - id: acknowledge_and_ask
         label: “많이 놀랐겠네요. 잠깐 숨 고르고, 직접 이어 갈 수 있겠어요?”라고 묻는다

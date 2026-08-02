@@ -53,6 +53,8 @@ nodes:
     kind: choice
     prompt: 업무 외 연락을 하지 말라는 민경의 요청에 어떻게 답할까?
     stimulus: 민경이 ‘업무 외 연락은 하지 말아 주세요’라고 명확히 말했다.
+    interaction_context:
+      kind: boundary
     options:
       - id: mirror_push
         label: 알겠다고 답하고 일주일간 업무 외 연락을 멈춘다
@@ -80,6 +82,9 @@ nodes:
         interpretation: 이번 상대와는 연애 게임을 중단한다.
         action: 업무 채널 이외의 연락을 하지 않는다.
         push_pull: {action: literal, intensity: 12, base_score: 4}
+        interaction:
+          target: cha_min_kyung
+          support_styles: [literal_respect]
         conditions: []
         effects:
           - {path: hidden.heroines.cha_min_kyung.suspicion, op: add, value: -5}

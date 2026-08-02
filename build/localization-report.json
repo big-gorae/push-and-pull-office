@@ -1,20 +1,20 @@
 {
   "schema_version": 2,
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "571cc87f8494642d841f952f416028ffe136e8c1cec83a7fa9f6d5cb5e59cbc5",
+  "source_sha256": "be0d12e513fb49f1a8e8df12d1dddf92e0b01ba4be3d8ff463241de2f1f6bebe",
   "profile": "development",
   "default_locale": "ko",
   "supported_locales": [
     "ko",
     "en"
   ],
-  "total_entries": 1051,
+  "total_entries": 1070,
   "coverage": {
     "ko": {
-      "direct": 1051,
-      "resolved": 1051,
-      "translated": 1051,
-      "total": 1051,
+      "direct": 1070,
+      "resolved": 1070,
+      "translated": 1070,
+      "total": 1070,
       "ratio": 1.0,
       "fallback_used": [],
       "missing": [],
@@ -51,8 +51,8 @@
           "total": 8
         },
         "scene": {
-          "direct": 659,
-          "total": 659
+          "direct": 678,
+          "total": 678
         },
         "thread": {
           "direct": 2,
@@ -70,10 +70,10 @@
     },
     "en": {
       "direct": 231,
-      "resolved": 1051,
+      "resolved": 1070,
       "translated": 231,
-      "total": 1051,
-      "ratio": 0.2198,
+      "total": 1070,
+      "ratio": 0.2159,
       "fallback_used": [
         "campaign.main.acts.collisions.purpose",
         "campaign.main.acts.crisis.purpose",
@@ -527,8 +527,27 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.after_workout.reality.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.perceived.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.reality.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.perceived.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.reality.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.perceived.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.reality.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.perceived.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.reality.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.perceived.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.reality.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.action",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.interpretation",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.label",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.action",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.interpretation",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.label",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.action",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.interpretation",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.label",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.prompt",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.stimulus",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.perceived.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.reality.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.action",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.interpretation",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.label",
@@ -1349,8 +1368,27 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.after_workout.reality.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.perceived.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.activity_response.variants.default.reality.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.perceived.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.reality.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.perceived.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.reality.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.perceived.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.reality.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.perceived.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.reality.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.action",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.interpretation",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.acknowledge_after_resolution.label",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.action",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.interpretation",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.add_more_work.label",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.action",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.interpretation",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.options.close_with_facts.label",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.prompt",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.stimulus",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.perceived.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.resolution_complete.reality.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.action",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.interpretation",
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.options.acknowledge_fatigue.label",
@@ -1752,7 +1790,7 @@
         },
         "scene": {
           "direct": 28,
-          "total": 659
+          "total": 678
         },
         "thread": {
           "direct": 0,
@@ -1814,15 +1852,15 @@
     },
     "common.day_03_business_trip_or_cafe": {
       "ko": {
-        "total": 64,
-        "direct": 64,
+        "total": 83,
+        "direct": 83,
         "fallback": 0,
         "missing": 0
       },
       "en": {
-        "total": 64,
+        "total": 83,
         "direct": 0,
-        "fallback": 64,
+        "fallback": 83,
         "missing": 0
       }
     },

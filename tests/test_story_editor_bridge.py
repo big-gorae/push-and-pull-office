@@ -265,6 +265,34 @@ class StoryEditorBridgeTests(unittest.TestCase):
         finally:
             temporary.cleanup()
 
+    def test_save_scene_preserves_interaction_context_target_and_style_order(self):
+        temporary, root = self.make_project_copy()
+        try:
+            project = StoryProject(root / "story")
+            scene = copy.deepcopy(project.build_bundle()["scenes"]["common.day_03_business_trip_or_cafe"])
+            path = Path(project.scenes[scene["id"]]["_source"])
+            choice = scene["nodes"]["post_resolution_choice"]
+            option = next(item for item in choice["options"] if item["id"] == "acknowledge_after_resolution")
+            expected_styles = ["autonomy_return", "emotional_validation", "ask_before_helping"]
+            option["interaction"]["support_styles"] = expected_styles
+
+            result = save_scene(root, {"scene": scene, "revision": revision(path)})
+
+            self.assertTrue(result["saved"])
+            source = YAML_RT.load(path.read_text(encoding="utf-8"))
+            source_choice = next(item for item in source["nodes"] if item["id"] == "post_resolution_choice")
+            source_option = next(item for item in source_choice["options"] if item["id"] == "acknowledge_after_resolution")
+            self.assertEqual({"kind": "support"}, dict(source_choice["interaction_context"]))
+            self.assertEqual("cha_min_kyung", source_option["interaction"]["target"])
+            self.assertEqual(expected_styles, list(source_option["interaction"]["support_styles"]))
+
+            runtime_choice = result["runtime"]["scenes"][scene["id"]]["nodes"]["post_resolution_choice"]
+            runtime_option = next(item for item in runtime_choice["options"] if item["id"] == "acknowledge_after_resolution")
+            self.assertEqual({"kind": "support"}, runtime_choice["interaction_context"])
+            self.assertEqual(expected_styles, runtime_option["interaction"]["support_styles"])
+        finally:
+            temporary.cleanup()
+
     def test_runtime_template_variants_do_not_replace_source_authoring_macro(self):
         with tempfile.TemporaryDirectory() as raw_temp:
             root = Path(raw_temp)

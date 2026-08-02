@@ -198,6 +198,8 @@ progress.flags.story_mode.yoo_jin_intervention → 공략 불가 특수 엔딩 �
 각 스토리 모드 선택지는 아래 제작 메타데이터를 가진다.
 
 ```yaml
+interaction_context:
+  kind: coordination # support | coordination | boundary | not_applicable
 push_pull:
   target: cha_min_kyung # 생략하면 장면 루트의 히로인
   action: approach # approach | space | literal
@@ -208,7 +210,7 @@ interaction:
   support_styles: [factual_clarification, practical_resolution]
 ```
 
-`push_pull`과 `interaction`은 선택지에 표시하지 않는다. 런타임은 `push_pull.target`만 밀당 계산 인물로 사용하며, 생략된 경우에만 장면 루트의 히로인을 사용한다. 계산 인물은 현재 장면 `cast` 안에 있어야 한다. `interaction.target`은 실제 화법을 받아 반응하는 인물이고 `support_styles`는 반응 저작·검수용 메타데이터다. 비공략 조연도 반응 대상이 될 수 있지만, 런타임은 `interaction.target`을 점수 대상의 대체값으로 사용하거나 그 인물의 히로인 상태를 생성하지 않는다. 지원 화법 메타데이터 자체는 주도권·호감·숨은 수치에 아무 효과도 주지 않는다.
+`interaction_context`는 선택 노드에, `push_pull`과 `interaction`은 각 선택지에 보존되지만 일반 플레이 화면에는 표시하지 않는다. `support`·`coordination`은 모든 옵션의 반응 대상과 화법 순서를 검증하고, `boundary`는 `literal_respect` 선택을 보장하며, `not_applicable`은 인물 화법을 판정하지 않는다. 런타임은 `push_pull.target`만 밀당 계산 인물로 사용하며, 생략된 경우에만 장면 루트의 히로인을 사용한다. 계산 인물은 현재 장면 `cast` 안에 있어야 한다. `interaction.target`은 실제 화법을 받아 반응하는 인물이고 `support_styles`는 발화·행동 순서대로 보존하는 반응 저작·검수용 메타데이터다. 비공략 조연도 반응 대상이 될 수 있지만, 런타임은 `interaction.target`을 점수 대상의 대체값으로 사용하거나 그 인물의 히로인 상태를 생성하지 않는다. 지원 화법 메타데이터 자체는 주도권·호감·숨은 수치에 아무 효과도 주지 않는다.
 
 명시적인 요청·거절·접촉 중단이 나온 선택에서는 인물의 평상시 순서보다 `literal_respect`를 우선한다. 이 화법은 요청을 그대로 지킨다는 저작 계약이지 점수 보너스가 아니며, `literal` 계산으로 한도윤의 흐름이 끊겨도 현실의 경계 존중에 숨은 악영향을 자동 생성하지 않는다.
 
