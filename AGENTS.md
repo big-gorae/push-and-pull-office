@@ -11,6 +11,13 @@
 - If the project-only authentication is genuinely missing or expired, authenticate only that directory with `GH_CONFIG_DIR="$love_office_gh_dir" gh auth login -h github.com --git-protocol https --web`. Never switch this repository to another account and never copy tokens into tracked files, shell output, logs, or documentation.
 - The project-only authentication is shared by sessions using this same repository's common Git directory, but it is not committed. A fresh clone must perform the project-only login once before publishing.
 
+## Casual `반영` integration workflow
+
+- Treat casual Korean instructions such as `반영해`, `반영`, or `적용해` as a request to integrate the requested work against the current repository state, not merely to edit files in isolation.
+- Before considering that work complete, inspect recent local commits and fetch and inspect the latest relevant remote branch, normally `origin/main`. Compare the requested changes with both histories and integrate the remote and local work so the result is conflict-free and internally consistent.
+- Resolve overlaps by preserving the intent of both the recent remote commits and the local work. Run validation appropriate to the affected scope after integration. If the intentions genuinely conflict and cannot be reconciled safely, stop and explain the conflict instead of silently dropping either side.
+- Casual `반영` instructions do not by themselves authorize staging, committing, pushing, opening or merging a pull request, or deploying. Only `전부 반영` activates the publishing workflow below unless the user separately requests publication.
+
 ## `전부 반영` publishing workflow
 
 - When the user says `전부 반영`, treat it as explicit authorization to stage and commit the completed in-scope changes, integrate the latest remote `main`, publish an automation branch, open a pull request, enable auto-merge, wait for the required CI check, and deploy the resulting `main` commit without asking for additional approval.
