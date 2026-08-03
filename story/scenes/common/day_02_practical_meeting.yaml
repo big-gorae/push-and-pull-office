@@ -184,12 +184,33 @@ nodes:
       atmosphere: guarded_office
       line: (다들 기다리는데 어떡하지. 또 틀리면 발표를 못 맡길 거라고 생각할 거야.)
       intent: self_protection
+    next: lecture_recall_before_recovery
+
+  - id: lecture_recall_before_recovery
+    kind: dual_dialogue
+    presentation_flags: [inner_voice]
+    speakers:
+      perceived: han_do_yoon
+      reality: null
+    perceived:
+      atmosphere: playful_tension
+      line: (그 강의에서는 상대가 멈춘 순간, 내가 하고 싶은 말보다 방금 보인 반응부터 증거로 삼으랬지. 서아는 사과한 뒤 말을 잇지 못했고, 민경은 아직 안건을 기다리고 있다.)
+    reality:
+      atmosphere: procedural
+      line: 한도윤은 전날 밤 펼쳐 본 《여성의 마음을 지배하는 어둠의 심리학》 강의 문장을 떠올리며, 서아의 당황과 회의 진행이라는 서로 다른 단서를 한꺼번에 저울질했다.
+      intent: self_promotion
     next: recovery_choice
 
   - id: recovery_choice
     kind: choice
     prompt: 잘못된 발표 파일 앞에서 어떻게 회의를 수습할까?
     stimulus: 서아가 이전 버전의 발표 파일을 연 뒤 사과하고 말을 잇지 못했다.
+    analysis_hints:
+      pull: “이번 득점선은 대화를 이어 가는 쪽입니다. 서아는 사과 뒤 멈췄고 회의는 아직 진행 중입니다. 그 두 증거를 만족시키는 말로 접근하십시오.”
+      push: “이번 득점선은 말을 줄이고 물러나는 쪽입니다. 서아가 직접 계속할 여지를 남기는지가 핵심입니다. 대신 결정하거나 앞질러 나서지 마십시오.”
+      none: “아직 첫 수라 정해진 득점선은 없습니다. 서아의 멈춘 말과 계속되어야 할 안건 중 어느 단서에 답할지 정하면, 그 선택이 다음 리듬의 기준이 됩니다.”
+    interaction_context:
+      kind: support
     options:
       - id: acknowledge_and_ask
         label: “많이 놀랐겠네요. 잠깐 숨 고르고, 직접 이어 갈 수 있겠어요?”라고 묻는다

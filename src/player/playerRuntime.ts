@@ -14,12 +14,14 @@ import {
   breakPushPullFlow,
   readPushPullState,
   resolvePushPull,
+  type PushPullTarget,
   type PushPullResult,
 } from "../pushPull";
 import { selfDevelopmentSystem } from "../selfDevelopment";
 import {
   nightPhaseCoordinator,
   type NightPhaseActivityResult,
+  type NightPhaseIntro,
   type NightPhaseSelection,
 } from "./nightPhase";
 import {
@@ -80,7 +82,7 @@ export type PlayerSession = {
   timelineLog: TimelineLogEntry[];
   currentEventId?: string;
   preparedTimeKey?: string;
-  nightPhase?: NightPhaseSelection | NightPhaseActivityResult;
+  nightPhase?: NightPhaseIntro | NightPhaseSelection | NightPhaseActivityResult;
   lastFeedback?: PushPullResult;
   lastEntryDecision?: {
     sceneId: string;
@@ -100,6 +102,11 @@ export type StartGameError =
 export type StartGameResult =
   | { ok: true; session: PlayerSession }
   | { ok: false; code: StartGameError };
+
+export type ChoiceAnalysisHint = {
+  direction: PushPullTarget;
+  lesson?: string;
+};
 
 const MAX_AUTOMATIC_NODES = 100;
 
@@ -591,6 +598,18 @@ export function availableOptions(runtime: Runtime, session: PlayerSession): Choi
         || eligibility.isEligible(session.state, option.self_development.expression)));
 }
 
+export function consumeChoiceAnalysisHint(
+  runtime: Runtime,
+  value: PlayerSession,
+): { session: PlayerSession; hint: ChoiceAnalysisHint } | undefined {
+  const session = normalizePlayerSession(clone(value), runtime);
+  const node = currentNode(runtime, session);
+  if (node?.kind !== "choice") return undefined;
+  const direction = readPushPullState(session.state).target;
+  if (!selfDevelopmentSystem(runtime).consumeHint(session.state)) return undefined;
+  return { session, hint: { direction, lesson: node.analysis_hints?.[direction] } };
+}
+
 function logCurrent(runtime: Runtime, session: PlayerSession): void {
   const node = currentNode(runtime, session);
   if (!node || (node.kind !== "dual_dialogue" && node.kind !== "dual_narration")) return;
@@ -664,6 +683,13 @@ export function selectSelfDevelopmentActivity(
   const session = normalizePlayerSession(clone(value), runtime);
   if (session.phase !== "self_development" || session.nightPhase?.status !== "selecting") return session;
   session.nightPhase = nightPhaseCoordinator(runtime).choose(session.state, activityId);
+  return session;
+}
+
+export function beginSelfDevelopmentNight(runtime: Runtime, value: PlayerSession): PlayerSession {
+  const session = normalizePlayerSession(clone(value), runtime);
+  if (session.phase !== "self_development" || session.nightPhase?.status !== "intro") return session;
+  session.nightPhase = nightPhaseCoordinator(runtime).continueIntro(session.state, session.nightPhase);
   return session;
 }
 

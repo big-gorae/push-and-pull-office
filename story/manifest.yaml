@@ -48,11 +48,11 @@ stats:
     min: 0
     max: 100
     description: 한도윤이 스스로 평가하는 매력도
-  visible.protagonist.self_development.stats.stamina:
+  visible.protagonist.self_development.stats.health:
     type: integer
     min: 0
     max: 5
-    description: 활동적인 대화 표현을 여는 체력
+    description: 운동과 생활 관리 관련 대화 표현을 여는 건강
   visible.protagonist.self_development.stats.appearance:
     type: integer
     min: 0
@@ -63,11 +63,11 @@ stats:
     min: 0
     max: 5
     description: 가벼운 농담 표현을 여는 유머 감각
-  visible.protagonist.self_development.stats.taste:
+  visible.protagonist.self_development.stats.intelligence:
     type: integer
     min: 0
     max: 5
-    description: 콘텐츠와 유행 화제를 여는 취향 지식
+    description: 독서와 업무 맥락 관련 대화 표현을 여는 지성
   visible.protagonist.self_development.fatigue:
     type: integer
     min: 0
@@ -120,7 +120,7 @@ stats:
 state_path_patterns:
   - pattern: "^visible\\.protagonist\\.self_development\\.(appeal|fatigue)$"
     stat_from_path: true
-  - pattern: "^visible\\.protagonist\\.self_development\\.stats\\.(stamina|appearance|humor|taste)$"
+  - pattern: "^visible\\.protagonist\\.self_development\\.stats\\.(health|appearance|humor|intelligence)$"
     stat_from_path: true
   - pattern: "^visible\\.heroines\\.[a-z][a-z0-9_]*\\.(affection|initiative|perceived_state)$"
     stat_from_suffix: true
@@ -142,6 +142,10 @@ state_path_patterns:
     type: array
   - pattern: "^progress\\.self_development\\.last_activity$"
     type: string
+  - pattern: "^progress\\.self_development\\.hint_charges$"
+    type: integer
+    min: 0
+    max: 9
 
 initial_state:
   visible:
@@ -149,10 +153,10 @@ initial_state:
       self_development:
         appeal: 30
         stats:
-          stamina: 0
+          health: 0
           appearance: 0
           humor: 0
-          taste: 0
+          intelligence: 0
         fatigue: 1
     heroines:
       yoon_seo_a:
@@ -197,6 +201,7 @@ initial_state:
       completed_days: []
       activity_history: []
       last_activity: ""
+      hint_charges: 0
     flags:
       push_pull:
         combo: 0
@@ -222,17 +227,17 @@ self_development:
         reality: selfDevelopment.activity.workout.reflection.reality
       appeal_delta: 3
       fatigue_delta: 2
-      stat_deltas: {stamina: 2, appearance: 1}
+      stat_deltas: {health: 2, appearance: 1}
       fatigue_lte: 4
-    - id: grooming
-      title_key: selfDevelopment.activity.grooming.title
-      description_key: selfDevelopment.activity.grooming.description
+    - id: reading
+      title_key: selfDevelopment.activity.reading.title
+      description_key: selfDevelopment.activity.reading.description
       reflection_keys:
-        perceived: selfDevelopment.activity.grooming.reflection.perceived
-        reality: selfDevelopment.activity.grooming.reflection.reality
-      appeal_delta: 3
+        perceived: selfDevelopment.activity.reading.reflection.perceived
+        reality: selfDevelopment.activity.reading.reflection.reality
+      appeal_delta: 1
       fatigue_delta: 1
-      stat_deltas: {appearance: 2}
+      stat_deltas: {intelligence: 2}
       fatigue_lte: 5
     - id: ott
       title_key: selfDevelopment.activity.ott.title
@@ -242,16 +247,7 @@ self_development:
         reality: selfDevelopment.activity.ott.reflection.reality
       appeal_delta: -1
       fatigue_delta: -1
-      stat_deltas: {humor: 2, taste: 1}
-    - id: reels
-      title_key: selfDevelopment.activity.reels.title
-      description_key: selfDevelopment.activity.reels.description
-      reflection_keys:
-        perceived: selfDevelopment.activity.reels.reflection.perceived
-        reality: selfDevelopment.activity.reels.reflection.reality
-      appeal_delta: -1
-      fatigue_delta: -2
-      stat_deltas: {humor: 1, taste: 1}
+      stat_deltas: {humor: 2}
     - id: sleep
       title_key: selfDevelopment.activity.sleep.title
       description_key: selfDevelopment.activity.sleep.description
@@ -261,29 +257,51 @@ self_development:
       appeal_delta: 0
       fatigue_delta: -4
       stat_deltas: {}
+    - id: dark_psychology
+      title_key: selfDevelopment.activity.dark_psychology.title
+      description_key: selfDevelopment.activity.dark_psychology.description
+      reflection_keys:
+        perceived: selfDevelopment.activity.dark_psychology.reflection.perceived
+        reality: selfDevelopment.activity.dark_psychology.reflection.reality
+      appeal_delta: 0
+      fatigue_delta: 2
+      stat_deltas: {}
+      fatigue_lte: 4
+      hint_charge: 1
+    - id: solo_drinking
+      title_key: selfDevelopment.activity.solo_drinking.title
+      description_key: selfDevelopment.activity.solo_drinking.description
+      reflection_keys:
+        perceived: selfDevelopment.activity.solo_drinking.reflection.perceived
+        reality: selfDevelopment.activity.solo_drinking.reflection.reality
+      selectable: false
+      appeal_delta: -1
+      fatigue_delta: -2
+      stat_deltas: {health: -1}
+      fatigue_gte: 5
   conversation_topics:
     workout:
       variant_id: after_workout
       expression: feedback.last_workout
       slots:
-        office_pitch: "요즘 운동을 다시 시작했습니다. 앉아 있는 시간이 길어서 체력부터 챙기려고요."
+        office_pitch: "요즘 운동을 다시 시작했습니다. 앉아 있는 시간이 길어서 건강부터 챙기려고요."
         weekend_pitch: "요즘 운동을 다시 시작했습니다. 주말에는 가볍게 걷는 것도 괜찮더군요. 이 근처도 산책하기 괜찮나요?"
         acknowledgement: "운동을 다시 시작하셨군요."
         weekend_answer: "이 근처는 차가 많지 않아 걷기 괜찮은 편이에요."
         perceived_self_image: "꾸준히 자기관리하는 사람이라는 인상은 남았겠지."
         reality_response_thought: "과장님이 운동을 다시 시작했다는 말을 먼저 꺼내셨네."
-        reality_limit: "한 번 운동했다는 자기보고일 뿐, 외형이나 체력의 변화가 확인된 것은 아니었다."
-    grooming:
-      variant_id: after_grooming
-      expression: feedback.last_grooming
+        reality_limit: "한 번 운동했다는 자기보고일 뿐, 외형이나 건강의 변화가 확인된 것은 아니었다."
+    reading:
+      variant_id: after_reading
+      expression: feedback.last_reading
       slots:
-        office_pitch: "요즘 출근 전에 옷 매무새를 한 번 더 보고 있습니다. 거래처 앞에서는 첫인상도 업무의 일부잖아요."
-        weekend_pitch: "요즘은 주말 옷도 조금 신경 써 보려 합니다. 정장보다 조합이 더 어렵더군요. 이 차림도 무난해 보입니까?"
-        acknowledgement: "출근할 때 옷차림을 더 신경 쓰시는군요."
-        weekend_answer: "편하게 입은 주말 차림으로 보여요."
-        perceived_self_image: "업무 밖에서도 인상을 챙기는 사람으로 보였겠지."
-        reality_response_thought: "과장님이 요즘 옷차림을 신경 쓴다는 말을 먼저 꺼내셨네."
-        reality_limit: "옷차림을 신경 쓴 사실과 짧은 코디 답변일 뿐, 상대가 매력을 평가한 것은 아니었다."
+        office_pitch: "요즘 《말보다 맥락》이라는 책을 읽고 있습니다. 상대가 정한 선을 먼저 이해해야 대화도 된다는 대목이 기억에 남더군요."
+        weekend_pitch: "요즘 《말보다 맥락》이라는 책을 읽고 있습니다. 주말에 조용히 읽을 곳을 찾고 있었는데, 이 근처도 괜찮습니까?"
+        acknowledgement: "요즘 책을 읽고 계시는군요."
+        weekend_answer: "조용히 읽으려면 안쪽 자리가 괜찮아요."
+        perceived_self_image: "말의 맥락까지 읽는 사람이라는 인상은 남았겠지."
+        reality_response_thought: "과장님이 전날 읽은 책을 대화 소재로 먼저 꺼내셨네."
+        reality_limit: "책 한 권을 읽기 시작했다는 자기보고일 뿐, 상대를 더 잘 이해하게 됐다는 증거는 아니었다."
     ott:
       variant_id: after_ott
       expression: feedback.last_ott
@@ -294,18 +312,7 @@ self_development:
         weekend_answer: "그 대사는 첫 회 회식 장면에 나와요."
         perceived_self_image: "세대가 다른 사람과도 화제를 맞출 줄 안다는 인상은 남았겠지."
         reality_response_thought: "과장님이 전날 본 코미디를 대화 소재로 먼저 꺼내셨네."
-        reality_limit: "대중적인 콘텐츠를 뒤늦게 봤다는 말일 뿐, 취향이 맞는다는 증거는 아니었다."
-    reels:
-      variant_id: after_reels
-      expression: feedback.last_reels
-      slots:
-        office_pitch: "요즘 짧은 영상은 전개가 정말 빠르더군요. 어제 몇 개 찾아봤습니다. 캠페인 감각을 놓치면 안 되니까요."
-        weekend_pitch: "요즘 짧은 영상은 전개가 정말 빠르더군요. 어제 몇 개 찾아봤는데, 막상 밖에 나오니 화면보다 눈에 들어오는 게 많네요."
-        acknowledgement: "요즘 유행하는 짧은 영상도 찾아보셨군요."
-        weekend_answer: "직접 보면 영상과 인상이 다를 때가 있죠."
-        perceived_self_image: "요즘 감각을 놓치지 않는 상사로 보였겠지."
-        reality_response_thought: "과장님이 전날 본 짧은 영상을 대화 소재로 먼저 꺼내셨네."
-        reality_limit: "몇 개의 영상을 봤다는 말일 뿐, 트렌드 이해도가 검증된 것은 아니었다."
+        reality_limit: "대중적인 콘텐츠를 뒤늦게 봤다는 말일 뿐, 서로 잘 통한다는 증거는 아니었다."
     sleep:
       variant_id: after_sleep
       expression: feedback.last_sleep
@@ -317,37 +324,96 @@ self_development:
         perceived_self_image: "자기 리듬을 관리할 줄 아는 사람으로 보였겠지."
         reality_response_thought: "과장님이 생활 리듬을 챙겨 보겠다는 말을 먼저 꺼내셨네."
         reality_limit: "생활 리듬을 챙겨 보겠다는 자기보고일 뿐, 지속적인 자기관리의 증거는 아니었다."
+    dark_psychology:
+      variant_id: after_dark_psychology
+      expression: feedback.last_dark_psychology
+      slots:
+        office_pitch: "요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 말보다 타이밍을 먼저 읽으라는 대목이 기억에 남더군요."
+        weekend_pitch: "요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요."
+        acknowledgement: "요즘 관계 심리 강의를 보고 계시는군요."
+        weekend_answer: "그런 내용은 사람마다 다르게 받아들일 것 같아요."
+        perceived_self_image: "상대의 마음을 체계적으로 공부하는 사람이라는 인상은 남았겠지."
+        reality_response_thought: "과장님이 관계를 통제하는 내용의 책과 강의를 먼저 꺼내셨네."
+        reality_limit: "자극적인 관계 강의를 봤다는 자기보고일 뿐, 눈앞의 사람을 이해했다는 증거는 아니었다."
+    solo_drinking:
+      variant_id: after_solo_drinking
+      expression: feedback.last_solo_drinking
+      slots:
+        office_pitch: "어제는 너무 피곤해서 혼자 한잔하고 바로 잤습니다. 오늘은 정신을 좀 차려야겠군요."
+        weekend_pitch: "어제는 너무 피곤해서 혼자 한잔하고 바로 잤습니다. 오늘은 술 대신 바람이나 쐬려고 나왔어요."
+        acknowledgement: "어제 많이 피곤하셨나 봐요."
+        weekend_answer: "오늘은 무리하지 말고 쉬시는 게 좋겠네요."
+        perceived_self_image: "흐트러진 날도 솔직하게 인정하는 사람으로 보였겠지."
+        reality_response_thought: "과장님이 피곤해서 혼자 술을 마셨다는 이야기까지 먼저 꺼내셨네."
+        reality_limit: "피곤해서 혼자 술을 마셨다는 자기보고일 뿐, 상대가 친밀감을 느꼈다는 뜻은 아니었다."
   expressions:
     feedback.last_workout:
       requires: {last_activity: workout}
       score_bonus: 0
-    feedback.last_grooming:
-      requires: {last_activity: grooming}
+    feedback.last_reading:
+      requires: {last_activity: reading}
       score_bonus: 0
     feedback.last_ott:
       requires: {last_activity: ott}
       score_bonus: 0
-    feedback.last_reels:
-      requires: {last_activity: reels}
-      score_bonus: 0
     feedback.last_sleep:
       requires: {last_activity: sleep}
       score_bonus: 0
-    stamina.change_notice:
-      requires: {appeal_gte: 32, stat: stamina, minimum: 2, fatigue_lte: 4}
+    feedback.last_dark_psychology:
+      requires: {last_activity: dark_psychology}
       score_bonus: 0
-    stamina.workout_answer:
-      requires: {appeal_gte: 32, stat: stamina, minimum: 2, fatigue_lte: 4}
-      score_bonus: 2
-    appearance.grooming_answer:
-      requires: {appeal_gte: 34, stat: appearance, minimum: 2, fatigue_lte: 4}
-      score_bonus: 2
-    taste.trend_topic:
-      requires: {appeal_gte: 32, stat: taste, minimum: 2, fatigue_lte: 4}
-      score_bonus: 2
+    feedback.last_solo_drinking:
+      requires: {last_activity: solo_drinking}
+      score_bonus: 0
+    health.workout_answer:
+      requires: {appeal_gte: 32, stat: health, minimum: 2, fatigue_lte: 4}
+      score_bonus: 0
+    intelligence.contextual_answer:
+      requires: {appeal_gte: 31, stat: intelligence, minimum: 2, fatigue_lte: 4}
+      score_bonus: 0
+    humor.trend_topic:
+      requires: {appeal_gte: 29, stat: humor, minimum: 2, fatigue_lte: 4}
+      score_bonus: 0
     humor.boundary_joke:
       requires: {appeal_gte: 30, stat: humor, minimum: 2, fatigue_lte: 3}
-      score_bonus: 2
+      score_bonus: 0
+
+gallery:
+  entries:
+    - id: office_lineup
+      title_key: gallery.entry.office_lineup.title
+      description_key: gallery.entry.office_lineup.description
+      asset: assets/concept-art/lineup-v1.png
+      unlock_memory: cg.office_lineup
+      default_unlocked: true
+    - id: health_min_kyung
+      title_key: gallery.entry.health_min_kyung.title
+      description_key: gallery.entry.health_min_kyung.description
+      asset: assets/concept-art-archive/cha-min-kyung-original-v1.png
+      unlock_memory: cg.stat.health.min_kyung
+      source_stat: health
+      source_minimum: 3
+    - id: appearance_yoo_jin
+      title_key: gallery.entry.appearance_yoo_jin.title
+      description_key: gallery.entry.appearance_yoo_jin.description
+      asset: assets/concept-art-archive/kang-yoo-jin-original-v1.png
+      unlock_memory: cg.stat.appearance.yoo_jin
+      source_stat: appearance
+      source_minimum: 3
+    - id: humor_seo_a
+      title_key: gallery.entry.humor_seo_a.title
+      description_key: gallery.entry.humor_seo_a.description
+      asset: assets/concept-art-archive/yoon-seo-a-original-v1.png
+      unlock_memory: cg.stat.humor.seo_a
+      source_stat: humor
+      source_minimum: 3
+    - id: intelligence_min_kyung
+      title_key: gallery.entry.intelligence_min_kyung.title
+      description_key: gallery.entry.intelligence_min_kyung.description
+      asset: assets/concept-art/cha-min-kyung.png
+      unlock_memory: cg.stat.intelligence.min_kyung
+      source_stat: intelligence
+      source_minimum: 3
 
 files:
   ui: ui.yaml

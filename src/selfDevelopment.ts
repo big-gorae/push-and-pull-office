@@ -16,22 +16,24 @@ const STAT_MIN = 0;
 const STAT_MAX = 5;
 const FATIGUE_MIN = 0;
 const FATIGUE_MAX = 6;
+const HINT_CHARGE_MIN = 0;
+const HINT_CHARGE_MAX = 9;
 const DEFAULT_MAX_NIGHT_DAY = 16;
 
 const SELF_DEVELOPMENT_STATS: readonly SelfDevelopmentStat[] = [
-  "stamina",
+  "health",
   "appearance",
   "humor",
-  "taste",
+  "intelligence",
 ];
 
 const DEFAULT_PROFILE: SelfDevelopmentState = {
   appeal: 30,
   stats: {
-    stamina: 0,
+    health: 0,
     appearance: 0,
     humor: 0,
-    taste: 0,
+    intelligence: 0,
   },
   fatigue: 1,
 };
@@ -40,6 +42,7 @@ const DEFAULT_PROGRESS: SelfDevelopmentProgress = {
   completed_days: [],
   activity_history: [],
   last_activity: "",
+  hint_charges: 0,
 };
 
 type UnknownRecord = Record<string, unknown>;
@@ -49,6 +52,7 @@ export type ActivityAvailabilityReason =
   | "outside_night_window"
   | "already_completed"
   | "fatigue_limit"
+  | "fatigue_minimum"
   | "fatigue_overflow";
 
 export type SelfDevelopmentActivityOption = {
@@ -140,6 +144,7 @@ function writeProgress(state: RuntimeState, progress: SelfDevelopmentProgress): 
     completed_days: [...progress.completed_days],
     activity_history: [...progress.activity_history],
     last_activity: progress.last_activity,
+    hint_charges: progress.hint_charges,
   };
 }
 
@@ -157,6 +162,12 @@ function hydrateProgress(value: unknown, fallback = DEFAULT_PROGRESS): SelfDevel
     last_activity: typeof source.last_activity === "string"
       ? source.last_activity
       : fallback.last_activity,
+    hint_charges: integerInRange(
+      source.hint_charges,
+      fallback.hint_charges,
+      HINT_CHARGE_MIN,
+      HINT_CHARGE_MAX,
+    ),
   };
 }
 
@@ -219,6 +230,11 @@ export class SelfDevelopmentProfile {
   }
 
   canPerform(activity: SelfDevelopmentActivity): ActivityAvailabilityReason | undefined {
+    const fatigueMinimum = activity.fatigue_gte === undefined
+      ? undefined
+      : finiteInteger(activity.fatigue_gte);
+    if (activity.fatigue_gte !== undefined && fatigueMinimum === undefined) return "fatigue_minimum";
+    if (fatigueMinimum !== undefined && this.fatigue < fatigueMinimum) return "fatigue_minimum";
     const fatigueLimit = activity.fatigue_lte === undefined
       ? undefined
       : finiteInteger(activity.fatigue_lte);
@@ -351,12 +367,28 @@ export class SelfDevelopmentService {
     return SelfDevelopmentProfile.hydrate(rawProfile(state), this.initialProfile);
   }
 
+  hintCharges(state: RuntimeState): number {
+    this.hydrate(state);
+    return state.progress.self_development.hint_charges;
+  }
+
+  consumeHint(state: RuntimeState): boolean {
+    this.hydrate(state);
+    const progress = hydrateProgress(rawProgress(state), this.initialProgress);
+    if (progress.hint_charges <= 0) return false;
+    progress.hint_charges -= 1;
+    writeProgress(state, progress);
+    return true;
+  }
+
   activityOptions(state: RuntimeState): SelfDevelopmentActivityOption[] {
     this.hydrate(state);
     const profile = this.profile(state);
     const day = state.progress.time.day;
     const progress = state.progress.self_development;
-    return Array.from(this.activities.values()).map((activity) => {
+    return Array.from(this.activities.values())
+      .filter((activity) => activity.selectable !== false)
+      .map((activity) => {
       let reason: ActivityAvailabilityReason | undefined;
       if (state.progress.time.slot !== "after_work") reason = "not_after_work";
       else if (!Number.isInteger(day) || day < 1 || day > this.maxNightDay) reason = "outside_night_window";
@@ -367,7 +399,15 @@ export class SelfDevelopmentService {
         available: reason === undefined,
         ...(reason ? { reason } : {}),
       };
-    });
+      });
+  }
+
+  forcedActivity(state: RuntimeState): SelfDevelopmentActivity | undefined {
+    this.hydrate(state);
+    const profile = this.profile(state);
+    return Array.from(this.activities.values())
+      .filter((activity) => activity.selectable === false)
+      .find((activity) => profile.canPerform(activity) === undefined);
   }
 
   performActivity(state: RuntimeState, activityId: string, day: number): SelfDevelopmentResult {
@@ -385,9 +425,19 @@ export class SelfDevelopmentService {
     if (!activity) {
       throw new SelfDevelopmentError("unknown_activity", `Unknown self-development activity: ${activityId}`);
     }
-    const option = this.activityOptions(state).find((candidate) => candidate.activity.id === activityId);
-    if (!option?.available) {
-      const code = option?.reason || "outside_night_window";
+    const selectableOption = this.activityOptions(state)
+      .find((candidate) => candidate.activity.id === activityId);
+    const forcedActivity = this.forcedActivity(state);
+    const forcedAvailable = activity.selectable === false && forcedActivity?.id === activityId;
+    const progress = state.progress.self_development;
+    const code: ActivityAvailabilityReason | undefined = state.progress.time.slot !== "after_work"
+      ? "not_after_work"
+      : progress.completed_days.includes(day)
+        ? "already_completed"
+        : activity.selectable === false
+          ? forcedAvailable ? undefined : "fatigue_minimum"
+          : selectableOption?.reason;
+    if (code) {
       throw new SelfDevelopmentError(code, `Self-development activity ${activityId} is unavailable: ${code}.`);
     }
 
@@ -403,18 +453,28 @@ export class SelfDevelopmentService {
       activityId,
       appealDelta: after.appeal - before.appeal,
       fatigueDelta: after.fatigue - before.fatigue,
+      hintChargeDelta: 0,
       statDeltas,
       before,
       after,
     };
 
     writeProfile(state, after);
-    const progress = hydrateProgress(rawProgress(state), this.initialProgress);
-    progress.completed_days.push(day);
-    progress.completed_days.sort((left, right) => left - right);
-    progress.activity_history.push(activityId);
-    progress.last_activity = activityId;
-    writeProgress(state, progress);
+    const updatedProgress = hydrateProgress(rawProgress(state), this.initialProgress);
+    updatedProgress.completed_days.push(day);
+    updatedProgress.completed_days.sort((left, right) => left - right);
+    updatedProgress.activity_history.push(activityId);
+    updatedProgress.last_activity = activityId;
+    const requestedHintCharge = finiteInteger(activity.hint_charge) ?? 0;
+    const previousHintCharges = updatedProgress.hint_charges;
+    updatedProgress.hint_charges = integerInRange(
+      previousHintCharges + requestedHintCharge,
+      previousHintCharges,
+      HINT_CHARGE_MIN,
+      HINT_CHARGE_MAX,
+    );
+    result.hintChargeDelta = updatedProgress.hint_charges - previousHintCharges;
+    writeProgress(state, updatedProgress);
     return result;
   }
 }

@@ -214,10 +214,10 @@ def derive_state_contract(
                 *reads,
                 "visible.protagonist.self_development.appeal",
                 "visible.protagonist.self_development.fatigue",
-                "visible.protagonist.self_development.stats.stamina",
+                "visible.protagonist.self_development.stats.health",
                 "visible.protagonist.self_development.stats.appearance",
                 "visible.protagonist.self_development.stats.humor",
-                "visible.protagonist.self_development.stats.taste",
+                "visible.protagonist.self_development.stats.intelligence",
             ])
             continue
         required_paths = []

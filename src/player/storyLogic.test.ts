@@ -10,6 +10,7 @@ import {
   deriveStateContract,
   effectiveSpeaker,
   inspectTimelineEvent,
+  makeNode,
   resolveDialogueNode,
   setPath,
 } from "../storyLogic";
@@ -17,6 +18,12 @@ import {
 const runtime = runtimeJson as unknown as Runtime;
 
 describe("condition conformance", () => {
+  it("classifies newly authored choice nodes as interaction not applicable", () => {
+    expect(makeNode("choice", "new_choice", "yoon_seo_a").interaction_context).toEqual({
+      kind: "not_applicable",
+    });
+  });
+
   it("derives push-pull state paths for every heroine targeted in a shared scene", () => {
     const scene = structuredClone(runtime.scenes["common.day_02_practical_meeting"]);
     const contract = deriveStateContract(scene, "yoon_seo_a", runtime);
@@ -80,6 +87,24 @@ describe("condition conformance", () => {
     if (!entryCase.expected_event_eligible) {
       expect(verdict.reasons.some((reason) => reason.includes("장면 진입 조건"))).toBe(true);
     }
+  });
+
+  it("makes a bonus event eligible when its TRPG-style stat threshold is met", () => {
+    const copy = structuredClone(runtime);
+    const event = structuredClone(copy.events["seo_a.relief_smile"]);
+    event.window = { days: [9, 10], deadline_day: 10, slots: ["morning"] };
+    event.requires = {
+      events: [],
+      conditions: [{
+        path: "visible.protagonist.self_development.stats.intelligence",
+        op: "gte",
+        value: 3,
+      }],
+    };
+    const state = structuredClone(copy.initial_state);
+    expect(inspectTimelineEvent(copy, event, state, 9, "morning").eligible).toBe(false);
+    state.visible.protagonist.self_development.stats.intelligence = 3;
+    expect(inspectTimelineEvent(copy, event, state, 9, "morning").eligible).toBe(true);
   });
 });
 

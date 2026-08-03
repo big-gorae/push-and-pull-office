@@ -39,11 +39,11 @@ class StoryEditorBridgeTests(unittest.TestCase):
 
     def test_load_project_includes_runtime_documents_and_revisions(self):
         result = load_project(ROOT)
-        self.assertEqual(14, len(result["runtime"]["scenes"]))
-        self.assertEqual(14, len(result["documents"]["scenes"]))
+        self.assertEqual(18, len(result["runtime"]["scenes"]))
+        self.assertEqual(18, len(result["documents"]["scenes"]))
         self.assertEqual([], result["issues"])
         self.assertEqual(64, len(result["documents"]["scenes"]["seo_a.email_request"]["revision"]))
-        self.assertEqual(24, len(result["documents"]["events"]))
+        self.assertEqual(28, len(result["documents"]["events"]))
         self.assertIn("common.day_01_company_meeting", result["documents"]["scenes"])
         self.assertIn("common.day_01_parent_pressure", result["documents"]["scenes"])
         self.assertIn("common.day_02_practical_meeting", result["documents"]["scenes"])
@@ -188,15 +188,15 @@ class StoryEditorBridgeTests(unittest.TestCase):
             "nodes": [{
                 "kind": "dual_dialogue",
                 "variants": [{
-                    "self_development": {"expression": "stamina.answer"},
+                    "self_development": {"expression": "health.answer"},
                 }],
             }],
         }
         derive_state_contract(scene, {
-            "stamina.answer": {
+            "health.answer": {
                 "requires": {
                     "appeal_gte": 32,
-                    "stat": "stamina",
+                    "stat": "health",
                     "minimum": 2,
                     "fatigue_lte": 4,
                 },
@@ -205,7 +205,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
         self.assertEqual(
             [
                 "visible.protagonist.self_development.appeal",
-                "visible.protagonist.self_development.stats.stamina",
+                "visible.protagonist.self_development.stats.health",
                 "visible.protagonist.self_development.fatigue",
             ],
             scene["state_contract"]["reads"],
@@ -265,6 +265,34 @@ class StoryEditorBridgeTests(unittest.TestCase):
             self.assertIn("GUI에서 바꾼 제목", text)
             self.assertTrue((root / "build" / "story-runtime.json").is_file())
             self.assertEqual([], StoryProject(root / "story").validate())
+        finally:
+            temporary.cleanup()
+
+    def test_save_scene_preserves_interaction_context_target_and_style_order(self):
+        temporary, root = self.make_project_copy()
+        try:
+            project = StoryProject(root / "story")
+            scene = copy.deepcopy(project.build_bundle()["scenes"]["common.day_03_business_trip_or_cafe"])
+            path = Path(project.scenes[scene["id"]]["_source"])
+            choice = scene["nodes"]["post_resolution_choice"]
+            option = next(item for item in choice["options"] if item["id"] == "acknowledge_after_resolution")
+            expected_styles = ["autonomy_return", "emotional_validation", "ask_before_helping"]
+            option["interaction"]["support_styles"] = expected_styles
+
+            result = save_scene(root, {"scene": scene, "revision": revision(path)})
+
+            self.assertTrue(result["saved"])
+            source = YAML_RT.load(path.read_text(encoding="utf-8"))
+            source_choice = next(item for item in source["nodes"] if item["id"] == "post_resolution_choice")
+            source_option = next(item for item in source_choice["options"] if item["id"] == "acknowledge_after_resolution")
+            self.assertEqual({"kind": "support"}, dict(source_choice["interaction_context"]))
+            self.assertEqual("cha_min_kyung", source_option["interaction"]["target"])
+            self.assertEqual(expected_styles, list(source_option["interaction"]["support_styles"]))
+
+            runtime_choice = result["runtime"]["scenes"][scene["id"]]["nodes"]["post_resolution_choice"]
+            runtime_option = next(item for item in runtime_choice["options"] if item["id"] == "acknowledge_after_resolution")
+            self.assertEqual({"kind": "support"}, runtime_choice["interaction_context"])
+            self.assertEqual(expected_styles, runtime_option["interaction"]["support_styles"])
         finally:
             temporary.cleanup()
 
@@ -956,6 +984,10 @@ class StoryEditorBridgeTests(unittest.TestCase):
                 [
                     "common.day_02_practical_meeting",
                     "common.day_03_business_trip_or_cafe",
+                    "bonus.stat_health_sample_sorting",
+                    "bonus.stat_intelligence_version_check",
+                    "bonus.stat_humor_tasting_vote",
+                    "bonus.stat_appearance_rehearsal",
                     "common.day_04_weekend_encounter",
                     "common.day_05_weekend_reflection",
                     "seo_a.email_request",

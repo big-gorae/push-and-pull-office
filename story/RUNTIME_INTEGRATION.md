@@ -120,7 +120,7 @@ choice
   conditions가 참이고 self_development.expression이 충족된 option만 표시
   stimulus로 직전 말·행동의 요약을 먼저 표시
   선택된 effects를 순서대로 적용
-  밀당 득점이 성립하면 expression의 보이는 점수 보너스만 합산
+  self_development.expression은 추가 상호작용만 열고 밀당 점수는 보정하지 않음
   option.next로 이동
 
 state_gate
@@ -177,11 +177,12 @@ progress.flags.push_pull.last_action  → 최근 이동 방향
 progress.flags.push_pull.heroine      → 현재 흐름의 대상 인물
 
 visible.protagonist.self_development.appeal           → 밤 화면의 매력도
-visible.protagonist.self_development.stats.<stat>      → 체력 | 외모 | 유머 | 취향
+visible.protagonist.self_development.stats.<stat>      → 건강 | 외모 | 유머 | 지성
 visible.protagonist.self_development.fatigue           → 피로도
 progress.self_development.completed_days               → 밤 활동을 마친 날짜
 progress.self_development.activity_history             → 선택한 활동 ID 기록
 progress.self_development.last_activity                → 최근 활동 ID
+progress.self_development.hint_charges                 → 선택 직전 머릿속 강사 힌트 잔여 횟수
 
 hidden.heroines.<id>.suspicion        → 의심도
 hidden.heroines.<id>.dislike          → 비호감도
@@ -198,6 +199,8 @@ progress.flags.story_mode.yoo_jin_intervention → 공략 불가 특수 엔딩 �
 각 스토리 모드 선택지는 아래 제작 메타데이터를 가진다.
 
 ```yaml
+interaction_context:
+  kind: coordination # support | coordination | boundary | not_applicable
 push_pull:
   target: cha_min_kyung # 생략하면 장면 루트의 히로인
   action: approach # approach | space | literal
@@ -208,7 +211,7 @@ interaction:
   support_styles: [factual_clarification, practical_resolution]
 ```
 
-`push_pull`과 `interaction`은 선택지에 표시하지 않는다. 런타임은 `push_pull.target`만 밀당 계산 인물로 사용하며, 생략된 경우에만 장면 루트의 히로인을 사용한다. 계산 인물은 현재 장면 `cast` 안에 있어야 한다. `interaction.target`은 실제 화법을 받아 반응하는 인물이고 `support_styles`는 반응 저작·검수용 메타데이터다. 비공략 조연도 반응 대상이 될 수 있지만, 런타임은 `interaction.target`을 점수 대상의 대체값으로 사용하거나 그 인물의 히로인 상태를 생성하지 않는다. 지원 화법 메타데이터 자체는 주도권·호감·숨은 수치에 아무 효과도 주지 않는다.
+`interaction_context`는 선택 노드에, `push_pull`과 `interaction`은 각 선택지에 보존되지만 일반 플레이 화면에는 표시하지 않는다. `support`·`coordination`은 모든 옵션의 반응 대상과 화법 순서를 검증하고, `boundary`는 `literal_respect` 선택을 보장하며, `not_applicable`은 인물 화법을 판정하지 않는다. 런타임은 `push_pull.target`만 밀당 계산 인물로 사용하며, 생략된 경우에만 장면 루트의 히로인을 사용한다. 계산 인물은 현재 장면 `cast` 안에 있어야 한다. `interaction.target`은 실제 화법을 받아 반응하는 인물이고 `support_styles`는 발화·행동 순서대로 보존하는 반응 저작·검수용 메타데이터다. 비공략 조연도 반응 대상이 될 수 있지만, 런타임은 `interaction.target`을 점수 대상의 대체값으로 사용하거나 그 인물의 히로인 상태를 생성하지 않는다. 지원 화법 메타데이터 자체는 주도권·호감·숨은 수치에 아무 효과도 주지 않는다.
 
 명시적인 요청·거절·접촉 중단이 나온 선택에서는 인물의 평상시 순서보다 `literal_respect`를 우선한다. 이 화법은 요청을 그대로 지킨다는 저작 계약이지 점수 보너스가 아니며, `literal` 계산으로 한도윤의 흐름이 끊겨도 현실의 경계 존중에 숨은 악영향을 자동 생성하지 않는다.
 
@@ -216,7 +219,9 @@ interaction:
 
 이름이 비슷하지만 `option.push_pull.target`은 계산할 **인물 ID**이고, `progress.flags.push_pull.target`은 현재 향하는 **득점선 방향**(`pull`, `push`, `none`)이다. 현재 콤보 인물은 `progress.flags.push_pull.heroine`에 저장한다.
 
-자기계발 해금 선택지는 `self_development.expression`, 같은 선택 노드의 `equivalent_to`, 합류 노드 `converges_at`을 선언한다. 요구 수치, 최근 활동 ID와 `score_bonus`는 `manifest.self_development.expressions`가 소유한다. `requires.last_activity`는 hydrated `progress.self_development.last_activity`와 정확히 비교하며, 직전 밤 선택을 회수하는 대사 표현은 `score_bonus: 0`으로 둔다. 해금 선택지는 기준 선택지와 `push_pull` 및 `effects`가 같아야 하며, 성공한 `score`/`turn` 판정에만 `0~3`의 보이는 주도권 보너스를 더한다. 위치·콤보·활성 득점선·숨은 반복 패턴 효과와 엔딩 결과에는 이 보너스를 사용하지 않는다. 보이는 주도권과 `visible.protagonist.self_development`·`progress.self_development`는 일반 조건에서 읽지 않는다.
+자기계발 해금 선택지는 `self_development.expression`, 같은 선택 노드의 `equivalent_to`, 합류 노드 `converges_at`을 선언한다. 요구 수치와 최근 활동 ID는 `manifest.self_development.expressions`가 소유하고 `score_bonus`는 항상 `0`이다. 해금 선택지는 기준 선택지와 `push_pull` 및 `effects`가 같아야 하며 고유 대사·행동·짧은 반응만 추가한다. 능력치의 주된 보상은 `event.requires.conditions`가 `visible.protagonist.self_development.stats.<stat>`을 읽어 여는 추가 `player` 사건이다. 매력도·피로도·최근 활동·힌트 횟수, 보이는 주도권과 자기계발 상태는 그 밖의 일반 조건과 엔딩에서 읽지 않는다.
+
+스탯 조건 사건은 `on_seen.effects`로 등록된 갤러리 `unlock_memory`를 `progress.memories`에 추가한다. 자동·수동 저장이 이를 플레이어 프로필의 `memories`에 합치며, 타이틀과 게임 메뉴의 갤러리는 `runtime.gallery.entries`와 프로필 메모리를 비교해 잠금 상태를 복원한다.
 
 직전 밤 활동의 스몰토크는 저작 원본에서 `self_development_template`과 `manifest.self_development.conversation_topics`를 사용한다. 스토리 빌더는 이를 일반 `variants.after_*`와 `default`로 미리 확장하고 매크로와 대화 소재 레지스트리를 런타임 JSON에서 제거한다. 따라서 플레이어 resolver, 세이브, 백로그와 localization key는 기존 variant 계약을 그대로 사용하며, 원본 YAML만 중복 없는 템플릿 형태를 유지한다. 에디터 브리지는 생성 variant를 YAML에 역류시키지 않고, 생성 문구를 직접 고친 저장은 명시적으로 거부한다. 공통 문구는 manifest 슬롯에서, 장면 문맥은 원본 템플릿에서 수정한다.
 

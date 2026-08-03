@@ -63,6 +63,34 @@ test("new game is exactly the approved three-mode contract", async ({ page }) =>
   await expect(page.locator(".vn-route-screen")).toHaveScreenshot("new-game.webp");
 });
 
+test("gallery shows collected artwork and keeps stat-event artwork locked", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: /갤러리/ }).click();
+
+  const gallery = page.getByRole("dialog", { name: "원화 갤러리" });
+  await expect(gallery).toBeVisible();
+  await expect(gallery.getByText("수집 1 / 5", { exact: true })).toBeVisible();
+  await expect(gallery.getByRole("img", { name: "러브 오피스 라인업" })).toBeVisible();
+  await expect(gallery.getByRole("button", { name: "미해금 원화" })).toHaveCount(4);
+});
+
+test("gallery restores a stat-event CG from the persistent profile", async ({ page }) => {
+  await page.addInitScript(({ key }) => {
+    localStorage.setItem(key, JSON.stringify({
+      clearedRoutes: [],
+      unlockedModes: ["base"],
+      memories: ["cg.stat.humor.seo_a"],
+    }));
+  }, { key: PROFILE_KEY });
+  await page.goto("/");
+  await page.getByRole("button", { name: /갤러리/ }).click();
+
+  const gallery = page.getByRole("dialog", { name: "원화 갤러리" });
+  await expect(gallery.getByText("수집 2 / 5", { exact: true })).toBeVisible();
+  await gallery.getByRole("button", { name: "윤서아 — 웃음이 터진 순간" }).click();
+  await expect(gallery.getByRole("img", { name: "윤서아 — 웃음이 터진 순간" })).toBeVisible();
+});
+
 test("first ending profile unlocks both post-ending modes", async ({ page }) => {
   await page.addInitScript(({ key }) => {
     localStorage.setItem(key, JSON.stringify({

@@ -122,6 +122,24 @@
       },
       "additionalProperties": false
     },
+    "interaction_context": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": {"enum": ["support", "coordination", "boundary", "not_applicable"]}
+      },
+      "additionalProperties": false
+    },
+    "analysis_hints": {
+      "type": "object",
+      "required": ["pull", "push", "none"],
+      "properties": {
+        "pull": {"type": "string", "minLength": 1},
+        "push": {"type": "string", "minLength": 1},
+        "none": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
     "self_development_choice": {
       "type": "object",
       "required": ["expression", "equivalent_to", "converges_at"],
@@ -217,6 +235,8 @@
       "properties": {
         "id": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
         "kind": {"enum": ["dual_dialogue", "dual_narration", "choice", "state_gate", "effect", "exit"]},
+        "analysis_hints": {"$ref": "#/$defs/analysis_hints"},
+        "interaction_context": {"$ref": "#/$defs/interaction_context"},
         "speaker": {"type": "string"},
         "speakers": {"$ref": "#/$defs/speakers"},
         "presentation_flags": {"type": "array", "items": {"type": "string"}},
@@ -243,10 +263,13 @@
           "required": ["next"],
           "oneOf": [{"required": ["perceived", "reality"]}, {"required": ["variants"]}]
         }},
-        {"if": {"properties": {"kind": {"const": "choice"}}}, "then": {"required": ["prompt", "stimulus", "options"]}},
+        {"if": {"properties": {"kind": {"const": "choice"}}}, "then": {"required": ["interaction_context", "prompt", "stimulus", "options"]}},
         {"if": {"properties": {"kind": {"const": "state_gate"}}}, "then": {"required": ["transitions"]}},
         {"if": {"properties": {"kind": {"const": "effect"}}}, "then": {"required": ["effects", "next"]}},
         {"if": {"properties": {"kind": {"const": "exit"}}}, "then": {"required": ["transitions"]}},
+        {"if": {"required": ["analysis_hints"]}, "then": {
+          "properties": {"kind": {"const": "choice"}}
+        }},
         {"if": {"required": ["self_development_template"]}, "then": {
           "required": ["perceived", "reality"],
           "properties": {"kind": {"enum": ["dual_dialogue", "dual_narration"]}}

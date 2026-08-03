@@ -19,7 +19,7 @@ visible:
   protagonist:
     self_development:
       appeal: 30
-      stats: {stamina: 0, appearance: 0, humor: 0, taste: 0}
+      stats: {health: 0, appearance: 0, humor: 0, intelligence: 0}
       fatigue: 1
   heroines:
     yoon_seo_a:
@@ -42,6 +42,7 @@ progress:
     completed_days: []
     activity_history: []
     last_activity: ""
+    hint_charges: 0
   flags:
     push_pull:
       combo: 0
@@ -114,7 +115,7 @@ campaign → day → slot → eligible event → scene → node
 - 플레이어에게 별도의 타임라인·ACT 선택 화면이나 캠페인 총일수 홍보 문구를 노출하지 않는다.
 - 런타임은 다음 의미 있는 사건으로 자동 진행하고 날짜가 바뀔 때만 짧은 전환 연출을 재생한다.
 - 같은 시간대에 선택 가능한 사건이 여럿이면 타임라인 카드가 아니라 장면 안의 대사·상황 요약과 선택지로 고르게 한다.
-- 1~16일의 `after_work` 사건 처리가 끝나면 날짜를 넘기기 전에 자기계발 밤 페이즈를 하루 한 번 연다. 17일은 최종 사건과 엔딩에 집중한다.
+- 1~16일의 `after_work` 사건 처리가 끝나면 날짜를 넘기기 전에 자기계발 밤 페이즈를 하루 한 번 연다. 별도 관리 화면을 만들지 않고 집에 돌아온 한도윤이 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽는 독백과 일반 대화 UI로 시작한 뒤, 선택 순간에만 현재 상태와 다섯 행동을 표시한다. 피로도 5 이상이면 선택 대신 혼술 사건이 강제로 발생한다. 17일은 최종 사건과 엔딩에 집중한다.
 - 캠페인은 안정 ID, `entry_event_id`, `initial_state_patch`와 활성 시스템을 선언한다.
 - 사건, 루트와 스레드는 `campaign_id`를 필수로 선언한다. 장면의 캠페인은 소속 루트에서 파생한다.
 - 런타임과 제작 도구는 캠페인 컬렉션의 첫 항목을 기본값으로 사용하지 않는다.
@@ -267,6 +268,8 @@ reality:
   kind: choice
   prompt: "자료 전달 방식을 분명히 한 서아에게 어떻게 답할까?"
   stimulus: "서아가 자료는 메일로 보내고 자리로 오지 말라고 요청했다."
+  interaction_context:
+    kind: boundary
   options:
     - id: match_push
       label: "알겠다고 답하고 요청대로 자료만 메일로 보낸다"
@@ -286,6 +289,15 @@ reality:
 
 선택 노드의 `stimulus`는 선택을 촉발한 직전 말이나 행동을 사실 중심의 한 문장으로 요약한다. 선택 화면은 이 요약을 문맥으로 먼저 보여 준다. `label`은 플레이어가 실제로 말하거나 수행할 구체적인 선택지, `interpretation`은 주인공이 믿는 미묘한 의미, `action`은 객관적으로 발생하는 행동이다. 세 필드를 섞지 않으며 `label`이나 `prompt`에 `밀기`, `당기기`, `push`, `pull` 같은 제작 판정을 직접 쓰지 않는다.
 
+모든 선택 노드는 `interaction_context.kind`로 MBTI 요소의 적용 문맥을 분류한다.
+
+- `support`: 위로, 실수 수습, 개인적 부담처럼 상대가 도움을 받아들이는 순서를 판단한다.
+- `coordination`: 공동 업무의 사실, 실행안, 역할과 결정권을 조율한다.
+- `boundary`: 명시적인 요청·거절·거리 두기를 원문 그대로 존중할지 판단한다.
+- `not_applicable`: 인물 지원 화법을 판정하지 않는 내적 해석이나 사건 절차다.
+
+`support`와 `coordination`의 모든 선택지는 `interaction`을 선언하고 한 노드에 서로 다른 화법 순서를 최소 두 개 둔다. `boundary`에는 `literal_respect` 선택지가 최소 하나 있어야 하며, 침범 행동을 MBTI 요소의 오답처럼 태깅하지 않는다. `not_applicable`에는 `interaction`을 선언하지 않는다.
+
 `push_pull`은 제작·런타임 전용 분류이며 일반 선택지 화면과 결과 연출에는 노출하지 않는다. 선택지별 방향·강도와 계산 결과는 명시적으로 켠 디버깅 모드에서만 표시한다. `action`은 `approach`, `space`, `literal`, `intensity`는 `8~16`, `base_score`는 `2~5`를 사용한다. 런타임은 장면의 일반 `effects`를 먼저 적용한 뒤 이 메타데이터로 위치, 콤보, 득점선, 주도권과 반복 패턴 효과를 계산한다. 장면 효과에서 `affection`, `perceived_state`, `initiative`를 수동으로 변경하지 않는다.
 
 MBTI 요소의 인물별 지원 화법을 쓴 선택은 `interaction`을 선언한다. 여러 공략 인물이 함께 있어 밀당 계산 대상도 장면 루트의 기본 히로인과 다르면 `push_pull.target`을 별도로 선언한다.
@@ -303,24 +315,60 @@ interaction:
     - practical_resolution
 ```
 
-`interaction.target`은 실제로 그 화법을 받아 반응하는 인물이며 현재 장면 `cast` 안의 캐릭터를 가리킨다. 공략 불가 조연도 자신의 `interaction_preferences`가 있으면 대상이 될 수 있다. `support_styles`는 실제 대사와 행동에 사용한 지원 화법을 기록하는 비노출 저작 메타데이터다. 인물별 고유 반응을 검토하는 데 사용하며 그 자체로 호감도·주도권·숨은 수치를 가감하지 않는다.
+`interaction.target`은 실제로 그 화법을 받아 반응하는 인물이며 현재 장면 `cast` 안의 캐릭터를 가리킨다. 공략 불가 조연도 자신의 `interaction_preferences`가 있으면 대상이 될 수 있다. `support_styles`는 실제 대사와 행동에 사용한 지원 화법을 발화·행동 순서대로 기록하는 비노출 저작 메타데이터다. 첫 항목이 먼저 전달되는 중심 화법이며, 편집기와 빌드는 이 순서를 보존한다. 같은 대상에 서로 다른 화법 순서를 쓴 선택은 다음 선택이나 장면 종료 전에 대상의 서로 다른 실제 `reality` 반응을 제공해야 한다. 이 메타데이터는 인물별 고유 반응을 검토하는 데 사용하며 그 자체로 호감도·주도권·숨은 수치를 가감하지 않는다.
 
 `push_pull.target`은 밀당 위치·콤보·주도권과 반복 패턴을 어느 히로인에게 적용할지 정한다. 생략하면 장면 루트의 히로인을 사용한다. 명시 여부와 관계없이 계산 인물은 현재 장면 `cast` 안에 있어야 한다. 다른 인물을 지정했다면 그 인물의 주도권과 숨은 반복 패턴 경로도 `state_contract.writes`에 선언한다. 대화 반응 대상과 밀당 계산 대상은 같을 수 있지만 의미가 다르므로 런타임은 두 필드를 서로 대신 사용하지 않는다.
+
+### 선택 직전 강사 힌트
+
+`progress.self_development.hint_charges`는 `0~9`의 소비형 횟수다. 밤 활동 `dark_psychology`를 한 번 수행하면 피로가 `+2` 되고 힌트가 `+1` 충전된다. 기존 세이브에 값이 없으면 `0`으로 보충한다.
+
+선택 노드에서 힌트를 사용하면 한 번을 즉시 소비하고 같은 선택 화면 안에서 상상 속 강사가 등장한다.
+
+1. 강사가 현재 활성 득점선에 맞는 득점 행동을 결정적으로 말한다.
+2. 선택 노드의 중립적 `stimulus`를 판단 근거인 실제 관찰 증거로 함께 제시한다.
+
+활성 득점선이 아직 `none`이면 첫 수에는 정해진 정답이 없고 이번 선택이 다음 득점 방향을 만든다고 알려 준다. 그 밖의 경우에는 어떤 종류의 행동이 득점인지 단정할 수 있다. 힌트는 `approach`·`space` 내부 ID, 이동 수치, 예상 획득량, 구체적인 선택지 하나, 인물별 정답 표현과 숨은 상태를 노출하지 않는다.
+
+강사 문구는 게임의 허구적 리듬 규칙만 설명한다. 현실에서 타인의 경계를 우회하거나 행동을 통제하는 재현 가능한 방법은 작성하지 않는다.
 
 자기계발로 여는 표현은 일반 `conditions` 대신 전용 메타데이터를 사용한다.
 
 ```yaml
 self_development:
-  expression: stamina.workout_answer
+  expression: health.workout_answer
   equivalent_to: match_push
   converges_at: after_choice
 ```
 
-`manifest.self_development.expressions`가 매력도·능력치·피로·최근 활동 요구와 `score_bonus`를 소유한다. `requires.last_activity`는 알려진 활동 ID 하나를 가리키며 `progress.self_development.last_activity`와 정확히 일치할 때만 표현을 연다. 직전 밤 선택을 다음 날 짧게 회수하는 대사에는 `score_bonus: 0`을 사용한다. 해금 선택지는 같은 선택 노드의 조건 없는 기준 선택지를 `equivalent_to`로 가리키고, 기준과 같은 `push_pull` 및 `effects`를 사용하며, 짧은 고유 대사 뒤 `converges_at`으로 합류해야 한다. 두 분기의 `next`부터 합류점 직전까지는 `dual_dialogue`와 `dual_narration`만 허용하며 `effect`, `state_gate`, `choice`, `exit`를 둘 수 없다. 보너스는 밀당의 `score` 또는 `turn` 판정이 성립할 때만 보이는 주도권에 `0~3`을 더한다. 위치, 콤보, 득점선, hidden 상태, 사건과 엔딩 판정은 바꾸지 않으며, 보이는 주도권 `visible.heroines.<id>.initiative`는 일반 조건에서 읽을 수 없다.
+`manifest.self_development.expressions`가 매력도·능력치·피로·최근 활동 요구를 소유하며 `score_bonus`는 항상 `0`이다. `requires.last_activity`는 알려진 활동 ID 하나를 가리키며 `progress.self_development.last_activity`와 정확히 일치할 때만 표현을 연다. 해금 선택지는 같은 선택 노드의 조건 없는 기준 선택지를 `equivalent_to`로 가리키고, 기준과 같은 `push_pull` 및 `effects`를 사용하며, 짧은 고유 대사 뒤 `converges_at`으로 합류해야 한다. 두 분기의 `next`부터 합류점 직전까지는 `dual_dialogue`와 `dual_narration`만 허용하며 `effect`, `state_gate`, `choice`, `exit`를 둘 수 없다. 즉 스탯 상호작용은 표현과 반응을 늘리지만 밀당 점수와 숨은 상태를 보정하지 않는다.
 
-대사 variant는 `self_development: {expression: <id>}`만 선언할 수 있다. 기본 variant는 항상 하나 남기며 자기계발 조건을 붙이지 않는다. `visible.protagonist.self_development`와 `progress.self_development` 경로는 일반 장면·사건·엔딩 조건에서 직접 읽지 않는다.
+대사 variant는 `self_development: {expression: <id>}`만 선언할 수 있다. 기본 variant는 항상 하나 남기며 자기계발 조건을 붙이지 않는다. 일반 장면과 엔딩은 자기계발 상태를 직접 읽지 않는다.
 
-직전 밤 활동을 다음 날 스몰토크로 회수할 때는 같은 다섯 활동 variant를 장면마다 복제하지 않고 저작 전용 `self_development_template`을 사용할 수 있다. 활동별 공통 소재는 `manifest.self_development.conversation_topics`가 소유한다.
+능력치의 주된 보상은 TRPG처럼 조건을 만족했을 때만 나타나는 추가 사건이다. 사건은 아래처럼 명명된 스탯만 직접 읽을 수 있다.
+
+```yaml
+availability: player
+type: heroine
+requires:
+  events: []
+  conditions:
+    - {path: visible.protagonist.self_development.stats.intelligence, op: gte, value: 3}
+on_seen:
+  effects:
+    - {path: progress.memories, op: append_unique, value: cg.stat.intelligence.min_kyung}
+on_missed: {effects: []}
+```
+
+스탯 조건 사건은 `player` 선택형 `heroine` 또는 `company` 사건이고, 기존 사건을 대체하지 않으며 놓쳐도 효과나 다른 사건을 만들지 않는다. 사건을 보면 `manifest.gallery.entries`에 등록된 원화 메모리를 하나 이상 지급해야 한다. 매력도·피로도·최근 활동·힌트 횟수는 사건 조건으로 사용하지 않는다.
+
+### 원화 갤러리
+
+`manifest.gallery.entries`는 안정 원화 ID, 제목·설명 UI 키, 실제 이미지 경로, 영구 해금용 `unlock_memory`를 소유한다. 기본 공개 원화는 `default_unlocked: true`를 사용하고, 스탯 사건 원화는 `source_stat`과 `source_minimum`을 선언한다. 사건이 지급한 `progress.memories`는 자동 저장 시 플레이어 프로필에 합쳐지므로 새 회차에서도 해금 상태가 유지된다.
+
+타이틀과 게임 메뉴의 `갤러리`는 등록된 모든 슬롯과 수집 수를 보여 준다. 잠긴 슬롯은 제목과 이미지를 숨기며, 해금된 원화만 확대 감상할 수 있다.
+
+직전 밤 활동을 다음 날 스몰토크로 회수할 때는 활동별 variant를 장면마다 복제하지 않고 저작 전용 `self_development_template`을 사용할 수 있다. 활동별 공통 소재는 `manifest.self_development.conversation_topics`가 소유한다.
 
 ```yaml
 self_development:
@@ -330,7 +378,7 @@ self_development:
       expression: feedback.last_workout
       slots:
         formal_opener: "요즘 운동을 다시 시작했습니다."
-        formal_pitch: "앉아 있는 시간이 길어서 체력부터 챙기려고요."
+        formal_pitch: "앉아 있는 시간이 길어서 건강부터 챙기려고요."
 ```
 
 `slots`의 값은 조사나 어미 조각이 아니라 그대로 발화할 수 있는 완결된 한국어 문장으로 작성한다. 장면 템플릿이 참조하는 모든 `{{slot_id}}`는 모든 대화 소재에 존재해야 하며, 알 수 없거나 비어 있는 슬롯은 빌드 오류다. `variant_id`와 `expression`은 배포 뒤 유지하고, `expression`은 해당 활동을 `requires.last_activity`로 요구하면서 `score_bonus: 0`인 표현을 가리킨다.

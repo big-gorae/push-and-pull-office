@@ -128,12 +128,17 @@ nodes:
     kind: choice
     prompt: 돌아가라는 요구와 현장 신고에 어떻게 대응할까?
     stimulus: 서아가 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.
+    interaction_context:
+      kind: boundary
     options:
       - id: accept_separation
         label: 현장에서 물러나 경찰의 분리와 질문에 응한다
         interpretation: 오늘은 주변의 오해가 풀릴 때까지 당겨지는 척한다.
         action: 현장에서 물러나 경찰의 분리와 질문에 응한다.
         push_pull: {action: literal, intensity: 12, base_score: 4}
+        interaction:
+          target: yoon_seo_a
+          support_styles: [literal_respect]
         conditions: []
         effects:
           - {path: progress.flags.story_mode.home_incident, op: set, value: reported}
@@ -178,6 +183,8 @@ nodes:
     kind: choice
     prompt: 분리 조치 뒤 한도윤은 오늘 밤의 일을 어떻게 받아들일까?
     stimulus: 경찰이 두 사람을 분리한 뒤 축적된 기록이 부족해 한도윤을 돌려보냈다.
+    interaction_context:
+      kind: not_applicable
     options:
       - id: choose_betrayal
         label: 서아가 자신을 이용하고 버렸다고 단정한다
@@ -202,6 +209,8 @@ nodes:
     kind: choice
     prompt: 경찰과 주변 사람들이 도착하자 어떻게 행동할까?
     stimulus: 돌아가라는 요구를 무시한 뒤 사이렌과 사람들의 기척이 가까워졌다.
+    interaction_context:
+      kind: not_applicable
     options:
       - id: remain
         label: 현장에 남아 자신의 주장을 설명한다

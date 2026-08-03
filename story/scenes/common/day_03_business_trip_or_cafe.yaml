@@ -6,7 +6,7 @@ chapter: 1
 sequence: 4
 location: office_break_room
 time: afternoon
-purpose: 한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 남은 업무를 다루는 답변에서 사실과 실행 가능성을 먼저 확인하는 민경의 대화 성향을 재확인한다.
+purpose: 한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 업무를 수습하는 동안에는 사실과 실행 가능성을 먼저 확인하고 해결 뒤에는 구체적인 부담 인정을 받아들이는 민경의 상황별 대화 순서를 재확인한다.
 cast: [han_do_yoon, yoon_seo_a, cha_min_kyung]
 entry_conditions: []
 state_contract:
@@ -79,6 +79,12 @@ nodes:
     kind: choice
     prompt: 민경이 남은 쟁점 세 가지부터 정리하자고 한 말에 어떻게 답할까?
     stimulus: 민경은 짧은 대화를 마치고 오늘 남은 쟁점 세 가지를 먼저 보자고 했다.
+    analysis_hints:
+      pull: “이번 득점선은 대화를 이어 가는 쪽입니다. 민경은 잡담을 끝내고 ‘남은 쟁점 세 가지’를 직접 지정했습니다. 그 우선순위 안에서 말을 이어 가십시오.”
+      push: “이번 득점선은 한발 물러나는 쪽입니다. 민경이 사적인 화제를 닫고 업무 순서를 지정한 것이 증거입니다. 대화의 범위를 더 넓히지 마십시오.”
+      none: “아직 첫 수라 정해진 득점선은 없습니다. 다만 민경이 무엇을 먼저 하자고 명시했는지는 분명합니다. 그 관찰을 기준으로 이번 리듬을 정하십시오.”
+    interaction_context:
+      kind: coordination
     options:
       - id: structure_issues
         label: “거래처 승인 회신, 수정 범위, 공개 일정으로 나누죠. 제가 확인한 범위부터 말씀드릴 테니, 나머지 순서는 차 대리가 정해 주세요.”라고 답한다
@@ -126,7 +132,7 @@ nodes:
       expression: actual_focused
       line: "좋습니다. 그 순서면 같은 설명을 두 번 확인할 필요가 없겠네요. 수정 범위와 공개 일정은 제가 정리하겠습니다."
       intent: documentation
-    next: weekend_clues
+    next: resolution_complete
 
   - id: fatigue_response
     kind: dual_dialogue
@@ -140,7 +146,7 @@ nodes:
       expression: actual_focused
       line: "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요."
       intent: work_only
-    next: weekend_clues
+    next: resolution_complete
 
   - id: takeover_response
     kind: dual_dialogue
@@ -153,6 +159,119 @@ nodes:
       atmosphere: procedural
       expression: actual_focused
       line: "세 가지를 전부 맡으시면 승인 범위와 제 담당이 섞입니다. 확인한 범위만 말씀해 주세요. 나머지는 제가 정리하겠습니다."
+      intent: documentation
+    next: resolution_complete
+
+  - id: resolution_complete
+    kind: dual_narration
+    perceived:
+      atmosphere: playful_tension
+      line: "세 쟁점에 마지막 확인이 붙자 민경은 노트북을 닫고 짧게 숨을 내쉬었다. 일을 끝낸 뒤에야 내게 보여 주는 틈처럼 느껴졌다."
+    reality:
+      atmosphere: procedural
+      line: "거래처 승인 회신, 수정 범위, 공개 일정의 담당과 다음 확인 시각이 모두 정리됐다. 민경은 노트북을 닫고 짧게 숨을 내쉬었다."
+      intent: work_only
+    next: lecture_recall_after_resolution
+
+  - id: lecture_recall_after_resolution
+    kind: dual_dialogue
+    presentation_flags: [inner_voice]
+    speakers:
+      perceived: han_do_yoon
+      reality: null
+    perceived:
+      atmosphere: playful_tension
+      line: (강의에서 말한 전환점이 이건가. 아까는 안건부터 보자던 민경이, 전부 끝난 뒤에야 노트북을 닫고 숨을 내쉬었다.)
+    reality:
+      atmosphere: procedural
+      line: 한도윤은 업무 전과 후의 반응 차이를 실제로 관찰했지만, 그 차이가 곧 사적인 호감의 신호인지는 아직 알 수 없었다.
+      intent: work_only
+    next: post_resolution_choice
+
+  - id: post_resolution_choice
+    kind: choice
+    prompt: 업무 정리를 마친 민경에게 어떻게 말할까?
+    stimulus: 세 쟁점의 담당과 다음 확인 시각을 정리한 민경이 노트북을 닫고 짧게 숨을 내쉬었다.
+    analysis_hints:
+      pull: “이번 득점선은 대화를 이어 가는 쪽입니다. 노트북을 닫고 나서야 숨을 내쉰 순서가 증거입니다. 해결 중이 아니라 해결 뒤에 나온 반응에 답하십시오.”
+      push: “이번 득점선은 여기서 물러나는 쪽입니다. 담당과 다음 시각이 이미 정리됐고 노트북도 닫혔습니다. 끝난 대화를 다시 늘리지 않는 선택이 득점입니다.”
+      none: “아직 첫 수라 정해진 득점선은 없습니다. 업무가 끝난 뒤에야 민경의 반응이 바뀌었다는 순서를 보고, 말을 더할지 닫을지 기준을 세우십시오.”
+    interaction_context:
+      kind: support
+    options:
+      - id: acknowledge_after_resolution
+        label: "“세 쟁점을 끝까지 나눠 확인하느라 신경 많이 쓰셨겠어요. 이제 다 끝났는데, 잠깐 쉬시겠어요?”라고 묻는다"
+        interpretation: 일을 끝낸 뒤 드러난 부담을 정확히 짚으면 민경도 업무 밖의 마음을 조금 더 보여 줄 거라고 생각한다.
+        action: 해결이 끝난 뒤 민경이 감당한 구체적인 부담을 인정하고, 쉴지는 민경이 정하도록 묻는다.
+        push_pull: {target: cha_min_kyung, action: approach, intensity: 12, base_score: 4}
+        interaction:
+          target: cha_min_kyung
+          support_styles: [emotional_validation, ask_before_helping, autonomy_return]
+        conditions: []
+        effects: []
+        next: after_resolution_empathy_response
+      - id: close_with_facts
+        label: "“세 건 모두 담당과 다음 확인 시각까지 정리됐습니다. 오늘은 여기서 마치죠.”라고 말한다"
+        interpretation: 일을 정확히 닫고 먼저 물러나면 민경이 다음 대화를 기다릴 거라고 생각한다.
+        action: 완료된 항목을 사실대로 확인하고 추가적인 감정 질문 없이 업무 대화를 끝낸다.
+        push_pull: {target: cha_min_kyung, action: space, intensity: 12, base_score: 4}
+        interaction:
+          target: cha_min_kyung
+          support_styles: [factual_clarification]
+        conditions: []
+        effects: []
+        next: after_resolution_close_response
+      - id: add_more_work
+        label: "“다음 확인표도 제가 새로 만들어 둘게요. 이제는 신경 쓰지 마세요.”라고 말한다"
+        interpretation: 해결책을 한 단계 더 준비하면 민경이 끝까지 믿고 맡길 사람으로 볼 거라고 생각한다.
+        action: 이미 담당과 다음 확인 시각이 정리된 업무에 새 확인표를 추가하겠다고, 필요 여부를 묻지 않고 통보한다.
+        push_pull: {target: cha_min_kyung, action: approach, intensity: 12, base_score: 4}
+        interaction:
+          target: cha_min_kyung
+          support_styles: [practical_resolution, concise_reassurance]
+        conditions: []
+        effects: []
+        next: after_resolution_overwork_response
+
+  - id: after_resolution_empathy_response
+    kind: dual_dialogue
+    speaker: cha_min_kyung
+    perceived:
+      atmosphere: playful_tension
+      expression: subjective_challenging
+      line: "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다."
+    reality:
+      atmosphere: procedural
+      expression: actual_focused
+      line: "맞습니다. 일정 자체보다 세 쟁점이 섞이지 않게 계속 확인하는 게 더 피곤했습니다. 지금은 끝났으니 잠깐 쉬겠습니다."
+      intent: courtesy
+    next: weekend_clues
+
+  - id: after_resolution_close_response
+    kind: dual_dialogue
+    speaker: cha_min_kyung
+    perceived:
+      atmosphere: procedural
+      expression: subjective_challenging
+      line: "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠."
+    reality:
+      atmosphere: procedural
+      expression: actual_focused
+      line: "네. 세 건 모두 정리됐습니다. 다음 확인 때 보죠."
+      intent: work_only
+    next: weekend_clues
+
+  - id: after_resolution_overwork_response
+    kind: dual_dialogue
+    speaker: cha_min_kyung
+    perceived:
+      atmosphere: guarded_office
+      expression: subjective_challenging
+      line: "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠."
+    reality:
+      atmosphere: procedural
+      expression: actual_skeptical
+      line: "확인 항목과 다음 시각은 이미 정리했습니다. 새 표를 만들 필요는 없습니다. 지금은 여기서 끝내죠."
       intent: documentation
     next: weekend_clues
 
@@ -176,6 +295,21 @@ nodes:
         line: "(짧게 받았지만 내가 꺼낸 화제는 바로 알아들었군. {{perceived_self_image}})"
       reality:
         line: "({{reality_response_thought}} 잡담은 여기까지 하고 남은 안건부터 보자.)"
+    next: lecture_recall_before_issues
+
+  - id: lecture_recall_before_issues
+    kind: dual_dialogue
+    presentation_flags: [inner_voice]
+    speakers:
+      perceived: han_do_yoon
+      reality: null
+    perceived:
+      atmosphere: playful_tension
+      line: (책에서는 같은 사람도 해결 전과 해결 후에 원하는 반응이 달라진다고 했다. 민경은 지금 피곤하다는 말보다 남은 쟁점 세 가지를 먼저 꺼냈다.)
+    reality:
+      atmosphere: procedural
+      line: 한도윤은 민경이 직접 말한 업무 순서를 관찰 근거로 삼으면서도, 그것을 어젯밤 강의의 공식에 맞춰 해석하려 했다.
+      intent: self_promotion
     next: response_choice
 
   - id: weekend_clues
@@ -193,4 +327,4 @@ nodes:
     kind: exit
     transitions:
       - default: true
-        scene: common.day_04_weekend_encounter
+        scene: bonus.stat_health_sample_sorting

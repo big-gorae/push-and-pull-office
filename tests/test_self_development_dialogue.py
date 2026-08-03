@@ -15,7 +15,7 @@ from self_development_dialogue import (  # noqa: E402
 )
 
 
-ACTIVITY_IDS = ("workout", "grooming", "ott", "reels", "sleep")
+ACTIVITY_IDS = ("workout", "reading", "ott", "sleep", "dark_psychology", "solo_drinking")
 
 
 def make_config():
