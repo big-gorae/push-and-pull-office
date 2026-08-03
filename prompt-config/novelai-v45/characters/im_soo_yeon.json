@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "characterId": "im_soo_yeon",
   "order": 40,
   "subject": "female",
@@ -10,46 +10,47 @@
       "id": "current",
       "label": "현재 · 단발과 안경",
       "identityTags": [
-        "adult",
-        "short softly wavy brown hair",
-        "thin round glasses",
-        "large calm amber-brown eyes",
-        "soft oval face",
+        "brown hair",
+        "short hair",
+        "wavy hair",
+        "glasses",
+        "round eyewear",
+        "brown eyes",
         "long eyelashes",
-        "small nose",
-        "soft full lips",
-        "subtle smile lines at the outer eyes",
-        "natural curvy adult build",
         "narrow waist",
         "1.2::large breasts::",
         "breasts"
       ],
-      "outfitTags": [
-        "olive green long cardigan",
-        "faded cream cotton blouse",
-        "long brown A-line skirt",
-        "book",
-        "plain bookmark"
+      "identityInstructions": [
+        "She is an adult Korean woman with short softly wavy brown hair and thin round glasses.",
+        "Give her large calm amber-brown eyes, a soft oval face, a small nose, soft full lips, and subtle smile lines at the outer corners of her eyes.",
+        "Keep her build naturally curvy, healthy, and elegant."
       ],
-      "fullBodyOnlyTags": ["brown loafers"],
+      "outfitTags": ["green cardigan", "blouse", "long skirt", "brown skirt", "book"],
+      "outfitInstructions": [
+        "Dress her in a long olive-green cardigan, a faded cream cotton blouse, and a long brown A-line skirt.",
+        "Give her a book with one plain bookmark."
+      ],
+      "fullBodyOnlyTags": ["loafers"],
+      "fullBodyOnlyInstructions": ["Use practical brown loafers."],
       "characterUndesiredTags": [
         "child",
         "loli",
-        "middle-aged woman",
-        "muscular woman",
-        "teenager",
+        "old woman",
+        "muscular",
         "flat chest",
         "small breasts",
         "long hair",
         "ponytail",
-        "office suit",
-        "employee lanyard",
+        "business suit",
+        "lanyard",
         "high heels",
-        "miniskirt",
-        "idol outfit",
-        "glamorous makeup",
-        "seductive pose"
+        "miniskirt"
       ],
+      "characterUndesiredInstructions": [
+        "A teenage appearance, an idol outfit, glamorous makeup, or a seductive pose."
+      ],
+      "inpaintTasks": [],
       "defaultSituationId": "reference_guarded",
       "situations": [
         {
@@ -58,7 +59,10 @@
           "description": "짧은 머리와 안경, 실용적인 옷차림의 현재 모습입니다.",
           "expressionId": "actual_guarded",
           "basePresetId": "sprite_full_body",
-          "tags": ["holding a book close to her body", "guarded posture", "closed mouth", "glancing toward the doorway"]
+          "tags": ["standing", "holding", "book", "closed mouth", "looking to the side"],
+          "instructions": ["Hold the book close to her body with a guarded posture and glance toward the doorway."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "current_guarded",
@@ -66,7 +70,10 @@
           "description": "자신의 안전을 확인하며 대화를 이어 갑니다.",
           "expressionId": "actual_guarded",
           "basePresetId": "testimony_room",
-          "tags": ["holding the book close to her body", "guarded posture", "closed mouth", "glancing toward the room entrance"]
+          "tags": ["holding", "book", "closed mouth", "looking to the side"],
+          "instructions": ["Hold the book close to her body with a guarded posture and glance toward the room entrance."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "current_testimony",
@@ -74,7 +81,10 @@
           "description": "현재의 삶을 지키며 과거 사건을 기록합니다.",
           "expressionId": "actual_testimony",
           "basePresetId": "testimony_room",
-          "tags": ["holding an old postcard with its address removed", "determined expression", "steady direct gaze", "upright seated posture"]
+          "tags": ["sitting", "holding", "determined", "looking at viewer"],
+          "instructions": ["Hold an old postcard with its address removed and maintain a steady direct gaze in an upright seated posture."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         }
       ]
     },
@@ -82,46 +92,45 @@
       "id": "past_bookstore",
       "label": "과거 · 서점 근무",
       "identityTags": [
-        "adult",
-        "shoulder-length naturally wavy brown hair",
-        "large calm amber-brown eyes",
-        "soft oval face",
+        "brown hair",
+        "medium hair",
+        "wavy hair",
+        "brown eyes",
         "long eyelashes",
-        "small nose",
-        "soft full lips",
-        "no glasses",
-        "subtle smile lines at the outer eyes",
-        "natural curvy adult build",
         "narrow waist",
         "1.2::large breasts::",
         "breasts"
       ],
-      "outfitTags": [
-        "olive cardigan",
-        "faded cream cotton shirt",
-        "long brown skirt",
-        "old independent-bookstore name tag",
-        "book",
-        "plain bookmark"
+      "identityInstructions": [
+        "She is an adult Korean woman with naturally wavy shoulder-length brown hair and no eyewear.",
+        "Give her large calm amber-brown eyes, a soft oval face, a small nose, soft full lips, and subtle smile lines at the outer corners of her eyes.",
+        "Keep her build naturally curvy, healthy, and elegant."
       ],
-      "fullBodyOnlyTags": ["practical flat shoes"],
+      "outfitTags": ["cardigan", "blouse", "long skirt", "brown skirt", "book"],
+      "outfitInstructions": [
+        "Dress her in an olive cardigan, a faded cream cotton shirt, and a long brown skirt.",
+        "Give her an old independent-bookstore name tag, a book, and one plain bookmark."
+      ],
+      "fullBodyOnlyTags": ["loafers"],
+      "fullBodyOnlyInstructions": ["Use practical flat brown shoes."],
       "characterUndesiredTags": [
         "child",
         "loli",
-        "middle-aged woman",
-        "muscular woman",
-        "teenager",
+        "old woman",
+        "muscular",
         "flat chest",
         "small breasts",
         "short hair",
         "glasses",
-        "office suit",
-        "employee lanyard",
+        "business suit",
+        "lanyard",
         "high heels",
-        "miniskirt",
-        "idol outfit",
-        "glamorous makeup"
+        "miniskirt"
       ],
+      "characterUndesiredInstructions": [
+        "A teenage appearance, an idol outfit, or glamorous makeup."
+      ],
+      "inpaintTasks": [],
       "defaultSituationId": "bookstore_service",
       "situations": [
         {
@@ -130,7 +139,10 @@
           "description": "모든 손님에게 제공하는 따뜻한 업무 표정입니다.",
           "expressionId": "actual_customer_service",
           "basePresetId": "bookstore",
-          "tags": ["holding a book at waist level", "polite closed-mouth smile", "relaxed professional posture", "looking toward a customer outside the frame"]
+          "tags": ["standing", "holding", "book", "smile", "closed mouth", "looking at another"],
+          "instructions": ["Hold the book at waist level with a relaxed professional posture and a polite closed-mouth smile toward a customer outside the frame."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "bookstore_guarded",
@@ -138,7 +150,10 @@
           "description": "책을 품에 안고 출입문과 동료를 확인합니다.",
           "expressionId": "actual_guarded",
           "basePresetId": "bookstore",
-          "tags": ["holding the book close to her body", "guarded posture", "closed mouth", "glancing toward the shop entrance"]
+          "tags": ["standing", "holding", "book", "closed mouth", "looking to the side"],
+          "instructions": ["Hold the book close to her body with a guarded posture and glance toward the shop entrance."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "perceived_first_love",
@@ -146,7 +161,10 @@
           "description": "손님 응대 친절을 자신만을 향한 첫사랑처럼 재구성한 화면입니다.",
           "expressionId": "subjective_first_love",
           "basePresetId": "memory_bookstore",
-          "tags": ["warm gentle smile", "soft eyes", "looking toward the viewer", "holding a book against her chest", "nostalgic pose"]
+          "tags": ["standing", "holding", "book", "smile", "looking at viewer"],
+          "instructions": ["Hold the book against her chest with soft eyes, a warm gentle smile, and a nostalgic pose."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         }
       ]
     }

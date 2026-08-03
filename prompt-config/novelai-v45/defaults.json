@@ -1,40 +1,116 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "model": "NovelAI Diffusion V4.5 Full",
   "settings": {
     "qualityTags": true,
     "ucPreset": "Human Focus V4.5 Full",
     "guidance": "5–6",
     "steps": "28 이하에서 탐색 후 Enhance",
-    "samplers": ["DPM++ 2M", "Euler Ancestral"]
+    "samplers": ["DPM++ 2M", "Euler Ancestral"],
+    "variety": false,
+    "noiseSchedule": "Recommended",
+    "promptGuidanceRescale": "기본 0 · 높은 Guidance에서 과포화될 때만 동일 시드 A/B"
   },
-  "styleTags": ["game cg", "year 2024"],
+  "styleTags": [
+    "visual novel",
+    "year 2024"
+  ],
+  "styleInstructions": [
+    "Use polished commercial game CG rendering and official visual-novel key-art finish.",
+    "Use soft cel shading, clear detailed eyes, delicate facial proportions, and warm luminous color grading."
+  ],
   "manualQualityTags": ["masterpiece", "very aesthetic", "no text"],
   "sharedUndesiredTags": [
     "3d",
     "photorealistic",
-    "plastic skin",
-    "glossy skin",
-    "wet skin",
     "heterochromia",
     "multicolored eyes",
-    "exposed breasts",
-    "nipples",
     "impossible clothes",
-    "overdesigned clothes",
-    "excessive jewelry",
-    "sparkles",
-    "floating particles",
+    "nipples",
     "bloom",
     "lens flare",
-    "rim light",
     "bokeh",
     "fisheye",
     "dutch angle",
-    "text",
     "signature",
-    "artist name",
-    "extra people"
+    "artist name"
+  ],
+  "sharedUndesiredInstructions": [
+    "Plastic-looking, wet, or excessively glossy skin.",
+    "Exposed breasts, overdesigned clothing, excessive jewelry, floating particles, or decorative sparkles.",
+    "Written text, logos, watermarks, or extra background people."
+  ],
+  "commonSituations": [
+    {
+      "id": "common_stern_glare",
+      "label": "공통 · 정색하고 노려보기",
+      "description": "심하게 인상을 쓰거나 화내지 않고 차갑고 흔들림 없는 시선을 보냅니다.",
+      "basePresetId": "character_upper_body",
+      "tags": ["serious", "closed mouth", "looking at viewer"],
+      "instructions": [
+        "Use a level unwavering stare, slightly lowered upper eyelids, a relaxed mouth, and only faint inward brow tension.",
+        "Keep all established face, hair, body, outfit, accessory, prop, and rendering details unchanged."
+      ],
+      "undesiredTags": ["angry", "scowl", "furrowed brow", "v-shaped eyebrows", "open mouth"],
+      "undesiredInstructions": ["Deep frowning, shouting, bared teeth, severe brow compression, or exaggerated hostility."],
+      "omitCharacterUndesiredTags": []
+    },
+    {
+      "id": "common_anger",
+      "label": "공통 · 분노",
+      "description": "집중된 시선과 강하게 내려간 눈썹, 굳은 턱으로 분노를 분명히 드러냅니다.",
+      "basePresetId": "character_upper_body",
+      "tags": ["angry", "scowl", "furrowed brow", "v-shaped eyebrows", "open mouth", "looking at viewer"],
+      "instructions": [
+        "Pull the brows sharply down and inward, tense the jaw and cheeks, and open the mouth mid-outburst with focused furious eyes.",
+        "Keep all established face, hair, body, outfit, accessory, prop, and rendering details unchanged."
+      ],
+      "undesiredTags": ["smile"],
+      "undesiredInstructions": ["Comedic anger marks, cute pouting, playful annoyance, or a relaxed face."],
+      "omitCharacterUndesiredTags": ["angry", "scowl", "furrowed brow", "v-shaped eyebrows"]
+    },
+    {
+      "id": "common_disgust",
+      "label": "공통 · 혐오",
+      "description": "과장된 개그 얼굴이 아닌 통제된 역겨움과 거부감을 표현합니다.",
+      "basePresetId": "character_upper_body",
+      "tags": ["disgust", "grimace", "closed mouth", "looking at viewer"],
+      "instructions": [
+        "Curl the upper lip slightly, wrinkle the nose bridge, pull the head back a fraction, and hold a controlled repulsed gaze.",
+        "Keep all established face, hair, body, outfit, accessory, prop, and rendering details unchanged."
+      ],
+      "undesiredTags": ["smile"],
+      "undesiredInstructions": ["Seductive contempt, playful teasing, comic distortion, vomiting, or an angry shouting face."],
+      "omitCharacterUndesiredTags": []
+    },
+    {
+      "id": "common_fear",
+      "label": "공통 · 공포",
+      "description": "놀람이나 흥분이 아니라 몸이 굳고 떨리는 실제 공포를 표현합니다.",
+      "basePresetId": "character_upper_body",
+      "tags": ["scared", "wide-eyed", "open mouth", "sweat", "trembling", "looking at viewer"],
+      "instructions": [
+        "Widen the eyes with centered pupils, lift and draw the brows together, part the mouth, and pull the shoulders inward in visible fear.",
+        "Keep all established face, hair, body, outfit, accessory, prop, and rendering details unchanged."
+      ],
+      "undesiredTags": ["smile", "angry"],
+      "undesiredInstructions": ["Comic surprise, excitement, seductive fear, a fighting stance, or supernatural eye effects."],
+      "omitCharacterUndesiredTags": []
+    },
+    {
+      "id": "common_fear_crying",
+      "label": "공통 · 공포에 빠져 울기",
+      "description": "겁에 질린 눈을 뜬 채 양쪽 뺨으로 눈물을 흘리며 몸을 떱니다.",
+      "basePresetId": "character_upper_body",
+      "tags": ["scared", "crying", "crying with eyes open", "tears", "wide-eyed", "open mouth", "trembling", "looking at viewer"],
+      "instructions": [
+        "Keep the frightened eyes open as tears pool and run down both cheeks; make the mouth and chin tremble and draw the shoulders inward.",
+        "Keep all established face, hair, body, outfit, accessory, prop, and rendering details unchanged."
+      ],
+      "undesiredTags": ["smile", "angry"],
+      "undesiredInstructions": ["Happy tears, pretty posing, closed dry eyes, comedic waterfall tears, or calm sadness."],
+      "omitCharacterUndesiredTags": []
+    }
   ],
   "basePresets": [
     {
@@ -42,63 +118,72 @@
       "label": "전신 설정화",
       "description": "단순 배경에서 전신과 의상 실루엣을 확인합니다.",
       "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
-      "tags": ["full body", "eye-level", "three-quarter view", "simple warm gray background"]
+      "tags": ["full body", "simple background", "grey background", "facing viewer"],
+      "instructions": ["Use a neutral eye-level camera with a slight three-quarter turn."]
     },
     {
       "id": "character_upper_body",
       "label": "상반신 얼굴·디테일",
       "description": "얼굴과 목·쇄골처럼 작은 고유 특징을 확인합니다.",
       "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
-      "tags": ["upper body", "eye-level", "three-quarter view", "simple warm gray background"]
+      "tags": ["upper body", "simple background", "grey background", "facing viewer"],
+      "instructions": ["Use a neutral eye-level camera with a slight three-quarter turn and keep the face, neck, and collarbones clearly visible."]
     },
     {
       "id": "office_desk",
       "label": "오피스 책상",
       "description": "업무 중 자연스러운 손동작과 시선을 만듭니다.",
       "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
-      "tags": ["cowboy shot", "eye-level", "off-center composition", "modern Korean office desk", "mixed window light and fluorescent light"]
+      "tags": ["cowboy shot", "office", "indoors", "desk"],
+      "instructions": ["Place the subject slightly off center in a modern Korean office and mix soft window light with neutral fluorescent light."]
     },
     {
       "id": "meeting_room",
       "label": "회의실",
       "description": "사실 확인·대치·발표 장면에 사용합니다.",
       "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
-      "tags": ["cowboy shot", "eye-level", "off-center composition", "modern Korean meeting room", "neutral overhead office light"]
+      "tags": ["cowboy shot", "office", "indoors"],
+      "instructions": ["Place the subject slightly off center in a modern Korean meeting room under soft neutral overhead light."]
     },
     {
       "id": "office_hallway",
       "label": "오피스 복도",
       "description": "출입문과 거리감이 중요한 장면에 사용합니다.",
       "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
-      "tags": ["cowboy shot", "eye-level", "off-center composition", "modern Korean office hallway", "mixed fluorescent light and window light"]
+      "tags": ["cowboy shot", "office", "indoors", "hallway"],
+      "instructions": ["Place the subject slightly off center in a modern Korean office hallway with mixed fluorescent and window light."]
     },
     {
       "id": "design_review",
       "label": "디자인 리뷰",
       "description": "태블릿과 발표 자료를 확인하는 디자인팀 장면입니다.",
       "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
-      "tags": ["cowboy shot", "eye-level", "off-center composition", "modern brand design studio", "presentation screen glow", "soft office ambient light"]
+      "tags": ["cowboy shot", "office", "indoors"],
+      "instructions": ["Place the subject slightly off center in a modern brand-design studio with a presentation screen and soft ambient office light."]
     },
     {
       "id": "bookstore",
       "label": "독립서점",
       "description": "과거 서점 근무 장면을 생활광으로 표현합니다.",
       "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
-      "tags": ["cowboy shot", "eye-level", "off-center composition", "small independent bookstore", "wooden bookshelves", "soft daylight from storefront window"]
+      "tags": ["cowboy shot", "bookstore", "indoors", "bookshelf"],
+      "instructions": ["Use a small independent bookstore with wooden shelves and soft daylight entering through the storefront window."]
     },
     {
       "id": "testimony_room",
       "label": "진술 기록",
       "description": "현재의 수연이 자신의 문장으로 기록을 남기는 장면입니다.",
       "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
-      "tags": ["upper body", "eye-level", "quiet interview room", "plain table", "soft even indoor light", "uncluttered background"]
+      "tags": ["upper body", "indoors", "desk"],
+      "instructions": ["Use a quiet uncluttered interview room, a plain table, and soft even indoor light."]
     },
     {
       "id": "memory_bookstore",
       "label": "미화된 서점 기억",
       "description": "한도윤의 주관 화면에서만 쓰는 따뜻한 기억 장면입니다.",
       "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
-      "tags": ["cowboy shot", "eye-level", "small independent bookstore", "warm afternoon backlight", "soft nostalgic atmosphere"]
+      "tags": ["cowboy shot", "bookstore", "indoors", "bookshelf"],
+      "instructions": ["Use warm afternoon backlight and a softly nostalgic atmosphere inside a small independent bookstore."]
     }
   ]
 }

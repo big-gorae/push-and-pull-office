@@ -1,4 +1,5 @@
 import runtimeJson from "../../build/story-runtime.json";
+import { promptTagNames } from "./promptComposer";
 import {
   PromptConfigValidationError,
   type PromptCatalog,
@@ -6,6 +7,8 @@ import {
   type PromptConfigIssue,
   type PromptFormat,
   type PromptLayer,
+  type PromptSituation,
+  type PromptTagRegistry,
   type PromptRuntimeMetadata,
   type PromptSubject,
   type PromptVariant,
@@ -16,7 +19,7 @@ import {
 type JsonObject = Record<string, unknown>;
 
 type DefaultsConfig = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   model: string;
   settings: {
     qualityTags: boolean;
@@ -24,34 +27,67 @@ type DefaultsConfig = {
     guidance: string;
     steps: string;
     samplers: string[];
+    variety: boolean;
+    noiseSchedule: string;
+    promptGuidanceRescale: string;
   };
   styleTags: string[];
+  styleInstructions: string[];
   manualQualityTags: string[];
   sharedUndesiredTags: string[];
+  sharedUndesiredInstructions: string[];
+  commonSituations: Array<{
+    id: string;
+    label: string;
+    description?: string;
+    basePresetId: string;
+    tags: string[];
+    instructions: string[];
+    undesiredTags: string[];
+    undesiredInstructions: string[];
+    omitCharacterUndesiredTags: string[];
+  }>;
   basePresets: Array<{
     id: string;
     label: string;
     description: string;
     subjectTags: Record<PromptSubject, string[]>;
     tags: string[];
+    instructions: string[];
   }>;
 };
 
 type CharacterConfig = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   characterId: string;
   order: number;
   subject: PromptSubject;
   accent: string;
+  referenceImages: Array<{
+    id: string;
+    label: string;
+    path: string;
+  }>;
   defaultLookId: string;
   looks: Array<{
     id: string;
     label: string;
     layer?: PromptLayer;
     identityTags: string[];
+    identityInstructions: string[];
     outfitTags: string[];
+    outfitInstructions: string[];
     fullBodyOnlyTags: string[];
+    fullBodyOnlyInstructions: string[];
     characterUndesiredTags: string[];
+    characterUndesiredInstructions: string[];
+    inpaintTasks: Array<{
+      id: string;
+      label: string;
+      description: string;
+      tags: string[];
+      instructions: string[];
+    }>;
     defaultSituationId: string;
     situations: Array<{
       id: string;
@@ -60,7 +96,10 @@ type CharacterConfig = {
       expressionId?: string;
       basePresetId: string;
       tags: string[];
+      instructions: string[];
       undesiredTags: string[];
+      undesiredInstructions: string[];
+      omitCharacterUndesiredTags: string[];
     }>;
   }>;
 };
@@ -74,6 +113,11 @@ const rawDefaults = import.meta.glob(
 
 const rawCharacters = import.meta.glob(
   "../../prompt-config/novelai-v45/characters/*.json",
+  { eager: true, query: "?raw", import: "default" },
+) as Record<string, string>;
+
+const rawRegistry = import.meta.glob(
+  "../../prompt-config/novelai-v45/tag-registry.json",
   { eager: true, query: "?raw", import: "default" },
 ) as Record<string, string>;
 
@@ -133,9 +177,14 @@ function numberAt(value: unknown, source: string, path: string): number {
   return value;
 }
 
-function schemaVersionAt(value: unknown, source: string): 1 {
+function schemaVersionOneAt(value: unknown, source: string): 1 {
   if (value !== 1) return fail(source, "$.schemaVersion", "expected schema version 1");
-  return 1;
+  return value;
+}
+
+function schemaVersionTwoAt(value: unknown, source: string): 2 {
+  if (value !== 2) return fail(source, "$.schemaVersion", "expected schema version 2");
+  return value;
 }
 
 function stringArrayAt(
@@ -158,12 +207,96 @@ function stringArrayAt(
   });
 }
 
+function instructionArrayAt(
+  value: unknown,
+  source: string,
+  path: string,
+  options: { allowEmpty?: boolean } = {},
+): string[] {
+  return stringArrayAt(value, source, path, options).map((instruction, index) => {
+    const itemPath = `${path}[${index}]`;
+    if (!/^[A-Z]/.test(instruction)) {
+      fail(source, itemPath, "natural-language instructions must start with an uppercase letter");
+    }
+    if (!/[.!?]$/.test(instruction)) {
+      fail(source, itemPath, "natural-language instructions must end with punctuation");
+    }
+    return instruction;
+  });
+}
+
+function tagArrayAt(
+  value: unknown,
+  source: string,
+  path: string,
+  registry: PromptTagRegistry,
+  options: { allowEmpty?: boolean } = {},
+): string[] {
+  const items = stringArrayAt(value, source, path, options);
+  const registeredTags = new Set(registry.tags.map(({ tag }) => tag));
+  items.forEach((item, index) => {
+    let tags: string[];
+    try {
+      tags = promptTagNames(item);
+    } catch (error) {
+      fail(source, `${path}[${index}]`, error instanceof Error ? error.message : String(error));
+    }
+    for (const tag of tags) {
+      if (!registeredTags.has(tag)) {
+        fail(
+          source,
+          `${path}[${index}]`,
+          `unregistered tag ${JSON.stringify(tag)}; verify it and add it to tag-registry.json or move it to an instructions field`,
+        );
+      }
+    }
+  });
+  return items;
+}
+
 function uniqueId(id: string, seen: Set<string>, source: string, path: string): void {
   if (seen.has(id)) fail(source, path, `duplicate id ${JSON.stringify(id)}`);
   seen.add(id);
 }
 
-function parseDefaults(raw: string, source: string): DefaultsConfig {
+function parseTagRegistry(raw: string, source: string): PromptTagRegistry {
+  const root = objectAt(parseJson(raw, source), source, "$");
+  schemaVersionOneAt(root.schemaVersion, source);
+  const sourceValues = arrayAt(root.sources, source, "$.sources");
+  const sourceIds = new Set<string>();
+  const sources = sourceValues.map((value, index) => {
+    const path = `$.sources[${index}]`;
+    const entry = objectAt(value, source, path);
+    const id = stringAt(entry.id, source, `${path}.id`);
+    uniqueId(id, sourceIds, source, `${path}.id`);
+    return {
+      id,
+      label: stringAt(entry.label, source, `${path}.label`),
+      url: stringAt(entry.url, source, `${path}.url`),
+      checkedAt: stringAt(entry.checkedAt, source, `${path}.checkedAt`),
+      description: stringAt(entry.description, source, `${path}.description`),
+    };
+  });
+  if (!sources.length) fail(source, "$.sources", "expected at least one source");
+
+  const tagValues = arrayAt(root.tags, source, "$.tags");
+  const seenTags = new Set<string>();
+  const tags = tagValues.map((value, index) => {
+    const path = `$.tags[${index}]`;
+    const entry = objectAt(value, source, path);
+    const tag = stringAt(entry.tag, source, `${path}.tag`);
+    uniqueId(tag, seenTags, source, `${path}.tag`);
+    const sourceId = stringAt(entry.sourceId, source, `${path}.sourceId`);
+    if (!sourceIds.has(sourceId)) {
+      fail(source, `${path}.sourceId`, `unknown source id ${JSON.stringify(sourceId)}`);
+    }
+    return { tag, sourceId };
+  });
+  if (!tags.length) fail(source, "$.tags", "expected at least one verified tag");
+  return { sources, tags };
+}
+
+function parseDefaults(raw: string, source: string, registry: PromptTagRegistry): DefaultsConfig {
   const root = objectAt(parseJson(raw, source), source, "$");
   const settings = objectAt(root.settings, source, "$.settings");
   const basePresetValues = arrayAt(root.basePresets, source, "$.basePresets");
@@ -181,15 +314,75 @@ function parseDefaults(raw: string, source: string): DefaultsConfig {
       label: stringAt(preset.label, source, `${path}.label`),
       description: stringAt(preset.description, source, `${path}.description`),
       subjectTags: {
-        female: stringArrayAt(subjectTags.female, source, `${path}.subjectTags.female`),
-        male: stringArrayAt(subjectTags.male, source, `${path}.subjectTags.male`),
+        female: tagArrayAt(subjectTags.female, source, `${path}.subjectTags.female`, registry),
+        male: tagArrayAt(subjectTags.male, source, `${path}.subjectTags.male`, registry),
       },
-      tags: stringArrayAt(preset.tags, source, `${path}.tags`),
+      tags: tagArrayAt(preset.tags, source, `${path}.tags`, registry),
+      instructions: instructionArrayAt(
+        preset.instructions,
+        source,
+        `${path}.instructions`,
+        { allowEmpty: true },
+      ),
+    };
+  });
+
+  const commonSituationValues = root.commonSituations === undefined
+    ? []
+    : arrayAt(root.commonSituations, source, "$.commonSituations");
+  const commonSituationIds = new Set<string>();
+  const commonSituations = commonSituationValues.map((value, index) => {
+    const path = `$.commonSituations[${index}]`;
+    const situation = objectAt(value, source, path);
+    const id = stringAt(situation.id, source, `${path}.id`);
+    uniqueId(id, commonSituationIds, source, `${path}.id`);
+    const basePresetId = stringAt(situation.basePresetId, source, `${path}.basePresetId`);
+    if (!presetIds.has(basePresetId)) {
+      fail(source, `${path}.basePresetId`, `unknown base preset ${JSON.stringify(basePresetId)}`);
+    }
+    return {
+      id,
+      label: stringAt(situation.label, source, `${path}.label`),
+      description: optionalStringAt(situation.description, source, `${path}.description`),
+      basePresetId,
+      tags: tagArrayAt(situation.tags, source, `${path}.tags`, registry, { allowEmpty: true }),
+      instructions: instructionArrayAt(
+        situation.instructions,
+        source,
+        `${path}.instructions`,
+        { allowEmpty: true },
+      ),
+      undesiredTags: situation.undesiredTags === undefined
+        ? []
+        : tagArrayAt(
+            situation.undesiredTags,
+            source,
+            `${path}.undesiredTags`,
+            registry,
+            { allowEmpty: true },
+          ),
+      undesiredInstructions: situation.undesiredInstructions === undefined
+        ? []
+        : instructionArrayAt(
+            situation.undesiredInstructions,
+            source,
+            `${path}.undesiredInstructions`,
+            { allowEmpty: true },
+          ),
+      omitCharacterUndesiredTags: situation.omitCharacterUndesiredTags === undefined
+        ? []
+        : tagArrayAt(
+            situation.omitCharacterUndesiredTags,
+            source,
+            `${path}.omitCharacterUndesiredTags`,
+            registry,
+            { allowEmpty: true },
+          ),
     };
   });
 
   return {
-    schemaVersion: schemaVersionAt(root.schemaVersion, source),
+    schemaVersion: schemaVersionTwoAt(root.schemaVersion, source),
     model: stringAt(root.model, source, "$.model"),
     settings: {
       qualityTags: booleanAt(settings.qualityTags, source, "$.settings.qualityTags"),
@@ -197,10 +390,25 @@ function parseDefaults(raw: string, source: string): DefaultsConfig {
       guidance: stringAt(settings.guidance, source, "$.settings.guidance"),
       steps: stringAt(settings.steps, source, "$.settings.steps"),
       samplers: stringArrayAt(settings.samplers, source, "$.settings.samplers"),
+      variety: booleanAt(settings.variety, source, "$.settings.variety"),
+      noiseSchedule: stringAt(settings.noiseSchedule, source, "$.settings.noiseSchedule"),
+      promptGuidanceRescale: stringAt(
+        settings.promptGuidanceRescale,
+        source,
+        "$.settings.promptGuidanceRescale",
+      ),
     },
-    styleTags: stringArrayAt(root.styleTags, source, "$.styleTags"),
-    manualQualityTags: stringArrayAt(root.manualQualityTags, source, "$.manualQualityTags"),
-    sharedUndesiredTags: stringArrayAt(root.sharedUndesiredTags, source, "$.sharedUndesiredTags"),
+    styleTags: tagArrayAt(root.styleTags, source, "$.styleTags", registry),
+    styleInstructions: instructionArrayAt(root.styleInstructions, source, "$.styleInstructions"),
+    manualQualityTags: tagArrayAt(root.manualQualityTags, source, "$.manualQualityTags", registry),
+    sharedUndesiredTags: tagArrayAt(root.sharedUndesiredTags, source, "$.sharedUndesiredTags", registry),
+    sharedUndesiredInstructions: instructionArrayAt(
+      root.sharedUndesiredInstructions,
+      source,
+      "$.sharedUndesiredInstructions",
+      { allowEmpty: true },
+    ),
+    commonSituations,
     basePresets,
   };
 }
@@ -220,8 +428,31 @@ function promptLayerAt(value: unknown, source: string, path: string): PromptLaye
   return value;
 }
 
-function parseCharacter(raw: string, source: string): SourcedCharacterConfig {
+function parseCharacter(
+  raw: string,
+  source: string,
+  registry: PromptTagRegistry,
+): SourcedCharacterConfig {
   const root = objectAt(parseJson(raw, source), source, "$");
+  const referenceImageValues = root.referenceImages === undefined
+    ? []
+    : arrayAt(root.referenceImages, source, "$.referenceImages");
+  const referenceImageIds = new Set<string>();
+  const referenceImages = referenceImageValues.map((value, index) => {
+    const path = `$.referenceImages[${index}]`;
+    const image = objectAt(value, source, path);
+    const id = stringAt(image.id, source, `${path}.id`);
+    uniqueId(id, referenceImageIds, source, `${path}.id`);
+    const imagePath = stringAt(image.path, source, `${path}.path`);
+    if (!/^assets\/concept-art\/[a-z0-9][a-z0-9-]*\.png$/.test(imagePath)) {
+      fail(source, `${path}.path`, "expected an assets/concept-art/<kebab-case>.png path");
+    }
+    return {
+      id,
+      label: stringAt(image.label, source, `${path}.label`),
+      path: imagePath,
+    };
+  });
   const lookValues = arrayAt(root.looks, source, "$.looks");
   if (!lookValues.length) fail(source, "$.looks", "expected at least one look");
 
@@ -248,10 +479,62 @@ function parseCharacter(raw: string, source: string): SourcedCharacterConfig {
         description: optionalStringAt(situation.description, source, `${path}.description`),
         expressionId: optionalStringAt(situation.expressionId, source, `${path}.expressionId`),
         basePresetId: stringAt(situation.basePresetId, source, `${path}.basePresetId`),
-        tags: stringArrayAt(situation.tags, source, `${path}.tags`),
+        tags: tagArrayAt(situation.tags, source, `${path}.tags`, registry, { allowEmpty: true }),
+        instructions: instructionArrayAt(
+          situation.instructions,
+          source,
+          `${path}.instructions`,
+          { allowEmpty: true },
+        ),
         undesiredTags: situation.undesiredTags === undefined
           ? []
-          : stringArrayAt(situation.undesiredTags, source, `${path}.undesiredTags`, { allowEmpty: true }),
+          : tagArrayAt(
+              situation.undesiredTags,
+              source,
+              `${path}.undesiredTags`,
+              registry,
+              { allowEmpty: true },
+            ),
+        undesiredInstructions: situation.undesiredInstructions === undefined
+          ? []
+          : instructionArrayAt(
+              situation.undesiredInstructions,
+              source,
+              `${path}.undesiredInstructions`,
+              { allowEmpty: true },
+            ),
+        omitCharacterUndesiredTags: situation.omitCharacterUndesiredTags === undefined
+          ? []
+          : tagArrayAt(
+              situation.omitCharacterUndesiredTags,
+              source,
+              `${path}.omitCharacterUndesiredTags`,
+              registry,
+              { allowEmpty: true },
+            ),
+      };
+    });
+
+    const inpaintTaskValues = look.inpaintTasks === undefined
+      ? []
+      : arrayAt(look.inpaintTasks, source, `${lookPath}.inpaintTasks`);
+    const inpaintTaskIds = new Set<string>();
+    const inpaintTasks = inpaintTaskValues.map((taskValue, taskIndex) => {
+      const path = `${lookPath}.inpaintTasks[${taskIndex}]`;
+      const task = objectAt(taskValue, source, path);
+      const taskId = stringAt(task.id, source, `${path}.id`);
+      uniqueId(taskId, inpaintTaskIds, source, `${path}.id`);
+      return {
+        id: taskId,
+        label: stringAt(task.label, source, `${path}.label`),
+        description: stringAt(task.description, source, `${path}.description`),
+        tags: tagArrayAt(task.tags, source, `${path}.tags`, registry, { allowEmpty: true }),
+        instructions: instructionArrayAt(
+          task.instructions,
+          source,
+          `${path}.instructions`,
+          { allowEmpty: true },
+        ),
       };
     });
 
@@ -272,17 +555,51 @@ function parseCharacter(raw: string, source: string): SourcedCharacterConfig {
       id,
       label: stringAt(look.label, source, `${lookPath}.label`),
       layer: promptLayerAt(look.layer, source, `${lookPath}.layer`),
-      identityTags: stringArrayAt(look.identityTags, source, `${lookPath}.identityTags`),
-      outfitTags: stringArrayAt(look.outfitTags, source, `${lookPath}.outfitTags`),
+      identityTags: tagArrayAt(look.identityTags, source, `${lookPath}.identityTags`, registry),
+      identityInstructions: instructionArrayAt(
+        look.identityInstructions,
+        source,
+        `${lookPath}.identityInstructions`,
+        { allowEmpty: true },
+      ),
+      outfitTags: tagArrayAt(look.outfitTags, source, `${lookPath}.outfitTags`, registry),
+      outfitInstructions: instructionArrayAt(
+        look.outfitInstructions,
+        source,
+        `${lookPath}.outfitInstructions`,
+        { allowEmpty: true },
+      ),
       fullBodyOnlyTags: look.fullBodyOnlyTags === undefined
         ? []
-        : stringArrayAt(look.fullBodyOnlyTags, source, `${lookPath}.fullBodyOnlyTags`, { allowEmpty: true }),
-      characterUndesiredTags: stringArrayAt(
+        : tagArrayAt(
+            look.fullBodyOnlyTags,
+            source,
+            `${lookPath}.fullBodyOnlyTags`,
+            registry,
+            { allowEmpty: true },
+          ),
+      fullBodyOnlyInstructions: look.fullBodyOnlyInstructions === undefined
+        ? []
+        : instructionArrayAt(
+            look.fullBodyOnlyInstructions,
+            source,
+            `${lookPath}.fullBodyOnlyInstructions`,
+            { allowEmpty: true },
+          ),
+      characterUndesiredTags: tagArrayAt(
         look.characterUndesiredTags,
         source,
         `${lookPath}.characterUndesiredTags`,
+        registry,
         { allowEmpty: true },
       ),
+      characterUndesiredInstructions: instructionArrayAt(
+        look.characterUndesiredInstructions,
+        source,
+        `${lookPath}.characterUndesiredInstructions`,
+        { allowEmpty: true },
+      ),
+      inpaintTasks,
       defaultSituationId,
       situations,
     };
@@ -294,11 +611,12 @@ function parseCharacter(raw: string, source: string): SourcedCharacterConfig {
   }
 
   return {
-    schemaVersion: schemaVersionAt(root.schemaVersion, source),
+    schemaVersion: schemaVersionTwoAt(root.schemaVersion, source),
     characterId: stringAt(root.characterId, source, "$.characterId"),
     order: numberAt(root.order, source, "$.order"),
     subject: promptSubjectAt(root.subject, source, "$.subject"),
     accent: stringAt(root.accent, source, "$.accent"),
+    referenceImages,
     defaultLookId,
     looks,
     source: sourceName(source),
@@ -324,10 +642,18 @@ function validateCharacterReferences(
   config: SourcedCharacterConfig,
   metadata: RuntimeCharacterMetadata,
   formatIds: Set<string>,
+  commonSituationIds: Set<string>,
 ): void {
   config.looks.forEach((look, lookIndex) => {
     look.situations.forEach((situation, situationIndex) => {
       const path = `$.looks[${lookIndex}].situations[${situationIndex}]`;
+      if (commonSituationIds.has(situation.id)) {
+        fail(
+          config.source,
+          `${path}.id`,
+          `situation id ${JSON.stringify(situation.id)} conflicts with a common situation`,
+        );
+      }
       if (!formatIds.has(situation.basePresetId)) {
         fail(
           config.source,
@@ -356,27 +682,58 @@ function validateCharacterReferences(
   });
 }
 
-function normalizeVariant(config: SourcedCharacterConfig, look: CharacterConfig["looks"][number]): PromptVariant {
+function normalizeSituation(
+  situation: CharacterConfig["looks"][number]["situations"][number] | DefaultsConfig["commonSituations"][number],
+  source: string,
+): PromptSituation {
+  return {
+    id: situation.id,
+    label: situation.label,
+    description: situation.description,
+    expressionId: "expressionId" in situation ? situation.expressionId : undefined,
+    basePresetId: situation.basePresetId,
+    tags: [...situation.tags],
+    instructions: [...situation.instructions],
+    undesiredTags: [...situation.undesiredTags],
+    undesiredInstructions: [...situation.undesiredInstructions],
+    omitCharacterUndesiredTags: [...situation.omitCharacterUndesiredTags],
+    source,
+  };
+}
+
+function normalizeVariant(
+  config: SourcedCharacterConfig,
+  look: CharacterConfig["looks"][number],
+  commonSituations: DefaultsConfig["commonSituations"],
+  defaultsSource: string,
+): PromptVariant {
   return {
     id: look.id,
     label: look.label,
     layer: look.layer,
     identityTags: [...look.identityTags],
+    identityInstructions: [...look.identityInstructions],
     defaultOutfitId: "default",
-    outfits: [{ id: "default", label: "기본 의상", tags: [...look.outfitTags] }],
+    outfits: [{
+      id: "default",
+      label: "기본 의상",
+      tags: [...look.outfitTags],
+      instructions: [...look.outfitInstructions],
+    }],
     fullBodyOnlyTags: [...look.fullBodyOnlyTags],
+    fullBodyOnlyInstructions: [...look.fullBodyOnlyInstructions],
     characterUndesiredTags: [...look.characterUndesiredTags],
-    defaultSituationId: look.defaultSituationId,
-    situations: look.situations.map((situation) => ({
-      id: situation.id,
-      label: situation.label,
-      description: situation.description,
-      expressionId: situation.expressionId,
-      basePresetId: situation.basePresetId,
-      tags: [...situation.tags],
-      undesiredTags: [...situation.undesiredTags],
-      source: config.source,
+    characterUndesiredInstructions: [...look.characterUndesiredInstructions],
+    inpaintTasks: look.inpaintTasks.map((task) => ({
+      ...task,
+      tags: [...task.tags],
+      instructions: [...task.instructions],
     })),
+    defaultSituationId: look.defaultSituationId,
+    situations: [
+      ...look.situations.map((situation) => normalizeSituation(situation, config.source)),
+      ...commonSituations.map((situation) => normalizeSituation(situation, defaultsSource)),
+    ],
     source: config.source,
   };
 }
@@ -384,6 +741,8 @@ function normalizeVariant(config: SourcedCharacterConfig, look: CharacterConfig[
 function normalizeCharacter(
   config: SourcedCharacterConfig,
   metadata: RuntimeCharacterMetadata,
+  commonSituations: DefaultsConfig["commonSituations"],
+  defaultsSource: string,
 ): PromptCharacter {
   return {
     id: config.characterId,
@@ -393,11 +752,14 @@ function normalizeCharacter(
     role: metadata.role,
     narrativeRole: metadata.narrative_role,
     conceptArt: metadata.visual?.concept_art,
+    referenceImages: config.referenceImages.map((image) => ({ ...image })),
     palette: [...(metadata.visual?.palette || [])],
     accent: config.accent,
     subject: config.subject,
     defaultVariantId: config.defaultLookId,
-    variants: config.looks.map((look) => normalizeVariant(config, look)),
+    variants: config.looks.map((look) => (
+      normalizeVariant(config, look, commonSituations, defaultsSource)
+    )),
     source: config.source,
   };
 }
@@ -406,6 +768,17 @@ export function parsePromptCatalog(
   files: RawPromptFiles,
   runtime: PromptRuntimeMetadata,
 ): PromptCatalog {
+  const registryEntries = Object.entries(files.registry);
+  if (registryEntries.length !== 1) {
+    fail(
+      "prompt-config/novelai-v45/tag-registry.json",
+      "$",
+      `expected exactly one tag registry file, found ${registryEntries.length}`,
+    );
+  }
+  const [rawRegistrySource, registryRaw] = registryEntries[0];
+  const registry = parseTagRegistry(registryRaw, sourceName(rawRegistrySource));
+
   const defaultsEntries = Object.entries(files.defaults);
   if (defaultsEntries.length !== 1) {
     fail(
@@ -417,8 +790,9 @@ export function parsePromptCatalog(
 
   const [rawDefaultsSource, defaultsRaw] = defaultsEntries[0];
   const defaultsSource = sourceName(rawDefaultsSource);
-  const defaults = parseDefaults(defaultsRaw, defaultsSource);
+  const defaults = parseDefaults(defaultsRaw, defaultsSource, registry);
   const formatIds = new Set(defaults.basePresets.map((preset) => preset.id));
+  const commonSituationIds = new Set(defaults.commonSituations.map(({ id }) => id));
 
   const characterEntries = Object.entries(files.characters)
     .sort(([left], [right]) => left.localeCompare(right));
@@ -428,11 +802,11 @@ export function parsePromptCatalog(
 
   const characterIds = new Set<string>();
   const characters = characterEntries.map(([source, raw]) => {
-    const config = parseCharacter(raw, source);
+    const config = parseCharacter(raw, source, registry);
     uniqueId(config.characterId, characterIds, config.source, "$.characterId");
     const metadata = runtimeCharacter(runtime, config);
-    validateCharacterReferences(config, metadata, formatIds);
-    return normalizeCharacter(config, metadata);
+    validateCharacterReferences(config, metadata, formatIds, commonSituationIds);
+    return normalizeCharacter(config, metadata, defaults.commonSituations, defaultsSource);
   }).sort((left, right) => left.order - right.order || left.id.localeCompare(right.id));
   const characterOrders = new Set<number>();
   characters.forEach((character) => {
@@ -451,6 +825,7 @@ export function parsePromptCatalog(
       male: [...preset.subjectTags.male],
     },
     tags: [...preset.tags],
+    instructions: [...preset.instructions],
     source: defaultsSource,
   }));
 
@@ -463,19 +838,28 @@ export function parsePromptCatalog(
       guidance: defaults.settings.guidance,
       steps: defaults.settings.steps,
       samplers: [...defaults.settings.samplers],
+      variety: defaults.settings.variety,
+      noiseSchedule: defaults.settings.noiseSchedule,
+      promptGuidanceRescale: defaults.settings.promptGuidanceRescale,
     },
     formats,
+    commonSituations: defaults.commonSituations.map((situation) => (
+      normalizeSituation(situation, defaultsSource)
+    )),
     characters,
     styleTags: [...defaults.styleTags],
+    styleInstructions: [...defaults.styleInstructions],
     manualQualityTags: [...defaults.manualQualityTags],
     sharedUndesiredTags: [...defaults.sharedUndesiredTags],
+    sharedUndesiredInstructions: [...defaults.sharedUndesiredInstructions],
+    tagRegistry: registry,
     source: defaultsSource,
   };
 }
 
 export function loadPromptCatalog(): PromptCatalog {
   return parsePromptCatalog(
-    { defaults: rawDefaults, characters: rawCharacters },
+    { defaults: rawDefaults, characters: rawCharacters, registry: rawRegistry },
     runtimeJson as unknown as PromptRuntimeMetadata,
   );
 }

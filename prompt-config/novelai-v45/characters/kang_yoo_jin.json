@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "characterId": "kang_yoo_jin",
   "order": 30,
   "subject": "female",
@@ -10,61 +10,105 @@
       "id": "office",
       "label": "기본 오피스",
       "identityTags": [
-        "adult",
-        "high dark brown ponytail",
-        "large upturned teal eyes",
-        "soft oval face",
+        "brown hair",
+        "long hair",
+        "high ponytail",
+        "pink eyes",
         "long eyelashes",
-        "small nose",
-        "soft full lips",
-        "lively face",
-        "shoulder-length hair tied high",
-        "expressive eyebrows",
         "curvy",
-        "1.3::narrow waist::",
-        "1.2::wide hips::",
-        "1.2::long legs::",
+        "narrow waist",
+        "wide hips",
+        "long legs",
         "slim legs",
-        "1.3::huge breasts::",
+        "1.1::medium breasts::",
         "breasts"
       ],
+      "identityInstructions": [
+        "She is a youthful twenty-nine-year-old adult Korean woman with long dark-brown hair in a high ponytail and soft curved side strands.",
+        "Use large upturned eyes with vivid clear rose-pink irises, dark pupils, catchlights, and white sclera; add a tapered oval face, small nose, soft full lips, small chin, and expressive brows.",
+        "Use a balanced curvy hourglass with a narrow waist, full hips, long slim legs, and a medium-full proportionate bust; keep shoulders, ribcage, torso, spine, and joints anatomical.",
+        "Use crisp dark lines, soft cel shading, luminous skin, restrained highlights, and clean contemporary visual-novel character rendering."
+      ],
       "outfitTags": [
-        "fitted cobalt blue button-up shirt",
-        "rolled-up sleeves",
-        "high-waisted light gray wide-leg trousers",
-        "geometric earrings",
-        "cobalt employee lanyard",
-        "tablet",
+        "shirt",
+        "white shirt",
+        "collared shirt",
+        "pants",
+        "grey pants",
+        "lanyard",
         "stylus"
       ],
-      "fullBodyOnlyTags": ["neat loafers"],
+      "outfitInstructions": [
+        "Dress her in a fitted pure-white button-up shirt with rolled sleeves and high-waisted light-gray wide-leg trousers; keep the shirt neutral white without blue, gray, cream, beige, or colored tint.",
+        "Add a cobalt employee lanyard, a slim tablet, and a stylus."
+      ],
+      "fullBodyOnlyTags": ["loafers"],
+      "fullBodyOnlyInstructions": ["Use neat low-profile loafers."],
       "characterUndesiredTags": [
         "child",
         "loli",
-        "middle-aged woman",
-        "muscular woman",
+        "old woman",
+        "muscular",
         "ribs",
+        "huge breasts",
         "slouching",
         "shy",
-        "blushing",
+        "blush",
         "flat chest",
         "small breasts",
         "bob cut",
         "low ponytail",
-        "black business suit",
         "pencil skirt",
         "miniskirt",
-        "high heels"
+        "high heels",
+        "blue shirt",
+        "aqua eyes",
+        "black eyes"
+      ],
+      "characterUndesiredInstructions": [
+        "Childlike or middle-aged facial traits, wrinkles, eye bags, a square jaw, heavy makeup, or a dull expression.",
+        "Breasts larger than her head, a fused bust, an impossible waist, a broken spine, fragile anatomy, distorted joints, or a sexualized pose.",
+        "Blue, gray, cream, beige, off-white, or tinted shirt fabric; a black business suit; a low ponytail; timid posing; or glossy 3D and photorealistic skin."
+      ],
+      "inpaintTasks": [
+        {
+          "id": "left_smile_dimple",
+          "label": "후보 A 확정 · 왼쪽 보조개 Inpaint",
+          "description": "Focused Inpainting에서 얼굴 아래쪽을 선택한 뒤 왼쪽 입꼬리 바로 옆 볼만 보조개보다 조금 넓게 마스킹합니다. 원본 얼굴이 잘 보이도록 Strength 0.75–0.9에서 시작합니다.",
+          "tags": ["smile", "closed mouth"],
+          "instructions": ["Create 1.5::exactly one clearly visible shallow smile dimple at the center of the masked left cheek beside the mouth corner::. Preserve the lips, jawline, skin tone, and unmasked face."]
+        },
+        {
+          "id": "natural_cupids_bow",
+          "label": "후보 B 확정 · 큐피드 보우 입술 Inpaint",
+          "description": "Focused Inpainting에서 입술 전체와 바로 주변의 좁은 피부 여백만 마스킹합니다. 입술 밖 얼굴이 변하지 않도록 Strength 0.65–0.8에서 시작합니다.",
+          "tags": ["closed mouth"],
+          "instructions": ["Shape the masked lips into 1.5::a clearly visible natural Cupid's bow with two crisp symmetric upper-lip peaks and a centered dip::. Keep the lower lip softly full and preserve the surrounding face."]
+        }
       ],
       "defaultSituationId": "reference_fact_check",
       "situations": [
         {
           "id": "reference_fact_check",
-          "label": "기본 사실 확인",
-          "description": "태블릿 기록을 보며 오류를 짚는 기본 자세입니다.",
+          "label": "기본 로비 자신감",
+          "description": "윤서아·차민경 원화와 같은 구도에서 밝고 자신감 있는 기본 인상을 확인합니다.",
           "expressionId": "actual_fact_check",
-          "basePresetId": "sprite_full_body",
-          "tags": ["holding a tablet and stylus", "upright posture", "one eyebrow raised", "skeptical expression", "looking at the tablet"]
+          "basePresetId": "character_upper_body",
+          "tags": ["standing", "holding", "stylus", "smile", "closed mouth", "looking at viewer"],
+          "instructions": ["Hold the tablet and stylus at waist level with relaxed shoulders, even eyebrows, a soft confident closed-mouth smile, and a direct friendly gaze."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
+        },
+        {
+          "id": "reference_asymmetric_eye_smile",
+          "label": "외모 후보 C · 눈웃음과 입꼬리",
+          "description": "볼과 아래 눈꺼풀, 살짝 비대칭인 입꼬리로 생기 있는 눈웃음을 만드는 후보입니다.",
+          "expressionId": "actual_fact_check",
+          "basePresetId": "character_upper_body",
+          "tags": ["standing", "holding", "stylus", "smile", "half-closed eyes", "closed mouth", "looking at viewer"],
+          "instructions": ["Hold her tablet and stylus at her waist.", "Use crescent-shaped smiling eyes, raised cheeks, a sliver of each rose-pink iris, and upturned mouth corners with the left slightly higher."],
+          "undesiredTags": [],
+          "undesiredInstructions": ["Staring eyes, deep smile lines, crooked jaw, or exaggerated smirk."]
         },
         {
           "id": "design_fact_check",
@@ -72,7 +116,10 @@
           "description": "발표 자료의 날짜·출처·담당자를 확인합니다.",
           "expressionId": "actual_fact_check",
           "basePresetId": "design_review",
-          "tags": ["holding a tablet", "pointing at one line with a stylus", "one eyebrow raised", "focused skeptical expression", "looking at the presentation screen"]
+          "tags": ["holding", "pointing", "stylus", "raised eyebrow", "looking at object"],
+          "instructions": ["Hold a tablet and point the stylus at one line while looking at the presentation screen with focused skepticism."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "direct_warning",
@@ -80,7 +127,10 @@
           "description": "모호하게 웃지 않고 경고 문장을 분명히 전달합니다.",
           "expressionId": "actual_warning",
           "basePresetId": "meeting_room",
-          "tags": ["holding the tablet at her side", "firm upright stance", "stern expression", "direct gaze", "pointing once with the stylus"]
+          "tags": ["standing", "serious", "looking at viewer", "pointing", "stylus"],
+          "instructions": ["Hold the tablet at her side with a firm upright stance and point once with the stylus while delivering a direct warning."],
+          "undesiredTags": ["smile"],
+          "undesiredInstructions": []
         },
         {
           "id": "procedural_record",
@@ -88,7 +138,10 @@
           "description": "감정 표현보다 기록 작성에 집중합니다.",
           "expressionId": "actual_procedural",
           "basePresetId": "office_desk",
-          "tags": ["writing on the tablet with a stylus", "focused", "closed mouth", "looking down at the record", "upright seated posture"]
+          "tags": ["sitting", "writing", "stylus", "closed mouth", "looking at object"],
+          "instructions": ["Write on the tablet with the stylus in a focused upright seated posture while looking down at the record."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "worn_down_after_report",
@@ -96,7 +149,10 @@
           "description": "자신감은 남아 있지만 반복된 묵살로 지쳐 있습니다.",
           "expressionId": "actual_worn_down",
           "basePresetId": "office_desk",
-          "tags": ["holding the tablet against her side", "tired eyes", "restrained expression", "upright posture", "looking away"]
+          "tags": ["standing", "holding", "looking to the side"],
+          "instructions": ["Hold the tablet against her side with tired eyes, a restrained expression, and an upright posture."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "perceived_bold_flirt",
@@ -104,7 +160,10 @@
           "description": "정면 경고를 자신과 대등한 호감 표현으로 오해합니다.",
           "expressionId": "subjective_bold_flirt",
           "basePresetId": "design_review",
-          "tags": ["bold confident smile", "direct gaze", "one eyebrow raised", "holding a stylus near her shoulder", "upright posture"]
+          "tags": ["smile", "looking at viewer", "raised eyebrow", "holding", "stylus", "standing"],
+          "instructions": ["Use a bold confident smile, a direct gaze, and an upright posture while holding the stylus near her shoulder."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         }
       ]
     }

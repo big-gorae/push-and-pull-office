@@ -1,78 +1,106 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "characterId": "cha_min_kyung",
   "order": 20,
   "subject": "female",
   "accent": "#a55261",
+  "referenceImages": [
+    {
+      "id": "mole-placement-reference",
+      "label": "점 위치 보강 원화",
+      "path": "assets/concept-art/cha-min-kyung-reference-2.png"
+    }
+  ],
   "defaultLookId": "office",
   "looks": [
     {
       "id": "office",
       "label": "기본 오피스",
       "identityTags": [
-        "adult",
-        "sleek chin-length black bob",
-        "large almond-shaped reddish-brown eyes",
-        "small oval face",
+        "black hair",
+        "bob cut",
+        "short hair",
+        "brown eyes",
         "long eyelashes",
-        "pale skin",
-        "small nose",
-        "soft full lips",
-        "subtle makeup",
+        "makeup",
+        "lipstick",
         "1.35::mole under eye::",
-        "One tiny dark beauty mark sits just below the outer corner of her left eye above the cheekbone.",
         "1.35::mole on collarbone::",
-        "A second tiny dark beauty mark sits at the left base of her neck, just below the collarbone on her upper chest.",
-        "hair tucked behind one ear",
-        "delicate v-shaped jawline",
-        "fine straight eyebrows",
-        "tall woman",
-        "slender curvy build",
+        "tall female",
         "narrow waist",
-        "1.2::large breasts::",
+        "1.25::large breasts::",
+        "cleavage",
         "breasts"
       ],
+      "identityInstructions": [
+        "Adult Korean woman, 28, with a sleek chin-length black bob tucked behind one ear, large almond-shaped reddish-brown eyes, a small oval face, pale skin, a small nose, soft full lips, a delicate V-shaped jawline, fine straight eyebrows, and a slender gently curving build.",
+        "One tiny dark beauty mark sits below the outer corner of her left eye; another sits at the left base of her neck just below the collarbone.",
+        "Give her full large breasts balanced to her adult frame, naturally close-set without merging, with rounded outer and lower contours."
+      ],
       "outfitTags": [
-        "charcoal tailored blazer",
-        "burgundy silk blouse",
+        "blazer",
+        "open jacket",
+        "blouse",
         "v-neck",
         "collarbone",
-        "black tailored slacks",
-        "thin metal earrings",
-        "subtle burgundy lipstick",
-        "metal pen"
+        "black pants",
+        "earrings",
+        "pen"
       ],
-      "fullBodyOnlyTags": ["black low heels"],
+      "outfitInstructions": [
+        "Keep the charcoal blazer open to frame her silhouette. A fitted burgundy silk V-neck blouse follows the bust with gentle tension, showing defined central cleavage and deep soft cel-shaded shadow while keeping the breasts covered. Add black slacks, thin metal earrings, burgundy lipstick, and a metal pen."
+      ],
+      "fullBodyOnlyTags": ["high heels"],
+      "fullBodyOnlyInstructions": ["Use understated black low heels."],
       "characterUndesiredTags": [
         "child",
         "loli",
-        "middle-aged woman",
-        "muscular woman",
+        "old woman",
+        "muscular",
         "petite",
-        "short stature",
-        "round face",
         "long hair",
         "ponytail",
         "blonde hair",
         "blue eyes",
         "shy",
-        "timid",
-        "blushing",
-        "old woman",
-        "wrinkles",
-        "bags under eyes",
-        "narrow eyes",
         "angry",
         "scowl",
         "furrowed brow",
         "v-shaped eyebrows",
         "smirk",
-        "heavy makeup",
+        "bags under eyes",
         "flat chest",
         "small breasts",
         "school uniform",
         "miniskirt",
-        "seductive pose"
+        "seductive smile"
+      ],
+      "characterUndesiredInstructions": [
+        "Middle-aged traits, wrinkles, narrowed eyes, round face, heavy makeup, short stature, timid body language, seductive posing, or misplaced beauty marks.",
+        "Extreme breasts larger than her head, fused breasts, one merged breast mass, flat bust volume, or exposed breasts."
+      ],
+      "inpaintTasks": [
+        {
+          "id": "right_eye_double_moles",
+          "label": "기존 눈물점 옆 두 번째 점 추가",
+          "description": "Focused Inpainting에서 기존 점은 마스크 밖에 두고, 바로 옆 빈 피부에 점보다 조금 넓은 원형 마스크를 만든 뒤 Strength 1로 생성합니다.",
+          "tags": ["1.6::mole under eye::"],
+          "instructions": ["Place one clearly visible small dark-brown circular beauty mark at the center of the masked skin area beside the existing under-eye mark."]
+        },
+        {
+          "id": "lower_neck_mole",
+          "label": "왼쪽 아래 목 점",
+          "description": "목의 왼쪽 아래만 작게 마스킹해 한 번에 한 점만 고칩니다.",
+          "tags": ["1.25::mole on neck::"],
+          "instructions": ["Add exactly one tiny dark beauty mark on the left side of her lower neck while preserving the neck contour and skin tone."]
+        },
+        {
+          "id": "upper_decolletage_mole",
+          "label": "쇄골 아래 중앙 점",
+          "description": "쇄골과 가슴골 사이 중앙만 작게 마스킹합니다.",
+          "tags": ["1.3::mole on collarbone::"],
+          "instructions": ["Add exactly one tiny dark beauty mark at the center of the upper decolletage below the collarbones and above the cleavage."]
+        }
       ],
       "defaultSituationId": "reference_skeptical",
       "situations": [
@@ -82,7 +110,10 @@
           "description": "차갑고 침착하지만 적대적이지 않은 기본 표정입니다.",
           "expressionId": "actual_skeptical",
           "basePresetId": "character_upper_body",
-          "tags": ["holding a metal pen", "upright relaxed posture", "neutral face", "calm eyes", "relaxed eyebrows", "closed mouth", "direct gaze"]
+          "tags": ["standing", "holding", "pen", "closed mouth", "looking at viewer"],
+          "instructions": ["Upright and relaxed, with calm eyes and relaxed eyebrows."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "meeting_fact_check",
@@ -90,7 +121,10 @@
           "description": "회의 자리에서 근거와 발언을 정확히 짚습니다.",
           "expressionId": "actual_skeptical",
           "basePresetId": "meeting_room",
-          "tags": ["holding a metal pen above a closed notebook", "upright relaxed posture", "calm analytical expression", "relaxed eyebrows", "closed mouth", "steady gaze", "looking at someone outside the frame"]
+          "tags": ["holding", "pen", "notebook", "closed mouth", "looking at another"],
+          "instructions": ["Hold the pen above a closed notebook with a calm analytical gaze."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "cold_boundary",
@@ -98,7 +132,10 @@
           "description": "표정을 흐트러뜨리지 않은 채 조용하고 단호하게 거리를 둡니다.",
           "expressionId": "actual_disgust",
           "basePresetId": "meeting_room",
-          "tags": ["standing still", "calm reserved expression", "steady cool gaze", "relaxed eyebrows", "closed mouth", "looking at someone just off camera"]
+          "tags": ["standing", "serious", "closed mouth", "looking at another"],
+          "instructions": ["Steady cool gaze and relaxed jaw, without a scowl or narrowed eyes."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "protect_coworker",
@@ -106,7 +143,10 @@
           "description": "화면 밖의 후배 앞에 서서 접근을 차단합니다.",
           "expressionId": "actual_protective",
           "basePresetId": "office_hallway",
-          "tags": ["stepping in front of a coworker just outside the frame", "firm stance", "calm serious expression", "relaxed mouth", "steady sideways gaze"]
+          "tags": ["standing", "serious", "looking to the side"],
+          "instructions": ["Firm stance in front of an off-frame coworker, with concerned eyes."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "exhausted_alone",
@@ -114,7 +154,10 @@
           "description": "회의가 끝난 뒤에만 굳은 어깨가 내려갑니다.",
           "expressionId": "actual_exhausted",
           "basePresetId": "meeting_room",
-          "tags": ["alone in the meeting room", "holding a closed laptop", "subtle fatigue", "softened gaze", "lowered shoulders", "looking down"]
+          "tags": ["holding", "laptop", "looking down"],
+          "instructions": ["Alone after the meeting with a closed laptop, tired eyes, and lowered shoulders."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "perceived_challenge",
@@ -122,7 +165,10 @@
           "description": "사실 확인 시선을 긴장감을 즐기는 도발로 오해합니다.",
           "expressionId": "subjective_challenging",
           "basePresetId": "meeting_room",
-          "tags": ["subtle confident smile", "calm direct gaze", "relaxed eyebrows", "upright posture", "looking directly at the viewer"]
+          "tags": ["smile", "looking at viewer", "standing"],
+          "instructions": ["Subtle confident smile, calm direct gaze, relaxed eyebrows, and upright posture."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "perceived_jealous",
@@ -130,7 +176,10 @@
           "description": "굳은 표정을 다른 여성을 향한 질투로 오해합니다.",
           "expressionId": "subjective_jealous",
           "basePresetId": "office_hallway",
-          "tags": ["reserved expression", "slightly averted gaze", "relaxed eyebrows", "closed mouth", "arms crossed", "upright posture"]
+          "tags": ["pout", "sideways glance", "closed mouth", "crossed arms", "standing"],
+          "instructions": ["Keep her eyebrows relaxed and her posture upright."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         }
       ]
     }
