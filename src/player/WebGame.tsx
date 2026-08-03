@@ -21,6 +21,7 @@ import {
 import { effectiveSpeaker, resolveDialogueNode } from "../storyLogic";
 import type {
   ChoiceOption,
+  GalleryEntry,
   GameModeId,
   Runtime,
   SelfDevelopmentStat,
@@ -34,6 +35,8 @@ import {
   advanceSession,
   availableTimelineEvents,
   availableOptions,
+  beginSelfDevelopmentNight,
+  consumeChoiceAnalysisHint,
   currentNode,
   finishSelfDevelopmentNight,
   nodeRead,
@@ -42,6 +45,7 @@ import {
   selectOption,
   startGameMode,
   startTimelineEvent,
+  type ChoiceAnalysisHint,
   type PlayerSession,
 } from "./playerRuntime";
 import { resolveModeAccess } from "./gameModes";
@@ -61,6 +65,7 @@ import {
   writeSettings,
   writeSlot,
   type PlayerSettings,
+  type PlayerProfile,
   type ReadableSaveSlot,
   type SaveSlot,
 } from "./playerStorage";
@@ -89,14 +94,16 @@ import "./web-game.css";
 const runtime = runtimeJson as unknown as Runtime;
 const selfDevelopment = selfDevelopmentSystem(runtime);
 const SELF_DEVELOPMENT_STATS: readonly SelfDevelopmentStat[] = [
-  "stamina",
+  "health",
   "appearance",
   "humor",
-  "taste",
+  "intelligence",
 ];
 const assetModules = import.meta.glob([
   "../../assets/backgrounds/*",
   "../../assets/concept-art/*",
+  "../../assets/concept-art-archive/*",
+  "../../assets/gallery/*",
   "!../../assets/concept-art/lineup-*",
 ], {
   eager: true,
@@ -105,7 +112,7 @@ const assetModules = import.meta.glob([
 }) as Record<string, string>;
 
 type Screen = "title" | "new-game" | "game";
-type Overlay = "backlog" | "save" | "load" | "settings" | "menu" | "text-edit" | null;
+type Overlay = "backlog" | "save" | "load" | "gallery" | "settings" | "menu" | "text-edit" | null;
 
 function assetUrl(path?: string): string | undefined {
   if (!path) return undefined;
@@ -188,22 +195,6 @@ function expressionStat(option: ChoiceOption): SelfDevelopmentStat | undefined {
   return stat && SELF_DEVELOPMENT_STATS.includes(stat) ? stat : undefined;
 }
 
-function visibleNightActivities(
-  options: SelfDevelopmentActivityOption[],
-  day: number,
-): SelfDevelopmentActivityOption[] {
-  if (options.length <= 4) return options;
-  const sleep = options.find((option) => option.activity.id === "sleep");
-  const rotating = options.filter((option) => option.activity.id !== "sleep");
-  const offset = rotating.length ? Math.max(0, day - 1) % rotating.length : 0;
-  const ordered = [...rotating.slice(offset), ...rotating.slice(0, offset)];
-  const prioritized = [
-    ...ordered.filter((option) => option.available),
-    ...ordered.filter((option) => !option.available),
-  ];
-  return [...prioritized.slice(0, sleep ? 3 : 4), ...(sleep ? [sleep] : [])];
-}
-
 export function sessionSlot(session: PlayerSession): SaveSlot {
   const node = currentNode(runtime, session);
   const lastTimelineEvent = [...session.timelineLog].reverse().find((entry) => entry.status === "seen");
@@ -249,12 +240,10 @@ export function savePreview(slot: ReadableSaveSlot, i18n: GameLocalizer): { titl
       : undefined;
     const activity = runtime.self_development?.activities.find((candidate) => candidate.id === activityId);
     return {
-      title: i18n.ui(session.nightPhase?.status === "result"
-        ? "selfDevelopment.result"
-        : "selfDevelopment.title"),
+      title: i18n.ui("slot.night"),
       line: activity
         ? selfDevelopmentMessage(i18n, activity.title_key)
-        : i18n.ui("selfDevelopment.subtitle"),
+        : i18n.ui("selfDevelopment.intro"),
     };
   }
   if (preview.kind === "ending") {
@@ -562,11 +551,56 @@ function StoryTextEditor({
   </Modal>;
 }
 
+function galleryEntryUnlocked(entry: GalleryEntry, profile: PlayerProfile): boolean {
+  return entry.default_unlocked === true || profile.memories.includes(entry.unlock_memory);
+}
+
+function GalleryPanel({ profile, i18n }: { profile: PlayerProfile; i18n: GameLocalizer }) {
+  const entries = runtime.gallery?.entries || [];
+  const unlockedEntries = entries.filter((entry) => galleryEntryUnlocked(entry, profile));
+  const [selectedId, setSelectedId] = useState(() => unlockedEntries[0]?.id || "");
+  const selected = unlockedEntries.find((entry) => entry.id === selectedId) || unlockedEntries[0];
+  return <div className="vn-gallery">
+    <div className="vn-gallery-summary">
+      <strong>{i18n.ui("gallery.progress", { unlocked: unlockedEntries.length, total: entries.length })}</strong>
+    </div>
+    {entries.length ? <div className="vn-gallery-layout">
+      <div className="vn-gallery-grid">
+        {entries.map((entry) => {
+          const unlocked = galleryEntryUnlocked(entry, profile);
+          const title = unlocked
+            ? i18n.ui(entry.title_key as Parameters<GameLocalizer["ui"]>[0])
+            : i18n.ui("gallery.lockedTitle");
+          return <button
+            type="button"
+            className={`${unlocked ? "unlocked" : "locked"} ${selected?.id === entry.id ? "active" : ""}`}
+            disabled={!unlocked}
+            onClick={() => setSelectedId(entry.id)}
+            aria-label={title}
+            key={entry.id}
+          >
+            {unlocked && <img src={assetUrl(entry.asset)} alt="" />}
+            {!unlocked && <i aria-hidden="true">?</i>}
+            <span>{title}</span>
+          </button>;
+        })}
+      </div>
+      <article className="vn-gallery-viewer">
+        {selected ? <>
+          <img src={assetUrl(selected.asset)} alt={i18n.ui(selected.title_key as Parameters<GameLocalizer["ui"]>[0])} />
+          <div><h3>{i18n.ui(selected.title_key as Parameters<GameLocalizer["ui"]>[0])}</h3><p>{i18n.ui(selected.description_key as Parameters<GameLocalizer["ui"]>[0])}</p></div>
+        </> : <p>{i18n.ui("gallery.lockedDescription")}</p>}
+      </article>
+    </div> : <p className="vn-empty">{i18n.ui("gallery.empty")}</p>}
+  </div>;
+}
+
 function TitleScreen({
   autosave,
   onContinue,
   onNewGame,
   onLoad,
+  onGallery,
   onSettings,
   i18n,
   onLocale,
@@ -575,6 +609,7 @@ function TitleScreen({
   onContinue: () => void;
   onNewGame: () => void;
   onLoad: () => void;
+  onGallery: () => void;
   onSettings: () => void;
   i18n: GameLocalizer;
   onLocale: (locale: GameLocale) => void;
@@ -603,6 +638,7 @@ function TitleScreen({
         <button type="button" data-icon="♥" className={autosave ? "primary" : ""} disabled={!autosave} onClick={onContinue}><span>{i18n.ui("menu.continue")}</span><small>{autosave ? savePreview(autosave, i18n).title : i18n.ui("menu.noSave")}</small></button>
         <button type="button" data-icon="✦" className={!autosave ? "primary" : ""} onClick={onNewGame}><span>{i18n.ui("menu.newGame")}</span></button>
         <button type="button" data-icon="♡" onClick={onLoad}><span>{i18n.ui("menu.load")}</span></button>
+        <button type="button" data-icon="▣" onClick={onGallery}><span>{i18n.ui("menu.gallery")}</span><small>{i18n.ui("menu.galleryHint")}</small></button>
         <button type="button" data-icon="⚙" onClick={onSettings}><span>{i18n.ui("menu.settings")}</span></button>
       </nav>
       <footer><span>{i18n.ui("app.brand")}</span><span>{i18n.ui("app.webPlayer")}</span></footer>
@@ -753,15 +789,17 @@ function FlowScreen({
 
 function activityIcon(activityId: string): string {
   if (activityId === "workout") return "◆";
-  if (activityId === "grooming") return "✦";
+  if (activityId === "reading") return "▤";
   if (activityId === "ott") return "▶";
-  if (activityId === "reels") return "⌁";
+  if (activityId === "dark_psychology") return "✦";
+  if (activityId === "solo_drinking") return "◒";
   return "☾";
 }
 
-function SelfDevelopmentScreen({
+function NightDialogueFlow({
   session,
   debugMode,
+  onBegin,
   onActivity,
   onContinue,
   onMode,
@@ -771,6 +809,7 @@ function SelfDevelopmentScreen({
 }: {
   session: PlayerSession;
   debugMode: boolean;
+  onBegin: () => void;
   onActivity: (activityId: string) => void;
   onContinue: () => void;
   onMode: () => void;
@@ -780,49 +819,35 @@ function SelfDevelopmentScreen({
 }) {
   const night = session.nightPhase;
   const profile = selfDevelopment.profile(session.state).snapshot();
-  const options = visibleNightActivities(
-    selfDevelopment.activityOptions(session.state),
-    session.state.progress.time.day,
-  );
+  const options = selfDevelopment.activityOptions(session.state);
   const result = night?.status === "result" ? night.result : undefined;
   const resultActivity = result
     ? runtime.self_development.activities.find((activity) => activity.id === result.activityId)
     : undefined;
-  const fatigueCells = Array.from({ length: 6 }, (_, index) => index < profile.fatigue);
   const activityTags = (option: SelfDevelopmentActivityOption) => [
     ...(option.activity.appeal_delta
-      ? [`${i18n.ui("selfDevelopment.appeal")} ${option.activity.appeal_delta > 0 ? "↑" : "↓"}`]
+      ? [`${i18n.ui("selfDevelopment.appeal")} ${signedValue(option.activity.appeal_delta)}`]
       : []),
     ...SELF_DEVELOPMENT_STATS
       .filter((stat) => Boolean(option.activity.stat_deltas[stat]))
-      .map((stat) => i18n.ui(`selfDevelopment.stat.${stat}` as Parameters<GameLocalizer["ui"]>[0])),
+      .map((stat) => `${i18n.ui(`selfDevelopment.stat.${stat}` as Parameters<GameLocalizer["ui"]>[0])} ${signedValue(option.activity.stat_deltas[stat] || 0)}`),
     ...(option.activity.fatigue_delta
-      ? [`${i18n.ui("selfDevelopment.fatigue")} ${option.activity.fatigue_delta > 0 ? "↑" : "↓"}`]
+      ? [`${i18n.ui("selfDevelopment.fatigue")} ${signedValue(option.activity.fatigue_delta)}`]
+      : []),
+    ...(option.activity.hint_charge
+      ? [`${i18n.ui("analysisHint.charge")} ${signedValue(option.activity.hint_charge)}`]
       : []),
   ];
-  const resultDeltas: Array<{ label: string; value: number }> = result ? [
-    ...(result.appealDelta
-      ? [{ label: i18n.ui("selfDevelopment.appeal"), value: result.appealDelta }]
-      : []),
-    ...SELF_DEVELOPMENT_STATS.flatMap((stat) => {
-      const value = result.statDeltas[stat] || 0;
-      return value
-        ? [{ label: i18n.ui(`selfDevelopment.stat.${stat}` as Parameters<GameLocalizer["ui"]>[0]), value }]
-        : [];
-    }),
-    ...(result.fatigueDelta
-      ? [{ label: i18n.ui("selfDevelopment.fatigue"), value: result.fatigueDelta }]
-      : []),
-  ] : [];
   const visibleTextKeys = [
-    "selfDevelopment.title",
-    "selfDevelopment.subtitle",
+    "selfDevelopment.intro",
+    "selfDevelopment.forcedIntro",
+    "selfDevelopment.status",
     "selfDevelopment.appeal",
     "selfDevelopment.fatigue",
     "selfDevelopment.choose",
     "selfDevelopment.blocked",
-    "selfDevelopment.result",
-    "selfDevelopment.continue",
+    "analysisHint.charge",
+    "analysisHint.charges",
     ...SELF_DEVELOPMENT_STATS.map((stat) => `selfDevelopment.stat.${stat}`),
     ...(night?.status === "selecting" ? options.flatMap((option) => [
       option.activity.title_key,
@@ -834,11 +859,22 @@ function SelfDevelopmentScreen({
       resultActivity.reflection_keys.reality,
     ] : []),
   ];
+  const reflection = resultActivity
+    ? selfDevelopmentMessage(i18n, resultActivity.reflection_keys[session.viewLayer])
+    : "";
+  const intro = i18n.ui(night?.status === "intro" && night.forcedActivityId
+    ? "selfDevelopment.forcedIntro"
+    : "selfDevelopment.intro");
+  const dialogueLine = night?.status === "result" ? reflection : intro;
+  const dialogueAction = night?.status === "result" ? onContinue : onBegin;
+  const showHanName = night?.status !== "result" || session.viewLayer === "perceived";
 
-  return <main className={`vn-self-development ${session.viewLayer}`}>
-    <div className="vn-night-sky" aria-hidden="true"><i /><i /><i /><i /></div>
-    <header className="vn-night-hud">
-      <div><span>{i18n.ui("app.brand")}</span><strong>{i18n.ui("slot.night")}</strong></div>
+  return <main className={`vn-game vn-night-story ${session.viewLayer}`}>
+    <div className="vn-night-home" aria-hidden="true">
+      <i className="window" /><i className="lamp" /><i className="sofa" /><i className="table" />
+    </div>
+    <header className="vn-flow-hud">
+      <div><span>DAY {String(session.state.progress.time.day).padStart(2, "0")}</span><strong>{i18n.ui("slot.night")}</strong></div>
       {debugMode && <button type="button" className="vn-mode-button" onClick={onMode}>
         <span>{i18n.ui(session.viewLayer === "reality" ? "hud.original" : "hud.story")}</span>
         <small>{i18n.ui(session.viewLayer === "reality" ? "hud.reality" : "hud.subjective")}</small>
@@ -847,38 +883,19 @@ function SelfDevelopmentScreen({
       {debugMode && <div className="vn-debug-badge">DEBUG</div>}
     </header>
 
-    <section className="vn-night-plan" aria-labelledby="vn-night-title">
-      <header className="vn-night-plan-title">
-        <span>✦ {i18n.ui("selfDevelopment.appeal")}</span>
-        <h1 id="vn-night-title">{i18n.ui("selfDevelopment.title")}</h1>
-        <p>{i18n.ui("selfDevelopment.subtitle")}</p>
-        {debugMode && onEditText && <button type="button" className="vn-authoring-button vn-night-authoring" onClick={() => onEditText(visibleTextKeys)}>현재 화면 문구 편집</button>}
-      </header>
-
-      <section className="vn-night-profile" aria-label={i18n.ui("selfDevelopment.appeal")}>
-        <div className="vn-appeal-score">
-          <span>{i18n.ui("selfDevelopment.appeal")}</span>
-          <div><strong>{profile.appeal}</strong><small>/ 100</small></div>
-        </div>
-        <div className="vn-night-stats">
-          {SELF_DEVELOPMENT_STATS.map((stat) => <div key={stat}>
-            <span>{i18n.ui(`selfDevelopment.stat.${stat}` as Parameters<GameLocalizer["ui"]>[0])}</span>
-            <i><b style={{ width: `${profile.stats[stat] * 20}%` }} /></i>
-            <strong>{profile.stats[stat]}</strong>
-          </div>)}
-        </div>
-        <div className="vn-fatigue-meter">
-          <span>{i18n.ui("selfDevelopment.fatigue")}</span>
-          <div aria-label={`${i18n.ui("selfDevelopment.fatigue")} ${profile.fatigue} / 6`}>
-            {fatigueCells.map((active, index) => <i className={active ? "active" : ""} key={index} />)}
-          </div>
-          <strong>{profile.fatigue}<small>/ 6</small></strong>
-        </div>
+    {debugMode && onEditText && <button type="button" className="vn-authoring-button vn-night-authoring" onClick={() => onEditText(visibleTextKeys)}>현재 화면 문구 편집</button>}
+    {night?.status === "selecting" && <>
+      <section className="vn-night-status" aria-label={i18n.ui("selfDevelopment.status")}>
+        <span><small>{i18n.ui("selfDevelopment.appeal")}</small><strong>{profile.appeal}</strong></span>
+        {SELF_DEVELOPMENT_STATS.map((stat) => <span key={stat}>
+          <small>{i18n.ui(`selfDevelopment.stat.${stat}` as Parameters<GameLocalizer["ui"]>[0])}</small>
+          <strong>{profile.stats[stat]}</strong>
+        </span>)}
+        <span><small>{i18n.ui("selfDevelopment.fatigue")}</small><strong>{profile.fatigue}<i>/6</i></strong></span>
+        <span><small>{i18n.ui("analysisHint.charges")}</small><strong>{session.state.progress.self_development.hint_charges}</strong></span>
       </section>
-
-      {night?.status === "selecting" && <section className="vn-night-activity-section">
-        <div className="vn-night-section-heading"><span>01</span><strong>{i18n.ui("selfDevelopment.choose")}</strong></div>
-        <div className="vn-night-activities">
+      <section className="vn-choices vn-night-choices" aria-label={i18n.ui("selfDevelopment.choose")}>
+        <div className="vn-night-activity-list">
           {options.map((option) => {
             const title = selfDevelopmentMessage(i18n, option.activity.title_key);
             return <button
@@ -889,38 +906,32 @@ function SelfDevelopmentScreen({
               aria-label={`${title}${option.available ? "" : ` · ${i18n.ui("selfDevelopment.blocked")}`}`}
               key={option.activity.id}
             >
-              <i className="vn-night-activity-icon" aria-hidden="true">{activityIcon(option.activity.id)}</i>
-              <div>
-                <strong>{title}</strong>
-                <p>{selfDevelopmentMessage(i18n, option.activity.description_key)}</p>
-                <span>{activityTags(option).map((tag) => <small key={tag}>{tag}</small>)}</span>
-              </div>
-              <em>{option.available ? i18n.ui("selfDevelopment.choose") : i18n.ui("selfDevelopment.blocked")}</em>
+              <span aria-hidden="true">{activityIcon(option.activity.id)}</span>
+              <strong>{title}</strong>
+              <em>{option.available
+                ? activityTags(option).join(" · ")
+                : i18n.ui("selfDevelopment.blocked")}</em>
               {debugMode && <code>DEBUG · {option.activity.id}</code>}
             </button>;
           })}
         </div>
-      </section>}
+      </section>
+    </>}
 
-      {result && resultActivity && <section className="vn-night-result" aria-live="polite">
-        <div className="vn-night-section-heading"><span>02</span><strong>{i18n.ui("selfDevelopment.result")}</strong></div>
-        <div className="vn-night-result-card">
-          <i className="vn-night-result-icon" aria-hidden="true">{activityIcon(result.activityId)}</i>
-          <div className="vn-night-result-copy">
-            <span>{i18n.ui("selfDevelopment.result")}</span>
-            <h2>{selfDevelopmentMessage(i18n, resultActivity.title_key)}</h2>
-            <div className="vn-night-result-deltas">
-              {resultDeltas.map((delta) => <span key={delta.label}>
-                {delta.label} <strong>{signedValue(delta.value)}</strong>
-              </span>)}
-            </div>
-            <blockquote>{selfDevelopmentMessage(i18n, resultActivity.reflection_keys[session.viewLayer])}</blockquote>
-          </div>
-          <button type="button" onClick={onContinue}>{i18n.ui("selfDevelopment.continue")}</button>
-          {debugMode && <code>DEBUG · {result.activityId}</code>}
-        </div>
-      </section>}
-    </section>
+    {(night?.status === "intro" || night?.status === "result") && <section
+      className="vn-dialogue vn-night-dialogue"
+      role="button"
+      tabIndex={0}
+      aria-live={night.status === "result" ? "polite" : undefined}
+      onClick={dialogueAction}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") dialogueAction();
+      }}
+    >
+      {showHanName && <div className="vn-nameplate">{i18n.characterName("han_do_yoon")}</div>}
+      <p className="vn-line">{dialogueLine}<i className="done" /></p>
+      {debugMode && night.status === "result" && <code>DEBUG · {night.result.activityId}</code>}
+    </section>}
   </main>;
 }
 
@@ -1092,6 +1103,7 @@ export default function WebGame() {
   const [revealed, setRevealed] = useState(false);
   const [visibleCharacters, setVisibleCharacters] = useState(0);
   const [feedbackVisible, setFeedbackVisible] = useState(false);
+  const [choiceHint, setChoiceHint] = useState<(ChoiceAnalysisHint & { sceneId: string; nodeId: string })>();
   const [toast, setToast] = useState("");
   const [debugHistory, setDebugHistory] = useState<PlayerSession[]>([]);
   const [debugViewLayer, setDebugViewLayer] = useState<ViewLayer>();
@@ -1261,9 +1273,22 @@ export default function WebGame() {
     window.setTimeout(() => setFeedbackVisible(true), settings.reducedMotion ? 0 : 650);
   }, [session, settings.reducedMotion, updateSession]);
 
+  const showChoiceHint = useCallback(() => {
+    if (!session || session.phase !== "scene") return;
+    const consumed = consumeChoiceAnalysisHint(runtime, session);
+    if (!consumed) return;
+    setChoiceHint({ ...consumed.hint, sceneId: session.sceneId, nodeId: session.nodeId });
+    updateSession(consumed.session, true);
+  }, [session, updateSession]);
+
   const chooseNightActivity = useCallback((activityId: string) => {
     if (!session || session.phase !== "self_development") return;
     updateSession(selectSelfDevelopmentActivity(runtime, session, activityId), true);
+  }, [session, updateSession]);
+
+  const beginNight = useCallback(() => {
+    if (!session || session.phase !== "self_development") return;
+    updateSession(beginSelfDevelopmentNight(runtime, session), true);
   }, [session, updateSession]);
 
   const finishNight = useCallback(() => {
@@ -1291,6 +1316,12 @@ export default function WebGame() {
     setVisibleCharacters(showAll ? fullText.length : 0);
     setRevealed(showAll);
   }, [fullText, session?.nodeId, settings.reducedMotion]);
+
+  useEffect(() => {
+    setChoiceHint((current) => current?.sceneId === session?.sceneId && current?.nodeId === session?.nodeId
+      ? current
+      : undefined);
+  }, [session?.nodeId, session?.sceneId]);
 
   useEffect(() => {
     if (revealed || !fullText || session?.phase !== "scene") return;
@@ -1426,6 +1457,7 @@ export default function WebGame() {
     </Modal>}
     {overlay === "save" && <Modal title={i18n.ui("save.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><SaveGrid mode="save" session={session} onLoad={loadSession} onSaved={() => notify(i18n.ui("save.done"))} i18n={i18n} /></Modal>}
     {overlay === "load" && <Modal title={i18n.ui("load.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><SaveGrid mode="load" onLoad={loadSession} onSaved={() => undefined} i18n={i18n} /></Modal>}
+    {overlay === "gallery" && <Modal title={i18n.ui("gallery.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><GalleryPanel profile={readProfile()} i18n={i18n} /></Modal>}
     {overlay === "settings" && <Modal title={i18n.ui("settings.title")} onClose={() => setOverlay(null)} i18n={i18n}><SettingsPanel value={settings} onChange={setSettings} i18n={i18n} /></Modal>}
     {overlay === "menu" && <Modal title={i18n.ui("menu.game")} onClose={() => setOverlay(null)} i18n={i18n}>
       <div className="vn-pause-menu">
@@ -1433,6 +1465,7 @@ export default function WebGame() {
         <button type="button" onClick={() => setOverlay("backlog")}>{i18n.ui("menu.backlog")}</button>
         <button type="button" onClick={() => setOverlay("save")}>{i18n.ui("save.title")}</button>
         <button type="button" onClick={() => setOverlay("load")}>{i18n.ui("load.title")}</button>
+        <button type="button" onClick={() => setOverlay("gallery")}>{i18n.ui("menu.gallery")}</button>
         <button type="button" onClick={() => setOverlay("settings")}>{i18n.ui("settings.title")}</button>
         <button type="button" className="danger" onClick={() => { setOverlay(null); setScreen("title"); setSession(undefined); }}>{i18n.ui("menu.title")}</button>
       </div>
@@ -1455,8 +1488,9 @@ export default function WebGame() {
 
   if (screen === "title") {
     return <div className={settings.reducedMotion ? "vn-reduced-motion" : ""}>
-      <TitleScreen autosave={autosave} onContinue={() => autosave && loadSession(autosave.session)} onNewGame={() => setScreen("new-game")} onLoad={() => setOverlay("load")} onSettings={() => setOverlay("settings")} i18n={i18n} onLocale={(locale) => setSettings((value) => ({ ...value, locale }))} />
+      <TitleScreen autosave={autosave} onContinue={() => autosave && loadSession(autosave.session)} onNewGame={() => setScreen("new-game")} onLoad={() => setOverlay("load")} onGallery={() => setOverlay("gallery")} onSettings={() => setOverlay("settings")} i18n={i18n} onLocale={(locale) => setSettings((value) => ({ ...value, locale }))} />
       {overlay === "load" && <Modal title={i18n.ui("load.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><SaveGrid mode="load" onLoad={loadSession} onSaved={() => undefined} i18n={i18n} /></Modal>}
+      {overlay === "gallery" && <Modal title={i18n.ui("gallery.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><GalleryPanel profile={readProfile()} i18n={i18n} /></Modal>}
       {overlay === "settings" && <Modal title={i18n.ui("settings.title")} onClose={() => setOverlay(null)} i18n={i18n}><SettingsPanel value={settings} onChange={setSettings} i18n={i18n} /></Modal>}
     </div>;
   }
@@ -1465,7 +1499,7 @@ export default function WebGame() {
     <NewGameScreen onStart={startCampaign} onBack={() => setScreen("title")} i18n={i18n} />
     {toast && <div className="vn-toast">{toast}</div>}
   </div>;
-  if (!session) return <TitleScreen autosave={autosave} onContinue={() => autosave && loadSession(autosave.session)} onNewGame={() => setScreen("new-game")} onLoad={() => setOverlay("load")} onSettings={() => setOverlay("settings")} i18n={i18n} onLocale={(locale) => setSettings((value) => ({ ...value, locale }))} />;
+  if (!session) return <TitleScreen autosave={autosave} onContinue={() => autosave && loadSession(autosave.session)} onNewGame={() => setScreen("new-game")} onLoad={() => setOverlay("load")} onGallery={() => setOverlay("gallery")} onSettings={() => setOverlay("settings")} i18n={i18n} onLocale={(locale) => setSettings((value) => ({ ...value, locale }))} />;
 
   if (dayTransition) {
     return <div className={settings.reducedMotion ? "vn-reduced-motion" : ""}>
@@ -1500,9 +1534,10 @@ export default function WebGame() {
 
   if (session.phase === "self_development") {
     return <div className={settings.reducedMotion ? "vn-reduced-motion" : ""}>
-      <SelfDevelopmentScreen
+      <NightDialogueFlow
         session={displaySession || session}
         debugMode={settings.debugMode}
+        onBegin={beginNight}
         onActivity={chooseNightActivity}
         onContinue={finishNight}
         onMode={changeMode}
@@ -1578,6 +1613,17 @@ export default function WebGame() {
   const choiceStimulus = node.kind === "choice"
     ? i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.stimulus`, node.stimulus || triggerSummary?.line || "")
     : "";
+  const hintCharges = session.state.progress.self_development.hint_charges;
+  const activeChoiceHint = choiceHint?.sceneId === session.sceneId && choiceHint.nodeId === session.nodeId
+    ? choiceHint
+    : undefined;
+  const hintDirection = activeChoiceHint?.direction || "none";
+  const hintLesson = activeChoiceHint?.lesson
+    ? i18n.story(
+      `scenes.${session.sceneId}.nodes.${node.id}.analysis_hints.${hintDirection}`,
+      activeChoiceHint.lesson,
+    )
+    : i18n.ui(`analysisHint.lesson.${hintDirection}` as Parameters<GameLocalizer["ui"]>[0]);
   const scene = runtime.scenes[session.sceneId];
   const isCommonScene = scene?.id.startsWith("common.") ?? false;
   const hasChoice = scene ? Object.values(scene.nodes).some((candidate) => candidate.kind === "choice") : false;
@@ -1621,7 +1667,16 @@ export default function WebGame() {
     {settings.debugMode && <DebugPanel session={session} previewLayer={activeViewLayer || session.viewLayer} settings={settings} canStepBack={debugHistory.length > 0} onSettings={setSettings} onStepBack={stepBack} onReturnToEditor={projectRoot ? () => returnToStoryEditor({ sceneId: session.sceneId, nodeId: node.id }) : undefined} i18n={i18n} />}
 
     {node.kind === "choice" && !uiHidden && <section className="vn-choices" aria-label={i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.prompt`, node.prompt || "")} onKeyDown={choiceKeyDown}>
-      <div className="vn-choice-context"><span>{triggerSummary?.speaker || i18n.ui("flow.choiceContext")}</span><strong>{choiceStimulus}</strong></div>
+      <div className="vn-choice-context">
+        <span>{triggerSummary?.speaker || i18n.ui("flow.choiceContext")}</span><strong>{choiceStimulus}</strong>
+        {!activeChoiceHint && <button type="button" className="vn-analysis-hint-button" disabled={hintCharges <= 0} onClick={showChoiceHint}>
+          <b>{i18n.ui("analysisHint.recall")}</b><small>×{hintCharges}</small>
+        </button>}
+        {activeChoiceHint && <div className="vn-analysis-hint" aria-live="polite">
+          <div className="vn-analysis-instructor"><i aria-hidden="true">講</i><p><small>{i18n.ui("analysisHint.instructor")}</small><strong>{hintLesson}</strong></p></div>
+          <p><small>{i18n.ui("analysisHint.observation")}</small>{choiceStimulus}</p>
+        </div>}
+      </div>
       <p>{i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.prompt`, node.prompt || "")}</p>
       {options.map((option, index) => {
         const debugEffect = choiceDebugEffect(option);

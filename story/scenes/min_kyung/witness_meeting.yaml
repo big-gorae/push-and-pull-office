@@ -94,6 +94,8 @@ nodes:
     kind: choice
     prompt: 서아가 함께 있는 회의에서 민경에게 어떻게 행동할까?
     stimulus: 민경이 서아를 회의록 담당으로 배석시키며 둘만의 회의를 피했다.
+    interaction_context:
+      kind: boundary
     options:
       - id: public_tease
         label: 서아 앞에서 민경과의 사적 연락을 암시한다

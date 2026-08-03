@@ -52,11 +52,18 @@ VALID_SUPPORT_STYLES = {
     "concise_reassurance",
     "literal_respect",
 }
+VALID_INTERACTION_CONTEXT_KINDS = {
+    "support",
+    "coordination",
+    "boundary",
+    "not_applicable",
+}
 SELF_DEVELOPMENT_STATE_PREFIX = "visible.protagonist.self_development"
 SELF_DEVELOPMENT_PROGRESS_PREFIX = "progress.self_development"
-SELF_DEVELOPMENT_STAT_ORDER = ("stamina", "appearance", "humor", "taste")
-SELF_DEVELOPMENT_STATS = {"stamina", "appearance", "humor", "taste"}
-SELF_DEVELOPMENT_MAX_SCORE_BONUS = 3
+SELF_DEVELOPMENT_STAT_ORDER = ("health", "appearance", "humor", "intelligence")
+SELF_DEVELOPMENT_STATS = {"health", "appearance", "humor", "intelligence"}
+SELF_DEVELOPMENT_MAX_SCORE_BONUS = 0
+SELF_DEVELOPMENT_MAX_HINT_CHARGES = 9
 SELF_DEVELOPMENT_BOUNDS = {
     f"{SELF_DEVELOPMENT_STATE_PREFIX}.appeal": (0, 100),
     f"{SELF_DEVELOPMENT_STATE_PREFIX}.fatigue": (0, 6),
@@ -298,6 +305,7 @@ class StoryProject:
         self._validate_manifest(issues)
         self._validate_game_modes(issues)
         self._validate_self_development(issues)
+        self._validate_gallery(issues)
         self._validate_campaigns(issues)
         self._validate_characters(issues)
         self._validate_events(issues)
@@ -505,6 +513,9 @@ class StoryProject:
                 for key in ("title_key", "description_key", "reflection_keys", "appeal_delta", "fatigue_delta", "stat_deltas"):
                     if key not in activity:
                         self._error(issues, activity_location, f"required key is missing: {key}")
+                selectable = activity.get("selectable", True)
+                if not isinstance(selectable, bool):
+                    self._error(issues, activity_location, "selectable must be a boolean")
                 reflection_keys = activity.get("reflection_keys")
                 if not isinstance(reflection_keys, dict) or not all(
                     isinstance(reflection_keys.get(mode), str) and reflection_keys.get(mode)
@@ -520,6 +531,16 @@ class StoryProject:
                     not isinstance(fatigue_lte, int) or isinstance(fatigue_lte, bool) or not 0 <= fatigue_lte <= 6
                 ):
                     self._error(issues, activity_location, "fatigue_lte must be an integer from 0 to 6")
+                fatigue_gte = activity.get("fatigue_gte")
+                if fatigue_gte is not None and (
+                    not isinstance(fatigue_gte, int) or isinstance(fatigue_gte, bool) or not 0 <= fatigue_gte <= 6
+                ):
+                    self._error(issues, activity_location, "fatigue_gte must be an integer from 0 to 6")
+                hint_charge = activity.get("hint_charge")
+                if hint_charge is not None and (
+                    not isinstance(hint_charge, int) or isinstance(hint_charge, bool) or not 0 <= hint_charge <= 1
+                ):
+                    self._error(issues, activity_location, "hint_charge must be 0 or 1")
                 stat_deltas = activity.get("stat_deltas")
                 if not isinstance(stat_deltas, dict):
                     self._error(issues, activity_location, "stat_deltas must be a mapping")
@@ -529,6 +550,27 @@ class StoryProject:
                             self._error(issues, activity_location, f"unknown self-development stat: {stat}")
                         if not isinstance(delta, int) or isinstance(delta, bool):
                             self._error(issues, activity_location, f"stat delta must be an integer: {stat}")
+
+            selectable_ids = {
+                activity.get("id") for activity in activities
+                if isinstance(activity, Mapping) and activity.get("selectable", True) is not False
+            }
+            if selectable_ids != {"workout", "reading", "ott", "sleep", "dark_psychology"}:
+                self._error(
+                    issues,
+                    location,
+                    "selectable night activities must be workout, reading, ott, sleep, and dark_psychology",
+                )
+            forced = [
+                activity for activity in activities
+                if isinstance(activity, Mapping) and activity.get("selectable") is False
+            ]
+            if len(forced) != 1 or forced[0].get("id") != "solo_drinking" or forced[0].get("fatigue_gte") != 5:
+                self._error(
+                    issues,
+                    location,
+                    "high fatigue must force solo_drinking at fatigue 5 or above",
+                )
 
         expressions = config.get("expressions")
         if not isinstance(expressions, dict) or not expressions:
@@ -669,6 +711,60 @@ class StoryProject:
                 self._error(issues, location, f"{path} is below minimum {spec['min']}")
             if "max" in spec and value > spec["max"]:
                 self._error(issues, location, f"{path} is above maximum {spec['max']}")
+
+    def _validate_gallery(self, issues: List[Issue]) -> None:
+        gallery = self.manifest.get("gallery")
+        location = "story/manifest.yaml#gallery"
+        if not isinstance(gallery, dict):
+            self._error(issues, location, "gallery must be a mapping")
+            return
+        entries = gallery.get("entries")
+        if not isinstance(entries, list) or not entries:
+            self._error(issues, location, "gallery.entries must be a non-empty list")
+            return
+        seen_ids: Set[str] = set()
+        seen_memories: Set[str] = set()
+        ui_strings = self.ui.get("strings", {})
+        for index, entry in enumerate(entries):
+            entry_location = f"{location}.entries[{index}]"
+            if not isinstance(entry, dict):
+                self._error(issues, entry_location, "gallery entry must be a mapping")
+                continue
+            entry_id = entry.get("id")
+            if not self.id_is_valid(entry_id):
+                self._error(issues, entry_location, f"invalid gallery entry id: {entry_id}")
+            elif entry_id in seen_ids:
+                self._error(issues, entry_location, f"duplicate gallery entry id: {entry_id}")
+            else:
+                seen_ids.add(entry_id)
+            memory = entry.get("unlock_memory")
+            if not self.id_is_valid(memory):
+                self._error(issues, entry_location, f"invalid gallery unlock_memory: {memory}")
+            elif memory in seen_memories:
+                self._error(issues, entry_location, f"duplicate gallery unlock_memory: {memory}")
+            else:
+                seen_memories.add(memory)
+            for key_name in ("title_key", "description_key"):
+                key = entry.get(key_name)
+                if not isinstance(key, str) or key not in ui_strings:
+                    self._error(issues, entry_location, f"{key_name} must reference a known UI string: {key}")
+            asset = entry.get("asset")
+            if not isinstance(asset, str) or not asset.startswith("assets/"):
+                self._error(issues, entry_location, "gallery asset must be a project-relative assets/ path")
+            elif (self.story_root.parent / "assets").exists() and not (self.story_root.parent / asset).is_file():
+                self._error(issues, entry_location, f"gallery asset does not exist: {asset}")
+            if not isinstance(entry.get("default_unlocked", False), bool):
+                self._error(issues, entry_location, "default_unlocked must be boolean")
+            stat = entry.get("source_stat")
+            minimum = entry.get("source_minimum")
+            if (stat is None) != (minimum is None):
+                self._error(issues, entry_location, "source_stat and source_minimum must be declared together")
+            if stat is not None and stat not in SELF_DEVELOPMENT_STATS:
+                self._error(issues, entry_location, f"unknown gallery source_stat: {stat}")
+            if minimum is not None and (
+                not isinstance(minimum, int) or isinstance(minimum, bool) or not 0 <= minimum <= 5
+            ):
+                self._error(issues, entry_location, "source_minimum must be an integer from 0 to 5")
 
     def _validate_campaigns(self, issues: List[Issue]) -> None:
         if not self.campaigns:
@@ -844,7 +940,58 @@ class StoryProject:
             if not isinstance(requires, dict):
                 self._error(issues, location, "requires must be a mapping")
             else:
-                self._validate_conditions(issues, f"{location}#requires", requires.get("conditions", []), None)
+                event_conditions = requires.get("conditions", [])
+                self._validate_conditions(
+                    issues,
+                    f"{location}#requires",
+                    event_conditions,
+                    None,
+                    allow_self_development_stats=True,
+                )
+                stat_gated = isinstance(event_conditions, list) and any(
+                    isinstance(condition, dict)
+                    and isinstance(condition.get("path"), str)
+                    and condition["path"].startswith(f"{SELF_DEVELOPMENT_STATE_PREFIX}.stats.")
+                    for condition in event_conditions
+                )
+                if stat_gated and event.get("availability") != "player":
+                    self._error(issues, location, "self-development stat-gated events must use player availability")
+                if stat_gated and event.get("type") not in {"heroine", "company"}:
+                    self._error(issues, location, "self-development stats may gate only additive heroine or company events")
+                missed = event.get("on_missed", {})
+                if stat_gated and (
+                    missed.get("effects")
+                    or missed.get("trigger_event")
+                ):
+                    self._error(issues, location, "missing a self-development stat-gated event cannot cause effects or trigger another event")
+                if stat_gated:
+                    gallery_entries = self.manifest.get("gallery", {}).get("entries", [])
+                    gallery_by_memory = {
+                        entry.get("unlock_memory"): entry
+                        for entry in gallery_entries
+                        if isinstance(entry, dict) and isinstance(entry.get("unlock_memory"), str)
+                    }
+                    awarded_memories = [
+                        effect.get("value")
+                        for effect in event.get("on_seen", {}).get("effects", [])
+                        if isinstance(effect, dict)
+                        and effect.get("path") == "progress.memories"
+                        and effect.get("op") == "append_unique"
+                        and effect.get("value") in gallery_by_memory
+                    ]
+                    if not awarded_memories:
+                        self._error(issues, location, "self-development stat-gated events must award a registered gallery memory")
+                    gated_stats = {
+                        condition.get("path", "").rsplit(".", 1)[-1]
+                        for condition in event_conditions
+                        if isinstance(condition, dict)
+                        and isinstance(condition.get("path"), str)
+                        and condition["path"].startswith(f"{SELF_DEVELOPMENT_STATE_PREFIX}.stats.")
+                    }
+                    for memory in awarded_memories:
+                        source_stat = gallery_by_memory[memory].get("source_stat")
+                        if source_stat not in gated_stats:
+                            self._error(issues, location, f"gallery memory {memory} does not match the event's gated stat")
                 for required_id in requires.get("events", []):
                     if required_id not in self.events:
                         self._error(issues, location, f"unknown required event: {required_id}")
@@ -1810,6 +1957,7 @@ class StoryProject:
             if start_node not in node_map:
                 self._error(issues, location, f"unknown start_node: {start_node}")
             self._validate_local_links(issues, location, node_map)
+            self._validate_choice_interaction_contexts(issues, location, scene, node_map)
             self._validate_self_development_choice_equivalence(issues, location, node_map)
             if start_node in node_map:
                 reachable = local_reachable(node_map, start_node)
@@ -1826,6 +1974,14 @@ class StoryProject:
         writes: Set[str],
     ) -> None:
         kind = node.get("kind")
+        analysis_hints = node.get("analysis_hints")
+        if analysis_hints is not None:
+            if kind != "choice":
+                self._error(issues, location, "analysis_hints is only allowed on choice nodes")
+            elif not isinstance(analysis_hints, dict) or set(analysis_hints) != {"pull", "push", "none"}:
+                self._error(issues, location, "choice analysis_hints must contain exactly pull, push, and none")
+            elif any(not isinstance(value, str) or not value.strip() for value in analysis_hints.values()):
+                self._error(issues, location, "choice analysis_hints values must be non-empty strings")
         if kind in {"dual_dialogue", "dual_narration"}:
             variants = node.get("variants")
             if variants is None:
@@ -2042,6 +2198,214 @@ class StoryProject:
                 self._error(issues, location, "effect node requires next")
         elif kind == "exit":
             self._validate_transitions(issues, location, node.get("transitions"), reads, target_key="scene", allow_ending=True)
+
+    def _validate_choice_interaction_contexts(
+        self,
+        issues: List[Issue],
+        location: str,
+        scene: Mapping[str, Any],
+        node_map: Mapping[str, Mapping[str, Any]],
+    ) -> None:
+        """Validate whether and how each choice applies character interaction metadata."""
+        for node_id, node in node_map.items():
+            node_location = f"{location}#nodes.{node_id}"
+            if node.get("kind") != "choice":
+                if "interaction_context" in node:
+                    self._error(
+                        issues,
+                        node_location,
+                        "interaction_context is only allowed on choice nodes",
+                    )
+                continue
+
+            context = node.get("interaction_context")
+            if not isinstance(context, Mapping):
+                self._error(
+                    issues,
+                    node_location,
+                    "choice interaction_context must be a mapping containing exactly kind",
+                )
+                continue
+            if set(context) != {"kind"}:
+                self._error(
+                    issues,
+                    node_location,
+                    "choice interaction_context must contain exactly the key: kind",
+                )
+            context_kind = context.get("kind")
+            if (
+                not isinstance(context_kind, str)
+                or context_kind not in VALID_INTERACTION_CONTEXT_KINDS
+            ):
+                self._error(
+                    issues,
+                    node_location,
+                    f"invalid interaction_context kind: {context_kind}",
+                )
+                continue
+
+            options = node.get("options")
+            if not isinstance(options, list):
+                continue
+            option_rows = [
+                (index, option)
+                for index, option in enumerate(options)
+                if isinstance(option, Mapping)
+            ]
+
+            if context_kind in {"support", "coordination"}:
+                ordered_style_signatures: Set[Tuple[str, ...]] = set()
+                for option_index, option in option_rows:
+                    option_location = f"{node_location}.options[{option_index}]"
+                    interaction = option.get("interaction")
+                    if not isinstance(interaction, Mapping):
+                        self._error(
+                            issues,
+                            option_location,
+                            f"{context_kind} choice options require interaction metadata",
+                        )
+                        continue
+                    support_styles = interaction.get("support_styles")
+                    if (
+                        isinstance(support_styles, list)
+                        and support_styles
+                        and all(isinstance(style, str) and style for style in support_styles)
+                    ):
+                        ordered_style_signatures.add(tuple(support_styles))
+                if len(ordered_style_signatures) < 2:
+                    self._error(
+                        issues,
+                        node_location,
+                        f"{context_kind} choices require at least two distinct ordered support style signatures",
+                    )
+                self._validate_distinct_interaction_responses(
+                    issues,
+                    node_location,
+                    scene,
+                    node_map,
+                    option_rows,
+                )
+            elif context_kind == "boundary":
+                has_literal_respect = any(
+                    isinstance(option.get("interaction"), Mapping)
+                    and isinstance(option["interaction"].get("support_styles"), list)
+                    and "literal_respect" in option["interaction"]["support_styles"]
+                    for _, option in option_rows
+                )
+                if not has_literal_respect:
+                    self._error(
+                        issues,
+                        node_location,
+                        "boundary choices require at least one literal_respect interaction option",
+                    )
+            elif context_kind == "not_applicable":
+                for option_index, option in option_rows:
+                    if "interaction" in option:
+                        self._error(
+                            issues,
+                            f"{node_location}.options[{option_index}]",
+                            "not_applicable choice options must not declare interaction metadata",
+                        )
+
+    def _validate_distinct_interaction_responses(
+        self,
+        issues: List[Issue],
+        location: str,
+        scene: Mapping[str, Any],
+        node_map: Mapping[str, Mapping[str, Any]],
+        option_rows: Sequence[Tuple[int, Mapping[str, Any]]],
+    ) -> None:
+        """Require different support orders for one target to produce different reality replies."""
+        by_target: Dict[str, List[Tuple[int, Mapping[str, Any], Tuple[str, ...]]]] = {}
+        cast = scene.get("cast", [])
+        if not isinstance(cast, list):
+            cast = []
+        for option_index, option in option_rows:
+            interaction = option.get("interaction")
+            if not isinstance(interaction, Mapping):
+                continue
+            target = interaction.get("target")
+            support_styles = interaction.get("support_styles")
+            if (
+                not isinstance(target, str)
+                or target not in self.characters
+                or target not in cast
+                or not isinstance(support_styles, list)
+                or not support_styles
+                or not all(isinstance(style, str) and style for style in support_styles)
+            ):
+                continue
+            by_target.setdefault(target, []).append(
+                (option_index, option, tuple(support_styles))
+            )
+
+        for target, entries in by_target.items():
+            if len({style_signature for _, _, style_signature in entries}) < 2:
+                continue
+            resolved: List[Tuple[int, Tuple[str, ...], Tuple[str, ...]]] = []
+            for option_index, option, style_signature in entries:
+                response_signature = self._find_interaction_response_signature(
+                    node_map,
+                    option.get("next"),
+                    target,
+                )
+                option_location = f"{location}.options[{option_index}]"
+                if response_signature is None:
+                    self._error(
+                        issues,
+                        option_location,
+                        f"interaction branch must reach a reality response from target: {target}",
+                    )
+                    continue
+                for previous_index, previous_styles, previous_response in resolved:
+                    if previous_styles != style_signature and previous_response == response_signature:
+                        self._error(
+                            issues,
+                            option_location,
+                            "different ordered support style signatures for the same target must lead to "
+                            f"distinct reality responses: options[{previous_index}] and options[{option_index}] ({target})",
+                        )
+                        break
+                resolved.append((option_index, style_signature, response_signature))
+
+    @staticmethod
+    def _find_interaction_response_signature(
+        node_map: Mapping[str, Mapping[str, Any]],
+        start: Any,
+        target: str,
+    ) -> Optional[Tuple[str, ...]]:
+        current = start
+        visited: Set[str] = set()
+        while isinstance(current, str) and current in node_map and current not in visited:
+            visited.add(current)
+            node = node_map[current]
+            kind = node.get("kind")
+            if kind == "dual_dialogue" and effective_speaker(node, "reality") == target:
+                lines: Set[str] = set()
+                reality = node.get("reality")
+                if isinstance(reality, Mapping):
+                    line = reality.get("line")
+                    if isinstance(line, str) and line:
+                        lines.add(line)
+                variants = node.get("variants")
+                if isinstance(variants, list):
+                    for variant in variants:
+                        if not isinstance(variant, Mapping):
+                            continue
+                        variant_reality = variant.get("reality")
+                        if not isinstance(variant_reality, Mapping):
+                            continue
+                        line = variant_reality.get("line")
+                        if isinstance(line, str) and line:
+                            lines.add(line)
+                return tuple(sorted(lines)) if lines else None
+            if kind == "effect":
+                current = node.get("next")
+                continue
+            if kind not in {"dual_dialogue", "dual_narration"}:
+                return None
+            current = node.get("next")
+        return None
 
     def _validate_self_development_use(
         self,
@@ -2376,7 +2740,14 @@ class StoryProject:
                     f"expression {expression_id} belongs to {expressions[expression_id].get('layer')}, not {layer_name}",
                 )
 
-    def _validate_conditions(self, issues: List[Issue], location: str, conditions: Any, reads: Optional[Set[str]]) -> None:
+    def _validate_conditions(
+        self,
+        issues: List[Issue],
+        location: str,
+        conditions: Any,
+        reads: Optional[Set[str]],
+        allow_self_development_stats: bool = False,
+    ) -> None:
         if not isinstance(conditions, list):
             self._error(issues, location, "conditions must be a list")
             return
@@ -2387,14 +2758,21 @@ class StoryProject:
                 continue
             path = condition.get("path")
             op = condition.get("op")
-            if isinstance(path, str) and any(
+            is_self_development_path = isinstance(path, str) and any(
                 path == prefix or path.startswith(f"{prefix}.")
                 for prefix in (SELF_DEVELOPMENT_STATE_PREFIX, SELF_DEVELOPMENT_PROGRESS_PREFIX)
-            ):
+            )
+            is_allowed_event_stat = (
+                allow_self_development_stats
+                and isinstance(path, str)
+                and path.startswith(f"{SELF_DEVELOPMENT_STATE_PREFIX}.stats.")
+                and path in SELF_DEVELOPMENT_BOUNDS
+            )
+            if is_self_development_path and not is_allowed_event_stat:
                 self._error(
                     issues,
                     item_location,
-                    "self-development state is forbidden in general conditions; use self_development.expression metadata",
+                    "self-development state is forbidden here; only named stats may gate additive player events, and interactions use self_development.expression metadata",
                 )
             if isinstance(path, str) and VISIBLE_INITIATIVE_CONDITION_PATTERN.fullmatch(path):
                 self._error(
@@ -2676,6 +3054,7 @@ class StoryProject:
             "enums": self.manifest.get("enums"),
             "stats": self.manifest.get("stats"),
             "self_development": runtime_self_development,
+            "gallery": copy.deepcopy(self.manifest.get("gallery", {})),
             "initial_state": self.initial_state(),
             "game_modes": copy.deepcopy(self.game_modes),
             "localization": self.localization_bundle(),
@@ -2743,6 +3122,7 @@ class StoryProject:
                 "self_development": copy.deepcopy(self.manifest.get("self_development", {})),
                 "condition_ops": sorted(VALID_CONDITION_OPS),
                 "effect_ops": sorted(VALID_EFFECT_OPS),
+                "interaction_context_kinds": sorted(VALID_INTERACTION_CONTEXT_KINDS),
                 "support_styles": sorted(VALID_SUPPORT_STYLES),
             },
             "route": clean_source(route),
@@ -3088,6 +3468,18 @@ def collect_localizable_entries(project: StoryProject) -> Dict[str, Dict[str, An
                 node_context["speakerId"] = node["speaker"]
             add(f"{node_base}.prompt", node.get("prompt"), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.prompt", context=node_context, max_length=160)
             add(f"{node_base}.stimulus", node.get("stimulus"), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.stimulus", context=node_context, max_length=240)
+            for direction in ("pull", "push", "none"):
+                add(
+                    f"{node_base}.analysis_hints.{direction}",
+                    node.get("analysis_hints", {}).get(direction),
+                    domain="scene",
+                    kind="scene",
+                    item_id=scene_id,
+                    source=source,
+                    field_path=f"nodes.{node_id}.analysis_hints.{direction}",
+                    context=node_context,
+                    max_length=320,
+                )
             for mode in ("perceived", "reality"):
                 layer = node.get(mode, {})
                 mode_speaker = effective_speaker(node, mode)
@@ -3442,6 +3834,7 @@ class SelfDevelopmentService:
             "completed_days": [],
             "activity_history": [],
             "last_activity": "",
+            "hint_charges": 0,
         })
 
     def _stat_bounds(self, path: str, default_minimum: int, default_maximum: int) -> Tuple[int, int]:
@@ -3501,6 +3894,12 @@ class SelfDevelopmentService:
             "last_activity": source.get("last_activity")
             if isinstance(source.get("last_activity"), str)
             else str(fallback.get("last_activity", "")),
+            "hint_charges": self._safe_integer(
+                source.get("hint_charges"),
+                int(fallback.get("hint_charges", 0)),
+                0,
+                SELF_DEVELOPMENT_MAX_HINT_CHARGES,
+            ),
         }
 
     def hydrate(self, state: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
@@ -3533,6 +3932,8 @@ class SelfDevelopmentService:
         _, fatigue_max = self._stat_bounds(f"{SELF_DEVELOPMENT_STATE_PREFIX}.fatigue", 0, 6)
         result = []
         for activity in self.activities.values():
+            if activity.get("selectable", True) is False:
+                continue
             reason = None
             if slot != "after_work":
                 reason = "not_after_work"
@@ -3548,6 +3949,13 @@ class SelfDevelopmentService:
                     or profile["fatigue"] > fatigue_lte
                 ):
                     reason = "fatigue_limit"
+                fatigue_gte = activity.get("fatigue_gte")
+                if reason is None and fatigue_gte is not None and (
+                    not isinstance(fatigue_gte, int)
+                    or isinstance(fatigue_gte, bool)
+                    or profile["fatigue"] < fatigue_gte
+                ):
+                    reason = "fatigue_minimum"
                 fatigue_delta = activity.get("fatigue_delta", 0)
                 if reason is None and isinstance(fatigue_delta, int) and fatigue_delta > 0:
                     if profile["fatigue"] + fatigue_delta > fatigue_max:
@@ -3558,6 +3966,23 @@ class SelfDevelopmentService:
                 **({"reason": reason} if reason else {}),
             })
         return result
+
+    def forced_activity(self, state: MutableMapping[str, Any]) -> Optional[Dict[str, Any]]:
+        self.hydrate(state)
+        profile = self.profile(state)
+        for activity in self.activities.values():
+            if activity.get("selectable", True) is not False:
+                continue
+            fatigue_gte = activity.get("fatigue_gte")
+            fatigue_lte = activity.get("fatigue_lte")
+            if not isinstance(fatigue_gte, int) or isinstance(fatigue_gte, bool):
+                continue
+            if profile["fatigue"] < fatigue_gte:
+                continue
+            if isinstance(fatigue_lte, int) and not isinstance(fatigue_lte, bool) and profile["fatigue"] > fatigue_lte:
+                continue
+            return copy.deepcopy(activity)
+        return None
 
     def perform_activity(
         self,
@@ -3577,12 +4002,22 @@ class SelfDevelopmentService:
         activity = self.activities.get(activity_id)
         if activity is None:
             raise SelfDevelopmentError("unknown_activity", f"unknown self-development activity: {activity_id}")
+        progress = self.progress(state)
+        slot = get_path(state, "progress.time.slot", None)
         option = next(
             (item for item in self.activity_options(state) if item["activity"]["id"] == activity_id),
             None,
         )
-        if not option or not option["available"]:
-            code = option.get("reason", "outside_night_window") if option else "outside_night_window"
+        forced = self.forced_activity(state)
+        if slot != "after_work":
+            code = "not_after_work"
+        elif day in progress["completed_days"]:
+            code = "already_completed"
+        elif activity.get("selectable", True) is False:
+            code = None if forced and forced.get("id") == activity_id else "fatigue_minimum"
+        else:
+            code = None if option and option["available"] else option.get("reason", "outside_night_window") if option else "outside_night_window"
+        if code:
             raise SelfDevelopmentError(
                 code,
                 f"self-development activity {activity_id} is unavailable: {code}",
@@ -3626,6 +4061,13 @@ class SelfDevelopmentService:
         progress["completed_days"] = sorted({*progress["completed_days"], day})
         progress["activity_history"].append(activity_id)
         progress["last_activity"] = activity_id
+        previous_hint_charges = progress["hint_charges"]
+        progress["hint_charges"] = self._safe_integer(
+            previous_hint_charges + int(activity.get("hint_charge", 0)),
+            previous_hint_charges,
+            0,
+            SELF_DEVELOPMENT_MAX_HINT_CHARGES,
+        )
         set_path(state, SELF_DEVELOPMENT_STATE_PREFIX, after)
         set_path(state, SELF_DEVELOPMENT_PROGRESS_PREFIX, progress)
         return {
@@ -3634,6 +4076,7 @@ class SelfDevelopmentService:
             "activity": activity_id,
             "appeal_delta": after["appeal"] - before["appeal"],
             "fatigue_delta": after["fatigue"] - before["fatigue"],
+            "hint_charge_delta": progress["hint_charges"] - previous_hint_charges,
             "stat_deltas": stat_deltas,
             "before": before,
             "after": copy.deepcopy(after),
@@ -3658,12 +4101,33 @@ class NightPhaseCoordinator:
             and not isinstance(day, bool)
             and 1 <= day <= self.service.max_night_day
             and day not in progress["completed_days"]
-            and any(option["available"] for option in self.service.activity_options(state))
+            and (
+                self.service.forced_activity(state) is not None
+                or any(option["available"] for option in self.service.activity_options(state))
+            )
         )
 
     def start(self, state: MutableMapping[str, Any]) -> Dict[str, Any]:
         if not self.should_start(state):
             raise NightPhaseError("not_available", "night phase is unavailable in the current state")
+        forced = self.service.forced_activity(state)
+        return {
+            "status": "intro",
+            "day": get_path(state, "progress.time.day", None),
+            "profile": self.service.profile(state),
+            **({"forced_activity_id": forced["id"]} if forced else {}),
+        }
+
+    def continue_intro(
+        self,
+        state: MutableMapping[str, Any],
+        phase: Mapping[str, Any],
+    ) -> Dict[str, Any]:
+        if not self.should_start(state) or phase.get("day") != get_path(state, "progress.time.day", None):
+            raise NightPhaseError("not_available", "night phase is unavailable in the current state")
+        forced = self.service.forced_activity(state)
+        if phase.get("forced_activity_id") and forced and phase["forced_activity_id"] == forced["id"]:
+            return self._choose_forced(state, forced["id"])
         return {
             "status": "selecting",
             "day": get_path(state, "progress.time.day", None),
@@ -3674,6 +4138,22 @@ class NightPhaseCoordinator:
     def choose(self, state: MutableMapping[str, Any], activity_id: str) -> Dict[str, Any]:
         if not self.should_start(state):
             raise NightPhaseError("not_available", "night phase is unavailable in the current state")
+        day = get_path(state, "progress.time.day", None)
+        option = next(
+            (item for item in self.service.activity_options(state) if item["activity"]["id"] == activity_id),
+            None,
+        )
+        if not option or not option["available"]:
+            raise NightPhaseError("not_available", "selected night activity is unavailable")
+        result = self.service.perform_activity(state, activity_id, day)
+        return {
+            "status": "result",
+            "day": day,
+            "profile": copy.deepcopy(result["after"]),
+            "result": result,
+        }
+
+    def _choose_forced(self, state: MutableMapping[str, Any], activity_id: str) -> Dict[str, Any]:
         day = get_path(state, "progress.time.day", None)
         result = self.service.perform_activity(state, activity_id, day)
         return {
@@ -4762,11 +5242,21 @@ def command_night(project: StoryProject, args: argparse.Namespace) -> int:
     profile_before = service.profile(state)
     options = service.activity_options(state)
     available_before = coordinator.should_start(state)
-    status = "selecting" if available_before else "unavailable"
+    status = "intro" if available_before else "unavailable"
     result = None
     finished = None
+    phase = None
 
-    if args.activity:
+    if available_before:
+        intro = coordinator.start(state)
+        phase = coordinator.continue_intro(state, intro)
+        status = phase["status"]
+        if status == "result":
+            result = phase["result"]
+            finished = coordinator.finish(state)
+            status = finished["status"]
+
+    if args.activity and status == "selecting":
         if not available_before:
             raise NightPhaseError(
                 "not_available",

@@ -1,0 +1,98 @@
+schema_version: 1
+id: bonus.stat_intelligence_version_check
+title: 세 문서의 다른 시각
+route: seo_a
+chapter: 1
+sequence: 42
+location: open_office
+time: afternoon
+purpose: 지성 스탯을 쌓은 플레이어에게 문서 불일치를 발견하는 추가 사건과 차민경 원화를 지급하되, 정답 암기가 아니라 실제 기록 비교가 상호작용을 만든다는 점을 보여 준다.
+cast: [han_do_yoon, cha_min_kyung, kang_yoo_jin]
+entry_conditions: []
+state_contract: {reads: [], writes: []}
+start_node: three_documents
+nodes:
+  - id: three_documents
+    kind: dual_narration
+    perceived:
+      atmosphere: playful_tension
+      line: 민경의 일정표와 유진의 디자인 이력, 거래처 회신을 나란히 놓자 남들이 넘긴 작은 틈이 눈에 들어왔다.
+    reality:
+      atmosphere: procedural
+      line: 한도윤은 백화점 입점 승인 회신, 디자인 변경 이력, 캠페인 일정표를 대조하다가 서로 다른 수정 시각을 발견했다.
+      intent: documentation
+    next: do_yoon_question
+
+  - id: do_yoon_question
+    kind: dual_dialogue
+    speaker: han_do_yoon
+    perceived:
+      atmosphere: warm_romance
+      expression: subjective_confident
+      line: "거래처 회신은 14시 20분, 디자인 이력은 14시 35분인데 일정표는 오전 버전입니다. 공개 시각을 바꾸기 전에 어느 파일이 최종인지 확인할까요?"
+    reality:
+      atmosphere: procedural
+      expression: actual_waiting_smile
+      line: "거래처 회신은 14시 20분, 디자인 이력은 14시 35분인데 일정표는 오전 버전입니다. 공개 시각을 바꾸기 전에 어느 파일이 최종인지 확인할까요?"
+      intent: documentation
+    next: yoo_jin_check
+
+  - id: yoo_jin_check
+    kind: dual_dialogue
+    speaker: kang_yoo_jin
+    perceived:
+      atmosphere: playful_tension
+      expression: subjective_bold_flirt
+      line: "14시 35분 파일이 최종입니다. 수정 이력 번호 D-18도 맞습니다. 일정표만 갱신하면 됩니다."
+    reality:
+      atmosphere: procedural
+      expression: actual_fact_check
+      line: "14시 35분 파일이 최종입니다. 수정 이력 번호 D-18도 맞습니다. 일정표만 갱신하면 됩니다."
+      intent: documentation
+    next: min_kyung_update
+
+  - id: min_kyung_update
+    kind: dual_dialogue
+    speaker: cha_min_kyung
+    perceived:
+      atmosphere: playful_tension
+      expression: subjective_challenging
+      line: "좋습니다. 확인 없이 공개 시각부터 바꿨으면 다시 수정할 뻔했네요. 세 시각을 근거란에 남기고 제가 일정표를 갱신하겠습니다."
+    reality:
+      atmosphere: procedural
+      expression: actual_focused
+      line: "좋습니다. 확인 없이 공개 시각부터 바꿨으면 다시 수정할 뻔했네요. 세 시각을 근거란에 남기고 제가 일정표를 갱신하겠습니다."
+      intent: documentation
+    next: note_closed
+
+  - id: note_closed
+    kind: dual_narration
+    perceived:
+      atmosphere: warm_romance
+      line: 민경이 세 시각을 가지런히 적고 노트를 덮었다. 내 관찰이 그녀의 빈칸을 정확히 채운 순간처럼 느껴졌다.
+    reality:
+      atmosphere: procedural
+      line: 민경은 확인된 최종 버전과 세 문서의 시각을 일정표 근거란에 기록했다. 작은 문서 불일치가 재작업 전에 해소됐다.
+      intent: work_only
+    next: do_yoon_inner
+
+  - id: do_yoon_inner
+    kind: dual_dialogue
+    presentation_flags: [inner_voice]
+    speakers:
+      perceived: han_do_yoon
+      reality: null
+    perceived:
+      atmosphere: playful_tension
+      line: (밤에 읽어 둔 덕분에 민경과 같은 속도로 생각했다. 이런 지적인 호흡은 쉽게 생기지 않는다.)
+    reality:
+      atmosphere: procedural
+      line: 도윤의 독서는 문서 비교에 도움이 됐지만, 민경이 고마워한 것은 확인 가능한 시각과 버전 번호였다.
+      intent: work_only
+    next: leave
+
+  - id: leave
+    kind: exit
+    transitions:
+      - default: true
+        scene: bonus.stat_humor_tasting_vote

@@ -1,0 +1,29 @@
+schema_version: 1
+campaign_id: main
+id: company.stat_intelligence_version_check
+title: 세 문서의 다른 시각
+type: company
+lane: company
+window: {days: [3, 5], slots: [afternoon], deadline_day: 5}
+duration: 1
+priority: 63
+availability: player
+completion: return_to_timeline
+participants: [han_do_yoon, cha_min_kyung, kang_yoo_jin]
+location: open_office
+scene: bonus.stat_intelligence_version_check
+requires:
+  events: [anchor.day_03_business_trip_or_cafe]
+  conditions:
+    - {path: visible.protagonist.self_development.stats.intelligence, op: gte, value: 3}
+on_seen:
+  effects:
+    - {path: progress.memories, op: append_unique, value: cg.stat.intelligence.min_kyung}
+on_missed: {effects: []}
+presentation:
+  perceived:
+    title: 같은 속도로 생각한 순간
+    summary: 독서로 높인 지성으로 세 문서의 시각 차이를 발견하고, 민경과 생각의 호흡이 맞은 장면을 원화로 남긴다.
+  reality:
+    title: 공개 일정 재작업 방지
+    summary: 도윤이 거래처 회신·디자인 이력·일정표를 대조해 불일치를 발견하고, 유진과 민경이 최종 버전을 기록한다.
