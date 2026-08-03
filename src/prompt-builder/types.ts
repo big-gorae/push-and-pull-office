@@ -1,6 +1,31 @@
 export type PromptSubject = "female" | "male";
 export type PromptLayer = "perceived" | "reality";
 export type PromptItem = string;
+export type PromptInstruction = string;
+
+export type PromptTagSource = {
+  id: string;
+  label: string;
+  url: string;
+  checkedAt: string;
+  description: string;
+};
+
+export type PromptTagRecord = {
+  tag: string;
+  sourceId: string;
+};
+
+export type PromptTagRegistry = {
+  sources: PromptTagSource[];
+  tags: PromptTagRecord[];
+};
+
+export type PromptReferenceImage = {
+  id: string;
+  label: string;
+  path: string;
+};
 
 export type PromptSettings = {
   model: string;
@@ -9,6 +34,9 @@ export type PromptSettings = {
   guidance: string;
   steps: string;
   samplers: string[];
+  variety: boolean;
+  noiseSchedule: string;
+  promptGuidanceRescale: string;
 };
 
 export type PromptFormat = {
@@ -17,6 +45,7 @@ export type PromptFormat = {
   description: string;
   subjectTags: Record<PromptSubject, PromptItem[]>;
   tags: PromptItem[];
+  instructions: PromptInstruction[];
   source: string;
 };
 
@@ -25,6 +54,15 @@ export type PromptOutfit = {
   label: string;
   description?: string;
   tags: PromptItem[];
+  instructions: PromptInstruction[];
+};
+
+export type PromptInpaintTask = {
+  id: string;
+  label: string;
+  description: string;
+  tags: PromptItem[];
+  instructions: PromptInstruction[];
 };
 
 export type PromptSituation = {
@@ -34,7 +72,10 @@ export type PromptSituation = {
   expressionId?: string;
   basePresetId: string;
   tags: PromptItem[];
+  instructions: PromptInstruction[];
   undesiredTags: PromptItem[];
+  undesiredInstructions: PromptInstruction[];
+  omitCharacterUndesiredTags: PromptItem[];
   source: string;
 };
 
@@ -44,10 +85,14 @@ export type PromptVariant = {
   description?: string;
   layer?: PromptLayer;
   identityTags: PromptItem[];
+  identityInstructions: PromptInstruction[];
   defaultOutfitId: string;
   outfits: PromptOutfit[];
   fullBodyOnlyTags: PromptItem[];
+  fullBodyOnlyInstructions: PromptInstruction[];
   characterUndesiredTags: PromptItem[];
+  characterUndesiredInstructions: PromptInstruction[];
+  inpaintTasks: PromptInpaintTask[];
   defaultSituationId: string;
   situations: PromptSituation[];
   source: string;
@@ -61,6 +106,7 @@ export type PromptCharacter = {
   role?: string;
   narrativeRole?: string;
   conceptArt?: string;
+  referenceImages: PromptReferenceImage[];
   palette: string[];
   accent: string;
   subject: PromptSubject;
@@ -70,13 +116,17 @@ export type PromptCharacter = {
 };
 
 export type PromptCatalog = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   settings: PromptSettings;
   formats: PromptFormat[];
+  commonSituations: PromptSituation[];
   characters: PromptCharacter[];
   styleTags: PromptItem[];
+  styleInstructions: PromptInstruction[];
   manualQualityTags: PromptItem[];
   sharedUndesiredTags: PromptItem[];
+  sharedUndesiredInstructions: PromptInstruction[];
+  tagRegistry: PromptTagRegistry;
   source: string;
 };
 
@@ -86,7 +136,13 @@ export type PromptSelection = {
   formatId?: string;
   outfitId?: string;
   situationId?: string;
+  extraTags?: string | readonly PromptItem[];
+  extraInstructions?: string | readonly PromptInstruction[];
+  extraUcTags?: string | readonly PromptItem[];
+  extraUcInstructions?: string | readonly PromptInstruction[];
+  /** @deprecated Use extraTags. */
   extraPrompt?: string | readonly PromptItem[];
+  /** @deprecated Use extraUcTags. */
   extraUc?: string | readonly PromptItem[];
 };
 
@@ -95,6 +151,12 @@ export type ComposedPrompt = {
   character: string;
   combined: string;
   uc: string;
+  audit: {
+    positiveTagItems: PromptItem[];
+    positiveInstructions: PromptInstruction[];
+    undesiredTagItems: PromptItem[];
+    undesiredInstructions: PromptInstruction[];
+  };
 };
 
 export type PromptConfigIssue = {
@@ -136,4 +198,5 @@ export type PromptRuntimeMetadata = {
 export type RawPromptFiles = {
   defaults: Record<string, string>;
   characters: Record<string, string>;
+  registry: Record<string, string>;
 };

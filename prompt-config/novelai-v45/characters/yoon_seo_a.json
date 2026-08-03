@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "characterId": "yoon_seo_a",
   "order": 10,
   "subject": "female",
@@ -10,55 +10,70 @@
       "id": "office",
       "label": "기본 오피스",
       "identityTags": [
-        "adult",
-        "long dark brown hair",
-        "large brown eyes",
-        "oval face",
+        "brown hair",
+        "long hair",
+        "wavy hair",
+        "swept bangs",
+        "brown eyes",
         "long eyelashes",
-        "small nose",
-        "soft full lips",
-        "softly wavy hair",
-        "soft side-swept bangs",
-        "thin natural eyebrows",
-        "slender adult build",
-        "short stature",
+        "petite",
         "narrow waist",
         "1.2::large breasts::",
         "breasts"
       ],
-      "outfitTags": [
-        "ivory cardigan",
-        "pale blue collared blouse",
-        "navy knee-length flared skirt",
-        "navy employee lanyard",
-        "cat-sticker notebook"
+      "identityInstructions": [
+        "She is a twenty-four-year-old adult Korean woman with distinctly youthful facial proportions.",
+        "Give her very large round brown eyes, a small rounded oval face, a small nose and mouth, soft full lips, soft cheeks, a small chin, thin natural eyebrows, and a subtle healthy blush.",
+        "Keep her face exceptionally youthful, cute, luminous, and polished without making her look like a child.",
+        "Use softly wavy dark-brown hair with soft side-swept bangs and a petite short adult frame."
       ],
-      "fullBodyOnlyTags": ["black loafers"],
+      "outfitTags": [
+        "cardigan",
+        "blouse",
+        "collared shirt",
+        "skirt",
+        "blue skirt",
+        "lanyard",
+        "notebook"
+      ],
+      "outfitInstructions": [
+        "Dress her in an ivory cardigan, a pale-blue collared blouse, and a navy knee-length flared skirt.",
+        "Give her a navy employee lanyard and a notebook decorated with one small cat sticker."
+      ],
+      "fullBodyOnlyTags": ["loafers"],
+      "fullBodyOnlyInstructions": ["Use simple black loafers."],
       "characterUndesiredTags": [
         "child",
         "loli",
-        "schoolgirl",
-        "school uniform",
-        "middle-aged woman",
-        "tall woman",
-        "muscular woman",
+        "old woman",
+        "muscular",
         "short hair",
         "bob cut",
         "blonde hair",
         "blue eyes",
         "seductive smile",
+        "sunken cheeks",
+        "bags under eyes",
         "flat chest",
         "small breasts"
       ],
+      "characterUndesiredInstructions": [
+        "Middle-aged or elderly facial traits, wrinkles, nasolabial folds, prominent cheekbones, eye bags, a square jaw, or heavy makeup.",
+        "A school uniform, a schoolgirl appearance, a tall frame, or a sexualized smile."
+      ],
+      "inpaintTasks": [],
       "defaultSituationId": "reference_social_smile",
       "situations": [
         {
           "id": "reference_social_smile",
-          "label": "기본 사회적 미소",
-          "description": "갈등을 빨리 끝내려는 얇은 미소와 경계 자세.",
+          "label": "기본 로비 미소",
+          "description": "메인 로비 원본의 어리고 귀여운 얼굴과 부드러운 미소입니다.",
           "expressionId": "actual_social_smile",
-          "basePresetId": "sprite_full_body",
-          "tags": ["standing with her elbows close to her body", "holding the notebook close to her chest", "subtle closed-mouth social smile", "subtle eye smile", "raised lower eyelids", "slightly raised cheeks", "slightly asymmetric upturned mouth corners", "slightly raised shoulders", "looking slightly toward the office exit"]
+          "basePresetId": "character_upper_body",
+          "tags": ["standing", "holding", "notebook", "smile", "closed mouth", "looking at viewer"],
+          "instructions": ["Hold the notebook at waist level with relaxed shoulders and a gentle closed-mouth smile.", "Create a subtle eye smile with slightly raised lower eyelids, slightly raised cheeks, and delicately asymmetric upturned mouth corners."],
+          "undesiredTags": [],
+          "undesiredInstructions": ["A broad grin, visible teeth, or an exaggerated gummy smile."]
         },
         {
           "id": "tense_at_doorway",
@@ -66,7 +81,10 @@
           "description": "휴대전화를 쥔 채 복도와 출입문을 확인합니다.",
           "expressionId": "actual_tense",
           "basePresetId": "office_hallway",
-          "tags": ["holding a smartphone with both hands", "tense", "raised shoulders", "closed mouth", "looking toward the office doorway"]
+          "tags": ["holding", "smartphone", "closed mouth", "looking to the side"],
+          "instructions": ["Hold the smartphone with both hands, raise her shoulders slightly, and look toward the office doorway with visible tension."],
+          "undesiredTags": ["smile"],
+          "undesiredInstructions": []
         },
         {
           "id": "relief_with_coworker",
@@ -74,7 +92,10 @@
           "description": "접근이 멈춘 뒤 어깨와 호흡이 잠시 풀립니다.",
           "expressionId": "actual_relief",
           "basePresetId": "office_hallway",
-          "tags": ["holding a tumbler at waist level", "relieved", "smiling eyes", "crescent-shaped half-closed eyes", "raised cheeks", "wide warm smile", "visible upper teeth", "subtle gummy smile", "slightly asymmetric upturned mouth corners", "relaxed shoulders", "looking toward a nearby coworker outside the frame"]
+          "tags": ["holding", "smile", "half-closed eyes", "teeth", "looking at another"],
+          "instructions": ["Hold a tumbler at waist level and look toward a nearby coworker outside the frame with relaxed shoulders.", "Use crescent-shaped smiling eyes, raised cheeks, a warm smile showing the upper teeth, a subtle gummy smile, and delicately asymmetric mouth corners."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "exhausted_at_desk",
@@ -82,7 +103,10 @@
           "description": "수면 부족과 반복되는 주변 확인이 드러납니다.",
           "expressionId": "actual_exhausted",
           "basePresetId": "office_desk",
-          "tags": ["seated at her desk", "tired eyes", "subtle under-eye shadows", "lowered shoulders", "looking down at her phone"]
+          "tags": ["sitting", "looking at phone"],
+          "instructions": ["Sit at her desk with tired eyes, subtle under-eye shadows, lowered shoulders, and her gaze fixed on her phone."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "perceived_shy",
@@ -90,7 +114,10 @@
           "description": "도윤이 긴장을 연애적 수줍음으로 오해한 화면입니다.",
           "expressionId": "subjective_shy",
           "basePresetId": "office_hallway",
-          "tags": ["closed-mouth shy smile", "subtle eye smile", "raised lower eyelids", "slightly raised cheeks", "slightly asymmetric upturned mouth corners", "faint blush", "looking away", "holding the notebook close to her chest", "slightly turned shoulders"]
+          "tags": ["shy", "smile", "closed mouth", "blush", "holding", "notebook", "looking to the side"],
+          "instructions": ["Use a subtle eye smile, slightly raised lower eyelids and cheeks, delicately asymmetric upturned mouth corners, and a faint blush.", "Hold the notebook close to her chest and turn her shoulders slightly away."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "perceived_relieved_smile",
@@ -98,7 +125,10 @@
           "description": "안도한 표정을 자신에게 다시 다가오는 미소로 오해합니다.",
           "expressionId": "subjective_relieved_smile",
           "basePresetId": "office_desk",
-          "tags": ["relieved smile", "smiling eyes", "crescent-shaped half-closed eyes", "raised cheeks", "visible upper teeth", "subtle gummy smile", "slightly asymmetric upturned mouth corners", "relaxed shoulders", "turning slightly toward the viewer", "hands loosely around a tumbler"]
+          "tags": ["smile", "half-closed eyes", "teeth", "facing viewer"],
+          "instructions": ["Use crescent-shaped smiling eyes, raised cheeks, visible upper teeth, a subtle gummy smile, and delicately asymmetric mouth corners.", "Turn slightly toward the viewer with relaxed shoulders and both hands loosely around a tumbler."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         }
       ]
     }

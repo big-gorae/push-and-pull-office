@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "characterId": "han_do_yoon",
   "order": 50,
   "subject": "male",
@@ -11,46 +11,37 @@
       "label": "현실 모습",
       "layer": "reality",
       "identityTags": [
-        "boy",
-        "42-year-old Korean man",
-        "adult man",
-        "1.12::round face, receding hairline, thinning short black hair::",
-        "dark brown eyes",
-        "faint uneven stubble",
-        "slightly oily forehead",
-        "short stature",
-        "stocky heavy build",
-        "protruding belly"
+        "black hair",
+        "short hair",
+        "receding hairline",
+        "brown eyes",
+        "stubble"
       ],
-      "outfitTags": [
-        "ill-fitting charcoal suit jacket",
-        "tight shirt collar",
-        "muted navy shirt",
-        "wine-red tie",
-        "old leather briefcase",
-        "company phone"
+      "identityInstructions": [
+        "He is a forty-two-year-old Korean man with a round face, a receding hairline, and visibly thinning short black hair.",
+        "Give him dark-brown eyes, faint uneven stubble, and a slightly oily forehead.",
+        "Keep him short with a stocky heavy build and a protruding belly."
       ],
-      "fullBodyOnlyTags": ["worn black dress shoes"],
+      "outfitTags": ["jacket", "shirt", "necktie", "briefcase", "phone"],
+      "outfitInstructions": [
+        "Dress him in an ill-fitting charcoal suit jacket, a tight muted-navy shirt collar, and a wine-red tie.",
+        "Give him an old leather briefcase and a company phone."
+      ],
+      "fullBodyOnlyTags": ["dress shoes"],
+      "fullBodyOnlyInstructions": ["Use visibly worn black dress shoes."],
       "characterUndesiredTags": [
         "bishounen",
-        "ikemen",
-        "youthful",
-        "teenager",
-        "tall man",
-        "slim man",
-        "slender",
+        "tall",
         "muscular",
         "abs",
-        "sharp jawline",
-        "full hair",
         "long hair",
-        "clean-shaven",
-        "glamorous",
-        "heroic pose",
-        "monster",
-        "grotesque",
-        "horror"
+        "monster"
       ],
+      "characterUndesiredInstructions": [
+        "A youthful handsome face, a sharp jawline, full hair, a clean-shaven face, a tall slim frame, broad heroic shoulders, glamorous grooming, or a heroic pose.",
+        "Grotesque or horror-like features."
+      ],
+      "inpaintTasks": [],
       "defaultSituationId": "reference_waiting_smile",
       "situations": [
         {
@@ -59,7 +50,10 @@
           "description": "상대가 원하는 반응을 할 때까지 미소를 유지합니다.",
           "expressionId": "actual_waiting_smile",
           "basePresetId": "sprite_full_body",
-          "tags": ["leaning his upper body toward someone just off camera", "closed-mouth smile held too long", "waiting expression", "looking at the other person"]
+          "tags": ["standing", "leaning forward", "smile", "closed mouth", "looking at another"],
+          "instructions": ["Lean his upper body toward someone just off camera and hold the closed-mouth smile for uncomfortably long while waiting for a reaction."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "office_waiting_smile",
@@ -67,7 +61,10 @@
           "description": "상대의 책상 쪽으로 몸을 기울인 채 반응을 기다립니다.",
           "expressionId": "actual_waiting_smile",
           "basePresetId": "office_desk",
-          "tags": ["standing beside another person's desk", "leaning his upper body forward", "closed-mouth smile held too long", "waiting expression", "looking at someone outside the frame"]
+          "tags": ["standing", "leaning forward", "smile", "closed mouth", "looking at another"],
+          "instructions": ["Stand beside another person's desk, lean forward, and hold the closed-mouth smile for uncomfortably long while waiting for a reaction."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "irritated_after_refusal",
@@ -75,7 +72,10 @@
           "description": "거절을 자신의 권리에 대한 모욕처럼 받아들입니다.",
           "expressionId": "actual_irritated",
           "basePresetId": "meeting_room",
-          "tags": ["leaning forward", "irritated", "furrowed brows", "clenched jaw", "tight closed mouth", "looking at someone just off camera"]
+          "tags": ["leaning forward", "angry", "furrowed brow", "closed mouth", "looking at another"],
+          "instructions": ["Tighten his jaw and mouth while looking at someone just off camera with visible irritation."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "looming_in_hallway",
@@ -83,7 +83,10 @@
           "description": "괴물화하지 않고 거리·자세·막힌 출입문으로 압박을 표현합니다.",
           "expressionId": "actual_waiting_smile",
           "basePresetId": "office_hallway",
-          "tags": ["standing too close to the foreground person", "blocking part of the doorway", "leaning forward", "neutral closed-mouth smile", "looking down at them"]
+          "tags": ["standing", "leaning forward", "smile", "closed mouth", "looking down"],
+          "instructions": ["Stand too close to the foreground person, block part of the doorway, and look down at them with a neutral closed-mouth smile."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         }
       ]
     },
@@ -92,29 +95,30 @@
       "label": "자기 인식 속 미남",
       "layer": "perceived",
       "identityTags": [
-        "boy",
-        "42-year-old Korean man",
-        "adult man",
-        "1.1::thick neatly styled black hair, sharp jawline, relaxed dark brown eyes::",
-        "handsome middle-aged man",
+        "black hair",
+        "short hair",
+        "brown eyes",
         "tall",
-        "lean build",
-        "broad shoulders",
-        "well-groomed"
+        "broad shoulders"
       ],
-      "outfitTags": ["fitted charcoal suit", "muted navy shirt", "wine-red tie"],
-      "fullBodyOnlyTags": ["polished black dress shoes"],
+      "identityInstructions": [
+        "He is a forty-two-year-old handsome Korean man with thick neatly styled black hair, a sharp jawline, and relaxed dark-brown eyes.",
+        "Keep him tall, lean, broad-shouldered, and meticulously well groomed."
+      ],
+      "outfitTags": ["business suit", "shirt", "necktie"],
+      "outfitInstructions": ["Dress him in a fitted charcoal suit, a muted-navy shirt, and a wine-red tie."],
+      "fullBodyOnlyTags": ["dress shoes"],
+      "fullBodyOnlyInstructions": ["Use polished black dress shoes."],
       "characterUndesiredTags": [
         "receding hairline",
-        "thinning hair",
-        "short stature",
         "obese",
-        "protruding belly",
-        "ill-fitting suit",
         "stubble",
-        "oily skin",
-        "looming posture"
+        "slouching"
       ],
+      "characterUndesiredInstructions": [
+        "Thinning hair, short stature, a protruding belly, an ill-fitting suit, oily skin, or looming posture."
+      ],
+      "inpaintTasks": [],
       "defaultSituationId": "perceived_confident",
       "situations": [
         {
@@ -123,7 +127,10 @@
           "description": "스스로 넉넉하고 다정하다고 믿는 기본 모습입니다.",
           "expressionId": "subjective_confident",
           "basePresetId": "sprite_full_body",
-          "tags": ["relaxed posture", "confident gentle smile", "looking slightly down toward the viewer"]
+          "tags": ["standing", "smile", "looking at viewer"],
+          "instructions": ["Use a relaxed posture and a confident gentle smile while looking slightly down toward the viewer."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "perceived_office_confident",
@@ -131,7 +138,10 @@
           "description": "상대에게 다가서는 행동을 세련된 배려라고 인식합니다.",
           "expressionId": "subjective_confident",
           "basePresetId": "office_desk",
-          "tags": ["relaxed posture beside an office desk", "confident gentle smile", "one hand loosely holding a phone", "looking toward someone outside the frame"]
+          "tags": ["standing", "holding", "phone", "smile", "looking at another"],
+          "instructions": ["Stand beside an office desk with a relaxed posture, a confident gentle smile, and one hand loosely holding a phone."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         },
         {
           "id": "perceived_wounded",
@@ -139,7 +149,10 @@
           "description": "거절 뒤의 감정을 사랑 때문에 받은 상처로 재구성합니다.",
           "expressionId": "subjective_wounded",
           "basePresetId": "meeting_room",
-          "tags": ["pained restrained smile", "downcast eyes", "one hand near his tie", "romantic melancholy", "upright posture"]
+          "tags": ["standing", "smile", "looking down"],
+          "instructions": ["Use an upright posture, a pained restrained smile, downcast eyes, and one hand held near his tie with romantic melancholy."],
+          "undesiredTags": [],
+          "undesiredInstructions": []
         }
       ]
     }

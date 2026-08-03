@@ -3,6 +3,7 @@ import type {
   PromptCatalog,
   PromptCharacter,
   PromptFormat,
+  PromptInstruction,
   PromptItem,
   PromptSelection,
   PromptSituation,
@@ -58,6 +59,58 @@ export function renderPromptItems(items: readonly PromptItem[]): string {
   return exactDedupe(items).join(", ");
 }
 
+export function promptTagNames(item: PromptItem): PromptItem[] {
+  const normalized = item.trim();
+  const weighted = normalized.match(/^(-?(?:\d+(?:\.\d+)?))::([\s\S]+)::$/);
+  if (normalized.includes("::") && !weighted) {
+    throw new Error(`잘못된 NovelAI 강조 구문입니다: ${normalized}`);
+  }
+  return (weighted ? weighted[2] : normalized)
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+}
+
+function instructionItems(value?: string | readonly PromptInstruction[]): PromptInstruction[] {
+  if (!value) return [];
+  const values = typeof value === "string" ? value.split(/\r?\n/) : value;
+  return exactDedupe(values.map((item) => {
+    const trimmed = item.trim();
+    if (!trimmed) return "";
+    const capitalized = `${trimmed[0].toUpperCase()}${trimmed.slice(1)}`;
+    return /[.!?]$/.test(capitalized) ? capitalized : `${capitalized}.`;
+  }));
+}
+
+export function unregisteredPromptTags(
+  catalog: PromptCatalog,
+  items: readonly PromptItem[],
+): PromptItem[] {
+  const registered = new Set(catalog.tagRegistry.tags.map(({ tag }) => tag));
+  return exactDedupe(items.flatMap(promptTagNames).filter((tag) => !registered.has(tag)));
+}
+
+function checkedExtraItems(
+  catalog: PromptCatalog,
+  value?: string | readonly PromptItem[],
+): PromptItem[] {
+  const items = extraItems(value);
+  const unknown = unregisteredPromptTags(catalog, items);
+  if (unknown.length) {
+    throw new Error(`출처가 검증되지 않은 태그입니다: ${unknown.join(", ")}`);
+  }
+  return items;
+}
+
+export function renderPromptSections(
+  tags: readonly PromptItem[],
+  instructions: readonly PromptInstruction[],
+): string {
+  return [renderPromptItems(tags), instructionItems(instructions).join(" ")]
+    .filter(Boolean)
+    .join(", ");
+}
+
 function selectedCharacter(catalog: PromptCatalog, id: string): PromptCharacter {
   const character = catalog.characters.find((item) => item.id === id);
   if (!character) throw new Error(`Unknown prompt character: ${id}`);
@@ -110,33 +163,62 @@ export function composePrompt(
   const outfit = variant.outfits.find((item) => item.id === outfitId);
   if (!outfit) throw new Error(`Unknown outfit ${outfitId} for look ${variant.id}`);
 
-  const baseItems = [
+  const extraTagItems = checkedExtraItems(catalog, selection.extraTags ?? selection.extraPrompt);
+  const extraUcTagItems = checkedExtraItems(catalog, selection.extraUcTags ?? selection.extraUc);
+  const baseTagItems = [
     ...format.subjectTags[character.subject],
     ...format.tags,
     ...catalog.styleTags,
     ...(catalog.settings.qualityTags ? [] : catalog.manualQualityTags),
   ];
-  const characterItems = [
+  const baseInstructions = [
+    ...format.instructions,
+    ...catalog.styleInstructions,
+  ];
+  const characterTagItems = [
     character.subject === "female" ? "girl" : "boy",
     ...variant.identityTags,
     ...outfit.tags,
     ...(isFullBodyFormat(format) ? variant.fullBodyOnlyTags : []),
     ...situation.tags,
-    ...extraItems(selection.extraPrompt),
+    ...extraTagItems,
   ];
-  const undesiredItems = [
+  const characterInstructions = [
+    ...variant.identityInstructions,
+    ...outfit.instructions,
+    ...(isFullBodyFormat(format) ? variant.fullBodyOnlyInstructions : []),
+    ...situation.instructions,
+    ...instructionItems(selection.extraInstructions),
+  ];
+  const omittedCharacterUcTags = new Set(situation.omitCharacterUndesiredTags);
+  const activeCharacterUndesiredTags = variant.characterUndesiredTags.filter((item) => (
+    promptTagNames(item).every((tag) => !omittedCharacterUcTags.has(tag))
+  ));
+  const undesiredTagItems = [
     ...catalog.sharedUndesiredTags,
-    ...variant.characterUndesiredTags,
+    ...activeCharacterUndesiredTags,
     ...situation.undesiredTags,
-    ...extraItems(selection.extraUc),
+    ...extraUcTagItems,
+  ];
+  const undesiredInstructions = [
+    ...catalog.sharedUndesiredInstructions,
+    ...variant.characterUndesiredInstructions,
+    ...situation.undesiredInstructions,
+    ...instructionItems(selection.extraUcInstructions),
   ];
 
-  const base = renderPromptItems(baseItems);
-  const characterPrompt = renderPromptItems(characterItems);
+  const base = renderPromptSections(baseTagItems, baseInstructions);
+  const characterPrompt = renderPromptSections(characterTagItems, characterInstructions);
   return {
     base,
     character: characterPrompt,
     combined: [base, characterPrompt].filter(Boolean).join(" | "),
-    uc: renderPromptItems(undesiredItems),
+    uc: renderPromptSections(undesiredTagItems, undesiredInstructions),
+    audit: {
+      positiveTagItems: exactDedupe([...baseTagItems, ...characterTagItems]),
+      positiveInstructions: instructionItems([...baseInstructions, ...characterInstructions]),
+      undesiredTagItems: exactDedupe(undesiredTagItems),
+      undesiredInstructions: instructionItems(undesiredInstructions),
+    },
   };
 }

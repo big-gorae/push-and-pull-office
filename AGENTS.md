@@ -27,6 +27,15 @@
 - Run `npm run verify` locally before publishing. After auto-merge, confirm the merged `main` SHA passed CI and deploy only that exact SHA.
 - Do not include unrelated user changes merely because `전부 반영` was invoked. If a conflict is genuinely ambiguous and both intentions cannot safely be preserved, stop and explain the conflict instead of guessing or discarding work.
 
+## Image prompt authoring workflow
+
+- Before adding or changing an unfamiliar visual concept in any NovelAI `*Tags` field, search that one concept with `npm run prompt:harness -- search "<Korean or English concept>"`. Prefer the exact English tag returned by the configured Danbooru tag tool when its description and category match the intended visual meaning.
+- A tag already present in `prompt-config/novelai-v45/tag-registry.json` does not need to be searched again when it is only being reused unchanged. NovelAI special tags documented by NovelAI may use the `novelai_official` source; other newly accepted tags normally use `danbooru_tag_tool`.
+- Never send a full prompt, character profile, story text, or comma-separated tag list to the external search API. Search one short visual concept at a time. The harness rejects prompt-shaped queries for this reason.
+- Do not select a tag merely because its spelling looks similar. Read the returned Korean name, description, category, and usage count. If no semantically correct tag exists, put a concise English sentence in the matching `*Instructions` field instead of inventing a tag.
+- Add a newly accepted tag to `tag-registry.json` with its real source before using it in character or defaults JSON. Do not weaken the registry or add a fake source merely to pass validation.
+- After any image-prompt change, run `npm run prompt:validate`, `npm run test:prompt-harness`, and `npm run test:prompts`.
+
 ## Story source of truth
 
 - Narrative intent and reviews live in `docs/`.

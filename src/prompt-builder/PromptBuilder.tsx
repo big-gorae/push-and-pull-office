@@ -1,15 +1,25 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { loadPromptCatalog } from "./promptCatalog";
-import { composePrompt } from "./promptComposer";
+import {
+  composePrompt,
+  renderPromptSections,
+  splitPromptText,
+  unregisteredPromptTags,
+} from "./promptComposer";
 import "./prompt-builder.css";
 
-type CopyTarget = "combined" | "uc" | "base" | "character";
+type CopyTarget = string;
 
 type CopyFeedback = {
   target?: CopyTarget;
   message: string;
   failed?: boolean;
 };
+
+const conceptArtImages = import.meta.glob(
+  "../../assets/concept-art/*",
+  { eager: true, query: "?url", import: "default" },
+) as Record<string, string>;
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
@@ -133,7 +143,14 @@ export default function PromptBuilder() {
   const [characterId, setCharacterId] = useState(initialCharacter?.id || "");
   const [variantId, setVariantId] = useState(initialVariant?.id || "");
   const [situationId, setSituationId] = useState(initialVariant?.defaultSituationId || initialVariant?.situations[0]?.id || "");
-  const [extraPrompt, setExtraPrompt] = useState("");
+  const [extraTags, setExtraTags] = useState("");
+  const [extraInstructions, setExtraInstructions] = useState("");
+  const [extraUcTags, setExtraUcTags] = useState("");
+  const [extraUcInstructions, setExtraUcInstructions] = useState("");
+  const [compareEnabled, setCompareEnabled] = useState(false);
+  const [compareTags, setCompareTags] = useState("");
+  const [compareInstructions, setCompareInstructions] = useState("");
+  const [seed, setSeed] = useState(() => String(Math.floor(Math.random() * 4_294_967_295)));
   const [copyFeedback, setCopyFeedback] = useState<CopyFeedback>({ message: "" });
   const copyTimer = useRef<number | undefined>(undefined);
 
@@ -155,9 +172,27 @@ export default function PromptBuilder() {
 
   const character = catalog?.characters.find((item) => item.id === characterId) || catalog?.characters[0];
   const variant = character?.variants.find((item) => item.id === variantId) || character?.variants[0];
+  const referenceImages = character
+    ? [
+        ...(character.conceptArt ? [{
+          id: "main-lobby",
+          label: "메인 로비 원화",
+          path: character.conceptArt,
+        }] : []),
+        ...character.referenceImages,
+      ].flatMap((image) => {
+        const url = conceptArtImages[`../../${image.path}`];
+        return url ? [{ ...image, url }] : [];
+      })
+    : [];
   const situations = variant?.situations || [];
   const variantVisible = Boolean(character && character.variants.length > 1);
   const situationStep = variantVisible ? 3 : 2;
+  const extraTagItems = useMemo(() => splitPromptText(extraTags), [extraTags]);
+  const unknownExtraTags = useMemo(
+    () => catalog ? unregisteredPromptTags(catalog, extraTagItems) : [],
+    [catalog, extraTagItems],
+  );
 
   const composedResult = useMemo(() => {
     if (!catalog || !character || !variant || !situationId) return { prompt: undefined, error: "" };
@@ -167,14 +202,53 @@ export default function PromptBuilder() {
           characterId: character.id,
           variantId: variant.id,
           situationId,
-          extraPrompt,
+          extraTags,
+          extraInstructions,
+          extraUcTags,
+          extraUcInstructions,
         }),
         error: "",
       };
     } catch (error) {
       return { prompt: undefined, error: errorMessage(error) };
     }
-  }, [catalog, character, extraPrompt, situationId, variant]);
+  }, [catalog, character, extraInstructions, extraTags, extraUcInstructions, extraUcTags, situationId, variant]);
+
+  const comparisonResult = useMemo(() => {
+    if (!compareEnabled || !catalog || !character || !variant || !situationId) {
+      return { prompt: undefined, error: "" };
+    }
+    try {
+      return {
+        prompt: composePrompt(catalog, {
+          characterId: character.id,
+          variantId: variant.id,
+          situationId,
+          extraTags: [...splitPromptText(extraTags), ...splitPromptText(compareTags)],
+          extraInstructions: [extraInstructions, compareInstructions]
+            .flatMap((value) => value.split(/\r?\n/))
+            .filter(Boolean),
+          extraUcTags,
+          extraUcInstructions,
+        }),
+        error: "",
+      };
+    } catch (error) {
+      return { prompt: undefined, error: errorMessage(error) };
+    }
+  }, [
+    catalog,
+    character,
+    compareEnabled,
+    compareInstructions,
+    compareTags,
+    extraInstructions,
+    extraTags,
+    extraUcInstructions,
+    extraUcTags,
+    situationId,
+    variant,
+  ]);
 
   if (!catalog) {
     return <main className="prompt-app"><section className="prompt-error" role="alert">
@@ -211,6 +285,7 @@ export default function PromptBuilder() {
   };
 
   const prompt = composedResult.prompt;
+  const inpaintTasks = variant?.inpaintTasks || [];
   const settings = catalog.settings;
   const qualityLabel = typeof settings.qualityTags === "boolean"
     ? `Quality Tags ${settings.qualityTags ? "ON" : "OFF"}`
@@ -225,9 +300,14 @@ export default function PromptBuilder() {
     <section className="prompt-settings-bar" aria-label="NovelAI 권장 설정">
       <strong>먼저 NovelAI 설정</strong>
       <span className="prompt-settings-chip accent">{settings.model}</span>
-      <span className="prompt-settings-chip">작화 · {catalog.styleTags.join(" + ")}</span>
+      <span className="prompt-settings-chip">작화 · 검증 태그 + 분리된 자연어</span>
       <span className="prompt-settings-chip">{qualityLabel}</span>
       <span className="prompt-settings-chip">UC preset · {settings.ucPreset}</span>
+      <span className="prompt-settings-chip">Steps · {settings.steps}</span>
+      <span className="prompt-settings-chip">Sampler · {settings.samplers.join(" / ")}</span>
+      <span className="prompt-settings-chip">Variety · {settings.variety ? "ON" : "OFF"}</span>
+      <span className="prompt-settings-chip">Noise · {settings.noiseSchedule}</span>
+      <span className="prompt-settings-chip">Guidance Rescale · {settings.promptGuidanceRescale}</span>
       <span className="prompt-settings-note">생성 버튼 없이 선택 즉시 프롬프트가 바뀝니다.</span>
     </section>
 
@@ -250,6 +330,24 @@ export default function PromptBuilder() {
             />)}
           </div>
         </fieldset>
+
+        {referenceImages.length > 0 && character && <aside className="prompt-reference-card">
+          <div className="prompt-reference-gallery">
+            {referenceImages.map((image) => <a
+              key={image.id}
+              className="prompt-reference-item"
+              href={image.url}
+              download={`${character.id}-${image.id}.png`}
+            >
+              <img src={image.url} alt={`${character.displayName} ${image.label}`} />
+              <span>{image.label}</span>
+            </a>)}
+          </div>
+          <div className="prompt-reference-copy">
+            <strong>얼굴·작화 참고 원화</strong>
+            <p>이 원본을 NovelAI의 Precise Reference에서 <b>Character &amp; Style Reference</b>로 추가하세요. 표정이나 포즈까지 원본에 붙으면 Strength를 낮추고, Vibe Transfer와 함께 쓰지 마세요.</p>
+          </div>
+        </aside>}
 
         {variantVisible && <fieldset className="prompt-selector-group">
           <legend><span className="prompt-step">2</span>모습<span className="prompt-field-hint">서로 섞이지 않습니다</span></legend>
@@ -285,18 +383,54 @@ export default function PromptBuilder() {
         </fieldset>
 
         <div className="prompt-extra-field">
-          <label className="prompt-field-label" htmlFor="prompt-extra-tags">추가 태그 <span className="prompt-field-hint">선택</span></label>
+          <label className="prompt-field-label" htmlFor="prompt-extra-tags">추가 검증 태그 <span className="prompt-field-hint">선택</span></label>
           <textarea
             id="prompt-extra-tags"
             rows={2}
-            value={extraPrompt}
-            onChange={(event) => setExtraPrompt(event.target.value)}
-            placeholder="예: holding a coffee cup, morning"
+            value={extraTags}
+            onChange={(event) => setExtraTags(event.target.value)}
+            placeholder="예: holding, book, smile"
             spellCheck={false}
+            aria-invalid={unknownExtraTags.length > 0}
             aria-describedby="prompt-extra-help"
           />
-          <small id="prompt-extra-help">기본 태그는 건드리지 않고 이 내용만 Prompt 마지막에 붙입니다.</small>
+          <small id="prompt-extra-help">
+            <a href="https://danbooru-tag.mephistopheles.moe/" target="_blank" rel="noreferrer">단부루 태그툴</a>이나 NovelAI 공식 태그로 검증된 항목만 입력합니다.
+          </small>
+          {unknownExtraTags.length > 0 && <p className="prompt-field-error" role="alert">
+            미등록 태그: {unknownExtraTags.join(", ")} · 태그가 없다면 아래 자연어 지시로 옮기세요.
+          </p>}
+
+          <label className="prompt-field-label prompt-subfield-label" htmlFor="prompt-extra-instructions">태그로 표현 못 하는 세부 지시 <span className="prompt-field-hint">선택</span></label>
+          <textarea
+            id="prompt-extra-instructions"
+            rows={3}
+            value={extraInstructions}
+            onChange={(event) => setExtraInstructions(event.target.value)}
+            placeholder="예: Hold the cup close to her chest while preserving her face."
+            spellCheck={false}
+          />
+          <small>한 줄에 한 문장으로 적으면 대문자 시작·마침표 형식으로 Prompt 끝에 분리해 붙입니다.</small>
         </div>
+
+        <details className="prompt-author-tools">
+          <summary>선택 도구 · UC 추가 / 동일 시드 A/B 비교</summary>
+          <div className="prompt-author-tools-body">
+            <div className="prompt-tool-grid">
+              <label>UC 검증 태그<textarea rows={2} value={extraUcTags} onChange={(event) => setExtraUcTags(event.target.value)} placeholder="예: text, signature" spellCheck={false} /></label>
+              <label>UC 자연어 지시<textarea rows={2} value={extraUcInstructions} onChange={(event) => setExtraUcInstructions(event.target.value)} placeholder="예: Misplaced accessories or distorted fingers." spellCheck={false} /></label>
+            </div>
+            <label className="prompt-compare-toggle">
+              <input type="checkbox" checked={compareEnabled} onChange={(event) => setCompareEnabled(event.target.checked)} />
+              <span><strong>동일 시드 A/B 비교</strong><small>A는 현재 Prompt, B에는 바꿀 한 블록만 추가합니다.</small></span>
+            </label>
+            {compareEnabled && <div className="prompt-compare-fields">
+              <label>NovelAI Seed<div className="prompt-seed-row"><input inputMode="numeric" value={seed} onChange={(event) => setSeed(event.target.value.replace(/\D/g, ""))} /><button type="button" onClick={() => setSeed(String(Math.floor(Math.random() * 4_294_967_295)))}>새 시드</button></div></label>
+              <label>B에서만 추가할 검증 태그<textarea rows={2} value={compareTags} onChange={(event) => setCompareTags(event.target.value)} placeholder="한 번에 한 태그 묶음만" spellCheck={false} /></label>
+              <label>B에서만 추가할 자연어 지시<textarea rows={2} value={compareInstructions} onChange={(event) => setCompareInstructions(event.target.value)} placeholder="한 번에 한 문장만" spellCheck={false} /></label>
+            </div>}
+          </div>
+        </details>
       </section>
 
       <section className="prompt-panel prompt-output-panel" aria-labelledby="prompt-output-title">
@@ -307,6 +441,13 @@ export default function PromptBuilder() {
 
         {composedResult.error && <div className="prompt-error" role="alert"><p>{composedResult.error}</p></div>}
         {!composedResult.error && prompt && <div className="prompt-output-stack">
+          <aside className="prompt-provenance-card" aria-label="프롬프트 출처 검사 결과">
+            <div><strong>출처 검사 통과</strong><span>긍정 {prompt.audit.positiveTagItems.length}개 · UC {prompt.audit.undesiredTagItems.length}개 검증 태그</span></div>
+            <div className="prompt-source-links">
+              {catalog.tagRegistry.sources.map((source) => <a key={source.id} href={source.url} target="_blank" rel="noreferrer" title={source.description}>{source.label} · {source.checkedAt}</a>)}
+            </div>
+            <p>자연어 지시 {prompt.audit.positiveInstructions.length + prompt.audit.undesiredInstructions.length}개는 태그와 분리되어 있습니다.</p>
+          </aside>
           <PromptOutput
             target="combined"
             title="① Prompt"
@@ -325,6 +466,35 @@ export default function PromptBuilder() {
             feedback={copyFeedback}
             onCopy={copy}
           />
+
+          {compareEnabled && <section className="prompt-comparison-card">
+            <header><div><strong>동일 시드 A/B</strong><small>NovelAI Seed에 <b>{seed || "값 입력 필요"}</b>를 A와 B 모두 동일하게 사용</small></div><span>설정도 전부 동일하게 유지</span></header>
+            {comparisonResult.error && <p className="prompt-field-error" role="alert">{comparisonResult.error}</p>}
+            {comparisonResult.prompt && <PromptOutput
+              target="combined-b"
+              title="B Prompt"
+              hint="A에서 한 블록만 바꾼 비교본"
+              value={comparisonResult.prompt.combined}
+              feedback={copyFeedback}
+              onCopy={copy}
+            />}
+          </section>}
+
+          <details className="prompt-inpaint-guide" open={inpaintTasks.length > 0}>
+            <summary>작은 디테일·손·액세서리는 Inpaint로 한 부위씩 수정</summary>
+            <div className="prompt-inpaint-body">
+              <p>전체 Prompt를 계속 복잡하게 만들지 말고, 마음에 드는 결과를 고른 뒤 문제 부위 하나만 마스킹하세요. 작은 부위는 Focused Inpainting을 쓰고, 주변이 새어 들어오면 마스크를 조금 넓힙니다.</p>
+              {inpaintTasks.map((task) => <PromptOutput
+                key={task.id}
+                target={`inpaint-${task.id}`}
+                title={task.label}
+                hint={task.description}
+                value={renderPromptSections(task.tags, task.instructions)}
+                feedback={copyFeedback}
+                onCopy={copy}
+              />)}
+            </div>
+          </details>
 
           <details className="prompt-advanced">
             <summary>고급 입력 · Base와 Character를 따로 복사</summary>
