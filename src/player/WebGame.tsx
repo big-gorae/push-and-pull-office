@@ -89,6 +89,7 @@ import {
   type StoryTextSaveResult,
   type StoryTextSource,
 } from "./storyAuthoring";
+import { rhythmGaugeMotion, rhythmMarkerPercent } from "./rhythmGauge";
 import "./web-game.css";
 
 const runtime = runtimeJson as unknown as Runtime;
@@ -104,6 +105,7 @@ const assetModules = import.meta.glob([
   "../../assets/concept-art/*",
   "../../assets/concept-art-archive/*",
   "../../assets/gallery/*",
+  "../../assets/hud/*",
   "!../../assets/concept-art/lineup-*",
 ], {
   eager: true,
@@ -935,17 +937,105 @@ function NightDialogueFlow({
   </main>;
 }
 
-function RhythmGauge({ session, debugMode, i18n }: { session: PlayerSession; debugMode: boolean; i18n: GameLocalizer }) {
+function AnimatedRhythmScore({
+  score,
+  from,
+  animationId,
+  reducedMotion,
+  label,
+}: {
+  score: number;
+  from: number;
+  animationId: string;
+  reducedMotion: boolean;
+  label: string;
+}) {
+  const [displayedScore, setDisplayedScore] = useState(score);
+
+  useEffect(() => {
+    if (!animationId || reducedMotion || from === score) {
+      setDisplayedScore(score);
+      return undefined;
+    }
+    let frame = 0;
+    const duration = 450;
+    const startedAt = performance.now();
+    setDisplayedScore(from);
+    const count = (now: number) => {
+      const progress = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - ((1 - progress) ** 3);
+      setDisplayedScore(Math.round(from + ((score - from) * eased)));
+      if (progress < 1) frame = window.requestAnimationFrame(count);
+    };
+    frame = window.requestAnimationFrame(count);
+    return () => window.cancelAnimationFrame(frame);
+  }, [animationId, from, reducedMotion, score]);
+
+  return <output className={`vn-rhythm-score ${animationId ? "changed" : ""}`} aria-live="polite" aria-label={`${label} SCORE ${score} / 100`}>
+    <small>SCORE</small>
+    <strong aria-hidden="true">{String(displayedScore).padStart(3, "0")}</strong>
+    <span aria-hidden="true">/100</span>
+  </output>;
+}
+
+function RhythmGauge({
+  session,
+  debugMode,
+  animationId,
+  reducedMotion,
+  i18n,
+}: {
+  session: PlayerSession;
+  debugMode: boolean;
+  animationId: string;
+  reducedMotion: boolean;
+  i18n: GameLocalizer;
+}) {
   const value = readPushPullState(session.state);
-  const marker = (value.position + 100) / 2;
+  const marker = rhythmMarkerPercent(value.position);
   const target = value.target === "pull" ? 34 : value.target === "push" ? 66 : 50;
-  return <div className="vn-rhythm" aria-label={debugMode ? pushPullPositionLabel(value.position, session.viewLayer) : i18n.ui("rhythm.status")}>
-    <div className="vn-rhythm-labels"><span>{i18n.ui("rhythm.approach")}</span><span>{i18n.ui("rhythm.space")}</span></div>
-    <div className="vn-rhythm-track">
-      <i className="optimal" />
-      <i className="checkpoint left" /><i className="checkpoint right" />
-      <i className="target" style={{ left: `${target}%`, opacity: debugMode && value.target !== "none" ? 1 : 0 }} />
-      <b style={{ left: `${marker}%` }} />
+  const routeHeroine = runtime.routes[session.routeId]?.heroine;
+  const heroineId = value.heroine || routeHeroine || "";
+  const heroineName = heroineId ? i18n.characterName(heroineId) : i18n.ui("rhythm.status");
+  const heroine = heroineId ? session.state.visible.heroines[heroineId] : undefined;
+  const score = heroine?.initiative ?? 0;
+  const portrait = heroineId ? assetUrl(runtime.characters[heroineId]?.visual.hud_portrait) : undefined;
+  const feedback = animationId ? session.lastFeedback : undefined;
+  const motion = rhythmGaugeMotion(feedback);
+  const motionClass = feedback ? `motion-${feedback.kind}` : "";
+  return <div
+    className={`vn-rhythm ${motion ? "has-motion" : ""} ${motionClass}`}
+    aria-label={debugMode ? pushPullPositionLabel(value.position, session.viewLayer) : i18n.ui("rhythm.status")}
+    data-rhythm-position={value.position}
+    data-rhythm-score={score}
+    data-rhythm-heroine={heroineId}
+  >
+    <div className="vn-rhythm-head">
+      <div className="vn-rhythm-labels"><span>{i18n.ui("rhythm.approach")}</span><span>{i18n.ui("rhythm.space")}</span></div>
+      <AnimatedRhythmScore
+        score={score}
+        from={motion?.scoreFrom ?? score}
+        animationId={motion && motion.scoreFrom !== motion.scoreTo ? animationId : ""}
+        reducedMotion={reducedMotion}
+        label={heroineName}
+      />
+    </div>
+    <div className="vn-rhythm-meter">
+      <div className="vn-rhythm-avatar" role="img" aria-label={heroineName} title={heroineName}>
+        {portrait ? <img src={portrait} alt="" /> : <i aria-hidden="true"><b /></i>}
+      </div>
+      <div className="vn-rhythm-track">
+        <i className="optimal" />
+        <i className="checkpoint left" /><i className="checkpoint right" />
+        <i className="target" style={{ left: `${target}%`, opacity: debugMode && value.target !== "none" ? 1 : 0 }} />
+        {motion && <>
+          <i className="vn-rhythm-ghost" key={`ghost-${animationId}`} style={{ left: `${motion.from}%` }} />
+          <i className="vn-rhythm-trail" key={`trail-${animationId}`} style={{ left: `${motion.trailLeft}%`, width: `${motion.trailWidth}%` }} />
+          <i className="vn-rhythm-impact" key={`impact-${animationId}`} style={{ left: `${motion.to}%` }} />
+          {motion.gain > 0 && <em className="vn-rhythm-gain" key={`gain-${animationId}`} style={{ left: `${motion.to}%` }}>+{motion.gain}</em>}
+        </>}
+        <i className="vn-rhythm-marker" style={{ left: `${marker}%` }} />
+      </div>
     </div>
     {debugMode && <small>DEBUG · {i18n.ui("rhythm.next", { target: pushPullTargetLabel(value.target, session.viewLayer) })}</small>}
   </div>;
@@ -1103,6 +1193,7 @@ export default function WebGame() {
   const [revealed, setRevealed] = useState(false);
   const [visibleCharacters, setVisibleCharacters] = useState(0);
   const [feedbackVisible, setFeedbackVisible] = useState(false);
+  const [rhythmAnimationId, setRhythmAnimationId] = useState("");
   const [choiceHint, setChoiceHint] = useState<(ChoiceAnalysisHint & { sceneId: string; nodeId: string })>();
   const [toast, setToast] = useState("");
   const [debugHistory, setDebugHistory] = useState<PlayerSession[]>([]);
@@ -1204,6 +1295,8 @@ export default function WebGame() {
     setAuto(false);
     setSkip(false);
     setUiHidden(false);
+    setFeedbackVisible(false);
+    setRhythmAnimationId("");
   }, []);
 
   const startCampaign = (gameModeId: GameModeId) => {
@@ -1248,6 +1341,7 @@ export default function WebGame() {
     setAuto(false);
     setSkip(false);
     setFeedbackVisible(false);
+    setRhythmAnimationId("");
   }, [debugHistory, saveAutosave, settings.debugMode]);
 
   const changeMode = useCallback(() => {
@@ -1269,6 +1363,9 @@ export default function WebGame() {
     if (!session || session.phase !== "scene") return;
     const next = selectOption(runtime, session, optionId);
     setFeedbackVisible(false);
+    setRhythmAnimationId(next.lastFeedback
+      ? `${session.sceneId}:${session.nodeId}:${optionId}:${next.choices.length}`
+      : "");
     updateSession(next, true);
     window.setTimeout(() => setFeedbackVisible(true), settings.reducedMotion ? 0 : 650);
   }, [session, settings.reducedMotion, updateSession]);
@@ -1663,7 +1760,13 @@ export default function WebGame() {
   >
     <Stage session={displaySession || session} node={node} settings={settings} i18n={i18n} />
     <GameHud session={displaySession || session} debugMode={settings.debugMode} onMode={changeMode} onMenu={() => setOverlay("menu")} i18n={i18n} />
-    {showPushPull && <RhythmGauge session={displaySession || session} debugMode={settings.debugMode} i18n={i18n} />}
+    {showPushPull && <RhythmGauge
+      session={displaySession || session}
+      debugMode={settings.debugMode}
+      animationId={rhythmAnimationId}
+      reducedMotion={settings.reducedMotion}
+      i18n={i18n}
+    />}
     {settings.debugMode && <DebugPanel session={session} previewLayer={activeViewLayer || session.viewLayer} settings={settings} canStepBack={debugHistory.length > 0} onSettings={setSettings} onStepBack={stepBack} onReturnToEditor={projectRoot ? () => returnToStoryEditor({ sceneId: session.sceneId, nodeId: node.id }) : undefined} i18n={i18n} />}
 
     {node.kind === "choice" && !uiHidden && <section className="vn-choices" aria-label={i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.prompt`, node.prompt || "")} onKeyDown={choiceKeyDown}>

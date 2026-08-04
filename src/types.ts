@@ -308,6 +308,7 @@ export type Character = {
   };
   visual: {
     concept_art?: string;
+    hud_portrait?: string;
     palette?: string[];
     silhouette?: string;
     props?: string[];
