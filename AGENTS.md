@@ -16,7 +16,8 @@
 - Treat casual Korean instructions such as `반영해`, `반영`, or `적용해` as a request to integrate the requested work against the current repository state, not merely to edit files in isolation.
 - Before considering that work complete, inspect recent local commits and fetch and inspect the latest relevant remote branch, normally `origin/main`. Compare the requested changes with both histories and integrate the remote and local work so the result is conflict-free and internally consistent.
 - Resolve overlaps by preserving the intent of both the recent remote commits and the local work. Run validation appropriate to the affected scope after integration. If the intentions genuinely conflict and cannot be reconciled safely, stop and explain the conflict instead of silently dropping either side.
-- Casual `반영` instructions do not by themselves authorize staging, committing, pushing, opening or merging a pull request, or deploying. Only `전부 반영` activates the publishing workflow below unless the user separately requests publication.
+- Casual `반영` instructions authorize staging and committing the completed in-scope changes, then pushing the current or an automation branch to `origin` after the integration and validation above succeed. Treat the remote push as part of `반영`, not as a separate action that requires another confirmation.
+- Casual `반영` instructions do not by themselves authorize opening or merging a pull request, updating protected `main`, enabling auto-merge, or deploying. Only `전부 반영` activates the full publishing workflow below unless the user separately requests one of those actions.
 
 ## `전부 반영` publishing workflow
 
@@ -98,3 +99,11 @@
 - Every choice node has a neutral `stimulus` summary. Player-facing prompts and labels describe concrete words, actions, or nuanced interpretations; they never reveal `push`, `pull`, `밀기`, `당기기`, or `밀당`. Direction and numeric effects are Debug Mode only.
 - Keep the push-pull bar high-contrast above the lower-right dialogue area, use the shared wider optimal range, and do not display “적정 범위 안” copy.
 - Put spacing, typography, radii, control sizes, and nameplate/button alignment in the central player design tokens instead of one-off component values.
+
+## Player-facing UX writing
+
+- Keep system phases inside the visual-novel dialogue flow whenever the player can understand them through situation, dialogue, choices, and immediate feedback. Do not replace an ordinary story moment with a separate dashboard or explanatory card page.
+- Rich scene dialogue is welcome, but permanent UI copy must be minimal. Add headings, subtitles, descriptions, badges, and help text only when the player cannot make the current decision without them.
+- Do not explain authorial intent, thematic meaning, future callbacks, or why a system matters in player-facing copy. Let later dialogue and changed choices reveal the relationship.
+- When a choice needs numeric context, show the compact current state at the decision point and keep option text to the concrete action plus concise mechanical deltas.
+- Night activity begins with Han Do-yoon arriving home and speaking to himself in the ordinary dialogue presentation. After the line, offer exactly `workout`, `reading`, `ott`, and `sleep`; high fatigue replaces the choice with the forced `solo_drinking` beat.

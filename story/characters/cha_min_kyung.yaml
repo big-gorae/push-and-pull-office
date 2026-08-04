@@ -34,6 +34,7 @@ interaction_preferences:
     - 문제를 수습한 뒤에는 감정과 부담을 짧고 정확하게 인정받아야 대화를 이어 갈 수 있다.
 visual:
   concept_art: assets/concept-art/cha-min-kyung.png
+  hud_portrait: assets/hud/cha-min-kyung-avatar.png
   palette: [burgundy, charcoal, black]
   silhouette: 169cm의 길고 균형 잡힌 체형, 각진 얼굴과 검은 단발.
   props: [얇은 노트북, 금속 볼펜, 버건디 립스틱]
