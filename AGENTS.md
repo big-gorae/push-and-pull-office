@@ -11,6 +11,30 @@
 - If the project-only authentication is genuinely missing or expired, authenticate only that directory with `GH_CONFIG_DIR="$love_office_gh_dir" gh auth login -h github.com --git-protocol https --web`. Never switch this repository to another account and never copy tokens into tracked files, shell output, logs, or documentation.
 - The project-only authentication is shared by sessions using this same repository's common Git directory, but it is not committed. A fresh clone must perform the project-only login once before publishing.
 
+## Browser identity
+
+- Use only the Chrome profile `big.gorea.king` for NovelAI and every other Chrome automation performed for this repository. The Chrome extension reports this profile's exact metadata name as `big.gorea.king@gmail.com`.
+- Before claiming or interacting with any Chrome tab, verify that the connected browser metadata reports the exact profile name `big.gorea.king@gmail.com`.
+- If any other Chrome profile is connected, stop immediately. Never navigate, click, type, upload, generate, or otherwise interact with that profile.
+
+## Local launch command mapping
+
+Use these exact Korean commands as user-facing shortcuts. They refer to the named build/surface terms in the project docs; do not collapse them into a generic “debug” request.
+
+- `게임 켜줘`: launch the **Play Build** with `npm run dev`. This is the read-only player surface. Do not open the Tauri editor or enable authoring controls for this command.
+- `디버그 모드`: launch or focus the **Authoring Build** with `make tauri-dev`, then ensure the in-game `디버그 모드` setting is enabled. If the Tauri app is already running, keep the current project and toggle the setting instead of starting a second server. Debug Mode is an inspector inside the Authoring Build, not a separate build.
+- `대사 편집 모드` or `작가 모드`: launch or focus the **Authoring Build** with `make tauri-dev`, open the selected project, and use `제작 플레이 열기`. This is the writable play surface for dialogue, scene, artwork, background, and asset authoring.
+
+Keep the distinction explicit in status messages: **Play Build / 플레이 버전** is read-only, **Authoring Build / 제작 버전** writes approved project files, **제작 플레이** is the in-game authoring screen, and **디버그 모드** only reveals additional inspection controls. A browser `npm run dev` session must never be presented as a writable authoring session.
+
+## Casual `반영` integration workflow
+
+- Treat casual Korean instructions such as `반영해`, `반영`, or `적용해` as a request to integrate the requested work against the current repository state, not merely to edit files in isolation.
+- Before considering that work complete, inspect recent local commits and fetch and inspect the latest relevant remote branch, normally `origin/main`. Compare the requested changes with both histories and integrate the remote and local work so the result is conflict-free and internally consistent.
+- Resolve overlaps by preserving the intent of both the recent remote commits and the local work. Run validation appropriate to the affected scope after integration. If the intentions genuinely conflict and cannot be reconciled safely, stop and explain the conflict instead of silently dropping either side.
+- Casual `반영` instructions authorize staging and committing the completed in-scope changes, then pushing the current or an automation branch to `origin` after the integration and validation above succeed. Treat the remote push as part of `반영`, not as a separate action that requires another confirmation.
+- Casual `반영` instructions do not by themselves authorize opening or merging a pull request, updating protected `main`, enabling auto-merge, or deploying. Only `전부 반영` activates the full publishing workflow below unless the user separately requests one of those actions.
+
 ## `전부 반영` publishing workflow
 
 - When the user says `전부 반영`, treat it as explicit authorization to stage and commit the completed in-scope changes, integrate the latest remote `main`, publish an automation branch, open a pull request, enable auto-merge, wait for the required CI check, and deploy the resulting `main` commit without asking for additional approval.
@@ -19,6 +43,15 @@
 - Integrate the current `origin/main` into the intended work before the pull request. Resolve merge conflicts by preserving the intent of both the latest `main` commits and the commit being published; never solve a conflict by silently dropping either side.
 - Run `npm run verify` locally before publishing. After auto-merge, confirm the merged `main` SHA passed CI and deploy only that exact SHA.
 - Do not include unrelated user changes merely because `전부 반영` was invoked. If a conflict is genuinely ambiguous and both intentions cannot safely be preserved, stop and explain the conflict instead of guessing or discarding work.
+
+## Image prompt authoring workflow
+
+- Before adding or changing an unfamiliar visual concept in any NovelAI `*Tags` field, search that one concept with `npm run prompt:harness -- search "<Korean or English concept>"`. Prefer the exact English tag returned by the configured Danbooru tag tool when its description and category match the intended visual meaning.
+- A tag already present in `prompt-config/novelai-v45/tag-registry.json` does not need to be searched again when it is only being reused unchanged. NovelAI special tags documented by NovelAI may use the `novelai_official` source; other newly accepted tags normally use `danbooru_tag_tool`.
+- Never send a full prompt, character profile, story text, or comma-separated tag list to the external search API. Search one short visual concept at a time. The harness rejects prompt-shaped queries for this reason.
+- Do not select a tag merely because its spelling looks similar. Read the returned Korean name, description, category, and usage count. If no semantically correct tag exists, put a concise English sentence in the matching `*Instructions` field instead of inventing a tag.
+- Add a newly accepted tag to `tag-registry.json` with its real source before using it in character or defaults JSON. Do not weaken the registry or add a fake source merely to pass validation.
+- After any image-prompt change, run `npm run prompt:validate`, `npm run test:prompt-harness`, and `npm run test:prompts`.
 
 ## Story source of truth
 
@@ -82,3 +115,11 @@
 - Every choice node has a neutral `stimulus` summary. Player-facing prompts and labels describe concrete words, actions, or nuanced interpretations; they never reveal `push`, `pull`, `밀기`, `당기기`, or `밀당`. Direction and numeric effects are Debug Mode only.
 - Keep the push-pull bar high-contrast above the lower-right dialogue area, use the shared wider optimal range, and do not display “적정 범위 안” copy.
 - Put spacing, typography, radii, control sizes, and nameplate/button alignment in the central player design tokens instead of one-off component values.
+
+## Player-facing UX writing
+
+- Keep system phases inside the visual-novel dialogue flow whenever the player can understand them through situation, dialogue, choices, and immediate feedback. Do not replace an ordinary story moment with a separate dashboard or explanatory card page.
+- Rich scene dialogue is welcome, but permanent UI copy must be minimal. Add headings, subtitles, descriptions, badges, and help text only when the player cannot make the current decision without them.
+- Do not explain authorial intent, thematic meaning, future callbacks, or why a system matters in player-facing copy. Let later dialogue and changed choices reveal the relationship.
+- When a choice needs numeric context, show the compact current state at the decision point and keep option text to the concrete action plus concise mechanical deltas.
+- Night activity begins with Han Do-yoon arriving home and speaking to himself in the ordinary dialogue presentation. After the line, offer exactly `workout`, `reading`, `ott`, and `sleep`; high fatigue replaces the choice with the forced `solo_drinking` beat.
