@@ -7,6 +7,7 @@ import CharacterEditor from "./CharacterEditor";
 import ProjectSettingsEditor, { type SettingsKind, type SettingsRequest } from "./ProjectSettingsEditor";
 import QuickOpen, { type QuickOpenItem } from "./QuickOpen";
 import DuplicateDialog from "./DuplicateDialog";
+import { consumeAuthoringTarget, rememberAuthoringRoot } from "./player/storyAuthoring";
 import {
   pushPullPositionLabel,
   pushPullTargetLabel,
@@ -41,6 +42,7 @@ import type {
   DialogueVariant,
   DocumentActivity,
   Effect,
+  InteractionContextKind,
   JsonValue,
   Layer,
   NodeKind,
@@ -72,6 +74,13 @@ const SUPPORT_STYLE_OPTIONS: Array<{ id: SupportStyle; label: string }> = [
   { id: "autonomy_return", label: "선택권 반환" },
   { id: "concise_reassurance", label: "짧고 구체적인 안심" },
   { id: "literal_respect", label: "말의 원문 존중" },
+];
+
+const INTERACTION_CONTEXT_OPTIONS: Array<{ id: InteractionContextKind; label: string }> = [
+  { id: "support", label: "지원이 필요한 상황" },
+  { id: "coordination", label: "업무 조율 상황" },
+  { id: "boundary", label: "명시적 요청·경계 상황" },
+  { id: "not_applicable", label: "MBTI 요소 적용 안 함" },
 ];
 
 const STATE_LABELS: Record<string, string> = { push: "밀기", pull: "당기기", neutral: "중립" };
@@ -328,6 +337,28 @@ function ChoiceEditor({ runtime, scene, node, onChange }: { runtime: Runtime; sc
     next[index] = { ...next[index], ...patch };
     onChange({ ...node, options: next });
   };
+  const updateSupportStyles = (optionIndex: number, supportStyles: SupportStyle[]) => {
+    const interaction = options[optionIndex]?.interaction;
+    if (!interaction?.target) return;
+    updateOption(optionIndex, {
+      interaction: { target: interaction.target, support_styles: supportStyles },
+    });
+  };
+  const addSupportStyle = (optionIndex: number) => {
+    const interaction = options[optionIndex]?.interaction;
+    if (!interaction?.target) return;
+    const nextStyle = SUPPORT_STYLE_OPTIONS.find((style) => !interaction.support_styles.includes(style.id));
+    if (!nextStyle) return;
+    updateSupportStyles(optionIndex, [...interaction.support_styles, nextStyle.id]);
+  };
+  const moveSupportStyle = (optionIndex: number, styleIndex: number, offset: number) => {
+    const styles = options[optionIndex]?.interaction?.support_styles || [];
+    const destination = styleIndex + offset;
+    if (destination < 0 || destination >= styles.length) return;
+    const next = [...styles];
+    [next[styleIndex], next[destination]] = [next[destination], next[styleIndex]];
+    updateSupportStyles(optionIndex, next);
+  };
   const move = (index: number, offset: number) => {
     const target = index + offset;
     if (target < 0 || target >= options.length) return;
@@ -350,6 +381,20 @@ function ChoiceEditor({ runtime, scene, node, onChange }: { runtime: Runtime; sc
     }] });
   };
   return <>
+    <Field label="상호작용 맥락">
+      <select
+        value={node.interaction_context?.kind || ""}
+        onChange={(event) => onChange({
+          ...node,
+          interaction_context: { kind: event.target.value as InteractionContextKind },
+        })}
+      >
+        <option value="" disabled>맥락 선택</option>
+        {INTERACTION_CONTEXT_OPTIONS.map((context) => (
+          <option value={context.id} key={context.id}>{context.label} · {context.id}</option>
+        ))}
+      </select>
+    </Field>
     <Field label="선택 질문" wide><TextArea value={node.prompt || ""} onChange={(event) => onChange({ ...node, prompt: event.target.value })} /></Field>
     <Field label="대응할 말·행동 요약" wide><TextArea value={node.stimulus || ""} onChange={(event) => onChange({ ...node, stimulus: event.target.value })} /></Field>
     <div className="option-list">
@@ -383,22 +428,54 @@ function ChoiceEditor({ runtime, scene, node, onChange }: { runtime: Runtime; sc
                 .map((character) => <option value={character.id} key={character.id}>{character.display_name}</option>)}
             </select>
           </Field>
-          <Field label="지원 화법" wide>
-            <select
-              multiple
-              size={4}
-              value={option.interaction?.support_styles || []}
-              onChange={(event) => {
-                const support_styles = Array.from(event.currentTarget.selectedOptions)
-                  .map((selected) => selected.value as SupportStyle);
-                const target = option.interaction?.target || runtime.routes[scene.route]?.heroine;
-                updateOption(index, {
-                  interaction: target ? { target, support_styles } : undefined,
-                });
-              }}
-            >
-              {SUPPORT_STYLE_OPTIONS.map((style) => <option value={style.id} key={style.id}>{style.label} · {style.id}</option>)}
-            </select>
+          <Field label="지원 화법 순서" wide>
+            <div className="rule-list">
+              {(option.interaction?.support_styles || []).map((style, styleIndex, supportStyles) => (
+                <div className="rule-row" key={`${style}-${styleIndex}`}>
+                  <select
+                    aria-label={`${styleIndex + 1}번째 지원 화법`}
+                    value={style}
+                    onChange={(event) => {
+                      const next = [...supportStyles];
+                      next[styleIndex] = event.target.value as SupportStyle;
+                      updateSupportStyles(index, next);
+                    }}
+                  >
+                    {SUPPORT_STYLE_OPTIONS
+                      .filter((candidate) => candidate.id === style || !supportStyles.includes(candidate.id))
+                      .map((candidate) => (
+                        <option value={candidate.id} key={candidate.id}>{candidate.label} · {candidate.id}</option>
+                      ))}
+                  </select>
+                  <button
+                    type="button"
+                    className="icon-button"
+                    aria-label={`${styleIndex + 1}번째 지원 화법을 위로`}
+                    disabled={styleIndex === 0}
+                    onClick={() => moveSupportStyle(index, styleIndex, -1)}
+                  >↑</button>
+                  <button
+                    type="button"
+                    className="icon-button"
+                    aria-label={`${styleIndex + 1}번째 지원 화법을 아래로`}
+                    disabled={styleIndex === supportStyles.length - 1}
+                    onClick={() => moveSupportStyle(index, styleIndex, 1)}
+                  >↓</button>
+                  <button
+                    type="button"
+                    className="icon-button danger"
+                    aria-label={`${styleIndex + 1}번째 지원 화법 삭제`}
+                    onClick={() => updateSupportStyles(index, supportStyles.filter((_, itemIndex) => itemIndex !== styleIndex))}
+                  >×</button>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="add-row-button"
+                disabled={!option.interaction?.target || option.interaction.support_styles.length >= SUPPORT_STYLE_OPTIONS.length}
+                onClick={() => addSupportStyle(index)}
+              ><IconText>＋</IconText> 지원 화법 추가</button>
+            </div>
           </Field>
           <Field label="밀당 계산 대상">
             <select
@@ -1062,8 +1139,21 @@ export default function App() {
       setLocale(project.runtime.localization.default_locale);
       setIssues(project.issues);
       const firstRoute = storyRoutes(project.runtime)[0];
-      const recoveredDraft = loadScene(project, firstRoute.entry_scene, true);
-      if (!recoveredDraft) setStatus(`${Object.keys(project.runtime.scenes).length}개 장면을 불러왔습니다.`);
+      const authoringTarget = consumeAuthoringTarget();
+      const sceneId = authoringTarget && project.runtime.scenes[authoringTarget.sceneId]
+        ? authoringTarget.sceneId
+        : firstRoute.entry_scene;
+      const recoveredDraft = loadScene(project, sceneId, true);
+      if (authoringTarget?.nodeId && project.runtime.scenes[sceneId]?.nodes[authoringTarget.nodeId]) {
+        setSelectedNodeId(authoringTarget.nodeId);
+      }
+      if (authoringTarget) {
+        workspaceRef.current = "scene";
+        setWorkspace("scene");
+      }
+      if (!recoveredDraft) setStatus(authoringTarget
+        ? `게임에서 보던 ${sceneId}${authoringTarget.nodeId ? ` · ${authoringTarget.nodeId}` : ""} 원본을 열었습니다.`
+        : `${Object.keys(project.runtime.scenes).length}개 장면을 불러왔습니다.`);
     } catch (error) {
       setStatus(`프로젝트를 열 수 없습니다: ${String(error)}`);
     } finally {
@@ -1391,6 +1481,16 @@ export default function App() {
     }
   };
 
+  const launchAuthoringPlay = () => {
+    if (!root || busy || dirty || hasPendingDocument) {
+      setStatus("저장 중인 문서를 모두 반영한 뒤 게임 편집 모드를 열어 주세요.");
+      return;
+    }
+    rememberAuthoringRoot(root);
+    window.location.hash = "#/play?authoring=1";
+    window.location.reload();
+  };
+
   const switchWorkspace = (next: Workspace) => {
     workspaceRef.current = next;
     if (next === "scene" && draft && payload) {
@@ -1582,6 +1682,7 @@ export default function App() {
       <div className="project-status"><strong>{runtime.project.title}</strong><span className={documentActivity.phase}>{documentActivity.phase === "saved" ? "✓" : "●"} {saveStateLabel}</span><span className={errorCount ? "error" : ""}>{errorCount} 오류</span></div>
       <div className="top-actions">
         <button type="button" className="quick-open-button" onClick={() => setQuickOpenVisible(true)} title="모든 스토리 문서 빠른 열기 (⌘P)">⌕ 빠른 열기 <kbd>⌘P</kbd></button>
+        <button type="button" onClick={launchAuthoringPlay} disabled={busy || dirty || hasPendingDocument} title="실제 게임 화면에서 원본 대사를 편집합니다">▶ 게임에서 대사 편집</button>
         <button type="button" onClick={selectProject} disabled={busy}>프로젝트 열기</button>
         {workspace === "scene" && <button type="button" onClick={undo} disabled={!history.past.length || busy} title="실행 취소 (⌘Z)">↶</button>}
         {workspace === "scene" && <button type="button" onClick={redo} disabled={!history.future.length || busy} title="다시 실행 (⇧⌘Z)">↷</button>}

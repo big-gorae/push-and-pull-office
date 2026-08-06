@@ -1,3 +1,5 @@
+import type { PushPullTarget } from "./pushPull";
+
 export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 export type DeepPartial<T> = T extends Array<infer Item>
   ? Array<DeepPartial<Item>>
@@ -17,6 +19,7 @@ export type SupportStyle =
   | "autonomy_return"
   | "concise_reassurance"
   | "literal_respect";
+export type InteractionContextKind = "support" | "coordination" | "boundary" | "not_applicable";
 export type TimeSlot = "morning" | "lunch" | "afternoon" | "after_work";
 export type EventType = "anchor" | "heroine" | "company" | "offscreen" | "ending";
 export type EventAvailability = "automatic" | "player" | "hidden";
@@ -53,7 +56,7 @@ export type Layer = {
   intent?: string;
 };
 
-export type SelfDevelopmentStat = "stamina" | "appearance" | "humor" | "taste";
+export type SelfDevelopmentStat = "health" | "appearance" | "humor" | "intelligence";
 
 export type SelfDevelopmentRequirement = {
   appeal_gte?: number;
@@ -83,10 +86,13 @@ export type SelfDevelopmentActivity = {
   title_key: string;
   description_key: string;
   reflection_keys: Record<ViewMode, string>;
+  selectable?: boolean;
   appeal_delta: number;
   fatigue_delta: number;
   stat_deltas: Partial<Record<SelfDevelopmentStat, number>>;
   fatigue_lte?: number;
+  fatigue_gte?: number;
+  hint_charge?: number;
 };
 
 export type SelfDevelopmentConfig = {
@@ -105,12 +111,14 @@ export type SelfDevelopmentProgress = {
   completed_days: number[];
   activity_history: string[];
   last_activity: string;
+  hint_charges: number;
 };
 
 export type SelfDevelopmentResult = {
   activityId: string;
   appealDelta: number;
   fatigueDelta: number;
+  hintChargeDelta: number;
   statDeltas: Partial<Record<SelfDevelopmentStat, number>>;
   before: SelfDevelopmentState;
   after: SelfDevelopmentState;
@@ -152,6 +160,10 @@ export type PushPullConfig = {
 export type StoryNode = {
   id: string;
   kind: NodeKind;
+  analysis_hints?: Partial<Record<PushPullTarget, string>>;
+  interaction_context?: {
+    kind: InteractionContextKind;
+  };
   speaker?: string;
   speakers?: Partial<Record<ViewMode, string | null>>;
   perceived?: Layer;
@@ -296,6 +308,7 @@ export type Character = {
   };
   visual: {
     concept_art?: string;
+    hud_portrait?: string;
     palette?: string[];
     silhouette?: string;
     props?: string[];
@@ -476,12 +489,24 @@ export type RuntimeState = {
   };
 };
 
+export type GalleryEntry = {
+  id: string;
+  title_key: string;
+  description_key: string;
+  asset: string;
+  unlock_memory: string;
+  default_unlocked?: boolean;
+  source_stat?: SelfDevelopmentStat;
+  source_minimum?: number;
+};
+
 export type Runtime = {
   project: { id: string; title: string; default_language: string };
   generated_at: string;
   enums: Record<string, string[]>;
   stats: Record<string, { type: string; min?: number; max?: number; values?: string[]; description: string }>;
   self_development: SelfDevelopmentConfig;
+  gallery: { entries: GalleryEntry[] };
   initial_state: RuntimeState;
   game_modes: Record<GameModeId, GameModeDefinition>;
   localization: LocalizationBundle;

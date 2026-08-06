@@ -20,17 +20,24 @@ export class GameLocalizer {
   readonly locale: GameLocale;
   private readonly runtime: Runtime;
   private readonly service: LocalizationService;
+  private readonly sourceOverrides: Readonly<Record<string, string>>;
 
-  constructor(runtime: Runtime, locale?: GameLocale) {
+  constructor(runtime: Runtime, locale?: GameLocale, sourceOverrides: Readonly<Record<string, string>> = {}) {
     this.runtime = runtime;
     const supported = gameLocales(runtime);
     this.locale = locale && supported.includes(locale)
       ? locale
       : runtime.localization.default_locale;
     this.service = new LocalizationService(runtime, this.locale);
+    this.sourceOverrides = sourceOverrides;
   }
 
   private resolve(key: string, source?: string): string {
+    const localizedOverride = this.sourceOverrides[`${this.locale}:${key}`];
+    if (localizedOverride !== undefined) return localizedOverride;
+    if (this.locale === this.runtime.localization.default_locale && key in this.sourceOverrides) {
+      return this.sourceOverrides[key];
+    }
     return this.service.t(key, source || key);
   }
 

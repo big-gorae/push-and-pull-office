@@ -20,6 +20,8 @@ run_story_checks() {
 }
 
 run_player_checks() {
+  npm run prompt:validate
+  npm run test:prompt-harness
   npm run test:player
   npm run test:prompts
   npm run build:site

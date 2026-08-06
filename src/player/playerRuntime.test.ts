@@ -7,8 +7,10 @@ import {
   advanceToNextMoment,
   availableOptions,
   availableTimelineEvents,
+  beginSelfDevelopmentNight,
   createSession,
   createCampaignSession,
+  consumeChoiceAnalysisHint,
   currentNode,
   prepareTimeSlot,
   finishSelfDevelopmentNight,
@@ -38,8 +40,15 @@ function finishCurrentScene(value: PlayerSession): PlayerSession {
 
 function finishNight(value: PlayerSession, activityId = "sleep"): PlayerSession {
   if (value.phase !== "self_development") return value;
-  const selected = selectSelfDevelopmentActivity(runtime, value, activityId);
-  return finishSelfDevelopmentNight(runtime, selected);
+  const started = value.nightPhase?.status === "intro"
+    ? beginSelfDevelopmentNight(runtime, value)
+    : value;
+  const selected = started.nightPhase?.status === "selecting"
+    ? selectSelfDevelopmentActivity(runtime, started, activityId)
+    : started;
+  return selected.nightPhase?.status === "result"
+    ? finishSelfDevelopmentNight(runtime, selected)
+    : selected;
 }
 
 function advanceMeaningfulMoment(value: PlayerSession): PlayerSession {
@@ -73,13 +82,15 @@ describe("web player campaign runtime", () => {
 
     session = advanceToNextMoment(runtime, session);
     expect(session.phase).toBe("self_development");
+    expect(session.nightPhase?.status).toBe("intro");
+    session = beginSelfDevelopmentNight(runtime, session);
     expect(session.nightPhase?.status).toBe("selecting");
     session = selectSelfDevelopmentActivity(runtime, session, "workout");
     expect(session.nightPhase?.status).toBe("result");
     expect(session.state.visible.protagonist.self_development).toMatchObject({
       appeal: 33,
       fatigue: 3,
-      stats: { stamina: 2, appearance: 1 },
+      stats: { health: 2, appearance: 1 },
     });
     session = finishSelfDevelopmentNight(runtime, session);
     expect(session.state.progress.time).toMatchObject({ day: 2, slot: "morning" });
@@ -164,7 +175,7 @@ describe("web player campaign runtime", () => {
     expect(advanced.backlog.at(-1)?.variantId).toBe("guarded");
   });
 
-  it("unlocks self-development dialogue and adds only the declared visible score bonus", () => {
+  it("unlocks a self-development interaction without changing the push-pull score", () => {
     const base = createSession(runtime, "seo_a");
     base.phase = "scene";
     base.sceneId = "seo_a.email_request";
@@ -175,7 +186,7 @@ describe("web player campaign runtime", () => {
 
     const trained = structuredClone(base);
     trained.state.visible.protagonist.self_development.appeal = 32;
-    trained.state.visible.protagonist.self_development.stats.stamina = 2;
+    trained.state.visible.protagonist.self_development.stats.health = 2;
     trained.state.visible.protagonist.self_development.fatigue = 3;
     expect(availableOptions(runtime, trained).map((option) => option.id))
       .toContain("mention_workout_and_step_back");
@@ -184,8 +195,8 @@ describe("web player campaign runtime", () => {
     const promoted = selectOption(runtime, structuredClone(trained), "mention_workout_and_step_back");
     expect(promoted.lastFeedback).toMatchObject({
       baseGain: ordinary.lastFeedback?.baseGain,
-      bonusGain: 2,
-      gain: (ordinary.lastFeedback?.gain || 0) + 2,
+      bonusGain: 0,
+      gain: ordinary.lastFeedback?.gain,
       position: ordinary.lastFeedback?.position,
       combo: ordinary.lastFeedback?.combo,
       target: ordinary.lastFeedback?.target,
@@ -216,6 +227,48 @@ describe("web player campaign runtime", () => {
       target: "none",
       day_02_response: "factual_resolution",
     });
+  });
+
+  it("spends one charged hint at a choice and reports the active scoring direction", () => {
+    const session = createSession(runtime, "seo_a");
+    session.phase = "scene";
+    session.sceneId = "common.day_02_practical_meeting";
+    session.nodeId = "recovery_choice";
+    session.state.progress.self_development.hint_charges = 1;
+    session.state.progress.flags.push_pull = {
+      combo: 2,
+      position: -24,
+      target: "pull",
+      last_action: "approach",
+      heroine: "yoon_seo_a",
+    };
+
+    const consumed = consumeChoiceAnalysisHint(runtime, session);
+    expect(consumed?.hint).toMatchObject({
+      direction: "pull",
+      lesson: expect.stringContaining("서아는 사과 뒤 멈췄고"),
+    });
+    expect(consumed?.session.state.progress.self_development.hint_charges).toBe(0);
+    expect(session.state.progress.self_development.hint_charges).toBe(1);
+    expect(consumeChoiceAnalysisHint(runtime, consumed!.session)).toBeUndefined();
+  });
+
+  it.each([
+    ["health", "company.stat_health_sample_sorting", "cg.stat.health.min_kyung"],
+    ["intelligence", "company.stat_intelligence_version_check", "cg.stat.intelligence.min_kyung"],
+    ["humor", "company.stat_humor_tasting_vote", "cg.stat.humor.seo_a"],
+    ["appearance", "company.stat_appearance_rehearsal", "cg.stat.appearance.yoo_jin"],
+  ] as const)("opens the week-one %s stat event and awards its artwork", (stat, eventId, memory) => {
+    const session = createSession(runtime, "seo_a");
+    session.phase = "timeline";
+    session.state.progress.time = { day: stat === "appearance" ? 4 : 3, act: 1, slot: "afternoon" };
+    session.state.progress.events.seen = ["anchor.day_03_business_trip_or_cafe"];
+    session.state.visible.protagonist.self_development.stats[stat] = 3;
+
+    expect(availableTimelineEvents(runtime, session).map((event) => event.id)).toContain(eventId);
+    const entered = startTimelineEvent(runtime, session, eventId);
+    expect(entered.state.progress.memories).toContain(memory);
+    expect(entered.currentEventId).toBe(eventId);
   });
 
   it("preserves a matching combo when entering a shared scene with multiple push-pull targets", () => {
@@ -253,7 +306,7 @@ describe("web player campaign runtime", () => {
     });
   });
 
-  it("selects a self-development dialogue variant only for an eligible profile", () => {
+  it("does not make a heroine notice an overnight physical change", () => {
     const baseline = createSession(runtime, "seo_a");
     baseline.phase = "scene";
     baseline.sceneId = "seo_a.email_request";
@@ -262,9 +315,9 @@ describe("web player campaign runtime", () => {
 
     const trained = structuredClone(baseline);
     trained.state.visible.protagonist.self_development.appeal = 32;
-    trained.state.visible.protagonist.self_development.stats.stamina = 2;
+    trained.state.visible.protagonist.self_development.stats.health = 2;
     trained.state.visible.protagonist.self_development.fatigue = 3;
-    expect(advanceSession(runtime, trained).backlog.at(-1)?.variantId).toBe("noticed_change");
+    expect(advanceSession(runtime, trained).backlog.at(-1)?.variantId).toBe("default");
   });
 
   it("does not mark an event seen when its scene entry condition fails", () => {

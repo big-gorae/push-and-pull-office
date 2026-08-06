@@ -14,7 +14,10 @@
     "build:site": "VITE_APP_SURFACE=game npm run build",
     "test:player": "vitest run src/player",
     "test:prompts": "vitest run src/prompt-builder",
+    "test:prompt-harness": "node --test tools/prompt_harness.test.mjs",
     "test:e2e": "playwright test",
+    "prompt:harness": "node tools/prompt_harness.mjs",
+    "prompt:validate": "node tools/prompt_harness.mjs validate",
     "verify": "bash tools/verify_all.sh all",
     "verify:story": "bash tools/verify_all.sh story",
     "verify:player": "bash tools/verify_all.sh player",
@@ -39,5 +42,8 @@
     "vite": "6.4.3",
     "vitest": "3.2.7",
     "wrangler": "4.118.0"
+  },
+  "overrides": {
+    "undici": "7.29.0"
   }
 }

@@ -21,6 +21,7 @@ import {
 import { effectiveSpeaker, resolveDialogueNode } from "../storyLogic";
 import type {
   ChoiceOption,
+  GalleryEntry,
   GameModeId,
   Runtime,
   SelfDevelopmentStat,
@@ -34,6 +35,8 @@ import {
   advanceSession,
   availableTimelineEvents,
   availableOptions,
+  beginSelfDevelopmentNight,
+  consumeChoiceAnalysisHint,
   currentNode,
   finishSelfDevelopmentNight,
   nodeRead,
@@ -42,6 +45,7 @@ import {
   selectOption,
   startGameMode,
   startTimelineEvent,
+  type ChoiceAnalysisHint,
   type PlayerSession,
 } from "./playerRuntime";
 import { resolveModeAccess } from "./gameModes";
@@ -61,23 +65,47 @@ import {
   writeSettings,
   writeSlot,
   type PlayerSettings,
+  type PlayerProfile,
   type ReadableSaveSlot,
   type SaveSlot,
 } from "./playerStorage";
 import { GameLocalizer, gameLocales, type GameLocale } from "./gameI18n";
+import {
+  authoringRoot,
+  copySourceLocator,
+  getStoryTextOwner,
+  inverseStoryTextEdits,
+  openStorySource,
+  readSourceEditor,
+  revealStorySource,
+  returnToStoryEditor,
+  runtimeTextValues,
+  saveStoryText,
+  sourceLocator,
+  writeSourceEditor,
+  type SourceEditor,
+  type StoryTextEdit,
+  type StoryTextOwner,
+  type StoryTextSaveResult,
+  type StoryTextSource,
+} from "./storyAuthoring";
+import { rhythmGaugeMotion, rhythmMarkerPercent } from "./rhythmGauge";
 import "./web-game.css";
 
 const runtime = runtimeJson as unknown as Runtime;
 const selfDevelopment = selfDevelopmentSystem(runtime);
 const SELF_DEVELOPMENT_STATS: readonly SelfDevelopmentStat[] = [
-  "stamina",
+  "health",
   "appearance",
   "humor",
-  "taste",
+  "intelligence",
 ];
 const assetModules = import.meta.glob([
   "../../assets/backgrounds/*",
   "../../assets/concept-art/*",
+  "../../assets/concept-art-archive/*",
+  "../../assets/gallery/*",
+  "../../assets/hud/*",
   "!../../assets/concept-art/lineup-*",
 ], {
   eager: true,
@@ -86,7 +114,7 @@ const assetModules = import.meta.glob([
 }) as Record<string, string>;
 
 type Screen = "title" | "new-game" | "game";
-type Overlay = "backlog" | "save" | "load" | "settings" | "menu" | null;
+type Overlay = "backlog" | "save" | "load" | "gallery" | "settings" | "menu" | "text-edit" | null;
 
 function assetUrl(path?: string): string | undefined {
   if (!path) return undefined;
@@ -169,22 +197,6 @@ function expressionStat(option: ChoiceOption): SelfDevelopmentStat | undefined {
   return stat && SELF_DEVELOPMENT_STATS.includes(stat) ? stat : undefined;
 }
 
-function visibleNightActivities(
-  options: SelfDevelopmentActivityOption[],
-  day: number,
-): SelfDevelopmentActivityOption[] {
-  if (options.length <= 4) return options;
-  const sleep = options.find((option) => option.activity.id === "sleep");
-  const rotating = options.filter((option) => option.activity.id !== "sleep");
-  const offset = rotating.length ? Math.max(0, day - 1) % rotating.length : 0;
-  const ordered = [...rotating.slice(offset), ...rotating.slice(0, offset)];
-  const prioritized = [
-    ...ordered.filter((option) => option.available),
-    ...ordered.filter((option) => !option.available),
-  ];
-  return [...prioritized.slice(0, sleep ? 3 : 4), ...(sleep ? [sleep] : [])];
-}
-
 export function sessionSlot(session: PlayerSession): SaveSlot {
   const node = currentNode(runtime, session);
   const lastTimelineEvent = [...session.timelineLog].reverse().find((entry) => entry.status === "seen");
@@ -230,12 +242,10 @@ export function savePreview(slot: ReadableSaveSlot, i18n: GameLocalizer): { titl
       : undefined;
     const activity = runtime.self_development?.activities.find((candidate) => candidate.id === activityId);
     return {
-      title: i18n.ui(session.nightPhase?.status === "result"
-        ? "selfDevelopment.result"
-        : "selfDevelopment.title"),
+      title: i18n.ui("slot.night"),
       line: activity
         ? selfDevelopmentMessage(i18n, activity.title_key)
-        : i18n.ui("selfDevelopment.subtitle"),
+        : i18n.ui("selfDevelopment.intro"),
     };
   }
   if (preview.kind === "ending") {
@@ -288,11 +298,311 @@ function Modal({
   </div>;
 }
 
+type StoryTextUndo = {
+  edits: StoryTextEdit[];
+  keys: string[];
+  locale: GameLocale;
+};
+
+type OwnedStorySource = {
+  ownerKey: string;
+  source: StoryTextSource;
+};
+
+function storySourceId(source: StoryTextSource): string {
+  return `${source.relativePath}::${source.fieldPath}`;
+}
+
+function editableComposedSources(owners: StoryTextOwner[]): OwnedStorySource[] {
+  const unique = new Map<string, OwnedStorySource>();
+  owners.forEach((owner) => owner.sources.forEach((source) => {
+    if (owner.kind === "composed_template" && source.editable && !unique.has(storySourceId(source))) {
+      unique.set(storySourceId(source), { ownerKey: owner.key, source });
+    }
+  }));
+  return [...unique.values()];
+}
+
+function storyOwnersFingerprint(owners: StoryTextOwner[]): string {
+  return JSON.stringify(owners.map((owner) => ({
+    key: owner.key,
+    revision: owner.revision,
+    currentValueHash: owner.currentValueHash,
+    sources: owner.sources.map((source) => [
+      source.relativePath,
+      source.fieldPath,
+      source.revision,
+      source.currentValueHash,
+    ]),
+  })));
+}
+
+function StoryTextEditor({
+  root,
+  keys,
+  locale,
+  onSaved,
+  onClose,
+  i18n,
+}: {
+  root: string;
+  keys: string[];
+  locale: GameLocale;
+  onSaved: (result: StoryTextSaveResult, undo: StoryTextUndo, editedLocale: GameLocale) => void;
+  onClose: () => void;
+  i18n: GameLocalizer;
+}) {
+  const [editingLocale, setEditingLocale] = useState(locale);
+  const [owners, setOwners] = useState<StoryTextOwner[]>([]);
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [sourceValues, setSourceValues] = useState<Record<string, string>>({});
+  const [sourceEditor, setSourceEditor] = useState<SourceEditor>(() => readSourceEditor());
+  const [busy, setBusy] = useState(true);
+  const [message, setMessage] = useState("원본 위치를 찾는 중…");
+  const composedSources = useMemo(() => editableComposedSources(owners), [owners]);
+  const draftKey = useMemo(
+    () => `love-office:story-text-draft:${encodeURIComponent(root)}:${editingLocale}:${keys.join("|")}`,
+    [editingLocale, keys, root],
+  );
+
+  const installOwners = useCallback((loaded: StoryTextOwner[]) => {
+    setOwners(loaded);
+    setValues(Object.fromEntries(loaded.map((owner) => [owner.key, owner.currentValue])));
+    setSourceValues(Object.fromEntries(editableComposedSources(loaded).map(({ source }) => [
+      storySourceId(source),
+      source.currentValue || "",
+    ])));
+  }, []);
+
+  const load = useCallback(async () => {
+    setBusy(true);
+    setMessage("원본 위치를 찾는 중…");
+    try {
+      const loaded = await Promise.all(keys.map((key) => getStoryTextOwner(root, key, editingLocale)));
+      installOwners(loaded);
+      let recoveredDraft = false;
+      try {
+        const rawDraft = window.localStorage.getItem(draftKey);
+        if (rawDraft) {
+          const draft = JSON.parse(rawDraft) as { fingerprint?: string; values?: Record<string, string>; sourceValues?: Record<string, string> };
+          if (draft.fingerprint === storyOwnersFingerprint(loaded)) {
+            setValues((current) => ({ ...current, ...draft.values }));
+            setSourceValues((current) => ({ ...current, ...draft.sourceValues }));
+            recoveredDraft = true;
+          } else window.localStorage.removeItem(draftKey);
+        }
+      } catch {
+        // Restricted WebViews may not expose localStorage; editing still works without draft recovery.
+      }
+      const hasComposed = loaded.some((owner) => owner.kind === "composed_template");
+      const missingTranslations = loaded.filter((owner) => owner.isTranslation && !owner.translationExists).length;
+      setMessage(recoveredDraft
+        ? "저장하지 않은 인게임 편집 초안을 복구했습니다."
+        : hasComposed
+        ? "합성 문장을 만드는 장면 템플릿과 활동 문구를 각각 수정할 수 있습니다. 저장 전 placeholder와 전체 스토리를 검증합니다."
+        : missingTranslations
+          ? `${missingTranslations}개 문장은 아직 직접 번역이 없습니다. 현재 원문을 바탕으로 새 번역을 만들 수 있습니다.`
+          : "저장하면 YAML과 게임 런타임을 함께 검증해 현재 화면에 반영합니다.");
+    } catch (error) {
+      setMessage(`원본을 찾지 못했습니다: ${String(error)}`);
+    } finally {
+      setBusy(false);
+    }
+  }, [draftKey, editingLocale, installOwners, keys, root]);
+
+  useEffect(() => { void load(); }, [load]);
+
+  const directChanged = owners.filter((owner) => owner.editable && values[owner.key] !== owner.currentValue);
+  const sourceChanged = composedSources.filter(({ source }) =>
+    sourceValues[storySourceId(source)] !== source.currentValue);
+  const hasChanges = directChanged.length > 0 || sourceChanged.length > 0;
+
+  useEffect(() => {
+    if (busy || !owners.length) return;
+    try {
+      if (!hasChanges) {
+        window.localStorage.removeItem(draftKey);
+        return;
+      }
+      window.localStorage.setItem(draftKey, JSON.stringify({
+        fingerprint: storyOwnersFingerprint(owners),
+        values,
+        sourceValues,
+      }));
+    } catch {
+      // A failed draft cache must never block the authoritative YAML workflow.
+    }
+  }, [busy, draftKey, hasChanges, owners, sourceValues, values]);
+
+  const save = async () => {
+    if (!hasChanges) {
+      setMessage("변경된 문장이 없습니다.");
+      return;
+    }
+    const edits: StoryTextEdit[] = [
+      ...directChanged.map((owner) => ({
+        localization_key: owner.key,
+        locale: editingLocale,
+        expected_revision: owner.revision!,
+        expected_value_hash: owner.currentValueHash!,
+        next_value: values[owner.key],
+      })),
+      ...sourceChanged.map(({ ownerKey, source }) => ({
+        localization_key: ownerKey,
+        locale: editingLocale,
+        source_relative_path: source.relativePath,
+        source_field_path: source.fieldPath,
+        expected_revision: source.revision!,
+        expected_value_hash: source.currentValueHash!,
+        next_value: sourceValues[storySourceId(source)],
+      })),
+    ];
+    setBusy(true);
+    setMessage("전체 스토리를 검증하고 저장하는 중…");
+    try {
+      const result = await saveStoryText(root, edits);
+      if (!result.saved) {
+        const errors = result.issues.filter((issue) => issue.severity === "error");
+        setMessage(errors.length
+          ? `검증 오류로 저장하지 않았습니다: ${errors[0].message}`
+          : "검증 오류로 저장하지 않았습니다.");
+        return;
+      }
+      const refreshed = await Promise.all(keys.map((key) => getStoryTextOwner(root, key, editingLocale)));
+      const undoEdits = inverseStoryTextEdits(result.changes || [], refreshed, editingLocale);
+      installOwners(refreshed);
+      try { window.localStorage.removeItem(draftKey); } catch { /* YAML save already succeeded. */ }
+      onSaved(result, { edits: undoEdits, keys, locale: editingLocale }, editingLocale);
+      setMessage("저장 완료 · 실제 원본과 현재 게임 화면에 반영했습니다. 화면의 ‘마지막 문구 저장 취소’로 되돌릴 수 있습니다.");
+    } catch (error) {
+      const text = String(error);
+      setMessage(text.includes("REVISION_CONFLICT") || text.includes("VALUE_CONFLICT")
+        ? "외부에서 원본이 변경되었습니다. 초안은 유지했습니다. 다시 불러온 뒤 비교해 주세요."
+        : `저장하지 못했습니다: ${text}`);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleKey = (event: globalThis.KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+        event.preventDefault();
+        void save();
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  });
+
+  const openSource = (source: StoryTextSource) => void openStorySource(root, source, sourceEditor);
+  const updateSourceEditor = (editor: SourceEditor) => {
+    setSourceEditor(editor);
+    writeSourceEditor(editor);
+  };
+
+  return <Modal title="인게임 원본 문구 편집" onClose={onClose} i18n={i18n} wide>
+    <div className="vn-story-editor">
+      <div className="vn-authoring-toolbar">
+        <div className="vn-authoring-locales" aria-label="편집 언어">
+          {gameLocales(runtime).map((candidate) => <button type="button" className={editingLocale === candidate ? "active" : ""} disabled={busy} onClick={() => { setBusy(true); setEditingLocale(candidate); }} key={candidate}>
+            {candidate === runtime.localization.default_locale ? "한국어 원본" : `${i18n.localeName(candidate)} 번역`}
+          </button>)}
+        </div>
+        <label>원본 열기<select value={sourceEditor} onChange={(event) => updateSourceEditor(event.target.value as SourceEditor)}>
+          <option value="system">시스템 기본 앱</option>
+          <option value="vscode">VS Code · 정확한 줄</option>
+          <option value="cursor">Cursor · 정확한 줄</option>
+          <option value="zed">Zed · 정확한 줄</option>
+        </select></label>
+      </div>
+      <p className="vn-story-editor-status" role="status">{message}</p>
+      {owners.map((owner) => <section className={owner.editable ? "editable" : "fallback"} key={owner.key}>
+        <header><strong>{owner.isTranslation ? (owner.translationExists ? `${editingLocale} 번역 편집` : `${editingLocale} 새 번역`) : owner.editable ? "직접 편집" : "합성 문구"}</strong><code>{owner.key}</code></header>
+        {owner.isTranslation && !owner.translationExists && <small className="vn-translation-fallback">현재 한국어 원문: {owner.sourceValue}</small>}
+        {owner.editable && <textarea
+          autoFocus={owner.key === owners.find((candidate) => candidate.editable)?.key}
+          rows={Math.max(3, Math.min(9, (values[owner.key]?.split("\n").length || 1) + 2))}
+          value={values[owner.key] || ""}
+          maxLength={owner.maxLength}
+          onChange={(event) => setValues((current) => ({ ...current, [owner.key]: event.target.value }))}
+          disabled={busy}
+        />}
+        {!owner.editable && owner.kind !== "composed_template" && <blockquote>{owner.currentValue}</blockquote>}
+        <div className="vn-story-source-list">{owner.sources.filter((source) => owner.kind !== "composed_template" || !source.editable).map((source) => <div key={storySourceId(source)}>
+          <code>{sourceLocator(source)}</code>
+          <button type="button" onClick={() => openSource(source)}>원본 파일 열기</button>
+          <button type="button" onClick={() => void revealStorySource(root, source)}>Finder에서 보기</button>
+          <button type="button" onClick={() => void copySourceLocator(source)}>위치 복사</button>
+        </div>)}</div>
+      </section>)}
+      {composedSources.length > 0 && <section className="vn-composed-source-editor">
+        <header><strong>합성 원본 구조화 편집</strong><code>완성 variant를 덮어쓰지 않고 실제 조합 원본만 수정합니다.</code></header>
+        {composedSources.map(({ source }) => <label key={storySourceId(source)}>
+          <span><strong>{source.label}</strong><code>{sourceLocator(source)}</code></span>
+          <textarea autoFocus={!owners.some((owner) => owner.editable) && source === composedSources[0]?.source} rows={4} value={sourceValues[storySourceId(source)] || ""} onChange={(event) => setSourceValues((current) => ({ ...current, [storySourceId(source)]: event.target.value }))} disabled={busy} />
+          <span className="vn-composed-source-actions"><button type="button" onClick={() => openSource(source)}>원본 파일 열기</button><button type="button" onClick={() => void revealStorySource(root, source)}>Finder에서 보기</button><button type="button" onClick={() => void copySourceLocator(source)}>위치 복사</button></span>
+        </label>)}
+      </section>}
+      <footer>
+        <button type="button" onClick={() => void load()} disabled={busy}>원본 다시 불러오기</button>
+        <button type="button" onClick={onClose}>닫기</button>
+        <button type="button" className="primary" onClick={() => void save()} disabled={busy || !hasChanges}>{editingLocale === runtime.localization.default_locale ? "원본 저장" : `${editingLocale} 번역 저장`} <kbd>⌘↵</kbd></button>
+      </footer>
+    </div>
+  </Modal>;
+}
+
+function galleryEntryUnlocked(entry: GalleryEntry, profile: PlayerProfile): boolean {
+  return entry.default_unlocked === true || profile.memories.includes(entry.unlock_memory);
+}
+
+function GalleryPanel({ profile, i18n }: { profile: PlayerProfile; i18n: GameLocalizer }) {
+  const entries = runtime.gallery?.entries || [];
+  const unlockedEntries = entries.filter((entry) => galleryEntryUnlocked(entry, profile));
+  const [selectedId, setSelectedId] = useState(() => unlockedEntries[0]?.id || "");
+  const selected = unlockedEntries.find((entry) => entry.id === selectedId) || unlockedEntries[0];
+  return <div className="vn-gallery">
+    <div className="vn-gallery-summary">
+      <strong>{i18n.ui("gallery.progress", { unlocked: unlockedEntries.length, total: entries.length })}</strong>
+    </div>
+    {entries.length ? <div className="vn-gallery-layout">
+      <div className="vn-gallery-grid">
+        {entries.map((entry) => {
+          const unlocked = galleryEntryUnlocked(entry, profile);
+          const title = unlocked
+            ? i18n.ui(entry.title_key as Parameters<GameLocalizer["ui"]>[0])
+            : i18n.ui("gallery.lockedTitle");
+          return <button
+            type="button"
+            className={`${unlocked ? "unlocked" : "locked"} ${selected?.id === entry.id ? "active" : ""}`}
+            disabled={!unlocked}
+            onClick={() => setSelectedId(entry.id)}
+            aria-label={title}
+            key={entry.id}
+          >
+            {unlocked && <img src={assetUrl(entry.asset)} alt="" />}
+            {!unlocked && <i aria-hidden="true">?</i>}
+            <span>{title}</span>
+          </button>;
+        })}
+      </div>
+      <article className="vn-gallery-viewer">
+        {selected ? <>
+          <img src={assetUrl(selected.asset)} alt={i18n.ui(selected.title_key as Parameters<GameLocalizer["ui"]>[0])} />
+          <div><h3>{i18n.ui(selected.title_key as Parameters<GameLocalizer["ui"]>[0])}</h3><p>{i18n.ui(selected.description_key as Parameters<GameLocalizer["ui"]>[0])}</p></div>
+        </> : <p>{i18n.ui("gallery.lockedDescription")}</p>}
+      </article>
+    </div> : <p className="vn-empty">{i18n.ui("gallery.empty")}</p>}
+  </div>;
+}
+
 function TitleScreen({
   autosave,
   onContinue,
   onNewGame,
   onLoad,
+  onGallery,
   onSettings,
   i18n,
   onLocale,
@@ -301,6 +611,7 @@ function TitleScreen({
   onContinue: () => void;
   onNewGame: () => void;
   onLoad: () => void;
+  onGallery: () => void;
   onSettings: () => void;
   i18n: GameLocalizer;
   onLocale: (locale: GameLocale) => void;
@@ -308,7 +619,7 @@ function TitleScreen({
   return <main className="vn-title">
     <img
       className="vn-title-key-art"
-      src="/og.png"
+      src={`${import.meta.env.BASE_URL}og.png`}
       alt=""
       aria-hidden="true"
     />
@@ -329,6 +640,7 @@ function TitleScreen({
         <button type="button" data-icon="♥" className={autosave ? "primary" : ""} disabled={!autosave} onClick={onContinue}><span>{i18n.ui("menu.continue")}</span><small>{autosave ? savePreview(autosave, i18n).title : i18n.ui("menu.noSave")}</small></button>
         <button type="button" data-icon="✦" className={!autosave ? "primary" : ""} onClick={onNewGame}><span>{i18n.ui("menu.newGame")}</span></button>
         <button type="button" data-icon="♡" onClick={onLoad}><span>{i18n.ui("menu.load")}</span></button>
+        <button type="button" data-icon="▣" onClick={onGallery}><span>{i18n.ui("menu.gallery")}</span><small>{i18n.ui("menu.galleryHint")}</small></button>
         <button type="button" data-icon="⚙" onClick={onSettings}><span>{i18n.ui("menu.settings")}</span></button>
       </nav>
       <footer><span>{i18n.ui("app.brand")}</span><span>{i18n.ui("app.webPlayer")}</span></footer>
@@ -390,6 +702,7 @@ function FlowScreen({
   canStepBack,
   onMode,
   onMenu,
+  onEditText,
   i18n,
 }: {
   session: PlayerSession;
@@ -402,6 +715,7 @@ function FlowScreen({
   canStepBack: boolean;
   onMode: () => void;
   onMenu: () => void;
+  onEditText?: (keys: string[]) => void;
   i18n: GameLocalizer;
 }) {
   const { day, slot } = session.state.progress.time;
@@ -435,6 +749,14 @@ function FlowScreen({
       <p>{eventPresentation(i18n, pendingEvent, session.viewLayer).summary}</p>
       <button type="button" onClick={() => onAcknowledge(pendingLog.id)}>{i18n.ui("flow.continue")}</button>
       {debugMode && <small>DEBUG · {pendingEvent.id} · {pendingLog.status}</small>}
+      {debugMode && onEditText && <button type="button" className="vn-authoring-button" onClick={() => onEditText([
+        `events.${pendingEvent.id}.title`,
+        `events.${pendingEvent.id}.presentation.perceived.title`,
+        `events.${pendingEvent.id}.presentation.perceived.summary`,
+        `events.${pendingEvent.id}.presentation.reality.title`,
+        `events.${pendingEvent.id}.presentation.reality.summary`,
+      ])}>사건 문구 편집</button>}
+      {debugMode && onEditText && <button type="button" className="vn-authoring-button" onClick={() => onEditText(["flow.continue"])}>진행 문구 편집</button>}
     </section>}
 
     {!pendingEvent && events.length > 0 && <section className="vn-flow-choices" aria-label={i18n.ui("flow.choicePrompt")}>
@@ -453,76 +775,108 @@ function FlowScreen({
           <div><strong>{i18n.ui("flow.passAction")}</strong><small>{i18n.ui("flow.passCopy")}</small></div>
         </button>
       </div>
+      {debugMode && onEditText && <div className="vn-flow-authoring-list">
+        <button type="button" onClick={() => onEditText(["flow.choiceContext", "flow.choicePrompt", "flow.passAction", "flow.passCopy"])}>이 화면 공통 문구</button>
+        {events.map((event) => <button type="button" key={event.id} onClick={() => onEditText([
+          `events.${event.id}.title`,
+          `events.${event.id}.presentation.perceived.title`,
+          `events.${event.id}.presentation.perceived.summary`,
+          `events.${event.id}.presentation.reality.title`,
+          `events.${event.id}.presentation.reality.summary`,
+        ])}>{event.id} 원본 문구</button>)}
+      </div>}
     </section>}
   </main>;
 }
 
 function activityIcon(activityId: string): string {
   if (activityId === "workout") return "◆";
-  if (activityId === "grooming") return "✦";
+  if (activityId === "reading") return "▤";
   if (activityId === "ott") return "▶";
-  if (activityId === "reels") return "⌁";
+  if (activityId === "dark_psychology") return "✦";
+  if (activityId === "solo_drinking") return "◒";
   return "☾";
 }
 
-function SelfDevelopmentScreen({
+function NightDialogueFlow({
   session,
   debugMode,
+  onBegin,
   onActivity,
   onContinue,
   onMode,
   onMenu,
+  onEditText,
   i18n,
 }: {
   session: PlayerSession;
   debugMode: boolean;
+  onBegin: () => void;
   onActivity: (activityId: string) => void;
   onContinue: () => void;
   onMode: () => void;
   onMenu: () => void;
+  onEditText?: (keys: string[]) => void;
   i18n: GameLocalizer;
 }) {
   const night = session.nightPhase;
   const profile = selfDevelopment.profile(session.state).snapshot();
-  const options = visibleNightActivities(
-    selfDevelopment.activityOptions(session.state),
-    session.state.progress.time.day,
-  );
+  const options = selfDevelopment.activityOptions(session.state);
   const result = night?.status === "result" ? night.result : undefined;
   const resultActivity = result
     ? runtime.self_development.activities.find((activity) => activity.id === result.activityId)
     : undefined;
-  const fatigueCells = Array.from({ length: 6 }, (_, index) => index < profile.fatigue);
   const activityTags = (option: SelfDevelopmentActivityOption) => [
     ...(option.activity.appeal_delta
-      ? [`${i18n.ui("selfDevelopment.appeal")} ${option.activity.appeal_delta > 0 ? "↑" : "↓"}`]
+      ? [`${i18n.ui("selfDevelopment.appeal")} ${signedValue(option.activity.appeal_delta)}`]
       : []),
     ...SELF_DEVELOPMENT_STATS
       .filter((stat) => Boolean(option.activity.stat_deltas[stat]))
-      .map((stat) => i18n.ui(`selfDevelopment.stat.${stat}` as Parameters<GameLocalizer["ui"]>[0])),
+      .map((stat) => `${i18n.ui(`selfDevelopment.stat.${stat}` as Parameters<GameLocalizer["ui"]>[0])} ${signedValue(option.activity.stat_deltas[stat] || 0)}`),
     ...(option.activity.fatigue_delta
-      ? [`${i18n.ui("selfDevelopment.fatigue")} ${option.activity.fatigue_delta > 0 ? "↑" : "↓"}`]
+      ? [`${i18n.ui("selfDevelopment.fatigue")} ${signedValue(option.activity.fatigue_delta)}`]
+      : []),
+    ...(option.activity.hint_charge
+      ? [`${i18n.ui("analysisHint.charge")} ${signedValue(option.activity.hint_charge)}`]
       : []),
   ];
-  const resultDeltas: Array<{ label: string; value: number }> = result ? [
-    ...(result.appealDelta
-      ? [{ label: i18n.ui("selfDevelopment.appeal"), value: result.appealDelta }]
-      : []),
-    ...SELF_DEVELOPMENT_STATS.flatMap((stat) => {
-      const value = result.statDeltas[stat] || 0;
-      return value
-        ? [{ label: i18n.ui(`selfDevelopment.stat.${stat}` as Parameters<GameLocalizer["ui"]>[0]), value }]
-        : [];
-    }),
-    ...(result.fatigueDelta
-      ? [{ label: i18n.ui("selfDevelopment.fatigue"), value: result.fatigueDelta }]
-      : []),
-  ] : [];
+  const visibleTextKeys = [
+    "selfDevelopment.intro",
+    "selfDevelopment.forcedIntro",
+    "selfDevelopment.status",
+    "selfDevelopment.appeal",
+    "selfDevelopment.fatigue",
+    "selfDevelopment.choose",
+    "selfDevelopment.blocked",
+    "analysisHint.charge",
+    "analysisHint.charges",
+    ...SELF_DEVELOPMENT_STATS.map((stat) => `selfDevelopment.stat.${stat}`),
+    ...(night?.status === "selecting" ? options.flatMap((option) => [
+      option.activity.title_key,
+      option.activity.description_key,
+    ]) : []),
+    ...(resultActivity ? [
+      resultActivity.title_key,
+      resultActivity.reflection_keys.perceived,
+      resultActivity.reflection_keys.reality,
+    ] : []),
+  ];
+  const reflection = resultActivity
+    ? selfDevelopmentMessage(i18n, resultActivity.reflection_keys[session.viewLayer])
+    : "";
+  const intro = i18n.ui(night?.status === "intro" && night.forcedActivityId
+    ? "selfDevelopment.forcedIntro"
+    : "selfDevelopment.intro");
+  const dialogueLine = night?.status === "result" ? reflection : intro;
+  const dialogueAction = night?.status === "result" ? onContinue : onBegin;
+  const showHanName = night?.status !== "result" || session.viewLayer === "perceived";
 
-  return <main className={`vn-self-development ${session.viewLayer}`}>
-    <div className="vn-night-sky" aria-hidden="true"><i /><i /><i /><i /></div>
-    <header className="vn-night-hud">
-      <div><span>{i18n.ui("app.brand")}</span><strong>{i18n.ui("slot.night")}</strong></div>
+  return <main className={`vn-game vn-night-story ${session.viewLayer}`}>
+    <div className="vn-night-home" aria-hidden="true">
+      <i className="window" /><i className="lamp" /><i className="sofa" /><i className="table" />
+    </div>
+    <header className="vn-flow-hud">
+      <div><span>DAY {String(session.state.progress.time.day).padStart(2, "0")}</span><strong>{i18n.ui("slot.night")}</strong></div>
       {debugMode && <button type="button" className="vn-mode-button" onClick={onMode}>
         <span>{i18n.ui(session.viewLayer === "reality" ? "hud.original" : "hud.story")}</span>
         <small>{i18n.ui(session.viewLayer === "reality" ? "hud.reality" : "hud.subjective")}</small>
@@ -531,37 +885,19 @@ function SelfDevelopmentScreen({
       {debugMode && <div className="vn-debug-badge">DEBUG</div>}
     </header>
 
-    <section className="vn-night-plan" aria-labelledby="vn-night-title">
-      <header className="vn-night-plan-title">
-        <span>✦ {i18n.ui("selfDevelopment.appeal")}</span>
-        <h1 id="vn-night-title">{i18n.ui("selfDevelopment.title")}</h1>
-        <p>{i18n.ui("selfDevelopment.subtitle")}</p>
-      </header>
-
-      <section className="vn-night-profile" aria-label={i18n.ui("selfDevelopment.appeal")}>
-        <div className="vn-appeal-score">
-          <span>{i18n.ui("selfDevelopment.appeal")}</span>
-          <div><strong>{profile.appeal}</strong><small>/ 100</small></div>
-        </div>
-        <div className="vn-night-stats">
-          {SELF_DEVELOPMENT_STATS.map((stat) => <div key={stat}>
-            <span>{i18n.ui(`selfDevelopment.stat.${stat}` as Parameters<GameLocalizer["ui"]>[0])}</span>
-            <i><b style={{ width: `${profile.stats[stat] * 20}%` }} /></i>
-            <strong>{profile.stats[stat]}</strong>
-          </div>)}
-        </div>
-        <div className="vn-fatigue-meter">
-          <span>{i18n.ui("selfDevelopment.fatigue")}</span>
-          <div aria-label={`${i18n.ui("selfDevelopment.fatigue")} ${profile.fatigue} / 6`}>
-            {fatigueCells.map((active, index) => <i className={active ? "active" : ""} key={index} />)}
-          </div>
-          <strong>{profile.fatigue}<small>/ 6</small></strong>
-        </div>
+    {debugMode && onEditText && <button type="button" className="vn-authoring-button vn-night-authoring" onClick={() => onEditText(visibleTextKeys)}>현재 화면 문구 편집</button>}
+    {night?.status === "selecting" && <>
+      <section className="vn-night-status" aria-label={i18n.ui("selfDevelopment.status")}>
+        <span><small>{i18n.ui("selfDevelopment.appeal")}</small><strong>{profile.appeal}</strong></span>
+        {SELF_DEVELOPMENT_STATS.map((stat) => <span key={stat}>
+          <small>{i18n.ui(`selfDevelopment.stat.${stat}` as Parameters<GameLocalizer["ui"]>[0])}</small>
+          <strong>{profile.stats[stat]}</strong>
+        </span>)}
+        <span><small>{i18n.ui("selfDevelopment.fatigue")}</small><strong>{profile.fatigue}<i>/6</i></strong></span>
+        <span><small>{i18n.ui("analysisHint.charges")}</small><strong>{session.state.progress.self_development.hint_charges}</strong></span>
       </section>
-
-      {night?.status === "selecting" && <section className="vn-night-activity-section">
-        <div className="vn-night-section-heading"><span>01</span><strong>{i18n.ui("selfDevelopment.choose")}</strong></div>
-        <div className="vn-night-activities">
+      <section className="vn-choices vn-night-choices" aria-label={i18n.ui("selfDevelopment.choose")}>
+        <div className="vn-night-activity-list">
           {options.map((option) => {
             const title = selfDevelopmentMessage(i18n, option.activity.title_key);
             return <button
@@ -572,52 +908,134 @@ function SelfDevelopmentScreen({
               aria-label={`${title}${option.available ? "" : ` · ${i18n.ui("selfDevelopment.blocked")}`}`}
               key={option.activity.id}
             >
-              <i className="vn-night-activity-icon" aria-hidden="true">{activityIcon(option.activity.id)}</i>
-              <div>
-                <strong>{title}</strong>
-                <p>{selfDevelopmentMessage(i18n, option.activity.description_key)}</p>
-                <span>{activityTags(option).map((tag) => <small key={tag}>{tag}</small>)}</span>
-              </div>
-              <em>{option.available ? i18n.ui("selfDevelopment.choose") : i18n.ui("selfDevelopment.blocked")}</em>
+              <span aria-hidden="true">{activityIcon(option.activity.id)}</span>
+              <strong>{title}</strong>
+              <em>{option.available
+                ? activityTags(option).join(" · ")
+                : i18n.ui("selfDevelopment.blocked")}</em>
               {debugMode && <code>DEBUG · {option.activity.id}</code>}
             </button>;
           })}
         </div>
-      </section>}
+      </section>
+    </>}
 
-      {result && resultActivity && <section className="vn-night-result" aria-live="polite">
-        <div className="vn-night-section-heading"><span>02</span><strong>{i18n.ui("selfDevelopment.result")}</strong></div>
-        <div className="vn-night-result-card">
-          <i className="vn-night-result-icon" aria-hidden="true">{activityIcon(result.activityId)}</i>
-          <div className="vn-night-result-copy">
-            <span>{i18n.ui("selfDevelopment.result")}</span>
-            <h2>{selfDevelopmentMessage(i18n, resultActivity.title_key)}</h2>
-            <div className="vn-night-result-deltas">
-              {resultDeltas.map((delta) => <span key={delta.label}>
-                {delta.label} <strong>{signedValue(delta.value)}</strong>
-              </span>)}
-            </div>
-            <blockquote>{selfDevelopmentMessage(i18n, resultActivity.reflection_keys[session.viewLayer])}</blockquote>
-          </div>
-          <button type="button" onClick={onContinue}>{i18n.ui("selfDevelopment.continue")}</button>
-          {debugMode && <code>DEBUG · {result.activityId}</code>}
-        </div>
-      </section>}
-    </section>
+    {(night?.status === "intro" || night?.status === "result") && <section
+      className="vn-dialogue vn-night-dialogue"
+      role="button"
+      tabIndex={0}
+      aria-live={night.status === "result" ? "polite" : undefined}
+      onClick={dialogueAction}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") dialogueAction();
+      }}
+    >
+      {showHanName && <div className="vn-nameplate">{i18n.characterName("han_do_yoon")}</div>}
+      <p className="vn-line">{dialogueLine}<i className="done" /></p>
+      {debugMode && night.status === "result" && <code>DEBUG · {night.result.activityId}</code>}
+    </section>}
   </main>;
 }
 
-function RhythmGauge({ session, debugMode, i18n }: { session: PlayerSession; debugMode: boolean; i18n: GameLocalizer }) {
+function AnimatedRhythmScore({
+  score,
+  from,
+  animationId,
+  reducedMotion,
+  label,
+}: {
+  score: number;
+  from: number;
+  animationId: string;
+  reducedMotion: boolean;
+  label: string;
+}) {
+  const [displayedScore, setDisplayedScore] = useState(score);
+
+  useEffect(() => {
+    if (!animationId || reducedMotion || from === score) {
+      setDisplayedScore(score);
+      return undefined;
+    }
+    let frame = 0;
+    const duration = 450;
+    const startedAt = performance.now();
+    setDisplayedScore(from);
+    const count = (now: number) => {
+      const progress = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - ((1 - progress) ** 3);
+      setDisplayedScore(Math.round(from + ((score - from) * eased)));
+      if (progress < 1) frame = window.requestAnimationFrame(count);
+    };
+    frame = window.requestAnimationFrame(count);
+    return () => window.cancelAnimationFrame(frame);
+  }, [animationId, from, reducedMotion, score]);
+
+  return <output className={`vn-rhythm-score ${animationId ? "changed" : ""}`} aria-live="polite" aria-label={`${label} SCORE ${score} / 100`}>
+    <small>SCORE</small>
+    <strong aria-hidden="true">{String(displayedScore).padStart(3, "0")}</strong>
+    <span aria-hidden="true">/100</span>
+  </output>;
+}
+
+function RhythmGauge({
+  session,
+  debugMode,
+  animationId,
+  reducedMotion,
+  i18n,
+}: {
+  session: PlayerSession;
+  debugMode: boolean;
+  animationId: string;
+  reducedMotion: boolean;
+  i18n: GameLocalizer;
+}) {
   const value = readPushPullState(session.state);
-  const marker = (value.position + 100) / 2;
+  const marker = rhythmMarkerPercent(value.position);
   const target = value.target === "pull" ? 34 : value.target === "push" ? 66 : 50;
-  return <div className="vn-rhythm" aria-label={debugMode ? pushPullPositionLabel(value.position, session.viewLayer) : i18n.ui("rhythm.status")}>
-    <div className="vn-rhythm-labels"><span>{i18n.ui("rhythm.approach")}</span><span>{i18n.ui("rhythm.space")}</span></div>
-    <div className="vn-rhythm-track">
-      <i className="optimal" />
-      <i className="checkpoint left" /><i className="checkpoint right" />
-      <i className="target" style={{ left: `${target}%`, opacity: debugMode && value.target !== "none" ? 1 : 0 }} />
-      <b style={{ left: `${marker}%` }} />
+  const routeHeroine = runtime.routes[session.routeId]?.heroine;
+  const heroineId = value.heroine || routeHeroine || "";
+  const heroineName = heroineId ? i18n.characterName(heroineId) : i18n.ui("rhythm.status");
+  const heroine = heroineId ? session.state.visible.heroines[heroineId] : undefined;
+  const score = heroine?.initiative ?? 0;
+  const portrait = heroineId ? assetUrl(runtime.characters[heroineId]?.visual.hud_portrait) : undefined;
+  const feedback = animationId ? session.lastFeedback : undefined;
+  const motion = rhythmGaugeMotion(feedback);
+  const motionClass = feedback ? `motion-${feedback.kind}` : "";
+  return <div
+    className={`vn-rhythm ${motion ? "has-motion" : ""} ${motionClass}`}
+    aria-label={debugMode ? pushPullPositionLabel(value.position, session.viewLayer) : i18n.ui("rhythm.status")}
+    data-rhythm-position={value.position}
+    data-rhythm-score={score}
+    data-rhythm-heroine={heroineId}
+  >
+    <div className="vn-rhythm-head">
+      <div className="vn-rhythm-labels"><span>{i18n.ui("rhythm.approach")}</span><span>{i18n.ui("rhythm.space")}</span></div>
+      <AnimatedRhythmScore
+        score={score}
+        from={motion?.scoreFrom ?? score}
+        animationId={motion && motion.scoreFrom !== motion.scoreTo ? animationId : ""}
+        reducedMotion={reducedMotion}
+        label={heroineName}
+      />
+    </div>
+    <div className="vn-rhythm-meter">
+      <div className="vn-rhythm-avatar" role="img" aria-label={heroineName} title={heroineName}>
+        {portrait ? <img src={portrait} alt="" /> : <i aria-hidden="true"><b /></i>}
+      </div>
+      <div className="vn-rhythm-track">
+        <i className="optimal" />
+        <i className="checkpoint left" /><i className="checkpoint right" />
+        <i className="target" style={{ left: `${target}%`, opacity: debugMode && value.target !== "none" ? 1 : 0 }} />
+        {motion && <>
+          <i className="vn-rhythm-ghost" key={`ghost-${animationId}`} style={{ left: `${motion.from}%` }} />
+          <i className="vn-rhythm-trail" key={`trail-${animationId}`} style={{ left: `${motion.trailLeft}%`, width: `${motion.trailWidth}%` }} />
+          <i className="vn-rhythm-impact" key={`impact-${animationId}`} style={{ left: `${motion.to}%` }} />
+          {motion.gain > 0 && <em className="vn-rhythm-gain" key={`gain-${animationId}`} style={{ left: `${motion.to}%` }}>+{motion.gain}</em>}
+        </>}
+        <i className="vn-rhythm-marker" style={{ left: `${marker}%` }} />
+      </div>
     </div>
     {debugMode && <small>DEBUG · {i18n.ui("rhythm.next", { target: pushPullTargetLabel(value.target, session.viewLayer) })}</small>}
   </div>;
@@ -681,6 +1099,7 @@ function DebugPanel({
   canStepBack,
   onSettings,
   onStepBack,
+  onReturnToEditor,
   i18n,
 }: {
   session: PlayerSession;
@@ -689,6 +1108,7 @@ function DebugPanel({
   canStepBack: boolean;
   onSettings: (settings: PlayerSettings) => void;
   onStepBack: () => void;
+  onReturnToEditor?: () => void;
   i18n: GameLocalizer;
 }) {
   return <aside className="vn-debug-panel" aria-label={i18n.ui("debug.panel")}>
@@ -702,6 +1122,7 @@ function DebugPanel({
     <label><span>{i18n.ui("debug.positionX")}</span><input type="range" min="-24" max="24" value={settings.characterX} onChange={(event) => onSettings({ ...settings, characterX: Number(event.target.value) })} /><output>{settings.characterX}</output></label>
     <label><span>{i18n.ui("debug.positionY")}</span><input type="range" min="-8" max="24" value={settings.characterY} onChange={(event) => onSettings({ ...settings, characterY: Number(event.target.value) })} /><output>{settings.characterY}</output></label>
     <label><span>{i18n.ui("debug.scale")}</span><input type="range" min="75" max="135" value={settings.characterScale} onChange={(event) => onSettings({ ...settings, characterScale: Number(event.target.value) })} /><output>{settings.characterScale}%</output></label>
+    {onReturnToEditor && <button type="button" className="vn-debug-editor-return" onClick={onReturnToEditor}>스토리 에디터로 돌아가기</button>}
   </aside>;
 }
 
@@ -757,11 +1178,14 @@ function SettingsPanel({ value, onChange, i18n }: { value: PlayerSettings; onCha
 }
 
 export default function WebGame() {
+  const projectRoot = useMemo(() => authoringRoot(), []);
   const [screen, setScreen] = useState<Screen>("title");
   const [session, setSession] = useState<PlayerSession>();
   const [overlay, setOverlay] = useState<Overlay>(null);
-  const [settings, setSettings] = useState(() =>
-    readSettings(runtime.localization.supported_locales, runtime.localization.default_locale));
+  const [settings, setSettings] = useState(() => {
+    const stored = readSettings(runtime.localization.supported_locales, runtime.localization.default_locale);
+    return projectRoot ? { ...stored, debugMode: true } : stored;
+  });
   const [autosave, setAutosave] = useState(() => readAutosave(runtime));
   const [auto, setAuto] = useState(false);
   const [skip, setSkip] = useState(false);
@@ -769,13 +1193,19 @@ export default function WebGame() {
   const [revealed, setRevealed] = useState(false);
   const [visibleCharacters, setVisibleCharacters] = useState(0);
   const [feedbackVisible, setFeedbackVisible] = useState(false);
+  const [rhythmAnimationId, setRhythmAnimationId] = useState("");
+  const [choiceHint, setChoiceHint] = useState<(ChoiceAnalysisHint & { sceneId: string; nodeId: string })>();
   const [toast, setToast] = useState("");
   const [debugHistory, setDebugHistory] = useState<PlayerSession[]>([]);
   const [debugViewLayer, setDebugViewLayer] = useState<ViewLayer>();
   const [acknowledgedLogs, setAcknowledgedLogs] = useState<Set<string>>(() => new Set());
   const [dayTransition, setDayTransition] = useState<{ from: number; to: number; next: PlayerSession }>();
+  const [textEditKeys, setTextEditKeys] = useState<string[]>([]);
+  const [sourceOverrides, setSourceOverrides] = useState<Record<string, string>>({});
+  const [lastTextUndo, setLastTextUndo] = useState<StoryTextUndo>();
+  const [undoBusy, setUndoBusy] = useState(false);
   const toastTimer = useRef<number | undefined>(undefined);
-  const i18n = useMemo(() => new GameLocalizer(runtime, settings.locale), [settings.locale]);
+  const i18n = useMemo(() => new GameLocalizer(runtime, settings.locale, sourceOverrides), [settings.locale, sourceOverrides]);
   const activeViewLayer = session
     ? settings.debugMode ? debugViewLayer || session.viewLayer : session.viewLayer
     : undefined;
@@ -805,6 +1235,48 @@ export default function WebGame() {
     toastTimer.current = window.setTimeout(() => setToast(""), 1800);
   }, []);
 
+  const applySavedRuntimeText = useCallback((result: StoryTextSaveResult, keys: string[], locale: GameLocale) => {
+    if (!result.runtime) return;
+    const values = runtimeTextValues(result.runtime, keys, locale);
+    setSourceOverrides((current) => ({
+      ...current,
+      ...Object.fromEntries(Object.entries(values).map(([key, value]) => [`${locale}:${key}`, value])),
+    }));
+  }, []);
+
+  const undoStoryText = useCallback(async () => {
+    if (!projectRoot || !lastTextUndo || undoBusy) return;
+    setUndoBusy(true);
+    try {
+      const result = await saveStoryText(projectRoot, lastTextUndo.edits);
+      if (!result.saved) {
+        notify(result.issues.find((issue) => issue.severity === "error")?.message || "문구 저장 취소가 검증을 통과하지 못했습니다.");
+        return;
+      }
+      applySavedRuntimeText(result, lastTextUndo.keys, lastTextUndo.locale);
+      setLastTextUndo(undefined);
+      notify("마지막 문구 저장을 실제 원본과 화면에서 되돌렸습니다.");
+    } catch (error) {
+      const text = String(error);
+      notify(text.includes("CONFLICT") ? "원본이 외부에서 바뀌어 자동으로 되돌리지 않았습니다." : `문구 저장 취소 실패: ${text}`);
+    } finally {
+      setUndoBusy(false);
+    }
+  }, [applySavedRuntimeText, lastTextUndo, notify, projectRoot, undoBusy]);
+
+  const editStoryText = useCallback((keys: string[]) => {
+    if (!projectRoot || !keys.length) return;
+    setAuto(false);
+    setSkip(false);
+    setTextEditKeys([...new Set(keys)]);
+    setOverlay("text-edit");
+  }, [projectRoot]);
+
+  const closeStoryTextEditor = useCallback(() => {
+    setOverlay(null);
+    setTextEditKeys([]);
+  }, []);
+
   const saveAutosave = useCallback((value: PlayerSession) => {
     const slot = sessionSlot(value);
     writeAutosave(slot);
@@ -823,6 +1295,8 @@ export default function WebGame() {
     setAuto(false);
     setSkip(false);
     setUiHidden(false);
+    setFeedbackVisible(false);
+    setRhythmAnimationId("");
   }, []);
 
   const startCampaign = (gameModeId: GameModeId) => {
@@ -867,6 +1341,7 @@ export default function WebGame() {
     setAuto(false);
     setSkip(false);
     setFeedbackVisible(false);
+    setRhythmAnimationId("");
   }, [debugHistory, saveAutosave, settings.debugMode]);
 
   const changeMode = useCallback(() => {
@@ -888,13 +1363,29 @@ export default function WebGame() {
     if (!session || session.phase !== "scene") return;
     const next = selectOption(runtime, session, optionId);
     setFeedbackVisible(false);
+    setRhythmAnimationId(next.lastFeedback
+      ? `${session.sceneId}:${session.nodeId}:${optionId}:${next.choices.length}`
+      : "");
     updateSession(next, true);
     window.setTimeout(() => setFeedbackVisible(true), settings.reducedMotion ? 0 : 650);
   }, [session, settings.reducedMotion, updateSession]);
 
+  const showChoiceHint = useCallback(() => {
+    if (!session || session.phase !== "scene") return;
+    const consumed = consumeChoiceAnalysisHint(runtime, session);
+    if (!consumed) return;
+    setChoiceHint({ ...consumed.hint, sceneId: session.sceneId, nodeId: session.nodeId });
+    updateSession(consumed.session, true);
+  }, [session, updateSession]);
+
   const chooseNightActivity = useCallback((activityId: string) => {
     if (!session || session.phase !== "self_development") return;
     updateSession(selectSelfDevelopmentActivity(runtime, session, activityId), true);
+  }, [session, updateSession]);
+
+  const beginNight = useCallback(() => {
+    if (!session || session.phase !== "self_development") return;
+    updateSession(beginSelfDevelopmentNight(runtime, session), true);
   }, [session, updateSession]);
 
   const finishNight = useCallback(() => {
@@ -922,6 +1413,12 @@ export default function WebGame() {
     setVisibleCharacters(showAll ? fullText.length : 0);
     setRevealed(showAll);
   }, [fullText, session?.nodeId, settings.reducedMotion]);
+
+  useEffect(() => {
+    setChoiceHint((current) => current?.sceneId === session?.sceneId && current?.nodeId === session?.nodeId
+      ? current
+      : undefined);
+  }, [session?.nodeId, session?.sceneId]);
 
   useEffect(() => {
     if (revealed || !fullText || session?.phase !== "scene") return;
@@ -987,7 +1484,10 @@ export default function WebGame() {
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        if (overlay) setOverlay(null);
+        if (overlay) {
+          setOverlay(null);
+          if (overlay === "text-edit") setTextEditKeys([]);
+        }
         else if (screen === "game" && session?.phase === "scene") setUiHidden((value) => !value);
         return;
       }
@@ -1031,26 +1531,30 @@ export default function WebGame() {
         const sourceText = entry.kind === "choice" && entry.optionId
           ? sourceNode?.options?.find((option) => option.id === entry.optionId)?.label || entry.optionId
           : resolvedLayer?.line || entry.nodeId;
-        const text = entry.kind === "choice" && entry.optionId
-          ? i18n.story(`scenes.${entry.sceneId}.nodes.${entry.nodeId}.options.${entry.optionId}.label`, sourceText)
-          : i18n.story(dialogueKey(
+        const entryKey = entry.kind === "choice" && entry.optionId
+          ? `scenes.${entry.sceneId}.nodes.${entry.nodeId}.options.${entry.optionId}.label`
+          : dialogueKey(
             entry.sceneId,
             entry.nodeId,
             resolved?.variantId || entry.variantId,
             entryLayer,
             "line",
             Boolean(sourceNode?.variants?.length),
-          ), sourceText);
+          );
+        const text = i18n.story(entryKey, sourceText);
         const backlogSpeakerId = resolved ? effectiveSpeaker(resolved.node, entryLayer) : entry.speakerId;
         const speakerName = backlogSpeakerId
           ? i18n.characterName(backlogSpeakerId)
           : entry.kind === "choice" ? i18n.ui("dialogue.choice") : "";
-        return <article className={entry.kind} key={entry.id}>{speakerName && <span>{speakerName}</span>}<p>{text}</p></article>;
+        return <article className={entry.kind} key={entry.id}>{speakerName && <span>{speakerName}</span>}<p>{text}</p>
+          {projectRoot && settings.debugMode && <button type="button" className="vn-backlog-edit" onClick={() => editStoryText([entryKey])}>원본 편집</button>}
+        </article>;
       })}
         {!session.backlog.length && <p className="vn-empty">{i18n.ui("backlog.empty")}</p>}</div>
     </Modal>}
     {overlay === "save" && <Modal title={i18n.ui("save.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><SaveGrid mode="save" session={session} onLoad={loadSession} onSaved={() => notify(i18n.ui("save.done"))} i18n={i18n} /></Modal>}
     {overlay === "load" && <Modal title={i18n.ui("load.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><SaveGrid mode="load" onLoad={loadSession} onSaved={() => undefined} i18n={i18n} /></Modal>}
+    {overlay === "gallery" && <Modal title={i18n.ui("gallery.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><GalleryPanel profile={readProfile()} i18n={i18n} /></Modal>}
     {overlay === "settings" && <Modal title={i18n.ui("settings.title")} onClose={() => setOverlay(null)} i18n={i18n}><SettingsPanel value={settings} onChange={setSettings} i18n={i18n} /></Modal>}
     {overlay === "menu" && <Modal title={i18n.ui("menu.game")} onClose={() => setOverlay(null)} i18n={i18n}>
       <div className="vn-pause-menu">
@@ -1058,16 +1562,32 @@ export default function WebGame() {
         <button type="button" onClick={() => setOverlay("backlog")}>{i18n.ui("menu.backlog")}</button>
         <button type="button" onClick={() => setOverlay("save")}>{i18n.ui("save.title")}</button>
         <button type="button" onClick={() => setOverlay("load")}>{i18n.ui("load.title")}</button>
+        <button type="button" onClick={() => setOverlay("gallery")}>{i18n.ui("menu.gallery")}</button>
         <button type="button" onClick={() => setOverlay("settings")}>{i18n.ui("settings.title")}</button>
         <button type="button" className="danger" onClick={() => { setOverlay(null); setScreen("title"); setSession(undefined); }}>{i18n.ui("menu.title")}</button>
       </div>
     </Modal>}
+    {overlay === "text-edit" && projectRoot && textEditKeys.length > 0 && <StoryTextEditor
+      root={projectRoot}
+      keys={textEditKeys}
+      locale={settings.locale}
+      onSaved={(result, undo, editedLocale) => {
+        applySavedRuntimeText(result, textEditKeys, editedLocale);
+        setLastTextUndo(undo.edits.length ? undo : undefined);
+      }}
+      onClose={closeStoryTextEditor}
+      i18n={i18n}
+    />}
   </> : null;
+  const authoringUndoButton = projectRoot && lastTextUndo
+    ? <button type="button" className="vn-authoring-undo" onClick={() => void undoStoryText()} disabled={undoBusy}>{undoBusy ? "되돌리는 중…" : "↶ 마지막 문구 저장 취소"}</button>
+    : null;
 
   if (screen === "title") {
     return <div className={settings.reducedMotion ? "vn-reduced-motion" : ""}>
-      <TitleScreen autosave={autosave} onContinue={() => autosave && loadSession(autosave.session)} onNewGame={() => setScreen("new-game")} onLoad={() => setOverlay("load")} onSettings={() => setOverlay("settings")} i18n={i18n} onLocale={(locale) => setSettings((value) => ({ ...value, locale }))} />
+      <TitleScreen autosave={autosave} onContinue={() => autosave && loadSession(autosave.session)} onNewGame={() => setScreen("new-game")} onLoad={() => setOverlay("load")} onGallery={() => setOverlay("gallery")} onSettings={() => setOverlay("settings")} i18n={i18n} onLocale={(locale) => setSettings((value) => ({ ...value, locale }))} />
       {overlay === "load" && <Modal title={i18n.ui("load.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><SaveGrid mode="load" onLoad={loadSession} onSaved={() => undefined} i18n={i18n} /></Modal>}
+      {overlay === "gallery" && <Modal title={i18n.ui("gallery.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><GalleryPanel profile={readProfile()} i18n={i18n} /></Modal>}
       {overlay === "settings" && <Modal title={i18n.ui("settings.title")} onClose={() => setOverlay(null)} i18n={i18n}><SettingsPanel value={settings} onChange={setSettings} i18n={i18n} /></Modal>}
     </div>;
   }
@@ -1076,11 +1596,14 @@ export default function WebGame() {
     <NewGameScreen onStart={startCampaign} onBack={() => setScreen("title")} i18n={i18n} />
     {toast && <div className="vn-toast">{toast}</div>}
   </div>;
-  if (!session) return <TitleScreen autosave={autosave} onContinue={() => autosave && loadSession(autosave.session)} onNewGame={() => setScreen("new-game")} onLoad={() => setOverlay("load")} onSettings={() => setOverlay("settings")} i18n={i18n} onLocale={(locale) => setSettings((value) => ({ ...value, locale }))} />;
+  if (!session) return <TitleScreen autosave={autosave} onContinue={() => autosave && loadSession(autosave.session)} onNewGame={() => setScreen("new-game")} onLoad={() => setOverlay("load")} onGallery={() => setOverlay("gallery")} onSettings={() => setOverlay("settings")} i18n={i18n} onLocale={(locale) => setSettings((value) => ({ ...value, locale }))} />;
 
   if (dayTransition) {
     return <div className={settings.reducedMotion ? "vn-reduced-motion" : ""}>
       <DayTransition from={dayTransition.from} to={dayTransition.to} i18n={i18n} />
+      {projectRoot && settings.debugMode && <button type="button" className="vn-screen-authoring" onClick={() => editStoryText(["dayChange.label"])}>날짜 전환 문구 편집</button>}
+      {authoringUndoButton}
+      {overlays}
     </div>;
   }
 
@@ -1097,8 +1620,10 @@ export default function WebGame() {
         canStepBack={debugHistory.length > 0}
         onMode={changeMode}
         onMenu={() => setOverlay("menu")}
+        onEditText={projectRoot && settings.debugMode ? editStoryText : undefined}
         i18n={i18n}
       />
+      {authoringUndoButton}
       {toast && <div className="vn-toast">{toast}</div>}
       {overlays}
     </div>;
@@ -1106,15 +1631,18 @@ export default function WebGame() {
 
   if (session.phase === "self_development") {
     return <div className={settings.reducedMotion ? "vn-reduced-motion" : ""}>
-      <SelfDevelopmentScreen
+      <NightDialogueFlow
         session={displaySession || session}
         debugMode={settings.debugMode}
+        onBegin={beginNight}
         onActivity={chooseNightActivity}
         onContinue={finishNight}
         onMode={changeMode}
         onMenu={() => setOverlay("menu")}
+        onEditText={projectRoot && settings.debugMode ? editStoryText : undefined}
         i18n={i18n}
       />
+      {authoringUndoButton}
       {toast && <div className="vn-toast">{toast}</div>}
       {overlays}
     </div>;
@@ -1123,12 +1651,28 @@ export default function WebGame() {
   if (session.phase === "complete") {
     const truthUnlocked = session.state.progress.unlocked_modes.includes("truth_view");
     const route = runtime.routes[session.routeId];
+    const endingTextKeys = [
+      ...(route ? [`routes.${route.id}.title`] : []),
+      "ending.label",
+      session.endingId === "campaign.complete" ? "ending.incomplete" : "ending.complete",
+      "ending.day",
+      "ending.events",
+      "ending.choices",
+      "ending.newMode",
+      "ending.unlocked",
+      "ending.unlockedCopy",
+      "ending.restart",
+      "ending.toTitle",
+    ];
     return <main className={`vn-ending-screen ${activeViewLayer}`}>
       <div className="vn-ending-record"><span>{i18n.ui("ending.label")}</span><h1>{route ? i18n.story(`routes.${route.id}.title`, route.title) : i18n.ui("ending.defaultTitle")}</h1><p>{i18n.ui(session.endingId === "campaign.complete" ? "ending.incomplete" : "ending.complete")}</p>
         <div className="vn-ending-meta"><span>{i18n.ui("ending.day", { day: session.state.progress.time.day })}</span><span>{i18n.ui("ending.events", { count: session.state.progress.events.seen.length })}</span><span>{i18n.ui("ending.choices", { count: session.choices.length })}</span></div>
         {truthUnlocked && <section><small>{i18n.ui("ending.newMode")}</small><strong>{i18n.ui("ending.unlocked")}</strong><p>{i18n.ui("ending.unlockedCopy")}</p></section>}
         <div className="vn-ending-actions"><button type="button" onClick={() => setScreen("new-game")}>{i18n.ui("ending.restart")}</button><button type="button" onClick={() => { setScreen("title"); setSession(undefined); }}>{i18n.ui("ending.toTitle")}</button></div>
       </div>
+      {projectRoot && settings.debugMode && <button type="button" className="vn-screen-authoring" onClick={() => editStoryText(endingTextKeys)}>엔딩 화면 문구 편집</button>}
+      {authoringUndoButton}
+      {overlays}
     </main>;
   }
 
@@ -1140,18 +1684,49 @@ export default function WebGame() {
   const speaker = i18n.characterName(effectiveSpeaker(node, activeViewLayer || session.viewLayer));
   const displayedText = revealed ? fullText : fullText.slice(0, visibleCharacters);
   const options = availableOptions(runtime, session);
+  const dialogueEditLayerOrder: readonly ViewLayer[] = activeViewLayer === "reality"
+    ? ["reality", "perceived"]
+    : ["perceived", "reality"];
+  const currentDialogueEditKeys = node.kind === "dual_dialogue" || node.kind === "dual_narration"
+    ? dialogueEditLayerOrder.flatMap((mode) => nodeLayer(node, mode)?.line ? [dialogueKey(
+      session.sceneId,
+      node.id,
+      resolvedDialogue?.variantId,
+      mode,
+      "line",
+      Boolean(rawNode?.variants?.length),
+    )] : [])
+    : [];
+  const choiceEditKeys = node.kind === "choice" ? [
+    ...(node.prompt ? [`scenes.${session.sceneId}.nodes.${node.id}.prompt`] : []),
+    ...(node.stimulus ? [`scenes.${session.sceneId}.nodes.${node.id}.stimulus`] : []),
+    ...options.flatMap((option) => (["label", "interpretation", "action"] as const)
+      .filter((field) => Boolean(option[field]))
+      .map((field) => `scenes.${session.sceneId}.nodes.${node.id}.options.${option.id}.${field}`)),
+  ] : [];
   const rhythm = readPushPullState(session.state);
   const feedback = session.lastFeedback;
   const triggerSummary = node.kind === "choice" ? choiceTriggerSummary(displaySession || session, i18n) : undefined;
   const choiceStimulus = node.kind === "choice"
     ? i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.stimulus`, node.stimulus || triggerSummary?.line || "")
     : "";
+  const hintCharges = session.state.progress.self_development.hint_charges;
+  const activeChoiceHint = choiceHint?.sceneId === session.sceneId && choiceHint.nodeId === session.nodeId
+    ? choiceHint
+    : undefined;
+  const hintDirection = activeChoiceHint?.direction || "none";
+  const hintLesson = activeChoiceHint?.lesson
+    ? i18n.story(
+      `scenes.${session.sceneId}.nodes.${node.id}.analysis_hints.${hintDirection}`,
+      activeChoiceHint.lesson,
+    )
+    : i18n.ui(`analysisHint.lesson.${hintDirection}` as Parameters<GameLocalizer["ui"]>[0]);
   const scene = runtime.scenes[session.sceneId];
   const isCommonScene = scene?.id.startsWith("common.") ?? false;
   const hasChoice = scene ? Object.values(scene.nodes).some((candidate) => candidate.kind === "choice") : false;
   const showPushPull = !isCommonScene || hasChoice;
   const clickStage = (event: MouseEvent) => {
-    if ((event.target as HTMLElement).closest("button, input, .vn-debug-panel")) return;
+    if ((event.target as HTMLElement).closest("button, input, textarea, .vn-modal, .vn-debug-panel")) return;
     advance();
   };
   const choiceKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
@@ -1166,6 +1741,8 @@ export default function WebGame() {
   };
   const quickMenu = <div className="vn-quick-menu">
     {settings.debugMode && <button type="button" disabled={!debugHistory.length} onClick={stepBack}>{i18n.ui("debug.previous")}</button>}
+    {projectRoot && settings.debugMode && currentDialogueEditKeys.length > 0 && <button type="button" className="vn-authoring-button" onClick={() => editStoryText(currentDialogueEditKeys)}>대사 편집</button>}
+    {projectRoot && settings.debugMode && choiceEditKeys.length > 0 && <button type="button" className="vn-authoring-button" onClick={() => editStoryText(choiceEditKeys)}>선택지 문구 편집</button>}
     <button type="button" onClick={() => setOverlay("backlog")}>{i18n.ui("menu.backlog")}</button>
     <button type="button" className={auto ? "active" : ""} onClick={() => { setAuto((value) => !value); setSkip(false); }}>{i18n.ui("menu.auto")}</button>
     <button type="button" className={skip ? "active" : ""} onClick={() => { setSkip((value) => !value); setAuto(false); }}>{i18n.ui("menu.skip")}</button>
@@ -1183,11 +1760,26 @@ export default function WebGame() {
   >
     <Stage session={displaySession || session} node={node} settings={settings} i18n={i18n} />
     <GameHud session={displaySession || session} debugMode={settings.debugMode} onMode={changeMode} onMenu={() => setOverlay("menu")} i18n={i18n} />
-    {showPushPull && <RhythmGauge session={displaySession || session} debugMode={settings.debugMode} i18n={i18n} />}
-    {settings.debugMode && <DebugPanel session={session} previewLayer={activeViewLayer || session.viewLayer} settings={settings} canStepBack={debugHistory.length > 0} onSettings={setSettings} onStepBack={stepBack} i18n={i18n} />}
+    {showPushPull && <RhythmGauge
+      session={displaySession || session}
+      debugMode={settings.debugMode}
+      animationId={rhythmAnimationId}
+      reducedMotion={settings.reducedMotion}
+      i18n={i18n}
+    />}
+    {settings.debugMode && <DebugPanel session={session} previewLayer={activeViewLayer || session.viewLayer} settings={settings} canStepBack={debugHistory.length > 0} onSettings={setSettings} onStepBack={stepBack} onReturnToEditor={projectRoot ? () => returnToStoryEditor({ sceneId: session.sceneId, nodeId: node.id }) : undefined} i18n={i18n} />}
 
     {node.kind === "choice" && !uiHidden && <section className="vn-choices" aria-label={i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.prompt`, node.prompt || "")} onKeyDown={choiceKeyDown}>
-      <div className="vn-choice-context"><span>{triggerSummary?.speaker || i18n.ui("flow.choiceContext")}</span><strong>{choiceStimulus}</strong></div>
+      <div className="vn-choice-context">
+        <span>{triggerSummary?.speaker || i18n.ui("flow.choiceContext")}</span><strong>{choiceStimulus}</strong>
+        {!activeChoiceHint && <button type="button" className="vn-analysis-hint-button" disabled={hintCharges <= 0} onClick={showChoiceHint}>
+          <b>{i18n.ui("analysisHint.recall")}</b><small>×{hintCharges}</small>
+        </button>}
+        {activeChoiceHint && <div className="vn-analysis-hint" aria-live="polite">
+          <div className="vn-analysis-instructor"><i aria-hidden="true">講</i><p><small>{i18n.ui("analysisHint.instructor")}</small><strong>{hintLesson}</strong></p></div>
+          <p><small>{i18n.ui("analysisHint.observation")}</small>{choiceStimulus}</p>
+        </div>}
+      </div>
       <p>{i18n.story(`scenes.${session.sceneId}.nodes.${node.id}.prompt`, node.prompt || "")}</p>
       {options.map((option, index) => {
         const debugEffect = choiceDebugEffect(option);
@@ -1225,6 +1817,7 @@ export default function WebGame() {
     </section>}
 
     {uiHidden && <button type="button" className="vn-show-ui" onClick={() => setUiHidden(false)}>{i18n.ui("menu.show")}</button>}
+    {authoringUndoButton}
     {toast && <div className="vn-toast">{toast}</div>}
     {overlays}
   </main>;

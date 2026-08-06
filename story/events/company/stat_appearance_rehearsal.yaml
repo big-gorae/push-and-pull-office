@@ -1,0 +1,29 @@
+schema_version: 1
+campaign_id: main
+id: company.stat_appearance_rehearsal
+title: 화면의 흰색 기준
+type: company
+lane: company
+window: {days: [4, 5], slots: [afternoon], deadline_day: 5}
+duration: 1
+priority: 61
+availability: player
+completion: return_to_timeline
+participants: [han_do_yoon, kang_yoo_jin]
+location: open_office
+scene: bonus.stat_appearance_rehearsal
+requires:
+  events: [anchor.day_03_business_trip_or_cafe]
+  conditions:
+    - {path: visible.protagonist.self_development.stats.appearance, op: gte, value: 3}
+on_seen:
+  effects:
+    - {path: progress.memories, op: append_unique, value: cg.stat.appearance.yoo_jin}
+on_missed: {effects: []}
+presentation:
+  perceived:
+    title: 디자이너의 시선이 머문 화면
+    summary: 꾸준히 관리한 외모 덕분에 리허설 화면의 기준 모델이 되고, 유진이 점검한 장면을 원화로 남긴다.
+  reality:
+    title: 라이브커머스 흰색 균형 점검
+    summary: 유진은 도윤의 무채색 재킷을 임시 색상 기준으로 사용해 미니오븐 촬영 화면을 확인한다.
