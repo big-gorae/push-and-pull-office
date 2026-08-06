@@ -47,6 +47,37 @@ test("prompt builder separates verified tags from prose and exposes reproducible
   await expect(combinedPrompt).toHaveValue(/Keep all established face, hair, body, outfit, accessory, prop, and rendering details unchanged/);
   await expect(combinedPrompt).toHaveValue(/pink eyes/);
 
+  await extraTags.fill("");
+  await page.getByLabel("태그로 표현 못 하는 세부 지시 선택").fill("");
+  await page.getByRole("radio", { name: /공통 · 데포르메 SD 종이 얼굴/ }).check();
+  await expect(combinedPrompt).toHaveValue(/chibi, head only, papercraft \(medium\), paper texture, outline, white outline/);
+  await expect(combinedPrompt).toHaveValue(/smile, closed mouth/);
+  await expect(combinedPrompt).toHaveValue(/pink eyes/);
+  await expect(combinedPrompt).toHaveValue(/long upturned rose-pink eyes/);
+  await expect(combinedPrompt).toHaveValue(/narrow tapered oval face/);
+  await expect(combinedPrompt).toHaveValue(/1\.2::high ponytail::/);
+  await expect(combinedPrompt).toHaveValue(/1\.25::pink eyes::/);
+  await expect(combinedPrompt).toHaveValue(/long upturned rose-pink eyes/);
+  await expect(combinedPrompt).toHaveValue(/narrow tapered oval face/);
+  await expect(combinedPrompt).not.toHaveValue(/smooth cheeks/);
+  await expect(combinedPrompt).toHaveValue(/high ponytail and curved side locks/);
+  await expect(page.getByRole("textbox", { name: "② UC 추가 태그", exact: true })).toHaveValue(/blush, blush stickers/);
+  await expect(combinedPrompt).toHaveValue(/gentle closed-mouth smile/);
+  await expect(combinedPrompt).toHaveValue(/Use a cute super-deformed face/);
+  await expect(combinedPrompt).toHaveValue(/continuous unprinted white margin/);
+  await expect(combinedPrompt).toHaveValue(/cut with scissors along its outside edge/);
+  await expect(combinedPrompt).not.toHaveValue(/visual novel|white shirt|grey pants|medium breasts/);
+  await expect(page.getByRole("textbox", { name: "② UC 추가 태그", exact: true })).toHaveValue(/neck, upper body, full body, cowboy shot, wide-eyed, open mouth, pout, serious, raised eyebrow/);
+
+  await page.locator('input[name="prompt-character"][value="yoon_seo_a"]').check();
+  await page.getByRole("radio", { name: /공통 · 데포르메 SD 종이 얼굴/ }).check();
+  await expect(combinedPrompt).toHaveValue(/1\.4::a white paper outline around the entire hair silhouette::/);
+
+  await page.locator('input[name="prompt-character"][value="cha_min_kyung"]').check();
+  await page.getByRole("radio", { name: /공통 · 데포르메 SD 종이 얼굴/ }).check();
+  await expect(combinedPrompt).toHaveValue(/1\.35::floating head::/);
+  await expect(combinedPrompt).toHaveValue(/Cut 1\.6::at the chin, background directly below, no neck::/);
+
   await page.getByText("선택 도구 · UC 추가 / 동일 시드 A/B 비교").click();
   await page.getByLabel(/동일 시드 A\/B 비교/).check();
   await page.getByLabel("NovelAI Seed").fill("123456");

@@ -165,33 +165,48 @@ export function composePrompt(
 
   const extraTagItems = checkedExtraItems(catalog, selection.extraTags ?? selection.extraPrompt);
   const extraUcTagItems = checkedExtraItems(catalog, selection.extraUcTags ?? selection.extraUc);
+  const identityTagItems = situation.identityMode === "face_only"
+    ? variant.faceOnlyIdentityTags
+    : variant.identityTags;
+  const identityInstructions = situation.identityMode === "face_only"
+    ? variant.faceOnlyIdentityInstructions
+    : variant.identityInstructions;
+  const outfitTagItems = situation.includeOutfit ? outfit.tags : [];
+  const outfitInstructions = situation.includeOutfit ? outfit.instructions : [];
+  const includeFullBodyDetails = situation.includeOutfit && isFullBodyFormat(format);
   const baseTagItems = [
     ...format.subjectTags[character.subject],
     ...format.tags,
-    ...catalog.styleTags,
+    ...(situation.useSharedStyle ? catalog.styleTags : []),
     ...(catalog.settings.qualityTags ? [] : catalog.manualQualityTags),
   ];
   const baseInstructions = [
     ...format.instructions,
-    ...catalog.styleInstructions,
+    ...(situation.useSharedStyle ? catalog.styleInstructions : []),
   ];
   const characterTagItems = [
     character.subject === "female" ? "girl" : "boy",
-    ...variant.identityTags,
-    ...outfit.tags,
-    ...(isFullBodyFormat(format) ? variant.fullBodyOnlyTags : []),
+    ...identityTagItems,
+    ...outfitTagItems,
+    ...(includeFullBodyDetails ? variant.fullBodyOnlyTags : []),
     ...situation.tags,
     ...extraTagItems,
   ];
   const characterInstructions = [
-    ...variant.identityInstructions,
-    ...outfit.instructions,
-    ...(isFullBodyFormat(format) ? variant.fullBodyOnlyInstructions : []),
+    ...identityInstructions,
+    ...outfitInstructions,
+    ...(includeFullBodyDetails ? variant.fullBodyOnlyInstructions : []),
     ...situation.instructions,
     ...instructionItems(selection.extraInstructions),
   ];
+  const characterUndesiredTags = situation.identityMode === "face_only"
+    ? variant.faceOnlyUndesiredTags
+    : variant.characterUndesiredTags;
+  const characterUndesiredInstructions = situation.identityMode === "face_only"
+    ? variant.faceOnlyUndesiredInstructions
+    : variant.characterUndesiredInstructions;
   const omittedCharacterUcTags = new Set(situation.omitCharacterUndesiredTags);
-  const activeCharacterUndesiredTags = variant.characterUndesiredTags.filter((item) => (
+  const activeCharacterUndesiredTags = characterUndesiredTags.filter((item) => (
     promptTagNames(item).every((tag) => !omittedCharacterUcTags.has(tag))
   ));
   const undesiredTagItems = [
@@ -202,7 +217,7 @@ export function composePrompt(
   ];
   const undesiredInstructions = [
     ...catalog.sharedUndesiredInstructions,
-    ...variant.characterUndesiredInstructions,
+    ...characterUndesiredInstructions,
     ...situation.undesiredInstructions,
     ...instructionItems(selection.extraUcInstructions),
   ];

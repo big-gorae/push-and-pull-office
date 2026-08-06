@@ -22,6 +22,17 @@
         "Give him dark-brown eyes, faint uneven stubble, and a slightly oily forehead.",
         "Keep him short with a stocky heavy build and a protruding belly."
       ],
+      "faceOnlyIdentityTags": [
+        "black hair",
+        "short hair",
+        "receding hairline",
+        "brown eyes",
+        "stubble"
+      ],
+      "faceOnlyIdentityInstructions": [
+        "He is a forty-two-year-old Korean man with a round face, a receding hairline, and visibly thinning short black hair.",
+        "Give him dark-brown eyes, faint uneven stubble, and a slightly oily forehead."
+      ],
       "outfitTags": ["jacket", "shirt", "necktie", "briefcase", "phone"],
       "outfitInstructions": [
         "Dress him in an ill-fitting charcoal suit jacket, a tight muted-navy shirt collar, and a wine-red tie.",
@@ -104,6 +115,14 @@
       "identityInstructions": [
         "He is a forty-two-year-old handsome Korean man with thick neatly styled black hair, a sharp jawline, and relaxed dark-brown eyes.",
         "Keep him tall, lean, broad-shouldered, and meticulously well groomed."
+      ],
+      "faceOnlyIdentityTags": [
+        "black hair",
+        "short hair",
+        "brown eyes"
+      ],
+      "faceOnlyIdentityInstructions": [
+        "He is a forty-two-year-old handsome Korean man with thick neatly styled black hair, a sharp jawline, relaxed dark-brown eyes, and meticulous grooming."
       ],
       "outfitTags": ["business suit", "shirt", "necktie"],
       "outfitInstructions": ["Dress him in a fitted charcoal suit, a muted-navy shirt, and a wine-red tie."],

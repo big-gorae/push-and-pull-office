@@ -63,9 +63,11 @@ npm run prompt:validate
 - 현실/주관, 현재/과거처럼 섞이면 안 되는 외형은 별도 `look`으로 만든다.
 - 태그 배열의 순서는 결과 프롬프트 순서이자 디버깅 순서다.
 
-모든 캐릭터와 모든 `look`에 같이 제공할 표정은 `defaults.json`의 `commonSituations`에 한 번만 선언한다. 조합기는 캐릭터 고유 상황 뒤에 공통 상황을 자동으로 붙이고, 선택한 상황과 무관하게 해당 캐릭터의 `identityTags`, `identityInstructions`, 기본 의상, 공통 작화 앵커를 항상 다시 합성한다. 공통 상황의 긍정 태그가 특정 캐릭터의 평상시 UC와 충돌할 때만 `omitCharacterUndesiredTags`에 정확히 충돌하는 태그를 적는다. 이 예외는 해당 상황에서만 적용되며 공통 UC와 다른 캐릭터 UC를 약화하지 않는다.
+모든 캐릭터와 모든 `look`에 같이 제공할 표정은 `defaults.json`의 `commonSituations`에 한 번만 선언한다. 일반 상황은 캐릭터 고유 상황 뒤에 자동으로 붙고, 해당 캐릭터의 `identityTags`, `identityInstructions`, 기본 의상, 공통 작화 앵커를 항상 다시 합성한다. 공통 상황의 긍정 태그가 특정 캐릭터의 평상시 UC와 충돌할 때만 `omitCharacterUndesiredTags`에 정확히 충돌하는 태그를 적는다. 이 예외는 해당 상황에서만 적용되며 공통 UC와 다른 캐릭터 UC를 약화하지 않는다.
 
 현재 공통 표정은 정색하고 노려보기, 분노, 혐오, 공포, 공포에 빠져 울기의 다섯 가지다. `glare`는 검색 결과 의도와 일치하는 일반 표정 태그가 없어 만들지 않았고, 검증된 `serious`, `closed mouth`, `looking at viewer`와 눈꺼풀·눈썹의 자연어 지시를 조합한다. 나머지는 Danbooru 검색기로 확인한 `angry`, `scowl`, `furrowed brow`, `v-shaped eyebrows`, `disgust`, `grimace`, `scared`, `wide-eyed`, `sweat`, `trembling`, `crying`, `crying with eyes open`, `tears` 등을 사용한다.
+
+`공통 · 데포르메 SD 종이 얼굴`은 의도적으로 작화와 구도가 바뀌는 예외다. `identityMode: "face_only"`로 각 `look`의 `faceOnlyIdentityTags`와 `faceOnlyIdentityInstructions`만 사용하고, `includeOutfit: false`, `useSharedStyle: false`로 몸·의상·상업 미연시 CG 지시를 제외한다. 검증된 `chibi`, `head only`, `papercraft (medium)`, `paper texture`, `outline`, `faux traditional media`를 사용하며, 머리카락과 턱선을 따라 종이를 오린 얇은 절단면은 자연어 지시로 고정한다. UC에는 `upper body`, `full body`, `cowboy shot`과 생물학적 절단 머리·목·어깨·몸·직사각형 종이·스티커·입체 인형을 넣어 얼굴 모양의 평평한 종이 오리기만 남긴다.
 
 ## 권장 생성 순서
 

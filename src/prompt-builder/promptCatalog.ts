@@ -46,6 +46,9 @@ type DefaultsConfig = {
     undesiredTags: string[];
     undesiredInstructions: string[];
     omitCharacterUndesiredTags: string[];
+    identityMode: "full" | "face_only";
+    includeOutfit: boolean;
+    useSharedStyle: boolean;
   }>;
   basePresets: Array<{
     id: string;
@@ -75,6 +78,10 @@ type CharacterConfig = {
     layer?: PromptLayer;
     identityTags: string[];
     identityInstructions: string[];
+    faceOnlyIdentityTags: string[];
+    faceOnlyIdentityInstructions: string[];
+    faceOnlyUndesiredTags?: string[];
+    faceOnlyUndesiredInstructions?: string[];
     outfitTags: string[];
     outfitInstructions: string[];
     fullBodyOnlyTags: string[];
@@ -100,6 +107,9 @@ type CharacterConfig = {
       undesiredTags: string[];
       undesiredInstructions: string[];
       omitCharacterUndesiredTags: string[];
+      identityMode: "full" | "face_only";
+      includeOutfit: boolean;
+      useSharedStyle: boolean;
     }>;
   }>;
 };
@@ -168,6 +178,16 @@ function optionalStringAt(value: unknown, source: string, path: string): string 
 function booleanAt(value: unknown, source: string, path: string): boolean {
   if (typeof value !== "boolean") return fail(source, path, "expected a boolean");
   return value;
+}
+
+function identityModeAt(
+  value: unknown,
+  source: string,
+  path: string,
+): "full" | "face_only" {
+  if (value === undefined || value === "full") return "full";
+  if (value === "face_only") return value;
+  return fail(source, path, "expected \"full\" or \"face_only\"");
 }
 
 function numberAt(value: unknown, source: string, path: string): number {
@@ -378,6 +398,13 @@ function parseDefaults(raw: string, source: string, registry: PromptTagRegistry)
             registry,
             { allowEmpty: true },
           ),
+      identityMode: identityModeAt(situation.identityMode, source, `${path}.identityMode`),
+      includeOutfit: situation.includeOutfit === undefined
+        ? true
+        : booleanAt(situation.includeOutfit, source, `${path}.includeOutfit`),
+      useSharedStyle: situation.useSharedStyle === undefined
+        ? true
+        : booleanAt(situation.useSharedStyle, source, `${path}.useSharedStyle`),
     };
   });
 
@@ -444,8 +471,8 @@ function parseCharacter(
     const id = stringAt(image.id, source, `${path}.id`);
     uniqueId(id, referenceImageIds, source, `${path}.id`);
     const imagePath = stringAt(image.path, source, `${path}.path`);
-    if (!/^assets\/concept-art\/[a-z0-9][a-z0-9-]*\.png$/.test(imagePath)) {
-      fail(source, `${path}.path`, "expected an assets/concept-art/<kebab-case>.png path");
+    if (!/^assets\/(?:concept-art|hud)\/[a-z0-9][a-z0-9-]*\.png$/.test(imagePath)) {
+      fail(source, `${path}.path`, "expected an assets/concept-art or assets/hud <kebab-case>.png path");
     }
     return {
       id,
@@ -512,6 +539,13 @@ function parseCharacter(
               registry,
               { allowEmpty: true },
             ),
+        identityMode: identityModeAt(situation.identityMode, source, `${path}.identityMode`),
+        includeOutfit: situation.includeOutfit === undefined
+          ? true
+          : booleanAt(situation.includeOutfit, source, `${path}.includeOutfit`),
+        useSharedStyle: situation.useSharedStyle === undefined
+          ? true
+          : booleanAt(situation.useSharedStyle, source, `${path}.useSharedStyle`),
       };
     });
 
@@ -562,6 +596,46 @@ function parseCharacter(
         `${lookPath}.identityInstructions`,
         { allowEmpty: true },
       ),
+      faceOnlyIdentityTags: tagArrayAt(
+        look.faceOnlyIdentityTags,
+        source,
+        `${lookPath}.faceOnlyIdentityTags`,
+        registry,
+      ),
+      faceOnlyIdentityInstructions: instructionArrayAt(
+        look.faceOnlyIdentityInstructions,
+        source,
+        `${lookPath}.faceOnlyIdentityInstructions`,
+        { allowEmpty: true },
+      ),
+      faceOnlyUndesiredTags: look.faceOnlyUndesiredTags === undefined
+        ? tagArrayAt(
+            look.characterUndesiredTags,
+            source,
+            `${lookPath}.characterUndesiredTags`,
+            registry,
+            { allowEmpty: true },
+          )
+        : tagArrayAt(
+            look.faceOnlyUndesiredTags,
+            source,
+            `${lookPath}.faceOnlyUndesiredTags`,
+            registry,
+            { allowEmpty: true },
+          ),
+      faceOnlyUndesiredInstructions: look.faceOnlyUndesiredInstructions === undefined
+        ? instructionArrayAt(
+            look.characterUndesiredInstructions,
+            source,
+            `${lookPath}.characterUndesiredInstructions`,
+            { allowEmpty: true },
+          )
+        : instructionArrayAt(
+            look.faceOnlyUndesiredInstructions,
+            source,
+            `${lookPath}.faceOnlyUndesiredInstructions`,
+            { allowEmpty: true },
+          ),
       outfitTags: tagArrayAt(look.outfitTags, source, `${lookPath}.outfitTags`, registry),
       outfitInstructions: instructionArrayAt(
         look.outfitInstructions,
@@ -697,6 +771,9 @@ function normalizeSituation(
     undesiredTags: [...situation.undesiredTags],
     undesiredInstructions: [...situation.undesiredInstructions],
     omitCharacterUndesiredTags: [...situation.omitCharacterUndesiredTags],
+    identityMode: situation.identityMode,
+    includeOutfit: situation.includeOutfit,
+    useSharedStyle: situation.useSharedStyle,
     source,
   };
 }
@@ -713,6 +790,12 @@ function normalizeVariant(
     layer: look.layer,
     identityTags: [...look.identityTags],
     identityInstructions: [...look.identityInstructions],
+    faceOnlyIdentityTags: [...look.faceOnlyIdentityTags],
+    faceOnlyIdentityInstructions: [...look.faceOnlyIdentityInstructions],
+    faceOnlyUndesiredTags: [...(look.faceOnlyUndesiredTags || look.characterUndesiredTags)],
+    faceOnlyUndesiredInstructions: [
+      ...(look.faceOnlyUndesiredInstructions || look.characterUndesiredInstructions),
+    ],
     defaultOutfitId: "default",
     outfits: [{
       id: "default",

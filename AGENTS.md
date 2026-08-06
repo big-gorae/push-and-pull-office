@@ -11,6 +11,12 @@
 - If the project-only authentication is genuinely missing or expired, authenticate only that directory with `GH_CONFIG_DIR="$love_office_gh_dir" gh auth login -h github.com --git-protocol https --web`. Never switch this repository to another account and never copy tokens into tracked files, shell output, logs, or documentation.
 - The project-only authentication is shared by sessions using this same repository's common Git directory, but it is not committed. A fresh clone must perform the project-only login once before publishing.
 
+## Browser identity
+
+- Use only the Chrome profile `big.gorea.king` for NovelAI and every other Chrome automation performed for this repository. The Chrome extension reports this profile's exact metadata name as `big.gorea.king@gmail.com`.
+- Before claiming or interacting with any Chrome tab, verify that the connected browser metadata reports the exact profile name `big.gorea.king@gmail.com`.
+- If any other Chrome profile is connected, stop immediately. Never navigate, click, type, upload, generate, or otherwise interact with that profile.
+
 ## Casual `반영` integration workflow
 
 - Treat casual Korean instructions such as `반영해`, `반영`, or `적용해` as a request to integrate the requested work against the current repository state, not merely to edit files in isolation.

@@ -17,9 +17,27 @@ type CopyFeedback = {
 };
 
 const conceptArtImages = import.meta.glob(
-  "../../assets/concept-art/*",
+  ["../../assets/concept-art/*", "../../assets/hud/*"],
   { eager: true, query: "?url", import: "default" },
 ) as Record<string, string>;
+
+const sdInpaintMasks: Record<string, { title: string; areas: string; preserve: string }> = {
+  sd_happy: {
+    title: "웃는 표정 마스크",
+    areas: "양쪽 눈·눈썹, 입, 볼 안쪽 홍조 영역만 칠합니다.",
+    preserve: "머리카락, 귀, 얼굴 외곽, 턱선, 종이 테두리와 배경은 칠하지 않습니다.",
+  },
+  sd_pout: {
+    title: "삐진 표정 마스크",
+    areas: "양쪽 눈·눈썹, 입, 볼 안쪽만 칠합니다. 볼 바깥 윤곽까지 닿지 않게 합니다.",
+    preserve: "얼굴 폭과 턱선이 바뀌지 않도록 외곽선·머리카락·종이 테두리는 반드시 마스크 밖에 둡니다.",
+  },
+  sd_awkward: {
+    title: "난감한 표정 마스크",
+    areas: "양쪽 눈·눈썹과 입을 칠하고, 땀방울용으로 머리 오른쪽 위 빈 배경에 작은 별도 영역을 칠합니다.",
+    preserve: "두 마스크 사이의 머리카락, 얼굴 외곽, 턱선과 종이 테두리는 칠하지 않습니다.",
+  },
+};
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
@@ -286,6 +304,8 @@ export default function PromptBuilder() {
 
   const prompt = composedResult.prompt;
   const inpaintTasks = variant?.inpaintTasks || [];
+  const sdInpaintMask = sdInpaintMasks[situationId];
+  const sdReferenceImage = referenceImages.find((image) => image.id === "sd-paper-face");
   const settings = catalog.settings;
   const qualityLabel = typeof settings.qualityTags === "boolean"
     ? `Quality Tags ${settings.qualityTags ? "ON" : "OFF"}`
@@ -345,7 +365,7 @@ export default function PromptBuilder() {
           </div>
           <div className="prompt-reference-copy">
             <strong>얼굴·작화 참고 원화</strong>
-            <p>이 원본을 NovelAI의 Precise Reference에서 <b>Character &amp; Style Reference</b>로 추가하세요. 표정이나 포즈까지 원본에 붙으면 Strength를 낮추고, Vibe Transfer와 함께 쓰지 마세요.</p>
+            <p>일반 생성은 Precise Reference의 <b>Character &amp; Style Reference</b>로 사용합니다. SD 표정은 확정 SD 원화를 <b>Base Img → Inpaint Image</b>로 열어 표정 부위만 수정하세요.</p>
           </div>
         </aside>}
 
@@ -441,6 +461,24 @@ export default function PromptBuilder() {
 
         {composedResult.error && <div className="prompt-error" role="alert"><p>{composedResult.error}</p></div>}
         {!composedResult.error && prompt && <div className="prompt-output-stack">
+          {sdInpaintMask && sdReferenceImage && <section className="prompt-sd-inpaint-workflow" aria-labelledby="prompt-sd-inpaint-title">
+            <header>
+              <div><p className="prompt-eyebrow">CONSISTENT SD INPAINT</p><h3 id="prompt-sd-inpaint-title">확정 기본 SD에서 표정만 바꾸기</h3></div>
+              <span>Text-to-Image 재생성 금지</span>
+            </header>
+            <div className="prompt-sd-inpaint-reference">
+              <img src={sdReferenceImage.url} alt={`${character?.displayName || "캐릭터"} 확정 기본 SD 원화`} />
+              <div><strong>{character?.displayName} 확정 기본 SD 원화</strong><p>항상 이 원화에서 직접 시작합니다. 웃음 결과를 다시 삐짐의 원본으로 쓰는 식의 연쇄 편집은 하지 않습니다.</p><a href={sdReferenceImage.url} download={`${character?.id || "character"}-sd-base.png`}>원화 파일 열기</a></div>
+            </div>
+            <ol className="prompt-sd-inpaint-steps">
+              <li><b>Base Img</b>에 위 원화를 넣고 <b>Inpaint Image</b>를 누릅니다.</li>
+              <li><b>{sdInpaintMask.title}</b>: {sdInpaintMask.areas} {sdInpaintMask.preserve}</li>
+              <li><b>Save &amp; Close</b> 후 아래 ① Prompt와 ② UC를 원본 내용 대신 그대로 넣습니다.</li>
+              <li><b>Generate 1 Image · 0 Anlas</b>를 확인하고 한 장씩 생성합니다. 결과가 마음에 들지 않아도 다음 표정은 다시 기본 SD 원화에서 시작합니다.</li>
+            </ol>
+            <div className="prompt-sd-inpaint-warning"><strong>일관성 잠금</strong><span>마스크 밖의 헤어 실루엣·눈 크기 기준·얼굴 폭·턱선·피부색·흰 종이 테두리는 변경 대상이 아닙니다.</span></div>
+          </section>}
+
           <aside className="prompt-provenance-card" aria-label="프롬프트 출처 검사 결과">
             <div><strong>출처 검사 통과</strong><span>긍정 {prompt.audit.positiveTagItems.length}개 · UC {prompt.audit.undesiredTagItems.length}개 검증 태그</span></div>
             <div className="prompt-source-links">

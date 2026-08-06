@@ -6,6 +6,11 @@
   "accent": "#a55261",
   "referenceImages": [
     {
+      "id": "sd-paper-face",
+      "label": "확정 SD 종이 얼굴",
+      "path": "assets/hud/cha-min-kyung-avatar.png"
+    },
+    {
       "id": "mole-placement-reference",
       "label": "점 위치 보강 원화",
       "path": "assets/concept-art/cha-min-kyung-reference-2.png"
@@ -36,6 +41,23 @@
         "Adult Korean woman, 28, with a sleek chin-length black bob tucked behind one ear, large almond-shaped reddish-brown eyes, a small oval face, pale skin, a small nose, soft full lips, a delicate V-shaped jawline, fine straight eyebrows, and a slender gently curving build.",
         "One tiny dark beauty mark sits below the outer corner of her left eye; another sits at the left base of her neck just below the collarbone.",
         "Give her full large breasts balanced to her adult frame, naturally close-set without merging, with rounded outer and lower contours."
+      ],
+      "faceOnlyIdentityTags": [
+        "black hair",
+        "bob cut",
+        "1.35::floating head::",
+        "brown eyes",
+        "long eyelashes",
+        "makeup",
+        "lipstick",
+        "1.35::mole under eye::"
+      ],
+      "faceOnlyIdentityInstructions": [
+        "She is a 28-year-old Korean woman with a chin-length black bob tucked behind one ear, large almond-shaped red-brown eyes, pale skin, a small oval face, small nose, soft full lips, fine straight eyebrows, and a delicate V-shaped jaw.",
+        "Keep her lower face slim and narrow; never widen or puff her cheeks or jaw.",
+        "Keep one tiny dark beauty mark below the outer corner of her left eye.",
+        "Render 1.4::a wide white outline around the black-hair silhouette:: as bare paper margin.",
+        "Cut 1.6::at the chin, background directly below, no neck::."
       ],
       "outfitTags": [
         "blazer",
@@ -104,6 +126,66 @@
       ],
       "defaultSituationId": "reference_skeptical",
       "situations": [
+        {
+          "id": "sd_happy",
+          "label": "SD · 볼 홍조 기쁜 미소",
+          "description": "입 안을 보이지 않는 침착한 미소와 옅은 볼 홍조의 SD 종이 얼굴입니다.",
+          "basePresetId": "sd_paper_face",
+          "identityMode": "face_only",
+          "includeOutfit": false,
+          "useSharedStyle": false,
+          "tags": ["smile", "blush", "closed mouth", "looking at viewer"],
+          "instructions": [
+            "Use a genuinely pleased but composed expression with softly smiling eyes, lightly blushed cheeks, and a gentle closed-mouth smile; do not show the inside of the mouth.",
+            "Use a cute super-deformed face with large simplified eyes, a tiny nose, and a tiny mouth while preserving every recognizable signature facial feature.",
+            "Draw face and hair on matte white paper. Leave a continuous unprinted white margin around all hair, ears, cheeks, and chin, cut by scissors along its outside edge.",
+            "The white contour is bare paper, not ink, glow, or adhesive. Show a thin slightly irregular scissor-cut edge; keep it flat, centered, and without a rectangular sheet.",
+            "Show only the paper face-and-hair silhouette with no neck, shoulders, torso, body, clothing, hands, or separate props."
+          ],
+          "undesiredTags": ["pout", "serious", "open mouth"],
+          "undesiredInstructions": ["Visible mouth interior, visible teeth, exaggerated red cheek circles, crying, a smirk, or a strained grin."],
+          "omitCharacterUndesiredTags": ["blush"]
+        },
+        {
+          "id": "sd_pout",
+          "label": "SD · 볼 빵빵 삐짐",
+          "description": "양 볼을 귀엽게 부풀리고 살짝 서운해하는 SD 종이 얼굴입니다.",
+          "basePresetId": "sd_paper_face",
+          "identityMode": "face_only",
+          "includeOutfit": false,
+          "useSharedStyle": false,
+          "tags": ["pout", "closed mouth", "sideways glance"],
+          "instructions": [
+            "Puff both cheeks evenly into a cute restrained sulky expression, with slightly lowered inner eyebrows and a tiny closed pout; preserve her slim lower face and delicate V-shaped jaw.",
+            "Use a cute super-deformed face with large simplified eyes, a tiny nose, and a tiny mouth while preserving every recognizable signature facial feature.",
+            "Draw face and hair on matte white paper. Leave a continuous unprinted white margin around all hair, ears, cheeks, and chin, cut by scissors along its outside edge.",
+            "The white contour is bare paper, not ink, glow, or adhesive. Show a thin slightly irregular scissor-cut edge; keep it flat, centered, and without a rectangular sheet.",
+            "Show only the paper face-and-hair silhouette with no neck, shoulders, torso, body, clothing, hands, or separate props."
+          ],
+          "undesiredTags": ["smile", "open mouth", "angry", "scowl", "crying"],
+          "undesiredInstructions": ["A hostile glare, deep frown, tears, asymmetrically inflated cheeks, a widened jaw, or an open mouth."],
+          "omitCharacterUndesiredTags": ["angry", "scowl"]
+        },
+        {
+          "id": "sd_awkward",
+          "label": "SD · 만화식 난감",
+          "description": "난감한 표정과 화면 오른쪽 위의 만화식 큰 땀방울을 사용합니다.",
+          "basePresetId": "sd_paper_face",
+          "identityMode": "face_only",
+          "includeOutfit": false,
+          "useSharedStyle": false,
+          "tags": ["worried", "closed mouth", "sweatdrop", "looking at viewer"],
+          "instructions": [
+            "Use an awkward troubled expression with slightly raised inner eyebrows and a small uneven closed mouth. Draw exactly one large symbolic sweatdrop in the empty space at the image's upper-right, beside and above the hair.",
+            "Use a cute super-deformed face with large simplified eyes, a tiny nose, and a tiny mouth while preserving every recognizable signature facial feature.",
+            "Draw face and hair on matte white paper. Leave a continuous unprinted white margin around all hair, ears, cheeks, and chin, cut by scissors along its outside edge.",
+            "The white contour is bare paper, not ink, glow, or adhesive. Show a thin slightly irregular scissor-cut edge; keep it flat, centered, and without a rectangular sheet.",
+            "Show only the paper face-and-hair silhouette with no neck, shoulders, torso, body, clothing, hands, or separate props."
+          ],
+          "undesiredTags": ["smile", "open mouth", "crying", "wide-eyed"],
+          "undesiredInstructions": ["Multiple sweatdrops, sweat on the skin, tears, panic, or a sweatdrop anywhere except the image's upper-right."],
+          "omitCharacterUndesiredTags": []
+        },
         {
           "id": "reference_skeptical",
           "label": "기본 냉정한 사실 확인",
