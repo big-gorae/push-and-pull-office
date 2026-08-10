@@ -7,7 +7,9 @@ import {
   choiceDebugEffect,
   dayChanged,
   modeUnlocked,
-  speakingCharacters,
+  showDialogueChrome,
+  showSceneHud,
+  visibleStageCharacters,
   visibleTimelineLogs,
 } from "./playerUiPolicy";
 
@@ -24,17 +26,24 @@ describe("player UI policy", () => {
     expect(modeUnlocked(runtime, cleared, "survivor_view")).toBe(true);
   });
 
-  it("renders only the active non-protagonist speaker", () => {
+  it("renders every character explicitly resolved onto the stage", () => {
     const character = (characterId: string, speaker: boolean) => ({
       character: characterId,
       speaker,
     } as ResolvedCharacterVisual);
-    const visible = speakingCharacters([
+    const visible = visibleStageCharacters([
       character("yoon_seo_a", true),
       character("cha_min_kyung", false),
       character("han_do_yoon", true),
     ]);
-    expect(visible.map((entry) => entry.character)).toEqual(["yoon_seo_a"]);
+    expect(visible.map((entry) => entry.character)).toEqual(["yoon_seo_a", "cha_min_kyung", "han_do_yoon"]);
+  });
+
+  it("shows a silent beat as artwork only", () => {
+    expect(showSceneHud("silent")).toBe(false);
+    expect(showDialogueChrome("silent")).toBe(false);
+    expect(showSceneHud("dual_dialogue")).toBe(true);
+    expect(showDialogueChrome("dual_dialogue")).toBe(true);
   });
 
   it("keeps push-pull mechanics available for debug labels without changing player copy", () => {

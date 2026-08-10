@@ -268,6 +268,74 @@ class StoryEditorBridgeTests(unittest.TestCase):
         finally:
             temporary.cleanup()
 
+    def test_save_scene_round_trips_manual_artwork_stage_to_physical_yaml(self):
+        temporary, root = self.make_project_copy()
+        try:
+            project = StoryProject(root / "story")
+            scene = copy.deepcopy(project.build_bundle()["scenes"]["seo_a.email_request"])
+            path = Path(project.scenes[scene["id"]]["_source"])
+            scene["nodes"]["request"]["stage"] = {
+                "perceived": [{
+                    "position": "right",
+                    "character": "yoon_seo_a",
+                    "visual_id": "character.yoon_seo_a",
+                    "artwork": "default",
+                }],
+                "reality": [],
+            }
+
+            result = save_scene(root, {"scene": scene, "revision": revision(path)})
+
+            self.assertTrue(result["saved"])
+            source = YAML_RT.load(path.read_text(encoding="utf-8"))
+            source_node = next(item for item in source["nodes"] if item["id"] == "request")
+            self.assertEqual("right", source_node["stage"]["perceived"][0]["position"])
+            self.assertEqual("character.yoon_seo_a", source_node["stage"]["perceived"][0]["visual_id"])
+            self.assertEqual([], list(source_node["stage"]["reality"]))
+            runtime_node = result["runtime"]["scenes"][scene["id"]]["nodes"]["request"]
+            self.assertEqual("default", runtime_node["stage"]["perceived"][0]["artwork"])
+            self.assertEqual([], runtime_node["stage"]["reality"])
+        finally:
+            temporary.cleanup()
+
+    def test_save_scene_round_trips_default_background_and_silent_node(self):
+        temporary, root = self.make_project_copy()
+        try:
+            project = StoryProject(root / "story")
+            scene = copy.deepcopy(project.build_bundle()["scenes"]["seo_a.email_request"])
+            path = Path(project.scenes[scene["id"]]["_source"])
+            original_start = scene["start_node"]
+            scene["default_background"] = {
+                "visual_id": "background.empty_office",
+                "variant_id": "night",
+            }
+            scene["nodes"]["silent_view_test"] = {
+                "id": "silent_view_test",
+                "kind": "silent",
+                "perceived": {"atmosphere": "dread", "line": ""},
+                "reality": {"atmosphere": "dread", "line": ""},
+                "stage": {"perceived": [], "reality": []},
+                "next": original_start,
+            }
+            scene["node_order"] = ["silent_view_test", *scene["node_order"]]
+            scene["start_node"] = "silent_view_test"
+
+            result = save_scene(root, {"scene": scene, "revision": revision(path)})
+
+            self.assertTrue(result["saved"])
+            source = YAML_RT.load(path.read_text(encoding="utf-8"))
+            self.assertEqual("background.empty_office", source["default_background"]["visual_id"])
+            self.assertEqual("night", source["default_background"]["variant_id"])
+            source_node = next(item for item in source["nodes"] if item["id"] == "silent_view_test")
+            self.assertEqual("silent", source_node["kind"])
+            self.assertEqual("", source_node["perceived"]["line"])
+            self.assertEqual([], list(source_node["stage"]["perceived"]))
+            runtime_scene = result["runtime"]["scenes"][scene["id"]]
+            self.assertEqual("silent_view_test", runtime_scene["start_node"])
+            self.assertEqual("silent", runtime_scene["nodes"]["silent_view_test"]["kind"])
+        finally:
+            temporary.cleanup()
+
     def test_save_scene_preserves_interaction_context_target_and_style_order(self):
         temporary, root = self.make_project_copy()
         try:

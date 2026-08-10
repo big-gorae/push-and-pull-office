@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import fixture from "../../tests/fixtures/condition-conformance.json";
 import runtimeJson from "../../build/story-runtime.json";
-import { VisualResolver } from "../presentation";
+import { characterArtworkOptions, VisualResolver } from "../presentation";
 import type { Condition, Runtime, StoryNode } from "../types";
 import {
   canEnterScene,
@@ -123,7 +123,7 @@ describe("contextual dialogue", () => {
     expect(effectiveSpeaker({ ...node, speakers: { ...node.speakers, reality: null } }, "reality")).toBeUndefined();
   });
 
-  it("resolves stage art for the active illustrated speaker only", () => {
+  it("keeps the legacy active-speaker default until a node has manual stage cues", () => {
     const scene = runtime.scenes["common.day_01_company_meeting"];
     const resolver = new VisualResolver(runtime);
     const spoken = resolver.resolveStage(scene, "preview", "perceived", {
@@ -145,6 +145,88 @@ describe("contextual dialogue", () => {
       next: "done",
     });
     expect(narrated.characters).toEqual([]);
+  });
+
+  it("supports artwork off and three explicitly positioned speaker-independent characters", () => {
+    const scene = runtime.scenes["common.day_01_company_meeting"];
+    const resolver = new VisualResolver(runtime);
+    const visualId = (character: string) => Object.values(runtime.visuals).find((visual) =>
+      visual.kind === "character" && !visual.abstract && visual.character === character)!.id;
+    const choice: StoryNode = {
+      id: "manual_stage",
+      kind: "choice",
+      prompt: "어떻게 답할까?",
+      stimulus: "세 사람이 답을 기다린다.",
+      stage: {
+        perceived: [
+          { position: "left", character: "yoon_seo_a", visual_id: visualId("yoon_seo_a"), artwork: "default" },
+          { position: "center", character: "cha_min_kyung", visual_id: visualId("cha_min_kyung"), artwork: "default" },
+          { position: "right", character: "kang_yoo_jin", visual_id: visualId("kang_yoo_jin"), artwork: "default" },
+        ],
+        reality: [],
+      },
+      options: [],
+    };
+    const perceived = resolver.resolveStage(scene, choice.id, "perceived", choice);
+    expect(perceived.characters.map((character) => [character.position, character.character, character.speaker])).toEqual([
+      ["left", "yoon_seo_a", false],
+      ["center", "cha_min_kyung", false],
+      ["right", "kang_yoo_jin", false],
+    ]);
+    expect(resolver.resolveStage(scene, choice.id, "reality", choice).characters).toEqual([]);
+  });
+
+  it("uses a scene default background before automatic location and atmosphere matching", () => {
+    const scene = structuredClone(runtime.scenes["seo_a.email_request"]);
+    scene.default_background = { visual_id: "background.empty_office", variant_id: "night" };
+    const stage = new VisualResolver(runtime).resolveStage(scene, "request", "perceived");
+    expect(stage.background).toMatchObject({
+      visual_id: "background.empty_office",
+      variant_id: "night",
+      matched: ["scene-default"],
+    });
+  });
+
+  it("creates an explicit zero-character silent node", () => {
+    expect(makeNode("silent", "silent_view", "yoon_seo_a")).toMatchObject({
+      id: "silent_view",
+      kind: "silent",
+      perceived: { line: "" },
+      reality: { line: "" },
+      stage: { perceived: [], reality: [] },
+    });
+  });
+
+  it("lists and resolves every registered artwork by its stable id", () => {
+    const copy = structuredClone(runtime);
+    const visual = copy.visuals["character.yoon_seo_a"];
+    visual.default_artwork = "office_default";
+    visual.artworks = {
+      office_default: { asset: "assets/characters/yoon-seo-a/office-default/base.png", label: "오피스 기본" },
+      cardigan_smile: { asset: "assets/concept-art/yoon-seo-a.png", label: "가디건 미소" },
+    };
+    const options = characterArtworkOptions(copy, "yoon_seo_a", "perceived");
+    expect(options.map((option) => option.id)).toEqual(["office_default", "cardigan_smile"]);
+
+    const scene = copy.scenes["common.day_01_company_meeting"];
+    const node: StoryNode = {
+      id: "alternate_artwork",
+      kind: "choice",
+      prompt: "선택",
+      stimulus: "서아가 기다린다.",
+      stage: { perceived: [{
+        position: "right",
+        character: "yoon_seo_a",
+        visual_id: visual.id,
+        artwork: "cardigan_smile",
+      }] },
+      options: [],
+    };
+    expect(new VisualResolver(copy).resolveStage(scene, node.id, "perceived", node).characters[0]).toMatchObject({
+      artwork: "cardigan_smile",
+      asset: "assets/concept-art/yoon-seo-a.png",
+      position: "right",
+    });
   });
 
   it("selects the first matching priority variant and preserves a forced backlog variant", () => {

@@ -37,6 +37,7 @@ enums:
   node_kind:
     - dual_dialogue
     - dual_narration
+    - silent
     - choice
     - state_gate
     - effect

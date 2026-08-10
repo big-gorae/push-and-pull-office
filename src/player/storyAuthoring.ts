@@ -1,6 +1,10 @@
 import type { Runtime, ValidationIssue } from "../types";
 
 const AUTHORING_ROOT_KEY = "love-office:authoring-root";
+const AUTHORING_PLAY_WINDOW = "authoring-play";
+const AUTHORING_NAVIGATE_EVENT = "authoring:navigate";
+const AUTHORING_PREVIEW_EVENT = "authoring:preview-dialogue";
+const AUTHORING_PREVIEW_TARGET_KEY = "love-office:authoring-preview-target";
 
 export type StoryTextSource = {
   label: string;
@@ -82,7 +86,10 @@ function isTauri(): boolean {
 export function authoringRoot(): string | undefined {
   if (!isTauri()) return undefined;
   try {
-    const root = window.sessionStorage.getItem(AUTHORING_ROOT_KEY)?.trim();
+    // sessionStorage is isolated per WebView.  Keep the approved project root in
+    // localStorage too so the companion play window can use the same Tauri bridge.
+    const root = (window.sessionStorage.getItem(AUTHORING_ROOT_KEY)
+      || window.localStorage.getItem(AUTHORING_ROOT_KEY))?.trim();
     return root || undefined;
   } catch {
     return undefined;
@@ -91,6 +98,7 @@ export function authoringRoot(): string | undefined {
 
 export function rememberAuthoringRoot(root: string): void {
   window.sessionStorage.setItem(AUTHORING_ROOT_KEY, root);
+  window.localStorage.setItem(AUTHORING_ROOT_KEY, root);
 }
 
 async function invoke<T>(command: string, args: Record<string, unknown>): Promise<T> {
@@ -178,10 +186,61 @@ export function inverseStoryTextEdits(
   });
 }
 
-export function returnToStoryEditor(target?: AuthoringTarget): void {
-  if (target) window.sessionStorage.setItem("love-office:authoring-target", JSON.stringify(target));
-  window.location.hash = "#/";
-  window.location.reload();
+export async function openAuthoringPlayWindow(root: string, target?: AuthoringTarget): Promise<void> {
+  if (!isTauri()) throw new Error("AUTHORING_UNAVAILABLE: Tauri 에디터에서만 사용할 수 있습니다.");
+  rememberAuthoringRoot(root);
+  if (target) window.localStorage.setItem(AUTHORING_PREVIEW_TARGET_KEY, JSON.stringify(target));
+  const [{ WebviewWindow }, { emitTo }] = await Promise.all([
+    import("@tauri-apps/api/webviewWindow"),
+    import("@tauri-apps/api/event"),
+  ]);
+  const existing = await WebviewWindow.getByLabel(AUTHORING_PLAY_WINDOW);
+  if (existing) {
+    if (target) await emitTo(AUTHORING_PLAY_WINDOW, AUTHORING_PREVIEW_EVENT, target);
+    await existing.show();
+    await existing.setFocus();
+    return;
+  }
+  const playWindow = new WebviewWindow(AUTHORING_PLAY_WINDOW, {
+    url: "#/play?authoring=1",
+    title: "밀당 오피스 · 게임 대사 편집",
+    width: 1280,
+    height: 820,
+    minWidth: 960,
+    minHeight: 640,
+  });
+  await new Promise<void>((resolve, reject) => {
+    playWindow.once("tauri://created", () => resolve());
+    playWindow.once("tauri://error", (event) => reject(new Error(String(event.payload))));
+  });
+}
+
+export function consumeAuthoringPreviewTarget(): AuthoringTarget | undefined {
+  try {
+    const raw = window.localStorage.getItem(AUTHORING_PREVIEW_TARGET_KEY);
+    window.localStorage.removeItem(AUTHORING_PREVIEW_TARGET_KEY);
+    if (!raw) return undefined;
+    const target = JSON.parse(raw) as Partial<AuthoringTarget>;
+    return typeof target.sceneId === "string"
+      ? { sceneId: target.sceneId, nodeId: typeof target.nodeId === "string" ? target.nodeId : undefined }
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function returnToStoryEditor(target?: AuthoringTarget): Promise<void> {
+  if (!isTauri()) return;
+  const [{ emitTo }, { WebviewWindow }] = await Promise.all([
+    import("@tauri-apps/api/event"),
+    import("@tauri-apps/api/webviewWindow"),
+  ]);
+  if (target) await emitTo("main", AUTHORING_NAVIGATE_EVENT, target);
+  const editor = await WebviewWindow.getByLabel("main");
+  if (editor) {
+    await editor.show();
+    await editor.setFocus();
+  }
 }
 
 export function consumeAuthoringTarget(): AuthoringTarget | undefined {

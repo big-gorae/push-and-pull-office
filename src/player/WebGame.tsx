@@ -18,7 +18,7 @@ import {
   selfDevelopmentSystem,
   type SelfDevelopmentActivityOption,
 } from "../selfDevelopment";
-import { effectiveSpeaker, resolveDialogueNode } from "../storyLogic";
+import { canEnterScene, effectiveSpeaker, resolveDialogueNode } from "../storyLogic";
 import type {
   ChoiceOption,
   GalleryEntry,
@@ -37,6 +37,7 @@ import {
   availableOptions,
   beginSelfDevelopmentNight,
   consumeChoiceAnalysisHint,
+  createSession,
   currentNode,
   finishSelfDevelopmentNight,
   nodeRead,
@@ -53,7 +54,9 @@ import {
   choiceDebugEffect,
   dayChanged,
   modeUnlocked,
-  speakingCharacters,
+  showDialogueChrome,
+  showSceneHud,
+  visibleStageCharacters,
   visibleTimelineLogs,
 } from "./playerUiPolicy";
 import {
@@ -72,6 +75,7 @@ import {
 import { GameLocalizer, gameLocales, type GameLocale } from "./gameI18n";
 import {
   authoringRoot,
+  consumeAuthoringPreviewTarget,
   copySourceLocator,
   getStoryTextOwner,
   inverseStoryTextEdits,
@@ -88,6 +92,7 @@ import {
   type StoryTextOwner,
   type StoryTextSaveResult,
   type StoryTextSource,
+  type AuthoringTarget,
 } from "./storyAuthoring";
 import { rhythmGaugeMotion, rhythmMarkerPercent } from "./rhythmGauge";
 import "./web-game.css";
@@ -1071,7 +1076,7 @@ function Stage({ session, node, settings, i18n }: { session: PlayerSession; node
   const resolver = useMemo(() => new VisualResolver(runtime), []);
   const stage = resolver.resolveStage(runtime.scenes[session.sceneId], session.nodeId, session.viewLayer, node);
   const background = assetUrl(stage.background?.asset);
-  const visibleCharacters = speakingCharacters(stage.characters);
+  const visibleCharacters = visibleStageCharacters(stage.characters);
   return <div className="vn-stage">
     {background && <img className="vn-stage-bg" src={background} alt="" />}
     <div className="vn-stage-light" />
@@ -1082,7 +1087,7 @@ function Stage({ session, node, settings, i18n }: { session: PlayerSession; node
     } as CSSProperties}>
       {visibleCharacters.map((character, index) => <figure
         className={`vn-character ${character.position} ${character.speaker ? "speaking" : ""}`}
-        key={`${character.character}:${character.expression || "default"}`}
+        key={`${character.position}:${character.character}:${character.artwork || character.expression || "default"}`}
         style={{ "--breath-delay": `${index * -1.1}s` } as CSSProperties}
       >
         <img src={assetUrl(character.asset)} alt={i18n.characterName(character.character)} />
@@ -1298,6 +1303,34 @@ export default function WebGame() {
     setFeedbackVisible(false);
     setRhythmAnimationId("");
   }, []);
+
+  const previewAuthoringDialogue = useCallback((target: AuthoringTarget) => {
+    const targetScene = runtime.scenes[target.sceneId];
+    const targetNodeId = target.nodeId || targetScene?.start_node;
+    if (!targetScene || !targetNodeId || !targetScene.nodes[targetNodeId]) {
+      notify("선택한 대사를 게임 런타임에서 찾을 수 없습니다. 먼저 장면을 저장해 주세요.");
+      return;
+    }
+    const preview = createSession(runtime, targetScene.route);
+    preview.phase = "scene";
+    preview.sceneId = targetScene.id;
+    preview.nodeId = targetNodeId;
+    preview.lastEntryDecision = { sceneId: targetScene.id, ...canEnterScene(runtime, preview.state, targetScene.id) };
+    loadSession(preview);
+    notify(`${targetScene.title} · 선택한 대사를 열었습니다.`);
+  }, [loadSession, notify]);
+
+  useEffect(() => {
+    if (!projectRoot) return;
+    const initialTarget = consumeAuthoringPreviewTarget();
+    if (initialTarget) previewAuthoringDialogue(initialTarget);
+    let unlisten: (() => void) | undefined;
+    void import("@tauri-apps/api/event").then(({ listen }) => listen<AuthoringTarget>("authoring:preview-dialogue", ({ payload }) => {
+      window.localStorage.removeItem("love-office:authoring-preview-target");
+      previewAuthoringDialogue(payload);
+    }, { target: "authoring-play" })).then((dispose) => { unlisten = dispose; }).catch(() => undefined);
+    return () => unlisten?.();
+  }, [previewAuthoringDialogue, projectRoot]);
 
   const startCampaign = (gameModeId: GameModeId) => {
     const profile = readProfile();
@@ -1753,14 +1786,14 @@ export default function WebGame() {
   </div>;
 
   return <main
-    className={`vn-game ${activeViewLayer} ${settings.reducedMotion ? "vn-reduced-motion" : ""} ${uiHidden ? "ui-hidden" : ""}`}
+    className={`vn-game ${activeViewLayer} ${node.kind === "silent" ? "silent" : ""} ${settings.reducedMotion ? "vn-reduced-motion" : ""} ${uiHidden ? "ui-hidden" : ""}`}
     onClick={clickStage}
     onContextMenu={(event) => { event.preventDefault(); setUiHidden((value) => !value); }}
     onWheel={(event) => { if (event.deltaY < -20 && !overlay) setOverlay("backlog"); }}
   >
     <Stage session={displaySession || session} node={node} settings={settings} i18n={i18n} />
-    <GameHud session={displaySession || session} debugMode={settings.debugMode} onMode={changeMode} onMenu={() => setOverlay("menu")} i18n={i18n} />
-    {showPushPull && <RhythmGauge
+    {showSceneHud(node.kind) && <GameHud session={displaySession || session} debugMode={settings.debugMode} onMode={changeMode} onMenu={() => setOverlay("menu")} i18n={i18n} />}
+    {showSceneHud(node.kind) && showPushPull && <RhythmGauge
       session={displaySession || session}
       debugMode={settings.debugMode}
       animationId={rhythmAnimationId}
@@ -1804,7 +1837,7 @@ export default function WebGame() {
       {quickMenu}
     </section>}
 
-    {!uiHidden && node.kind !== "choice" && <section className="vn-dialogue">
+    {!uiHidden && showDialogueChrome(node.kind) && <section className="vn-dialogue">
       {speaker && <div className="vn-nameplate">{speaker}</div>}
       <p className="vn-line">{displayedText}<i className={revealed ? "done" : ""} /></p>
       {settings.debugMode && feedback && feedbackVisible && <div className={`vn-feedback ${feedback.kind}`}>

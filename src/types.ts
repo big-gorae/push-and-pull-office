@@ -4,7 +4,7 @@ export type JsonValue = string | number | boolean | null | JsonValue[] | { [key:
 export type DeepPartial<T> = T extends Array<infer Item>
   ? Array<DeepPartial<Item>>
   : T extends object ? { [Key in keyof T]?: DeepPartial<T[Key]> } : T;
-export type NodeKind = "dual_dialogue" | "dual_narration" | "choice" | "state_gate" | "effect" | "exit";
+export type NodeKind = "dual_dialogue" | "dual_narration" | "silent" | "choice" | "state_gate" | "effect" | "exit";
 export type GameModeId = "base" | "truth_view" | "survivor_view";
 export type ViewLayer = "perceived" | "reality";
 /** @deprecated Use ViewLayer. Kept temporarily for editor-facing compatibility. */
@@ -26,6 +26,7 @@ export type EventAvailability = "automatic" | "player" | "hidden";
 export type LocaleId = string;
 export type VisualKind = "background_archetype" | "background" | "character_archetype" | "character";
 export type StagePosition = "far_left" | "left" | "center" | "right" | "far_right";
+export type ArtworkPosition = "left" | "center" | "right";
 
 export type Condition = {
   path: string;
@@ -175,7 +176,20 @@ export type StoryNode = {
   transitions?: Transition[];
   effects?: Effect[];
   presentation_flags?: string[];
+  stage?: Partial<Record<ViewMode, StageCharacterCue[]>>;
   next?: string;
+};
+
+export type StageCharacterCue = {
+  position: ArtworkPosition;
+  character: string;
+  visual_id: string;
+  artwork: string;
+};
+
+export type SceneBackgroundCue = {
+  visual_id: string;
+  variant_id: string;
 };
 
 export type Scene = {
@@ -187,6 +201,7 @@ export type Scene = {
   sequence?: number;
   location?: string;
   time?: string;
+  default_background?: SceneBackgroundCue;
   purpose: string;
   cast: string[];
   world_context?: {
@@ -421,6 +436,14 @@ export type VisualVariant = {
   priority: number;
 };
 
+export type CharacterArtwork = {
+  asset: string;
+  label?: string;
+  outfits?: string[];
+  poses?: string[];
+  expression_assets?: Record<string, string>;
+};
+
 export type VisualObject = {
   schema_version: number;
   id: string;
@@ -431,6 +454,8 @@ export type VisualObject = {
   title?: string;
   render_strategy?: "flat_portrait" | "layered_sprite" | "background";
   character?: string;
+  default_artwork?: string;
+  artworks?: Record<string, CharacterArtwork>;
   fallback_asset?: string;
   default_reality_expression?: string;
   default_outfit?: string;
@@ -458,6 +483,7 @@ export type ResolvedCharacterVisual = {
   character: string;
   asset: string;
   expression?: string;
+  artwork?: string;
   outfit?: string;
   pose?: string;
   position: StagePosition;

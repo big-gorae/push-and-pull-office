@@ -179,7 +179,7 @@ export function settleSession(runtime: Runtime, value: PlayerSession): PlayerSes
       finishEnding(runtime, session, `missing-node:${session.sceneId}:${session.nodeId}`);
       break;
     }
-    if (node.kind === "dual_dialogue" || node.kind === "dual_narration" || node.kind === "choice") {
+    if (node.kind === "dual_dialogue" || node.kind === "dual_narration" || node.kind === "silent" || node.kind === "choice") {
       break;
     }
     if (node.kind === "effect") {
@@ -612,7 +612,13 @@ export function consumeChoiceAnalysisHint(
 
 function logCurrent(runtime: Runtime, session: PlayerSession): void {
   const node = currentNode(runtime, session);
-  if (!node || (node.kind !== "dual_dialogue" && node.kind !== "dual_narration")) return;
+  if (!node) return;
+  const key = readId(session.sceneId, node.id);
+  if (node.kind === "silent") {
+    if (!session.readNodes.includes(key)) session.readNodes.push(key);
+    return;
+  }
+  if (node.kind !== "dual_dialogue" && node.kind !== "dual_narration") return;
   const resolved = resolveDialogueNode(runtime, session.state, node);
   session.backlog.push({
     id: `${readId(session.sceneId, node.id)}:${session.backlog.length}`,
@@ -623,14 +629,13 @@ function logCurrent(runtime: Runtime, session: PlayerSession): void {
     variantId: resolved.variantId,
     layerAtPresentation: session.viewLayer,
   });
-  const key = readId(session.sceneId, node.id);
   if (!session.readNodes.includes(key)) session.readNodes.push(key);
 }
 
 export function advanceSession(runtime: Runtime, value: PlayerSession): PlayerSession {
   const session = clone(value);
   const node = currentNode(runtime, session);
-  if (!node || (node.kind !== "dual_dialogue" && node.kind !== "dual_narration")) return session;
+  if (!node || (node.kind !== "dual_dialogue" && node.kind !== "dual_narration" && node.kind !== "silent")) return session;
   logCurrent(runtime, session);
   if (!node.next) {
     finishEnding(runtime, session, `dead-end:${session.sceneId}:${node.id}`);

@@ -49,7 +49,7 @@ export function StageCanvas({ runtime, scene, node, stage, locale, variantId, im
       : <div className="stage-background-placeholder">BACKGROUND</div>}
     <div className="stage-vignette" />
     <div className="stage-cast" aria-label="등장인물 배치">
-      {stage.characters.filter((character) => character.speaker).map((character) => <figure
+      {stage.characters.map((character) => <figure
         className={`stage-character ${character.position} ${character.speaker ? "speaking" : ""} ${character.render_strategy}`}
         key={character.character}
       >
@@ -59,10 +59,10 @@ export function StageCanvas({ runtime, scene, node, stage, locale, variantId, im
         <figcaption>{runtime.characters[character.character]?.display_name}<small>{character.expression || character.pose}</small></figcaption>
       </figure>)}
     </div>
-    <div className="stage-dialogue">
+    {node.kind !== "silent" && <div className="stage-dialogue">
       {speakerName && <strong>{speakerName}</strong>}
       <blockquote>{line}</blockquote>
-    </div>
+    </div>}
   </div>;
 }
 

@@ -7,7 +7,11 @@ sequence: 1
 location: meeting_room
 time: morning
 purpose: 프로젝트 킥오프에서 서아·민경·유진의 업무 태도와 한도윤의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.
-cast: [han_do_yoon, yoon_seo_a, cha_min_kyung, kang_yoo_jin]
+cast:
+  - han_do_yoon
+  - yoon_seo_a
+  - cha_min_kyung
+  - kang_yoo_jin
 world_context:
   company: company.dawon_living
   project: project.harudam_spring_campaign
@@ -30,10 +34,10 @@ nodes:
     kind: dual_narration
     perceived:
       atmosphere: procedural
-      line: "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 낯선 팀이 한자리에 모이면 사람의 장점도 평소보다 선명하게 보이는 법이다."
+      line: "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나.."
     reality:
       atmosphere: procedural
-      line: "수요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 신규 프로젝트 킥오프를 위해 회의실에 모였다."
+      line: "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나.."
       intent: work_only
     next: arrival_inner
 
@@ -46,7 +50,7 @@ nodes:
       reality:
     perceived:
       atmosphere: procedural
-      line: (새 프로젝트라… 내 능력도 보여 주고, 사람들도 천천히 알아볼 기회겠군.)
+      line: (새 프로젝트라.. 기대되는걸)
     reality:
       atmosphere: procedural
       line: 참석자들은 배포 자료와 일정표를 확인한 뒤 각자 맡은 일을 시작할 차례였다.
@@ -58,10 +62,10 @@ nodes:
     speaker: member.jeong_da_eun
     perceived:
       atmosphere: procedural
-      line: "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다."
+      line: "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다."
     reality:
       atmosphere: procedural
-      line: "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다."
+      line: "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다."
       intent: documentation
     next: oh_se_jin_scope
 

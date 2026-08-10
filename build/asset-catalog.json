@@ -1,0 +1,3875 @@
+{
+  "schemaVersion": 1,
+  "sourceSha256": "17497ef461eaa6d926dcaf45ca022d61aed5203fa7bbbe4854b360018386daa1",
+  "entries": [
+    {
+      "id": "background.empty_office.dread",
+      "kind": "background_variant",
+      "ownerId": "background.empty_office",
+      "relativePath": "assets/backgrounds/empty-office/dread.png",
+      "width": 1672,
+      "height": 941,
+      "aspectRatio": 1.776833,
+      "sha256": "e8e32ee66dba155efb39e484cde50e96b1a5df65566c79c18990848591fdf4bb",
+      "tags": [
+        "dread",
+        "evening",
+        "isolation",
+        "night",
+        "office"
+      ],
+      "usedBy": [
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.betrayed_record.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.betrayed_record.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.betrayed_record_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.betrayed_record_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.caught_record.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.caught_record_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.last_push_record.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.last_push_record.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.last_push_record_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.last_push_record_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.leave_request.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.leave_request.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.leave_request_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.leave_request_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.romance_record.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.romance_record.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.romance_record_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.romance_record_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.unrouteable_record.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.unrouteable_record_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.yoo_jin_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.yoo_jin_response_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.leave_request.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.leave_request.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.leave_request_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.leave_request_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.mugshot.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.mugshot_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.never_dated.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.never_dated_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.police_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.police_response_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.betrayed_record.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.betrayed_record.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.betrayed_record_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.betrayed_record_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.caught_record.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.caught_record_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.last_push_record.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.last_push_record.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.last_push_record_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.last_push_record_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.leave_request.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.leave_request.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.leave_request_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.leave_request_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.romance_record.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.romance_record.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.romance_record_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.romance_record_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.unrouteable_record.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.unrouteable_record_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.yoo_jin_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.yoo_jin_response_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.leave_request.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.leave_request.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.leave_request_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.leave_request_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.mugshot.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.mugshot_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.never_dated.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.never_dated_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.police_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.police_response_inner.perceived.resolved_background"
+        }
+      ],
+      "thumbnailKey": "c95d8fa1666ad577a571c047"
+    },
+    {
+      "id": "background.empty_office.night",
+      "kind": "background_variant",
+      "ownerId": "background.empty_office",
+      "relativePath": "assets/backgrounds/empty-office/night.png",
+      "width": 1672,
+      "height": 941,
+      "aspectRatio": 1.776833,
+      "sha256": "e8e32ee66dba155efb39e484cde50e96b1a5df65566c79c18990848591fdf4bb",
+      "tags": [
+        "design_team_desk",
+        "empty_design_desk",
+        "empty_office",
+        "evening",
+        "isolation",
+        "night",
+        "office",
+        "office_archive",
+        "open_office"
+      ],
+      "usedBy": [],
+      "thumbnailKey": "b66779f10c554fd0ab28f326"
+    },
+    {
+      "id": "background.meeting_room.default",
+      "kind": "background_variant",
+      "ownerId": "background.meeting_room",
+      "relativePath": "assets/backgrounds/meeting-room/default.png",
+      "width": 1672,
+      "height": 941,
+      "aspectRatio": 1.776833,
+      "sha256": "587a8daf615ac3c6ef868ddf74eb7f82907f3f53839958ce14cf2126fc9014d5",
+      "tags": [
+        "audit_room",
+        "conference_room",
+        "executive_meeting_room",
+        "external_counsel_room",
+        "glass_meeting_room",
+        "hr_interview_room",
+        "meeting",
+        "meeting_room",
+        "office",
+        "procedural"
+      ],
+      "usedBy": [
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_answer.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_answer_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.leave.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.leave.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_question.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_question_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_materials.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_materials_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_correction.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_correction_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.closing.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_do_yoon.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_min_kyung.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_seo_a.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_seo_a_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_do_yoon.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_min_kyung.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_min_kyung_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_seo_a.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_empathy.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_facts.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_gate.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_gate.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_inner_takeover.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_roles.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.leave.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.leave.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.lecture_recall_before_recovery.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.meeting_ends.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.presentation_resumes.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.recovery_choice.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.recovery_choice.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.roles_do_yoon.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.roles_min_kyung.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.roles_seo_a.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.seo_a_begins.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.seo_a_freezes.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.seo_a_freezes_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_do_yoon.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_min_kyung.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_seo_a.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_seo_a_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.wrong_slide.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_records.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/explicit_boundary.yaml",
+          "fieldPath": "nodes.boundary.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/explicit_boundary.yaml",
+          "fieldPath": "nodes.boundary_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/explicit_boundary.yaml",
+          "fieldPath": "nodes.leave.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/explicit_boundary.yaml",
+          "fieldPath": "nodes.leave.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/explicit_boundary.yaml",
+          "fieldPath": "nodes.respond.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/explicit_boundary.yaml",
+          "fieldPath": "nodes.respond.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.choose.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.choose.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.leave.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.leave.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.posture_gate.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.posture_gate.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.protective.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.protective_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.public_tease_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.public_tease_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.retaliatory_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.retaliatory_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.skeptical.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.skeptical_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.work_only_do_yoon.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.work_only_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.work_only_response.perceived.resolved_background"
+        }
+      ],
+      "thumbnailKey": "70a92b1e8d072a658c2795e6"
+    },
+    {
+      "id": "background.meeting_room.procedural",
+      "kind": "background_variant",
+      "ownerId": "background.meeting_room",
+      "relativePath": "assets/backgrounds/meeting-room/procedural.png",
+      "width": 1672,
+      "height": 941,
+      "aspectRatio": 1.776833,
+      "sha256": "587a8daf615ac3c6ef868ddf74eb7f82907f3f53839958ce14cf2126fc9014d5",
+      "tags": [
+        "audit_room",
+        "cold_office",
+        "conference_room",
+        "dread",
+        "executive_meeting_room",
+        "external_counsel_room",
+        "glass_meeting_room",
+        "guarded_office",
+        "hr_interview_room",
+        "meeting",
+        "meeting_room",
+        "office",
+        "procedural"
+      ],
+      "usedBy": [
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.after_meeting.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.after_meeting.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.after_meeting_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.after_meeting_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.arrival.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.arrival.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.arrival_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.arrival_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.assignments.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.assignments.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.assignments_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.assignments_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_accepts_correction.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_accepts_correction.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_accepts_correction_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_accepts_correction_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_answer.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_answer_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_closing.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_closing.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_closing_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_closing_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_thanks.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_thanks.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_thanks_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_thanks_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.jeong_da_eun_opening.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.jeong_da_eun_opening.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_accepts.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_accepts.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_accepts_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_accepts_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_closing.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_closing.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_closing_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_closing_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_question.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_question_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.moon_ji_hye_capacity.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.moon_ji_hye_capacity.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.oh_se_jin_scope.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.oh_se_jin_scope.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_closing.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_closing.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_closing_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_closing_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_introduction.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_introduction.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_introduction_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_introduction_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_materials.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_materials_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_closing.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_closing.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_closing_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_closing_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_correction.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_correction_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_timestamp.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_timestamp.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_timestamp_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_timestamp_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.agenda.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.agenda.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.closing.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.day_one_activity_reaction.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.day_one_activity_reaction.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.day_one_activity_reaction_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.day_one_activity_reaction_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.day_one_activity_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.day_one_activity_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_do_yoon.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_min_kyung.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_seo_a.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_seo_a_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_do_yoon.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_min_kyung.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_min_kyung_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_seo_a.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_empathy.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_facts.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_inner_takeover.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_roles.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_takeover.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_takeover.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.lecture_recall_before_recovery.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.meeting_ends.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.opening.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.opening.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.presentation_resumes.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.roles_do_yoon.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.roles_min_kyung.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.roles_seo_a.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.seo_a_begins.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.seo_a_freezes.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.seo_a_freezes_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_do_yoon.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_min_kyung.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_seo_a.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_seo_a_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.wrong_slide.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_records.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/explicit_boundary.yaml",
+          "fieldPath": "nodes.boundary.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/explicit_boundary.yaml",
+          "fieldPath": "nodes.boundary_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.protective.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.protective_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.public_tease_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.public_tease_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.retaliatory_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.retaliatory_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.skeptical.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.skeptical_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.work_only_do_yoon.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.work_only_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.work_only_response.reality.resolved_background"
+        }
+      ],
+      "thumbnailKey": "e232ac87c42f96dd3f6a6bec"
+    },
+    {
+      "id": "background.office_corridor.afternoon",
+      "kind": "background_variant",
+      "ownerId": "background.office_corridor",
+      "relativePath": "assets/backgrounds/office-corridor/afternoon.png",
+      "width": 1672,
+      "height": 941,
+      "aspectRatio": 1.776833,
+      "sha256": "dd68733e3d3ca74f168caeedf7d1b42c0e9144dd96ae2b283589295b7c75c267",
+      "tags": [
+        "afternoon",
+        "corridor",
+        "exposed",
+        "late_afternoon",
+        "morning",
+        "office",
+        "office_corridor",
+        "office_exit"
+      ],
+      "usedBy": [
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.decision.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.decision.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.decision_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.decision_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_answers.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_answers.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_answers_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_answers_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_deflects.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_deflects.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_deflects_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_deflects_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.end_call.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.end_call.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.end_call_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.end_call_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.father_pressure.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.father_pressure.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.father_pressure_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.father_pressure_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.first_interest.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.first_interest.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.leave.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.leave.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.mother_opening.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.mother_opening.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.mother_opening_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.mother_opening_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.mother_softens.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.mother_softens.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.mother_softens_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.mother_softens_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.night_close.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.night_close.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.night_close_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.night_close_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.phone_rings.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.phone_rings.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.phone_rings_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.phone_rings_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.reframe_morning.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.reframe_morning.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.reframe_morning_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.reframe_morning_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.remember_min_kyung.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.remember_min_kyung.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.remember_min_kyung_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.remember_min_kyung_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.remember_seo_a.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.remember_seo_a.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.remember_seo_a_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.remember_seo_a_inner.reality.resolved_background"
+        }
+      ],
+      "thumbnailKey": "6b41d2faf759e9729b2b2567"
+    },
+    {
+      "id": "background.office_corridor.default",
+      "kind": "background_variant",
+      "ownerId": "background.office_corridor",
+      "relativePath": "assets/backgrounds/office-corridor/default.png",
+      "width": 1672,
+      "height": 941,
+      "aspectRatio": 1.776833,
+      "sha256": "dd68733e3d3ca74f168caeedf7d1b42c0e9144dd96ae2b283589295b7c75c267",
+      "tags": [
+        "apartment_corridor",
+        "corridor",
+        "exposed",
+        "objective_record",
+        "office",
+        "office_corridor",
+        "office_exit",
+        "police_booking",
+        "prison_intake",
+        "public_archive",
+        "subway_platform"
+      ],
+      "usedBy": [
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.betrayed_end.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.betrayed_end.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.caught_end.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.caught_end.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.caught_record.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.caught_record_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.complete.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.complete.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.immediate_choice.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.immediate_choice.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.interpretation_choice.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.interpretation_choice.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.last_push_end.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.last_push_end.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.line_cross_choice.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.line_cross_choice.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.released.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.released.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.released_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.released_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.romance_end.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.romance_end.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.unrouteable_end.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.unrouteable_end.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.unrouteable_record.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.unrouteable_record_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.yoo_jin_gate.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.yoo_jin_gate.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.yoo_jin_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.yoo_jin_response_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.company_epilogue.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.company_epilogue.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.company_epilogue_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.company_epilogue_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.complete.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.complete.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.grooms_face_end.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.grooms_face_end.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.mugshot.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.mugshot_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.never_dated.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.never_dated_end.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.never_dated_end.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.never_dated_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.police_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.police_response_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.record_memory.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.record_memory.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.true_gate.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.true_gate.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.betrayed_end.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.betrayed_end.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.caught_end.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.caught_end.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.caught_record.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.caught_record_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.complete.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.complete.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.immediate_choice.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.immediate_choice.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.interpretation_choice.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.interpretation_choice.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.last_push_end.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.last_push_end.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.line_cross_choice.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.line_cross_choice.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.released.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.released.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.released_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.released_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.romance_end.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.romance_end.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.unrouteable_end.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.unrouteable_end.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.unrouteable_record.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.unrouteable_record_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.yoo_jin_gate.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.yoo_jin_gate.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.yoo_jin_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.yoo_jin_response_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.company_epilogue.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.company_epilogue.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.company_epilogue_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.company_epilogue_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.complete.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.complete.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.grooms_face_end.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.grooms_face_end.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.mugshot.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.mugshot_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.never_dated.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.never_dated_end.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.never_dated_end.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.never_dated_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.police_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.police_response_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.record_memory.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.record_memory.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.true_gate.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.true_gate.reality.resolved_background"
+        }
+      ],
+      "thumbnailKey": "c01c938a95260470a9be87ec"
+    },
+    {
+      "id": "background.office_open.default",
+      "kind": "background_variant",
+      "ownerId": "background.office_open",
+      "relativePath": "assets/backgrounds/office-open/default.png",
+      "width": 1672,
+      "height": 941,
+      "aspectRatio": 1.776833,
+      "sha256": "270751afc63b919a547d471c1163dbdd0352837a35883503ad7f7267723843b0",
+      "tags": [
+        "daytime",
+        "design_team_desk",
+        "desk",
+        "empty_desk",
+        "office",
+        "office_archive",
+        "office_desk",
+        "open_office"
+      ],
+      "usedBy": [],
+      "thumbnailKey": "d51d0a32a5c9fa97b34274c8"
+    },
+    {
+      "id": "background.office_open.late_afternoon",
+      "kind": "background_variant",
+      "ownerId": "background.office_open",
+      "relativePath": "assets/backgrounds/office-open/late-afternoon.png",
+      "width": 1672,
+      "height": 941,
+      "aspectRatio": 1.776833,
+      "sha256": "270751afc63b919a547d471c1163dbdd0352837a35883503ad7f7267723843b0",
+      "tags": [
+        "afternoon",
+        "daytime",
+        "design_team_desk",
+        "desk",
+        "empty_desk",
+        "late_afternoon",
+        "office",
+        "office_desk",
+        "open_office"
+      ],
+      "usedBy": [
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.do_yoon_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.do_yoon_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.do_yoon_stands.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.do_yoon_stands.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.leave.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.leave.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.rehearsal_screen.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.rehearsal_screen.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.screen_saved.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.screen_saved.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.yoo_jin_adjusts.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.yoo_jin_adjusts.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.yoo_jin_request.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.yoo_jin_request.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.do_yoon_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.do_yoon_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.do_yoon_split.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.do_yoon_split.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.leave.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.leave.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.min_kyung_plan.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.min_kyung_plan.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.min_kyung_result.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.min_kyung_result.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.sample_boxes.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.sample_boxes.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.sorting_done.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.sorting_done.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.do_yoon_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.do_yoon_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.do_yoon_question.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.do_yoon_question.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.leave.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.leave.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.min_kyung_update.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.min_kyung_update.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.note_closed.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.note_closed.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.three_documents.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.three_documents.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.yoo_jin_check.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.yoo_jin_check.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.after_choice.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.after_choice.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.after_choice_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.after_choice_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.interpret.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.interpret.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.leave.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.leave.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.reading_self_promotion.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.reading_self_promotion.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.request.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.request.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.request_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.request_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.workout_self_promotion.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.workout_self_promotion.reality.resolved_background"
+        }
+      ],
+      "thumbnailKey": "6cba89982af6d3b653699c13"
+    },
+    {
+      "id": "background.office_pantry.default",
+      "kind": "background_variant",
+      "ownerId": "background.office_pantry",
+      "relativePath": "assets/backgrounds/office-pantry/default.png",
+      "width": 1672,
+      "height": 941,
+      "aspectRatio": 1.776833,
+      "sha256": "f07728fbfa24e20265f6769bdaae9290a7838809c63ea2e32a640f78f845f9d3",
+      "tags": [
+        "break_room",
+        "office",
+        "office_break_room",
+        "office_pantry",
+        "outside_cafe",
+        "temporary_safety"
+      ],
+      "usedBy": [
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.do_yoon_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.do_yoon_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.do_yoon_joke.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.do_yoon_joke.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.leave.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.leave.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.seo_a_laugh.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.seo_a_laugh.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.seo_a_worry.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.seo_a_worry.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.tasting_table.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.tasting_table.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.yoo_jin_records.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.yoo_jin_records.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.activity_callback.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.activity_callback.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.activity_callback_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.activity_callback_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.activity_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.activity_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_close_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_close_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_empathy_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_empathy_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_overwork_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_overwork_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.fatigue_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.fatigue_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.leave.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.leave.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.lecture_recall_after_resolution.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.lecture_recall_after_resolution.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.lecture_recall_before_issues.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.lecture_recall_before_issues.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.post_resolution_choice.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.post_resolution_choice.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.resolution_complete.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.resolution_complete.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.response_choice.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.response_choice.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.return_to_office.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.return_to_office.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.structure_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.structure_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.takeover_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.takeover_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.weekend_clues.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.weekend_clues.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.activity_callback.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.activity_callback.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.activity_callback_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.activity_callback_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.activity_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.activity_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.encounter.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.encounter.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.goodbye.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.goodbye.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.goodbye_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.goodbye_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.leave.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.leave.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.activity_callback.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.activity_callback.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.activity_callback_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.activity_callback_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.activity_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.activity_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.commit_push_pull.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.commit_push_pull.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.encounter.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.encounter.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.goodbye.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.goodbye.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.leave.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.leave.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.week_close.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.week_close.reality.resolved_background"
+        }
+      ],
+      "thumbnailKey": "b93030a2954f8ae118e5ab63"
+    },
+    {
+      "id": "background.office_pantry.morning",
+      "kind": "background_variant",
+      "ownerId": "background.office_pantry",
+      "relativePath": "assets/backgrounds/office-pantry/morning.png",
+      "width": 1672,
+      "height": 941,
+      "aspectRatio": 1.776833,
+      "sha256": "f07728fbfa24e20265f6769bdaae9290a7838809c63ea2e32a640f78f845f9d3",
+      "tags": [
+        "break_room",
+        "lunch",
+        "morning",
+        "office",
+        "office_break_room",
+        "office_pantry",
+        "outside_cafe",
+        "temporary_safety"
+      ],
+      "usedBy": [
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.guarded_smile.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.guarded_smile.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.guarded_smile_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.guarded_smile_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.leave.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.leave.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.mood_gate.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.mood_gate.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.relief_smile.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.relief_smile.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.relief_smile_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.relief_smile_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.response_choice.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.response_choice.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_response.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_response.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_response_inner.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_response_inner.reality.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_self_promotion.perceived.resolved_background"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_self_promotion.reality.resolved_background"
+        }
+      ],
+      "thumbnailKey": "d96d313ac9400227f1449781"
+    },
+    {
+      "id": "character.cha_min_kyung.office_default",
+      "kind": "character_artwork",
+      "ownerId": "character.cha_min_kyung",
+      "relativePath": "assets/characters/cha-min-kyung/office-default/base.png",
+      "width": 832,
+      "height": 1216,
+      "aspectRatio": 0.684211,
+      "sha256": "eb88573c4fa81ceabdc1134b02417bacbdf3c48d8a63164c5e5d18b660cb2a63",
+      "tags": [
+        "assertive",
+        "heroine",
+        "neutral",
+        "office",
+        "witness"
+      ],
+      "usedBy": [
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.min_kyung_plan.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.min_kyung_plan.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.min_kyung_result.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.min_kyung_result.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.min_kyung_update.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.min_kyung_update.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_accepts.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_accepts.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_accepts_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_closing.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_closing.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_closing_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_question.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_question.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_question_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.remember_min_kyung_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_min_kyung.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_min_kyung.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_min_kyung.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_min_kyung.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_min_kyung_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.roles_min_kyung.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.roles_min_kyung.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_min_kyung.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_min_kyung.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.activity_callback_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.activity_response.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.activity_response.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_close_response.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_close_response.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_empathy_response.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_empathy_response.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_overwork_response.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.after_resolution_overwork_response.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.fatigue_response.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.fatigue_response.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.structure_response.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.structure_response.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.takeover_response.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.takeover_response.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.leave_request.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.leave_request.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.leave_request_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.leave_request.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.leave_request.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.leave_request_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/explicit_boundary.yaml",
+          "fieldPath": "nodes.boundary.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/explicit_boundary.yaml",
+          "fieldPath": "nodes.boundary.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/explicit_boundary.yaml",
+          "fieldPath": "nodes.boundary_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.protective.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.protective.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.protective_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.public_tease_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.public_tease_response.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.public_tease_response.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.retaliatory_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.retaliatory_response.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.retaliatory_response.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.skeptical.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.skeptical.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.skeptical_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.work_only_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.work_only_response.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.work_only_response.reality.resolved_portrait"
+        }
+      ],
+      "thumbnailKey": "3074e64c3e194f61a26cf5af"
+    },
+    {
+      "id": "character.han_do_yoon.office_default",
+      "kind": "character_artwork",
+      "ownerId": "character.han_do_yoon",
+      "relativePath": "assets/characters/han-do-yoon/office-default/base.png",
+      "width": 941,
+      "height": 1672,
+      "aspectRatio": 0.562799,
+      "sha256": "233813369c42670bae6c6ce7dbe8d5901cccb0d93648f58c0092592a3e05179c",
+      "tags": [
+        "looming",
+        "neutral",
+        "office",
+        "protagonist",
+        "unreliable_view"
+      ],
+      "usedBy": [
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.do_yoon_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.do_yoon_stands.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.do_yoon_stands.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.do_yoon_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.do_yoon_split.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_health_sample_sorting.yaml",
+          "fieldPath": "nodes.do_yoon_split.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.do_yoon_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.do_yoon_joke.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.do_yoon_joke.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.do_yoon_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.do_yoon_question.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.do_yoon_question.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.after_meeting_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.after_meeting_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.arrival_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.assignments_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_accepts_correction.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_accepts_correction.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_accepts_correction_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_accepts_correction_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_answer.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_answer.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_answer_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_answer_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_closing.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_closing.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_closing_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_closing_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_thanks.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_thanks.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_thanks_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.do_yoon_thanks_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_accepts_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_closing_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.min_kyung_question_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_closing_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_introduction_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_materials_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_closing_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_correction_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_timestamp_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.decision.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.decision.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.decision_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.decision_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_answers.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_answers.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_answers_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_answers_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_deflects.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_deflects.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_deflects_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.do_yoon_deflects_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.end_call.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.end_call.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.end_call_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.end_call_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.father_pressure_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.mother_opening_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.mother_softens_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.night_close_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.phone_rings_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.reframe_morning_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.remember_min_kyung_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.remember_seo_a_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.day_one_activity_reaction.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.day_one_activity_reaction.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.day_one_activity_reaction_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_do_yoon.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_do_yoon.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_seo_a_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_do_yoon.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_do_yoon.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_min_kyung_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_inner_takeover.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_inner_takeover.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.lecture_recall_before_recovery.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.roles_do_yoon.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.roles_do_yoon.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.seo_a_freezes_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_do_yoon.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_do_yoon.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_seo_a_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.activity_callback.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.activity_callback.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.activity_callback_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.lecture_recall_after_resolution.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_03_business_trip_or_cafe.yaml",
+          "fieldPath": "nodes.lecture_recall_before_issues.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.activity_callback.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.activity_callback.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.activity_callback_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_04_weekend_encounter.yaml",
+          "fieldPath": "nodes.goodbye_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.activity_callback.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.activity_callback.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.activity_callback_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_05_weekend_reflection.yaml",
+          "fieldPath": "nodes.week_close.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.betrayed_record_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.caught_record_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.last_push_record_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.leave_request_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.released_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.romance_record_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.unrouteable_record_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.yoo_jin_response_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.company_epilogue_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.leave_request_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.mugshot_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.never_dated_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_report.yaml",
+          "fieldPath": "nodes.police_response_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.betrayed_record_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.caught_record_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.last_push_record_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.leave_request_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.released_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.romance_record_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.unrouteable_record_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.yoo_jin_response_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.company_epilogue_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.leave_request_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.mugshot_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.never_dated_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.police_response_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/explicit_boundary.yaml",
+          "fieldPath": "nodes.boundary_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.protective_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.public_tease_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.retaliatory_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.skeptical_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.work_only_do_yoon.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.work_only_do_yoon.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/min_kyung/witness_meeting.yaml",
+          "fieldPath": "nodes.work_only_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.after_choice.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.after_choice.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.after_choice_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.after_choice_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.reading_self_promotion.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.reading_self_promotion.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.request_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.workout_self_promotion.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.workout_self_promotion.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.guarded_smile_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.relief_smile_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_response_inner.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_self_promotion.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_self_promotion.reality.resolved_portrait"
+        }
+      ],
+      "thumbnailKey": "ea37508e33fda8c220750d32"
+    },
+    {
+      "id": "character.im_soo_yeon.casual_default",
+      "kind": "character_artwork",
+      "ownerId": "character.im_soo_yeon",
+      "relativePath": "assets/characters/im-soo-yeon/casual-default/base.png",
+      "width": 864,
+      "height": 1821,
+      "aspectRatio": 0.474465,
+      "sha256": "775cd37ab1be68fd8ccbe6b73c5be1af18fe1a2a7718dbdc183e793ad6980873",
+      "tags": [
+        "casual",
+        "guarded",
+        "past_victim",
+        "testimony"
+      ],
+      "usedBy": [],
+      "thumbnailKey": "21d6358ba176e4d2acde3cb0"
+    },
+    {
+      "id": "character.kang_yoo_jin.office_default",
+      "kind": "character_artwork",
+      "ownerId": "character.kang_yoo_jin",
+      "relativePath": "assets/characters/kang-yoo-jin/office-default/base.png",
+      "width": 832,
+      "height": 1216,
+      "aspectRatio": 0.684211,
+      "sha256": "d93e91ffbe1c20ad41127156f1e0d802d9eb230f0291f5a848575429342586a7",
+      "tags": [
+        "direct",
+        "fact_checker",
+        "heroine",
+        "neutral",
+        "office",
+        "unlockable"
+      ],
+      "usedBy": [
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.yoo_jin_adjusts.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.yoo_jin_adjusts.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.yoo_jin_request.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_appearance_rehearsal.yaml",
+          "fieldPath": "nodes.yoo_jin_request.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.yoo_jin_records.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.yoo_jin_records.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.yoo_jin_check.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_intelligence_version_check.yaml",
+          "fieldPath": "nodes.yoo_jin_check.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_closing.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_closing.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_closing_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_correction.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_correction.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_correction_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_timestamp.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_timestamp.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_timestamp_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.wrong_slide.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.wrong_slide.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_records.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.yoo_jin_records.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.unrouteable_record_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.yoo_jin_response.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.yoo_jin_response.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/min_kyung_coverup.yaml",
+          "fieldPath": "nodes.yoo_jin_response_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.unrouteable_record_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.yoo_jin_response.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.yoo_jin_response.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.yoo_jin_response_inner.reality.resolved_portrait"
+        }
+      ],
+      "thumbnailKey": "8e7cdf6334d87b63c9fd3332"
+    },
+    {
+      "id": "character.yoon_seo_a.office_default",
+      "kind": "character_artwork",
+      "ownerId": "character.yoon_seo_a",
+      "relativePath": "assets/characters/yoon-seo-a/office-default/base.png",
+      "width": 832,
+      "height": 1216,
+      "aspectRatio": 0.684211,
+      "sha256": "77b70731816223b9060890ed3fc9ff9353634d36042e18174780a01e3e96e0ad",
+      "tags": [
+        "freeze_response",
+        "guarded",
+        "heroine",
+        "neutral",
+        "office"
+      ],
+      "usedBy": [
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.seo_a_laugh.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.seo_a_laugh.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.seo_a_worry.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/bonus/stat_humor_tasting_vote.yaml",
+          "fieldPath": "nodes.seo_a_worry.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_closing.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_closing.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_closing_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_introduction.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_introduction.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_introduction_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_materials.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_materials.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_company_meeting.yaml",
+          "fieldPath": "nodes.seo_a_materials_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_01_parent_pressure.yaml",
+          "fieldPath": "nodes.remember_seo_a_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.day_one_activity_reaction_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.day_one_activity_response.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.day_one_activity_response.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_seo_a.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_seo_a.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.empathy_seo_a_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_seo_a.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.facts_seo_a.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_empathy.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_empathy.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_facts.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_facts.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_roles.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_roles.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_takeover.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.gratitude_takeover.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.roles_seo_a.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.roles_seo_a.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.seo_a_begins.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.seo_a_begins.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.seo_a_freezes.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.seo_a_freezes.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.seo_a_freezes_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_seo_a.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_seo_a.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/common/day_02_practical_meeting.yaml",
+          "fieldPath": "nodes.takeover_seo_a_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.leave_request.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.leave_request.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_ambiguous.yaml",
+          "fieldPath": "nodes.leave_request_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.leave_request.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.leave_request.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/endings/seo_a_report.yaml",
+          "fieldPath": "nodes.leave_request_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.appearance_observation_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.request.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.request.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/email_request.yaml",
+          "fieldPath": "nodes.request_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.guarded_smile.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.guarded_smile.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.guarded_smile_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.relief_smile.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.relief_smile.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.relief_smile_inner.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_response.perceived.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_response.reality.resolved_portrait"
+        },
+        {
+          "document": "story/scenes/seo_a/relief_smile.yaml",
+          "fieldPath": "nodes.trend_response_inner.reality.resolved_portrait"
+        }
+      ],
+      "thumbnailKey": "94df6b449bdfca185a5b8c62"
+    },
+    {
+      "id": "ui.hud.cha-min-kyung",
+      "kind": "ui",
+      "ownerId": "ui",
+      "relativePath": "assets/ui/hud/cha-min-kyung.png",
+      "width": 832,
+      "height": 1216,
+      "aspectRatio": 0.684211,
+      "sha256": "9951476cea7e88d66dca1d9ff356f8379ced1408746a1687bb6106b6ebd27d68",
+      "tags": [],
+      "usedBy": [],
+      "thumbnailKey": "231a3e90aa6a63e6723c1b8a"
+    },
+    {
+      "id": "ui.hud.yoon-seo-a",
+      "kind": "ui",
+      "ownerId": "ui",
+      "relativePath": "assets/ui/hud/yoon-seo-a.png",
+      "width": 832,
+      "height": 1216,
+      "aspectRatio": 0.684211,
+      "sha256": "340265791670c7f3daecc568e8e4acbd7e11ed5ac79b62c28f18ed3a3234e6e5",
+      "tags": [],
+      "usedBy": [],
+      "thumbnailKey": "d89384ffa231908238dbd1af"
+    },
+    {
+      "id": "cg.appearance-yoo-jin.image",
+      "kind": "cg",
+      "ownerId": "cg",
+      "relativePath": "assets/cg/appearance-yoo-jin/image.png",
+      "width": 951,
+      "height": 1653,
+      "aspectRatio": 0.575318,
+      "sha256": "e58c06bc42bbef3abad88deb424e54c7b9694314fcae7715034c973ad6fe3922",
+      "tags": [],
+      "usedBy": [],
+      "thumbnailKey": "ee748aa2a9afaa0881fc86d4"
+    },
+    {
+      "id": "cg.health-min-kyung.image",
+      "kind": "cg",
+      "ownerId": "cg",
+      "relativePath": "assets/cg/health-min-kyung/image.png",
+      "width": 941,
+      "height": 1672,
+      "aspectRatio": 0.562799,
+      "sha256": "9d3cc314139421fc384d77a865804dff08e854ee0bbb5e80baa70b80905c3604",
+      "tags": [],
+      "usedBy": [],
+      "thumbnailKey": "a16e08abed63fb51901a4122"
+    },
+    {
+      "id": "cg.humor-seo-a.image",
+      "kind": "cg",
+      "ownerId": "cg",
+      "relativePath": "assets/cg/humor-seo-a/image.png",
+      "width": 1023,
+      "height": 1537,
+      "aspectRatio": 0.665582,
+      "sha256": "1d5f8e8a215816fc837cbb9c6224775c60d722b475523443130ff10659312a9d",
+      "tags": [],
+      "usedBy": [],
+      "thumbnailKey": "0cc2eaa74b5f29fcb49d7379"
+    },
+    {
+      "id": "cg.intelligence-min-kyung.image",
+      "kind": "cg",
+      "ownerId": "cg",
+      "relativePath": "assets/cg/intelligence-min-kyung/image.png",
+      "width": 832,
+      "height": 1216,
+      "aspectRatio": 0.684211,
+      "sha256": "eb88573c4fa81ceabdc1134b02417bacbdf3c48d8a63164c5e5d18b660cb2a63",
+      "tags": [],
+      "usedBy": [],
+      "thumbnailKey": "7f16f2918e6b25afd57478f8"
+    },
+    {
+      "id": "cg.office-lineup.image",
+      "kind": "cg",
+      "ownerId": "cg",
+      "relativePath": "assets/cg/office-lineup/image.png",
+      "width": 1692,
+      "height": 929,
+      "aspectRatio": 1.821313,
+      "sha256": "19bae7fc13f4793186cb4849efa46ce3b81fe59569d2d0a467ed0c9302eefb0c",
+      "tags": [],
+      "usedBy": [],
+      "thumbnailKey": "ce1fed758ec97b834234b899"
+    }
+  ]
+}

@@ -10,7 +10,7 @@
     ]
   },
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "c9d5d5830abbc0abb5bd016ee29a6fbcedbe0216919a7a393d7c9ce36a4161ca",
+  "source_sha256": "ff5fc7750d5a9d59fdbffe8b874d4124189766cb34dd6b37943ce6b4c459e6eb",
   "enums": {
     "perceived_state": [
       "push",
@@ -87,6 +87,7 @@
     "node_kind": [
       "dual_dialogue",
       "dual_narration",
+      "silent",
       "choice",
       "state_gate",
       "effect",
@@ -8063,7 +8064,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.arrival.perceived.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.arrival.perceived.line",
-        "source": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 낯선 팀이 한자리에 모이면 사람의 장점도 평소보다 선명하게 보이는 법이다.",
+        "source": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나..",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -8082,7 +8083,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.arrival.reality.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.arrival.reality.line",
-        "source": "수요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 신규 프로젝트 킥오프를 위해 회의실에 모였다.",
+        "source": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나..",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -8101,7 +8102,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line",
-        "source": "(새 프로젝트라… 내 능력도 보여 주고, 사람들도 천천히 알아볼 기회겠군.)",
+        "source": "(새 프로젝트라.. 기대되는걸)",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -8537,7 +8538,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line",
-        "source": "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다.",
+        "source": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -8557,7 +8558,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line",
-        "source": "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다.",
+        "source": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -23720,9 +23721,9 @@
       "scenes.common.day_01_company_meeting.nodes.after_meeting.reality.line": "회의가 끝나자 세 사람은 각자 맡은 업무로 돌아갔다. 누구도 한도윤에게 사적인 관심을 표현하지 않았다.",
       "scenes.common.day_01_company_meeting.nodes.after_meeting_inner.perceived.line": "(셋 다 눈에 띄긴 하지만, 아직은 같이 일하게 된 사람들일 뿐이지.)",
       "scenes.common.day_01_company_meeting.nodes.after_meeting_inner.reality.line": "(업무에 필요한 것보다 셋의 인상을 조금 오래 떠올렸군. 그래도 아직 뭘 할 생각은 없어.)",
-      "scenes.common.day_01_company_meeting.nodes.arrival.perceived.line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 낯선 팀이 한자리에 모이면 사람의 장점도 평소보다 선명하게 보이는 법이다.",
-      "scenes.common.day_01_company_meeting.nodes.arrival.reality.line": "수요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 신규 프로젝트 킥오프를 위해 회의실에 모였다.",
-      "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": "(새 프로젝트라… 내 능력도 보여 주고, 사람들도 천천히 알아볼 기회겠군.)",
+      "scenes.common.day_01_company_meeting.nodes.arrival.perceived.line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나..",
+      "scenes.common.day_01_company_meeting.nodes.arrival.reality.line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나..",
+      "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": "(새 프로젝트라.. 기대되는걸)",
       "scenes.common.day_01_company_meeting.nodes.arrival_inner.reality.line": "참석자들은 배포 자료와 일정표를 확인한 뒤 각자 맡은 일을 시작할 차례였다.",
       "scenes.common.day_01_company_meeting.nodes.assignments.perceived.line": "서아는 세심했고, 민경은 정확했으며, 유진은 거리낌이 없었다. 첫 회의치고는 각자의 색이 분명한 팀이었다.",
       "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": "참석자들은 바이어 승인, 제품 자료, 캠페인 일정과 제작 파일을 담당별로 나눴다.",
@@ -23744,8 +23745,8 @@
       "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks.reality.line": "고마워요, 윤서아 씨. 한 부가 부족한 걸 바로 챙겨 줬네요. 저는 이걸로 보고, 추가 출력은 회의 끝나고 해도 됩니다.",
       "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.perceived.line": "(먼저 챙긴 걸 알아주고 이름까지 불렀으니 긴장도 풀리겠지. 여유 있는 상사처럼 보였을 거야.)",
       "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.reality.line": "(사원증에 윤서아라고 적혀 있었지. 자료도 생겼으니 시작하자.)",
-      "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다.",
-      "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다.",
+      "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
+      "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
       "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.perceived.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
       "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.reality.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
       "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts_inner.perceived.line": "(시험은 끝났다는 표정이군. 내 답을 인정하고 한발 물러났네.)",
@@ -24939,9 +24940,9 @@
         "scenes.common.day_01_company_meeting.nodes.after_meeting.reality.line": "회의가 끝나자 세 사람은 각자 맡은 업무로 돌아갔다. 누구도 한도윤에게 사적인 관심을 표현하지 않았다.",
         "scenes.common.day_01_company_meeting.nodes.after_meeting_inner.perceived.line": "(셋 다 눈에 띄긴 하지만, 아직은 같이 일하게 된 사람들일 뿐이지.)",
         "scenes.common.day_01_company_meeting.nodes.after_meeting_inner.reality.line": "(업무에 필요한 것보다 셋의 인상을 조금 오래 떠올렸군. 그래도 아직 뭘 할 생각은 없어.)",
-        "scenes.common.day_01_company_meeting.nodes.arrival.perceived.line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 낯선 팀이 한자리에 모이면 사람의 장점도 평소보다 선명하게 보이는 법이다.",
-        "scenes.common.day_01_company_meeting.nodes.arrival.reality.line": "수요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 신규 프로젝트 킥오프를 위해 회의실에 모였다.",
-        "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": "(새 프로젝트라… 내 능력도 보여 주고, 사람들도 천천히 알아볼 기회겠군.)",
+        "scenes.common.day_01_company_meeting.nodes.arrival.perceived.line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나..",
+        "scenes.common.day_01_company_meeting.nodes.arrival.reality.line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나..",
+        "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": "(새 프로젝트라.. 기대되는걸)",
         "scenes.common.day_01_company_meeting.nodes.arrival_inner.reality.line": "참석자들은 배포 자료와 일정표를 확인한 뒤 각자 맡은 일을 시작할 차례였다.",
         "scenes.common.day_01_company_meeting.nodes.assignments.perceived.line": "서아는 세심했고, 민경은 정확했으며, 유진은 거리낌이 없었다. 첫 회의치고는 각자의 색이 분명한 팀이었다.",
         "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": "참석자들은 바이어 승인, 제품 자료, 캠페인 일정과 제작 파일을 담당별로 나눴다.",
@@ -24963,8 +24964,8 @@
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks.reality.line": "고마워요, 윤서아 씨. 한 부가 부족한 걸 바로 챙겨 줬네요. 저는 이걸로 보고, 추가 출력은 회의 끝나고 해도 됩니다.",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.perceived.line": "(먼저 챙긴 걸 알아주고 이름까지 불렀으니 긴장도 풀리겠지. 여유 있는 상사처럼 보였을 거야.)",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.reality.line": "(사원증에 윤서아라고 적혀 있었지. 자료도 생겼으니 시작하자.)",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다.",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.perceived.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.reality.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts_inner.perceived.line": "(시험은 끝났다는 표정이군. 내 답을 인정하고 한발 물러났네.)",
@@ -26157,9 +26158,9 @@
         "scenes.common.day_01_company_meeting.nodes.after_meeting.reality.line": "회의가 끝나자 세 사람은 각자 맡은 업무로 돌아갔다. 누구도 한도윤에게 사적인 관심을 표현하지 않았다.",
         "scenes.common.day_01_company_meeting.nodes.after_meeting_inner.perceived.line": "(셋 다 눈에 띄긴 하지만, 아직은 같이 일하게 된 사람들일 뿐이지.)",
         "scenes.common.day_01_company_meeting.nodes.after_meeting_inner.reality.line": "(업무에 필요한 것보다 셋의 인상을 조금 오래 떠올렸군. 그래도 아직 뭘 할 생각은 없어.)",
-        "scenes.common.day_01_company_meeting.nodes.arrival.perceived.line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 낯선 팀이 한자리에 모이면 사람의 장점도 평소보다 선명하게 보이는 법이다.",
-        "scenes.common.day_01_company_meeting.nodes.arrival.reality.line": "수요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 신규 프로젝트 킥오프를 위해 회의실에 모였다.",
-        "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": "(새 프로젝트라… 내 능력도 보여 주고, 사람들도 천천히 알아볼 기회겠군.)",
+        "scenes.common.day_01_company_meeting.nodes.arrival.perceived.line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나..",
+        "scenes.common.day_01_company_meeting.nodes.arrival.reality.line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나..",
+        "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": "(새 프로젝트라.. 기대되는걸)",
         "scenes.common.day_01_company_meeting.nodes.arrival_inner.reality.line": "참석자들은 배포 자료와 일정표를 확인한 뒤 각자 맡은 일을 시작할 차례였다.",
         "scenes.common.day_01_company_meeting.nodes.assignments.perceived.line": "서아는 세심했고, 민경은 정확했으며, 유진은 거리낌이 없었다. 첫 회의치고는 각자의 색이 분명한 팀이었다.",
         "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": "참석자들은 바이어 승인, 제품 자료, 캠페인 일정과 제작 파일을 담당별로 나눴다.",
@@ -26181,8 +26182,8 @@
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks.reality.line": "고마워요, 윤서아 씨. 한 부가 부족한 걸 바로 챙겨 줬네요. 저는 이걸로 보고, 추가 출력은 회의 끝나고 해도 됩니다.",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.perceived.line": "(먼저 챙긴 걸 알아주고 이름까지 불렀으니 긴장도 풀리겠지. 여유 있는 상사처럼 보였을 거야.)",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.reality.line": "(사원증에 윤서아라고 적혀 있었지. 자료도 생겼으니 시작하자.)",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다.",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.perceived.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.reality.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts_inner.perceived.line": "(시험은 끝났다는 표정이군. 내 답을 인정하고 한발 물러났네.)",
@@ -27644,9 +27645,9 @@
         "scenes.common.day_01_company_meeting.nodes.after_meeting.reality.line": "회의가 끝나자 세 사람은 각자 맡은 업무로 돌아갔다. 누구도 한도윤에게 사적인 관심을 표현하지 않았다.",
         "scenes.common.day_01_company_meeting.nodes.after_meeting_inner.perceived.line": "(셋 다 눈에 띄긴 하지만, 아직은 같이 일하게 된 사람들일 뿐이지.)",
         "scenes.common.day_01_company_meeting.nodes.after_meeting_inner.reality.line": "(업무에 필요한 것보다 셋의 인상을 조금 오래 떠올렸군. 그래도 아직 뭘 할 생각은 없어.)",
-        "scenes.common.day_01_company_meeting.nodes.arrival.perceived.line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 낯선 팀이 한자리에 모이면 사람의 장점도 평소보다 선명하게 보이는 법이다.",
-        "scenes.common.day_01_company_meeting.nodes.arrival.reality.line": "수요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 신규 프로젝트 킥오프를 위해 회의실에 모였다.",
-        "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": "(새 프로젝트라… 내 능력도 보여 주고, 사람들도 천천히 알아볼 기회겠군.)",
+        "scenes.common.day_01_company_meeting.nodes.arrival.perceived.line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나..",
+        "scenes.common.day_01_company_meeting.nodes.arrival.reality.line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나..",
+        "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": "(새 프로젝트라.. 기대되는걸)",
         "scenes.common.day_01_company_meeting.nodes.arrival_inner.reality.line": "참석자들은 배포 자료와 일정표를 확인한 뒤 각자 맡은 일을 시작할 차례였다.",
         "scenes.common.day_01_company_meeting.nodes.assignments.perceived.line": "서아는 세심했고, 민경은 정확했으며, 유진은 거리낌이 없었다. 첫 회의치고는 각자의 색이 분명한 팀이었다.",
         "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": "참석자들은 바이어 승인, 제품 자료, 캠페인 일정과 제작 파일을 담당별로 나눴다.",
@@ -27668,8 +27669,8 @@
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks.reality.line": "고마워요, 윤서아 씨. 한 부가 부족한 걸 바로 챙겨 줬네요. 저는 이걸로 보고, 추가 출력은 회의 끝나고 해도 됩니다.",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.perceived.line": "(먼저 챙긴 걸 알아주고 이름까지 불렀으니 긴장도 풀리겠지. 여유 있는 상사처럼 보였을 거야.)",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.reality.line": "(사원증에 윤서아라고 적혀 있었지. 자료도 생겼으니 시작하자.)",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다.",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.perceived.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.reality.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts_inner.perceived.line": "(시험은 끝났다는 표정이군. 내 답을 인정하고 한발 물러났네.)",
@@ -28862,9 +28863,9 @@
         "scenes.common.day_01_company_meeting.nodes.after_meeting.reality.line": "회의가 끝나자 세 사람은 각자 맡은 업무로 돌아갔다. 누구도 한도윤에게 사적인 관심을 표현하지 않았다.",
         "scenes.common.day_01_company_meeting.nodes.after_meeting_inner.perceived.line": "(셋 다 눈에 띄긴 하지만, 아직은 같이 일하게 된 사람들일 뿐이지.)",
         "scenes.common.day_01_company_meeting.nodes.after_meeting_inner.reality.line": "(업무에 필요한 것보다 셋의 인상을 조금 오래 떠올렸군. 그래도 아직 뭘 할 생각은 없어.)",
-        "scenes.common.day_01_company_meeting.nodes.arrival.perceived.line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 낯선 팀이 한자리에 모이면 사람의 장점도 평소보다 선명하게 보이는 법이다.",
-        "scenes.common.day_01_company_meeting.nodes.arrival.reality.line": "수요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 신규 프로젝트 킥오프를 위해 회의실에 모였다.",
-        "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": "(새 프로젝트라… 내 능력도 보여 주고, 사람들도 천천히 알아볼 기회겠군.)",
+        "scenes.common.day_01_company_meeting.nodes.arrival.perceived.line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나..",
+        "scenes.common.day_01_company_meeting.nodes.arrival.reality.line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나..",
+        "scenes.common.day_01_company_meeting.nodes.arrival_inner.perceived.line": "(새 프로젝트라.. 기대되는걸)",
         "scenes.common.day_01_company_meeting.nodes.arrival_inner.reality.line": "참석자들은 배포 자료와 일정표를 확인한 뒤 각자 맡은 일을 시작할 차례였다.",
         "scenes.common.day_01_company_meeting.nodes.assignments.perceived.line": "서아는 세심했고, 민경은 정확했으며, 유진은 거리낌이 없었다. 첫 회의치고는 각자의 색이 분명한 팀이었다.",
         "scenes.common.day_01_company_meeting.nodes.assignments.reality.line": "참석자들은 바이어 승인, 제품 자료, 캠페인 일정과 제작 파일을 담당별로 나눴다.",
@@ -28886,8 +28887,8 @@
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks.reality.line": "고마워요, 윤서아 씨. 한 부가 부족한 걸 바로 챙겨 줬네요. 저는 이걸로 보고, 추가 출력은 회의 끝나고 해도 됩니다.",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.perceived.line": "(먼저 챙긴 걸 알아주고 이름까지 불렀으니 긴장도 풀리겠지. 여유 있는 상사처럼 보였을 거야.)",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.reality.line": "(사원증에 윤서아라고 적혀 있었지. 자료도 생겼으니 시작하자.)",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다.",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.perceived.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.reality.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts_inner.perceived.line": "(시험은 끝났다는 표정이군. 내 답을 인정하고 한발 물러났네.)",
@@ -32136,7 +32137,7 @@
         ]
       },
       "visual": {
-        "concept_art": "assets/concept-art/kang-yoo-jin.png",
+        "concept_art": "assets/characters/kang-yoo-jin/office-default/base.png",
         "palette": [
           "cobalt",
           "emerald",
@@ -34420,7 +34421,7 @@
       "title": "강유진 기본 바스트",
       "character": "kang_yoo_jin",
       "default_reality_expression": "actual_procedural",
-      "fallback_asset": "assets/concept-art/kang-yoo-jin.png"
+      "fallback_asset": "assets/characters/kang-yoo-jin/office-default/base.png"
     },
     "character.yoon_seo_a": {
       "schema_version": 1,
@@ -35463,11 +35464,11 @@
           "kind": "dual_narration",
           "perceived": {
             "atmosphere": "procedural",
-            "line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 낯선 팀이 한자리에 모이면 사람의 장점도 평소보다 선명하게 보이는 법이다."
+            "line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나.."
           },
           "reality": {
             "atmosphere": "procedural",
-            "line": "수요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 신규 프로젝트 킥오프를 위해 회의실에 모였다.",
+            "line": "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나..",
             "intent": "work_only"
           },
           "next": "arrival_inner"
@@ -35484,7 +35485,7 @@
           },
           "perceived": {
             "atmosphere": "procedural",
-            "line": "(새 프로젝트라… 내 능력도 보여 주고, 사람들도 천천히 알아볼 기회겠군.)"
+            "line": "(새 프로젝트라.. 기대되는걸)"
           },
           "reality": {
             "atmosphere": "procedural",
@@ -35499,11 +35500,11 @@
           "speaker": "member.jeong_da_eun",
           "perceived": {
             "atmosphere": "procedural",
-            "line": "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다."
+            "line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다."
           },
           "reality": {
             "atmosphere": "procedural",
-            "line": "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다.",
+            "line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
             "intent": "documentation"
           },
           "next": "oh_se_jin_scope"

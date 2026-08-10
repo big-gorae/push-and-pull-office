@@ -1,1 +1,1 @@
-{"main-capability":{"identifier":"main-capability","description":"Only the native project folder picker is exposed to the editor window.","local":true,"windows":["main"],"permissions":["core:default","dialog:allow-open"]}}
+{"main-capability":{"identifier":"main-capability","description":"The editor and its companion authoring-play window can use the local project bridge.","local":true,"windows":["main","authoring-play"],"permissions":["core:default","core:webview:allow-create-webview-window","dialog:allow-open"]}}

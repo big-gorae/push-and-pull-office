@@ -16,6 +16,7 @@ import {
   finishSelfDevelopmentNight,
   selectSelfDevelopmentActivity,
   selectOption,
+  settleSession,
   startTimelineEvent,
   type PlayerSession,
 } from "./playerRuntime";
@@ -56,6 +57,33 @@ function advanceMeaningfulMoment(value: PlayerSession): PlayerSession {
 }
 
 describe("web player campaign runtime", () => {
+  it("keeps a silent screen presentable and advances without a backlog line", () => {
+    const copy = structuredClone(runtime);
+    const scene = copy.scenes["seo_a.email_request"];
+    scene.nodes.silent_view = {
+      id: "silent_view",
+      kind: "silent",
+      perceived: { atmosphere: "dread", line: "" },
+      reality: { atmosphere: "dread", line: "" },
+      stage: { perceived: [], reality: [] },
+      next: "request",
+    };
+    scene.node_order.unshift("silent_view");
+    scene.start_node = "silent_view";
+
+    const session = createSession(copy, "seo_a");
+    session.phase = "scene";
+    session.sceneId = scene.id;
+    session.nodeId = "silent_view";
+    const settled = settleSession(copy, session);
+    expect(currentNode(copy, settled)?.kind).toBe("silent");
+
+    const advanced = advanceSession(copy, settled);
+    expect(advanced.nodeId).toBe("request");
+    expect(advanced.backlog).toEqual([]);
+    expect(advanced.readNodes).toContain(`${scene.id}:silent_view`);
+  });
+
   it("starts at day one and advances only to meaningful timeline moments", () => {
     let session = createCampaignSession(runtime, "base");
     const initialHidden = structuredClone(session.state.hidden);

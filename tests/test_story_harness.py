@@ -1879,6 +1879,78 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual("background.office_corridor", report["visual_id"])
         self.assertEqual("background.office_corridor", empty["visual_id"])
 
+    def test_scene_default_background_overrides_automatic_matching(self):
+        scene = copy.deepcopy(self.project.scenes["seo_a.email_request"])
+        scene["default_background"] = {
+            "visual_id": "background.empty_office",
+            "variant_id": "night",
+        }
+        background = resolve_scene_background(
+            self.project.resolve_visuals(), scene, "request", "perceived"
+        )
+        self.assertEqual("background.empty_office", background["visual_id"])
+        self.assertEqual("night", background["variant_id"])
+        self.assertEqual(["scene-default"], background["matched"])
+
+    def test_scene_default_background_rejects_unknown_variant(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        original = copy.deepcopy(scene.get("default_background"))
+        scene["default_background"] = {
+            "visual_id": "background.empty_office",
+            "variant_id": "missing",
+        }
+        try:
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("unknown background variant" in message for message in messages))
+        finally:
+            if original is None:
+                scene.pop("default_background", None)
+            else:
+                scene["default_background"] = original
+
+    def test_silent_node_is_zero_character_presentable_flow(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        original_start = scene["start_node"]
+        silent = {
+            "id": "silent_view_test",
+            "kind": "silent",
+            "perceived": {"atmosphere": "dread", "line": ""},
+            "reality": {"atmosphere": "dread", "line": ""},
+            "stage": {"perceived": [], "reality": []},
+            "next": original_start,
+        }
+        scene["nodes"].insert(0, silent)
+        scene["start_node"] = silent["id"]
+        try:
+            self.assertEqual([], self.project.validate())
+            stage = resolve_scene_stage(
+                self.project.resolve_visuals(), scene, silent["id"], "perceived"
+            )
+            self.assertEqual([], stage["characters"])
+            self.assertIsNotNone(stage["background"])
+        finally:
+            scene["start_node"] = original_start
+            scene["nodes"] = [node for node in scene["nodes"] if node["id"] != silent["id"]]
+
+    def test_silent_node_rejects_nonempty_dialogue(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        original_start = scene["start_node"]
+        silent = {
+            "id": "silent_view_invalid",
+            "kind": "silent",
+            "perceived": {"atmosphere": "dread", "line": "not silent"},
+            "reality": {"atmosphere": "dread", "line": ""},
+            "next": original_start,
+        }
+        scene["nodes"].insert(0, silent)
+        scene["start_node"] = silent["id"]
+        try:
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("silent perceived.line must be an explicit empty string" in message for message in messages))
+        finally:
+            scene["start_node"] = original_start
+            scene["nodes"] = [node for node in scene["nodes"] if node["id"] != silent["id"]]
+
     def test_scene_stage_composes_background_and_character_objects(self):
         scene = self.project.scenes["seo_a.email_request"]
         stage = resolve_scene_stage(self.project.resolve_visuals(), scene, "request", "reality")
@@ -1892,6 +1964,87 @@ class StoryHarnessTests(unittest.TestCase):
         reality_inner = resolve_scene_stage(self.project.resolve_visuals(), scene, "request_inner", "reality")
         self.assertEqual(["han_do_yoon"], [item["character"] for item in perceived_inner["characters"]])
         self.assertEqual(["yoon_seo_a"], [item["character"] for item in reality_inner["characters"]])
+
+    def test_manual_stage_supports_off_and_three_non_speaker_artworks(self):
+        scene = self.project.scenes["common.day_01_company_meeting"]
+        node = scene["nodes"][0]
+        original = copy.deepcopy(node.get("stage"))
+        node["stage"] = {
+            "perceived": [
+                {"position": "left", "character": "yoon_seo_a", "visual_id": "character.yoon_seo_a", "artwork": "default"},
+                {"position": "center", "character": "cha_min_kyung", "visual_id": "character.cha_min_kyung", "artwork": "default"},
+                {"position": "right", "character": "kang_yoo_jin", "visual_id": "character.kang_yoo_jin", "artwork": "default"},
+            ],
+            "reality": [],
+        }
+        try:
+            self.assertEqual([], self.project.validate())
+            perceived = resolve_scene_stage(self.project.resolve_visuals(), scene, node["id"], "perceived")
+            self.assertEqual(
+                [("left", "yoon_seo_a"), ("center", "cha_min_kyung"), ("right", "kang_yoo_jin")],
+                [(item["position"], item["character"]) for item in perceived["characters"]],
+            )
+            self.assertEqual([], resolve_scene_stage(self.project.resolve_visuals(), scene, node["id"], "reality")["characters"])
+        finally:
+            if original is None:
+                node.pop("stage", None)
+            else:
+                node["stage"] = original
+
+    def test_manual_stage_rejects_duplicate_positions_and_out_of_cast_characters(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        node = scene["nodes"][0]
+        original = copy.deepcopy(node.get("stage"))
+        node["stage"] = {"perceived": [
+            {"position": "left", "character": "yoon_seo_a", "visual_id": "character.yoon_seo_a", "artwork": "default"},
+            {"position": "left", "character": "cha_min_kyung", "visual_id": "character.cha_min_kyung", "artwork": "default"},
+        ]}
+        try:
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("duplicate stage position" in message for message in messages))
+            self.assertTrue(any("stage character is not in scene cast" in message for message in messages))
+        finally:
+            if original is None:
+                node.pop("stage", None)
+            else:
+                node["stage"] = original
+
+    def test_character_visual_accepts_multiple_registered_artworks(self):
+        source = self.project.visuals["character.yoon_seo_a"]
+        original_default = source.get("default_artwork")
+        original_artworks = copy.deepcopy(source.get("artworks"))
+        scene = self.project.scenes["seo_a.email_request"]
+        node = scene["nodes"][0]
+        original_stage = copy.deepcopy(node.get("stage"))
+        source["default_artwork"] = "office_default"
+        source["artworks"] = {
+            "office_default": {"asset": source["fallback_asset"], "label": "오피스 기본"},
+            "cardigan_smile": {"asset": source["fallback_asset"], "label": "가디건 미소"},
+        }
+        node["stage"] = {"perceived": [{
+            "position": "center",
+            "character": "yoon_seo_a",
+            "visual_id": "character.yoon_seo_a",
+            "artwork": "cardigan_smile",
+        }]}
+        try:
+            self.assertEqual([], self.project.validate())
+            stage = resolve_scene_stage(self.project.resolve_visuals(), scene, node["id"], "perceived")
+            self.assertEqual("cardigan_smile", stage["characters"][0]["artwork"])
+            self.assertEqual(source["fallback_asset"], stage["characters"][0]["asset"])
+        finally:
+            if original_default is None:
+                source.pop("default_artwork", None)
+            else:
+                source["default_artwork"] = original_default
+            if original_artworks is None:
+                source.pop("artworks", None)
+            else:
+                source["artworks"] = original_artworks
+            if original_stage is None:
+                node.pop("stage", None)
+            else:
+                node["stage"] = original_stage
 
     def test_timeline_scheduler_does_not_expose_retired_collapse_events(self):
         scheduler = TimelineScheduler(self.project, "main")

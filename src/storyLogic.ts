@@ -515,6 +515,16 @@ export function makeNode(kind: NodeKind, id: string, heroineId: string): StoryNo
       next: "",
     };
   }
+  if (kind === "silent") {
+    return {
+      id,
+      kind,
+      perceived: { atmosphere: "warm_romance", line: "" },
+      reality: { atmosphere: "cold_office", line: "" },
+      stage: { perceived: [], reality: [] },
+      next: "",
+    };
+  }
   if (kind === "choice") {
     return {
       id,

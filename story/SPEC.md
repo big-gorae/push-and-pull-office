@@ -191,6 +191,7 @@ nodes:
 
 - `dual_dialogue`: 인지 화면과 실제 화면을 동시에 기록하는 대사
 - `dual_narration`: 화자가 없는 이중 서술
+- `silent`: 대사창 없이 배경과 배치 원화만 보여 주는 무대사 화면
 - `choice`: 조건과 효과를 가진 선택지
 - `state_gate`: 수치에 따라 노드 흐름을 나누는 조건문
 - `effect`: 선택 없이 상태를 변경하는 사건
@@ -241,6 +242,55 @@ nodes:
 - 속마음 모드에서는 `reality`를 표시하고, 스토리 모드에서는 `perceived`를 표시한다.
 - 표정 ID는 화자의 인물 파일에 등록되어야 한다.
 - `dual_narration`은 화자 이름표 없이 문장만 표시한다. 플레이어 UI에 `나레이션`이라는 가상 화자명을 만들지 않는다.
+
+### 대사별 화면 원화
+
+모든 노드는 선택적으로 `stage`를 가질 수 있다. `stage`는 대사의 화자와 별개인 화면 배치이며 `choice`에도 사용할 수 있다.
+
+```yaml
+- id: response_choice
+  kind: choice
+  stimulus: "두 사람이 답을 기다린다."
+  stage:
+    perceived:
+      - position: left
+        character: yoon_seo_a
+        visual_id: character.yoon_seo_a
+        artwork: office_default
+      - position: right
+        character: cha_min_kyung
+        visual_id: character.cha_min_kyung
+        artwork: office_default
+    reality: []
+  options: []
+```
+
+- `stage.<layer>` 키가 없으면 호환 기본값으로 해당 레이어의 화자 원화를 가운데 자동 표시한다.
+- `stage.<layer>: []`는 해당 레이어 원화 전체 OFF다.
+- 직접 배치는 `left`, `center`, `right`에 최대 3명이며 위치와 인물은 각각 중복될 수 없다.
+- 비화자도 표시할 수 있지만 `character`는 장면의 illustrated `cast`에 포함되어야 한다.
+- `visual_id`는 해당 캐릭터의 구체 visual을, `artwork`는 그 visual의 안정적인 artwork ID를 참조한다.
+- 장면 YAML에는 이미지 파일 경로를 넣지 않는다. 실제 경로는 `story/visuals/characters/*.yaml`의 `artworks`에서 해석한다.
+- `perceived`와 `reality`의 배치는 서로 독립적이다.
+
+### 무대사 화면
+
+배경이나 원화를 문구 없이 감상시키려면 `silent` 노드를 사용한다.
+
+```yaml
+- id: empty_office_view
+  kind: silent
+  perceived: {atmosphere: dread, line: ""}
+  reality: {atmosphere: dread, line: ""}
+  stage: {perceived: [], reality: []}
+  next: closing
+```
+
+- 두 레이어와 `line: ""`를 명시해 의도적인 무대사임을 빈 초안과 구분한다.
+- 화자·이름표·대사창·선택지는 표시하지 않는다.
+- 일반 플레이에서는 HUD와 밀당 게이지도 숨기고 화면 클릭으로 다음 노드로 이동한다.
+- `stage`를 비우면 배경만, 직접 배치하면 배경과 지정 원화를 함께 보여 준다.
+- 장면 흐름·세이브·디버그 이전 화면 이동에서는 일반 표시 노드처럼 유지한다.
 
 ### `romance_insert`
 
@@ -341,7 +391,7 @@ self_development:
   converges_at: after_choice
 ```
 
-`manifest.self_development.expressions`가 매력도·능력치·피로·최근 활동 요구를 소유하며 `score_bonus`는 항상 `0`이다. `requires.last_activity`는 알려진 활동 ID 하나를 가리키며 `progress.self_development.last_activity`와 정확히 일치할 때만 표현을 연다. 해금 선택지는 같은 선택 노드의 조건 없는 기준 선택지를 `equivalent_to`로 가리키고, 기준과 같은 `push_pull` 및 `effects`를 사용하며, 짧은 고유 대사 뒤 `converges_at`으로 합류해야 한다. 두 분기의 `next`부터 합류점 직전까지는 `dual_dialogue`와 `dual_narration`만 허용하며 `effect`, `state_gate`, `choice`, `exit`를 둘 수 없다. 즉 스탯 상호작용은 표현과 반응을 늘리지만 밀당 점수와 숨은 상태를 보정하지 않는다.
+`manifest.self_development.expressions`가 매력도·능력치·피로·최근 활동 요구를 소유하며 `score_bonus`는 항상 `0`이다. `requires.last_activity`는 알려진 활동 ID 하나를 가리키며 `progress.self_development.last_activity`와 정확히 일치할 때만 표현을 연다. 해금 선택지는 같은 선택 노드의 조건 없는 기준 선택지를 `equivalent_to`로 가리키고, 기준과 같은 `push_pull` 및 `effects`를 사용하며, 짧은 고유 대사 뒤 `converges_at`으로 합류해야 한다. 두 분기의 `next`부터 합류점 직전까지는 `dual_dialogue`, `dual_narration`, `silent`만 허용하며 `effect`, `state_gate`, `choice`, `exit`를 둘 수 없다. 즉 스탯 상호작용은 표현과 반응을 늘리지만 밀당 점수와 숨은 상태를 보정하지 않는다.
 
 대사 variant는 `self_development: {expression: <id>}`만 선언할 수 있다. 기본 variant는 항상 하나 남기며 자기계발 조건을 붙이지 않는다. 일반 장면과 엔딩은 자기계발 상태를 직접 읽지 않는다.
 
@@ -543,6 +593,19 @@ variants:
 ```
 
 장면의 `location`, `time`, 현재 노드의 `atmosphere`, 표시 모드와 일치하는 후보 중 우선순위 점수가 가장 높은 변형을 사용한다. validator는 모든 장면의 모든 노드가 두 모드에서 배경을 얻는지 검사한다.
+
+한 씬에서 배경을 자주 바꾸지 않는 경우에는 씬 기본 배경을 안정 ID로 고정할 수 있다.
+
+```yaml
+default_background:
+  visual_id: background.office_open
+  variant_id: late_afternoon
+```
+
+- `default_background`이 없으면 기존 장소·시간·분위기 자동 판정을 사용한다.
+- 지정하면 씬 안의 모든 노드와 두 보기 모드에서 같은 배경 variant를 기본으로 사용한다.
+- scene에는 `visual_id`와 `variant_id`만 저장하며 실제 asset 경로는 background visual이 소유한다.
+- 존재하지 않는 visual, 추상 visual, 캐릭터 visual 또는 존재하지 않는 variant는 검증 오류다.
 
 ## 15. 런타임 빌드
 
