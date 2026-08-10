@@ -170,6 +170,50 @@ test("game flow hides authoring UI and debug restores controlled inspection", as
   await expect(page.getByRole("button", { name: "← 이전 대화" }).first()).toBeEnabled();
 });
 
+test("officetel dialogue keeps two characters left and right and tones down the listener", async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.goto("/");
+  await enterFirstScene(page);
+
+  let reached = false;
+  for (let step = 0; step < 240; step += 1) {
+    const title = await page.locator(".vn-day small").textContent().catch(() => null);
+    if (title?.trim() === "엘리베이터 문이 열리자" && await page.locator(".vn-character").count() === 2) {
+      reached = true;
+      break;
+    }
+    const pending = page.locator(".vn-flow-dialogue button").first();
+    if (await pending.count()) await pending.click();
+    else await page.keyboard.press("Enter");
+    await page.waitForTimeout(15);
+  }
+  expect(reached).toBe(true);
+
+  await expect(page.locator(".vn-stage-bg")).toHaveAttribute("src", /elevator-lobby-evening/);
+  await expect(page.locator(".vn-character.left img")).toHaveAttribute("alt", "한도윤");
+  await expect(page.locator(".vn-character.right img")).toHaveAttribute("alt", "윤서아");
+  await expect(page.locator(".vn-character.speaking")).toHaveCount(1);
+  await expect(page.locator(".vn-character.listening")).toHaveCount(1);
+  const filters = await page.locator(".vn-character").evaluateAll((figures) => figures.map((figure) => ({
+    speaking: figure.classList.contains("speaking"),
+    filter: getComputedStyle(figure).filter,
+  })));
+  expect(filters.find((entry) => !entry.speaking)?.filter).toContain("grayscale(0.3)");
+  expect(filters.find((entry) => !entry.speaking)?.filter).not.toBe(filters.find((entry) => entry.speaking)?.filter);
+
+  let doYoonSpeaking = false;
+  for (let step = 0; step < 12; step += 1) {
+    if (await page.locator(".vn-character.left.speaking").count()) {
+      doYoonSpeaking = true;
+      break;
+    }
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(15);
+  }
+  expect(doYoonSpeaking).toBe(true);
+  await expect(page.locator(".vn-character.right.listening")).toHaveCount(1);
+});
+
 test("Tauri authoring edits composed sources, creates a translation, and exposes guarded undo", async ({ page }) => {
   test.setTimeout(60_000);
   await page.addInitScript(({ settingsKey }) => {

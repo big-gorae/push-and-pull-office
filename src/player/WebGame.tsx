@@ -56,6 +56,7 @@ import {
   modeUnlocked,
   showDialogueChrome,
   showSceneHud,
+  stageCharacterFocusClass,
   visibleStageCharacters,
   visibleTimelineLogs,
 } from "./playerUiPolicy";
@@ -106,7 +107,7 @@ const SELF_DEVELOPMENT_STATS: readonly SelfDevelopmentStat[] = [
   "intelligence",
 ];
 const assetModules = import.meta.glob([
-  "../../assets/backgrounds/*",
+  "../../assets/backgrounds/**/*",
   "../../assets/concept-art/*",
   "../../assets/concept-art-archive/*",
   "../../assets/gallery/*",
@@ -1086,7 +1087,7 @@ function Stage({ session, node, settings, i18n }: { session: PlayerSession; node
       "--vn-character-scale": settings.characterScale / 100,
     } as CSSProperties}>
       {visibleCharacters.map((character, index) => <figure
-        className={`vn-character ${character.position} ${character.speaker ? "speaking" : ""}`}
+        className={`vn-character ${character.position} ${stageCharacterFocusClass(character)}`}
         key={`${character.position}:${character.character}:${character.artwork || character.expression || "default"}`}
         style={{ "--breath-delay": `${index * -1.1}s` } as CSSProperties}
       >

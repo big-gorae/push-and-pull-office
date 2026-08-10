@@ -10,7 +10,7 @@ priority: 100
 availability: automatic
 completion: return_to_timeline
 participants: [han_do_yoon, cha_min_kyung]
-location: apartment_corridor
+location: officetel_unit_corridor
 scene: common.day_03_officetel_min_kyung_move_in
 requires:
   events: [anchor.day_03_business_trip_or_cafe]

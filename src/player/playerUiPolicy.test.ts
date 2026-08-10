@@ -7,6 +7,7 @@ import {
   choiceDebugEffect,
   dayChanged,
   modeUnlocked,
+  stageCharacterFocusClass,
   showDialogueChrome,
   showSceneHud,
   visibleStageCharacters,
@@ -37,6 +38,8 @@ describe("player UI policy", () => {
       character("han_do_yoon", true),
     ]);
     expect(visible.map((entry) => entry.character)).toEqual(["yoon_seo_a", "cha_min_kyung", "han_do_yoon"]);
+    expect(stageCharacterFocusClass(visible[0])).toBe("speaking");
+    expect(stageCharacterFocusClass(visible[1])).toBe("listening");
   });
 
   it("shows a silent beat as artwork only", () => {

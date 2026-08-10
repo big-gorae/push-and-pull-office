@@ -1,20 +1,20 @@
 {
   "schema_version": 2,
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "85ea9ed5b70c7de3f5b79c254fd18eb555dd701d48d2765f20be4ed63ee90a6b",
+  "source_sha256": "6e3d4cd43c014564990612a0f75d1bfd546ac2515e20d7392d737c6f5879388e",
   "profile": "development",
   "default_locale": "ko",
   "supported_locales": [
     "ko",
     "en"
   ],
-  "total_entries": 1266,
+  "total_entries": 1268,
   "coverage": {
     "ko": {
-      "direct": 1266,
-      "resolved": 1266,
-      "translated": 1266,
-      "total": 1266,
+      "direct": 1268,
+      "resolved": 1268,
+      "translated": 1268,
+      "total": 1268,
       "ratio": 1.0,
       "fallback_used": [],
       "missing": [],
@@ -59,8 +59,8 @@
           "total": 2
         },
         "visual": {
-          "direct": 10,
-          "total": 10
+          "direct": 12,
+          "total": 12
         },
         "world": {
           "direct": 7,
@@ -70,10 +70,10 @@
     },
     "en": {
       "direct": 260,
-      "resolved": 1266,
+      "resolved": 1268,
       "translated": 260,
-      "total": 1266,
-      "ratio": 0.2054,
+      "total": 1268,
+      "ratio": 0.205,
       "fallback_used": [
         "campaign.main.acts.collisions.purpose",
         "campaign.main.acts.crisis.purpose",
@@ -1074,6 +1074,8 @@
         "scenes.seo_a.relief_smile.title",
         "threads.min_kyung.title",
         "threads.seo_a.title",
+        "visual.background.officetel_elevator_lobby.title",
+        "visual.background.officetel_unit_corridor.title",
         "world.members.member.jeong_da_eun.display_name",
         "world.members.member.lee_hyeon_woo.display_name",
         "world.members.member.lee_su_hyeon.display_name",
@@ -2082,6 +2084,8 @@
         "scenes.seo_a.relief_smile.title",
         "threads.min_kyung.title",
         "threads.seo_a.title",
+        "visual.background.officetel_elevator_lobby.title",
+        "visual.background.officetel_unit_corridor.title",
         "world.members.member.jeong_da_eun.display_name",
         "world.members.member.lee_hyeon_woo.display_name",
         "world.members.member.lee_su_hyeon.display_name",
@@ -2132,7 +2136,7 @@
         },
         "visual": {
           "direct": 10,
-          "total": 10
+          "total": 12
         },
         "world": {
           "direct": 0,

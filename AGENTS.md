@@ -109,7 +109,7 @@ Keep the distinction explicit in status messages: **Play Build / 플레이 버�
 ## Player experience invariants
 
 - The new-game screen contains only the three mode cards. `속마음 모드` and `어나더 스토리` both unlock after the first ending; keep their approved descriptions in `story/ui.yaml`.
-- Render only the character speaking in the active layer. Keep character X/Y/scale adjustable in Debug Mode, and keep previous-dialogue navigation available there.
+- In automatic staging, center a one-character illustrated conversation and keep both characters visible at left/right in a two-character conversation. Render the current speaker at full color and subtly darken/desaturate the visible non-speaker. For scenes with three or more illustrated cast members, keep the active-layer speaker-only fallback unless the node declares manual stage cues. Keep character X/Y/scale adjustable in Debug Mode, and keep previous-dialogue navigation available there.
 - Do not restore the removed interpretation/thought sub-panels, a `나레이션` nameplate, a timeline/calendar selection screen, visible ACT labels, or copy/effects that promote the campaign's day count.
 - Between ordinary moments, present event summaries and selections as dialogue-style in-game beats. Use the cinematic day-change overlay only when the day number changes.
 - Every choice node has a neutral `stimulus` summary. Player-facing prompts and labels describe concrete words, actions, or nuanced interpretations; they never reveal `push`, `pull`, `밀기`, `당기기`, or `밀당`. Direction and numeric effects are Debug Mode only.

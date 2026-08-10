@@ -421,11 +421,12 @@ button { color: inherit; }
 .vn-stage-bg { object-fit: cover; filter: saturate(.93) brightness(1.04); transform: scale(1.01); }
 .vn-stage-light { background: linear-gradient(180deg, rgba(255,255,255,.42), transparent 24%, transparent 58%, rgba(255,238,246,.55)); }
 .vn-cast { position: absolute; top: auto; right: auto; width: 100vw; height: 88vh; transform: scale(var(--vn-character-scale, 1)); transform-origin: left bottom; }
-.vn-character { position: absolute; bottom: 0; width: min(var(--vn-character-width, 34vw), var(--vn-character-max, 520px)); height: 100%; margin: 0; overflow: hidden; border-radius: 45% 45% 12% 12%; filter: drop-shadow(0 16px 26px rgba(102,72,96,.2)) saturate(.82) brightness(.95); transform-origin: bottom center; }
+.vn-character { position: absolute; bottom: 0; width: min(var(--vn-character-width, 34vw), var(--vn-character-max, 520px)); height: 100%; margin: 0; overflow: hidden; border-radius: 45% 45% 12% 12%; filter: drop-shadow(0 16px 26px rgba(102,72,96,.2)) saturate(.82) brightness(.95); transform-origin: bottom center; transition: filter 180ms ease, opacity 180ms ease; }
 .vn-character.left, .vn-character.far_left { left: 2vw; }
 .vn-character.center { left: 50%; transform: translateX(-50%); }
 .vn-character.right, .vn-character.far_right { right: 2vw; }
 .vn-character img { width: 100%; height: 100%; object-fit: cover; object-position: center 16%; mask-image: linear-gradient(#000 82%, transparent 100%); animation: vn-breathe 5.8s ease-in-out var(--breath-delay) infinite; }
+.vn-character.listening { filter: drop-shadow(0 14px 24px rgba(72,62,72,.18)) grayscale(.3) saturate(.58) brightness(.82); opacity: .92; z-index: 1; }
 .vn-character.speaking { filter: drop-shadow(0 18px 30px rgba(113,74,102,.28)) saturate(1) brightness(1.04); z-index: 2; }
 @keyframes vn-breathe { 0%,100% { transform: translateY(0) scaleY(1); } 50% { transform: translateY(5px) scaleY(1.006); } }
 .vn-choice-vignette { position: absolute; inset: 0; background: rgba(255,239,247,.24); backdrop-filter: blur(1.5px); }

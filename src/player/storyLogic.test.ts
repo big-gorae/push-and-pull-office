@@ -123,7 +123,7 @@ describe("contextual dialogue", () => {
     expect(effectiveSpeaker({ ...node, speakers: { ...node.speakers, reality: null } }, "reality")).toBeUndefined();
   });
 
-  it("keeps the legacy active-speaker default until a node has manual stage cues", () => {
+  it("centers one automatic character and places two-person conversations left and right", () => {
     const scene = runtime.scenes["common.day_01_company_meeting"];
     const resolver = new VisualResolver(runtime);
     const spoken = resolver.resolveStage(scene, "preview", "perceived", {
@@ -135,7 +135,22 @@ describe("contextual dialogue", () => {
       next: "done",
     });
     expect(spoken.characters.map((character) => character.character)).toEqual(["yoon_seo_a"]);
+    expect(spoken.characters[0]?.position).toBe("center");
     expect(spoken.characters[0]?.speaker).toBe(true);
+
+    const twoPersonScene = runtime.scenes["common.day_01_officetel_seo_a_reveal"];
+    const conversation = resolver.resolveStage(twoPersonScene, "preview", "perceived", {
+      id: "preview",
+      kind: "dual_dialogue",
+      speaker: "yoon_seo_a",
+      perceived: { line: "안녕하세요", atmosphere: "procedural", expression: "subjective_shy" },
+      reality: { line: "안녕하세요", atmosphere: "procedural", intent: "courtesy" },
+      next: "done",
+    });
+    expect(conversation.characters.map((character) => [character.character, character.position, character.speaker])).toEqual([
+      ["han_do_yoon", "left", false],
+      ["yoon_seo_a", "right", true],
+    ]);
 
     const narrated = resolver.resolveStage(scene, "preview", "perceived", {
       id: "preview",

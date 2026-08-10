@@ -10,7 +10,7 @@ priority: 90
 availability: automatic
 completion: return_to_timeline
 participants: [han_do_yoon, yoon_seo_a]
-location: apartment_corridor
+location: officetel_elevator_lobby
 scene: common.day_01_officetel_seo_a_reveal
 requires:
   events: [anchor.day_01_parent_pressure]

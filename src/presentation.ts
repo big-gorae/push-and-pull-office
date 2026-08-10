@@ -251,7 +251,11 @@ export class VisualResolver {
     const speaker = effectiveSpeaker(node, mode);
     const hasManualStage = Boolean(node?.stage && Object.prototype.hasOwnProperty.call(node.stage, mode));
     const manualCues = hasManualStage ? node?.stage?.[mode] || [] : undefined;
-    const visibleCast = speaker ? scene.cast.filter((characterId) => characterId === speaker) : [];
+    const visibleCast = speaker
+      ? scene.cast.length <= 2
+        ? scene.cast
+        : scene.cast.filter((characterId) => characterId === speaker)
+      : [];
     const positions = stagePositions(visibleCast.length);
     const characters = manualCues
       ? manualCues.flatMap((cue) => {

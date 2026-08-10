@@ -11,6 +11,10 @@ export function visibleStageCharacters(characters: ResolvedCharacterVisual[]): R
   return characters;
 }
 
+export function stageCharacterFocusClass(character: ResolvedCharacterVisual): "speaking" | "listening" {
+  return character.speaker ? "speaking" : "listening";
+}
+
 export function showSceneHud(kind: NodeKind): boolean {
   return kind !== "silent";
 }

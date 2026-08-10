@@ -10,7 +10,7 @@
     ]
   },
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "85ea9ed5b70c7de3f5b79c254fd18eb555dd701d48d2765f20be4ed63ee90a6b",
+  "source_sha256": "6e3d4cd43c014564990612a0f75d1bfd546ac2515e20d7392d737c6f5879388e",
   "enums": {
     "perceived_state": [
       "push",
@@ -23956,6 +23956,36 @@
         "multiline": false,
         "maxLength": 100
       },
+      "visual.background.officetel_elevator_lobby.title": {
+        "key": "visual.background.officetel_elevator_lobby.title",
+        "source": "오피스텔 엘리베이터 로비",
+        "domain": "visual",
+        "sourceDocument": {
+          "kind": "visual",
+          "id": "background.officetel_elevator_lobby",
+          "path": "story/visuals/backgrounds/officetel_elevator_lobby.yaml",
+          "fieldPath": "title"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "visual.background.officetel_unit_corridor.title": {
+        "key": "visual.background.officetel_unit_corridor.title",
+        "source": "오피스텔 현관 복도",
+        "domain": "visual",
+        "sourceDocument": {
+          "kind": "visual",
+          "id": "background.officetel_unit_corridor",
+          "path": "story/visuals/backgrounds/officetel_unit_corridor.yaml",
+          "fieldPath": "title"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
       "visual.character.cha_min_kyung.title": {
         "key": "visual.character.cha_min_kyung.title",
         "source": "차민경 기본 바스트",
@@ -25511,6 +25541,8 @@
       "visual.background.office_corridor.title": "사무실 복도",
       "visual.background.office_open.title": "오픈 오피스",
       "visual.background.office_pantry.title": "사내 휴게실",
+      "visual.background.officetel_elevator_lobby.title": "오피스텔 엘리베이터 로비",
+      "visual.background.officetel_unit_corridor.title": "오피스텔 현관 복도",
       "visual.character.cha_min_kyung.title": "차민경 기본 바스트",
       "visual.character.han_do_yoon.title": "한도윤 기본 바스트",
       "visual.character.im_soo_yeon.title": "임수연 기본 바스트",
@@ -26780,6 +26812,8 @@
         "visual.background.office_corridor.title": "사무실 복도",
         "visual.background.office_open.title": "오픈 오피스",
         "visual.background.office_pantry.title": "사내 휴게실",
+        "visual.background.officetel_elevator_lobby.title": "오피스텔 엘리베이터 로비",
+        "visual.background.officetel_unit_corridor.title": "오피스텔 현관 복도",
         "visual.character.cha_min_kyung.title": "차민경 기본 바스트",
         "visual.character.han_do_yoon.title": "한도윤 기본 바스트",
         "visual.character.im_soo_yeon.title": "임수연 기본 바스트",
@@ -28048,6 +28082,8 @@
         "visual.background.office_corridor.title": "Office Corridor",
         "visual.background.office_open.title": "Open-plan Office",
         "visual.background.office_pantry.title": "Office Pantry",
+        "visual.background.officetel_elevator_lobby.title": "오피스텔 엘리베이터 로비",
+        "visual.background.officetel_unit_corridor.title": "오피스텔 현관 복도",
         "visual.character.cha_min_kyung.title": "Cha Min-kyung — Default Bust",
         "visual.character.han_do_yoon.title": "Han Do-yoon — Default Bust",
         "visual.character.im_soo_yeon.title": "Im Soo-yeon — Default Bust",
@@ -29585,6 +29621,8 @@
         "visual.background.office_corridor.title": "사무실 복도",
         "visual.background.office_open.title": "오픈 오피스",
         "visual.background.office_pantry.title": "사내 휴게실",
+        "visual.background.officetel_elevator_lobby.title": "오피스텔 엘리베이터 로비",
+        "visual.background.officetel_unit_corridor.title": "오피스텔 현관 복도",
         "visual.character.cha_min_kyung.title": "차민경 기본 바스트",
         "visual.character.han_do_yoon.title": "한도윤 기본 바스트",
         "visual.character.im_soo_yeon.title": "임수연 기본 바스트",
@@ -30853,6 +30891,8 @@
         "visual.background.office_corridor.title": "Office Corridor",
         "visual.background.office_open.title": "Open-plan Office",
         "visual.background.office_pantry.title": "Office Pantry",
+        "visual.background.officetel_elevator_lobby.title": "오피스텔 엘리베이터 로비",
+        "visual.background.officetel_unit_corridor.title": "오피스텔 현관 복도",
         "visual.character.cha_min_kyung.title": "Cha Min-kyung — Default Bust",
         "visual.character.han_do_yoon.title": "Han Do-yoon — Default Bust",
         "visual.character.im_soo_yeon.title": "Im Soo-yeon — Default Bust",
@@ -30876,10 +30916,10 @@
     },
     "coverage": {
       "ko": {
-        "direct": 1266,
-        "resolved": 1266,
-        "translated": 1266,
-        "total": 1266,
+        "direct": 1268,
+        "resolved": 1268,
+        "translated": 1268,
+        "total": 1268,
         "ratio": 1.0,
         "fallback_used": [],
         "missing": [],
@@ -30924,8 +30964,8 @@
             "total": 2
           },
           "visual": {
-            "direct": 10,
-            "total": 10
+            "direct": 12,
+            "total": 12
           },
           "world": {
             "direct": 7,
@@ -30935,10 +30975,10 @@
       },
       "en": {
         "direct": 260,
-        "resolved": 1266,
+        "resolved": 1268,
         "translated": 260,
-        "total": 1266,
-        "ratio": 0.2054,
+        "total": 1268,
+        "ratio": 0.205,
         "fallback_used": [
           "campaign.main.acts.collisions.purpose",
           "campaign.main.acts.crisis.purpose",
@@ -31939,6 +31979,8 @@
           "scenes.seo_a.relief_smile.title",
           "threads.min_kyung.title",
           "threads.seo_a.title",
+          "visual.background.officetel_elevator_lobby.title",
+          "visual.background.officetel_unit_corridor.title",
           "world.members.member.jeong_da_eun.display_name",
           "world.members.member.lee_hyeon_woo.display_name",
           "world.members.member.lee_su_hyeon.display_name",
@@ -32947,6 +32989,8 @@
           "scenes.seo_a.relief_smile.title",
           "threads.min_kyung.title",
           "threads.seo_a.title",
+          "visual.background.officetel_elevator_lobby.title",
+          "visual.background.officetel_unit_corridor.title",
           "world.members.member.jeong_da_eun.display_name",
           "world.members.member.lee_hyeon_woo.display_name",
           "world.members.member.lee_su_hyeon.display_name",
@@ -32997,7 +33041,7 @@
           },
           "visual": {
             "direct": 10,
-            "total": 10
+            "total": 12
           },
           "world": {
             "direct": 0,
@@ -33773,7 +33817,7 @@
         "han_do_yoon",
         "yoon_seo_a"
       ],
-      "location": "apartment_corridor",
+      "location": "officetel_elevator_lobby",
       "scene": "common.day_01_officetel_seo_a_reveal",
       "requires": {
         "events": [
@@ -34025,7 +34069,7 @@
         "han_do_yoon",
         "cha_min_kyung"
       ],
-      "location": "apartment_corridor",
+      "location": "officetel_unit_corridor",
       "scene": "common.day_03_officetel_min_kyung_move_in",
       "requires": {
         "events": [
@@ -35659,6 +35703,81 @@
             ]
           },
           "priority": 45
+        }
+      }
+    },
+    "background.officetel_elevator_lobby": {
+      "schema_version": 1,
+      "id": "background.officetel_elevator_lobby",
+      "kind": "background",
+      "abstract": false,
+      "render_strategy": "background",
+      "defaults": {
+        "fit": "cover",
+        "focal_point": "center",
+        "transition": "crossfade",
+        "dialogue_safe_area": "bottom_30_percent"
+      },
+      "tags": [
+        "officetel",
+        "residential",
+        "elevator",
+        "evening"
+      ],
+      "extends": "archetype.background",
+      "title_key": "visual.background.officetel_elevator_lobby.title",
+      "title": "오피스텔 엘리베이터 로비",
+      "variants": {
+        "evening": {
+          "asset": "assets/backgrounds/officetel/elevator-lobby-evening.png",
+          "match": {
+            "locations": [
+              "officetel_elevator_lobby"
+            ],
+            "times": [
+              "evening",
+              "night"
+            ]
+          },
+          "priority": 120
+        }
+      }
+    },
+    "background.officetel_unit_corridor": {
+      "schema_version": 1,
+      "id": "background.officetel_unit_corridor",
+      "kind": "background",
+      "abstract": false,
+      "render_strategy": "background",
+      "defaults": {
+        "fit": "cover",
+        "focal_point": "center",
+        "transition": "crossfade",
+        "dialogue_safe_area": "bottom_30_percent"
+      },
+      "tags": [
+        "officetel",
+        "residential",
+        "corridor",
+        "move_in",
+        "evening"
+      ],
+      "extends": "archetype.background",
+      "title_key": "visual.background.officetel_unit_corridor.title",
+      "title": "오피스텔 현관 복도",
+      "variants": {
+        "move_in_evening": {
+          "asset": "assets/backgrounds/officetel/unit-corridor-move-in-evening.png",
+          "match": {
+            "locations": [
+              "officetel_unit_corridor"
+            ],
+            "times": [
+              "evening",
+              "night"
+            ]
+          },
+          "priority": 120
         }
       }
     },
@@ -37538,7 +37657,7 @@
       "route": "seo_a",
       "chapter": 0,
       "sequence": 3,
-      "location": "apartment_corridor",
+      "location": "officetel_elevator_lobby",
       "time": "evening",
       "purpose": "첫날 귀가한 한도윤이 같은 오피스텔의 기존 입주민인 윤서아와 엘리베이터 앞에서 우연히 마주치고, 회사 밖의 편한 모습을 보며 가벼운 이성적 호감을 더 느낀다.",
       "cast": [
@@ -40220,7 +40339,7 @@
       "route": "seo_a",
       "chapter": 1,
       "sequence": 5,
-      "location": "apartment_corridor",
+      "location": "officetel_unit_corridor",
       "time": "evening",
       "purpose": "금요일 저녁 같은 오피스텔로 이사 온 차민경이 이사떡을 돌리다 한도윤과 단둘이 마주치고, 한도윤은 업무 밖의 편한 모습과 입주민으로서의 호의를 운명적인 연결로 받아들인다.",
       "cast": [

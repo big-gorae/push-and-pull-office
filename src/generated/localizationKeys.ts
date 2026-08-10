@@ -1247,6 +1247,8 @@ export const LOCALIZATION_KEYS = [
   "visual.background.office_corridor.title",
   "visual.background.office_open.title",
   "visual.background.office_pantry.title",
+  "visual.background.officetel_elevator_lobby.title",
+  "visual.background.officetel_unit_corridor.title",
   "visual.character.cha_min_kyung.title",
   "visual.character.han_do_yoon.title",
   "visual.character.im_soo_yeon.title",

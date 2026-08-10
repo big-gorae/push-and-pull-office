@@ -1909,6 +1909,18 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual("background.office_corridor", report["visual_id"])
         self.assertEqual("background.office_corridor", empty["visual_id"])
 
+    def test_officetel_scenes_use_their_two_dedicated_backgrounds(self):
+        visuals = self.project.resolve_visuals()
+        seo_a_scene = self.project.scenes["common.day_01_officetel_seo_a_reveal"]
+        min_kyung_scene = self.project.scenes["common.day_03_officetel_min_kyung_move_in"]
+        seo_a_background = resolve_scene_background(visuals, seo_a_scene, "home_arrival", "perceived")
+        min_kyung_background = resolve_scene_background(visuals, min_kyung_scene, "knock_at_door", "perceived")
+        self.assertEqual("background.officetel_elevator_lobby", seo_a_background["visual_id"])
+        self.assertEqual("evening", seo_a_background["variant_id"])
+        self.assertEqual("background.officetel_unit_corridor", min_kyung_background["visual_id"])
+        self.assertEqual("move_in_evening", min_kyung_background["variant_id"])
+        self.assertNotEqual(seo_a_background["asset"], min_kyung_background["asset"])
+
     def test_scene_default_background_overrides_automatic_matching(self):
         scene = copy.deepcopy(self.project.scenes["seo_a.email_request"])
         scene["default_background"] = {
@@ -1985,15 +1997,24 @@ class StoryHarnessTests(unittest.TestCase):
         scene = self.project.scenes["seo_a.email_request"]
         stage = resolve_scene_stage(self.project.resolve_visuals(), scene, "request", "reality")
         self.assertEqual("background.office_open", stage["background"]["visual_id"])
-        self.assertEqual(["yoon_seo_a"], [item["character"] for item in stage["characters"]])
-        seo_a = stage["characters"][0]
+        self.assertEqual(
+            [("han_do_yoon", "left", False), ("yoon_seo_a", "right", True)],
+            [(item["character"], item["position"], item["speaker"]) for item in stage["characters"]],
+        )
+        seo_a = stage["characters"][1]
         self.assertEqual("actual_tense", seo_a["expression"])
         self.assertTrue(seo_a["speaker"])
 
         perceived_inner = resolve_scene_stage(self.project.resolve_visuals(), scene, "request_inner", "perceived")
         reality_inner = resolve_scene_stage(self.project.resolve_visuals(), scene, "request_inner", "reality")
-        self.assertEqual(["han_do_yoon"], [item["character"] for item in perceived_inner["characters"]])
-        self.assertEqual(["yoon_seo_a"], [item["character"] for item in reality_inner["characters"]])
+        self.assertEqual(
+            [("han_do_yoon", True), ("yoon_seo_a", False)],
+            [(item["character"], item["speaker"]) for item in perceived_inner["characters"]],
+        )
+        self.assertEqual(
+            [("han_do_yoon", False), ("yoon_seo_a", True)],
+            [(item["character"], item["speaker"]) for item in reality_inner["characters"]],
+        )
 
     def test_manual_stage_supports_off_and_three_non_speaker_artworks(self):
         scene = self.project.scenes["common.day_01_company_meeting"]

@@ -3511,9 +3511,9 @@ def resolve_scene_stage(
                 "render_strategy": visual.get("render_strategy"),
             })
         return {"background": background, "characters": characters, "mode": mode, "node": node_id}
-    for character_id in cast:
-        if character_id != speaker:
-            continue
+    visible_cast = cast if speaker and len(cast) <= 2 else [character_id for character_id in cast if character_id == speaker]
+    positions = ["center"] if len(visible_cast) <= 1 else ["left", "right"]
+    for index, character_id in enumerate(visible_cast):
         visual = next(
             (
                 item for item in visuals.values()
@@ -3541,8 +3541,8 @@ def resolve_scene_stage(
             "artwork": selected_id if isinstance(selected_artwork, Mapping) else "default",
             "outfit": visual.get("default_outfit"),
             "pose": visual.get("default_pose"),
-            "position": "center",
-            "speaker": True,
+            "position": positions[min(index, len(positions) - 1)],
+            "speaker": character_id == speaker,
             "render_strategy": visual.get("render_strategy"),
         })
     return {"background": background, "characters": characters, "mode": mode, "node": node_id}
