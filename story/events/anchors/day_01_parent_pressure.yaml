@@ -4,7 +4,7 @@ id: anchor.day_01_parent_pressure
 title: 올해는 사람 좀 만나
 type: anchor
 lane: personal
-window: {days: [1, 1], slots: [after_work], deadline_day: 1}
+window: {days: [1, 1], slots: [afternoon], deadline_day: 1}
 duration: 1
 priority: 100
 availability: automatic

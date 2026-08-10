@@ -1655,13 +1655,43 @@ class StoryHarnessTests(unittest.TestCase):
             "kang_yoo_jin",
             bundle["events"]["anchor.day_01_company_meeting"]["participants"],
         )
-        self.assertEqual(28, len(bundle["events"]))
+        self.assertEqual(30, len(bundle["events"]))
         parent_pressure = bundle["events"]["anchor.day_01_parent_pressure"]
         self.assertEqual([1, 1], parent_pressure["window"]["days"])
-        self.assertEqual(["after_work"], parent_pressure["window"]["slots"])
+        self.assertEqual(["afternoon"], parent_pressure["window"]["slots"])
         self.assertEqual(
             ["anchor.day_01_company_meeting"],
             parent_pressure["requires"]["events"],
+        )
+        seo_a_neighbor = bundle["events"]["anchor.day_01_officetel_seo_a_reveal"]
+        self.assertEqual([1, 1], seo_a_neighbor["window"]["days"])
+        self.assertEqual(["after_work"], seo_a_neighbor["window"]["slots"])
+        self.assertEqual(
+            ["anchor.day_01_parent_pressure"],
+            seo_a_neighbor["requires"]["events"],
+        )
+        self.assertEqual(
+            ["han_do_yoon", "yoon_seo_a"],
+            bundle["scenes"]["common.day_01_officetel_seo_a_reveal"]["cast"],
+        )
+        min_kyung_move_in = bundle["events"]["anchor.day_03_officetel_min_kyung_move_in"]
+        self.assertEqual([3, 3], min_kyung_move_in["window"]["days"])
+        self.assertEqual(["after_work"], min_kyung_move_in["window"]["slots"])
+        self.assertEqual(
+            ["anchor.day_03_business_trip_or_cafe"],
+            min_kyung_move_in["requires"]["events"],
+        )
+        self.assertEqual(
+            ["han_do_yoon", "cha_min_kyung"],
+            bundle["scenes"]["common.day_03_officetel_min_kyung_move_in"]["cast"],
+        )
+        self.assertEqual(
+            ["anchor.day_01_officetel_seo_a_reveal"],
+            bundle["events"]["anchor.day_02_practical_meeting"]["requires"]["events"],
+        )
+        self.assertEqual(
+            ["anchor.day_03_officetel_min_kyung_move_in"],
+            bundle["events"]["anchor.day_04_weekend_encounter"]["requires"]["events"],
         )
         second_weekend_encounter = bundle["events"]["anchor.day_05_weekend_reflection"]
         self.assertEqual(["afternoon"], second_weekend_encounter["window"]["slots"])

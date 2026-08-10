@@ -36,11 +36,11 @@ nodes:
     perceived:
       atmosphere: dread
       expression: subjective_shy
-      line: "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
+      line: "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
     reality:
       atmosphere: dread
       expression: actual_tense
-      line: "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
+      line: "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
       intent: self_protection
     next: leave_request_inner
 
@@ -127,7 +127,7 @@ nodes:
   - id: immediate_choice
     kind: choice
     prompt: 돌아가라는 요구와 현장 신고에 어떻게 대응할까?
-    stimulus: 서아가 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.
+    stimulus: 서아가 자신의 정확한 호수를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.
     interaction_context:
       kind: boundary
     options:

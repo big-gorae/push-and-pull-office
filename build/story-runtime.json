@@ -10,7 +10,7 @@
     ]
   },
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "ff5fc7750d5a9d59fdbffe8b874d4124189766cb34dd6b37943ce6b4c459e6eb",
+  "source_sha256": "85ea9ed5b70c7de3f5b79c254fd18eb555dd701d48d2765f20be4ed63ee90a6b",
   "enums": {
     "perceived_state": [
       "push",
@@ -1200,7 +1200,7 @@
       },
       "campaign.main.acts.romantic_surface.purpose": {
         "key": "campaign.main.acts.romantic_surface.purpose",
-        "source": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 토·일요일에 서아와 민경을 한 명씩 교차해 만나며 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.",
+        "source": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓는 사이 서아가 같은 오피스텔의 기존 입주민임을 알고 민경도 새로 이사 오며, 토·일요일에는 두 사람을 한 명씩 교차해 만나 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.",
         "domain": "campaign",
         "sourceDocument": {
           "kind": "campaign",
@@ -2601,6 +2601,100 @@
         "multiline": false,
         "maxLength": 100
       },
+      "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.summary": {
+        "key": "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.summary",
+        "source": "첫날 귀가한 오피스텔 엘리베이터에서 편한 차림의 서아와 다시 만나 회사 밖의 새로운 매력을 발견한다.",
+        "domain": "event",
+        "sourceDocument": {
+          "kind": "event",
+          "id": "anchor.day_01_officetel_seo_a_reveal",
+          "path": "story/events/anchors/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "presentation.perceived.summary"
+        },
+        "context": {
+          "eventId": "anchor.day_01_officetel_seo_a_reveal",
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.title": {
+        "key": "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.title",
+        "source": "같은 건물에 살던 서아",
+        "domain": "event",
+        "sourceDocument": {
+          "kind": "event",
+          "id": "anchor.day_01_officetel_seo_a_reveal",
+          "path": "story/events/anchors/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "presentation.perceived.title"
+        },
+        "context": {
+          "eventId": "anchor.day_01_officetel_seo_a_reveal",
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.summary": {
+        "key": "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.summary",
+        "source": "서아와 한도윤은 서로가 같은 오피스텔의 기존 입주민이라는 사실을 처음 알고 짧게 인사한 뒤 각자의 저녁 일정으로 돌아간다.",
+        "domain": "event",
+        "sourceDocument": {
+          "kind": "event",
+          "id": "anchor.day_01_officetel_seo_a_reveal",
+          "path": "story/events/anchors/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "presentation.reality.summary"
+        },
+        "context": {
+          "eventId": "anchor.day_01_officetel_seo_a_reveal",
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.title": {
+        "key": "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.title",
+        "source": "같은 건물의 직장 동료",
+        "domain": "event",
+        "sourceDocument": {
+          "kind": "event",
+          "id": "anchor.day_01_officetel_seo_a_reveal",
+          "path": "story/events/anchors/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "presentation.reality.title"
+        },
+        "context": {
+          "eventId": "anchor.day_01_officetel_seo_a_reveal",
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "events.anchor.day_01_officetel_seo_a_reveal.title": {
+        "key": "events.anchor.day_01_officetel_seo_a_reveal.title",
+        "source": "엘리베이터 문이 열리자",
+        "domain": "event",
+        "sourceDocument": {
+          "kind": "event",
+          "id": "anchor.day_01_officetel_seo_a_reveal",
+          "path": "story/events/anchors/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "title"
+        },
+        "context": {
+          "eventId": "anchor.day_01_officetel_seo_a_reveal",
+          "sceneId": "common.day_01_officetel_seo_a_reveal"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
       "events.anchor.day_01_parent_pressure.presentation.perceived.summary": {
         "key": "events.anchor.day_01_parent_pressure.presentation.perceived.summary",
         "source": "퇴근 후 부모의 결혼 재촉과 칭찬을 듣고, 오전 프로젝트에서 만난 서아와 민경을 연애 후보로 다시 떠올린다.",
@@ -2967,6 +3061,100 @@
         "context": {
           "eventId": "anchor.day_03_business_trip_or_cafe",
           "sceneId": "common.day_03_business_trip_or_cafe"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.summary": {
+        "key": "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.summary",
+        "source": "같은 오피스텔로 이사 온 민경이 이사떡을 들고 문 앞에 나타나자 두 사람의 인연이 생활권까지 이어졌다고 느낀다.",
+        "domain": "event",
+        "sourceDocument": {
+          "kind": "event",
+          "id": "anchor.day_03_officetel_min_kyung_move_in",
+          "path": "story/events/anchors/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "presentation.perceived.summary"
+        },
+        "context": {
+          "eventId": "anchor.day_03_officetel_min_kyung_move_in",
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.title": {
+        "key": "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.title",
+        "source": "차 대리가 이웃이 되었다",
+        "domain": "event",
+        "sourceDocument": {
+          "kind": "event",
+          "id": "anchor.day_03_officetel_min_kyung_move_in",
+          "path": "story/events/anchors/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "presentation.perceived.title"
+        },
+        "context": {
+          "eventId": "anchor.day_03_officetel_min_kyung_move_in",
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.summary": {
+        "key": "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.summary",
+        "source": "민경은 같은 층에 이사 인사를 돌리다 한도윤과 단둘이 마주치고, 분리배출 위치를 물은 뒤 다른 집으로 이동한다.",
+        "domain": "event",
+        "sourceDocument": {
+          "kind": "event",
+          "id": "anchor.day_03_officetel_min_kyung_move_in",
+          "path": "story/events/anchors/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "presentation.reality.summary"
+        },
+        "context": {
+          "eventId": "anchor.day_03_officetel_min_kyung_move_in",
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.title": {
+        "key": "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.title",
+        "source": "같은 층 새 입주자의 인사",
+        "domain": "event",
+        "sourceDocument": {
+          "kind": "event",
+          "id": "anchor.day_03_officetel_min_kyung_move_in",
+          "path": "story/events/anchors/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "presentation.reality.title"
+        },
+        "context": {
+          "eventId": "anchor.day_03_officetel_min_kyung_move_in",
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "events.anchor.day_03_officetel_min_kyung_move_in.title": {
+        "key": "events.anchor.day_03_officetel_min_kyung_move_in.title",
+        "source": "문 앞의 이사떡",
+        "domain": "event",
+        "sourceDocument": {
+          "kind": "event",
+          "id": "anchor.day_03_officetel_min_kyung_move_in",
+          "path": "story/events/anchors/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "title"
+        },
+        "context": {
+          "eventId": "anchor.day_03_officetel_min_kyung_move_in",
+          "sceneId": "common.day_03_officetel_min_kyung_move_in"
         },
         "placeholders": [],
         "multiline": false,
@@ -9410,6 +9598,355 @@
         "multiline": false,
         "maxLength": 100
       },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.perceived.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.perceived.line",
+        "source": "그러게요. 저도 여기 산 지 좀 됐는데 회사 분을 만난 건 처음입니다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.do_yoon_answers.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "do_yoon_answers",
+          "speakerId": "han_do_yoon",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.reality.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.reality.line",
+        "source": "그러게요. 저도 여기 산 지 좀 됐는데 회사 분을 만난 건 처음입니다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.do_yoon_answers.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "do_yoon_answers",
+          "speakerId": "han_do_yoon",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.perceived.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.perceived.line",
+        "source": "문이 열리자 회사에서 막 헤어진 서아가 서 있었다. 사원증도 업무 수첩도 없이 편한 집업 차림으로 장바구니를 든 모습은 오전과 전혀 달라 보였다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.doors_open.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "doors_open",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.reality.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.reality.line",
+        "source": "엘리베이터 문이 열렸고, 편한 집업 차림으로 장바구니를 든 윤서아가 내리려다 한도윤을 알아봤다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.doors_open.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "doors_open",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.perceived.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.perceived.line",
+        "source": "아, 먼저 타세요. 저는 내려가서 살 게 하나 더 있어서요. 내일 뵙겠습니다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.elevator_courtesy.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "elevator_courtesy",
+          "speakerId": "yoon_seo_a",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.reality.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.reality.line",
+        "source": "아, 먼저 타세요. 저는 내려가서 살 게 하나 더 있어서요. 내일 뵙겠습니다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.elevator_courtesy.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "elevator_courtesy",
+          "speakerId": "yoon_seo_a",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.perceived.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.perceived.line",
+        "source": "부모님과 통화를 마치고 돌아온 오피스텔은 평소처럼 조용했다. 엘리베이터 도착음이 울리기 전까지는 그랬다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.home_arrival.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "home_arrival",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.reality.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.reality.line",
+        "source": "수요일 저녁, 한도윤은 귀가해 자신이 사는 오피스텔의 엘리베이터 앞에 섰다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.home_arrival.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "home_arrival",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.perceived.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.perceived.line",
+        "source": "(같은 건물이라니. 회사에서 본 모습과는 다른 편안한 면도 있군. 서아 씨가 어떤 사람인지 조금 더 궁금해졌어.)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.passing_inner.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "passing_inner",
+          "layer": "perceived",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.reality.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.reality.line",
+        "source": "두 사람은 같은 오피스텔에 산다는 사실을 처음 알았고, 서아는 필요한 장을 보러 다시 로비로 향했다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.passing_inner.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "passing_inner",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.perceived.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.perceived.line",
+        "source": "저도 전부터 살았어요. 회사까지 가기 편해서요. 진짜 신기하네요.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.seo_a_explains.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "seo_a_explains",
+          "speakerId": "yoon_seo_a",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.reality.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.reality.line",
+        "source": "저도 전부터 살았어요. 회사까지 가기 편해서요. 진짜 신기하네요.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.seo_a_explains.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "seo_a_explains",
+          "speakerId": "yoon_seo_a",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.perceived.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.perceived.line",
+        "source": "아, 과장님? 과장님도 여기 사세요?",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.seo_a_surprised.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "seo_a_surprised",
+          "speakerId": "yoon_seo_a",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.reality.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.reality.line",
+        "source": "아, 과장님? 과장님도 여기 사세요?",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.seo_a_surprised.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "seo_a_surprised",
+          "speakerId": "yoon_seo_a",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.perceived.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.perceived.line",
+        "source": "(첫날부터 회사 밖에서 다시 만나다니. 이렇게 편한 모습은 회사 사람 중 내가 처음 본 건가.)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.seo_a_surprised_inner.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "seo_a_surprised_inner",
+          "layer": "perceived",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.reality.line": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.reality.line",
+        "source": "(회사 과장님이 같은 건물에 살 줄은 몰랐네. 출근길에 마주치면 조금 어색하겠다.)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "nodes.seo_a_surprised_inner.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal",
+          "nodeId": "seo_a_surprised_inner",
+          "layer": "reality",
+          "speakerId": "yoon_seo_a"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.purpose": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.purpose",
+        "source": "첫날 귀가한 한도윤이 같은 오피스텔의 기존 입주민인 윤서아와 엘리베이터 앞에서 우연히 마주치고, 회사 밖의 편한 모습을 보며 가벼운 이성적 호감을 더 느낀다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "purpose"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.common.day_01_officetel_seo_a_reveal.title": {
+        "key": "scenes.common.day_01_officetel_seo_a_reveal.title",
+        "source": "엘리베이터 문이 열리자",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_officetel_seo_a_reveal",
+          "path": "story/scenes/common/day_01_officetel_seo_a_reveal.yaml",
+          "fieldPath": "title"
+        },
+        "context": {
+          "sceneId": "common.day_01_officetel_seo_a_reveal"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
       "scenes.common.day_01_parent_pressure.nodes.decision.perceived.line": {
         "key": "scenes.common.day_01_parent_pressure.nodes.decision.perceived.line",
         "source": "결혼을 생각한다면 회사에도 괜찮은 사람은 있겠지. 서아 씨와 차 대리가 어떤 사람인지는 천천히 보면 되겠어.",
@@ -14757,6 +15294,435 @@
         "multiline": false,
         "maxLength": 100
       },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.perceived.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.perceived.line",
+        "source": "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.do_yoon_confirms.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "do_yoon_confirms",
+          "speakerId": "han_do_yoon",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.reality.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.reality.line",
+        "source": "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.do_yoon_confirms.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "do_yoon_confirms",
+          "speakerId": "han_do_yoon",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.perceived.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.perceived.line",
+        "source": "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.do_yoon_directions.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "do_yoon_directions",
+          "speakerId": "han_do_yoon",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.reality.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.reality.line",
+        "source": "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.do_yoon_directions.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "do_yoon_directions",
+          "speakerId": "han_do_yoon",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.perceived.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.perceived.line",
+        "source": "(회사에서는 빈틈없던 차 대리가 이사떡을 들고 내 문 앞에 서 있을 줄이야. 생활하는 얼굴까지 보니 더 매력적인 사람이군.)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.door_closes_inner.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "door_closes_inner",
+          "layer": "perceived",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.reality.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.reality.line",
+        "source": "민경은 같은 층의 다른 집에도 같은 인사를 하기 위해 이동했고, 한도윤은 새 이웃이 된 동료에게 받은 떡을 들고 문을 닫았다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.door_closes_inner.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "door_closes_inner",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.perceived.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.perceived.line",
+        "source": "문을 열자 가벼운 셔츠 차림의 민경이 소포장 떡을 들고 서 있었다. 노트북과 일정표 대신 이삿짐 상자가 놓인 복도에서 보니 전혀 다른 사람 같았다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.door_opens.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "door_opens",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.reality.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.reality.line",
+        "source": "한도윤이 문을 열자, 편한 셔츠 차림의 차민경이 소포장 떡을 들고 서 있었다. 복도 한쪽에는 정리 중인 이삿짐 상자가 남아 있었다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.door_opens.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "door_opens",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.perceived.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.perceived.line",
+        "source": "금요일 저녁, 현관문 너머에서 짧고 또렷한 노크가 들렸다. 한 주를 끝내고 돌아온 그를 기다린 뜻밖의 방문처럼 들렸다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.knock_at_door.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "knock_at_door",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.reality.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.reality.line",
+        "source": "금요일 저녁, 한도윤이 사는 오피스텔 현관문에 같은 층 새 입주자가 인사를 위해 노크했다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.knock_at_door.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "knock_at_door",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.perceived.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.perceived.line",
+        "source": "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.min_kyung_greeting.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "min_kyung_greeting",
+          "speakerId": "cha_min_kyung",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.reality.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.reality.line",
+        "source": "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.min_kyung_greeting.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "min_kyung_greeting",
+          "speakerId": "cha_min_kyung",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.perceived.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.perceived.line",
+        "source": "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.min_kyung_thanks.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "min_kyung_thanks",
+          "speakerId": "cha_min_kyung",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.reality.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.reality.line",
+        "source": "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.min_kyung_thanks.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "min_kyung_thanks",
+          "speakerId": "cha_min_kyung",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.perceived.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.perceived.line",
+        "source": "한 과장님? 한 과장님도 여기 사십니까?",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.mutual_surprise.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "mutual_surprise",
+          "speakerId": "cha_min_kyung",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.reality.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.reality.line",
+        "source": "한 과장님? 한 과장님도 여기 사십니까?",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.mutual_surprise.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "mutual_surprise",
+          "speakerId": "cha_min_kyung",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.perceived.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.perceived.line",
+        "source": "(서아 씨에 이어 차 대리까지 같은 건물이라니. 우연치고는 너무 절묘한데.)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.mutual_surprise_inner.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "mutual_surprise_inner",
+          "layer": "perceived",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.reality.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.reality.line",
+        "source": "(회사 사람을 같은 층에서 만날 줄은 몰랐네. 그래도 남은 집에도 인사는 마쳐야지.)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.mutual_surprise_inner.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "mutual_surprise_inner",
+          "layer": "reality",
+          "speakerId": "cha_min_kyung"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.perceived.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.perceived.line",
+        "source": "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.practical_question.perceived.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "practical_question",
+          "speakerId": "cha_min_kyung",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.reality.line": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.reality.line",
+        "source": "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "nodes.practical_question.reality.line"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in",
+          "nodeId": "practical_question",
+          "speakerId": "cha_min_kyung",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.purpose": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.purpose",
+        "source": "금요일 저녁 같은 오피스텔로 이사 온 차민경이 이사떡을 돌리다 한도윤과 단둘이 마주치고, 한도윤은 업무 밖의 편한 모습과 입주민으로서의 호의를 운명적인 연결로 받아들인다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "purpose"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "scenes.common.day_03_officetel_min_kyung_move_in.title": {
+        "key": "scenes.common.day_03_officetel_min_kyung_move_in.title",
+        "source": "문 앞의 이사떡",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_03_officetel_min_kyung_move_in",
+          "path": "story/scenes/common/day_03_officetel_min_kyung_move_in.yaml",
+          "fieldPath": "title"
+        },
+        "context": {
+          "sceneId": "common.day_03_officetel_min_kyung_move_in"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
       "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.perceived.line": {
         "key": "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.perceived.line",
         "source": "주말에도 뵙네요. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요.",
@@ -17065,7 +18031,7 @@
       },
       "scenes.ending.min_kyung.coverup.nodes.immediate_choice.stimulus": {
         "key": "scenes.ending.min_kyung.coverup.nodes.immediate_choice.stimulus",
-        "source": "민경이 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+        "source": "민경이 자신의 정확한 호수를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -17310,7 +18276,7 @@
       },
       "scenes.ending.min_kyung.coverup.nodes.leave_request.perceived.line": {
         "key": "scenes.ending.min_kyung.coverup.nodes.leave_request.perceived.line",
-        "source": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "source": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -17330,7 +18296,7 @@
       },
       "scenes.ending.min_kyung.coverup.nodes.leave_request.reality.line": {
         "key": "scenes.ending.min_kyung.coverup.nodes.leave_request.reality.line",
-        "source": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "source": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -17963,7 +18929,7 @@
       },
       "scenes.ending.min_kyung.report.nodes.leave_request.perceived.line": {
         "key": "scenes.ending.min_kyung.report.nodes.leave_request.perceived.line",
-        "source": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "source": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -17983,7 +18949,7 @@
       },
       "scenes.ending.min_kyung.report.nodes.leave_request.reality.line": {
         "key": "scenes.ending.min_kyung.report.nodes.leave_request.reality.line",
-        "source": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "source": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -18594,7 +19560,7 @@
       },
       "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.stimulus": {
         "key": "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.stimulus",
-        "source": "서아가 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+        "source": "서아가 자신의 정확한 호수를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -18839,7 +19805,7 @@
       },
       "scenes.ending.seo_a.ambiguous.nodes.leave_request.perceived.line": {
         "key": "scenes.ending.seo_a.ambiguous.nodes.leave_request.perceived.line",
-        "source": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "source": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -18859,7 +19825,7 @@
       },
       "scenes.ending.seo_a.ambiguous.nodes.leave_request.reality.line": {
         "key": "scenes.ending.seo_a.ambiguous.nodes.leave_request.reality.line",
-        "source": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "source": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -19492,7 +20458,7 @@
       },
       "scenes.ending.seo_a.report.nodes.leave_request.perceived.line": {
         "key": "scenes.ending.seo_a.report.nodes.leave_request.perceived.line",
-        "source": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "source": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -19512,7 +20478,7 @@
       },
       "scenes.ending.seo_a.report.nodes.leave_request.reality.line": {
         "key": "scenes.ending.seo_a.report.nodes.leave_request.reality.line",
-        "source": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "source": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -23320,7 +24286,7 @@
       "campaign.main.acts.collisions.title": "시간 충돌과 의심",
       "campaign.main.acts.crisis.purpose": "두 번째 주말의 확신이 비밀 연애, 삼각관계, 간병과 사내 소문으로 번역되다가 주거지 방문과 현장 신고로 수렴한다.",
       "campaign.main.acts.crisis.title": "수습이 침범이 되는 시간",
-      "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 토·일요일에 서아와 민경을 한 명씩 교차해 만나며 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.",
+      "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓는 사이 서아가 같은 오피스텔의 기존 입주민임을 알고 민경도 새로 이사 오며, 토·일요일에는 두 사람을 한 명씩 교차해 만나 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.",
       "campaign.main.acts.romantic_surface.title": "첫인상과 업무의 거리",
       "campaign.main.lanes.cha_min_kyung.title": "차민경",
       "campaign.main.lanes.company.title": "회사와 고정 사건",
@@ -23406,6 +24372,11 @@
       "events.anchor.day_01_company_meeting.presentation.reality.summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.",
       "events.anchor.day_01_company_meeting.presentation.reality.title": "수요일 프로젝트 킥오프",
       "events.anchor.day_01_company_meeting.title": "신규 프로젝트 킥오프",
+      "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.summary": "첫날 귀가한 오피스텔 엘리베이터에서 편한 차림의 서아와 다시 만나 회사 밖의 새로운 매력을 발견한다.",
+      "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.title": "같은 건물에 살던 서아",
+      "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.summary": "서아와 한도윤은 서로가 같은 오피스텔의 기존 입주민이라는 사실을 처음 알고 짧게 인사한 뒤 각자의 저녁 일정으로 돌아간다.",
+      "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.title": "같은 건물의 직장 동료",
+      "events.anchor.day_01_officetel_seo_a_reveal.title": "엘리베이터 문이 열리자",
       "events.anchor.day_01_parent_pressure.presentation.perceived.summary": "퇴근 후 부모의 결혼 재촉과 칭찬을 듣고, 오전 프로젝트에서 만난 서아와 민경을 연애 후보로 다시 떠올린다.",
       "events.anchor.day_01_parent_pressure.presentation.perceived.title": "신부감을 찾아볼 때",
       "events.anchor.day_01_parent_pressure.presentation.reality.summary": "부모는 한도윤의 자존심을 다치지 않으려 외모와 조건을 칭찬하며 사람을 만나보라고 권한다.",
@@ -23426,6 +24397,11 @@
       "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 주요 대화 상대와 회사 복귀 후 공용 대화에서 두 사람의 주말 예정 장소가 각각 자연스럽게 드러난다.",
       "events.anchor.day_03_business_trip_or_cafe.presentation.reality.title": "업무 외출과 짧은 휴식",
       "events.anchor.day_03_business_trip_or_cafe.title": "출장 또는 단둘의 점심",
+      "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.summary": "같은 오피스텔로 이사 온 민경이 이사떡을 들고 문 앞에 나타나자 두 사람의 인연이 생활권까지 이어졌다고 느낀다.",
+      "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.title": "차 대리가 이웃이 되었다",
+      "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.summary": "민경은 같은 층에 이사 인사를 돌리다 한도윤과 단둘이 마주치고, 분리배출 위치를 물은 뒤 다른 집으로 이동한다.",
+      "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.title": "같은 층 새 입주자의 인사",
+      "events.anchor.day_03_officetel_min_kyung_move_in.title": "문 앞의 이사떡",
       "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": "현재 공략 우선 판정이 높은 한 사람과 주말 장소에서 마주치고, 회사에서 몰랐던 취향과 모습을 조금 더 알고 싶어진다.",
       "events.anchor.day_04_weekend_encounter.presentation.perceived.title": "회사 밖에서 본 새로운 모습",
       "events.anchor.day_04_weekend_encounter.presentation.reality.summary": "토요일에는 서아와 민경 중 한 명과만 만난다. 상대는 공공장소에서 동료와 마주친 우연으로 받아들이며 아직 의도적 접근을 의심하지 않는다.",
@@ -23789,6 +24765,24 @@
       "scenes.common.day_01_company_meeting.nodes.yoo_jin_timestamp_inner.reality.line": "(수정 시각까지 말해 두면 나중에 버전이 섞이지 않겠지.)",
       "scenes.common.day_01_company_meeting.purpose": "프로젝트 킥오프에서 서아·민경·유진의 업무 태도와 한도윤의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.",
       "scenes.common.day_01_company_meeting.title": "수요일의 첫 회의",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.perceived.line": "그러게요. 저도 여기 산 지 좀 됐는데 회사 분을 만난 건 처음입니다.",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.reality.line": "그러게요. 저도 여기 산 지 좀 됐는데 회사 분을 만난 건 처음입니다.",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.perceived.line": "문이 열리자 회사에서 막 헤어진 서아가 서 있었다. 사원증도 업무 수첩도 없이 편한 집업 차림으로 장바구니를 든 모습은 오전과 전혀 달라 보였다.",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.reality.line": "엘리베이터 문이 열렸고, 편한 집업 차림으로 장바구니를 든 윤서아가 내리려다 한도윤을 알아봤다.",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.perceived.line": "아, 먼저 타세요. 저는 내려가서 살 게 하나 더 있어서요. 내일 뵙겠습니다.",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.reality.line": "아, 먼저 타세요. 저는 내려가서 살 게 하나 더 있어서요. 내일 뵙겠습니다.",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.perceived.line": "부모님과 통화를 마치고 돌아온 오피스텔은 평소처럼 조용했다. 엘리베이터 도착음이 울리기 전까지는 그랬다.",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.reality.line": "수요일 저녁, 한도윤은 귀가해 자신이 사는 오피스텔의 엘리베이터 앞에 섰다.",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.perceived.line": "(같은 건물이라니. 회사에서 본 모습과는 다른 편안한 면도 있군. 서아 씨가 어떤 사람인지 조금 더 궁금해졌어.)",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.reality.line": "두 사람은 같은 오피스텔에 산다는 사실을 처음 알았고, 서아는 필요한 장을 보러 다시 로비로 향했다.",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.perceived.line": "저도 전부터 살았어요. 회사까지 가기 편해서요. 진짜 신기하네요.",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.reality.line": "저도 전부터 살았어요. 회사까지 가기 편해서요. 진짜 신기하네요.",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.perceived.line": "아, 과장님? 과장님도 여기 사세요?",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.reality.line": "아, 과장님? 과장님도 여기 사세요?",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.perceived.line": "(첫날부터 회사 밖에서 다시 만나다니. 이렇게 편한 모습은 회사 사람 중 내가 처음 본 건가.)",
+      "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.reality.line": "(회사 과장님이 같은 건물에 살 줄은 몰랐네. 출근길에 마주치면 조금 어색하겠다.)",
+      "scenes.common.day_01_officetel_seo_a_reveal.purpose": "첫날 귀가한 한도윤이 같은 오피스텔의 기존 입주민인 윤서아와 엘리베이터 앞에서 우연히 마주치고, 회사 밖의 편한 모습을 보며 가벼운 이성적 호감을 더 느낀다.",
+      "scenes.common.day_01_officetel_seo_a_reveal.title": "엘리베이터 문이 열리자",
       "scenes.common.day_01_parent_pressure.nodes.decision.perceived.line": "결혼을 생각한다면 회사에도 괜찮은 사람은 있겠지. 서아 씨와 차 대리가 어떤 사람인지는 천천히 보면 되겠어.",
       "scenes.common.day_01_parent_pressure.nodes.decision.reality.line": "결혼을 생각한다면 회사에도 괜찮은 사람은 있겠지. 서아 씨와 차 대리가 어떤 사람인지는 천천히 보면 되겠어.",
       "scenes.common.day_01_parent_pressure.nodes.decision_inner.perceived.line": "(성급하게 정할 필요는 없어. 어떤 사람들인지 천천히 보면 되겠지.)",
@@ -24058,6 +25052,28 @@
       "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line": "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다.",
       "scenes.common.day_03_business_trip_or_cafe.purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 업무를 수습하는 동안에는 사실과 실행 가능성을 먼저 확인하고 해결 뒤에는 구체적인 부담 인정을 받아들이는 민경의 상황별 대화 순서를 재확인한다.",
       "scenes.common.day_03_business_trip_or_cafe.title": "돌아온 뒤 남은 말",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.perceived.line": "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다.",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.reality.line": "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다.",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.perceived.line": "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다.",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.reality.line": "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다.",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.perceived.line": "(회사에서는 빈틈없던 차 대리가 이사떡을 들고 내 문 앞에 서 있을 줄이야. 생활하는 얼굴까지 보니 더 매력적인 사람이군.)",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.reality.line": "민경은 같은 층의 다른 집에도 같은 인사를 하기 위해 이동했고, 한도윤은 새 이웃이 된 동료에게 받은 떡을 들고 문을 닫았다.",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.perceived.line": "문을 열자 가벼운 셔츠 차림의 민경이 소포장 떡을 들고 서 있었다. 노트북과 일정표 대신 이삿짐 상자가 놓인 복도에서 보니 전혀 다른 사람 같았다.",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.reality.line": "한도윤이 문을 열자, 편한 셔츠 차림의 차민경이 소포장 떡을 들고 서 있었다. 복도 한쪽에는 정리 중인 이삿짐 상자가 남아 있었다.",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.perceived.line": "금요일 저녁, 현관문 너머에서 짧고 또렷한 노크가 들렸다. 한 주를 끝내고 돌아온 그를 기다린 뜻밖의 방문처럼 들렸다.",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.reality.line": "금요일 저녁, 한도윤이 사는 오피스텔 현관문에 같은 층 새 입주자가 인사를 위해 노크했다.",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.perceived.line": "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요.",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.reality.line": "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요.",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.perceived.line": "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠.",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.reality.line": "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠.",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.perceived.line": "한 과장님? 한 과장님도 여기 사십니까?",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.reality.line": "한 과장님? 한 과장님도 여기 사십니까?",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.perceived.line": "(서아 씨에 이어 차 대리까지 같은 건물이라니. 우연치고는 너무 절묘한데.)",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.reality.line": "(회사 사람을 같은 층에서 만날 줄은 몰랐네. 그래도 남은 집에도 인사는 마쳐야지.)",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.perceived.line": "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?",
+      "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.reality.line": "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?",
+      "scenes.common.day_03_officetel_min_kyung_move_in.purpose": "금요일 저녁 같은 오피스텔로 이사 온 차민경이 이사떡을 돌리다 한도윤과 단둘이 마주치고, 한도윤은 업무 밖의 편한 모습과 입주민으로서의 호의를 운명적인 연결로 받아들인다.",
+      "scenes.common.day_03_officetel_min_kyung_move_in.title": "문 앞의 이사떡",
       "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.perceived.line": "주말에도 뵙네요. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요.",
       "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.reality.line": "주말에도 뵙네요. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요.",
       "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_ott.perceived.line": "주말에도 뵙네요. 요즘 다들 《퇴근은 내일》이라는 회사 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. ‘회의는 끝났지만 내 마음은 야근 중입니다’라는 대사는 원래 어느 장면에 나옵니까?",
@@ -24173,7 +25189,7 @@
       "scenes.ending.min_kyung.coverup.nodes.immediate_choice.options.cross_line.interpretation": "외부가 끼어들기 전에 관계를 확정해야 한다.",
       "scenes.ending.min_kyung.coverup.nodes.immediate_choice.options.cross_line.label": "돌아가라는 요구를 무시하고 관계를 확인하려 한다",
       "scenes.ending.min_kyung.coverup.nodes.immediate_choice.prompt": "돌아가라는 요구와 현장 신고에 어떻게 대응할까?",
-      "scenes.ending.min_kyung.coverup.nodes.immediate_choice.stimulus": "민경이 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+      "scenes.ending.min_kyung.coverup.nodes.immediate_choice.stimulus": "민경이 자신의 정확한 호수를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
       "scenes.ending.min_kyung.coverup.nodes.interpretation_choice.options.choose_betrayal.action": "연애 망상을 보복의 피해의식으로 바꾼다.",
       "scenes.ending.min_kyung.coverup.nodes.interpretation_choice.options.choose_betrayal.interpretation": "사랑은 있었지만 그녀가 자신을 이용하고 버렸다고 결론 내린다.",
       "scenes.ending.min_kyung.coverup.nodes.interpretation_choice.options.choose_betrayal.label": "민경이 자신을 이용하고 버렸다고 단정한다",
@@ -24186,8 +25202,8 @@
       "scenes.ending.min_kyung.coverup.nodes.last_push_record.reality.line": "한도윤은 현장을 벗어나는 과정에서 사망했다. 객관 카메라의 넓은 화면에는 실제 모습의 그와 빈 공간만 남아 있었다.",
       "scenes.ending.min_kyung.coverup.nodes.last_push_record_inner.perceived.line": "(마지막에는 결국 내 선택이 통했군.)",
       "scenes.ending.min_kyung.coverup.nodes.last_push_record_inner.reality.line": "기록에는 그가 현장을 벗어나다 사망했다는 결과만 남았다.",
-      "scenes.ending.min_kyung.coverup.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
-      "scenes.ending.min_kyung.coverup.nodes.leave_request.reality.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+      "scenes.ending.min_kyung.coverup.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+      "scenes.ending.min_kyung.coverup.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
       "scenes.ending.min_kyung.coverup.nodes.leave_request_inner.perceived.line": "(내 서프라이즈에 놀란 거겠지. 그래도 마지막까지 주도권은 안 놓치네.)",
       "scenes.ending.min_kyung.coverup.nodes.leave_request_inner.reality.line": "(설명하려 들지 말자. 신고할 문장과 시각부터 정확히 남겨야 해.)",
       "scenes.ending.min_kyung.coverup.nodes.line_cross_choice.options.escape.action": "현장을 벗어나려다 돌아오지 못한다.",
@@ -24220,8 +25236,8 @@
       "scenes.ending.min_kyung.report.nodes.company_epilogue.reality.line": "회사는 경찰 대응 뒤 업무 배제와 내부 확인을 거쳐 뒤늦게 해고를 통보했다.",
       "scenes.ending.min_kyung.report.nodes.company_epilogue_inner.perceived.line": "(회사는 끝내 우리 관계를 지켜 주지 않고 나를 배신했군.)",
       "scenes.ending.min_kyung.report.nodes.company_epilogue_inner.reality.line": "경찰 대응이 먼저였고, 회사는 그 뒤에야 업무 배제와 내부 확인을 시작했다.",
-      "scenes.ending.min_kyung.report.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
-      "scenes.ending.min_kyung.report.nodes.leave_request.reality.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+      "scenes.ending.min_kyung.report.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+      "scenes.ending.min_kyung.report.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
       "scenes.ending.min_kyung.report.nodes.leave_request_inner.perceived.line": "(예상하지 못한 고백이라 놀란 거겠지. 그래도 끝까지 주도권은 안 놓치네.)",
       "scenes.ending.min_kyung.report.nodes.leave_request_inner.reality.line": "(같은 말을 또 설명하지 말자. 신고할 문장과 시각부터 남겨야 해.)",
       "scenes.ending.min_kyung.report.nodes.mugshot.perceived.line": "플래시 속에는 강한 여자를 사랑한, 단정하고 훤칠한 중년 남자가 서 있었다.",
@@ -24253,7 +25269,7 @@
       "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.options.cross_line.interpretation": "외부가 끼어들기 전에 관계를 확정해야 한다.",
       "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.options.cross_line.label": "돌아가라는 요구를 무시하고 관계를 확인하려 한다",
       "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.prompt": "돌아가라는 요구와 현장 신고에 어떻게 대응할까?",
-      "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.stimulus": "서아가 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+      "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.stimulus": "서아가 자신의 정확한 호수를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
       "scenes.ending.seo_a.ambiguous.nodes.interpretation_choice.options.choose_betrayal.action": "연애 망상을 보복의 피해의식으로 바꾼다.",
       "scenes.ending.seo_a.ambiguous.nodes.interpretation_choice.options.choose_betrayal.interpretation": "사랑은 있었지만 그녀가 자신을 이용하고 버렸다고 결론 내린다.",
       "scenes.ending.seo_a.ambiguous.nodes.interpretation_choice.options.choose_betrayal.label": "서아가 자신을 이용하고 버렸다고 단정한다",
@@ -24266,8 +25282,8 @@
       "scenes.ending.seo_a.ambiguous.nodes.last_push_record.reality.line": "한도윤은 현장을 벗어나는 과정에서 사망했다. 객관 카메라의 넓은 화면에는 실제 모습의 그와 빈 공간만 남아 있었다.",
       "scenes.ending.seo_a.ambiguous.nodes.last_push_record_inner.perceived.line": "(마지막에는 결국 내 선택이 통했군.)",
       "scenes.ending.seo_a.ambiguous.nodes.last_push_record_inner.reality.line": "기록에는 그가 현장을 벗어나다 사망했다는 결과만 남았다.",
-      "scenes.ending.seo_a.ambiguous.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
-      "scenes.ending.seo_a.ambiguous.nodes.leave_request.reality.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+      "scenes.ending.seo_a.ambiguous.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+      "scenes.ending.seo_a.ambiguous.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
       "scenes.ending.seo_a.ambiguous.nodes.leave_request_inner.perceived.line": "(서프라이즈에 놀라서 마음에도 없는 말을 하는 거겠지. 마지막까지 나를 시험하네.)",
       "scenes.ending.seo_a.ambiguous.nodes.leave_request_inner.reality.line": "(문은 더 열지 말자. 신고가 연결될 때까지 통화를 유지해야 해.)",
       "scenes.ending.seo_a.ambiguous.nodes.line_cross_choice.options.escape.action": "현장을 벗어나려다 돌아오지 못한다.",
@@ -24300,8 +25316,8 @@
       "scenes.ending.seo_a.report.nodes.company_epilogue.reality.line": "회사는 경찰 대응 뒤 업무 배제와 내부 확인을 거쳐 뒤늦게 해고를 통보했다.",
       "scenes.ending.seo_a.report.nodes.company_epilogue_inner.perceived.line": "(회사는 끝내 우리 관계를 지켜 주지 않고 나를 배신했군.)",
       "scenes.ending.seo_a.report.nodes.company_epilogue_inner.reality.line": "경찰 대응이 먼저였고, 회사는 그 뒤에야 업무 배제와 내부 확인을 시작했다.",
-      "scenes.ending.seo_a.report.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
-      "scenes.ending.seo_a.report.nodes.leave_request.reality.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+      "scenes.ending.seo_a.report.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+      "scenes.ending.seo_a.report.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
       "scenes.ending.seo_a.report.nodes.leave_request_inner.perceived.line": "(갑작스러운 고백이라 놀란 거겠지. 사람들 눈 때문에 마음에도 없는 말을 하는 거야.)",
       "scenes.ending.seo_a.report.nodes.leave_request_inner.reality.line": "(문은 더 열지 말자. 지금 바로 신고해야 해.)",
       "scenes.ending.seo_a.report.nodes.mugshot.perceived.line": "플래시 속에는 사랑을 오해받은, 단정하고 훤칠한 중년 남자가 서 있었다.",
@@ -24539,7 +25555,7 @@
         "campaign.main.acts.collisions.title": "시간 충돌과 의심",
         "campaign.main.acts.crisis.purpose": "두 번째 주말의 확신이 비밀 연애, 삼각관계, 간병과 사내 소문으로 번역되다가 주거지 방문과 현장 신고로 수렴한다.",
         "campaign.main.acts.crisis.title": "수습이 침범이 되는 시간",
-        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 토·일요일에 서아와 민경을 한 명씩 교차해 만나며 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.",
+        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓는 사이 서아가 같은 오피스텔의 기존 입주민임을 알고 민경도 새로 이사 오며, 토·일요일에는 두 사람을 한 명씩 교차해 만나 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.",
         "campaign.main.acts.romantic_surface.title": "첫인상과 업무의 거리",
         "campaign.main.lanes.cha_min_kyung.title": "차민경",
         "campaign.main.lanes.company.title": "회사와 고정 사건",
@@ -24625,6 +25641,11 @@
         "events.anchor.day_01_company_meeting.presentation.reality.summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.",
         "events.anchor.day_01_company_meeting.presentation.reality.title": "수요일 프로젝트 킥오프",
         "events.anchor.day_01_company_meeting.title": "신규 프로젝트 킥오프",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.summary": "첫날 귀가한 오피스텔 엘리베이터에서 편한 차림의 서아와 다시 만나 회사 밖의 새로운 매력을 발견한다.",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.title": "같은 건물에 살던 서아",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.summary": "서아와 한도윤은 서로가 같은 오피스텔의 기존 입주민이라는 사실을 처음 알고 짧게 인사한 뒤 각자의 저녁 일정으로 돌아간다.",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.title": "같은 건물의 직장 동료",
+        "events.anchor.day_01_officetel_seo_a_reveal.title": "엘리베이터 문이 열리자",
         "events.anchor.day_01_parent_pressure.presentation.perceived.summary": "퇴근 후 부모의 결혼 재촉과 칭찬을 듣고, 오전 프로젝트에서 만난 서아와 민경을 연애 후보로 다시 떠올린다.",
         "events.anchor.day_01_parent_pressure.presentation.perceived.title": "신부감을 찾아볼 때",
         "events.anchor.day_01_parent_pressure.presentation.reality.summary": "부모는 한도윤의 자존심을 다치지 않으려 외모와 조건을 칭찬하며 사람을 만나보라고 권한다.",
@@ -24645,6 +25666,11 @@
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 주요 대화 상대와 회사 복귀 후 공용 대화에서 두 사람의 주말 예정 장소가 각각 자연스럽게 드러난다.",
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.title": "업무 외출과 짧은 휴식",
         "events.anchor.day_03_business_trip_or_cafe.title": "출장 또는 단둘의 점심",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.summary": "같은 오피스텔로 이사 온 민경이 이사떡을 들고 문 앞에 나타나자 두 사람의 인연이 생활권까지 이어졌다고 느낀다.",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.title": "차 대리가 이웃이 되었다",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.summary": "민경은 같은 층에 이사 인사를 돌리다 한도윤과 단둘이 마주치고, 분리배출 위치를 물은 뒤 다른 집으로 이동한다.",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.title": "같은 층 새 입주자의 인사",
+        "events.anchor.day_03_officetel_min_kyung_move_in.title": "문 앞의 이사떡",
         "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": "현재 공략 우선 판정이 높은 한 사람과 주말 장소에서 마주치고, 회사에서 몰랐던 취향과 모습을 조금 더 알고 싶어진다.",
         "events.anchor.day_04_weekend_encounter.presentation.perceived.title": "회사 밖에서 본 새로운 모습",
         "events.anchor.day_04_weekend_encounter.presentation.reality.summary": "토요일에는 서아와 민경 중 한 명과만 만난다. 상대는 공공장소에서 동료와 마주친 우연으로 받아들이며 아직 의도적 접근을 의심하지 않는다.",
@@ -25008,6 +26034,24 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_timestamp_inner.reality.line": "(수정 시각까지 말해 두면 나중에 버전이 섞이지 않겠지.)",
         "scenes.common.day_01_company_meeting.purpose": "프로젝트 킥오프에서 서아·민경·유진의 업무 태도와 한도윤의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.",
         "scenes.common.day_01_company_meeting.title": "수요일의 첫 회의",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.perceived.line": "그러게요. 저도 여기 산 지 좀 됐는데 회사 분을 만난 건 처음입니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.reality.line": "그러게요. 저도 여기 산 지 좀 됐는데 회사 분을 만난 건 처음입니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.perceived.line": "문이 열리자 회사에서 막 헤어진 서아가 서 있었다. 사원증도 업무 수첩도 없이 편한 집업 차림으로 장바구니를 든 모습은 오전과 전혀 달라 보였다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.reality.line": "엘리베이터 문이 열렸고, 편한 집업 차림으로 장바구니를 든 윤서아가 내리려다 한도윤을 알아봤다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.perceived.line": "아, 먼저 타세요. 저는 내려가서 살 게 하나 더 있어서요. 내일 뵙겠습니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.reality.line": "아, 먼저 타세요. 저는 내려가서 살 게 하나 더 있어서요. 내일 뵙겠습니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.perceived.line": "부모님과 통화를 마치고 돌아온 오피스텔은 평소처럼 조용했다. 엘리베이터 도착음이 울리기 전까지는 그랬다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.reality.line": "수요일 저녁, 한도윤은 귀가해 자신이 사는 오피스텔의 엘리베이터 앞에 섰다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.perceived.line": "(같은 건물이라니. 회사에서 본 모습과는 다른 편안한 면도 있군. 서아 씨가 어떤 사람인지 조금 더 궁금해졌어.)",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.reality.line": "두 사람은 같은 오피스텔에 산다는 사실을 처음 알았고, 서아는 필요한 장을 보러 다시 로비로 향했다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.perceived.line": "저도 전부터 살았어요. 회사까지 가기 편해서요. 진짜 신기하네요.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.reality.line": "저도 전부터 살았어요. 회사까지 가기 편해서요. 진짜 신기하네요.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.perceived.line": "아, 과장님? 과장님도 여기 사세요?",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.reality.line": "아, 과장님? 과장님도 여기 사세요?",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.perceived.line": "(첫날부터 회사 밖에서 다시 만나다니. 이렇게 편한 모습은 회사 사람 중 내가 처음 본 건가.)",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.reality.line": "(회사 과장님이 같은 건물에 살 줄은 몰랐네. 출근길에 마주치면 조금 어색하겠다.)",
+        "scenes.common.day_01_officetel_seo_a_reveal.purpose": "첫날 귀가한 한도윤이 같은 오피스텔의 기존 입주민인 윤서아와 엘리베이터 앞에서 우연히 마주치고, 회사 밖의 편한 모습을 보며 가벼운 이성적 호감을 더 느낀다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.title": "엘리베이터 문이 열리자",
         "scenes.common.day_01_parent_pressure.nodes.decision.perceived.line": "결혼을 생각한다면 회사에도 괜찮은 사람은 있겠지. 서아 씨와 차 대리가 어떤 사람인지는 천천히 보면 되겠어.",
         "scenes.common.day_01_parent_pressure.nodes.decision.reality.line": "결혼을 생각한다면 회사에도 괜찮은 사람은 있겠지. 서아 씨와 차 대리가 어떤 사람인지는 천천히 보면 되겠어.",
         "scenes.common.day_01_parent_pressure.nodes.decision_inner.perceived.line": "(성급하게 정할 필요는 없어. 어떤 사람들인지 천천히 보면 되겠지.)",
@@ -25277,6 +26321,28 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line": "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다.",
         "scenes.common.day_03_business_trip_or_cafe.purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 업무를 수습하는 동안에는 사실과 실행 가능성을 먼저 확인하고 해결 뒤에는 구체적인 부담 인정을 받아들이는 민경의 상황별 대화 순서를 재확인한다.",
         "scenes.common.day_03_business_trip_or_cafe.title": "돌아온 뒤 남은 말",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.perceived.line": "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.reality.line": "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.perceived.line": "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.reality.line": "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.perceived.line": "(회사에서는 빈틈없던 차 대리가 이사떡을 들고 내 문 앞에 서 있을 줄이야. 생활하는 얼굴까지 보니 더 매력적인 사람이군.)",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.reality.line": "민경은 같은 층의 다른 집에도 같은 인사를 하기 위해 이동했고, 한도윤은 새 이웃이 된 동료에게 받은 떡을 들고 문을 닫았다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.perceived.line": "문을 열자 가벼운 셔츠 차림의 민경이 소포장 떡을 들고 서 있었다. 노트북과 일정표 대신 이삿짐 상자가 놓인 복도에서 보니 전혀 다른 사람 같았다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.reality.line": "한도윤이 문을 열자, 편한 셔츠 차림의 차민경이 소포장 떡을 들고 서 있었다. 복도 한쪽에는 정리 중인 이삿짐 상자가 남아 있었다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.perceived.line": "금요일 저녁, 현관문 너머에서 짧고 또렷한 노크가 들렸다. 한 주를 끝내고 돌아온 그를 기다린 뜻밖의 방문처럼 들렸다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.reality.line": "금요일 저녁, 한도윤이 사는 오피스텔 현관문에 같은 층 새 입주자가 인사를 위해 노크했다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.perceived.line": "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.reality.line": "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.perceived.line": "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.reality.line": "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.perceived.line": "한 과장님? 한 과장님도 여기 사십니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.reality.line": "한 과장님? 한 과장님도 여기 사십니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.perceived.line": "(서아 씨에 이어 차 대리까지 같은 건물이라니. 우연치고는 너무 절묘한데.)",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.reality.line": "(회사 사람을 같은 층에서 만날 줄은 몰랐네. 그래도 남은 집에도 인사는 마쳐야지.)",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.perceived.line": "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.reality.line": "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.purpose": "금요일 저녁 같은 오피스텔로 이사 온 차민경이 이사떡을 돌리다 한도윤과 단둘이 마주치고, 한도윤은 업무 밖의 편한 모습과 입주민으로서의 호의를 운명적인 연결로 받아들인다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.title": "문 앞의 이사떡",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.perceived.line": "주말에도 뵙네요. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요.",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.reality.line": "주말에도 뵙네요. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요.",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_ott.perceived.line": "주말에도 뵙네요. 요즘 다들 《퇴근은 내일》이라는 회사 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. ‘회의는 끝났지만 내 마음은 야근 중입니다’라는 대사는 원래 어느 장면에 나옵니까?",
@@ -25392,7 +26458,7 @@
         "scenes.ending.min_kyung.coverup.nodes.immediate_choice.options.cross_line.interpretation": "외부가 끼어들기 전에 관계를 확정해야 한다.",
         "scenes.ending.min_kyung.coverup.nodes.immediate_choice.options.cross_line.label": "돌아가라는 요구를 무시하고 관계를 확인하려 한다",
         "scenes.ending.min_kyung.coverup.nodes.immediate_choice.prompt": "돌아가라는 요구와 현장 신고에 어떻게 대응할까?",
-        "scenes.ending.min_kyung.coverup.nodes.immediate_choice.stimulus": "민경이 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+        "scenes.ending.min_kyung.coverup.nodes.immediate_choice.stimulus": "민경이 자신의 정확한 호수를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
         "scenes.ending.min_kyung.coverup.nodes.interpretation_choice.options.choose_betrayal.action": "연애 망상을 보복의 피해의식으로 바꾼다.",
         "scenes.ending.min_kyung.coverup.nodes.interpretation_choice.options.choose_betrayal.interpretation": "사랑은 있었지만 그녀가 자신을 이용하고 버렸다고 결론 내린다.",
         "scenes.ending.min_kyung.coverup.nodes.interpretation_choice.options.choose_betrayal.label": "민경이 자신을 이용하고 버렸다고 단정한다",
@@ -25405,8 +26471,8 @@
         "scenes.ending.min_kyung.coverup.nodes.last_push_record.reality.line": "한도윤은 현장을 벗어나는 과정에서 사망했다. 객관 카메라의 넓은 화면에는 실제 모습의 그와 빈 공간만 남아 있었다.",
         "scenes.ending.min_kyung.coverup.nodes.last_push_record_inner.perceived.line": "(마지막에는 결국 내 선택이 통했군.)",
         "scenes.ending.min_kyung.coverup.nodes.last_push_record_inner.reality.line": "기록에는 그가 현장을 벗어나다 사망했다는 결과만 남았다.",
-        "scenes.ending.min_kyung.coverup.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.min_kyung.coverup.nodes.leave_request.reality.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.coverup.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.coverup.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.min_kyung.coverup.nodes.leave_request_inner.perceived.line": "(내 서프라이즈에 놀란 거겠지. 그래도 마지막까지 주도권은 안 놓치네.)",
         "scenes.ending.min_kyung.coverup.nodes.leave_request_inner.reality.line": "(설명하려 들지 말자. 신고할 문장과 시각부터 정확히 남겨야 해.)",
         "scenes.ending.min_kyung.coverup.nodes.line_cross_choice.options.escape.action": "현장을 벗어나려다 돌아오지 못한다.",
@@ -25439,8 +26505,8 @@
         "scenes.ending.min_kyung.report.nodes.company_epilogue.reality.line": "회사는 경찰 대응 뒤 업무 배제와 내부 확인을 거쳐 뒤늦게 해고를 통보했다.",
         "scenes.ending.min_kyung.report.nodes.company_epilogue_inner.perceived.line": "(회사는 끝내 우리 관계를 지켜 주지 않고 나를 배신했군.)",
         "scenes.ending.min_kyung.report.nodes.company_epilogue_inner.reality.line": "경찰 대응이 먼저였고, 회사는 그 뒤에야 업무 배제와 내부 확인을 시작했다.",
-        "scenes.ending.min_kyung.report.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.min_kyung.report.nodes.leave_request.reality.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.report.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.report.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.min_kyung.report.nodes.leave_request_inner.perceived.line": "(예상하지 못한 고백이라 놀란 거겠지. 그래도 끝까지 주도권은 안 놓치네.)",
         "scenes.ending.min_kyung.report.nodes.leave_request_inner.reality.line": "(같은 말을 또 설명하지 말자. 신고할 문장과 시각부터 남겨야 해.)",
         "scenes.ending.min_kyung.report.nodes.mugshot.perceived.line": "플래시 속에는 강한 여자를 사랑한, 단정하고 훤칠한 중년 남자가 서 있었다.",
@@ -25472,7 +26538,7 @@
         "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.options.cross_line.interpretation": "외부가 끼어들기 전에 관계를 확정해야 한다.",
         "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.options.cross_line.label": "돌아가라는 요구를 무시하고 관계를 확인하려 한다",
         "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.prompt": "돌아가라는 요구와 현장 신고에 어떻게 대응할까?",
-        "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.stimulus": "서아가 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+        "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.stimulus": "서아가 자신의 정확한 호수를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
         "scenes.ending.seo_a.ambiguous.nodes.interpretation_choice.options.choose_betrayal.action": "연애 망상을 보복의 피해의식으로 바꾼다.",
         "scenes.ending.seo_a.ambiguous.nodes.interpretation_choice.options.choose_betrayal.interpretation": "사랑은 있었지만 그녀가 자신을 이용하고 버렸다고 결론 내린다.",
         "scenes.ending.seo_a.ambiguous.nodes.interpretation_choice.options.choose_betrayal.label": "서아가 자신을 이용하고 버렸다고 단정한다",
@@ -25485,8 +26551,8 @@
         "scenes.ending.seo_a.ambiguous.nodes.last_push_record.reality.line": "한도윤은 현장을 벗어나는 과정에서 사망했다. 객관 카메라의 넓은 화면에는 실제 모습의 그와 빈 공간만 남아 있었다.",
         "scenes.ending.seo_a.ambiguous.nodes.last_push_record_inner.perceived.line": "(마지막에는 결국 내 선택이 통했군.)",
         "scenes.ending.seo_a.ambiguous.nodes.last_push_record_inner.reality.line": "기록에는 그가 현장을 벗어나다 사망했다는 결과만 남았다.",
-        "scenes.ending.seo_a.ambiguous.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.seo_a.ambiguous.nodes.leave_request.reality.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.ambiguous.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.ambiguous.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.seo_a.ambiguous.nodes.leave_request_inner.perceived.line": "(서프라이즈에 놀라서 마음에도 없는 말을 하는 거겠지. 마지막까지 나를 시험하네.)",
         "scenes.ending.seo_a.ambiguous.nodes.leave_request_inner.reality.line": "(문은 더 열지 말자. 신고가 연결될 때까지 통화를 유지해야 해.)",
         "scenes.ending.seo_a.ambiguous.nodes.line_cross_choice.options.escape.action": "현장을 벗어나려다 돌아오지 못한다.",
@@ -25519,8 +26585,8 @@
         "scenes.ending.seo_a.report.nodes.company_epilogue.reality.line": "회사는 경찰 대응 뒤 업무 배제와 내부 확인을 거쳐 뒤늦게 해고를 통보했다.",
         "scenes.ending.seo_a.report.nodes.company_epilogue_inner.perceived.line": "(회사는 끝내 우리 관계를 지켜 주지 않고 나를 배신했군.)",
         "scenes.ending.seo_a.report.nodes.company_epilogue_inner.reality.line": "경찰 대응이 먼저였고, 회사는 그 뒤에야 업무 배제와 내부 확인을 시작했다.",
-        "scenes.ending.seo_a.report.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.seo_a.report.nodes.leave_request.reality.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.report.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.report.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.seo_a.report.nodes.leave_request_inner.perceived.line": "(갑작스러운 고백이라 놀란 거겠지. 사람들 눈 때문에 마음에도 없는 말을 하는 거야.)",
         "scenes.ending.seo_a.report.nodes.leave_request_inner.reality.line": "(문은 더 열지 말자. 지금 바로 신고해야 해.)",
         "scenes.ending.seo_a.report.nodes.mugshot.perceived.line": "플래시 속에는 사랑을 오해받은, 단정하고 훤칠한 중년 남자가 서 있었다.",
@@ -25757,7 +26823,7 @@
         "campaign.main.acts.collisions.title": "Cracks in the Interpretation",
         "campaign.main.acts.crisis.purpose": "두 번째 주말의 확신이 비밀 연애, 삼각관계, 간병과 사내 소문으로 번역되다가 주거지 방문과 현장 신고로 수렴한다.",
         "campaign.main.acts.crisis.title": "Records That Cannot Be Rewritten",
-        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 토·일요일에 서아와 민경을 한 명씩 교차해 만나며 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.",
+        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓는 사이 서아가 같은 오피스텔의 기존 입주민임을 알고 민경도 새로 이사 오며, 토·일요일에는 두 사람을 한 명씩 교차해 만나 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.",
         "campaign.main.acts.romantic_surface.title": "First Encounters",
         "campaign.main.lanes.cha_min_kyung.title": "차민경",
         "campaign.main.lanes.company.title": "회사와 고정 사건",
@@ -25843,6 +26909,11 @@
         "events.anchor.day_01_company_meeting.presentation.reality.summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.",
         "events.anchor.day_01_company_meeting.presentation.reality.title": "수요일 프로젝트 킥오프",
         "events.anchor.day_01_company_meeting.title": "신규 프로젝트 킥오프",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.summary": "첫날 귀가한 오피스텔 엘리베이터에서 편한 차림의 서아와 다시 만나 회사 밖의 새로운 매력을 발견한다.",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.title": "같은 건물에 살던 서아",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.summary": "서아와 한도윤은 서로가 같은 오피스텔의 기존 입주민이라는 사실을 처음 알고 짧게 인사한 뒤 각자의 저녁 일정으로 돌아간다.",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.title": "같은 건물의 직장 동료",
+        "events.anchor.day_01_officetel_seo_a_reveal.title": "엘리베이터 문이 열리자",
         "events.anchor.day_01_parent_pressure.presentation.perceived.summary": "퇴근 후 부모의 결혼 재촉과 칭찬을 듣고, 오전 프로젝트에서 만난 서아와 민경을 연애 후보로 다시 떠올린다.",
         "events.anchor.day_01_parent_pressure.presentation.perceived.title": "신부감을 찾아볼 때",
         "events.anchor.day_01_parent_pressure.presentation.reality.summary": "부모는 한도윤의 자존심을 다치지 않으려 외모와 조건을 칭찬하며 사람을 만나보라고 권한다.",
@@ -25863,6 +26934,11 @@
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 주요 대화 상대와 회사 복귀 후 공용 대화에서 두 사람의 주말 예정 장소가 각각 자연스럽게 드러난다.",
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.title": "업무 외출과 짧은 휴식",
         "events.anchor.day_03_business_trip_or_cafe.title": "출장 또는 단둘의 점심",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.summary": "같은 오피스텔로 이사 온 민경이 이사떡을 들고 문 앞에 나타나자 두 사람의 인연이 생활권까지 이어졌다고 느낀다.",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.title": "차 대리가 이웃이 되었다",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.summary": "민경은 같은 층에 이사 인사를 돌리다 한도윤과 단둘이 마주치고, 분리배출 위치를 물은 뒤 다른 집으로 이동한다.",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.title": "같은 층 새 입주자의 인사",
+        "events.anchor.day_03_officetel_min_kyung_move_in.title": "문 앞의 이사떡",
         "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": "현재 공략 우선 판정이 높은 한 사람과 주말 장소에서 마주치고, 회사에서 몰랐던 취향과 모습을 조금 더 알고 싶어진다.",
         "events.anchor.day_04_weekend_encounter.presentation.perceived.title": "회사 밖에서 본 새로운 모습",
         "events.anchor.day_04_weekend_encounter.presentation.reality.summary": "토요일에는 서아와 민경 중 한 명과만 만난다. 상대는 공공장소에서 동료와 마주친 우연으로 받아들이며 아직 의도적 접근을 의심하지 않는다.",
@@ -26226,6 +27302,24 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_timestamp_inner.reality.line": "(수정 시각까지 말해 두면 나중에 버전이 섞이지 않겠지.)",
         "scenes.common.day_01_company_meeting.purpose": "프로젝트 킥오프에서 서아·민경·유진의 업무 태도와 한도윤의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.",
         "scenes.common.day_01_company_meeting.title": "수요일의 첫 회의",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.perceived.line": "그러게요. 저도 여기 산 지 좀 됐는데 회사 분을 만난 건 처음입니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.reality.line": "그러게요. 저도 여기 산 지 좀 됐는데 회사 분을 만난 건 처음입니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.perceived.line": "문이 열리자 회사에서 막 헤어진 서아가 서 있었다. 사원증도 업무 수첩도 없이 편한 집업 차림으로 장바구니를 든 모습은 오전과 전혀 달라 보였다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.reality.line": "엘리베이터 문이 열렸고, 편한 집업 차림으로 장바구니를 든 윤서아가 내리려다 한도윤을 알아봤다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.perceived.line": "아, 먼저 타세요. 저는 내려가서 살 게 하나 더 있어서요. 내일 뵙겠습니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.reality.line": "아, 먼저 타세요. 저는 내려가서 살 게 하나 더 있어서요. 내일 뵙겠습니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.perceived.line": "부모님과 통화를 마치고 돌아온 오피스텔은 평소처럼 조용했다. 엘리베이터 도착음이 울리기 전까지는 그랬다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.reality.line": "수요일 저녁, 한도윤은 귀가해 자신이 사는 오피스텔의 엘리베이터 앞에 섰다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.perceived.line": "(같은 건물이라니. 회사에서 본 모습과는 다른 편안한 면도 있군. 서아 씨가 어떤 사람인지 조금 더 궁금해졌어.)",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.reality.line": "두 사람은 같은 오피스텔에 산다는 사실을 처음 알았고, 서아는 필요한 장을 보러 다시 로비로 향했다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.perceived.line": "저도 전부터 살았어요. 회사까지 가기 편해서요. 진짜 신기하네요.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.reality.line": "저도 전부터 살았어요. 회사까지 가기 편해서요. 진짜 신기하네요.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.perceived.line": "아, 과장님? 과장님도 여기 사세요?",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.reality.line": "아, 과장님? 과장님도 여기 사세요?",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.perceived.line": "(첫날부터 회사 밖에서 다시 만나다니. 이렇게 편한 모습은 회사 사람 중 내가 처음 본 건가.)",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.reality.line": "(회사 과장님이 같은 건물에 살 줄은 몰랐네. 출근길에 마주치면 조금 어색하겠다.)",
+        "scenes.common.day_01_officetel_seo_a_reveal.purpose": "첫날 귀가한 한도윤이 같은 오피스텔의 기존 입주민인 윤서아와 엘리베이터 앞에서 우연히 마주치고, 회사 밖의 편한 모습을 보며 가벼운 이성적 호감을 더 느낀다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.title": "엘리베이터 문이 열리자",
         "scenes.common.day_01_parent_pressure.nodes.decision.perceived.line": "결혼을 생각한다면 회사에도 괜찮은 사람은 있겠지. 서아 씨와 차 대리가 어떤 사람인지는 천천히 보면 되겠어.",
         "scenes.common.day_01_parent_pressure.nodes.decision.reality.line": "결혼을 생각한다면 회사에도 괜찮은 사람은 있겠지. 서아 씨와 차 대리가 어떤 사람인지는 천천히 보면 되겠어.",
         "scenes.common.day_01_parent_pressure.nodes.decision_inner.perceived.line": "(성급하게 정할 필요는 없어. 어떤 사람들인지 천천히 보면 되겠지.)",
@@ -26495,6 +27589,28 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line": "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다.",
         "scenes.common.day_03_business_trip_or_cafe.purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 업무를 수습하는 동안에는 사실과 실행 가능성을 먼저 확인하고 해결 뒤에는 구체적인 부담 인정을 받아들이는 민경의 상황별 대화 순서를 재확인한다.",
         "scenes.common.day_03_business_trip_or_cafe.title": "돌아온 뒤 남은 말",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.perceived.line": "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.reality.line": "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.perceived.line": "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.reality.line": "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.perceived.line": "(회사에서는 빈틈없던 차 대리가 이사떡을 들고 내 문 앞에 서 있을 줄이야. 생활하는 얼굴까지 보니 더 매력적인 사람이군.)",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.reality.line": "민경은 같은 층의 다른 집에도 같은 인사를 하기 위해 이동했고, 한도윤은 새 이웃이 된 동료에게 받은 떡을 들고 문을 닫았다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.perceived.line": "문을 열자 가벼운 셔츠 차림의 민경이 소포장 떡을 들고 서 있었다. 노트북과 일정표 대신 이삿짐 상자가 놓인 복도에서 보니 전혀 다른 사람 같았다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.reality.line": "한도윤이 문을 열자, 편한 셔츠 차림의 차민경이 소포장 떡을 들고 서 있었다. 복도 한쪽에는 정리 중인 이삿짐 상자가 남아 있었다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.perceived.line": "금요일 저녁, 현관문 너머에서 짧고 또렷한 노크가 들렸다. 한 주를 끝내고 돌아온 그를 기다린 뜻밖의 방문처럼 들렸다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.reality.line": "금요일 저녁, 한도윤이 사는 오피스텔 현관문에 같은 층 새 입주자가 인사를 위해 노크했다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.perceived.line": "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.reality.line": "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.perceived.line": "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.reality.line": "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.perceived.line": "한 과장님? 한 과장님도 여기 사십니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.reality.line": "한 과장님? 한 과장님도 여기 사십니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.perceived.line": "(서아 씨에 이어 차 대리까지 같은 건물이라니. 우연치고는 너무 절묘한데.)",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.reality.line": "(회사 사람을 같은 층에서 만날 줄은 몰랐네. 그래도 남은 집에도 인사는 마쳐야지.)",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.perceived.line": "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.reality.line": "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.purpose": "금요일 저녁 같은 오피스텔로 이사 온 차민경이 이사떡을 돌리다 한도윤과 단둘이 마주치고, 한도윤은 업무 밖의 편한 모습과 입주민으로서의 호의를 운명적인 연결로 받아들인다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.title": "문 앞의 이사떡",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.perceived.line": "주말에도 뵙네요. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요.",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.reality.line": "주말에도 뵙네요. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요.",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_ott.perceived.line": "주말에도 뵙네요. 요즘 다들 《퇴근은 내일》이라는 회사 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. ‘회의는 끝났지만 내 마음은 야근 중입니다’라는 대사는 원래 어느 장면에 나옵니까?",
@@ -26610,7 +27726,7 @@
         "scenes.ending.min_kyung.coverup.nodes.immediate_choice.options.cross_line.interpretation": "외부가 끼어들기 전에 관계를 확정해야 한다.",
         "scenes.ending.min_kyung.coverup.nodes.immediate_choice.options.cross_line.label": "돌아가라는 요구를 무시하고 관계를 확인하려 한다",
         "scenes.ending.min_kyung.coverup.nodes.immediate_choice.prompt": "돌아가라는 요구와 현장 신고에 어떻게 대응할까?",
-        "scenes.ending.min_kyung.coverup.nodes.immediate_choice.stimulus": "민경이 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+        "scenes.ending.min_kyung.coverup.nodes.immediate_choice.stimulus": "민경이 자신의 정확한 호수를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
         "scenes.ending.min_kyung.coverup.nodes.interpretation_choice.options.choose_betrayal.action": "연애 망상을 보복의 피해의식으로 바꾼다.",
         "scenes.ending.min_kyung.coverup.nodes.interpretation_choice.options.choose_betrayal.interpretation": "사랑은 있었지만 그녀가 자신을 이용하고 버렸다고 결론 내린다.",
         "scenes.ending.min_kyung.coverup.nodes.interpretation_choice.options.choose_betrayal.label": "민경이 자신을 이용하고 버렸다고 단정한다",
@@ -26623,8 +27739,8 @@
         "scenes.ending.min_kyung.coverup.nodes.last_push_record.reality.line": "한도윤은 현장을 벗어나는 과정에서 사망했다. 객관 카메라의 넓은 화면에는 실제 모습의 그와 빈 공간만 남아 있었다.",
         "scenes.ending.min_kyung.coverup.nodes.last_push_record_inner.perceived.line": "(마지막에는 결국 내 선택이 통했군.)",
         "scenes.ending.min_kyung.coverup.nodes.last_push_record_inner.reality.line": "기록에는 그가 현장을 벗어나다 사망했다는 결과만 남았다.",
-        "scenes.ending.min_kyung.coverup.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.min_kyung.coverup.nodes.leave_request.reality.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.coverup.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.coverup.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.min_kyung.coverup.nodes.leave_request_inner.perceived.line": "(내 서프라이즈에 놀란 거겠지. 그래도 마지막까지 주도권은 안 놓치네.)",
         "scenes.ending.min_kyung.coverup.nodes.leave_request_inner.reality.line": "(설명하려 들지 말자. 신고할 문장과 시각부터 정확히 남겨야 해.)",
         "scenes.ending.min_kyung.coverup.nodes.line_cross_choice.options.escape.action": "현장을 벗어나려다 돌아오지 못한다.",
@@ -26657,8 +27773,8 @@
         "scenes.ending.min_kyung.report.nodes.company_epilogue.reality.line": "회사는 경찰 대응 뒤 업무 배제와 내부 확인을 거쳐 뒤늦게 해고를 통보했다.",
         "scenes.ending.min_kyung.report.nodes.company_epilogue_inner.perceived.line": "(회사는 끝내 우리 관계를 지켜 주지 않고 나를 배신했군.)",
         "scenes.ending.min_kyung.report.nodes.company_epilogue_inner.reality.line": "경찰 대응이 먼저였고, 회사는 그 뒤에야 업무 배제와 내부 확인을 시작했다.",
-        "scenes.ending.min_kyung.report.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.min_kyung.report.nodes.leave_request.reality.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.report.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.report.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.min_kyung.report.nodes.leave_request_inner.perceived.line": "(예상하지 못한 고백이라 놀란 거겠지. 그래도 끝까지 주도권은 안 놓치네.)",
         "scenes.ending.min_kyung.report.nodes.leave_request_inner.reality.line": "(같은 말을 또 설명하지 말자. 신고할 문장과 시각부터 남겨야 해.)",
         "scenes.ending.min_kyung.report.nodes.mugshot.perceived.line": "플래시 속에는 강한 여자를 사랑한, 단정하고 훤칠한 중년 남자가 서 있었다.",
@@ -26690,7 +27806,7 @@
         "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.options.cross_line.interpretation": "외부가 끼어들기 전에 관계를 확정해야 한다.",
         "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.options.cross_line.label": "돌아가라는 요구를 무시하고 관계를 확인하려 한다",
         "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.prompt": "돌아가라는 요구와 현장 신고에 어떻게 대응할까?",
-        "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.stimulus": "서아가 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+        "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.stimulus": "서아가 자신의 정확한 호수를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
         "scenes.ending.seo_a.ambiguous.nodes.interpretation_choice.options.choose_betrayal.action": "연애 망상을 보복의 피해의식으로 바꾼다.",
         "scenes.ending.seo_a.ambiguous.nodes.interpretation_choice.options.choose_betrayal.interpretation": "사랑은 있었지만 그녀가 자신을 이용하고 버렸다고 결론 내린다.",
         "scenes.ending.seo_a.ambiguous.nodes.interpretation_choice.options.choose_betrayal.label": "서아가 자신을 이용하고 버렸다고 단정한다",
@@ -26703,8 +27819,8 @@
         "scenes.ending.seo_a.ambiguous.nodes.last_push_record.reality.line": "한도윤은 현장을 벗어나는 과정에서 사망했다. 객관 카메라의 넓은 화면에는 실제 모습의 그와 빈 공간만 남아 있었다.",
         "scenes.ending.seo_a.ambiguous.nodes.last_push_record_inner.perceived.line": "(마지막에는 결국 내 선택이 통했군.)",
         "scenes.ending.seo_a.ambiguous.nodes.last_push_record_inner.reality.line": "기록에는 그가 현장을 벗어나다 사망했다는 결과만 남았다.",
-        "scenes.ending.seo_a.ambiguous.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.seo_a.ambiguous.nodes.leave_request.reality.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.ambiguous.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.ambiguous.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.seo_a.ambiguous.nodes.leave_request_inner.perceived.line": "(서프라이즈에 놀라서 마음에도 없는 말을 하는 거겠지. 마지막까지 나를 시험하네.)",
         "scenes.ending.seo_a.ambiguous.nodes.leave_request_inner.reality.line": "(문은 더 열지 말자. 신고가 연결될 때까지 통화를 유지해야 해.)",
         "scenes.ending.seo_a.ambiguous.nodes.line_cross_choice.options.escape.action": "현장을 벗어나려다 돌아오지 못한다.",
@@ -26737,8 +27853,8 @@
         "scenes.ending.seo_a.report.nodes.company_epilogue.reality.line": "회사는 경찰 대응 뒤 업무 배제와 내부 확인을 거쳐 뒤늦게 해고를 통보했다.",
         "scenes.ending.seo_a.report.nodes.company_epilogue_inner.perceived.line": "(회사는 끝내 우리 관계를 지켜 주지 않고 나를 배신했군.)",
         "scenes.ending.seo_a.report.nodes.company_epilogue_inner.reality.line": "경찰 대응이 먼저였고, 회사는 그 뒤에야 업무 배제와 내부 확인을 시작했다.",
-        "scenes.ending.seo_a.report.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.seo_a.report.nodes.leave_request.reality.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.report.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.report.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.seo_a.report.nodes.leave_request_inner.perceived.line": "(갑작스러운 고백이라 놀란 거겠지. 사람들 눈 때문에 마음에도 없는 말을 하는 거야.)",
         "scenes.ending.seo_a.report.nodes.leave_request_inner.reality.line": "(문은 더 열지 말자. 지금 바로 신고해야 해.)",
         "scenes.ending.seo_a.report.nodes.mugshot.perceived.line": "플래시 속에는 사랑을 오해받은, 단정하고 훤칠한 중년 남자가 서 있었다.",
@@ -27244,7 +28360,7 @@
         "campaign.main.acts.collisions.title": "시간 충돌과 의심",
         "campaign.main.acts.crisis.purpose": "두 번째 주말의 확신이 비밀 연애, 삼각관계, 간병과 사내 소문으로 번역되다가 주거지 방문과 현장 신고로 수렴한다.",
         "campaign.main.acts.crisis.title": "수습이 침범이 되는 시간",
-        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 토·일요일에 서아와 민경을 한 명씩 교차해 만나며 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.",
+        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓는 사이 서아가 같은 오피스텔의 기존 입주민임을 알고 민경도 새로 이사 오며, 토·일요일에는 두 사람을 한 명씩 교차해 만나 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.",
         "campaign.main.acts.romantic_surface.title": "첫인상과 업무의 거리",
         "campaign.main.lanes.cha_min_kyung.title": "차민경",
         "campaign.main.lanes.company.title": "회사와 고정 사건",
@@ -27330,6 +28446,11 @@
         "events.anchor.day_01_company_meeting.presentation.reality.summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.",
         "events.anchor.day_01_company_meeting.presentation.reality.title": "수요일 프로젝트 킥오프",
         "events.anchor.day_01_company_meeting.title": "신규 프로젝트 킥오프",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.summary": "첫날 귀가한 오피스텔 엘리베이터에서 편한 차림의 서아와 다시 만나 회사 밖의 새로운 매력을 발견한다.",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.title": "같은 건물에 살던 서아",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.summary": "서아와 한도윤은 서로가 같은 오피스텔의 기존 입주민이라는 사실을 처음 알고 짧게 인사한 뒤 각자의 저녁 일정으로 돌아간다.",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.title": "같은 건물의 직장 동료",
+        "events.anchor.day_01_officetel_seo_a_reveal.title": "엘리베이터 문이 열리자",
         "events.anchor.day_01_parent_pressure.presentation.perceived.summary": "퇴근 후 부모의 결혼 재촉과 칭찬을 듣고, 오전 프로젝트에서 만난 서아와 민경을 연애 후보로 다시 떠올린다.",
         "events.anchor.day_01_parent_pressure.presentation.perceived.title": "신부감을 찾아볼 때",
         "events.anchor.day_01_parent_pressure.presentation.reality.summary": "부모는 한도윤의 자존심을 다치지 않으려 외모와 조건을 칭찬하며 사람을 만나보라고 권한다.",
@@ -27350,6 +28471,11 @@
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 주요 대화 상대와 회사 복귀 후 공용 대화에서 두 사람의 주말 예정 장소가 각각 자연스럽게 드러난다.",
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.title": "업무 외출과 짧은 휴식",
         "events.anchor.day_03_business_trip_or_cafe.title": "출장 또는 단둘의 점심",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.summary": "같은 오피스텔로 이사 온 민경이 이사떡을 들고 문 앞에 나타나자 두 사람의 인연이 생활권까지 이어졌다고 느낀다.",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.title": "차 대리가 이웃이 되었다",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.summary": "민경은 같은 층에 이사 인사를 돌리다 한도윤과 단둘이 마주치고, 분리배출 위치를 물은 뒤 다른 집으로 이동한다.",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.title": "같은 층 새 입주자의 인사",
+        "events.anchor.day_03_officetel_min_kyung_move_in.title": "문 앞의 이사떡",
         "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": "현재 공략 우선 판정이 높은 한 사람과 주말 장소에서 마주치고, 회사에서 몰랐던 취향과 모습을 조금 더 알고 싶어진다.",
         "events.anchor.day_04_weekend_encounter.presentation.perceived.title": "회사 밖에서 본 새로운 모습",
         "events.anchor.day_04_weekend_encounter.presentation.reality.summary": "토요일에는 서아와 민경 중 한 명과만 만난다. 상대는 공공장소에서 동료와 마주친 우연으로 받아들이며 아직 의도적 접근을 의심하지 않는다.",
@@ -27713,6 +28839,24 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_timestamp_inner.reality.line": "(수정 시각까지 말해 두면 나중에 버전이 섞이지 않겠지.)",
         "scenes.common.day_01_company_meeting.purpose": "프로젝트 킥오프에서 서아·민경·유진의 업무 태도와 한도윤의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.",
         "scenes.common.day_01_company_meeting.title": "수요일의 첫 회의",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.perceived.line": "그러게요. 저도 여기 산 지 좀 됐는데 회사 분을 만난 건 처음입니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.reality.line": "그러게요. 저도 여기 산 지 좀 됐는데 회사 분을 만난 건 처음입니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.perceived.line": "문이 열리자 회사에서 막 헤어진 서아가 서 있었다. 사원증도 업무 수첩도 없이 편한 집업 차림으로 장바구니를 든 모습은 오전과 전혀 달라 보였다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.reality.line": "엘리베이터 문이 열렸고, 편한 집업 차림으로 장바구니를 든 윤서아가 내리려다 한도윤을 알아봤다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.perceived.line": "아, 먼저 타세요. 저는 내려가서 살 게 하나 더 있어서요. 내일 뵙겠습니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.reality.line": "아, 먼저 타세요. 저는 내려가서 살 게 하나 더 있어서요. 내일 뵙겠습니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.perceived.line": "부모님과 통화를 마치고 돌아온 오피스텔은 평소처럼 조용했다. 엘리베이터 도착음이 울리기 전까지는 그랬다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.reality.line": "수요일 저녁, 한도윤은 귀가해 자신이 사는 오피스텔의 엘리베이터 앞에 섰다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.perceived.line": "(같은 건물이라니. 회사에서 본 모습과는 다른 편안한 면도 있군. 서아 씨가 어떤 사람인지 조금 더 궁금해졌어.)",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.reality.line": "두 사람은 같은 오피스텔에 산다는 사실을 처음 알았고, 서아는 필요한 장을 보러 다시 로비로 향했다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.perceived.line": "저도 전부터 살았어요. 회사까지 가기 편해서요. 진짜 신기하네요.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.reality.line": "저도 전부터 살았어요. 회사까지 가기 편해서요. 진짜 신기하네요.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.perceived.line": "아, 과장님? 과장님도 여기 사세요?",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.reality.line": "아, 과장님? 과장님도 여기 사세요?",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.perceived.line": "(첫날부터 회사 밖에서 다시 만나다니. 이렇게 편한 모습은 회사 사람 중 내가 처음 본 건가.)",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.reality.line": "(회사 과장님이 같은 건물에 살 줄은 몰랐네. 출근길에 마주치면 조금 어색하겠다.)",
+        "scenes.common.day_01_officetel_seo_a_reveal.purpose": "첫날 귀가한 한도윤이 같은 오피스텔의 기존 입주민인 윤서아와 엘리베이터 앞에서 우연히 마주치고, 회사 밖의 편한 모습을 보며 가벼운 이성적 호감을 더 느낀다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.title": "엘리베이터 문이 열리자",
         "scenes.common.day_01_parent_pressure.nodes.decision.perceived.line": "결혼을 생각한다면 회사에도 괜찮은 사람은 있겠지. 서아 씨와 차 대리가 어떤 사람인지는 천천히 보면 되겠어.",
         "scenes.common.day_01_parent_pressure.nodes.decision.reality.line": "결혼을 생각한다면 회사에도 괜찮은 사람은 있겠지. 서아 씨와 차 대리가 어떤 사람인지는 천천히 보면 되겠어.",
         "scenes.common.day_01_parent_pressure.nodes.decision_inner.perceived.line": "(성급하게 정할 필요는 없어. 어떤 사람들인지 천천히 보면 되겠지.)",
@@ -27982,6 +29126,28 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line": "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다.",
         "scenes.common.day_03_business_trip_or_cafe.purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 업무를 수습하는 동안에는 사실과 실행 가능성을 먼저 확인하고 해결 뒤에는 구체적인 부담 인정을 받아들이는 민경의 상황별 대화 순서를 재확인한다.",
         "scenes.common.day_03_business_trip_or_cafe.title": "돌아온 뒤 남은 말",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.perceived.line": "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.reality.line": "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.perceived.line": "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.reality.line": "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.perceived.line": "(회사에서는 빈틈없던 차 대리가 이사떡을 들고 내 문 앞에 서 있을 줄이야. 생활하는 얼굴까지 보니 더 매력적인 사람이군.)",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.reality.line": "민경은 같은 층의 다른 집에도 같은 인사를 하기 위해 이동했고, 한도윤은 새 이웃이 된 동료에게 받은 떡을 들고 문을 닫았다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.perceived.line": "문을 열자 가벼운 셔츠 차림의 민경이 소포장 떡을 들고 서 있었다. 노트북과 일정표 대신 이삿짐 상자가 놓인 복도에서 보니 전혀 다른 사람 같았다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.reality.line": "한도윤이 문을 열자, 편한 셔츠 차림의 차민경이 소포장 떡을 들고 서 있었다. 복도 한쪽에는 정리 중인 이삿짐 상자가 남아 있었다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.perceived.line": "금요일 저녁, 현관문 너머에서 짧고 또렷한 노크가 들렸다. 한 주를 끝내고 돌아온 그를 기다린 뜻밖의 방문처럼 들렸다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.reality.line": "금요일 저녁, 한도윤이 사는 오피스텔 현관문에 같은 층 새 입주자가 인사를 위해 노크했다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.perceived.line": "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.reality.line": "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.perceived.line": "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.reality.line": "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.perceived.line": "한 과장님? 한 과장님도 여기 사십니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.reality.line": "한 과장님? 한 과장님도 여기 사십니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.perceived.line": "(서아 씨에 이어 차 대리까지 같은 건물이라니. 우연치고는 너무 절묘한데.)",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.reality.line": "(회사 사람을 같은 층에서 만날 줄은 몰랐네. 그래도 남은 집에도 인사는 마쳐야지.)",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.perceived.line": "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.reality.line": "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.purpose": "금요일 저녁 같은 오피스텔로 이사 온 차민경이 이사떡을 돌리다 한도윤과 단둘이 마주치고, 한도윤은 업무 밖의 편한 모습과 입주민으로서의 호의를 운명적인 연결로 받아들인다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.title": "문 앞의 이사떡",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.perceived.line": "주말에도 뵙네요. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요.",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.reality.line": "주말에도 뵙네요. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요.",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_ott.perceived.line": "주말에도 뵙네요. 요즘 다들 《퇴근은 내일》이라는 회사 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. ‘회의는 끝났지만 내 마음은 야근 중입니다’라는 대사는 원래 어느 장면에 나옵니까?",
@@ -28097,7 +29263,7 @@
         "scenes.ending.min_kyung.coverup.nodes.immediate_choice.options.cross_line.interpretation": "외부가 끼어들기 전에 관계를 확정해야 한다.",
         "scenes.ending.min_kyung.coverup.nodes.immediate_choice.options.cross_line.label": "돌아가라는 요구를 무시하고 관계를 확인하려 한다",
         "scenes.ending.min_kyung.coverup.nodes.immediate_choice.prompt": "돌아가라는 요구와 현장 신고에 어떻게 대응할까?",
-        "scenes.ending.min_kyung.coverup.nodes.immediate_choice.stimulus": "민경이 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+        "scenes.ending.min_kyung.coverup.nodes.immediate_choice.stimulus": "민경이 자신의 정확한 호수를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
         "scenes.ending.min_kyung.coverup.nodes.interpretation_choice.options.choose_betrayal.action": "연애 망상을 보복의 피해의식으로 바꾼다.",
         "scenes.ending.min_kyung.coverup.nodes.interpretation_choice.options.choose_betrayal.interpretation": "사랑은 있었지만 그녀가 자신을 이용하고 버렸다고 결론 내린다.",
         "scenes.ending.min_kyung.coverup.nodes.interpretation_choice.options.choose_betrayal.label": "민경이 자신을 이용하고 버렸다고 단정한다",
@@ -28110,8 +29276,8 @@
         "scenes.ending.min_kyung.coverup.nodes.last_push_record.reality.line": "한도윤은 현장을 벗어나는 과정에서 사망했다. 객관 카메라의 넓은 화면에는 실제 모습의 그와 빈 공간만 남아 있었다.",
         "scenes.ending.min_kyung.coverup.nodes.last_push_record_inner.perceived.line": "(마지막에는 결국 내 선택이 통했군.)",
         "scenes.ending.min_kyung.coverup.nodes.last_push_record_inner.reality.line": "기록에는 그가 현장을 벗어나다 사망했다는 결과만 남았다.",
-        "scenes.ending.min_kyung.coverup.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.min_kyung.coverup.nodes.leave_request.reality.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.coverup.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.coverup.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.min_kyung.coverup.nodes.leave_request_inner.perceived.line": "(내 서프라이즈에 놀란 거겠지. 그래도 마지막까지 주도권은 안 놓치네.)",
         "scenes.ending.min_kyung.coverup.nodes.leave_request_inner.reality.line": "(설명하려 들지 말자. 신고할 문장과 시각부터 정확히 남겨야 해.)",
         "scenes.ending.min_kyung.coverup.nodes.line_cross_choice.options.escape.action": "현장을 벗어나려다 돌아오지 못한다.",
@@ -28144,8 +29310,8 @@
         "scenes.ending.min_kyung.report.nodes.company_epilogue.reality.line": "회사는 경찰 대응 뒤 업무 배제와 내부 확인을 거쳐 뒤늦게 해고를 통보했다.",
         "scenes.ending.min_kyung.report.nodes.company_epilogue_inner.perceived.line": "(회사는 끝내 우리 관계를 지켜 주지 않고 나를 배신했군.)",
         "scenes.ending.min_kyung.report.nodes.company_epilogue_inner.reality.line": "경찰 대응이 먼저였고, 회사는 그 뒤에야 업무 배제와 내부 확인을 시작했다.",
-        "scenes.ending.min_kyung.report.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.min_kyung.report.nodes.leave_request.reality.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.report.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.report.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.min_kyung.report.nodes.leave_request_inner.perceived.line": "(예상하지 못한 고백이라 놀란 거겠지. 그래도 끝까지 주도권은 안 놓치네.)",
         "scenes.ending.min_kyung.report.nodes.leave_request_inner.reality.line": "(같은 말을 또 설명하지 말자. 신고할 문장과 시각부터 남겨야 해.)",
         "scenes.ending.min_kyung.report.nodes.mugshot.perceived.line": "플래시 속에는 강한 여자를 사랑한, 단정하고 훤칠한 중년 남자가 서 있었다.",
@@ -28177,7 +29343,7 @@
         "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.options.cross_line.interpretation": "외부가 끼어들기 전에 관계를 확정해야 한다.",
         "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.options.cross_line.label": "돌아가라는 요구를 무시하고 관계를 확인하려 한다",
         "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.prompt": "돌아가라는 요구와 현장 신고에 어떻게 대응할까?",
-        "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.stimulus": "서아가 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+        "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.stimulus": "서아가 자신의 정확한 호수를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
         "scenes.ending.seo_a.ambiguous.nodes.interpretation_choice.options.choose_betrayal.action": "연애 망상을 보복의 피해의식으로 바꾼다.",
         "scenes.ending.seo_a.ambiguous.nodes.interpretation_choice.options.choose_betrayal.interpretation": "사랑은 있었지만 그녀가 자신을 이용하고 버렸다고 결론 내린다.",
         "scenes.ending.seo_a.ambiguous.nodes.interpretation_choice.options.choose_betrayal.label": "서아가 자신을 이용하고 버렸다고 단정한다",
@@ -28190,8 +29356,8 @@
         "scenes.ending.seo_a.ambiguous.nodes.last_push_record.reality.line": "한도윤은 현장을 벗어나는 과정에서 사망했다. 객관 카메라의 넓은 화면에는 실제 모습의 그와 빈 공간만 남아 있었다.",
         "scenes.ending.seo_a.ambiguous.nodes.last_push_record_inner.perceived.line": "(마지막에는 결국 내 선택이 통했군.)",
         "scenes.ending.seo_a.ambiguous.nodes.last_push_record_inner.reality.line": "기록에는 그가 현장을 벗어나다 사망했다는 결과만 남았다.",
-        "scenes.ending.seo_a.ambiguous.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.seo_a.ambiguous.nodes.leave_request.reality.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.ambiguous.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.ambiguous.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.seo_a.ambiguous.nodes.leave_request_inner.perceived.line": "(서프라이즈에 놀라서 마음에도 없는 말을 하는 거겠지. 마지막까지 나를 시험하네.)",
         "scenes.ending.seo_a.ambiguous.nodes.leave_request_inner.reality.line": "(문은 더 열지 말자. 신고가 연결될 때까지 통화를 유지해야 해.)",
         "scenes.ending.seo_a.ambiguous.nodes.line_cross_choice.options.escape.action": "현장을 벗어나려다 돌아오지 못한다.",
@@ -28224,8 +29390,8 @@
         "scenes.ending.seo_a.report.nodes.company_epilogue.reality.line": "회사는 경찰 대응 뒤 업무 배제와 내부 확인을 거쳐 뒤늦게 해고를 통보했다.",
         "scenes.ending.seo_a.report.nodes.company_epilogue_inner.perceived.line": "(회사는 끝내 우리 관계를 지켜 주지 않고 나를 배신했군.)",
         "scenes.ending.seo_a.report.nodes.company_epilogue_inner.reality.line": "경찰 대응이 먼저였고, 회사는 그 뒤에야 업무 배제와 내부 확인을 시작했다.",
-        "scenes.ending.seo_a.report.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.seo_a.report.nodes.leave_request.reality.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.report.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.report.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.seo_a.report.nodes.leave_request_inner.perceived.line": "(갑작스러운 고백이라 놀란 거겠지. 사람들 눈 때문에 마음에도 없는 말을 하는 거야.)",
         "scenes.ending.seo_a.report.nodes.leave_request_inner.reality.line": "(문은 더 열지 말자. 지금 바로 신고해야 해.)",
         "scenes.ending.seo_a.report.nodes.mugshot.perceived.line": "플래시 속에는 사랑을 오해받은, 단정하고 훤칠한 중년 남자가 서 있었다.",
@@ -28462,7 +29628,7 @@
         "campaign.main.acts.collisions.title": "Cracks in the Interpretation",
         "campaign.main.acts.crisis.purpose": "두 번째 주말의 확신이 비밀 연애, 삼각관계, 간병과 사내 소문으로 번역되다가 주거지 방문과 현장 신고로 수렴한다.",
         "campaign.main.acts.crisis.title": "Records That Cannot Be Rewritten",
-        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 토·일요일에 서아와 민경을 한 명씩 교차해 만나며 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.",
+        "campaign.main.acts.romantic_surface.purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓는 사이 서아가 같은 오피스텔의 기존 입주민임을 알고 민경도 새로 이사 오며, 토·일요일에는 두 사람을 한 명씩 교차해 만나 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.",
         "campaign.main.acts.romantic_surface.title": "First Encounters",
         "campaign.main.lanes.cha_min_kyung.title": "차민경",
         "campaign.main.lanes.company.title": "회사와 고정 사건",
@@ -28548,6 +29714,11 @@
         "events.anchor.day_01_company_meeting.presentation.reality.summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.",
         "events.anchor.day_01_company_meeting.presentation.reality.title": "수요일 프로젝트 킥오프",
         "events.anchor.day_01_company_meeting.title": "신규 프로젝트 킥오프",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.summary": "첫날 귀가한 오피스텔 엘리베이터에서 편한 차림의 서아와 다시 만나 회사 밖의 새로운 매력을 발견한다.",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.title": "같은 건물에 살던 서아",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.summary": "서아와 한도윤은 서로가 같은 오피스텔의 기존 입주민이라는 사실을 처음 알고 짧게 인사한 뒤 각자의 저녁 일정으로 돌아간다.",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.title": "같은 건물의 직장 동료",
+        "events.anchor.day_01_officetel_seo_a_reveal.title": "엘리베이터 문이 열리자",
         "events.anchor.day_01_parent_pressure.presentation.perceived.summary": "퇴근 후 부모의 결혼 재촉과 칭찬을 듣고, 오전 프로젝트에서 만난 서아와 민경을 연애 후보로 다시 떠올린다.",
         "events.anchor.day_01_parent_pressure.presentation.perceived.title": "신부감을 찾아볼 때",
         "events.anchor.day_01_parent_pressure.presentation.reality.summary": "부모는 한도윤의 자존심을 다치지 않으려 외모와 조건을 칭찬하며 사람을 만나보라고 권한다.",
@@ -28568,6 +29739,11 @@
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary": "서아는 상사에게 실무 고민을 말하고, 민경은 호흡이 맞는 동료로서 한도윤을 평가한다. 주요 대화 상대와 회사 복귀 후 공용 대화에서 두 사람의 주말 예정 장소가 각각 자연스럽게 드러난다.",
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.title": "업무 외출과 짧은 휴식",
         "events.anchor.day_03_business_trip_or_cafe.title": "출장 또는 단둘의 점심",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.summary": "같은 오피스텔로 이사 온 민경이 이사떡을 들고 문 앞에 나타나자 두 사람의 인연이 생활권까지 이어졌다고 느낀다.",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.title": "차 대리가 이웃이 되었다",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.summary": "민경은 같은 층에 이사 인사를 돌리다 한도윤과 단둘이 마주치고, 분리배출 위치를 물은 뒤 다른 집으로 이동한다.",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.title": "같은 층 새 입주자의 인사",
+        "events.anchor.day_03_officetel_min_kyung_move_in.title": "문 앞의 이사떡",
         "events.anchor.day_04_weekend_encounter.presentation.perceived.summary": "현재 공략 우선 판정이 높은 한 사람과 주말 장소에서 마주치고, 회사에서 몰랐던 취향과 모습을 조금 더 알고 싶어진다.",
         "events.anchor.day_04_weekend_encounter.presentation.perceived.title": "회사 밖에서 본 새로운 모습",
         "events.anchor.day_04_weekend_encounter.presentation.reality.summary": "토요일에는 서아와 민경 중 한 명과만 만난다. 상대는 공공장소에서 동료와 마주친 우연으로 받아들이며 아직 의도적 접근을 의심하지 않는다.",
@@ -28931,6 +30107,24 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_timestamp_inner.reality.line": "(수정 시각까지 말해 두면 나중에 버전이 섞이지 않겠지.)",
         "scenes.common.day_01_company_meeting.purpose": "프로젝트 킥오프에서 서아·민경·유진의 업무 태도와 한도윤의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.",
         "scenes.common.day_01_company_meeting.title": "수요일의 첫 회의",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.perceived.line": "그러게요. 저도 여기 산 지 좀 됐는데 회사 분을 만난 건 처음입니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.reality.line": "그러게요. 저도 여기 산 지 좀 됐는데 회사 분을 만난 건 처음입니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.perceived.line": "문이 열리자 회사에서 막 헤어진 서아가 서 있었다. 사원증도 업무 수첩도 없이 편한 집업 차림으로 장바구니를 든 모습은 오전과 전혀 달라 보였다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.reality.line": "엘리베이터 문이 열렸고, 편한 집업 차림으로 장바구니를 든 윤서아가 내리려다 한도윤을 알아봤다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.perceived.line": "아, 먼저 타세요. 저는 내려가서 살 게 하나 더 있어서요. 내일 뵙겠습니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.reality.line": "아, 먼저 타세요. 저는 내려가서 살 게 하나 더 있어서요. 내일 뵙겠습니다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.perceived.line": "부모님과 통화를 마치고 돌아온 오피스텔은 평소처럼 조용했다. 엘리베이터 도착음이 울리기 전까지는 그랬다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.reality.line": "수요일 저녁, 한도윤은 귀가해 자신이 사는 오피스텔의 엘리베이터 앞에 섰다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.perceived.line": "(같은 건물이라니. 회사에서 본 모습과는 다른 편안한 면도 있군. 서아 씨가 어떤 사람인지 조금 더 궁금해졌어.)",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.reality.line": "두 사람은 같은 오피스텔에 산다는 사실을 처음 알았고, 서아는 필요한 장을 보러 다시 로비로 향했다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.perceived.line": "저도 전부터 살았어요. 회사까지 가기 편해서요. 진짜 신기하네요.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.reality.line": "저도 전부터 살았어요. 회사까지 가기 편해서요. 진짜 신기하네요.",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.perceived.line": "아, 과장님? 과장님도 여기 사세요?",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.reality.line": "아, 과장님? 과장님도 여기 사세요?",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.perceived.line": "(첫날부터 회사 밖에서 다시 만나다니. 이렇게 편한 모습은 회사 사람 중 내가 처음 본 건가.)",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.reality.line": "(회사 과장님이 같은 건물에 살 줄은 몰랐네. 출근길에 마주치면 조금 어색하겠다.)",
+        "scenes.common.day_01_officetel_seo_a_reveal.purpose": "첫날 귀가한 한도윤이 같은 오피스텔의 기존 입주민인 윤서아와 엘리베이터 앞에서 우연히 마주치고, 회사 밖의 편한 모습을 보며 가벼운 이성적 호감을 더 느낀다.",
+        "scenes.common.day_01_officetel_seo_a_reveal.title": "엘리베이터 문이 열리자",
         "scenes.common.day_01_parent_pressure.nodes.decision.perceived.line": "결혼을 생각한다면 회사에도 괜찮은 사람은 있겠지. 서아 씨와 차 대리가 어떤 사람인지는 천천히 보면 되겠어.",
         "scenes.common.day_01_parent_pressure.nodes.decision.reality.line": "결혼을 생각한다면 회사에도 괜찮은 사람은 있겠지. 서아 씨와 차 대리가 어떤 사람인지는 천천히 보면 되겠어.",
         "scenes.common.day_01_parent_pressure.nodes.decision_inner.perceived.line": "(성급하게 정할 필요는 없어. 어떤 사람들인지 천천히 보면 되겠지.)",
@@ -29200,6 +30394,28 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line": "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다.",
         "scenes.common.day_03_business_trip_or_cafe.purpose": "한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 업무를 수습하는 동안에는 사실과 실행 가능성을 먼저 확인하고 해결 뒤에는 구체적인 부담 인정을 받아들이는 민경의 상황별 대화 순서를 재확인한다.",
         "scenes.common.day_03_business_trip_or_cafe.title": "돌아온 뒤 남은 말",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.perceived.line": "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.reality.line": "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.perceived.line": "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.reality.line": "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.perceived.line": "(회사에서는 빈틈없던 차 대리가 이사떡을 들고 내 문 앞에 서 있을 줄이야. 생활하는 얼굴까지 보니 더 매력적인 사람이군.)",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.reality.line": "민경은 같은 층의 다른 집에도 같은 인사를 하기 위해 이동했고, 한도윤은 새 이웃이 된 동료에게 받은 떡을 들고 문을 닫았다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.perceived.line": "문을 열자 가벼운 셔츠 차림의 민경이 소포장 떡을 들고 서 있었다. 노트북과 일정표 대신 이삿짐 상자가 놓인 복도에서 보니 전혀 다른 사람 같았다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.reality.line": "한도윤이 문을 열자, 편한 셔츠 차림의 차민경이 소포장 떡을 들고 서 있었다. 복도 한쪽에는 정리 중인 이삿짐 상자가 남아 있었다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.perceived.line": "금요일 저녁, 현관문 너머에서 짧고 또렷한 노크가 들렸다. 한 주를 끝내고 돌아온 그를 기다린 뜻밖의 방문처럼 들렸다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.reality.line": "금요일 저녁, 한도윤이 사는 오피스텔 현관문에 같은 층 새 입주자가 인사를 위해 노크했다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.perceived.line": "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.reality.line": "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.perceived.line": "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.reality.line": "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.perceived.line": "한 과장님? 한 과장님도 여기 사십니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.reality.line": "한 과장님? 한 과장님도 여기 사십니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.perceived.line": "(서아 씨에 이어 차 대리까지 같은 건물이라니. 우연치고는 너무 절묘한데.)",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.reality.line": "(회사 사람을 같은 층에서 만날 줄은 몰랐네. 그래도 남은 집에도 인사는 마쳐야지.)",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.perceived.line": "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.reality.line": "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?",
+        "scenes.common.day_03_officetel_min_kyung_move_in.purpose": "금요일 저녁 같은 오피스텔로 이사 온 차민경이 이사떡을 돌리다 한도윤과 단둘이 마주치고, 한도윤은 업무 밖의 편한 모습과 입주민으로서의 호의를 운명적인 연결로 받아들인다.",
+        "scenes.common.day_03_officetel_min_kyung_move_in.title": "문 앞의 이사떡",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.perceived.line": "주말에도 뵙네요. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요.",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.reality.line": "주말에도 뵙네요. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요.",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_ott.perceived.line": "주말에도 뵙네요. 요즘 다들 《퇴근은 내일》이라는 회사 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. ‘회의는 끝났지만 내 마음은 야근 중입니다’라는 대사는 원래 어느 장면에 나옵니까?",
@@ -29315,7 +30531,7 @@
         "scenes.ending.min_kyung.coverup.nodes.immediate_choice.options.cross_line.interpretation": "외부가 끼어들기 전에 관계를 확정해야 한다.",
         "scenes.ending.min_kyung.coverup.nodes.immediate_choice.options.cross_line.label": "돌아가라는 요구를 무시하고 관계를 확인하려 한다",
         "scenes.ending.min_kyung.coverup.nodes.immediate_choice.prompt": "돌아가라는 요구와 현장 신고에 어떻게 대응할까?",
-        "scenes.ending.min_kyung.coverup.nodes.immediate_choice.stimulus": "민경이 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+        "scenes.ending.min_kyung.coverup.nodes.immediate_choice.stimulus": "민경이 자신의 정확한 호수를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
         "scenes.ending.min_kyung.coverup.nodes.interpretation_choice.options.choose_betrayal.action": "연애 망상을 보복의 피해의식으로 바꾼다.",
         "scenes.ending.min_kyung.coverup.nodes.interpretation_choice.options.choose_betrayal.interpretation": "사랑은 있었지만 그녀가 자신을 이용하고 버렸다고 결론 내린다.",
         "scenes.ending.min_kyung.coverup.nodes.interpretation_choice.options.choose_betrayal.label": "민경이 자신을 이용하고 버렸다고 단정한다",
@@ -29328,8 +30544,8 @@
         "scenes.ending.min_kyung.coverup.nodes.last_push_record.reality.line": "한도윤은 현장을 벗어나는 과정에서 사망했다. 객관 카메라의 넓은 화면에는 실제 모습의 그와 빈 공간만 남아 있었다.",
         "scenes.ending.min_kyung.coverup.nodes.last_push_record_inner.perceived.line": "(마지막에는 결국 내 선택이 통했군.)",
         "scenes.ending.min_kyung.coverup.nodes.last_push_record_inner.reality.line": "기록에는 그가 현장을 벗어나다 사망했다는 결과만 남았다.",
-        "scenes.ending.min_kyung.coverup.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.min_kyung.coverup.nodes.leave_request.reality.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.coverup.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.coverup.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.min_kyung.coverup.nodes.leave_request_inner.perceived.line": "(내 서프라이즈에 놀란 거겠지. 그래도 마지막까지 주도권은 안 놓치네.)",
         "scenes.ending.min_kyung.coverup.nodes.leave_request_inner.reality.line": "(설명하려 들지 말자. 신고할 문장과 시각부터 정확히 남겨야 해.)",
         "scenes.ending.min_kyung.coverup.nodes.line_cross_choice.options.escape.action": "현장을 벗어나려다 돌아오지 못한다.",
@@ -29362,8 +30578,8 @@
         "scenes.ending.min_kyung.report.nodes.company_epilogue.reality.line": "회사는 경찰 대응 뒤 업무 배제와 내부 확인을 거쳐 뒤늦게 해고를 통보했다.",
         "scenes.ending.min_kyung.report.nodes.company_epilogue_inner.perceived.line": "(회사는 끝내 우리 관계를 지켜 주지 않고 나를 배신했군.)",
         "scenes.ending.min_kyung.report.nodes.company_epilogue_inner.reality.line": "경찰 대응이 먼저였고, 회사는 그 뒤에야 업무 배제와 내부 확인을 시작했다.",
-        "scenes.ending.min_kyung.report.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.min_kyung.report.nodes.leave_request.reality.line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.report.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.min_kyung.report.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.min_kyung.report.nodes.leave_request_inner.perceived.line": "(예상하지 못한 고백이라 놀란 거겠지. 그래도 끝까지 주도권은 안 놓치네.)",
         "scenes.ending.min_kyung.report.nodes.leave_request_inner.reality.line": "(같은 말을 또 설명하지 말자. 신고할 문장과 시각부터 남겨야 해.)",
         "scenes.ending.min_kyung.report.nodes.mugshot.perceived.line": "플래시 속에는 강한 여자를 사랑한, 단정하고 훤칠한 중년 남자가 서 있었다.",
@@ -29395,7 +30611,7 @@
         "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.options.cross_line.interpretation": "외부가 끼어들기 전에 관계를 확정해야 한다.",
         "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.options.cross_line.label": "돌아가라는 요구를 무시하고 관계를 확인하려 한다",
         "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.prompt": "돌아가라는 요구와 현장 신고에 어떻게 대응할까?",
-        "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.stimulus": "서아가 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+        "scenes.ending.seo_a.ambiguous.nodes.immediate_choice.stimulus": "서아가 자신의 정확한 호수를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
         "scenes.ending.seo_a.ambiguous.nodes.interpretation_choice.options.choose_betrayal.action": "연애 망상을 보복의 피해의식으로 바꾼다.",
         "scenes.ending.seo_a.ambiguous.nodes.interpretation_choice.options.choose_betrayal.interpretation": "사랑은 있었지만 그녀가 자신을 이용하고 버렸다고 결론 내린다.",
         "scenes.ending.seo_a.ambiguous.nodes.interpretation_choice.options.choose_betrayal.label": "서아가 자신을 이용하고 버렸다고 단정한다",
@@ -29408,8 +30624,8 @@
         "scenes.ending.seo_a.ambiguous.nodes.last_push_record.reality.line": "한도윤은 현장을 벗어나는 과정에서 사망했다. 객관 카메라의 넓은 화면에는 실제 모습의 그와 빈 공간만 남아 있었다.",
         "scenes.ending.seo_a.ambiguous.nodes.last_push_record_inner.perceived.line": "(마지막에는 결국 내 선택이 통했군.)",
         "scenes.ending.seo_a.ambiguous.nodes.last_push_record_inner.reality.line": "기록에는 그가 현장을 벗어나다 사망했다는 결과만 남았다.",
-        "scenes.ending.seo_a.ambiguous.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.seo_a.ambiguous.nodes.leave_request.reality.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.ambiguous.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.ambiguous.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.seo_a.ambiguous.nodes.leave_request_inner.perceived.line": "(서프라이즈에 놀라서 마음에도 없는 말을 하는 거겠지. 마지막까지 나를 시험하네.)",
         "scenes.ending.seo_a.ambiguous.nodes.leave_request_inner.reality.line": "(문은 더 열지 말자. 신고가 연결될 때까지 통화를 유지해야 해.)",
         "scenes.ending.seo_a.ambiguous.nodes.line_cross_choice.options.escape.action": "현장을 벗어나려다 돌아오지 못한다.",
@@ -29442,8 +30658,8 @@
         "scenes.ending.seo_a.report.nodes.company_epilogue.reality.line": "회사는 경찰 대응 뒤 업무 배제와 내부 확인을 거쳐 뒤늦게 해고를 통보했다.",
         "scenes.ending.seo_a.report.nodes.company_epilogue_inner.perceived.line": "(회사는 끝내 우리 관계를 지켜 주지 않고 나를 배신했군.)",
         "scenes.ending.seo_a.report.nodes.company_epilogue_inner.reality.line": "경찰 대응이 먼저였고, 회사는 그 뒤에야 업무 배제와 내부 확인을 시작했다.",
-        "scenes.ending.seo_a.report.nodes.leave_request.perceived.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
-        "scenes.ending.seo_a.report.nodes.leave_request.reality.line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.report.nodes.leave_request.perceived.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+        "scenes.ending.seo_a.report.nodes.leave_request.reality.line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
         "scenes.ending.seo_a.report.nodes.leave_request_inner.perceived.line": "(갑작스러운 고백이라 놀란 거겠지. 사람들 눈 때문에 마음에도 없는 말을 하는 거야.)",
         "scenes.ending.seo_a.report.nodes.leave_request_inner.reality.line": "(문은 더 열지 말자. 지금 바로 신고해야 해.)",
         "scenes.ending.seo_a.report.nodes.mugshot.perceived.line": "플래시 속에는 사랑을 오해받은, 단정하고 훤칠한 중년 남자가 서 있었다.",
@@ -29660,10 +30876,10 @@
     },
     "coverage": {
       "ko": {
-        "direct": 1216,
-        "resolved": 1216,
-        "translated": 1216,
-        "total": 1216,
+        "direct": 1266,
+        "resolved": 1266,
+        "translated": 1266,
+        "total": 1266,
         "ratio": 1.0,
         "fallback_used": [],
         "missing": [],
@@ -29684,8 +30900,8 @@
             "total": 43
           },
           "event": {
-            "direct": 140,
-            "total": 140
+            "direct": 150,
+            "total": 150
           },
           "locale": {
             "direct": 4,
@@ -29700,8 +30916,8 @@
             "total": 8
           },
           "scene": {
-            "direct": 774,
-            "total": 774
+            "direct": 814,
+            "total": 814
           },
           "thread": {
             "direct": 2,
@@ -29719,10 +30935,10 @@
       },
       "en": {
         "direct": 260,
-        "resolved": 1216,
+        "resolved": 1266,
         "translated": 260,
-        "total": 1216,
-        "ratio": 0.2138,
+        "total": 1266,
+        "ratio": 0.2054,
         "fallback_used": [
           "campaign.main.acts.collisions.purpose",
           "campaign.main.acts.crisis.purpose",
@@ -29777,6 +30993,11 @@
           "events.anchor.day_01_company_meeting.presentation.reality.summary",
           "events.anchor.day_01_company_meeting.presentation.reality.title",
           "events.anchor.day_01_company_meeting.title",
+          "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.summary",
+          "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.title",
+          "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.summary",
+          "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.title",
+          "events.anchor.day_01_officetel_seo_a_reveal.title",
           "events.anchor.day_01_parent_pressure.presentation.perceived.summary",
           "events.anchor.day_01_parent_pressure.presentation.perceived.title",
           "events.anchor.day_01_parent_pressure.presentation.reality.summary",
@@ -29797,6 +31018,11 @@
           "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary",
           "events.anchor.day_03_business_trip_or_cafe.presentation.reality.title",
           "events.anchor.day_03_business_trip_or_cafe.title",
+          "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.summary",
+          "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.title",
+          "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.summary",
+          "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.title",
+          "events.anchor.day_03_officetel_min_kyung_move_in.title",
           "events.anchor.day_04_weekend_encounter.presentation.perceived.summary",
           "events.anchor.day_04_weekend_encounter.presentation.perceived.title",
           "events.anchor.day_04_weekend_encounter.presentation.reality.summary",
@@ -30052,6 +31278,24 @@
           "scenes.common.day_01_company_meeting.nodes.yoo_jin_timestamp_inner.reality.line",
           "scenes.common.day_01_company_meeting.purpose",
           "scenes.common.day_01_company_meeting.title",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.purpose",
+          "scenes.common.day_01_officetel_seo_a_reveal.title",
           "scenes.common.day_01_parent_pressure.nodes.decision.perceived.line",
           "scenes.common.day_01_parent_pressure.nodes.decision.reality.line",
           "scenes.common.day_01_parent_pressure.nodes.decision_inner.perceived.line",
@@ -30321,6 +31565,28 @@
           "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line",
           "scenes.common.day_03_business_trip_or_cafe.purpose",
           "scenes.common.day_03_business_trip_or_cafe.title",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.purpose",
+          "scenes.common.day_03_officetel_min_kyung_move_in.title",
           "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.perceived.line",
           "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.reality.line",
           "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_ott.perceived.line",
@@ -30735,6 +32001,11 @@
           "events.anchor.day_01_company_meeting.presentation.reality.summary",
           "events.anchor.day_01_company_meeting.presentation.reality.title",
           "events.anchor.day_01_company_meeting.title",
+          "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.summary",
+          "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.title",
+          "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.summary",
+          "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.title",
+          "events.anchor.day_01_officetel_seo_a_reveal.title",
           "events.anchor.day_01_parent_pressure.presentation.perceived.summary",
           "events.anchor.day_01_parent_pressure.presentation.perceived.title",
           "events.anchor.day_01_parent_pressure.presentation.reality.summary",
@@ -30755,6 +32026,11 @@
           "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary",
           "events.anchor.day_03_business_trip_or_cafe.presentation.reality.title",
           "events.anchor.day_03_business_trip_or_cafe.title",
+          "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.summary",
+          "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.title",
+          "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.summary",
+          "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.title",
+          "events.anchor.day_03_officetel_min_kyung_move_in.title",
           "events.anchor.day_04_weekend_encounter.presentation.perceived.summary",
           "events.anchor.day_04_weekend_encounter.presentation.perceived.title",
           "events.anchor.day_04_weekend_encounter.presentation.reality.summary",
@@ -31010,6 +32286,24 @@
           "scenes.common.day_01_company_meeting.nodes.yoo_jin_timestamp_inner.reality.line",
           "scenes.common.day_01_company_meeting.purpose",
           "scenes.common.day_01_company_meeting.title",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.perceived.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.reality.line",
+          "scenes.common.day_01_officetel_seo_a_reveal.purpose",
+          "scenes.common.day_01_officetel_seo_a_reveal.title",
           "scenes.common.day_01_parent_pressure.nodes.decision.perceived.line",
           "scenes.common.day_01_parent_pressure.nodes.decision.reality.line",
           "scenes.common.day_01_parent_pressure.nodes.decision_inner.perceived.line",
@@ -31279,6 +32573,28 @@
           "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line",
           "scenes.common.day_03_business_trip_or_cafe.purpose",
           "scenes.common.day_03_business_trip_or_cafe.title",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.perceived.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.reality.line",
+          "scenes.common.day_03_officetel_min_kyung_move_in.purpose",
+          "scenes.common.day_03_officetel_min_kyung_move_in.title",
           "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.perceived.line",
           "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.reality.line",
           "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_ott.perceived.line",
@@ -31657,7 +32973,7 @@
           },
           "event": {
             "direct": 2,
-            "total": 140
+            "total": 150
           },
           "locale": {
             "direct": 2,
@@ -31673,7 +32989,7 @@
           },
           "scene": {
             "direct": 27,
-            "total": 774
+            "total": 814
           },
           "thread": {
             "direct": 0,
@@ -31730,7 +33046,7 @@
             1,
             5
           ],
-          "purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓고, 토·일요일에 서아와 민경을 한 명씩 교차해 만나며 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다."
+          "purpose": "수요일부터 금요일까지 정석적인 오피스 라포를 쌓는 사이 서아가 같은 오피스텔의 기존 입주민임을 알고 민경도 새로 이사 오며, 토·일요일에는 두 사람을 한 명씩 교차해 만나 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다."
         },
         {
           "number": 2,
@@ -32432,6 +33748,56 @@
         }
       }
     },
+    "anchor.day_01_officetel_seo_a_reveal": {
+      "schema_version": 1,
+      "campaign_id": "main",
+      "id": "anchor.day_01_officetel_seo_a_reveal",
+      "title": "엘리베이터 문이 열리자",
+      "type": "heroine",
+      "lane": "yoon_seo_a",
+      "window": {
+        "days": [
+          1,
+          1
+        ],
+        "slots": [
+          "after_work"
+        ],
+        "deadline_day": 1
+      },
+      "duration": 1,
+      "priority": 90,
+      "availability": "automatic",
+      "completion": "return_to_timeline",
+      "participants": [
+        "han_do_yoon",
+        "yoon_seo_a"
+      ],
+      "location": "apartment_corridor",
+      "scene": "common.day_01_officetel_seo_a_reveal",
+      "requires": {
+        "events": [
+          "anchor.day_01_parent_pressure"
+        ],
+        "conditions": []
+      },
+      "on_seen": {
+        "effects": []
+      },
+      "on_missed": {
+        "effects": []
+      },
+      "presentation": {
+        "perceived": {
+          "title": "같은 건물에 살던 서아",
+          "summary": "첫날 귀가한 오피스텔 엘리베이터에서 편한 차림의 서아와 다시 만나 회사 밖의 새로운 매력을 발견한다."
+        },
+        "reality": {
+          "title": "같은 건물의 직장 동료",
+          "summary": "서아와 한도윤은 서로가 같은 오피스텔의 기존 입주민이라는 사실을 처음 알고 짧게 인사한 뒤 각자의 저녁 일정으로 돌아간다."
+        }
+      }
+    },
     "anchor.day_01_parent_pressure": {
       "schema_version": 1,
       "campaign_id": "main",
@@ -32445,7 +33811,7 @@
           1
         ],
         "slots": [
-          "after_work"
+          "afternoon"
         ],
         "deadline_day": 1
       },
@@ -32512,7 +33878,7 @@
       "scene": "common.day_02_practical_meeting",
       "requires": {
         "events": [
-          "anchor.day_01_parent_pressure"
+          "anchor.day_01_officetel_seo_a_reveal"
         ],
         "conditions": []
       },
@@ -32634,6 +34000,56 @@
         }
       }
     },
+    "anchor.day_03_officetel_min_kyung_move_in": {
+      "schema_version": 1,
+      "campaign_id": "main",
+      "id": "anchor.day_03_officetel_min_kyung_move_in",
+      "title": "문 앞의 이사떡",
+      "type": "heroine",
+      "lane": "cha_min_kyung",
+      "window": {
+        "days": [
+          3,
+          3
+        ],
+        "slots": [
+          "after_work"
+        ],
+        "deadline_day": 3
+      },
+      "duration": 1,
+      "priority": 100,
+      "availability": "automatic",
+      "completion": "return_to_timeline",
+      "participants": [
+        "han_do_yoon",
+        "cha_min_kyung"
+      ],
+      "location": "apartment_corridor",
+      "scene": "common.day_03_officetel_min_kyung_move_in",
+      "requires": {
+        "events": [
+          "anchor.day_03_business_trip_or_cafe"
+        ],
+        "conditions": []
+      },
+      "on_seen": {
+        "effects": []
+      },
+      "on_missed": {
+        "effects": []
+      },
+      "presentation": {
+        "perceived": {
+          "title": "차 대리가 이웃이 되었다",
+          "summary": "같은 오피스텔로 이사 온 민경이 이사떡을 들고 문 앞에 나타나자 두 사람의 인연이 생활권까지 이어졌다고 느낀다."
+        },
+        "reality": {
+          "title": "같은 층 새 입주자의 인사",
+          "summary": "민경은 같은 층에 이사 인사를 돌리다 한도윤과 단둘이 마주치고, 분리배출 위치를 물은 뒤 다른 집으로 이동한다."
+        }
+      }
+    },
     "anchor.day_04_weekend_encounter": {
       "schema_version": 1,
       "campaign_id": "main",
@@ -32662,7 +34078,7 @@
       "scene": "common.day_04_weekend_encounter",
       "requires": {
         "events": [
-          "anchor.day_03_business_trip_or_cafe"
+          "anchor.day_03_officetel_min_kyung_move_in"
         ],
         "conditions": []
       },
@@ -36115,6 +37531,188 @@
         }
       }
     },
+    "common.day_01_officetel_seo_a_reveal": {
+      "schema_version": 1,
+      "id": "common.day_01_officetel_seo_a_reveal",
+      "title": "엘리베이터 문이 열리자",
+      "route": "seo_a",
+      "chapter": 0,
+      "sequence": 3,
+      "location": "apartment_corridor",
+      "time": "evening",
+      "purpose": "첫날 귀가한 한도윤이 같은 오피스텔의 기존 입주민인 윤서아와 엘리베이터 앞에서 우연히 마주치고, 회사 밖의 편한 모습을 보며 가벼운 이성적 호감을 더 느낀다.",
+      "cast": [
+        "han_do_yoon",
+        "yoon_seo_a"
+      ],
+      "entry_conditions": [],
+      "state_contract": {
+        "reads": [],
+        "writes": []
+      },
+      "start_node": "home_arrival",
+      "node_order": [
+        "home_arrival",
+        "doors_open",
+        "seo_a_surprised",
+        "seo_a_surprised_inner",
+        "do_yoon_answers",
+        "seo_a_explains",
+        "elevator_courtesy",
+        "passing_inner",
+        "leave"
+      ],
+      "nodes": {
+        "home_arrival": {
+          "id": "home_arrival",
+          "kind": "dual_narration",
+          "perceived": {
+            "atmosphere": "procedural",
+            "line": "부모님과 통화를 마치고 돌아온 오피스텔은 평소처럼 조용했다. 엘리베이터 도착음이 울리기 전까지는 그랬다."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "line": "수요일 저녁, 한도윤은 귀가해 자신이 사는 오피스텔의 엘리베이터 앞에 섰다.",
+            "intent": "work_only"
+          },
+          "next": "doors_open"
+        },
+        "doors_open": {
+          "id": "doors_open",
+          "kind": "dual_narration",
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "line": "문이 열리자 회사에서 막 헤어진 서아가 서 있었다. 사원증도 업무 수첩도 없이 편한 집업 차림으로 장바구니를 든 모습은 오전과 전혀 달라 보였다."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "line": "엘리베이터 문이 열렸고, 편한 집업 차림으로 장바구니를 든 윤서아가 내리려다 한도윤을 알아봤다.",
+            "intent": "courtesy"
+          },
+          "next": "seo_a_surprised"
+        },
+        "seo_a_surprised": {
+          "id": "seo_a_surprised",
+          "kind": "dual_dialogue",
+          "speaker": "yoon_seo_a",
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "expression": "subjective_shy",
+            "line": "아, 과장님? 과장님도 여기 사세요?"
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "expression": "actual_social_smile",
+            "line": "아, 과장님? 과장님도 여기 사세요?",
+            "intent": "courtesy"
+          },
+          "next": "seo_a_surprised_inner"
+        },
+        "seo_a_surprised_inner": {
+          "id": "seo_a_surprised_inner",
+          "kind": "dual_dialogue",
+          "presentation_flags": [
+            "inner_voice"
+          ],
+          "speakers": {
+            "perceived": "han_do_yoon",
+            "reality": "yoon_seo_a"
+          },
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "line": "(첫날부터 회사 밖에서 다시 만나다니. 이렇게 편한 모습은 회사 사람 중 내가 처음 본 건가.)"
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "line": "(회사 과장님이 같은 건물에 살 줄은 몰랐네. 출근길에 마주치면 조금 어색하겠다.)",
+            "intent": "courtesy"
+          },
+          "next": "do_yoon_answers"
+        },
+        "do_yoon_answers": {
+          "id": "do_yoon_answers",
+          "kind": "dual_dialogue",
+          "speaker": "han_do_yoon",
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "expression": "subjective_confident",
+            "line": "그러게요. 저도 여기 산 지 좀 됐는데 회사 분을 만난 건 처음입니다."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "expression": "actual_waiting_smile",
+            "line": "그러게요. 저도 여기 산 지 좀 됐는데 회사 분을 만난 건 처음입니다.",
+            "intent": "courtesy"
+          },
+          "next": "seo_a_explains"
+        },
+        "seo_a_explains": {
+          "id": "seo_a_explains",
+          "kind": "dual_dialogue",
+          "speaker": "yoon_seo_a",
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "expression": "subjective_shy",
+            "line": "저도 전부터 살았어요. 회사까지 가기 편해서요. 진짜 신기하네요."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "expression": "actual_social_smile",
+            "line": "저도 전부터 살았어요. 회사까지 가기 편해서요. 진짜 신기하네요.",
+            "intent": "courtesy"
+          },
+          "next": "elevator_courtesy"
+        },
+        "elevator_courtesy": {
+          "id": "elevator_courtesy",
+          "kind": "dual_dialogue",
+          "speaker": "yoon_seo_a",
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "expression": "subjective_shy",
+            "line": "아, 먼저 타세요. 저는 내려가서 살 게 하나 더 있어서요. 내일 뵙겠습니다."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "expression": "actual_social_smile",
+            "line": "아, 먼저 타세요. 저는 내려가서 살 게 하나 더 있어서요. 내일 뵙겠습니다.",
+            "intent": "courtesy"
+          },
+          "next": "passing_inner"
+        },
+        "passing_inner": {
+          "id": "passing_inner",
+          "kind": "dual_dialogue",
+          "presentation_flags": [
+            "inner_voice"
+          ],
+          "speakers": {
+            "perceived": "han_do_yoon",
+            "reality": null
+          },
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "line": "(같은 건물이라니. 회사에서 본 모습과는 다른 편안한 면도 있군. 서아 씨가 어떤 사람인지 조금 더 궁금해졌어.)"
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "line": "두 사람은 같은 오피스텔에 산다는 사실을 처음 알았고, 서아는 필요한 장을 보러 다시 로비로 향했다.",
+            "intent": "courtesy"
+          },
+          "next": "leave"
+        },
+        "leave": {
+          "id": "leave",
+          "kind": "exit",
+          "transitions": [
+            {
+              "default": true,
+              "scene": "common.day_02_practical_meeting"
+            }
+          ]
+        }
+      }
+    },
     "common.day_01_parent_pressure": {
       "schema_version": 1,
       "id": "common.day_01_parent_pressure",
@@ -38615,6 +40213,224 @@
         }
       }
     },
+    "common.day_03_officetel_min_kyung_move_in": {
+      "schema_version": 1,
+      "id": "common.day_03_officetel_min_kyung_move_in",
+      "title": "문 앞의 이사떡",
+      "route": "seo_a",
+      "chapter": 1,
+      "sequence": 5,
+      "location": "apartment_corridor",
+      "time": "evening",
+      "purpose": "금요일 저녁 같은 오피스텔로 이사 온 차민경이 이사떡을 돌리다 한도윤과 단둘이 마주치고, 한도윤은 업무 밖의 편한 모습과 입주민으로서의 호의를 운명적인 연결로 받아들인다.",
+      "cast": [
+        "han_do_yoon",
+        "cha_min_kyung"
+      ],
+      "entry_conditions": [],
+      "state_contract": {
+        "reads": [],
+        "writes": []
+      },
+      "start_node": "knock_at_door",
+      "node_order": [
+        "knock_at_door",
+        "door_opens",
+        "min_kyung_greeting",
+        "mutual_surprise",
+        "mutual_surprise_inner",
+        "do_yoon_confirms",
+        "practical_question",
+        "do_yoon_directions",
+        "min_kyung_thanks",
+        "door_closes_inner",
+        "leave"
+      ],
+      "nodes": {
+        "knock_at_door": {
+          "id": "knock_at_door",
+          "kind": "dual_narration",
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "line": "금요일 저녁, 현관문 너머에서 짧고 또렷한 노크가 들렸다. 한 주를 끝내고 돌아온 그를 기다린 뜻밖의 방문처럼 들렸다."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "line": "금요일 저녁, 한도윤이 사는 오피스텔 현관문에 같은 층 새 입주자가 인사를 위해 노크했다.",
+            "intent": "courtesy"
+          },
+          "next": "door_opens"
+        },
+        "door_opens": {
+          "id": "door_opens",
+          "kind": "dual_narration",
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "line": "문을 열자 가벼운 셔츠 차림의 민경이 소포장 떡을 들고 서 있었다. 노트북과 일정표 대신 이삿짐 상자가 놓인 복도에서 보니 전혀 다른 사람 같았다."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "line": "한도윤이 문을 열자, 편한 셔츠 차림의 차민경이 소포장 떡을 들고 서 있었다. 복도 한쪽에는 정리 중인 이삿짐 상자가 남아 있었다.",
+            "intent": "courtesy"
+          },
+          "next": "min_kyung_greeting"
+        },
+        "min_kyung_greeting": {
+          "id": "min_kyung_greeting",
+          "kind": "dual_dialogue",
+          "speaker": "cha_min_kyung",
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "expression": "subjective_challenging",
+            "line": "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "expression": "actual_focused",
+            "line": "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요.",
+            "intent": "courtesy"
+          },
+          "next": "mutual_surprise"
+        },
+        "mutual_surprise": {
+          "id": "mutual_surprise",
+          "kind": "dual_dialogue",
+          "speaker": "cha_min_kyung",
+          "perceived": {
+            "atmosphere": "playful_tension",
+            "expression": "subjective_challenging",
+            "line": "한 과장님? 한 과장님도 여기 사십니까?"
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "expression": "actual_skeptical",
+            "line": "한 과장님? 한 과장님도 여기 사십니까?",
+            "intent": "courtesy"
+          },
+          "next": "mutual_surprise_inner"
+        },
+        "mutual_surprise_inner": {
+          "id": "mutual_surprise_inner",
+          "kind": "dual_dialogue",
+          "presentation_flags": [
+            "inner_voice"
+          ],
+          "speakers": {
+            "perceived": "han_do_yoon",
+            "reality": "cha_min_kyung"
+          },
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "line": "(서아 씨에 이어 차 대리까지 같은 건물이라니. 우연치고는 너무 절묘한데.)"
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "line": "(회사 사람을 같은 층에서 만날 줄은 몰랐네. 그래도 남은 집에도 인사는 마쳐야지.)",
+            "intent": "courtesy"
+          },
+          "next": "do_yoon_confirms"
+        },
+        "do_yoon_confirms": {
+          "id": "do_yoon_confirms",
+          "kind": "dual_dialogue",
+          "speaker": "han_do_yoon",
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "expression": "subjective_confident",
+            "line": "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "expression": "actual_waiting_smile",
+            "line": "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다.",
+            "intent": "courtesy"
+          },
+          "next": "practical_question"
+        },
+        "practical_question": {
+          "id": "practical_question",
+          "kind": "dual_dialogue",
+          "speaker": "cha_min_kyung",
+          "perceived": {
+            "atmosphere": "playful_tension",
+            "expression": "subjective_challenging",
+            "line": "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?"
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "expression": "actual_focused",
+            "line": "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?",
+            "intent": "courtesy"
+          },
+          "next": "do_yoon_directions"
+        },
+        "do_yoon_directions": {
+          "id": "do_yoon_directions",
+          "kind": "dual_dialogue",
+          "speaker": "han_do_yoon",
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "expression": "subjective_confident",
+            "line": "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "expression": "actual_waiting_smile",
+            "line": "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다.",
+            "intent": "courtesy"
+          },
+          "next": "min_kyung_thanks"
+        },
+        "min_kyung_thanks": {
+          "id": "min_kyung_thanks",
+          "kind": "dual_dialogue",
+          "speaker": "cha_min_kyung",
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "expression": "subjective_challenging",
+            "line": "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠."
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "expression": "actual_focused",
+            "line": "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠.",
+            "intent": "courtesy"
+          },
+          "next": "door_closes_inner"
+        },
+        "door_closes_inner": {
+          "id": "door_closes_inner",
+          "kind": "dual_dialogue",
+          "presentation_flags": [
+            "inner_voice"
+          ],
+          "speakers": {
+            "perceived": "han_do_yoon",
+            "reality": null
+          },
+          "perceived": {
+            "atmosphere": "warm_romance",
+            "line": "(회사에서는 빈틈없던 차 대리가 이사떡을 들고 내 문 앞에 서 있을 줄이야. 생활하는 얼굴까지 보니 더 매력적인 사람이군.)"
+          },
+          "reality": {
+            "atmosphere": "procedural",
+            "line": "민경은 같은 층의 다른 집에도 같은 인사를 하기 위해 이동했고, 한도윤은 새 이웃이 된 동료에게 받은 떡을 들고 문을 닫았다.",
+            "intent": "courtesy"
+          },
+          "next": "leave"
+        },
+        "leave": {
+          "id": "leave",
+          "kind": "exit",
+          "transitions": [
+            {
+              "default": true,
+              "scene": "common.day_04_weekend_encounter"
+            }
+          ]
+        }
+      }
+    },
     "common.day_04_weekend_encounter": {
       "schema_version": 1,
       "id": "common.day_04_weekend_encounter",
@@ -39626,12 +41442,12 @@
           "perceived": {
             "atmosphere": "dread",
             "expression": "subjective_challenging",
-            "line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요."
+            "line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요."
           },
           "reality": {
             "atmosphere": "dread",
             "expression": "actual_disgust",
-            "line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+            "line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
             "intent": "confrontation"
           },
           "next": "leave_request_inner"
@@ -39758,7 +41574,7 @@
           "id": "immediate_choice",
           "kind": "choice",
           "prompt": "돌아가라는 요구와 현장 신고에 어떻게 대응할까?",
-          "stimulus": "민경이 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+          "stimulus": "민경이 자신의 정확한 호수를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
           "interaction_context": {
             "kind": "boundary"
           },
@@ -40226,12 +42042,12 @@
           "perceived": {
             "atmosphere": "dread",
             "expression": "subjective_challenging",
-            "line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요."
+            "line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요."
           },
           "reality": {
             "atmosphere": "dread",
             "expression": "actual_disgust",
-            "line": "제 주소를 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
+            "line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았습니까? 여기까지 찾아오지 마세요. 돌아가세요.",
             "intent": "confrontation"
           },
           "next": "leave_request_inner"
@@ -40551,12 +42367,12 @@
           "perceived": {
             "atmosphere": "dread",
             "expression": "subjective_shy",
-            "line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
+            "line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
           },
           "reality": {
             "atmosphere": "dread",
             "expression": "actual_tense",
-            "line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+            "line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
             "intent": "self_protection"
           },
           "next": "leave_request_inner"
@@ -40683,7 +42499,7 @@
           "id": "immediate_choice",
           "kind": "choice",
           "prompt": "돌아가라는 요구와 현장 신고에 어떻게 대응할까?",
-          "stimulus": "서아가 주소를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
+          "stimulus": "서아가 자신의 정확한 호수를 어떻게 알았느냐며 돌아가라고 요구했고 현장 신고가 접수됐다.",
           "interaction_context": {
             "kind": "boundary"
           },
@@ -41151,12 +42967,12 @@
           "perceived": {
             "atmosphere": "dread",
             "expression": "subjective_shy",
-            "line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
+            "line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
           },
           "reality": {
             "atmosphere": "dread",
             "expression": "actual_tense",
-            "line": "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
+            "line": "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요.",
             "intent": "self_protection"
           },
           "next": "leave_request_inner"

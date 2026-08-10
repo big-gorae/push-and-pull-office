@@ -98,8 +98,14 @@ describe("web player campaign runtime", () => {
     session = advanceToNextMoment(runtime, session);
     expect(session.phase).toBe("scene");
     expect(session.sceneId).toBe("common.day_01_parent_pressure");
-    expect(session.state.progress.time).toMatchObject({ day: 1, slot: "after_work" });
+    expect(session.state.progress.time).toMatchObject({ day: 1, slot: "afternoon" });
     expect(session.state.progress.events.seen).toContain("anchor.day_01_parent_pressure");
+    session = finishCurrentScene(session);
+    expect(session.phase).toBe("timeline");
+    session = advanceToNextMoment(runtime, session);
+    expect(session.phase).toBe("scene");
+    expect(session.sceneId).toBe("common.day_01_officetel_seo_a_reveal");
+    expect(session.state.progress.events.seen).toContain("anchor.day_01_officetel_seo_a_reveal");
     session = finishCurrentScene(session);
     expect(session.phase).toBe("timeline");
     expect(session.choices).toHaveLength(0);
@@ -146,6 +152,7 @@ describe("web player campaign runtime", () => {
     }
     expect(weekOneCallbackScenes).toEqual([
       "common.day_03_business_trip_or_cafe",
+      "common.day_03_officetel_min_kyung_move_in",
       "common.day_04_weekend_encounter",
       "common.day_05_weekend_reflection",
     ]);
@@ -307,6 +314,7 @@ describe("web player campaign runtime", () => {
     session.state.progress.events.seen = [
       "anchor.day_01_company_meeting",
       "anchor.day_01_parent_pressure",
+      "anchor.day_01_officetel_seo_a_reveal",
     ];
     session.state.progress.flags.push_pull = {
       combo: 2,

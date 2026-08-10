@@ -1,0 +1,26 @@
+schema_version: 1
+campaign_id: main
+id: anchor.day_01_officetel_seo_a_reveal
+title: 엘리베이터 문이 열리자
+type: heroine
+lane: yoon_seo_a
+window: {days: [1, 1], slots: [after_work], deadline_day: 1}
+duration: 1
+priority: 90
+availability: automatic
+completion: return_to_timeline
+participants: [han_do_yoon, yoon_seo_a]
+location: apartment_corridor
+scene: common.day_01_officetel_seo_a_reveal
+requires:
+  events: [anchor.day_01_parent_pressure]
+  conditions: []
+on_seen: {effects: []}
+on_missed: {effects: []}
+presentation:
+  perceived:
+    title: 같은 건물에 살던 서아
+    summary: 첫날 귀가한 오피스텔 엘리베이터에서 편한 차림의 서아와 다시 만나 회사 밖의 새로운 매력을 발견한다.
+  reality:
+    title: 같은 건물의 직장 동료
+    summary: 서아와 한도윤은 서로가 같은 오피스텔의 기존 입주민이라는 사실을 처음 알고 짧게 인사한 뒤 각자의 저녁 일정으로 돌아간다.

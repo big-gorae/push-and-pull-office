@@ -1,0 +1,26 @@
+schema_version: 1
+campaign_id: main
+id: anchor.day_03_officetel_min_kyung_move_in
+title: 문 앞의 이사떡
+type: heroine
+lane: cha_min_kyung
+window: {days: [3, 3], slots: [after_work], deadline_day: 3}
+duration: 1
+priority: 100
+availability: automatic
+completion: return_to_timeline
+participants: [han_do_yoon, cha_min_kyung]
+location: apartment_corridor
+scene: common.day_03_officetel_min_kyung_move_in
+requires:
+  events: [anchor.day_03_business_trip_or_cafe]
+  conditions: []
+on_seen: {effects: []}
+on_missed: {effects: []}
+presentation:
+  perceived:
+    title: 차 대리가 이웃이 되었다
+    summary: 같은 오피스텔로 이사 온 민경이 이사떡을 들고 문 앞에 나타나자 두 사람의 인연이 생활권까지 이어졌다고 느낀다.
+  reality:
+    title: 같은 층 새 입주자의 인사
+    summary: 민경은 같은 층에 이사 인사를 돌리다 한도윤과 단둘이 마주치고, 분리배출 위치를 물은 뒤 다른 집으로 이동한다.

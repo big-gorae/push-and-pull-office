@@ -32,11 +32,11 @@ nodes:
     perceived:
       atmosphere: dread
       expression: subjective_shy
-      line: "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
+      line: "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
     reality:
       atmosphere: dread
       expression: actual_tense
-      line: "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
+      line: "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
       intent: self_protection
     next: leave_request_inner
 
