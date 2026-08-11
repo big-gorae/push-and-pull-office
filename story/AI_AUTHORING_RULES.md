@@ -82,6 +82,7 @@
 76. 다크 심리학 강의 문구는 허구의 밀당 게이지를 설명하는 과장된 문장으로 제한한다. 현실에서 타인을 조종하거나 경계를 우회하는 데 재현 가능한 상세 지침을 제공하지 않는다.
 77. 스탯 조건 추가 사건은 `availability: player`인 `heroine` 또는 `company` 사건으로 작성하며, `on_seen.effects`에서 등록된 갤러리 원화의 `unlock_memory`를 `progress.memories`에 `append_unique`한다. 놓쳐도 효과나 대체 사건을 발생시키지 않으며, 스탯이 낮다는 이유로 본편 사건·엔딩·경계 존중 선택에 손해를 주지 않는다.
 78. 수집 원화는 `manifest.gallery.entries`에 안정 ID, UI 제목·설명 키, 실제 `assets/` 경로와 고유 `unlock_memory`를 등록한다. 스탯 사건 원화는 사건 조건과 같은 `source_stat`을 선언하고 프로필의 `memories`를 통해 회차를 넘어 해금 상태를 유지한다.
+79. 런타임은 `cast`나 화자만으로 인물 원화를 자동 배치하지 않는다. 화면에 보이는 모든 인물은 레이어별 `stage`에 명시하며, 새 대사에서 한도윤이 아닌 일러스트 화자를 선택하면 편집기가 두 레이어 중앙 cue를 기본으로 기록한다. 한도윤 원화는 `ending.*`의 `dual_narration` 노드가 `protagonist_art_reveal`을 선언하면서 두 레이어에 직접 배치한 경우에만 공개한다.
 
 ## 장면 작성 절차
 

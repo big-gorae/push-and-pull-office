@@ -13,7 +13,7 @@ enums:
   event_type: [anchor, heroine, company, offscreen, ending]
   event_availability: [automatic, player, hidden]
   event_completion: [return_to_timeline, honor_scene_exit]
-  presentation_flag: [original_text_lock, ui_glitch, ui_label_reveal, auditory_distortion, romance_insert, inner_voice]
+  presentation_flag: [original_text_lock, ui_glitch, ui_label_reveal, auditory_distortion, romance_insert, inner_voice, protagonist_art_reveal]
   visual_kind: [background_archetype, background, character_archetype, character]
   render_strategy: [flat_portrait, layered_sprite, background]
   stage_position: [far_left, left, center, right, far_right]

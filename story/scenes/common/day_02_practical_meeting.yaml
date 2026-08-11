@@ -53,6 +53,9 @@ nodes:
   - id: day_one_activity_reaction
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       expression: subjective_confident
@@ -75,6 +78,17 @@ nodes:
   - id: day_one_activity_response
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: procedural
       expression: subjective_shy
@@ -100,6 +114,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: procedural
       line: (첫 실무 회의부터 대화가 자연스럽군.)
@@ -120,6 +141,9 @@ nodes:
   - id: agenda
     kind: dual_dialogue
     speaker: member.jeong_da_eun
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       line: "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다."
@@ -132,6 +156,17 @@ nodes:
   - id: seo_a_begins
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_shy
@@ -146,6 +181,17 @@ nodes:
   - id: wrong_slide
     kind: dual_dialogue
     speaker: kang_yoo_jin
+    stage:
+      perceived:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_bold_flirt
@@ -160,6 +206,17 @@ nodes:
   - id: seo_a_freezes
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_shy
@@ -177,6 +234,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       line: (당황해서 나를 보는군. 이럴 때 어떻게 잡아 주느냐가 중요하지.)
@@ -191,7 +255,10 @@ nodes:
     presentation_flags: [inner_voice]
     speakers:
       perceived: han_do_yoon
-      reality: null
+      reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: playful_tension
       line: (그 강의에서는 상대가 멈춘 순간, 내가 하고 싶은 말보다 방금 보인 반응부터 증거로 삼으랬지. 서아는 사과한 뒤 말을 잇지 못했고, 민경은 아직 안건을 기다리고 있다.)
@@ -264,6 +331,9 @@ nodes:
   - id: empathy_do_yoon
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -278,6 +348,17 @@ nodes:
   - id: empathy_seo_a
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
@@ -295,6 +376,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       line: (역시 마음을 먼저 알아주니 바로 나에게 부탁하는군.)
@@ -307,6 +395,17 @@ nodes:
   - id: empathy_min_kyung
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -321,6 +420,17 @@ nodes:
   - id: gratitude_empathy
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
@@ -335,6 +445,9 @@ nodes:
   - id: facts_do_yoon
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: playful_tension
       expression: subjective_confident
@@ -349,6 +462,17 @@ nodes:
   - id: facts_min_kyung
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -366,6 +490,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: cha_min_kyung
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       line: (내가 범위와 답을 내놓으니 차 대리도 바로 호흡을 맞추는군.)
@@ -378,6 +509,17 @@ nodes:
   - id: facts_seo_a
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_shy
@@ -392,6 +534,17 @@ nodes:
   - id: gratitude_facts
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
@@ -406,6 +559,9 @@ nodes:
   - id: roles_do_yoon
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -420,6 +576,17 @@ nodes:
   - id: roles_seo_a
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
@@ -434,6 +601,17 @@ nodes:
   - id: roles_min_kyung
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -448,6 +626,17 @@ nodes:
   - id: gratitude_roles
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
@@ -462,6 +651,9 @@ nodes:
   - id: takeover_do_yoon
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -476,6 +668,17 @@ nodes:
   - id: takeover_min_kyung
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -490,6 +693,17 @@ nodes:
   - id: takeover_seo_a
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_shy
@@ -507,6 +721,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       line: (말은 못 해도 내가 나서 준 게 든든했겠지.)
@@ -519,6 +740,17 @@ nodes:
   - id: gratitude_takeover
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: guarded_office
       expression: subjective_shy
@@ -536,6 +768,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (다음에는 먼저 물어보라니, 내 도움을 계속 기대한다는 뜻이군.)
@@ -551,6 +786,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (과장님이 계셔서 다행이었다라. 첫 위기부터 나를 특별히 의식하기 시작했군.)
@@ -574,6 +812,17 @@ nodes:
   - id: yoo_jin_records
     kind: dual_dialogue
     speaker: kang_yoo_jin
+    stage:
+      perceived:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_bold_flirt

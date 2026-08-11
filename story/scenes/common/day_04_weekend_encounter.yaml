@@ -29,6 +29,9 @@ nodes:
   - id: activity_callback
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -70,6 +73,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: "(회사 밖에서 마주친 걸 꽤 반가워하는군.)"
@@ -103,6 +109,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (다음에 또 보자는 말까지 붙인 걸 보면, 오늘 마주친 게 싫지는 않았던 모양이야.)

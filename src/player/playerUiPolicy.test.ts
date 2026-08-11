@@ -27,7 +27,7 @@ describe("player UI policy", () => {
     expect(modeUnlocked(runtime, cleared, "survivor_view")).toBe(true);
   });
 
-  it("renders every character explicitly resolved onto the stage", () => {
+  it("hides protagonist artwork unless the current beat is an explicit reveal", () => {
     const character = (characterId: string, speaker: boolean) => ({
       character: characterId,
       speaker,
@@ -37,7 +37,10 @@ describe("player UI policy", () => {
       character("cha_min_kyung", false),
       character("han_do_yoon", true),
     ]);
-    expect(visible.map((entry) => entry.character)).toEqual(["yoon_seo_a", "cha_min_kyung", "han_do_yoon"]);
+    expect(visible.map((entry) => entry.character)).toEqual(["yoon_seo_a", "cha_min_kyung"]);
+    expect(visibleStageCharacters([
+      character("han_do_yoon", true),
+    ], true).map((entry) => entry.character)).toEqual(["han_do_yoon"]);
     expect(stageCharacterFocusClass(visible[0])).toBe("speaking");
     expect(stageCharacterFocusClass(visible[1])).toBe("listening");
   });

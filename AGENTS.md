@@ -108,8 +108,11 @@ Keep the distinction explicit in status messages: **Play Build / 플레이 버�
 
 ## Player experience invariants
 
+- 한도윤의 원화는 후반 반전을 위한 보존 자산이다. 원화 파일, `character.han_do_yoon` 비주얼 정의와 NovelAI 프롬프트 프로필은 삭제하지 않는다.
+- 한도윤이 화자이거나 장면 `cast`에 포함되어 있어도 평상시 수동 `stage`, 제작 미리보기와 플레이 화면에는 그의 원화를 노출하지 않는다. 평상시에는 배경과 다른 인물만 표시한다.
+- 한도윤 원화 공개는 `ending.*` 장면의 `dual_narration` 노드가 `presentation_flags: [protagonist_art_reveal]`를 명시하고 `perceived`와 `reality` 양쪽 `stage`에 `character.han_do_yoon`을 직접 배치한 후반 반전 장면에서만 허용한다. 사용자 지시 없이 공개 시점을 앞당기거나 예외를 추가하지 않는다.
 - The new-game screen contains only the three mode cards. `속마음 모드` and `어나더 스토리` both unlock after the first ending; keep their approved descriptions in `story/ui.yaml`.
-- In automatic staging, center a one-character illustrated conversation and keep both characters visible at left/right in a two-character conversation. Render the current speaker at full color and subtly darken/desaturate the visible non-speaker. For scenes with three or more illustrated cast members, keep the active-layer speaker-only fallback unless the node declares manual stage cues. Keep character X/Y/scale adjustable in Debug Mode, and keep previous-dialogue navigation available there.
+- Do not infer character artwork from `cast` or the current speaker at runtime. Every visible character must come from an explicit layer `stage` cue stored in scene YAML. In the editor, a newly added dialogue starts without a speaker; selecting a non-Han-Do-yoon illustrated speaker writes that character as the explicit centered default in both layers. Selecting Han Do-yoon never creates ordinary stage cues. Keep character X/Y/scale adjustable in Debug Mode, and keep previous-dialogue navigation available there.
 - Do not restore the removed interpretation/thought sub-panels, a `나레이션` nameplate, a timeline/calendar selection screen, visible ACT labels, or copy/effects that promote the campaign's day count.
 - Between ordinary moments, present event summaries and selections as dialogue-style in-game beats. Use the cinematic day-change overlay only when the day number changes.
 - Every choice node has a neutral `stimulus` summary. Player-facing prompts and labels describe concrete words, actions, or nuanced interpretations; they never reveal `push`, `pull`, `밀기`, `당기기`, or `밀당`. Direction and numeric effects are Debug Mode only.

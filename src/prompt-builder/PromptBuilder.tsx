@@ -17,7 +17,7 @@ type CopyFeedback = {
 };
 
 const conceptArtImages = import.meta.glob(
-  "../../assets/concept-art/*",
+  ["../../assets/concept-art/*", "../../assets/characters/**/*"],
   { eager: true, query: "?url", import: "default" },
 ) as Record<string, string>;
 

@@ -29,6 +29,17 @@ nodes:
   - id: leave_request
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: dread
       expression: subjective_challenging
@@ -47,6 +58,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: cha_min_kyung
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: dread
       line: (예상하지 못한 고백이라 놀란 거겠지. 그래도 끝까지 주도권은 안 놓치네.)
@@ -73,6 +91,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: dread
       line: (민경도 진정하고 나면 내 확신이 맞았다는 걸 인정하겠지.)
@@ -83,7 +104,12 @@ nodes:
     next: mugshot
   - id: mugshot
     kind: dual_narration
-    presentation_flags: [ui_label_reveal]
+    presentation_flags: [ui_label_reveal, protagonist_art_reveal]
+    stage:
+      perceived:
+        - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
+      reality:
+        - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
     perceived:
       atmosphere: dread
       line: "플래시 속에는 강한 여자를 사랑한, 단정하고 훤칠한 중년 남자가 서 있었다."
@@ -100,6 +126,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: dread
       line: (이 사진도 언젠가는 우리가 얼마나 격렬하게 사랑했는지 보여 줄 기록이 되겠지.)
@@ -143,6 +172,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: cold_office
       line: (회사는 끝내 우리 관계를 지켜 주지 않고 나를 배신했군.)
@@ -170,6 +202,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: dread
       line: (두 번의 사랑이 모두 주변의 오해 때문에 망가진 거야.)

@@ -29,6 +29,9 @@ nodes:
   - id: activity_callback
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -70,6 +73,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: "(두 번째 우연까지 자연스럽게 이어지니 이번 주말은 흐름이 좋군.)"
@@ -103,6 +109,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (회사에서 봤을 때와는 둘 다 느낌이 다르네. 조금 더 알아봐도 괜찮겠어.)

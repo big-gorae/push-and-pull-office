@@ -35,6 +35,9 @@ nodes:
   - id: activity_callback
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       expression: subjective_confident
@@ -57,6 +60,17 @@ nodes:
   - id: activity_response
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: procedural
       expression: subjective_challenging
@@ -123,6 +137,17 @@ nodes:
   - id: structure_response
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -137,6 +162,17 @@ nodes:
   - id: fatigue_response
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -151,6 +187,17 @@ nodes:
   - id: takeover_response
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: guarded_office
       expression: subjective_challenging
@@ -178,7 +225,10 @@ nodes:
     presentation_flags: [inner_voice]
     speakers:
       perceived: han_do_yoon
-      reality: null
+      reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: playful_tension
       line: (강의에서 말한 전환점이 이건가. 아까는 안건부터 보자던 민경이, 전부 끝난 뒤에야 노트북을 닫고 숨을 내쉬었다.)
@@ -236,6 +286,17 @@ nodes:
   - id: after_resolution_empathy_response
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -250,6 +311,17 @@ nodes:
   - id: after_resolution_close_response
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: procedural
       expression: subjective_challenging
@@ -264,6 +336,17 @@ nodes:
   - id: after_resolution_overwork_response
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: guarded_office
       expression: subjective_challenging
@@ -281,6 +364,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: cha_min_kyung
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: procedural
       line: (회사 밖에서 본 뒤라 대화의 호흡도 조금 달라졌군.)
@@ -302,7 +392,10 @@ nodes:
     presentation_flags: [inner_voice]
     speakers:
       perceived: han_do_yoon
-      reality: null
+      reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: playful_tension
       line: (책에서는 같은 사람도 해결 전과 해결 후에 원하는 반응이 달라진다고 했다. 민경은 지금 피곤하다는 말보다 남은 쟁점 세 가지를 먼저 꺼냈다.)

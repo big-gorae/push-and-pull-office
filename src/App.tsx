@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import TimelineEditor from "./TimelineEditor";
 import PresentationEditor from "./PresentationEditor";
 import CharacterEditor from "./CharacterEditor";
@@ -8,7 +8,9 @@ import ProjectSettingsEditor, { type SettingsKind, type SettingsRequest } from "
 import QuickOpen, { type QuickOpenItem } from "./QuickOpen";
 import DuplicateDialog from "./DuplicateDialog";
 import ArtworkStageEditor from "./ArtworkStageEditor";
+import { applyDialogueSpeakerSelection } from "./stageAuthoring";
 import SceneBackgroundEditor from "./SceneBackgroundEditor";
+import { inactiveEditorPropsEqual, nextHistoryGroup, shouldCaptureHistory, type EditHistoryGroup } from "./editorPerformance";
 import { deleteNodeAndReconnect, deletionReplacement, incomingReferenceCount } from "./sceneEditing";
 import { consumeAuthoringTarget, openAuthoringPlayWindow, rememberAuthoringRoot, type AuthoringTarget } from "./player/storyAuthoring";
 import {
@@ -92,6 +94,10 @@ const STATE_LABELS: Record<string, string> = { push: "밀기", pull: "당기기"
 type HistoryState = { past: Scene[]; future: Scene[] };
 type Workspace = "timeline" | "scene" | "character" | "presentation" | "settings";
 const WORKSPACES: Workspace[] = ["timeline", "scene", "character", "presentation", "settings"];
+const DeferredTimelineEditor = memo(TimelineEditor, inactiveEditorPropsEqual);
+const DeferredCharacterEditor = memo(CharacterEditor, inactiveEditorPropsEqual);
+const DeferredPresentationEditor = memo(PresentationEditor, inactiveEditorPropsEqual);
+const DeferredProjectSettingsEditor = memo(ProjectSettingsEditor, inactiveEditorPropsEqual);
 
 function initialWorkspace(): Workspace {
   try {
@@ -113,6 +119,26 @@ function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
 function TextArea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return <textarea rows={3} {...props} />;
 }
+
+const DialogueFlowRow = memo(function DialogueFlowRow({
+  id,
+  index,
+  preview,
+  kindLabel,
+  active,
+  onSelect,
+}: {
+  id: string;
+  index: number;
+  preview: string;
+  kindLabel: string;
+  active: boolean;
+  onSelect: (id: string) => void;
+}) {
+  return <button type="button" role="listitem" className={active ? "node-pill active" : "node-pill"} onClick={() => onSelect(id)}>
+    <b>{index + 1}</b><span>{preview}</span><small>{kindLabel}</small>
+  </button>;
+});
 
 function IconText({ children }: { children: ReactNode }) {
   return <span aria-hidden="true" className="icon-text">{children}</span>;
@@ -919,7 +945,7 @@ function NodeEditor({
     {node.kind === "dual_dialogue" && <>
       {node.presentation_flags?.includes("inner_voice") ? <div className="form-grid compact-grid">
         {(["perceived", "reality"] as ViewMode[]).map((mode) => <Field label={mode === "perceived" ? "스토리 모드 생각 화자" : "속마음 모드 생각 화자"} key={mode}><select value={node.speakers?.[mode] || ""} onChange={(event) => onChange({ ...node, speakers: { ...node.speakers, [mode]: event.target.value || null } })}><option value="">화자 없는 서술</option>{speakerOptions.map(({ id, label }) => <option value={id} key={id}>{label}</option>)}</select></Field>)}
-      </div> : <Field label="화자"><select value={node.speaker || ""} onChange={(event) => onChange({ ...node, speaker: event.target.value })}>{speakerOptions.map(({ id, label }) => <option value={id} key={id}>{label}</option>)}</select></Field>}
+      </div> : <Field label="화자"><select value={node.speaker || ""} onChange={(event) => onChange(applyDialogueSpeakerSelection(runtime, node, event.target.value))}><option value="">화자 선택</option>{speakerOptions.map(({ id, label }) => <option value={id} key={id}>{label}</option>)}</select></Field>}
       {!node.variants && <div className="dual-layer-grid">
         <LayerEditor title="주인공이 보는 장면" layer={node.perceived || {}} mode="perceived" runtime={runtime} speaker={effectiveSpeaker(node, "perceived")} onChange={(perceived) => onChange({ ...node, perceived })} />
         <LayerEditor title="실제 장면" layer={node.reality || {}} mode="reality" runtime={runtime} speaker={effectiveSpeaker(node, "reality")} onChange={(reality) => onChange({ ...node, reality })} />
@@ -1152,7 +1178,12 @@ export default function App() {
   const [payload, setPayload] = useState<ProjectPayload | null>(null);
   const [selectedSceneId, setSelectedSceneId] = useState("");
   const [selectedNodeId, setSelectedNodeId] = useState("");
-  const [draft, setDraft] = useState<Scene | null>(null);
+  const [draft, setDraftState] = useState<Scene | null>(null);
+  const draftRef = useRef<Scene | null>(null);
+  const dirtyRef = useRef(false);
+  const historyGroupRef = useRef<EditHistoryGroup | null>(null);
+  const draftVersionRef = useRef(0);
+  const sceneSaveInFlight = useRef(false);
   const [revision, setRevision] = useState("");
   const [dirty, setDirty] = useState(false);
   const [history, setHistory] = useState<HistoryState>({ past: [], future: [] });
@@ -1172,7 +1203,7 @@ export default function App() {
   const [characterRequest, setCharacterRequest] = useState<{ id: string; token: number } | null>(null);
   const [settingsRequest, setSettingsRequest] = useState<SettingsRequest | null>(null);
   const [duplicateRequest, setDuplicateRequest] = useState<{ kind: "scene" | "event"; id: string; title: string } | null>(null);
-  const lastAutoSaveAttempt = useRef("");
+  const lastAutoSaveAttempt = useRef(-1);
   const workspaceRef = useRef<Workspace>(workspace);
   const [workspaceActivities, setWorkspaceActivities] = useState<Partial<Record<Workspace, DocumentActivity>>>({});
 
@@ -1191,17 +1222,35 @@ export default function App() {
   const reportPresentationActivity = useCallback((activity: DocumentActivity) => reportActivity("presentation", activity), [reportActivity]);
   const reportSettingsActivity = useCallback((activity: DocumentActivity) => reportActivity("settings", activity), [reportActivity]);
 
+  const replaceDraft = useCallback((next: Scene | null) => {
+    draftRef.current = next;
+    setDraftState(next);
+  }, []);
+  const setSceneDirty = useCallback((next: boolean) => {
+    dirtyRef.current = next;
+    setDirty(next);
+  }, []);
+
   const runtime = payload?.runtime;
   const root = payload?.root;
   const currentRoute = draft && runtime ? runtime.routes[draft.route] : undefined;
   const heroineId = currentRoute?.heroine;
   const selectedNode = draft?.nodes[selectedNodeId];
-  const visibleDialogueIds = draft
-    ? draft.node_order.filter((id) => {
-      const query = dialogueSearch.trim().toLocaleLowerCase();
+  const selectDialogueNode = useCallback((id: string) => setSelectedNodeId(id), []);
+  const visibleDialogueIds = useMemo(() => {
+    if (!draft) return [];
+    const query = dialogueSearch.trim().toLocaleLowerCase();
+    return draft.node_order.filter((id) => {
       return !query || nodeScreenTexts(draft.nodes[id]).some((text) => text.toLocaleLowerCase().includes(query));
-    })
-    : [];
+    });
+  }, [dialogueSearch, draft]);
+  const dialogueOrder = useMemo(() => new Map(draft?.node_order.map((id, index) => [id, index]) || []), [draft?.node_order]);
+  const sceneDayGroups = useMemo(() => runtime ? scenesByDay(runtime) : [], [runtime]);
+  const contract = useMemo(() => {
+    if (!draft) return { reads: [], writes: [] };
+    if (editorTab !== "scene") return draft.state_contract || { reads: [], writes: [] };
+    return deriveStateContract(draft, heroineId, runtime);
+  }, [draft, editorTab, heroineId, runtime]);
 
   const loadScene = useCallback((project: ProjectPayload, sceneId: string, force = false) => {
     if (!force && dirty && !window.confirm("저장하지 않은 변경을 버리고 다른 장면을 열까요?")) return;
@@ -1219,23 +1268,26 @@ export default function App() {
           if (window.confirm(`저장하지 않은 '${sourceScene.title}' 초안이 있습니다. 복구할까요?`)) {
             next = recovered.scene;
             recoveredDraft = true;
-            setDirty(true);
+            setSceneDirty(true);
             setStatus("저장하지 않은 초안을 복구했습니다.");
           } else {
             localStorage.removeItem(key);
-            setDirty(false);
+            setSceneDirty(false);
           }
         } else {
           localStorage.removeItem(key);
-          setDirty(false);
+          setSceneDirty(false);
         }
       } catch {
         localStorage.removeItem(key);
-        setDirty(false);
+        setSceneDirty(false);
       }
-    } else setDirty(false);
+    } else setSceneDirty(false);
     setSelectedSceneId(sceneId);
-    setDraft(next);
+    replaceDraft(next);
+    historyGroupRef.current = null;
+    draftVersionRef.current = 0;
+    lastAutoSaveAttempt.current = -1;
     setRevision(meta.revision);
     setSelectedNodeId(next.start_node);
     setHistory({ past: [], future: [] });
@@ -1248,7 +1300,7 @@ export default function App() {
       detail: recoveredDraft ? "복구한 초안 · 디스크 저장 대기" : "디스크와 동기화됨",
     });
     return recoveredDraft;
-  }, [dirty]);
+  }, [dirty, replaceDraft, reportSceneActivity, setSceneDirty]);
 
   const loadProject = useCallback(async (projectRoot: string) => {
     setBusy(true);
@@ -1329,34 +1381,61 @@ export default function App() {
     return () => window.removeEventListener("beforeunload", preserveDraft);
   }, [dirty, draft, revision, root]);
 
-  const updateDraft = (updater: (scene: Scene) => void) => {
-    setDraft((current) => {
-      if (!current) return current;
-      const next = clone(current);
-      updater(next);
-      next.state_contract = deriveStateContract(next, runtime?.routes[next.route]?.heroine, runtime);
+  const commitDraft = useCallback((next: Scene, historyGroup?: string) => {
+    const current = draftRef.current;
+    if (!current || current === next) return;
+    const now = performance.now();
+    if (shouldCaptureHistory(historyGroupRef.current, historyGroup, now)) {
       setHistory((value) => ({ past: [...value.past, clone(current)].slice(-100), future: [] }));
-      const changed = JSON.stringify(next) !== JSON.stringify(payload?.runtime.scenes[next.id]);
-      setDirty(changed);
+    }
+    historyGroupRef.current = nextHistoryGroup(historyGroup, now);
+    draftVersionRef.current += 1;
+    draftRef.current = next;
+    setDraftState(next);
+    if (!dirtyRef.current) {
+      setSceneDirty(true);
       reportSceneActivity({
-        phase: changed ? "dirty" : "saved",
+        phase: "dirty",
         label: next.title,
         path: payload?.documents.scenes[next.id]?.path || "",
-        detail: changed ? "자동 저장 대기" : "디스크 상태로 되돌아옴",
+        detail: "자동 저장 대기",
       });
-      return next;
-    });
-  };
+    }
+  }, [payload?.documents.scenes, reportSceneActivity, setSceneDirty]);
 
-  const updateNode = (node: StoryNode) => updateDraft((scene) => { scene.nodes[node.id] = node; });
+  const updateDraft = useCallback((updater: (scene: Scene) => void, historyGroup?: string) => {
+    const current = draftRef.current;
+    if (!current) return;
+    const next = clone(current);
+    updater(next);
+    commitDraft(next, historyGroup);
+  }, [commitDraft]);
+
+  const updateScene = useCallback((patch: Partial<Scene>, historyGroup?: string) => {
+    const current = draftRef.current;
+    if (!current) return;
+    commitDraft({ ...current, ...patch }, historyGroup);
+  }, [commitDraft]);
+
+  const updateNode = useCallback((node: StoryNode) => {
+    const current = draftRef.current;
+    if (!current || current.nodes[node.id] === node) return;
+    commitDraft({ ...current, nodes: { ...current.nodes, [node.id]: node } }, `node:${node.id}`);
+  }, [commitDraft]);
+
+  useEffect(() => {
+    historyGroupRef.current = null;
+  }, [editorTab, selectedNodeId]);
 
   const undo = () => {
     if (!draft || history.past.length === 0) return;
     const previous = history.past[history.past.length - 1];
     const changed = JSON.stringify(previous) !== JSON.stringify(payload?.runtime.scenes[previous.id]);
     setHistory({ past: history.past.slice(0, -1), future: [clone(draft), ...history.future].slice(0, 100) });
-    setDraft(previous);
-    setDirty(changed);
+    historyGroupRef.current = null;
+    draftVersionRef.current += 1;
+    replaceDraft(previous);
+    setSceneDirty(changed);
     reportSceneActivity({
       phase: changed ? "dirty" : "saved",
       label: previous.title,
@@ -1370,8 +1449,10 @@ export default function App() {
     const next = history.future[0];
     const changed = JSON.stringify(next) !== JSON.stringify(payload?.runtime.scenes[next.id]);
     setHistory({ past: [...history.past, clone(draft)].slice(-100), future: history.future.slice(1) });
-    setDraft(next);
-    setDirty(changed);
+    historyGroupRef.current = null;
+    draftVersionRef.current += 1;
+    replaceDraft(next);
+    setSceneDirty(changed);
     reportSceneActivity({
       phase: changed ? "dirty" : "saved",
       label: next.title,
@@ -1394,7 +1475,8 @@ export default function App() {
       if (draft && workspace === "scene") {
         const result = await invoke<{ issues: ValidationIssue[]; state_contract: Scene["state_contract"] }>("validate_scene", { root, scene: draft });
         setIssues(result.issues);
-        setDraft((current) => current ? { ...current, state_contract: result.state_contract } : current);
+        const current = draftRef.current;
+        if (current?.id === draft.id) replaceDraft({ ...current, state_contract: result.state_contract });
         setStatus(result.issues.length ? `${result.issues.length}개 검증 항목이 있습니다.` : "현재 초안에 오류가 없습니다.");
       } else {
         const result = await invoke<{ issues: ValidationIssue[] }>("validate_project", { root });
@@ -1409,7 +1491,13 @@ export default function App() {
   };
 
   const save = useCallback(async () => {
-    if (!root || !draft || !payload) return;
+    if (!root || !draft || !payload || sceneSaveInFlight.current) return;
+    const savingVersion = draftVersionRef.current;
+    const sceneToSave = {
+      ...draft,
+      state_contract: deriveStateContract(draft, payload.runtime.routes[draft.route]?.heroine, payload.runtime),
+    };
+    sceneSaveInFlight.current = true;
     setBusy(true);
     setStatus("전체 프로젝트를 검증하고 안전하게 저장하는 중…");
     reportSceneActivity({
@@ -1424,7 +1512,7 @@ export default function App() {
         issues: ValidationIssue[];
         runtime?: Runtime;
         document?: ProjectPayload["documents"]["scenes"][string];
-      }>("save_scene", { root, scene: draft, revision });
+      }>("save_scene", { root, scene: sceneToSave, revision });
       setIssues(result.issues);
       if (!result.saved || !result.runtime || !result.document) {
         setStatus("오류가 있어 원본에는 저장하지 않았습니다.");
@@ -1436,22 +1524,38 @@ export default function App() {
         });
         return;
       }
-      const nextProject = clone(payload);
-      nextProject.runtime = result.runtime;
-      nextProject.documents.scenes[draft.id] = result.document;
+      const nextProject: ProjectPayload = {
+        ...payload,
+        runtime: result.runtime,
+        documents: {
+          ...payload.documents,
+          scenes: { ...payload.documents.scenes, [draft.id]: result.document },
+        },
+      };
       setPayload(nextProject);
       setRevision(result.document.revision);
-      setDraft(clone(result.runtime.scenes[draft.id]));
-      setDirty(false);
-      localStorage.removeItem(`love-office-draft:${root}:${draft.id}`);
-      setStatus("YAML과 런타임을 저장했습니다.");
-      reportSceneActivity({
-        phase: "saved",
-        label: result.runtime.scenes[draft.id].title,
-        path: result.document.path,
-        detail: "YAML + 런타임 저장 완료",
-        savedAt: Date.now(),
-      });
+      if (savingVersion === draftVersionRef.current) {
+        replaceDraft(clone(result.runtime.scenes[draft.id]));
+        historyGroupRef.current = null;
+        setSceneDirty(false);
+        localStorage.removeItem(`love-office-draft:${root}:${draft.id}`);
+        setStatus("YAML과 런타임을 저장했습니다.");
+        reportSceneActivity({
+          phase: "saved",
+          label: result.runtime.scenes[draft.id].title,
+          path: result.document.path,
+          detail: "YAML + 런타임 저장 완료",
+          savedAt: Date.now(),
+        });
+      } else {
+        setStatus("입력 중이던 내용은 유지했습니다. 남은 변경을 이어서 자동 저장합니다.");
+        reportSceneActivity({
+          phase: "dirty",
+          label: draftRef.current?.title || draft.title,
+          path: result.document.path,
+          detail: "이전 입력 저장 완료 · 최신 입력 자동 저장 대기",
+        });
+      }
     } catch (error) {
       const message = String(error);
       setStatus(message.includes("REVISION_CONFLICT") ? "외부에서 파일이 변경되었습니다. 프로젝트를 다시 불러온 뒤 비교하세요." : `저장 실패: ${message}`);
@@ -1462,16 +1566,17 @@ export default function App() {
         detail: message.includes("REVISION_CONFLICT") ? "외부 변경 충돌 · 원본 보존됨" : "저장 실패 · 원본 보존됨",
       });
     } finally {
+      sceneSaveInFlight.current = false;
       setBusy(false);
     }
-  }, [draft, payload, revision, root]);
+  }, [draft, payload, replaceDraft, reportSceneActivity, revision, root, setSceneDirty]);
 
   useEffect(() => {
     if (!dirty || !draft || !root || !revision) return;
-    const signature = JSON.stringify(draft);
-    if (signature === lastAutoSaveAttempt.current) return;
+    const version = draftVersionRef.current;
+    if (version === lastAutoSaveAttempt.current) return;
     const timer = window.setTimeout(() => {
-      lastAutoSaveAttempt.current = signature;
+      lastAutoSaveAttempt.current = version;
       void save();
     }, 1000);
     return () => window.clearTimeout(timer);
@@ -1816,7 +1921,6 @@ export default function App() {
     </main>;
   }
 
-  const contract = deriveStateContract(draft, runtime.routes[draft.route]?.heroine, runtime);
   const errorCount = issues.filter((issue) => issue.severity === "error").length;
   const saveStateLabel = documentActivity.phase === "saving" ? "저장 중…"
     : documentActivity.phase === "dirty" ? "자동 저장 대기"
@@ -1857,7 +1961,7 @@ export default function App() {
     </div>
 
     <div className={workspace === "timeline" ? "workspace-pane active" : "workspace-pane"} aria-hidden={workspace !== "timeline"}>
-    <TimelineEditor
+    <DeferredTimelineEditor
       key={`${payload.root}:timeline`}
       active={workspace === "timeline"}
       payload={payload}
@@ -1878,7 +1982,7 @@ export default function App() {
     />
     </div>
     <div className={workspace === "character" ? "workspace-pane active" : "workspace-pane"} aria-hidden={workspace !== "character"}>
-    <CharacterEditor
+    <DeferredCharacterEditor
       key={`${payload.root}:characters`}
       active={workspace === "character"}
       payload={payload}
@@ -1890,7 +1994,7 @@ export default function App() {
     />
     </div>
     <div className={workspace === "presentation" ? "workspace-pane active" : "workspace-pane"} aria-hidden={workspace !== "presentation"}>
-    <PresentationEditor
+    <DeferredPresentationEditor
       key={`${payload.root}:presentation`}
       active={workspace === "presentation"}
       payload={payload}
@@ -1905,7 +2009,7 @@ export default function App() {
     />
     </div>
     <div className={workspace === "settings" ? "workspace-pane active" : "workspace-pane"} aria-hidden={workspace !== "settings"}>
-    <ProjectSettingsEditor
+    <DeferredProjectSettingsEditor
       key={`${payload.root}:settings`}
       active={workspace === "settings"}
       payload={payload}
@@ -1920,7 +2024,7 @@ export default function App() {
       <nav className="explorer" aria-label="스토리 탐색기">
         <div className="panel-heading"><div><p className="eyebrow">STORY FLOW</p><h2>날짜별 장면</h2></div></div>
         <p className="explorer-help">게임의 시간 순서대로 장면을 선택합니다.</p>
-        <div className="day-tree">{scenesByDay(runtime).map(({ day, scenes }) => <section className={scenes.some((entry) => entry.sceneId === selectedSceneId) ? "day-sector active" : "day-sector"} key={day}>
+        <div className="day-tree">{sceneDayGroups.map(({ day, scenes }) => <section className={scenes.some((entry) => entry.sceneId === selectedSceneId) ? "day-sector active" : "day-sector"} key={day}>
           <h3><span>{day}일차</span><small>{scenes.length ? `${scenes.length}개 장면` : "장면 없음"}</small></h3>
           {scenes.map((entry) => {
             const scene = runtime.scenes[entry.sceneId];
@@ -1944,18 +2048,18 @@ export default function App() {
         </div>
 
         {editorTab === "scene" && <div className="scroll-area scene-form">
-          <SceneBackgroundEditor root={root} runtime={runtime} scene={draft} onChange={(defaultBackground) => updateDraft((scene) => { scene.default_background = defaultBackground; })} />
+          <SceneBackgroundEditor root={root} runtime={runtime} scene={draft} onChange={(defaultBackground) => updateScene({ default_background: defaultBackground })} />
           <div className="form-grid">
-            <Field label="장면 제목"><TextInput value={draft.title} onChange={(event) => updateDraft((scene) => { scene.title = event.target.value; })} /></Field>
-            <Field label="첫 대사"><select value={draft.start_node} onChange={(event) => updateDraft((scene) => { scene.start_node = event.target.value; })}>{draft.node_order.map((id) => <option value={id} key={id}>{dialogueOptionLabel(draft, id)}</option>)}</select></Field>
-            <Field label="장면 목적" wide><TextArea value={draft.purpose} onChange={(event) => updateDraft((scene) => { scene.purpose = event.target.value; })} /></Field>
-            <Field label="장소"><TextInput value={draft.location || ""} onChange={(event) => updateDraft((scene) => { scene.location = event.target.value; })} /></Field>
-            <Field label="시간"><TextInput value={draft.time || ""} onChange={(event) => updateDraft((scene) => { scene.time = event.target.value; })} /></Field>
-            <Field label="챕터"><TextInput type="number" min="0" value={draft.chapter || 0} onChange={(event) => updateDraft((scene) => { scene.chapter = Number(event.target.value); })} /></Field>
-            <Field label="정렬 순서"><TextInput type="number" min="0" value={draft.sequence || 0} onChange={(event) => updateDraft((scene) => { scene.sequence = Number(event.target.value); })} /></Field>
+            <Field label="장면 제목"><TextInput value={draft.title} onChange={(event) => updateScene({ title: event.target.value }, "scene:title")} /></Field>
+            <Field label="첫 대사"><select value={draft.start_node} onChange={(event) => updateScene({ start_node: event.target.value })}>{draft.node_order.map((id) => <option value={id} key={id}>{dialogueOptionLabel(draft, id)}</option>)}</select></Field>
+            <Field label="장면 목적" wide><TextArea value={draft.purpose} onChange={(event) => updateScene({ purpose: event.target.value }, "scene:purpose")} /></Field>
+            <Field label="장소"><TextInput value={draft.location || ""} onChange={(event) => updateScene({ location: event.target.value }, "scene:location")} /></Field>
+            <Field label="시간"><TextInput value={draft.time || ""} onChange={(event) => updateScene({ time: event.target.value }, "scene:time")} /></Field>
+            <Field label="챕터"><TextInput type="number" min="0" value={draft.chapter || 0} onChange={(event) => updateScene({ chapter: Number(event.target.value) }, "scene:chapter")} /></Field>
+            <Field label="정렬 순서"><TextInput type="number" min="0" value={draft.sequence || 0} onChange={(event) => updateScene({ sequence: Number(event.target.value) }, "scene:sequence")} /></Field>
           </div>
-          <fieldset className="cast-editor"><legend>출연 인물</legend>{Object.values(runtime.characters).map((character) => <label className="check-row" key={character.id}><input type="checkbox" checked={draft.cast.includes(character.id)} onChange={(event) => updateDraft((scene) => { scene.cast = event.target.checked ? [...scene.cast, character.id] : scene.cast.filter((id) => id !== character.id); })} /><span>{character.display_name}</span><small>{character.id}</small></label>)}</fieldset>
-          <fieldset className="entry-condition-editor"><legend>장면 진입 조건</legend><ConditionEditor runtime={runtime} conditions={draft.entry_conditions || []} onChange={(conditions) => updateDraft((scene) => { scene.entry_conditions = conditions; })} /></fieldset>
+          <fieldset className="cast-editor"><legend>출연 인물</legend>{Object.values(runtime.characters).map((character) => <label className="check-row" key={character.id}><input type="checkbox" checked={draft.cast.includes(character.id)} onChange={(event) => updateScene({ cast: event.target.checked ? [...draft.cast, character.id] : draft.cast.filter((id) => id !== character.id) })} /><span>{character.display_name}</span><small>{character.id}</small></label>)}</fieldset>
+          <fieldset className="entry-condition-editor"><legend>장면 진입 조건</legend><ConditionEditor runtime={runtime} conditions={draft.entry_conditions || []} onChange={(conditions) => updateScene({ entry_conditions: conditions })} /></fieldset>
           <fieldset className="contract-editor"><legend>자동 계산된 상태 계약</legend><div><strong>읽는 수치</strong>{contract.reads.map((path) => <code key={path}>{path}</code>)}</div><div><strong>바꾸는 수치</strong>{contract.writes.map((path) => <code key={path}>{path}</code>)}</div></fieldset>
         </div>}
 
@@ -1965,8 +2069,16 @@ export default function App() {
             <label className="dialogue-search"><span>대사 내용 검색</span><input type="search" placeholder="화면에 표시되는 문장으로 검색…" value={dialogueSearch} onChange={(event) => setDialogueSearch(event.target.value)} /><small>{visibleDialogueIds.length} / {draft.node_order.length}</small></label>
             <div className="new-node-row"><select aria-label="추가할 대사 종류" value={newNodeKind} onChange={(event) => setNewNodeKind(event.target.value as NodeKind)}>{Object.entries(NODE_LABELS).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select><button type="button" onClick={addNode}>현재 대사 다음에 추가</button></div>
             <div className="node-flow" role="list">{visibleDialogueIds.map((id) => {
-              const index = draft.node_order.indexOf(id);
-              return <button type="button" role="listitem" className={id === selectedNodeId ? "node-pill active" : "node-pill"} key={id} onClick={() => setSelectedNodeId(id)}><b>{index + 1}</b><span>{nodePreview(draft.nodes[id])}</span><small>{NODE_LABELS[draft.nodes[id].kind]}</small></button>;
+              const index = dialogueOrder.get(id) ?? 0;
+              return <DialogueFlowRow
+                id={id}
+                index={index}
+                preview={nodePreview(draft.nodes[id])}
+                kindLabel={NODE_LABELS[draft.nodes[id].kind]}
+                active={id === selectedNodeId}
+                onSelect={selectDialogueNode}
+                key={id}
+              />;
             })}{visibleDialogueIds.length === 0 && <p className="dialogue-search-empty">검색 결과가 없습니다.</p>}</div>
           </aside>
           <div className="dialogue-detail scroll-area">{selectedNode ? <NodeEditor root={root} runtime={runtime} state={testState} scene={draft} node={selectedNode} mode={mode} onMode={setMode} onChange={updateNode} /> : <p>대사를 선택하세요.</p>}</div>

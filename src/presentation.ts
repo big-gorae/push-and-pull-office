@@ -7,13 +7,13 @@ import type {
   ResolvedStage,
   Runtime,
   Scene,
-  StagePosition,
   StoryNode,
   StageCharacterCue,
   ViewMode,
   VisualObject,
 } from "./types";
 import { effectiveSpeaker } from "./storyLogic";
+import { canRevealProtagonistArtwork, isProtagonistArtwork } from "./protagonistArtworkPolicy";
 
 export type MessageVariables = Record<string, string | number>;
 
@@ -65,13 +65,6 @@ export class LocalizationService {
 
 function layerFor(node: StoryNode | undefined, mode: ViewMode): Layer | undefined {
   return node?.[mode] as Layer | undefined;
-}
-
-function stagePositions(count: number): StagePosition[] {
-  if (count <= 1) return ["center"];
-  if (count === 2) return ["left", "right"];
-  if (count === 3) return ["far_left", "center", "far_right"];
-  return ["far_left", "left", "right", "far_right"];
 }
 
 export type CharacterArtworkOption = {
@@ -206,25 +199,6 @@ export class VisualResolver {
     return candidates.sort((a, b) => b.score - a.score || a.visual_id.localeCompare(b.visual_id) || a.variant_id.localeCompare(b.variant_id))[0];
   }
 
-  resolveCharacter(characterId: string, expression: string | undefined, position: StagePosition, speaker: boolean): ResolvedCharacterVisual | undefined {
-    const visual = this.concrete("character").find((candidate) => candidate.character === characterId);
-    if (!visual) return undefined;
-    const selected = artworkSelection(visual, undefined, expression);
-    if (!selected.asset) return undefined;
-    return {
-      visual_id: visual.id,
-      character: characterId,
-      asset: selected.asset,
-      expression: selected.expression || expression,
-      artwork: selected.artwork,
-      outfit: visual.default_outfit,
-      pose: visual.default_pose,
-      position,
-      speaker,
-      render_strategy: visual.render_strategy === "layered_sprite" ? "layered_sprite" : "flat_portrait",
-    };
-  }
-
   resolveCharacterCue(cue: StageCharacterCue, speakerId: string | null | undefined): ResolvedCharacterVisual | undefined {
     const visual = this.concrete("character").find((candidate) =>
       candidate.id === cue.visual_id && candidate.character === cue.character);
@@ -247,30 +221,17 @@ export class VisualResolver {
 
   resolveStage(scene: Scene, nodeId: string, mode: ViewMode, nodeOverride?: StoryNode): ResolvedStage {
     const node = nodeOverride || scene.nodes[nodeId];
-    const layer = layerFor(node, mode);
     const speaker = effectiveSpeaker(node, mode);
+    const protagonistReveal = canRevealProtagonistArtwork(scene, node);
     const hasManualStage = Boolean(node?.stage && Object.prototype.hasOwnProperty.call(node.stage, mode));
     const manualCues = hasManualStage ? node?.stage?.[mode] || [] : undefined;
-    const visibleCast = speaker
-      ? scene.cast.length <= 2
-        ? scene.cast
-        : scene.cast.filter((characterId) => characterId === speaker)
-      : [];
-    const positions = stagePositions(visibleCast.length);
     const characters = manualCues
       ? manualCues.flatMap((cue) => {
+        if (isProtagonistArtwork(cue.character) && !protagonistReveal) return [];
         const visual = this.resolveCharacterCue(cue, speaker);
         return visual ? [visual] : [];
       })
-      : visibleCast.flatMap((characterId, index) => {
-        const visual = this.resolveCharacter(
-          characterId,
-          speaker === characterId ? layer?.expression : undefined,
-          positions[Math.min(index, positions.length - 1)],
-          speaker === characterId,
-        );
-        return visual ? [visual] : [];
-      });
+      : [];
     return {
       background: this.resolveBackground(scene, node, mode),
       characters,

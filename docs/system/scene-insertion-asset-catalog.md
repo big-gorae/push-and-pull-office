@@ -140,12 +140,12 @@ ID와 파일명은 분리하되 한 번 저장된 ID는 파일 이동과 무관�
 - 대사마다 왼쪽·가운데·오른쪽 세 슬롯
 - 캐릭터별 탭과 등록된 artwork 썸네일
 - 화자와 무관한 cast 인물 배치와 선택지 화면 배치
-- 레이어별 `화자 자동`, 직접 배치, 전체 `OFF`
+- 레이어별 명시적 직접 배치와 전체 `OFF`
 - fallback 발생 여부와 이유
 
 장면은 실제 asset path를 저장하지 않는다.
 
-대사 `stage`에 해당 레이어 키가 없으면 자동 배치를 사용한다. illustrated cast가 한 명이면 가운데, 두 명이면 왼쪽·오른쪽에 계속 표시하고, 세 명 이상인 장면은 현재 화자만 가운데 표시한다. 함께 보이는 비화자는 살짝 어둡고 회색인 톤으로 낮춘다. 레이어 키가 빈 배열이면 원화를 모두 끄고, 1~3개 cue가 있으면 화자 여부와 무관하게 지정한 인물을 표시한다. 한 레이어에서 위치와 인물은 각각 중복될 수 없으며 선택 가능한 인물은 illustrated cast로 제한한다.
+대사 `stage`에 해당 레이어 키가 없으면 인물 원화를 표시하지 않는다. 런타임은 `cast`나 화자를 근거로 배치를 추론하지 않는다. 새 대사의 화자를 선택하면 편집기가 한도윤을 제외한 일러스트 화자를 양쪽 레이어 중앙 cue로 명시 저장한다. 레이어 키가 빈 배열이면 원화를 모두 끄고, 1~3개 cue가 있으면 화자 여부와 무관하게 지정한 인물을 표시한다. 한 레이어에서 위치와 인물은 각각 중복될 수 없으며 선택 가능한 인물은 illustrated cast로 제한한다.
 
 ```yaml
 stage:
@@ -345,7 +345,7 @@ character: yoon_seo_a
 default_artwork: office_default
 artworks:
   office_default:
-    asset: assets/characters/yoon-seo-a/office-default/base.png
+    asset: assets/characters/yoon-seo-a/office-default/base-cutout.png
     outfits: [office]
     poses: [neutral, guarded]
     expression_assets:

@@ -1,7 +1,8 @@
-import { invoke } from "@tauri-apps/api/core";
-import { useEffect, useMemo, useState } from "react";
-import { characterArtworkOptions, VisualResolver, type CharacterArtworkOption } from "./presentation";
+import { useMemo, useState } from "react";
+import { useAssetPreview } from "./assetPreview";
+import { characterArtworkOptions, type CharacterArtworkOption } from "./presentation";
 import type { ArtworkPosition, Runtime, Scene, StageCharacterCue, StoryNode, ViewMode } from "./types";
+import { canRevealProtagonistArtwork, isProtagonistArtwork } from "./protagonistArtworkPolicy";
 
 const POSITIONS: Array<{ id: ArtworkPosition; label: string }> = [
   { id: "left", label: "왼쪽" },
@@ -10,16 +11,7 @@ const POSITIONS: Array<{ id: ArtworkPosition; label: string }> = [
 ];
 
 function AssetThumbnail({ root, path, alt }: { root: string; path?: string; alt: string }) {
-  const [source, setSource] = useState("");
-  useEffect(() => {
-    let active = true;
-    setSource("");
-    if (!path) return () => { active = false; };
-    void invoke<string>("read_asset", { root, relativePath: path })
-      .then((value) => { if (active) setSource(value); })
-      .catch(() => undefined);
-    return () => { active = false; };
-  }, [path, root]);
+  const source = useAssetPreview(root, path);
   return source ? <img src={source} alt={alt} /> : <span className="artwork-thumbnail-placeholder">NO IMAGE</span>;
 }
 
@@ -29,38 +21,27 @@ function cueOption(runtime: Runtime, cue: StageCharacterCue | undefined): Charac
     option.visual_id === cue.visual_id && option.id === cue.artwork);
 }
 
-function automaticCues(runtime: Runtime, scene: Scene, node: StoryNode, mode: ViewMode): StageCharacterCue[] {
-  const stage = new VisualResolver(runtime).resolveStage(scene, node.id, mode, node);
-  return stage.characters.flatMap((character): StageCharacterCue[] => {
-    const option = characterArtworkOptions(runtime, character.character).find((candidate) =>
-      candidate.visual_id === character.visual_id
-      && candidate.id === (character.artwork || character.expression || "default"));
-    return option ? [{
-      position: character.position === "left" || character.position === "right" ? character.position : "center",
-      character: character.character,
-      visual_id: option.visual_id,
-      artwork: option.id,
-    }] : [];
-  });
-}
-
 type ArtworkPickerProps = {
   root: string;
   runtime: Runtime;
   scene: Scene;
   position: ArtworkPosition;
   mode: ViewMode;
+  allowProtagonistArtwork: boolean;
   current?: StageCharacterCue;
   onPick: (option?: CharacterArtworkOption) => void;
   onClose: () => void;
 };
 
-function ArtworkPicker({ root, runtime, scene, position, mode, current, onPick, onClose }: ArtworkPickerProps) {
+function ArtworkPicker({ root, runtime, scene, position, mode, allowProtagonistArtwork, current, onPick, onClose }: ArtworkPickerProps) {
   const characters = useMemo(() => scene.cast
     .map((id) => runtime.characters[id])
-    .filter((character) => character && characterArtworkOptions(runtime, character.id, mode).length), [mode, runtime, scene.cast]);
+    .filter((character) => character && (allowProtagonistArtwork || !isProtagonistArtwork(character.id)))
+    .filter((character) => character && characterArtworkOptions(runtime, character.id, mode).length), [allowProtagonistArtwork, mode, runtime, scene.cast]);
   const [characterId, setCharacterId] = useState(current?.character || characters[0]?.id || "");
-  const options = characterId ? characterArtworkOptions(runtime, characterId, mode) : [];
+  const options = characterId && (allowProtagonistArtwork || !isProtagonistArtwork(characterId))
+    ? characterArtworkOptions(runtime, characterId, mode)
+    : [];
 
   return <div className="artwork-picker-backdrop" role="presentation" onMouseDown={(event) => {
     if (event.target === event.currentTarget) onClose();
@@ -108,21 +89,16 @@ export default function ArtworkStageEditor({
   onChange: (node: StoryNode) => void;
 }) {
   const [pickerPosition, setPickerPosition] = useState<ArtworkPosition | null>(null);
+  const allowProtagonistArtwork = canRevealProtagonistArtwork(scene, node);
   const manual = Boolean(node.stage && Object.prototype.hasOwnProperty.call(node.stage, mode));
-  const cues = manual ? node.stage?.[mode] || [] : automaticCues(runtime, scene, node, mode);
+  const cues = node.stage?.[mode] || [];
 
   const setCues = (next: StageCharacterCue[]) => onChange({
     ...node,
     stage: { ...(node.stage || {}), [mode]: next },
   });
-  const resetAutomatic = () => {
-    const stage = { ...(node.stage || {}) };
-    delete stage[mode];
-    onChange({ ...node, stage: Object.keys(stage).length ? stage : undefined });
-  };
   const choose = (position: ArtworkPosition, option?: CharacterArtworkOption) => {
-    const base = manual ? [...cues] : automaticCues(runtime, scene, node, mode);
-    const withoutPosition = base.filter((cue) => cue.position !== position);
+    const withoutPosition = cues.filter((cue) => cue.position !== position);
     const withoutDuplicate = option
       ? withoutPosition.filter((cue) => cue.character !== option.character)
       : withoutPosition;
@@ -143,9 +119,9 @@ export default function ArtworkStageEditor({
         <button type="button" className={mode === "reality" ? "active" : ""} onClick={() => onMode("reality")}>속마음 모드</button>
       </div>
     </header>
+    {!allowProtagonistArtwork && scene.cast.includes("han_do_yoon") && <p className="artwork-stage-policy-note">한도윤 원화는 후반 반전 공개 노드에서만 선택할 수 있습니다.</p>}
     <div className="artwork-stage-toolbar">
-      <span className={manual ? "manual" : "auto"}>{manual ? "직접 배치" : "화자 자동 표시"}</span>
-      <button type="button" onClick={resetAutomatic} disabled={!manual}>화자 자동</button>
+      <span className={manual ? "manual" : "auto"}>{manual ? "명시적 배치" : "원화 미지정"}</span>
       <button type="button" onClick={() => setCues([])}>원화 모두 끄기</button>
     </div>
     <div className="artwork-stage-slots">
@@ -158,7 +134,7 @@ export default function ArtworkStageEditor({
             <AssetThumbnail root={root} path={option.asset} alt={option.label} />
             <strong>{runtime.characters[cue.character]?.display_name || cue.character}</strong>
             <small>{option.label}</small>
-          </> : <><b>＋</b><strong>원화 선택</strong><small>{manual ? "OFF" : id === "center" && cues.length ? "자동 배치" : "비어 있음"}</small></>}
+          </> : <><b>＋</b><strong>원화 선택</strong><small>{manual ? "OFF" : "비어 있음"}</small></>}
         </button>;
       })}
     </div>
@@ -168,6 +144,7 @@ export default function ArtworkStageEditor({
       scene={scene}
       position={pickerPosition}
       mode={mode}
+      allowProtagonistArtwork={allowProtagonistArtwork}
       current={cues.find((cue) => cue.position === pickerPosition)}
       onPick={(option) => choose(pickerPosition, option)}
       onClose={() => setPickerPosition(null)}

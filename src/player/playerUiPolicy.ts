@@ -2,13 +2,19 @@ import type { ChoiceOption, GameModeId, NodeKind, ResolvedCharacterVisual, Runti
 import type { TimelineLogEntry } from "./playerRuntime";
 import type { PlayerProfile } from "./playerStorage";
 import { resolveModeAccess } from "./gameModes";
+import { isProtagonistArtwork } from "../protagonistArtworkPolicy";
 
 export function modeUnlocked(runtime: Runtime, profile: PlayerProfile, mode: GameModeId): boolean {
   return resolveModeAccess(runtime, mode, profile) !== "locked";
 }
 
-export function visibleStageCharacters(characters: ResolvedCharacterVisual[]): ResolvedCharacterVisual[] {
-  return characters;
+export function visibleStageCharacters(
+  characters: ResolvedCharacterVisual[],
+  allowProtagonistArtwork = false,
+): ResolvedCharacterVisual[] {
+  return allowProtagonistArtwork
+    ? characters
+    : characters.filter((character) => !isProtagonistArtwork(character.character));
 }
 
 export function stageCharacterFocusClass(character: ResolvedCharacterVisual): "speaking" | "listening" {

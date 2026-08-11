@@ -1998,23 +1998,76 @@ class StoryHarnessTests(unittest.TestCase):
         stage = resolve_scene_stage(self.project.resolve_visuals(), scene, "request", "reality")
         self.assertEqual("background.office_open", stage["background"]["visual_id"])
         self.assertEqual(
-            [("han_do_yoon", "left", False), ("yoon_seo_a", "right", True)],
+            [("yoon_seo_a", "center", True)],
             [(item["character"], item["position"], item["speaker"]) for item in stage["characters"]],
         )
-        seo_a = stage["characters"][1]
-        self.assertEqual("actual_tense", seo_a["expression"])
+        seo_a = stage["characters"][0]
+        self.assertIsNone(seo_a["expression"])
         self.assertTrue(seo_a["speaker"])
 
         perceived_inner = resolve_scene_stage(self.project.resolve_visuals(), scene, "request_inner", "perceived")
         reality_inner = resolve_scene_stage(self.project.resolve_visuals(), scene, "request_inner", "reality")
         self.assertEqual(
-            [("han_do_yoon", True), ("yoon_seo_a", False)],
+            [],
             [(item["character"], item["speaker"]) for item in perceived_inner["characters"]],
         )
         self.assertEqual(
-            [("han_do_yoon", False), ("yoon_seo_a", True)],
+            [("yoon_seo_a", True)],
             [(item["character"], item["speaker"]) for item in reality_inner["characters"]],
         )
+
+    def test_han_do_yoon_artwork_requires_an_explicit_ending_reveal(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        node = scene["nodes"][0]
+        original_stage = copy.deepcopy(node.get("stage"))
+        node["stage"] = {
+            "perceived": [{
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default",
+            }],
+        }
+        try:
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("reserved for an explicit ending reveal" in message for message in messages))
+            stage = resolve_scene_stage(self.project.resolve_visuals(), scene, node["id"], "perceived")
+            self.assertFalse(any(item["character"] == "han_do_yoon" for item in stage["characters"]))
+        finally:
+            if original_stage is None:
+                node.pop("stage", None)
+            else:
+                node["stage"] = original_stage
+
+    def test_han_do_yoon_artwork_appears_on_the_declared_mugshot_reveal(self):
+        scene = self.project.scenes["ending.seo_a.report"]
+        for mode in ("perceived", "reality"):
+            stage = resolve_scene_stage(self.project.resolve_visuals(), scene, "mugshot", mode)
+            self.assertEqual(
+                [("han_do_yoon", "center")],
+                [(item["character"], item["position"]) for item in stage["characters"]],
+            )
+
+    def test_han_do_yoon_artwork_never_leaks_outside_declared_reveal_nodes(self):
+        visuals = self.project.resolve_visuals()
+        reveal_count = 0
+        for scene in self.project.scenes.values():
+            for node in scene["nodes"]:
+                is_reveal = (
+                    scene["id"].startswith("ending.")
+                    and node.get("kind") == "dual_narration"
+                    and "protagonist_art_reveal" in node.get("presentation_flags", [])
+                )
+                for mode in ("perceived", "reality"):
+                    stage = resolve_scene_stage(visuals, scene, node["id"], mode)
+                    has_protagonist_art = any(
+                        item["character"] == "han_do_yoon"
+                        for item in stage["characters"]
+                    )
+                    self.assertEqual(is_reveal, has_protagonist_art, f"{scene['id']}#{node['id']}:{mode}")
+                if is_reveal:
+                    reveal_count += 1
+        self.assertGreater(reveal_count, 0)
 
     def test_manual_stage_supports_off_and_three_non_speaker_artworks(self):
         scene = self.project.scenes["common.day_01_company_meeting"]

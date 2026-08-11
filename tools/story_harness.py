@@ -100,6 +100,17 @@ APPROVED_UI_STRINGS = {
     "mode.survivor.title": "어나더 스토리",
     "mode.survivor.copy": "새로운 그녀로 새로운 이야기를 만들어 보아요",
 }
+PROTAGONIST_ARTWORK_CHARACTER_ID = "han_do_yoon"
+PROTAGONIST_ARTWORK_REVEAL_FLAG = "protagonist_art_reveal"
+
+
+def can_reveal_protagonist_artwork(scene: Mapping[str, Any], node: Optional[Mapping[str, Any]]) -> bool:
+    return bool(
+        isinstance(node, Mapping)
+        and str(scene.get("id", "")).startswith("ending.")
+        and node.get("kind") == "dual_narration"
+        and PROTAGONIST_ARTWORK_REVEAL_FLAG in node.get("presentation_flags", [])
+    )
 
 
 def reproducible_generated_at() -> str:
@@ -2266,8 +2277,18 @@ class StoryProject:
         node: Mapping[str, Any],
         location: str,
     ) -> None:
+        protagonist_reveal = can_reveal_protagonist_artwork(scene, node)
+        has_reveal_flag = PROTAGONIST_ARTWORK_REVEAL_FLAG in node.get("presentation_flags", [])
+        if has_reveal_flag and not protagonist_reveal:
+            self._error(
+                issues,
+                location,
+                "protagonist_art_reveal is allowed only on dual_narration nodes in ending scenes",
+            )
         stage = node.get("stage")
         if stage is None:
+            if has_reveal_flag:
+                self._error(issues, location, "protagonist_art_reveal requires explicit perceived and reality stage cues")
             return
         if not isinstance(stage, Mapping):
             self._error(issues, location, "stage must be a mapping")
@@ -2275,6 +2296,7 @@ class StoryProject:
         for unknown in sorted(set(stage) - {"perceived", "reality"}):
             self._error(issues, location, f"unknown stage layer: {unknown}")
         visuals = self.resolve_visuals()
+        reveal_layers: Set[str] = set()
         for layer_name in ("perceived", "reality"):
             if layer_name not in stage:
                 continue
@@ -2304,6 +2326,15 @@ class StoryProject:
                 character_id = cue.get("character")
                 visual_id = cue.get("visual_id")
                 artwork = cue.get("artwork")
+                if character_id == PROTAGONIST_ARTWORK_CHARACTER_ID:
+                    if not protagonist_reveal:
+                        self._error(
+                            issues,
+                            item_location,
+                            "Han Do-yoon artwork is reserved for an explicit ending reveal",
+                        )
+                    else:
+                        reveal_layers.add(layer_name)
                 if position not in {"left", "center", "right"}:
                     self._error(issues, item_location, f"unknown stage position: {position}")
                 elif position in positions:
@@ -2342,6 +2373,14 @@ class StoryProject:
                 expression = self.characters.get(character_id, {}).get("expressions", {}).get(artwork, {})
                 if isinstance(expression, Mapping) and expression.get("layer") != layer_name:
                     self._error(issues, item_location, f"artwork expression belongs to {expression.get('layer')}, not {layer_name}")
+        if protagonist_reveal:
+            for layer_name in ("perceived", "reality"):
+                if layer_name not in reveal_layers:
+                    self._error(
+                        issues,
+                        f"{location}.stage.{layer_name}",
+                        "protagonist_art_reveal must explicitly place Han Do-yoon artwork in both layers",
+                    )
     def _validate_choice_interaction_contexts(
         self,
         issues: List[Issue],
@@ -3470,9 +3509,8 @@ def resolve_scene_stage(
 ) -> Dict[str, Any]:
     background = resolve_scene_background(visuals, scene, node_id, mode)
     node = scene_node(scene, node_id)
-    layer = node.get(mode, {}) if isinstance(node, Mapping) else {}
     speaker = effective_speaker(node, mode) if isinstance(node, Mapping) else None
-    cast = list(scene.get("cast", []))
+    protagonist_reveal = can_reveal_protagonist_artwork(scene, node)
     characters = []
     raw_stage = node.get("stage") if isinstance(node, Mapping) else None
     if isinstance(raw_stage, Mapping) and mode in raw_stage:
@@ -3483,6 +3521,8 @@ def resolve_scene_stage(
             if not isinstance(cue, Mapping):
                 continue
             character_id = cue.get("character")
+            if character_id == PROTAGONIST_ARTWORK_CHARACTER_ID and not protagonist_reveal:
+                continue
             visual_id = cue.get("visual_id")
             visual = visuals.get(visual_id) if isinstance(visual_id, str) else None
             if not isinstance(visual, Mapping) or visual.get("character") != character_id:
@@ -3511,40 +3551,6 @@ def resolve_scene_stage(
                 "render_strategy": visual.get("render_strategy"),
             })
         return {"background": background, "characters": characters, "mode": mode, "node": node_id}
-    visible_cast = cast if speaker and len(cast) <= 2 else [character_id for character_id in cast if character_id == speaker]
-    positions = ["center"] if len(visible_cast) <= 1 else ["left", "right"]
-    for index, character_id in enumerate(visible_cast):
-        visual = next(
-            (
-                item for item in visuals.values()
-                if item.get("kind") == "character" and not item.get("abstract") and item.get("character") == character_id
-            ),
-            None,
-        )
-        if visual is None:
-            continue
-        expression_id = layer.get("expression") if character_id == speaker and isinstance(layer, Mapping) else None
-        artworks = visual.get("artworks", {})
-        selected_id = visual.get("default_artwork")
-        selected_artwork = artworks.get(selected_id) if isinstance(artworks, Mapping) else None
-        expression_assets = (
-            selected_artwork.get("expression_assets", {})
-            if isinstance(selected_artwork, Mapping)
-            else visual.get("expression_assets", {})
-        )
-        fallback_asset = selected_artwork.get("asset") if isinstance(selected_artwork, Mapping) else visual.get("fallback_asset")
-        characters.append({
-            "visual_id": visual.get("id"),
-            "character": character_id,
-            "asset": expression_assets.get(expression_id, fallback_asset),
-            "expression": expression_id,
-            "artwork": selected_id if isinstance(selected_artwork, Mapping) else "default",
-            "outfit": visual.get("default_outfit"),
-            "pose": visual.get("default_pose"),
-            "position": positions[min(index, len(positions) - 1)],
-            "speaker": character_id == speaker,
-            "render_strategy": visual.get("render_strategy"),
-        })
     return {"background": background, "characters": characters, "mode": mode, "node": node_id}
 
 

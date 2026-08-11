@@ -38,6 +38,17 @@ nodes:
   - id: guarded_smile
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
@@ -56,6 +67,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       line: (거리를 둔 시간이 길어지니 먼저 관계를 회복하려는군.)
@@ -67,6 +85,17 @@ nodes:
   - id: relief_smile
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
@@ -85,6 +114,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       line: (내가 거리를 두니 서아 씨가 먼저 부드러워졌네.)
@@ -151,6 +187,9 @@ nodes:
   - id: trend_self_promotion
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -165,6 +204,17 @@ nodes:
   - id: trend_response
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
@@ -182,6 +232,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       line: (세대 차이 없이 통한다는 걸 알아봤군. 저녁은 아직 타이밍의 문제겠지.)

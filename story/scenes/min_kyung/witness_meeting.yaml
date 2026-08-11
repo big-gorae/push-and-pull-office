@@ -35,6 +35,17 @@ nodes:
   - id: protective
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_jealous
@@ -53,6 +64,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: cha_min_kyung
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       line: (다른 여자를 앞세워서 내 반응을 보려는 거군.)
@@ -64,6 +82,17 @@ nodes:
   - id: skeptical
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -82,6 +111,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: cha_min_kyung
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       line: (서아 씨를 데려와 내 질투를 살짝 건드려 보겠다는 건가.)
@@ -135,6 +171,17 @@ nodes:
   - id: public_tease_response
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -152,6 +199,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: cha_min_kyung
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       line: (서아 씨 앞이라 더 강하게 부정하는군. 의식할수록 말은 세지는 법이지.)
@@ -164,6 +218,17 @@ nodes:
   - id: retaliatory_response
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -181,6 +246,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: cha_min_kyung
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       line: (제외한다니까 바로 다음 수를 꺼내네. 역시 쉽게 주도권을 내줄 상대가 아니야.)
@@ -193,6 +265,9 @@ nodes:
   - id: work_only_do_yoon
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: playful_tension
       expression: subjective_confident
@@ -207,6 +282,17 @@ nodes:
   - id: work_only_response
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -224,6 +310,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: cha_min_kyung
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       line: (내가 핵심을 짚으니 차 대리도 바로 호흡을 맞추는군.)

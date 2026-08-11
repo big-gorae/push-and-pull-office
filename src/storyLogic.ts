@@ -495,12 +495,12 @@ export function deriveStateContract(
   return { reads, writes };
 }
 
-export function makeNode(kind: NodeKind, id: string, heroineId: string): StoryNode {
+export function makeNode(kind: NodeKind, id: string, _heroineId: string): StoryNode {
   if (kind === "dual_dialogue") {
     return {
       id,
       kind,
-      speaker: heroineId,
+      speaker: "",
       perceived: { atmosphere: "warm_romance", expression: "", line: "" },
       reality: { atmosphere: "cold_office", expression: "", line: "", intent: "work_only" },
       next: "",

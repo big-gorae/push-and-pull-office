@@ -20,6 +20,7 @@ run_story_checks() {
 }
 
 run_player_checks() {
+  npm run art:cutout:verify
   npm run prompt:validate
   npm run test:prompt-harness
   npm run test:player

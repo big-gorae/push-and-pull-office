@@ -14,6 +14,7 @@ import {
   readPushPullState,
 } from "../pushPull";
 import { VisualResolver } from "../presentation";
+import { canRevealProtagonistArtwork } from "../protagonistArtworkPolicy";
 import {
   selfDevelopmentSystem,
   type SelfDevelopmentActivityOption,
@@ -1075,9 +1076,11 @@ function GameHud({ session, debugMode, onMode, onMenu, i18n }: { session: Player
 
 function Stage({ session, node, settings, i18n }: { session: PlayerSession; node?: StoryNode; settings: PlayerSettings; i18n: GameLocalizer }) {
   const resolver = useMemo(() => new VisualResolver(runtime), []);
-  const stage = resolver.resolveStage(runtime.scenes[session.sceneId], session.nodeId, session.viewLayer, node);
+  const scene = runtime.scenes[session.sceneId];
+  const resolvedNode = node || scene.nodes[session.nodeId];
+  const stage = resolver.resolveStage(scene, session.nodeId, session.viewLayer, resolvedNode);
   const background = assetUrl(stage.background?.asset);
-  const visibleCharacters = visibleStageCharacters(stage.characters);
+  const visibleCharacters = visibleStageCharacters(stage.characters, canRevealProtagonistArtwork(scene, resolvedNode));
   return <div className="vn-stage">
     {background && <img className="vn-stage-bg" src={background} alt="" />}
     <div className="vn-stage-light" />

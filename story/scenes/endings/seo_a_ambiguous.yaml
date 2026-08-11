@@ -33,6 +33,17 @@ nodes:
   - id: leave_request
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: dread
       expression: subjective_shy
@@ -51,6 +62,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: dread
       line: (서프라이즈에 놀라서 마음에도 없는 말을 하는 거겠지. 마지막까지 나를 시험하네.)
@@ -71,6 +89,17 @@ nodes:
   - id: yoo_jin_response
     kind: dual_dialogue
     speaker: kang_yoo_jin
+    stage:
+      perceived:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: dread
       expression: subjective_bold_flirt
@@ -89,6 +118,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: kang_yoo_jin
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: dread
       line: (역시 질투하고 있었군. 드디어 우리 관계에 직접 들어오는 건가.)
@@ -99,7 +135,12 @@ nodes:
     next: unrouteable_record
   - id: unrouteable_record
     kind: dual_narration
-    presentation_flags: [ui_glitch, ui_label_reveal]
+    presentation_flags: [ui_glitch, ui_label_reveal, protagonist_art_reveal]
+    stage:
+      perceived:
+        - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
+      reality:
+        - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
     perceived:
       atmosphere: dread
       line: "시스템이 강유진 루트의 마지막 조건을 확인하기 시작했다."
@@ -116,6 +157,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: kang_yoo_jin
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: dread
       line: (역시 숨겨진 세 번째 길이 있었어. 셋 사이의 흐름을 읽어 낸 거야.)
@@ -171,6 +219,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: cold_office
       line: (오늘은 잠깐 떨어져 있으라는 거겠지. 끝내라는 뜻은 아닐 거야.)
@@ -233,7 +284,12 @@ nodes:
 
   - id: betrayed_record
     kind: dual_narration
-    presentation_flags: [ui_label_reveal]
+    presentation_flags: [ui_label_reveal, protagonist_art_reveal]
+    stage:
+      perceived:
+        - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
+      reality:
+        - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
     perceived:
       atmosphere: dread
       line: "한도윤은 사랑했던 남자가 배신의 대가를 묻는 이야기로 마지막 장을 고쳐 썼다."
@@ -250,6 +306,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: dread
       line: (상처받은 건 나야. 이 결과는 결국 서아가 고른 거라고.)
@@ -260,7 +319,12 @@ nodes:
     next: betrayed_end
   - id: romance_record
     kind: dual_narration
-    presentation_flags: [ui_label_reveal]
+    presentation_flags: [ui_label_reveal, protagonist_art_reveal]
+    stage:
+      perceived:
+        - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
+      reality:
+        - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
     perceived:
       atmosphere: dread
       line: "그는 두 사람의 사랑을 방해하는 모든 연락을 무시하고 다음 만남을 준비했다."
@@ -277,6 +341,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: dread
       line: (기다림이 길수록 다시 만나는 순간은 더 극적이겠지.)
@@ -287,7 +354,12 @@ nodes:
     next: romance_end
   - id: caught_record
     kind: dual_narration
-    presentation_flags: [ui_label_reveal]
+    presentation_flags: [ui_label_reveal, protagonist_art_reveal]
+    stage:
+      perceived:
+        - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
+      reality:
+        - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
     perceived:
       atmosphere: dread
       line: "수감 기록 속에서도 한도윤은 접견 거부를 장거리 연애의 시련이라고 불렀다."
@@ -304,6 +376,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: dread
       line: (시간이 지나면 서아도 결국 날 찾아오겠지.)
@@ -314,7 +389,12 @@ nodes:
     next: caught_end
   - id: last_push_record
     kind: dual_narration
-    presentation_flags: [ui_label_reveal]
+    presentation_flags: [ui_label_reveal, protagonist_art_reveal]
+    stage:
+      perceived:
+        - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
+      reality:
+        - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
     perceived:
       atmosphere: dread
       line: "마지막 순간 서아가 멀리서 손을 내밀며 돌아오라고 말했다."
@@ -331,6 +411,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: dread
       line: (마지막에는 결국 내 선택이 통했군.)

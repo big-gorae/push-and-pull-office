@@ -1,5 +1,5 @@
-import { invoke } from "@tauri-apps/api/core";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { useAssetPreview } from "./assetPreview";
 import { VisualResolver } from "./presentation";
 import type { Runtime, Scene, SceneBackgroundCue } from "./types";
 
@@ -27,16 +27,7 @@ function backgroundOptions(runtime: Runtime): BackgroundOption[] {
 }
 
 function BackgroundThumbnail({ root, path, alt }: { root: string; path?: string; alt: string }) {
-  const [source, setSource] = useState("");
-  useEffect(() => {
-    let active = true;
-    setSource("");
-    if (!path) return () => { active = false; };
-    void invoke<string>("read_asset", { root, relativePath: path })
-      .then((value) => { if (active) setSource(value); })
-      .catch(() => undefined);
-    return () => { active = false; };
-  }, [path, root]);
+  const source = useAssetPreview(root, path);
   return source
     ? <img src={source} alt={alt} />
     : <span className="background-thumbnail-placeholder">NO IMAGE</span>;

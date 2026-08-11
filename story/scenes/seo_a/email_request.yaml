@@ -27,6 +27,17 @@ nodes:
   - id: appearance_observation
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_shy
@@ -44,6 +55,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       line: (따로 말을 꺼낼 만큼 내 반응이 궁금한 모양이군.)
@@ -56,6 +74,17 @@ nodes:
   - id: request
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_shy
@@ -74,6 +103,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       line: (직접 찾아올 핑계가 없어져서 아쉬운가? 눈을 피하는 게 귀엽네.)
@@ -154,6 +190,9 @@ nodes:
   - id: workout_self_promotion
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -168,6 +207,9 @@ nodes:
   - id: reading_self_promotion
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -183,6 +225,9 @@ nodes:
     kind: dual_dialogue
     speaker: han_do_yoon
     presentation_flags: [auditory_distortion]
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: playful_tension
       expression: subjective_confident
@@ -201,6 +246,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: playful_tension
       line: (그래, 관계의 속도는 내가 제대로 조절하고 있어.)

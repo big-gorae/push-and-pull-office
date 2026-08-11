@@ -39,6 +39,17 @@ nodes:
   - id: min_kyung_greeting
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_challenging
@@ -53,6 +64,17 @@ nodes:
   - id: mutual_surprise
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -70,6 +92,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: cha_min_kyung
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: warm_romance
       line: (서아 씨에 이어 차 대리까지 같은 건물이라니. 우연치고는 너무 절묘한데.)
@@ -82,6 +111,9 @@ nodes:
   - id: do_yoon_confirms
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -96,6 +128,17 @@ nodes:
   - id: practical_question
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -110,6 +153,9 @@ nodes:
   - id: do_yoon_directions
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -124,6 +170,17 @@ nodes:
   - id: min_kyung_thanks
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_challenging
@@ -140,7 +197,10 @@ nodes:
     presentation_flags: [inner_voice]
     speakers:
       perceived: han_do_yoon
-      reality: null
+      reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (회사에서는 빈틈없던 차 대리가 이사떡을 들고 내 문 앞에 서 있을 줄이야. 생활하는 얼굴까지 보니 더 매력적인 사람이군.)

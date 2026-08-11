@@ -3,6 +3,7 @@ import fixture from "../../tests/fixtures/condition-conformance.json";
 import runtimeJson from "../../build/story-runtime.json";
 import { characterArtworkOptions, VisualResolver } from "../presentation";
 import type { Condition, Runtime, StoryNode } from "../types";
+import { applyDialogueSpeakerSelection } from "../stageAuthoring";
 import {
   canEnterScene,
   chooseSceneTransition,
@@ -123,7 +124,7 @@ describe("contextual dialogue", () => {
     expect(effectiveSpeaker({ ...node, speakers: { ...node.speakers, reality: null } }, "reality")).toBeUndefined();
   });
 
-  it("centers one automatic character and places two-person conversations left and right", () => {
+  it("renders characters only from explicit stage cues", () => {
     const scene = runtime.scenes["common.day_01_company_meeting"];
     const resolver = new VisualResolver(runtime);
     const spoken = resolver.resolveStage(scene, "preview", "perceived", {
@@ -134,9 +135,7 @@ describe("contextual dialogue", () => {
       reality: { line: "안녕하세요", atmosphere: "procedural", intent: "work_only" },
       next: "done",
     });
-    expect(spoken.characters.map((character) => character.character)).toEqual(["yoon_seo_a"]);
-    expect(spoken.characters[0]?.position).toBe("center");
-    expect(spoken.characters[0]?.speaker).toBe(true);
+    expect(spoken.characters).toEqual([]);
 
     const twoPersonScene = runtime.scenes["common.day_01_officetel_seo_a_reveal"];
     const conversation = resolver.resolveStage(twoPersonScene, "preview", "perceived", {
@@ -147,10 +146,7 @@ describe("contextual dialogue", () => {
       reality: { line: "안녕하세요", atmosphere: "procedural", intent: "courtesy" },
       next: "done",
     });
-    expect(conversation.characters.map((character) => [character.character, character.position, character.speaker])).toEqual([
-      ["han_do_yoon", "left", false],
-      ["yoon_seo_a", "right", true],
-    ]);
+    expect(conversation.characters).toEqual([]);
 
     const narrated = resolver.resolveStage(scene, "preview", "perceived", {
       id: "preview",
@@ -160,6 +156,78 @@ describe("contextual dialogue", () => {
       next: "done",
     });
     expect(narrated.characters).toEqual([]);
+  });
+
+  it("stores a selected non-protagonist speaker as an explicit centered default", () => {
+    const fresh = makeNode("dual_dialogue", "new_dialogue", "yoon_seo_a");
+    expect(fresh.speaker).toBe("");
+    expect(fresh.stage).toBeUndefined();
+
+    const selected = applyDialogueSpeakerSelection(runtime, fresh, "yoon_seo_a");
+    expect(selected.speaker).toBe("yoon_seo_a");
+    expect(selected.stage).toEqual({
+      perceived: [{
+        position: "center",
+        character: "yoon_seo_a",
+        visual_id: "character.yoon_seo_a",
+        artwork: "default",
+      }],
+      reality: [{
+        position: "center",
+        character: "yoon_seo_a",
+        visual_id: "character.yoon_seo_a",
+        artwork: "default",
+      }],
+    });
+
+    const protagonist = applyDialogueSpeakerSelection(runtime, fresh, "han_do_yoon");
+    expect(protagonist.speaker).toBe("han_do_yoon");
+    expect(protagonist.stage).toBeUndefined();
+
+    const changed = applyDialogueSpeakerSelection(runtime, selected, "cha_min_kyung");
+    expect(changed.stage?.perceived?.[0]).toMatchObject({
+      position: "center",
+      character: "cha_min_kyung",
+      visual_id: "character.cha_min_kyung",
+    });
+
+    const custom = {
+      ...selected,
+      stage: {
+        perceived: [{ ...selected.stage!.perceived![0], position: "left" as const }],
+        reality: [{ ...selected.stage!.reality![0], position: "right" as const }],
+      },
+    };
+    const customSpeakerChanged = applyDialogueSpeakerSelection(runtime, custom, "cha_min_kyung");
+    expect(customSpeakerChanged.speaker).toBe("cha_min_kyung");
+    expect(customSpeakerChanged.stage).toEqual(custom.stage);
+  });
+
+  it("keeps Han Do-yoon off ordinary stages and reveals him only on an explicit ending beat", () => {
+    const resolver = new VisualResolver(runtime);
+    const ordinaryScene = runtime.scenes["common.day_01_officetel_seo_a_reveal"];
+    const ordinaryNode: StoryNode = {
+      id: "forbidden_protagonist_art",
+      kind: "dual_narration",
+      perceived: { line: "복도에 두 사람이 섰다.", atmosphere: "procedural" },
+      reality: { line: "복도에 두 사람이 섰다.", atmosphere: "procedural", intent: "documentation" },
+      stage: {
+        perceived: [{
+          position: "center",
+          character: "han_do_yoon",
+          visual_id: "character.han_do_yoon",
+          artwork: "default",
+        }],
+      },
+      next: "done",
+    };
+    expect(resolver.resolveStage(ordinaryScene, ordinaryNode.id, "perceived", ordinaryNode).characters).toEqual([]);
+
+    const revealScene = runtime.scenes["ending.seo_a.report"];
+    const reveal = resolver.resolveStage(revealScene, "mugshot", "perceived");
+    expect(reveal.characters.map((character) => [character.character, character.position])).toEqual([
+      ["han_do_yoon", "center"],
+    ]);
   });
 
   it("supports artwork off and three explicitly positioned speaker-independent characters", () => {
@@ -217,7 +285,7 @@ describe("contextual dialogue", () => {
     const visual = copy.visuals["character.yoon_seo_a"];
     visual.default_artwork = "office_default";
     visual.artworks = {
-      office_default: { asset: "assets/characters/yoon-seo-a/office-default/base.png", label: "오피스 기본" },
+      office_default: { asset: "assets/characters/yoon-seo-a/office-default/base-cutout.png", label: "오피스 기본" },
       cardigan_smile: { asset: "assets/concept-art/yoon-seo-a.png", label: "가디건 미소" },
     };
     const options = characterArtworkOptions(copy, "yoon_seo_a", "perceived");

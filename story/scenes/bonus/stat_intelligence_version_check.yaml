@@ -26,6 +26,9 @@ nodes:
   - id: do_yoon_question
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -40,6 +43,17 @@ nodes:
   - id: yoo_jin_check
     kind: dual_dialogue
     speaker: kang_yoo_jin
+    stage:
+      perceived:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_bold_flirt
@@ -54,6 +68,17 @@ nodes:
   - id: min_kyung_update
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -81,7 +106,10 @@ nodes:
     presentation_flags: [inner_voice]
     speakers:
       perceived: han_do_yoon
-      reality: null
+      reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: playful_tension
       line: (밤에 읽어 둔 덕분에 민경과 같은 속도로 생각했다. 이런 지적인 호흡은 쉽게 생기지 않는다.)

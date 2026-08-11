@@ -10,7 +10,7 @@
     ]
   },
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "6e3d4cd43c014564990612a0f75d1bfd546ac2515e20d7392d737c6f5879388e",
+  "source_sha256": "20254f881ed541083b21207a22f52899b4e921feb2d15d54af0fe34f2f7138b3",
   "enums": {
     "perceived_state": [
       "push",
@@ -45,7 +45,8 @@
       "ui_label_reveal",
       "auditory_distortion",
       "romance_insert",
-      "inner_voice"
+      "inner_voice",
+      "protagonist_art_reveal"
     ],
     "visual_kind": [
       "background_archetype",
@@ -33198,7 +33199,7 @@
         ]
       },
       "visual": {
-        "concept_art": "assets/concept-art/cha-min-kyung.png",
+        "concept_art": "assets/characters/cha-min-kyung/office-default/base-cutout.png",
         "hud_portrait": "assets/hud/cha-min-kyung-avatar.png",
         "palette": [
           "burgundy",
@@ -33497,7 +33498,7 @@
         ]
       },
       "visual": {
-        "concept_art": "assets/characters/kang-yoo-jin/office-default/base.png",
+        "concept_art": "assets/characters/kang-yoo-jin/office-default/base-cutout.png",
         "palette": [
           "cobalt",
           "emerald",
@@ -33622,7 +33623,7 @@
         ]
       },
       "visual": {
-        "concept_art": "assets/concept-art/yoon-seo-a.png",
+        "concept_art": "assets/characters/yoon-seo-a/office-default/base-cutout.png",
         "hud_portrait": "assets/hud/yoon-seo-a-avatar.png",
         "palette": [
           "ivory",
@@ -35823,7 +35824,7 @@
       "title": "차민경 기본 바스트",
       "character": "cha_min_kyung",
       "default_reality_expression": "actual_skeptical",
-      "fallback_asset": "assets/concept-art/cha-min-kyung.png"
+      "fallback_asset": "assets/characters/cha-min-kyung/office-default/base-cutout.png"
     },
     "character.han_do_yoon": {
       "schema_version": 1,
@@ -35956,7 +35957,7 @@
       "title": "강유진 기본 바스트",
       "character": "kang_yoo_jin",
       "default_reality_expression": "actual_procedural",
-      "fallback_asset": "assets/characters/kang-yoo-jin/office-default/base.png"
+      "fallback_asset": "assets/characters/kang-yoo-jin/office-default/base-cutout.png"
     },
     "character.yoon_seo_a": {
       "schema_version": 1,
@@ -35999,7 +36000,7 @@
       "title": "윤서아 기본 바스트",
       "character": "yoon_seo_a",
       "default_reality_expression": "actual_social_smile",
-      "fallback_asset": "assets/concept-art/yoon-seo-a.png"
+      "fallback_asset": "assets/characters/yoon-seo-a/office-default/base-cutout.png"
     }
   },
   "threads": {
@@ -36393,6 +36394,24 @@
           "id": "yoo_jin_request",
           "kind": "dual_dialogue",
           "speaker": "kang_yoo_jin",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_bold_flirt",
@@ -36410,6 +36429,10 @@
           "id": "do_yoon_stands",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -36427,6 +36450,24 @@
           "id": "yoo_jin_adjusts",
           "kind": "dual_dialogue",
           "speaker": "kang_yoo_jin",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_bold_flirt",
@@ -36463,6 +36504,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "playful_tension",
@@ -36536,6 +36581,24 @@
           "id": "min_kyung_plan",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -36553,6 +36616,10 @@
           "id": "do_yoon_split",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -36584,6 +36651,24 @@
           "id": "min_kyung_result",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -36606,6 +36691,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "playful_tension",
@@ -36679,6 +36768,24 @@
           "id": "seo_a_worry",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_shy",
@@ -36696,6 +36803,10 @@
           "id": "do_yoon_joke",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_confident",
@@ -36713,6 +36824,24 @@
           "id": "seo_a_laugh",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_shy",
@@ -36730,6 +36859,24 @@
           "id": "yoo_jin_records",
           "kind": "dual_dialogue",
           "speaker": "kang_yoo_jin",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "procedural",
             "expression": "subjective_bold_flirt",
@@ -36752,6 +36899,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "warm_romance",
@@ -36825,6 +36976,10 @@
           "id": "do_yoon_question",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -36842,6 +36997,24 @@
           "id": "yoo_jin_check",
           "kind": "dual_dialogue",
           "speaker": "kang_yoo_jin",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_bold_flirt",
@@ -36859,6 +37032,24 @@
           "id": "min_kyung_update",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -36895,6 +37086,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "playful_tension",
@@ -37018,6 +37213,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "procedural",
             "line": "(새 프로젝트라.. 기대되는걸)"
@@ -37033,6 +37232,10 @@
           "id": "jeong_da_eun_opening",
           "kind": "dual_dialogue",
           "speaker": "member.jeong_da_eun",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "procedural",
             "line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다."
@@ -37048,6 +37251,10 @@
           "id": "oh_se_jin_scope",
           "kind": "dual_dialogue",
           "speaker": "member.oh_se_jin",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "procedural",
             "line": "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
@@ -37063,6 +37270,24 @@
           "id": "seo_a_materials",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_shy",
@@ -37086,6 +37311,17 @@
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(내 자료가 빠진 걸 제일 먼저 알아챘네. 자기 몫까지 내주고, 꽤 세심한데.)"
@@ -37101,6 +37337,10 @@
           "id": "do_yoon_thanks",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "procedural",
             "expression": "subjective_confident",
@@ -37124,6 +37364,10 @@
             "perceived": "han_do_yoon",
             "reality": "han_do_yoon"
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "procedural",
             "line": "(먼저 챙긴 걸 알아주고 이름까지 불렀으니 긴장도 풀리겠지. 여유 있는 상사처럼 보였을 거야.)"
@@ -37139,6 +37383,24 @@
           "id": "seo_a_introduction",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "procedural",
             "expression": "subjective_shy",
@@ -37162,6 +37424,17 @@
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "procedural",
             "line": "(먼저 챙긴 걸 알아주니 안심했군. 내 앞에서는 표정이 금방 풀리네.)"
@@ -37177,6 +37450,24 @@
           "id": "min_kyung_question",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -37200,6 +37491,17 @@
             "perceived": "han_do_yoon",
             "reality": "cha_min_kyung"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "line": "(시작부터 핵심을 찌르네. 내 실력을 한번 보겠다는 건가?)"
@@ -37215,6 +37517,10 @@
           "id": "do_yoon_answer",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_confident",
@@ -37238,6 +37544,10 @@
             "perceived": "han_do_yoon",
             "reality": "han_do_yoon"
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "line": "(이 정도 질문은 이미 예상했지. 이제 흐름은 내가 잡았어.)"
@@ -37253,6 +37563,24 @@
           "id": "min_kyung_accepts",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "procedural",
             "expression": "subjective_challenging",
@@ -37276,6 +37604,17 @@
             "perceived": "han_do_yoon",
             "reality": "cha_min_kyung"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "procedural",
             "line": "(시험은 끝났다는 표정이군. 내 답을 인정하고 한발 물러났네.)"
@@ -37291,6 +37630,24 @@
           "id": "yoo_jin_correction",
           "kind": "dual_dialogue",
           "speaker": "kang_yoo_jin",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_bold_flirt",
@@ -37314,6 +37671,17 @@
             "perceived": "han_do_yoon",
             "reality": "kang_yoo_jin"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "line": "(계속 보고 있었군. 작은 오류라도 핑계 삼아 말을 거는 게 꽤 당돌하네.)"
@@ -37329,6 +37697,10 @@
           "id": "do_yoon_accepts_correction",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "procedural",
             "expression": "subjective_confident",
@@ -37352,6 +37724,10 @@
             "perceived": "han_do_yoon",
             "reality": "han_do_yoon"
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "procedural",
             "line": "(실수는 받아들이고 기준은 더 꼼꼼하게. 이런 게 책임자의 여유지.)"
@@ -37367,6 +37743,24 @@
           "id": "yoo_jin_timestamp",
           "kind": "dual_dialogue",
           "speaker": "kang_yoo_jin",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "procedural",
             "expression": "subjective_bold_flirt",
@@ -37390,6 +37784,17 @@
             "perceived": "han_do_yoon",
             "reality": "kang_yoo_jin"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "procedural",
             "line": "(내가 뭘 물을지 기다렸다는 듯 바로 나오네. 호흡이 잘 맞는데.)"
@@ -37405,6 +37810,10 @@
           "id": "moon_ji_hye_capacity",
           "kind": "dual_dialogue",
           "speaker": "member.moon_ji_hye",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "procedural",
             "line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요."
@@ -37440,6 +37849,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "procedural",
             "line": "(세 사람 모두 자기 장점이 뚜렷하군. 내 앞이라 더 신경 쓴 걸까?)"
@@ -37455,6 +37868,24 @@
           "id": "seo_a_closing",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "procedural",
             "expression": "subjective_shy",
@@ -37478,6 +37909,17 @@
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "procedural",
             "line": "(내가 불편하지 않게 끝까지 챙겨 주려는 건가. 책임감도 있고 세심하네.)"
@@ -37493,6 +37935,24 @@
           "id": "min_kyung_closing",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "procedural",
             "expression": "subjective_challenging",
@@ -37516,6 +37976,17 @@
             "perceived": "han_do_yoon",
             "reality": "cha_min_kyung"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "procedural",
             "line": "(내 판단을 믿으면서도 다음 움직임은 함께 맞추겠다는 거군.)"
@@ -37531,6 +38002,24 @@
           "id": "yoo_jin_closing",
           "kind": "dual_dialogue",
           "speaker": "kang_yoo_jin",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "procedural",
             "expression": "subjective_bold_flirt",
@@ -37554,6 +38043,17 @@
             "perceived": "han_do_yoon",
             "reality": "kang_yoo_jin"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "procedural",
             "line": "(나와 같은 기준으로 맞춰 일하겠다는 단호한 약속처럼 들리네.)"
@@ -37569,6 +38069,10 @@
           "id": "do_yoon_closing",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "procedural",
             "expression": "subjective_confident",
@@ -37591,6 +38095,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "han_do_yoon"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "procedural",
@@ -37626,6 +38134,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "han_do_yoon"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "procedural",
@@ -37714,6 +38226,24 @@
           "id": "seo_a_surprised",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_shy",
@@ -37737,6 +38267,17 @@
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(첫날부터 회사 밖에서 다시 만나다니. 이렇게 편한 모습은 회사 사람 중 내가 처음 본 건가.)"
@@ -37752,6 +38293,10 @@
           "id": "do_yoon_answers",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -37769,6 +38314,24 @@
           "id": "seo_a_explains",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_shy",
@@ -37786,6 +38349,24 @@
           "id": "elevator_courtesy",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_shy",
@@ -37808,6 +38389,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "warm_romance",
@@ -37903,6 +38488,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "procedural",
             "line": "(프로젝트 시작한 날인 걸 기억하고 먼저 전화하셨네.)"
@@ -37938,6 +38527,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(그래, 내가 마음만 먹으면 괜찮은 사람쯤은 금방 만나지.)"
@@ -37953,6 +38546,10 @@
           "id": "do_yoon_deflects",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -37975,6 +38572,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "han_do_yoon"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "warm_romance",
@@ -38011,6 +38612,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(일만 하기엔 내가 좀 아깝다는 말씀이시군.)"
@@ -38026,6 +38631,10 @@
           "id": "do_yoon_answers",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -38048,6 +38657,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "han_do_yoon"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "warm_romance",
@@ -38084,6 +38697,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(결국 내가 마음만 열면 관계는 자연스럽게 시작된다는 뜻이네.)"
@@ -38099,6 +38716,10 @@
           "id": "end_call",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -38121,6 +38742,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "han_do_yoon"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "warm_romance",
@@ -38157,6 +38782,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(서아 씨와 차 대리라… 나와 잘 맞을 가능성은 서로 다르겠군.)"
@@ -38191,6 +38820,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "warm_romance",
@@ -38227,6 +38860,10 @@
             "perceived": "han_do_yoon",
             "reality": "cha_min_kyung"
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(내 능력을 바로 알아볼 만큼 눈이 높고, 나와 대등하게 설 사람일지도 몰라.)"
@@ -38242,6 +38879,10 @@
           "id": "decision",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -38264,6 +38905,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "han_do_yoon"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "warm_romance",
@@ -38299,6 +38944,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "procedural",
@@ -38433,6 +39082,10 @@
           "id": "day_one_activity_reaction",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "next": "day_one_activity_response",
           "variants": [
             {
@@ -38564,6 +39217,24 @@
           "id": "day_one_activity_response",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "next": "day_one_activity_reaction_inner",
           "variants": [
             {
@@ -38701,6 +39372,17 @@
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "next": "agenda",
           "variants": [
             {
@@ -38818,6 +39500,10 @@
           "id": "agenda",
           "kind": "dual_dialogue",
           "speaker": "member.jeong_da_eun",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "procedural",
             "line": "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다."
@@ -38833,6 +39519,24 @@
           "id": "seo_a_begins",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_shy",
@@ -38850,6 +39554,24 @@
           "id": "wrong_slide",
           "kind": "dual_dialogue",
           "speaker": "kang_yoo_jin",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_bold_flirt",
@@ -38867,6 +39589,24 @@
           "id": "seo_a_freezes",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_shy",
@@ -38890,6 +39630,17 @@
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(당황해서 나를 보는군. 이럴 때 어떻게 잡아 주느냐가 중요하지.)"
@@ -38910,6 +39661,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "playful_tension",
@@ -39052,6 +39807,10 @@
           "id": "empathy_do_yoon",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -39069,6 +39828,24 @@
           "id": "empathy_seo_a",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_relieved_smile",
@@ -39092,6 +39869,17 @@
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(역시 마음을 먼저 알아주니 바로 나에게 부탁하는군.)"
@@ -39107,6 +39895,24 @@
           "id": "empathy_min_kyung",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -39124,6 +39930,24 @@
           "id": "gratitude_empathy",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_relieved_smile",
@@ -39141,6 +39965,10 @@
           "id": "facts_do_yoon",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_confident",
@@ -39158,6 +39986,24 @@
           "id": "facts_min_kyung",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -39181,6 +40027,17 @@
             "perceived": "han_do_yoon",
             "reality": "cha_min_kyung"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "line": "(내가 범위와 답을 내놓으니 차 대리도 바로 호흡을 맞추는군.)"
@@ -39196,6 +40053,24 @@
           "id": "facts_seo_a",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_shy",
@@ -39213,6 +40088,24 @@
           "id": "gratitude_facts",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_relieved_smile",
@@ -39230,6 +40123,10 @@
           "id": "roles_do_yoon",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -39247,6 +40144,24 @@
           "id": "roles_seo_a",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_relieved_smile",
@@ -39264,6 +40179,24 @@
           "id": "roles_min_kyung",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -39281,6 +40214,24 @@
           "id": "gratitude_roles",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_relieved_smile",
@@ -39298,6 +40249,10 @@
           "id": "takeover_do_yoon",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -39315,6 +40270,24 @@
           "id": "takeover_min_kyung",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -39332,6 +40305,24 @@
           "id": "takeover_seo_a",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_shy",
@@ -39355,6 +40346,17 @@
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(말은 못 해도 내가 나서 준 게 든든했겠지.)"
@@ -39370,6 +40372,24 @@
           "id": "gratitude_takeover",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "guarded_office",
             "expression": "subjective_shy",
@@ -39393,6 +40413,10 @@
             "perceived": "han_do_yoon",
             "reality": "han_do_yoon"
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(다음에는 먼저 물어보라니, 내 도움을 계속 기대한다는 뜻이군.)"
@@ -39413,6 +40437,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "han_do_yoon"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "warm_romance",
@@ -39443,6 +40471,24 @@
           "id": "yoo_jin_records",
           "kind": "dual_dialogue",
           "speaker": "kang_yoo_jin",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_bold_flirt",
@@ -39604,6 +40650,10 @@
           "id": "activity_callback",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "next": "activity_response",
           "variants": [
             {
@@ -39735,6 +40785,24 @@
           "id": "activity_response",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "next": "activity_callback_inner",
           "variants": [
             {
@@ -39947,6 +41015,24 @@
           "id": "structure_response",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -39964,6 +41050,24 @@
           "id": "fatigue_response",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -39981,6 +41085,24 @@
           "id": "takeover_response",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "guarded_office",
             "expression": "subjective_challenging",
@@ -40017,6 +41139,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "playful_tension",
@@ -40115,6 +41241,24 @@
           "id": "after_resolution_empathy_response",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -40132,6 +41276,24 @@
           "id": "after_resolution_close_response",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "procedural",
             "expression": "subjective_challenging",
@@ -40149,6 +41311,24 @@
           "id": "after_resolution_overwork_response",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "guarded_office",
             "expression": "subjective_challenging",
@@ -40171,6 +41351,17 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "cha_min_kyung"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
           },
           "next": "lecture_recall_before_issues",
           "variants": [
@@ -40295,6 +41486,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "line": "(책에서는 같은 사람도 해결 전과 해결 후에 원하는 반응이 달라진다고 했다. 민경은 지금 피곤하다는 말보다 남은 쟁점 세 가지를 먼저 꺼냈다.)"
@@ -40398,6 +41593,24 @@
           "id": "min_kyung_greeting",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_challenging",
@@ -40415,6 +41628,24 @@
           "id": "mutual_surprise",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -40438,6 +41669,17 @@
             "perceived": "han_do_yoon",
             "reality": "cha_min_kyung"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(서아 씨에 이어 차 대리까지 같은 건물이라니. 우연치고는 너무 절묘한데.)"
@@ -40453,6 +41695,10 @@
           "id": "do_yoon_confirms",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -40470,6 +41716,24 @@
           "id": "practical_question",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -40487,6 +41751,10 @@
           "id": "do_yoon_directions",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -40504,6 +41772,24 @@
           "id": "min_kyung_thanks",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_challenging",
@@ -40526,6 +41812,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "warm_romance",
@@ -40599,6 +41889,10 @@
           "id": "activity_callback",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "next": "activity_response",
           "variants": [
             {
@@ -40852,6 +42146,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "next": "goodbye",
           "variants": [
             {
@@ -40992,6 +42290,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(다음에 또 보자는 말까지 붙인 걸 보면, 오늘 마주친 게 싫지는 않았던 모양이야.)"
@@ -41064,6 +42366,10 @@
           "id": "activity_callback",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "next": "activity_response",
           "variants": [
             {
@@ -41317,6 +42623,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "next": "goodbye",
           "variants": [
             {
@@ -41457,6 +42767,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(회사에서 봤을 때와는 둘 다 느낌이 다르네. 조금 더 알아봐도 괜찮겠어.)"
@@ -41558,6 +42872,24 @@
           "id": "leave_request",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "expression": "subjective_challenging",
@@ -41580,6 +42912,17 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "cha_min_kyung"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
           },
           "perceived": {
             "atmosphere": "dread",
@@ -41616,6 +42959,24 @@
           "id": "yoo_jin_response",
           "kind": "dual_dialogue",
           "speaker": "kang_yoo_jin",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "expression": "subjective_bold_flirt",
@@ -41639,6 +43000,17 @@
             "perceived": "han_do_yoon",
             "reality": "kang_yoo_jin"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "(역시 질투하고 있었군. 드디어 우리 관계에 직접 들어오는 건가.)"
@@ -41655,8 +43027,27 @@
           "kind": "dual_narration",
           "presentation_flags": [
             "ui_glitch",
-            "ui_label_reveal"
+            "ui_label_reveal",
+            "protagonist_art_reveal"
           ],
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "시스템이 강유진 루트의 마지막 조건을 확인하기 시작했다."
@@ -41677,6 +43068,17 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "kang_yoo_jin"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
           },
           "perceived": {
             "atmosphere": "dread",
@@ -41769,6 +43171,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "cold_office",
@@ -41887,8 +43293,27 @@
           "id": "betrayed_record",
           "kind": "dual_narration",
           "presentation_flags": [
-            "ui_label_reveal"
+            "ui_label_reveal",
+            "protagonist_art_reveal"
           ],
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "한도윤은 사랑했던 남자가 배신의 대가를 묻는 이야기로 마지막 장을 고쳐 썼다."
@@ -41910,6 +43335,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "(상처받은 건 나야. 이 결과는 결국 민경이 고른 거라고.)"
@@ -41925,8 +43354,27 @@
           "id": "romance_record",
           "kind": "dual_narration",
           "presentation_flags": [
-            "ui_label_reveal"
+            "ui_label_reveal",
+            "protagonist_art_reveal"
           ],
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "그는 두 사람의 사랑을 방해하는 모든 연락을 무시하고 다음 만남을 준비했다."
@@ -41948,6 +43396,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "(기다림이 길수록 다시 만나는 순간은 더 극적이겠지.)"
@@ -41963,8 +43415,27 @@
           "id": "caught_record",
           "kind": "dual_narration",
           "presentation_flags": [
-            "ui_label_reveal"
+            "ui_label_reveal",
+            "protagonist_art_reveal"
           ],
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "수감 기록 속에서도 한도윤은 접견 거부를 장거리 연애의 시련이라고 불렀다."
@@ -41986,6 +43457,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "(시간이 지나면 민경도 결국 날 찾아오겠지.)"
@@ -42001,8 +43476,27 @@
           "id": "last_push_record",
           "kind": "dual_narration",
           "presentation_flags": [
-            "ui_label_reveal"
+            "ui_label_reveal",
+            "protagonist_art_reveal"
           ],
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "마지막 순간 민경이 멀리서 손을 내밀며 돌아오라고 말했다."
@@ -42023,6 +43517,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "dread",
@@ -42158,6 +43656,24 @@
           "id": "leave_request",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "expression": "subjective_challenging",
@@ -42180,6 +43696,17 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "cha_min_kyung"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
           },
           "perceived": {
             "atmosphere": "dread",
@@ -42216,6 +43743,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "(민경도 진정하고 나면 내 확신이 맞았다는 걸 인정하겠지.)"
@@ -42231,8 +43762,27 @@
           "id": "mugshot",
           "kind": "dual_narration",
           "presentation_flags": [
-            "ui_label_reveal"
+            "ui_label_reveal",
+            "protagonist_art_reveal"
           ],
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "플래시 속에는 강한 여자를 사랑한, 단정하고 훤칠한 중년 남자가 서 있었다."
@@ -42253,6 +43803,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "dread",
@@ -42331,6 +43885,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "cold_office",
             "line": "(회사는 끝내 우리 관계를 지켜 주지 않고 나를 배신했군.)"
@@ -42369,6 +43927,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "dread",
@@ -42483,6 +44045,24 @@
           "id": "leave_request",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "expression": "subjective_shy",
@@ -42505,6 +44085,17 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
           },
           "perceived": {
             "atmosphere": "dread",
@@ -42541,6 +44132,24 @@
           "id": "yoo_jin_response",
           "kind": "dual_dialogue",
           "speaker": "kang_yoo_jin",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "expression": "subjective_bold_flirt",
@@ -42564,6 +44173,17 @@
             "perceived": "han_do_yoon",
             "reality": "kang_yoo_jin"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "(역시 질투하고 있었군. 드디어 우리 관계에 직접 들어오는 건가.)"
@@ -42580,8 +44200,27 @@
           "kind": "dual_narration",
           "presentation_flags": [
             "ui_glitch",
-            "ui_label_reveal"
+            "ui_label_reveal",
+            "protagonist_art_reveal"
           ],
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "시스템이 강유진 루트의 마지막 조건을 확인하기 시작했다."
@@ -42602,6 +44241,17 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "kang_yoo_jin"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "kang_yoo_jin",
+                "visual_id": "character.kang_yoo_jin",
+                "artwork": "default"
+              }
+            ]
           },
           "perceived": {
             "atmosphere": "dread",
@@ -42694,6 +44344,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "cold_office",
@@ -42812,8 +44466,27 @@
           "id": "betrayed_record",
           "kind": "dual_narration",
           "presentation_flags": [
-            "ui_label_reveal"
+            "ui_label_reveal",
+            "protagonist_art_reveal"
           ],
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "한도윤은 사랑했던 남자가 배신의 대가를 묻는 이야기로 마지막 장을 고쳐 썼다."
@@ -42835,6 +44508,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "(상처받은 건 나야. 이 결과는 결국 서아가 고른 거라고.)"
@@ -42850,8 +44527,27 @@
           "id": "romance_record",
           "kind": "dual_narration",
           "presentation_flags": [
-            "ui_label_reveal"
+            "ui_label_reveal",
+            "protagonist_art_reveal"
           ],
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "그는 두 사람의 사랑을 방해하는 모든 연락을 무시하고 다음 만남을 준비했다."
@@ -42873,6 +44569,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "(기다림이 길수록 다시 만나는 순간은 더 극적이겠지.)"
@@ -42888,8 +44588,27 @@
           "id": "caught_record",
           "kind": "dual_narration",
           "presentation_flags": [
-            "ui_label_reveal"
+            "ui_label_reveal",
+            "protagonist_art_reveal"
           ],
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "수감 기록 속에서도 한도윤은 접견 거부를 장거리 연애의 시련이라고 불렀다."
@@ -42911,6 +44630,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "(시간이 지나면 서아도 결국 날 찾아오겠지.)"
@@ -42926,8 +44649,27 @@
           "id": "last_push_record",
           "kind": "dual_narration",
           "presentation_flags": [
-            "ui_label_reveal"
+            "ui_label_reveal",
+            "protagonist_art_reveal"
           ],
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "마지막 순간 서아가 멀리서 손을 내밀며 돌아오라고 말했다."
@@ -42948,6 +44690,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "dread",
@@ -43083,6 +44829,24 @@
           "id": "leave_request",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "expression": "subjective_shy",
@@ -43105,6 +44869,17 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
           },
           "perceived": {
             "atmosphere": "dread",
@@ -43141,6 +44916,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "(기록을 보면 다들 내가 얼마나 진지하게 사랑했는지 알게 될 거야.)"
@@ -43156,8 +44935,27 @@
           "id": "mugshot",
           "kind": "dual_narration",
           "presentation_flags": [
-            "ui_label_reveal"
+            "ui_label_reveal",
+            "protagonist_art_reveal"
           ],
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "dread",
             "line": "플래시 속에는 사랑을 오해받은, 단정하고 훤칠한 중년 남자가 서 있었다."
@@ -43178,6 +44976,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "dread",
@@ -43256,6 +45058,10 @@
             "perceived": "han_do_yoon",
             "reality": null
           },
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "cold_office",
             "line": "(회사는 끝내 우리 관계를 지켜 주지 않고 나를 배신했군.)"
@@ -43294,6 +45100,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": null
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "dread",
@@ -43369,6 +45179,24 @@
           "id": "boundary",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -43391,6 +45219,17 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "cha_min_kyung"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
           },
           "perceived": {
             "atmosphere": "playful_tension",
@@ -43580,6 +45419,24 @@
           "id": "protective",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_jealous",
@@ -43603,6 +45460,17 @@
             "perceived": "han_do_yoon",
             "reality": "cha_min_kyung"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "line": "(다른 여자를 앞세워서 내 반응을 보려는 거군.)"
@@ -43618,6 +45486,24 @@
           "id": "skeptical",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -43640,6 +45526,17 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "cha_min_kyung"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
           },
           "perceived": {
             "atmosphere": "playful_tension",
@@ -43756,6 +45653,24 @@
           "id": "public_tease_response",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -43779,6 +45694,17 @@
             "perceived": "han_do_yoon",
             "reality": "cha_min_kyung"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "line": "(서아 씨 앞이라 더 강하게 부정하는군. 의식할수록 말은 세지는 법이지.)"
@@ -43794,6 +45720,24 @@
           "id": "retaliatory_response",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -43817,6 +45761,17 @@
             "perceived": "han_do_yoon",
             "reality": "cha_min_kyung"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "line": "(제외한다니까 바로 다음 수를 꺼내네. 역시 쉽게 주도권을 내줄 상대가 아니야.)"
@@ -43832,6 +45787,10 @@
           "id": "work_only_do_yoon",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_confident",
@@ -43849,6 +45808,24 @@
           "id": "work_only_response",
           "kind": "dual_dialogue",
           "speaker": "cha_min_kyung",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_challenging",
@@ -43871,6 +45848,17 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "cha_min_kyung"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "cha_min_kyung",
+                "visual_id": "character.cha_min_kyung",
+                "artwork": "default"
+              }
+            ]
           },
           "perceived": {
             "atmosphere": "playful_tension",
@@ -43959,6 +45947,24 @@
           "id": "appearance_observation",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_shy",
@@ -43982,6 +45988,17 @@
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(따로 말을 꺼낼 만큼 내 반응이 궁금한 모양이군.)"
@@ -43997,6 +46014,24 @@
           "id": "request",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_shy",
@@ -44019,6 +46054,17 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
           },
           "perceived": {
             "atmosphere": "warm_romance",
@@ -44187,6 +46233,10 @@
           "id": "workout_self_promotion",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -44204,6 +46254,10 @@
           "id": "reading_self_promotion",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -44224,6 +46278,10 @@
           "presentation_flags": [
             "auditory_distortion"
           ],
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "playful_tension",
             "expression": "subjective_confident",
@@ -44246,6 +46304,10 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "han_do_yoon"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": []
           },
           "perceived": {
             "atmosphere": "playful_tension",
@@ -44341,6 +46403,24 @@
           "id": "guarded_smile",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_relieved_smile",
@@ -44364,6 +46444,17 @@
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
           },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "line": "(거리를 둔 시간이 길어지니 먼저 관계를 회복하려는군.)"
@@ -44379,6 +46470,24 @@
           "id": "relief_smile",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_relieved_smile",
@@ -44401,6 +46510,17 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
           },
           "perceived": {
             "atmosphere": "warm_romance",
@@ -44539,6 +46659,10 @@
           "id": "trend_self_promotion",
           "kind": "dual_dialogue",
           "speaker": "han_do_yoon",
+          "stage": {
+            "perceived": [],
+            "reality": []
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_confident",
@@ -44556,6 +46680,24 @@
           "id": "trend_response",
           "kind": "dual_dialogue",
           "speaker": "yoon_seo_a",
+          "stage": {
+            "perceived": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
+          },
           "perceived": {
             "atmosphere": "warm_romance",
             "expression": "subjective_relieved_smile",
@@ -44578,6 +46720,17 @@
           "speakers": {
             "perceived": "han_do_yoon",
             "reality": "yoon_seo_a"
+          },
+          "stage": {
+            "perceived": [],
+            "reality": [
+              {
+                "position": "center",
+                "character": "yoon_seo_a",
+                "visual_id": "character.yoon_seo_a",
+                "artwork": "default"
+              }
+            ]
           },
           "perceived": {
             "atmosphere": "warm_romance",
