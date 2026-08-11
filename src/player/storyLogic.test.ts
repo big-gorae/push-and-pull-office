@@ -217,7 +217,7 @@ describe("contextual dialogue", () => {
     const visual = copy.visuals["character.yoon_seo_a"];
     visual.default_artwork = "office_default";
     visual.artworks = {
-      office_default: { asset: "assets/characters/yoon-seo-a/office-default/base.png", label: "오피스 기본" },
+      office_default: { asset: "assets/characters/yoon-seo-a/office-default/base-cutout.png", label: "오피스 기본" },
       cardigan_smile: { asset: "assets/concept-art/yoon-seo-a.png", label: "가디건 미소" },
     };
     const options = characterArtworkOptions(copy, "yoon_seo_a", "perceived");

@@ -345,7 +345,7 @@ character: yoon_seo_a
 default_artwork: office_default
 artworks:
   office_default:
-    asset: assets/characters/yoon-seo-a/office-default/base.png
+    asset: assets/characters/yoon-seo-a/office-default/base-cutout.png
     outfits: [office]
     poses: [neutral, guarded]
     expression_assets:

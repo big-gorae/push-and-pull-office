@@ -10,7 +10,7 @@
     ]
   },
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "6e3d4cd43c014564990612a0f75d1bfd546ac2515e20d7392d737c6f5879388e",
+  "source_sha256": "1e1d129b7007e6d68683f1b3a67b996dcd9db7e201cf0c530bb0f92932e889f4",
   "enums": {
     "perceived_state": [
       "push",
@@ -33198,7 +33198,7 @@
         ]
       },
       "visual": {
-        "concept_art": "assets/concept-art/cha-min-kyung.png",
+        "concept_art": "assets/characters/cha-min-kyung/office-default/base-cutout.png",
         "hud_portrait": "assets/hud/cha-min-kyung-avatar.png",
         "palette": [
           "burgundy",
@@ -33497,7 +33497,7 @@
         ]
       },
       "visual": {
-        "concept_art": "assets/characters/kang-yoo-jin/office-default/base.png",
+        "concept_art": "assets/characters/kang-yoo-jin/office-default/base-cutout.png",
         "palette": [
           "cobalt",
           "emerald",
@@ -33622,7 +33622,7 @@
         ]
       },
       "visual": {
-        "concept_art": "assets/concept-art/yoon-seo-a.png",
+        "concept_art": "assets/characters/yoon-seo-a/office-default/base-cutout.png",
         "hud_portrait": "assets/hud/yoon-seo-a-avatar.png",
         "palette": [
           "ivory",
@@ -35823,7 +35823,7 @@
       "title": "차민경 기본 바스트",
       "character": "cha_min_kyung",
       "default_reality_expression": "actual_skeptical",
-      "fallback_asset": "assets/concept-art/cha-min-kyung.png"
+      "fallback_asset": "assets/characters/cha-min-kyung/office-default/base-cutout.png"
     },
     "character.han_do_yoon": {
       "schema_version": 1,
@@ -35956,7 +35956,7 @@
       "title": "강유진 기본 바스트",
       "character": "kang_yoo_jin",
       "default_reality_expression": "actual_procedural",
-      "fallback_asset": "assets/characters/kang-yoo-jin/office-default/base.png"
+      "fallback_asset": "assets/characters/kang-yoo-jin/office-default/base-cutout.png"
     },
     "character.yoon_seo_a": {
       "schema_version": 1,
@@ -35999,7 +35999,7 @@
       "title": "윤서아 기본 바스트",
       "character": "yoon_seo_a",
       "default_reality_expression": "actual_social_smile",
-      "fallback_asset": "assets/concept-art/yoon-seo-a.png"
+      "fallback_asset": "assets/characters/yoon-seo-a/office-default/base-cutout.png"
     }
   },
   "threads": {

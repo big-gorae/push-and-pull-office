@@ -4,6 +4,7 @@
 
 - `archive/backgrounds/`: canonical runtime 폴더로 복사한 이전 평면 배경 원본
 - `archive/concept-art/`: 갤러리·비교용으로 사용했던 이전 캐릭터 원본
+- `archive/characters/`: 투명 런타임 원화의 배경 포함 원본
 - `references/`: 프롬프트 제작에만 사용하는 참고 이미지의 이후 정리 위치
 - `generation-history/`: 재생성 기록과 비교본의 이후 정리 위치
 
