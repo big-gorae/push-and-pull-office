@@ -5,6 +5,32 @@ export type EditHistoryGroup = {
   updatedAt: number;
 };
 
+type EditorHistoryKeyEvent = {
+  key: string;
+  code?: string;
+  metaKey: boolean;
+  ctrlKey: boolean;
+  shiftKey: boolean;
+  altKey: boolean;
+};
+
+export type EditorHistoryCommand = "undo" | "redo";
+
+/**
+ * Resolve editor-level history shortcuts independently of the active keyboard
+ * layout. `code` keeps Ctrl/Cmd+Z working while a Korean IME is selected and
+ * `key` remains as a fallback for synthetic and older WebView events.
+ */
+export function editorHistoryCommand(event: EditorHistoryKeyEvent): EditorHistoryCommand | undefined {
+  if (!(event.metaKey || event.ctrlKey) || event.altKey) return undefined;
+  const key = event.key.toLocaleLowerCase();
+  const isZ = event.code === "KeyZ" || key === "z";
+  if (isZ) return event.shiftKey ? "redo" : "undo";
+  const isY = event.code === "KeyY" || key === "y";
+  if (event.ctrlKey && !event.metaKey && !event.shiftKey && isY) return "redo";
+  return undefined;
+}
+
 export function shouldCaptureHistory(
   previous: EditHistoryGroup | null,
   key: string | undefined,

@@ -14,7 +14,7 @@ import SceneBackgroundEditor from "./SceneBackgroundEditor";
 import { useDocumentAutosave, useSaveCommandBinding } from "./editorAutosave";
 import { editorDraftJournal, useDraftJournal } from "./editorDraftJournal";
 import { editorSaveRepository } from "./editorRepository";
-import { inactiveEditorPropsEqual, nextHistoryGroup, shouldCaptureHistory, type EditHistoryGroup } from "./editorPerformance";
+import { editorHistoryCommand, inactiveEditorPropsEqual, nextHistoryGroup, shouldCaptureHistory, type EditHistoryGroup } from "./editorPerformance";
 import { editorSaveCoordinator, SaveFailure, type DocumentSnapshot, type SaveCommitResult, type SaveCompletion, type SaveState } from "./editorSave";
 import { resolveRuntimeUpdate, type RuntimePatch, type RuntimeUpdate } from "./runtimePatch";
 import { selfDevelopmentVariantDisplayName } from "./player/systemDialogueAuthoring";
@@ -1802,9 +1802,10 @@ export default function App() {
           return;
         }
       }
-      if (key === "z") {
+      const historyCommand = editorHistoryCommand(event);
+      if (historyCommand) {
         event.preventDefault();
-        if (event.shiftKey) redo();
+        if (historyCommand === "redo") redo();
         else undo();
       }
     };
@@ -2183,8 +2184,8 @@ export default function App() {
         <button type="button" className="quick-open-button" onClick={() => setQuickOpenVisible(true)} title="모든 스토리 문서 빠른 열기 (⌘P)">⌕ 빠른 열기 <kbd>⌘P</kbd></button>
         <button type="button" onClick={launchAuthoringPlay} disabled={busy || dirty || hasPendingDocument} title="실제 게임 화면에서 원본 대사를 편집합니다">▶ 게임에서 대사 편집</button>
         <button type="button" onClick={selectProject} disabled={busy}>프로젝트 열기</button>
-        {workspace === "scene" && <button type="button" onClick={undo} disabled={!history.past.length || busy} title="실행 취소 (⌘Z)">↶</button>}
-        {workspace === "scene" && <button type="button" onClick={redo} disabled={!history.future.length || busy} title="다시 실행 (⇧⌘Z)">↷</button>}
+        {workspace === "scene" && <button type="button" onClick={undo} disabled={!history.past.length || busy} aria-label="동작 취소" title="동작 취소 (⌘/Ctrl+Z)">↶</button>}
+        {workspace === "scene" && <button type="button" onClick={redo} disabled={!history.future.length || busy} aria-label="다시 실행" title="다시 실행 (⇧⌘/Ctrl+Z 또는 Ctrl+Y)">↷</button>}
         <button type="button" onClick={validate} disabled={busy}>검증</button>
         <button type="button" onClick={build} disabled={busy || hasPendingDocument}>런타임 빌드</button>
         {workspace === "scene" && <button type="button" className="primary-button" onClick={save} disabled={busy || !dirty}>지금 저장 <kbd>⌘S</kbd></button>}
