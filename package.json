@@ -33,14 +33,14 @@
   "dependencies": {
     "@tauri-apps/api": "2.11.1",
     "@tauri-apps/plugin-dialog": "2.7.2",
-    "react": "19.2.7",
+    "react": "19.2.8",
     "react-dom": "19.2.7"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.50.0",
     "@playwright/test": "1.62.1",
     "@tauri-apps/cli": "2.11.4",
-    "@types/react": "19.2.14",
+    "@types/react": "19.2.18",
     "@types/react-dom": "19.2.3",
     "sharp": "0.35.2",
     "typescript": "5.9.3",
