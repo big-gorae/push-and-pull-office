@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-validate-scene"
+description = "Enables the validate_scene command without any pre-configured scope."
+commands.allow = ["validate_scene"]
+
+[[permission]]
+identifier = "deny-validate-scene"
+description = "Denies the validate_scene command without any pre-configured scope."
+commands.deny = ["validate_scene"]

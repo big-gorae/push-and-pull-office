@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-apply-mobile-sync-changes"
+description = "Enables the apply_mobile_sync_changes command without any pre-configured scope."
+commands.allow = ["apply_mobile_sync_changes"]
+
+[[permission]]
+identifier = "deny-apply-mobile-sync-changes"
+description = "Denies the apply_mobile_sync_changes command without any pre-configured scope."
+commands.deny = ["apply_mobile_sync_changes"]

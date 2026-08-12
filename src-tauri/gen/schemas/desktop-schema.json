@@ -183,10 +183,196 @@
           "markdownDescription": "Allows the authenticated mobile sync surface to submit path-free dialogue events to the active project's validated save pipeline."
         },
         {
+          "description": "Enables the build_runtime command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-build-runtime",
+          "markdownDescription": "Enables the build_runtime command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the default_project_root command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-default-project-root",
+          "markdownDescription": "Enables the default_project_root command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the duplicate_event command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-duplicate-event",
+          "markdownDescription": "Enables the duplicate_event command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the duplicate_scene command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-duplicate-scene",
+          "markdownDescription": "Enables the duplicate_scene command without any pre-configured scope."
+        },
+        {
+          "description": "Allows the native story editor and its authoring-play companion to use the approved local project bridge.",
+          "type": "string",
+          "const": "allow-editor-bridge",
+          "markdownDescription": "Allows the native story editor and its authoring-play companion to use the approved local project bridge."
+        },
+        {
+          "description": "Enables the get_story_text_owner command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-get-story-text-owner",
+          "markdownDescription": "Enables the get_story_text_owner command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the load_project command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-load-project",
+          "markdownDescription": "Enables the load_project command without any pre-configured scope."
+        },
+        {
           "description": "Allows the authenticated mobile sync surface to read the active project's path-free dialogue catalog.",
           "type": "string",
           "const": "allow-mobile-sync-snapshot",
           "markdownDescription": "Allows the authenticated mobile sync surface to read the active project's path-free dialogue catalog."
+        },
+        {
+          "description": "Enables the open_source_location command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-open-source-location",
+          "markdownDescription": "Enables the open_source_location command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the read_asset command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-read-asset",
+          "markdownDescription": "Enables the read_asset command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the reveal_in_file_manager command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-reveal-in-file-manager",
+          "markdownDescription": "Enables the reveal_in_file_manager command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the save_document command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-save-document",
+          "markdownDescription": "Enables the save_document command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the save_scene command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-save-scene",
+          "markdownDescription": "Enables the save_scene command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the save_story_text command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-save-story-text",
+          "markdownDescription": "Enables the save_story_text command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the validate_project command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-validate-project",
+          "markdownDescription": "Enables the validate_project command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the validate_scene command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-validate-scene",
+          "markdownDescription": "Enables the validate_scene command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the apply_mobile_sync_changes command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-apply-mobile-sync-changes",
+          "markdownDescription": "Denies the apply_mobile_sync_changes command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the build_runtime command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-build-runtime",
+          "markdownDescription": "Denies the build_runtime command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the default_project_root command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-default-project-root",
+          "markdownDescription": "Denies the default_project_root command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the duplicate_event command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-duplicate-event",
+          "markdownDescription": "Denies the duplicate_event command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the duplicate_scene command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-duplicate-scene",
+          "markdownDescription": "Denies the duplicate_scene command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the get_story_text_owner command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-get-story-text-owner",
+          "markdownDescription": "Denies the get_story_text_owner command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the load_project command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-load-project",
+          "markdownDescription": "Denies the load_project command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the mobile_sync_snapshot command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-mobile-sync-snapshot",
+          "markdownDescription": "Denies the mobile_sync_snapshot command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the open_source_location command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-open-source-location",
+          "markdownDescription": "Denies the open_source_location command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the read_asset command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-read-asset",
+          "markdownDescription": "Denies the read_asset command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the reveal_in_file_manager command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-reveal-in-file-manager",
+          "markdownDescription": "Denies the reveal_in_file_manager command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the save_document command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-save-document",
+          "markdownDescription": "Denies the save_document command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the save_scene command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-save-scene",
+          "markdownDescription": "Denies the save_scene command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the save_story_text command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-save-story-text",
+          "markdownDescription": "Denies the save_story_text command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the validate_project command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-validate-project",
+          "markdownDescription": "Denies the validate_project command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the validate_scene command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-validate-scene",
+          "markdownDescription": "Denies the validate_scene command without any pre-configured scope."
         },
         {
           "description": "Default core plugins set.\n#### This default permission set includes:\n\n- `core:path:default`\n- `core:event:default`\n- `core:window:default`\n- `core:webview:default`\n- `core:app:default`\n- `core:image:default`\n- `core:resources:default`\n- `core:menu:default`\n- `core:tray:default`",
