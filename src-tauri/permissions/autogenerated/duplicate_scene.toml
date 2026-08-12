@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-duplicate-scene"
+description = "Enables the duplicate_scene command without any pre-configured scope."
+commands.allow = ["duplicate_scene"]
+
+[[permission]]
+identifier = "deny-duplicate-scene"
+description = "Denies the duplicate_scene command without any pre-configured scope."
+commands.deny = ["duplicate_scene"]

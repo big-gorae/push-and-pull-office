@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-mobile-sync-snapshot"
+description = "Enables the mobile_sync_snapshot command without any pre-configured scope."
+commands.allow = ["mobile_sync_snapshot"]
+
+[[permission]]
+identifier = "deny-mobile-sync-snapshot"
+description = "Denies the mobile_sync_snapshot command without any pre-configured scope."
+commands.deny = ["mobile_sync_snapshot"]

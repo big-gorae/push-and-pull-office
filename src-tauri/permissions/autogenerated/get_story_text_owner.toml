@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-get-story-text-owner"
+description = "Enables the get_story_text_owner command without any pre-configured scope."
+commands.allow = ["get_story_text_owner"]
+
+[[permission]]
+identifier = "deny-get-story-text-owner"
+description = "Denies the get_story_text_owner command without any pre-configured scope."
+commands.deny = ["get_story_text_owner"]

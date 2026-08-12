@@ -1,0 +1,19 @@
+[[permission]]
+identifier = "allow-editor-bridge"
+description = "Allows the native story editor and its authoring-play companion to use the approved local project bridge."
+commands.allow = [
+    "default_project_root",
+    "load_project",
+    "validate_project",
+    "validate_scene",
+    "save_scene",
+    "save_document",
+    "get_story_text_owner",
+    "save_story_text",
+    "duplicate_scene",
+    "duplicate_event",
+    "build_runtime",
+    "read_asset",
+    "reveal_in_file_manager",
+    "open_source_location",
+]

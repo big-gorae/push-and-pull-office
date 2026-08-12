@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-save-scene"
+description = "Enables the save_scene command without any pre-configured scope."
+commands.allow = ["save_scene"]
+
+[[permission]]
+identifier = "deny-save-scene"
+description = "Denies the save_scene command without any pre-configured scope."
+commands.deny = ["save_scene"]

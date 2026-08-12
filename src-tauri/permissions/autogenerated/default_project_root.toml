@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-default-project-root"
+description = "Enables the default_project_root command without any pre-configured scope."
+commands.allow = ["default_project_root"]
+
+[[permission]]
+identifier = "deny-default-project-root"
+description = "Denies the default_project_root command without any pre-configured scope."
+commands.deny = ["default_project_root"]
