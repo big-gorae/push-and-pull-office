@@ -1,7 +1,8 @@
 import { expect, test } from "@playwright/test";
 
 test("mobile authoring reopens offline with its locally saved draft", async ({ page, context }) => {
-  await page.goto("/author/");
+  await page.goto("/");
+  await page.evaluate(() => { window.location.hash = "/author"; });
   await expect(page.getByRole("heading", { name: "대사 보관함" })).toBeVisible();
   await expect(page.locator(".dialogue-card").first()).toBeVisible();
 
@@ -15,7 +16,7 @@ test("mobile authoring reopens offline with its locally saved draft", async ({ p
 
   await page.waitForFunction(async () => {
     if (!("serviceWorker" in navigator) || !navigator.serviceWorker.controller) return false;
-    const cache = await caches.open("love-office-authoring-v3");
+    const cache = await caches.open("love-office-authoring-v4");
     const urls = (await cache.keys()).map((request) => request.url);
     return urls.some((url) => url.includes("MobileAuthoringApp-"))
       && urls.some((url) => url.includes("story-runtime-"));
