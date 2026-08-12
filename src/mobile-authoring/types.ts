@@ -1,3 +1,5 @@
+import type { ArtworkPosition, Scene, ViewMode } from "../types";
+
 export type MobileCatalogEntry = {
   localizationKey: string;
   locale: string;
@@ -22,13 +24,68 @@ export type MobileCatalogEntry = {
 };
 
 export type MobileCatalogSnapshot = {
-  schemaVersion: 1;
+  schemaVersion: 1 | 2;
   projectId: string;
   projectTitle: string;
   defaultLocale: string;
   generation: string;
   updatedAt?: string | null;
   entries: MobileCatalogEntry[];
+  workspace?: MobileSceneWorkspace;
+};
+
+export type MobileScheduledScene = {
+  sceneId: string;
+  eventId: string;
+  eventTitle: string;
+  slot: string;
+  endDay: number;
+};
+
+export type MobileDayGroup = {
+  day: number;
+  scenes: MobileScheduledScene[];
+};
+
+export type MobileSpeakerOption = {
+  id: string;
+  label: string;
+  illustrated: boolean;
+  expressions?: Array<{ id: string; label: string; layer: ViewMode }>;
+};
+
+export type MobileArtworkOption = {
+  id: string;
+  visualId: string;
+  characterId: string;
+  characterLabel: string;
+  label: string;
+  asset?: string;
+};
+
+export type MobileBackgroundOption = {
+  visualId: string;
+  variantId: string;
+  title: string;
+  details: string;
+  asset?: string;
+};
+
+export type MobileSceneRecord = {
+  revision: string;
+  sceneHash: string;
+  scene: Scene;
+  speakers: MobileSpeakerOption[];
+};
+
+export type MobileSceneWorkspace = {
+  schemaVersion: 1;
+  days: MobileDayGroup[];
+  scenes: Record<string, MobileSceneRecord>;
+  artworks: MobileArtworkOption[];
+  backgrounds: MobileBackgroundOption[];
+  atmospheres: string[];
+  intents: string[];
 };
 
 export type MobileChangeStatus = "editing" | "queued" | "pending" | "applied" | "conflict" | "rejected";
@@ -65,6 +122,46 @@ export type StoredOutboxEvent = MobileTextChange & {
   uploaded: boolean;
 };
 
+export type MobileSceneChange = {
+  eventId: string;
+  projectId: string;
+  sceneId: string;
+  baseSceneHash: string;
+  nextSceneHash: string;
+  baseScene: Scene;
+  nextScene: Scene;
+  deviceId: string;
+  clientCreatedAt: string;
+};
+
+export type StoredSceneDraft = {
+  id: string;
+  projectId: string;
+  sceneId: string;
+  baseSceneHash: string;
+  baseScene: Scene;
+  nextScene: Scene;
+  eventId?: string;
+  status: MobileChangeStatus;
+  reason?: string;
+  currentScene?: Scene;
+  currentSceneHash?: string;
+  updatedAt: string;
+};
+
+export type StoredSceneOutboxEvent = MobileSceneChange & {
+  uploaded: boolean;
+};
+
+export type ServerSceneChange = MobileSceneChange & {
+  status: "pending" | "superseded" | "applied" | "conflict" | "rejected";
+  serverCreatedAt: string;
+  updatedAt: string;
+  reason?: string;
+  currentScene?: Scene;
+  currentSceneHash?: string;
+};
+
 export type ServerChange = MobileTextChange & {
   status: "pending" | "superseded" | "applied" | "conflict" | "rejected";
   serverCreatedAt: string;
@@ -82,7 +179,21 @@ export type MobileSyncReceipt = {
   currentValueHash?: string;
 };
 
+export type MobileSceneSyncReceipt = {
+  eventId: string;
+  status: "applied" | "conflict" | "rejected";
+  reason?: string;
+  currentScene?: Scene;
+  currentSceneHash?: string;
+};
+
 export type MobileApplyResult = {
   receipts: MobileSyncReceipt[];
+  sceneReceipts?: MobileSceneSyncReceipt[];
   snapshot: MobileCatalogSnapshot;
+};
+
+export type MobileArtworkSelection = {
+  mode: ViewMode;
+  position: ArtworkPosition;
 };

@@ -1,17 +1,23 @@
 import type {
   MobileCatalogSnapshot,
+  MobileSceneChange,
   MobileTextChange,
   ServerChange,
+  ServerSceneChange,
   StoredMobileDraft,
   StoredOutboxEvent,
+  StoredSceneDraft,
+  StoredSceneOutboxEvent,
 } from "./types";
 
 const DATABASE_NAME = "love-office-mobile-authoring";
-const DATABASE_VERSION = 1;
+const DATABASE_VERSION = 2;
 const MEMORY = {
   catalog: undefined as MobileCatalogSnapshot | undefined,
   drafts: new Map<string, StoredMobileDraft>(),
   outbox: new Map<string, StoredOutboxEvent>(),
+  sceneDrafts: new Map<string, StoredSceneDraft>(),
+  sceneOutbox: new Map<string, StoredSceneOutboxEvent>(),
   settings: new Map<string, string>(),
 };
 
@@ -30,6 +36,8 @@ function database(): Promise<IDBDatabase | undefined> {
       if (!db.objectStoreNames.contains("catalog")) db.createObjectStore("catalog", { keyPath: "projectId" });
       if (!db.objectStoreNames.contains("drafts")) db.createObjectStore("drafts", { keyPath: "id" });
       if (!db.objectStoreNames.contains("outbox")) db.createObjectStore("outbox", { keyPath: "eventId" });
+      if (!db.objectStoreNames.contains("sceneDrafts")) db.createObjectStore("sceneDrafts", { keyPath: "id" });
+      if (!db.objectStoreNames.contains("sceneOutbox")) db.createObjectStore("sceneOutbox", { keyPath: "eventId" });
       if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings", { keyPath: "key" });
     };
     request.onsuccess = () => resolve(request.result);
@@ -84,6 +92,10 @@ async function remove(storeName: string, key: IDBValidKey): Promise<void> {
 
 export function draftId(projectId: string, localizationKey: string, locale: string): string {
   return `${projectId}\u0000${locale}\u0000${localizationKey}`;
+}
+
+export function sceneDraftId(projectId: string, sceneId: string): string {
+  return `${projectId}\u0000scene\u0000${sceneId}`;
 }
 
 export async function readCatalog(projectId: string): Promise<MobileCatalogSnapshot | undefined> {
@@ -200,4 +212,98 @@ export async function deviceId(): Promise<string> {
   MEMORY.settings.set("deviceId", value);
   await put("settings", { key: "deviceId", value }).catch(() => undefined);
   return value;
+}
+
+export async function readSceneDrafts(projectId: string): Promise<StoredSceneDraft[]> {
+  const persisted = await all<StoredSceneDraft>("sceneDrafts");
+  const values = persisted.length ? persisted : [...MEMORY.sceneDrafts.values()];
+  return values.filter((draft) => draft.projectId === projectId);
+}
+
+export async function writeSceneDraft(draft: StoredSceneDraft): Promise<void> {
+  MEMORY.sceneDrafts.set(draft.id, draft);
+  await put("sceneDrafts", draft).catch(() => undefined);
+}
+
+export async function deleteSceneDraft(draft: StoredSceneDraft): Promise<void> {
+  MEMORY.sceneDrafts.delete(draft.id);
+  await remove("sceneDrafts", draft.id).catch(() => undefined);
+  if (draft.eventId) {
+    MEMORY.sceneOutbox.delete(draft.eventId);
+    await remove("sceneOutbox", draft.eventId).catch(() => undefined);
+  }
+}
+
+export async function queueSceneChange(change: MobileSceneChange): Promise<StoredSceneDraft> {
+  const id = sceneDraftId(change.projectId, change.sceneId);
+  const prior = await get<StoredSceneDraft>("sceneDrafts", id) || MEMORY.sceneDrafts.get(id);
+  if (prior?.eventId) {
+    MEMORY.sceneOutbox.delete(prior.eventId);
+    await remove("sceneOutbox", prior.eventId).catch(() => undefined);
+  }
+  const outbox: StoredSceneOutboxEvent = { ...change, uploaded: false };
+  const draft: StoredSceneDraft = {
+    id,
+    projectId: change.projectId,
+    sceneId: change.sceneId,
+    baseSceneHash: change.baseSceneHash,
+    baseScene: change.baseScene,
+    nextScene: change.nextScene,
+    eventId: change.eventId,
+    status: "queued",
+    updatedAt: change.clientCreatedAt,
+  };
+  MEMORY.sceneOutbox.set(change.eventId, outbox);
+  MEMORY.sceneDrafts.set(id, draft);
+  await Promise.all([
+    put("sceneOutbox", outbox).catch(() => undefined),
+    put("sceneDrafts", draft).catch(() => undefined),
+  ]);
+  return draft;
+}
+
+export async function readQueuedSceneEvents(projectId: string): Promise<StoredSceneOutboxEvent[]> {
+  const persisted = await all<StoredSceneOutboxEvent>("sceneOutbox");
+  const values = persisted.length ? persisted : [...MEMORY.sceneOutbox.values()];
+  return values.filter((event) => event.projectId === projectId && !event.uploaded);
+}
+
+export async function markSceneEventsUploaded(eventIds: string[]): Promise<void> {
+  await Promise.all(eventIds.map(async (eventId) => {
+    const event = await get<StoredSceneOutboxEvent>("sceneOutbox", eventId) || MEMORY.sceneOutbox.get(eventId);
+    if (!event) return;
+    const next = { ...event, uploaded: true };
+    MEMORY.sceneOutbox.set(eventId, next);
+    await put("sceneOutbox", next).catch(() => undefined);
+    const id = sceneDraftId(event.projectId, event.sceneId);
+    const draft = await get<StoredSceneDraft>("sceneDrafts", id) || MEMORY.sceneDrafts.get(id);
+    if (draft?.eventId !== eventId) return;
+    await writeSceneDraft({ ...draft, status: "pending", updatedAt: new Date().toISOString() });
+  }));
+}
+
+export async function reconcileServerSceneChanges(projectId: string, changes: ServerSceneChange[]): Promise<void> {
+  const byEvent = new Map(changes.map((change) => [change.eventId, change]));
+  const drafts = await readSceneDrafts(projectId);
+  await Promise.all(drafts.map(async (draft) => {
+    if (!draft.eventId) return;
+    const change = byEvent.get(draft.eventId);
+    if (!change) return;
+    if (change.status === "applied" || change.status === "superseded") {
+      await deleteSceneDraft(draft);
+      return;
+    }
+    if (change.status === "pending") {
+      await writeSceneDraft({ ...draft, status: "pending", updatedAt: change.updatedAt });
+      return;
+    }
+    await writeSceneDraft({
+      ...draft,
+      status: change.status,
+      reason: change.reason,
+      currentScene: change.currentScene,
+      currentSceneHash: change.currentSceneHash,
+      updatedAt: change.updatedAt,
+    });
+  }));
 }

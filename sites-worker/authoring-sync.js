@@ -2,11 +2,15 @@ const API_PREFIX = "/api/authoring/v1/";
 const MAX_JSON_BYTES = 1_500_000;
 const MAX_CATALOG_ENTRIES = 2_000;
 const MAX_CHANGE_BATCH = 100;
+const MAX_SCENE_CHANGE_BATCH = 10;
 const MAX_TEXT_LENGTH = 4_000;
+const MAX_SCENE_JSON_BYTES = 250_000;
+const MAX_WORKSPACE_JSON_BYTES = 900_000;
 const EVENT_ID = /^[a-zA-Z0-9_-]{16,96}$/;
 const SHA256 = /^[a-f0-9]{64}$/;
 const PROJECT_ID = /^[a-z][a-z0-9_.-]{1,127}$/;
 const LOCALIZATION_KEY = /^[a-zA-Z0-9_.-]{2,500}$/;
+const SCENE_ID = /^[a-zA-Z0-9_.-]{2,256}$/;
 const TERMINAL_STATUSES = new Set(["applied", "conflict", "rejected"]);
 
 const SCHEMA = [
@@ -47,6 +51,40 @@ const SCHEMA = [
     ON authoring_changes (owner_id, project_id, localization_key, locale, status)`,
   `CREATE INDEX IF NOT EXISTS idx_authoring_catalog_generation
     ON authoring_catalog (owner_id, project_id, generation)`,
+  `CREATE TABLE IF NOT EXISTS authoring_workspace (
+    owner_id TEXT NOT NULL,
+    project_id TEXT NOT NULL,
+    project_title TEXT NOT NULL,
+    default_locale TEXT NOT NULL,
+    schema_version INTEGER NOT NULL,
+    generation TEXT NOT NULL,
+    workspace_json TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    PRIMARY KEY (owner_id, project_id)
+  )`,
+  `CREATE TABLE IF NOT EXISTS authoring_scene_changes (
+    owner_id TEXT NOT NULL,
+    event_id TEXT NOT NULL,
+    project_id TEXT NOT NULL,
+    scene_id TEXT NOT NULL,
+    base_scene_hash TEXT NOT NULL,
+    next_scene_hash TEXT NOT NULL,
+    base_scene_json TEXT NOT NULL,
+    next_scene_json TEXT NOT NULL,
+    device_id TEXT NOT NULL,
+    client_created_at TEXT NOT NULL,
+    server_created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('pending', 'superseded', 'applied', 'conflict', 'rejected')),
+    reason TEXT,
+    current_scene_json TEXT,
+    current_scene_hash TEXT,
+    PRIMARY KEY (owner_id, event_id)
+  )`,
+  `CREATE INDEX IF NOT EXISTS idx_authoring_scene_changes_pending
+    ON authoring_scene_changes (owner_id, project_id, status, server_created_at)`,
+  `CREATE INDEX IF NOT EXISTS idx_authoring_scene_changes_scene
+    ON authoring_scene_changes (owner_id, project_id, scene_id, status)`,
 ];
 
 let schemaReady;
@@ -148,6 +186,19 @@ function validateCatalogEntry(raw) {
   return { localizationKey, locale, value, valueHash, metadata };
 }
 
+function validateWorkspace(raw) {
+  if (!raw || typeof raw !== "object" || raw.schemaVersion !== 1
+    || !Array.isArray(raw.days) || !raw.scenes || typeof raw.scenes !== "object"
+    || !Array.isArray(raw.artworks) || !Array.isArray(raw.backgrounds)) {
+    throw Object.assign(new Error("장면 작업공간 payload가 올바르지 않습니다."), { code: "INVALID_WORKSPACE" });
+  }
+  const workspaceJson = JSON.stringify(raw);
+  if (new TextEncoder().encode(workspaceJson).byteLength > MAX_WORKSPACE_JSON_BYTES) {
+    throw Object.assign(new Error("장면 작업공간이 너무 큽니다."), { code: "WORKSPACE_TOO_LARGE", status: 413 });
+  }
+  return workspaceJson;
+}
+
 function validateChange(raw) {
   const eventId = requireString(raw?.eventId, "eventId", 96);
   const projectId = validateProjectId(raw?.projectId);
@@ -167,6 +218,36 @@ function validateChange(raw) {
   return { eventId, projectId, localizationKey, locale, baseValue, baseValueHash, nextValue, deviceId, clientCreatedAt };
 }
 
+function validateSceneChange(raw) {
+  const eventId = requireString(raw?.eventId, "eventId", 96);
+  const projectId = validateProjectId(raw?.projectId);
+  const sceneId = requireString(raw?.sceneId, "sceneId", 256);
+  const baseSceneHash = requireString(raw?.baseSceneHash, "baseSceneHash", 64);
+  const nextSceneHash = requireString(raw?.nextSceneHash, "nextSceneHash", 64);
+  const deviceId = requireString(raw?.deviceId, "deviceId", 128);
+  const clientCreatedAt = requireString(raw?.clientCreatedAt, "clientCreatedAt", 64);
+  if (!EVENT_ID.test(eventId) || !SCENE_ID.test(sceneId) || !SHA256.test(baseSceneHash) || !SHA256.test(nextSceneHash)) {
+    throw Object.assign(new Error("장면 변경 이벤트 형식이 올바르지 않습니다."), { code: "INVALID_SCENE_CHANGE" });
+  }
+  if (!Number.isFinite(Date.parse(clientCreatedAt))) {
+    throw Object.assign(new Error("장면 변경 이벤트 시간이 올바르지 않습니다."), { code: "INVALID_CHANGE_TIME" });
+  }
+  if (!raw.baseScene || typeof raw.baseScene !== "object" || raw.baseScene.id !== sceneId
+    || !raw.nextScene || typeof raw.nextScene !== "object" || raw.nextScene.id !== sceneId) {
+    throw Object.assign(new Error("장면 기준본 또는 수정본이 올바르지 않습니다."), { code: "INVALID_SCENE_DOCUMENT" });
+  }
+  const baseSceneJson = JSON.stringify(raw.baseScene);
+  const nextSceneJson = JSON.stringify(raw.nextScene);
+  if (new TextEncoder().encode(baseSceneJson).byteLength > MAX_SCENE_JSON_BYTES
+    || new TextEncoder().encode(nextSceneJson).byteLength > MAX_SCENE_JSON_BYTES) {
+    throw Object.assign(new Error("장면 변경 내용이 너무 큽니다."), { code: "SCENE_CHANGE_TOO_LARGE", status: 413 });
+  }
+  return {
+    eventId, projectId, sceneId, baseSceneHash, nextSceneHash,
+    baseSceneJson, nextSceneJson, deviceId, clientCreatedAt,
+  };
+}
+
 async function putCatalog(db, owner, payload) {
   const projectId = validateProjectId(payload?.projectId);
   const generation = requireString(payload?.generation, "generation", 64);
@@ -174,6 +255,9 @@ async function putCatalog(db, owner, payload) {
     throw Object.assign(new Error("카탈로그 payload가 올바르지 않습니다."), { code: "INVALID_CATALOG" });
   }
   const entries = payload.entries.map(validateCatalogEntry);
+  const workspaceJson = validateWorkspace(payload?.workspace);
+  const projectTitle = typeof payload.projectTitle === "string" ? payload.projectTitle.slice(0, 500) : projectId;
+  const defaultLocale = typeof payload.defaultLocale === "string" ? payload.defaultLocale.slice(0, 16) : "ko";
   const now = new Date().toISOString();
   for (let index = 0; index < entries.length; index += 50) {
     const chunk = entries.slice(index, index + 50);
@@ -192,16 +276,31 @@ async function putCatalog(db, owner, payload) {
   await db.prepare(
     "DELETE FROM authoring_catalog WHERE owner_id = ? AND project_id = ? AND generation != ?",
   ).bind(owner, projectId, generation).run();
+  await db.prepare(
+    `INSERT INTO authoring_workspace
+      (owner_id, project_id, project_title, default_locale, schema_version, generation, workspace_json, updated_at)
+     VALUES (?, ?, ?, ?, 2, ?, ?, ?)
+     ON CONFLICT(owner_id, project_id) DO UPDATE SET
+       project_title = excluded.project_title,
+       default_locale = excluded.default_locale,
+       schema_version = excluded.schema_version,
+       generation = excluded.generation,
+       workspace_json = excluded.workspace_json,
+       updated_at = excluded.updated_at`,
+  ).bind(owner, projectId, projectTitle, defaultLocale, generation, workspaceJson, now).run();
   return { projectId, generation, count: entries.length, updatedAt: now };
 }
 
 async function getCatalog(db, owner, projectId) {
-  const result = await db.prepare(
+  const [result, workspaceRow] = await Promise.all([db.prepare(
     `SELECT localization_key, locale, value, value_hash, metadata_json, generation, updated_at
      FROM authoring_catalog
      WHERE owner_id = ? AND project_id = ?
      ORDER BY localization_key`,
-  ).bind(owner, projectId).all();
+  ).bind(owner, projectId).all(), db.prepare(
+    `SELECT project_title, default_locale, schema_version, generation, workspace_json, updated_at
+     FROM authoring_workspace WHERE owner_id = ? AND project_id = ?`,
+  ).bind(owner, projectId).first()]);
   const entries = (result.results || []).map((row) => {
     let metadata = {};
     try { metadata = JSON.parse(row.metadata_json); } catch { /* ignore corrupt optional metadata */ }
@@ -213,14 +312,17 @@ async function getCatalog(db, owner, projectId) {
       ...metadata,
     };
   });
+  let workspace;
+  try { workspace = workspaceRow?.workspace_json ? JSON.parse(workspaceRow.workspace_json) : undefined; } catch { /* ignore corrupt workspace */ }
   return {
-    schemaVersion: 1,
+    schemaVersion: workspaceRow?.schema_version || 1,
     projectId,
-    projectTitle: projectId,
-    defaultLocale: result.results?.[0]?.locale || "ko",
-    generation: result.results?.[0]?.generation || null,
-    updatedAt: result.results?.[0]?.updated_at || null,
+    projectTitle: workspaceRow?.project_title || projectId,
+    defaultLocale: workspaceRow?.default_locale || result.results?.[0]?.locale || "ko",
+    generation: workspaceRow?.generation || result.results?.[0]?.generation || null,
+    updatedAt: workspaceRow?.updated_at || result.results?.[0]?.updated_at || null,
     entries,
+    workspace,
   };
 }
 
@@ -263,6 +365,46 @@ async function enqueueChanges(db, owner, payload) {
   return { accepted: changes.map((change) => change.eventId), serverTime: now };
 }
 
+async function enqueueSceneChanges(db, owner, payload) {
+  if (!Array.isArray(payload?.changes) || payload.changes.length < 1 || payload.changes.length > MAX_SCENE_CHANGE_BATCH) {
+    throw Object.assign(new Error(`장면 변경은 한 번에 1-${MAX_SCENE_CHANGE_BATCH}개까지 보낼 수 있습니다.`), { code: "INVALID_BATCH" });
+  }
+  const changes = payload.changes.map(validateSceneChange);
+  const now = new Date().toISOString();
+  for (const change of changes) {
+    await db.batch([
+      db.prepare(
+        `UPDATE authoring_scene_changes
+         SET status = 'superseded', updated_at = ?
+         WHERE owner_id = ? AND project_id = ? AND scene_id = ?
+           AND status = 'pending' AND event_id != ?`,
+      ).bind(now, owner, change.projectId, change.sceneId, change.eventId),
+      db.prepare(
+        `INSERT INTO authoring_scene_changes
+          (owner_id, event_id, project_id, scene_id, base_scene_hash, next_scene_hash,
+           base_scene_json, next_scene_json, device_id, client_created_at,
+           server_created_at, updated_at, status)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+         ON CONFLICT(owner_id, event_id) DO NOTHING`,
+      ).bind(
+        owner, change.eventId, change.projectId, change.sceneId,
+        change.baseSceneHash, change.nextSceneHash, change.baseSceneJson, change.nextSceneJson,
+        change.deviceId, change.clientCreatedAt, now, now,
+      ),
+    ]);
+    const stored = await db.prepare(
+      `SELECT project_id, scene_id, base_scene_hash, next_scene_hash, device_id
+       FROM authoring_scene_changes WHERE owner_id = ? AND event_id = ?`,
+    ).bind(owner, change.eventId).first();
+    if (!stored || stored.project_id !== change.projectId || stored.scene_id !== change.sceneId
+      || stored.base_scene_hash !== change.baseSceneHash || stored.next_scene_hash !== change.nextSceneHash
+      || stored.device_id !== change.deviceId) {
+      throw Object.assign(new Error("같은 eventId에 다른 장면 변경이 이미 저장되어 있습니다."), { code: "IDEMPOTENCY_CONFLICT", status: 409 });
+    }
+  }
+  return { accepted: changes.map((change) => change.eventId), serverTime: now };
+}
+
 function changeRow(row) {
   return {
     eventId: row.event_id,
@@ -283,6 +425,32 @@ function changeRow(row) {
   };
 }
 
+function sceneChangeRow(row) {
+  let baseScene;
+  let nextScene;
+  let currentScene;
+  try { baseScene = JSON.parse(row.base_scene_json); } catch { baseScene = undefined; }
+  try { nextScene = JSON.parse(row.next_scene_json); } catch { nextScene = undefined; }
+  try { currentScene = row.current_scene_json ? JSON.parse(row.current_scene_json) : undefined; } catch { currentScene = undefined; }
+  return {
+    eventId: row.event_id,
+    projectId: row.project_id,
+    sceneId: row.scene_id,
+    baseSceneHash: row.base_scene_hash,
+    nextSceneHash: row.next_scene_hash,
+    baseScene,
+    nextScene,
+    deviceId: row.device_id,
+    clientCreatedAt: row.client_created_at,
+    serverCreatedAt: row.server_created_at,
+    updatedAt: row.updated_at,
+    status: row.status,
+    reason: row.reason || undefined,
+    currentScene,
+    currentSceneHash: row.current_scene_hash || undefined,
+  };
+}
+
 async function getChanges(db, owner, projectId, status) {
   const onlyPending = status === "pending";
   const result = await db.prepare(
@@ -291,6 +459,16 @@ async function getChanges(db, owner, projectId, status) {
      ORDER BY server_created_at DESC LIMIT 250`,
   ).bind(owner, projectId).all();
   return { projectId, changes: (result.results || []).map(changeRow), serverTime: new Date().toISOString() };
+}
+
+async function getSceneChanges(db, owner, projectId, status) {
+  const onlyPending = status === "pending";
+  const result = await db.prepare(
+    `SELECT * FROM authoring_scene_changes
+     WHERE owner_id = ? AND project_id = ? ${onlyPending ? "AND status = 'pending'" : ""}
+     ORDER BY server_created_at DESC LIMIT 100`,
+  ).bind(owner, projectId).all();
+  return { projectId, changes: (result.results || []).map(sceneChangeRow), serverTime: new Date().toISOString() };
 }
 
 async function saveReceipts(db, owner, payload) {
@@ -328,6 +506,48 @@ async function saveReceipts(db, owner, payload) {
   };
 }
 
+async function saveSceneReceipts(db, owner, payload) {
+  const projectId = validateProjectId(payload?.projectId);
+  if (!Array.isArray(payload?.receipts) || payload.receipts.length < 1 || payload.receipts.length > MAX_SCENE_CHANGE_BATCH) {
+    throw Object.assign(new Error("장면 처리 결과 묶음이 올바르지 않습니다."), { code: "INVALID_RECEIPTS" });
+  }
+  const now = new Date().toISOString();
+  const receipts = payload.receipts.map((raw) => {
+    const eventId = requireString(raw?.eventId, "eventId", 96);
+    const status = requireString(raw?.status, "status", 16);
+    if (!EVENT_ID.test(eventId) || !TERMINAL_STATUSES.has(status)) {
+      throw Object.assign(new Error("장면 처리 결과 형식이 올바르지 않습니다."), { code: "INVALID_RECEIPT" });
+    }
+    let currentSceneJson = null;
+    if (raw.currentScene && typeof raw.currentScene === "object") {
+      currentSceneJson = JSON.stringify(raw.currentScene);
+      if (new TextEncoder().encode(currentSceneJson).byteLength > MAX_SCENE_JSON_BYTES) {
+        throw Object.assign(new Error("현재 장면 처리 결과가 너무 큽니다."), { code: "SCENE_RECEIPT_TOO_LARGE" });
+      }
+    }
+    return {
+      eventId,
+      status,
+      reason: typeof raw.reason === "string" ? raw.reason.slice(0, 500) : null,
+      currentSceneJson,
+      currentSceneHash: typeof raw.currentSceneHash === "string" && SHA256.test(raw.currentSceneHash) ? raw.currentSceneHash : null,
+    };
+  });
+  const results = await db.batch(receipts.map((receipt) => db.prepare(
+    `UPDATE authoring_scene_changes
+     SET status = ?, reason = ?, current_scene_json = ?, current_scene_hash = ?, updated_at = ?
+     WHERE owner_id = ? AND project_id = ? AND event_id = ? AND status = 'pending'`,
+  ).bind(
+    receipt.status, receipt.reason, receipt.currentSceneJson, receipt.currentSceneHash,
+    now, owner, projectId, receipt.eventId,
+  )));
+  return {
+    projectId,
+    updated: results.reduce((total, result) => total + Number(result.meta?.changes || 0), 0),
+    serverTime: now,
+  };
+}
+
 export async function handleAuthoringSync(request, env) {
   const url = new URL(request.url);
   if (!url.pathname.startsWith(API_PREFIX)) return null;
@@ -354,8 +574,18 @@ export async function handleAuthoringSync(request, env) {
     if (route === "changes" && request.method === "POST") {
       return response({ ok: true, ...(await enqueueChanges(env.DB, owner, await readJson(request))) }, 202);
     }
+    if (route === "scene-changes" && request.method === "GET") {
+      const projectId = validateProjectId(url.searchParams.get("projectId"));
+      return response({ ok: true, ...(await getSceneChanges(env.DB, owner, projectId, url.searchParams.get("status"))) });
+    }
+    if (route === "scene-changes" && request.method === "POST") {
+      return response({ ok: true, ...(await enqueueSceneChanges(env.DB, owner, await readJson(request))) }, 202);
+    }
     if (route === "receipts" && request.method === "POST") {
       return response({ ok: true, ...(await saveReceipts(env.DB, owner, await readJson(request))) });
+    }
+    if (route === "scene-receipts" && request.method === "POST") {
+      return response({ ok: true, ...(await saveSceneReceipts(env.DB, owner, await readJson(request))) });
     }
     return error("NOT_FOUND", "동기화 API를 찾을 수 없습니다.", 404);
   } catch (failure) {
@@ -371,4 +601,4 @@ export async function handleAuthoringSync(request, env) {
 }
 
 export const authoringSyncSchema = SCHEMA;
-export { sameOriginWrite, validateCatalogEntry, validateChange };
+export { sameOriginWrite, validateCatalogEntry, validateChange, validateSceneChange, validateWorkspace };

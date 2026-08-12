@@ -70,6 +70,11 @@ def value_hash(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
 
+def json_value_hash(value: Any) -> str:
+    serialized = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return value_hash(serialized)
+
+
 def text_placeholders(value: str) -> List[str]:
     return sorted(set(re.findall(r"\{\{\s*([a-zA-Z_][a-zA-Z0-9_.-]*)\s*\}\}", value)))
 
@@ -802,6 +807,157 @@ def story_text_owner(
     }
 
 
+def mobile_scene_workspace(root: Path, project: StoryProject) -> Dict[str, Any]:
+    bundle = project.build_bundle()
+    campaigns = bundle.get("campaigns", {})
+    runtime_scenes = bundle.get("scenes", {})
+    grouped: Dict[int, List[Dict[str, Any]]] = {}
+    seen: set[tuple[int, str]] = set()
+
+    def event_sort_key(event: Mapping[str, Any]) -> tuple[Any, ...]:
+        window = event.get("window", {}) if isinstance(event.get("window"), Mapping) else {}
+        days = window.get("days", [999, 999])
+        slots = window.get("slots", [])
+        campaign = campaigns.get(event.get("campaign_id"), {})
+        campaign_slots = campaign.get("slots", []) if isinstance(campaign, Mapping) else []
+        slot = slots[0] if isinstance(slots, Sequence) and slots else ""
+        return (
+            days[0] if isinstance(days, Sequence) and days else 999,
+            campaign_slots.index(slot) if slot in campaign_slots else 999,
+            event.get("sequence", 999),
+            -int(event.get("priority", 0)),
+        )
+
+    for event in sorted(bundle.get("events", {}).values(), key=event_sort_key):
+        if not isinstance(event, Mapping):
+            continue
+        scene_id = event.get("scene")
+        window = event.get("window")
+        if not isinstance(scene_id, str) or scene_id not in runtime_scenes or not isinstance(window, Mapping):
+            continue
+        days = window.get("days")
+        slots = window.get("slots")
+        if not isinstance(days, Sequence) or len(days) != 2 or not isinstance(slots, Sequence):
+            continue
+        day = int(days[0])
+        identity = (day, scene_id)
+        if identity in seen:
+            continue
+        seen.add(identity)
+        grouped.setdefault(day, []).append({
+            "sceneId": scene_id,
+            "eventId": str(event.get("id", "")),
+            "eventTitle": str(event.get("title", scene_id)),
+            "slot": " · ".join(str(slot) for slot in slots),
+            "endDay": int(days[1]),
+        })
+
+    total_days = max([1, *[
+        int(campaign.get("total_days", 1))
+        for campaign in campaigns.values() if isinstance(campaign, Mapping)
+    ]])
+    world_entities = bundle.get("world", {}).get("entities", {}) \
+        if isinstance(bundle.get("world"), Mapping) else {}
+    characters = bundle.get("characters", {})
+    scene_records: Dict[str, Dict[str, Any]] = {}
+    for scene_id, scene in runtime_scenes.items():
+        if not isinstance(scene, Mapping):
+            continue
+        illustrated = [{
+            "id": character_id,
+            "label": str(characters.get(character_id, {}).get("display_name", character_id)),
+            "illustrated": True,
+            "expressions": [{
+                "id": str(expression_id),
+                "label": str(expression.get("description", expression_id)),
+                "layer": str(expression.get("layer", "perceived")),
+            } for expression_id, expression in characters.get(character_id, {}).get("expressions", {}).items()
+            if isinstance(expression, Mapping)],
+        } for character_id in scene.get("cast", []) if isinstance(character_id, str)]
+        participants = scene.get("world_context", {}).get("participants", []) \
+            if isinstance(scene.get("world_context"), Mapping) else []
+        supporting = [{
+            "id": member_id,
+            "label": str(world_entities.get(member_id, {}).get("display_name", member_id)),
+            "illustrated": False,
+        } for member_id in participants
+        if isinstance(member_id, str) and world_entities.get(member_id, {}).get("presentation") == "text_only"]
+        speakers = []
+        speaker_ids: set[str] = set()
+        for speaker in [*illustrated, *supporting]:
+            if speaker["id"] in speaker_ids:
+                continue
+            speaker_ids.add(speaker["id"])
+            speakers.append(speaker)
+        source = project.scenes.get(scene_id)
+        source_path = Path(str(source["_source"])).resolve() if isinstance(source, Mapping) else None
+        scene_value = copy.deepcopy(dict(scene))
+        scene_records[scene_id] = {
+            "revision": revision(source_path) if source_path else bundle.get("source_sha256", ""),
+            "sceneHash": json_value_hash(scene_value),
+            "scene": scene_value,
+            "speakers": speakers,
+        }
+
+    artworks: List[Dict[str, Any]] = []
+    backgrounds: List[Dict[str, Any]] = []
+    for visual in bundle.get("visuals", {}).values():
+        if not isinstance(visual, Mapping) or visual.get("abstract"):
+            continue
+        if visual.get("kind") == "character" and isinstance(visual.get("character"), str):
+            character_id = str(visual["character"])
+            character_label = str(characters.get(character_id, {}).get("display_name", character_id))
+            visual_artworks = visual.get("artworks", {})
+            if isinstance(visual_artworks, Mapping) and visual_artworks:
+                for artwork_id, artwork in visual_artworks.items():
+                    if not isinstance(artwork, Mapping):
+                        continue
+                    artworks.append({
+                        "id": str(artwork_id),
+                        "visualId": str(visual.get("id", "")),
+                        "characterId": character_id,
+                        "characterLabel": character_label,
+                        "label": str(artwork.get("label", str(artwork_id).replace("_", " "))),
+                        "asset": artwork.get("asset"),
+                    })
+            elif isinstance(visual.get("fallback_asset"), str):
+                artworks.append({
+                    "id": "default",
+                    "visualId": str(visual.get("id", "")),
+                    "characterId": character_id,
+                    "characterLabel": character_label,
+                    "label": "기본 원화",
+                    "asset": visual.get("fallback_asset"),
+                })
+        if visual.get("kind") == "background" and isinstance(visual.get("variants"), Mapping):
+            for variant_id, variant in visual["variants"].items():
+                if not isinstance(variant, Mapping):
+                    continue
+                match = variant.get("match", {}) if isinstance(variant.get("match"), Mapping) else {}
+                details = [
+                    str(value)
+                    for dimension in ("locations", "times", "atmospheres")
+                    for value in (match.get(dimension, []) if isinstance(match.get(dimension), Sequence) else [])
+                ]
+                backgrounds.append({
+                    "visualId": str(visual.get("id", "")),
+                    "variantId": str(variant_id),
+                    "title": str(visual.get("title", visual.get("id", ""))),
+                    "details": " · ".join(details) or str(variant_id),
+                    "asset": variant.get("asset"),
+                })
+
+    return {
+        "schemaVersion": 1,
+        "days": [{"day": day, "scenes": grouped.get(day, [])} for day in range(1, total_days + 1)],
+        "scenes": scene_records,
+        "artworks": artworks,
+        "backgrounds": sorted(backgrounds, key=lambda item: (item["title"], item["variantId"])),
+        "atmospheres": list(bundle.get("enums", {}).get("atmosphere", [])),
+        "intents": list(bundle.get("enums", {}).get("intent", [])),
+    }
+
+
 def mobile_sync_snapshot(root: Path) -> Dict[str, Any]:
     """Return the narrow, path-free text catalog exposed to the mobile PWA.
 
@@ -855,28 +1011,160 @@ def mobile_sync_snapshot(root: Path) -> Dict[str, Any]:
             "linkedLocalizationKeys": linked_keys,
         })
 
+    workspace = mobile_scene_workspace(root, project)
     generation_source = "\n".join(
         f"{entry['localizationKey']}\0{entry['valueHash']}" for entry in entries
-    )
+    ) + "\n" + json.dumps(workspace, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "projectId": project_id,
         "projectTitle": str(settings.get("title", project_id)),
         "defaultLocale": default_locale,
         "generation": value_hash(generation_source),
         "entries": entries,
+        "workspace": workspace,
     }
+
+
+_MOBILE_MISSING = object()
+
+
+class MobileSceneConflict(RuntimeError):
+    pass
+
+
+def merge_mobile_scene(base: Any, edited: Any, current: Any, path: str = "scene") -> Any:
+    """Three-way merge a mobile scene edit onto the current authoritative scene."""
+    if edited == base:
+        return copy.deepcopy(current)
+    if current == base or current == edited:
+        return copy.deepcopy(edited)
+    if isinstance(base, Mapping) and isinstance(edited, Mapping) and isinstance(current, Mapping):
+        merged: Dict[str, Any] = {}
+        for key in set(base) | set(edited) | set(current):
+            base_value = base.get(key, _MOBILE_MISSING)
+            edited_value = edited.get(key, _MOBILE_MISSING)
+            current_value = current.get(key, _MOBILE_MISSING)
+            child_path = f"{path}.{key}"
+            if edited_value is _MOBILE_MISSING:
+                if current_value is _MOBILE_MISSING or current_value == base_value:
+                    continue
+                raise MobileSceneConflict(child_path)
+            if base_value is _MOBILE_MISSING:
+                if current_value is _MOBILE_MISSING or current_value == edited_value:
+                    merged[key] = copy.deepcopy(edited_value)
+                    continue
+                raise MobileSceneConflict(child_path)
+            if current_value is _MOBILE_MISSING:
+                if edited_value == base_value:
+                    continue
+                raise MobileSceneConflict(child_path)
+            merged[key] = merge_mobile_scene(base_value, edited_value, current_value, child_path)
+        return merged
+    # Lists are atomic because their ordering has story-graph meaning.
+    raise MobileSceneConflict(path)
+
+
+def apply_mobile_scene_changes(
+    root: Path,
+    raw_changes: Sequence[Any],
+    project_id: str,
+) -> List[Dict[str, Any]]:
+    receipts: List[Dict[str, Any]] = []
+    if len(raw_changes) > 10:
+        raise RuntimeError("mobile scene sync accepts 1-10 changes")
+    for raw in raw_changes:
+        if not isinstance(raw, Mapping):
+            raise RuntimeError("mobile scene sync change is invalid")
+        event_id = raw.get("eventId")
+        scene_id = raw.get("sceneId")
+        change_project_id = raw.get("projectId")
+        base_hash = raw.get("baseSceneHash")
+        next_hash = raw.get("nextSceneHash")
+        base_scene = raw.get("baseScene")
+        next_scene = raw.get("nextScene")
+        if not all(isinstance(value, str) for value in (
+            event_id, scene_id, change_project_id, base_hash, next_hash,
+        )) or not isinstance(base_scene, Mapping) or not isinstance(next_scene, Mapping):
+            raise RuntimeError("mobile scene sync change fields are invalid")
+        if not MOBILE_SYNC_EVENT_ID.fullmatch(event_id):
+            raise RuntimeError("mobile scene sync event id is invalid")
+        if change_project_id != project_id or base_scene.get("id") != scene_id or next_scene.get("id") != scene_id:
+            receipts.append({"eventId": event_id, "status": "rejected", "reason": "PROJECT_OR_SCENE_MISMATCH"})
+            continue
+        if not MOBILE_SYNC_HASH.fullmatch(base_hash) or not MOBILE_SYNC_HASH.fullmatch(next_hash) \
+                or json_value_hash(base_scene) != base_hash or json_value_hash(next_scene) != next_hash:
+            receipts.append({"eventId": event_id, "status": "rejected", "reason": "INVALID_SCENE_HASH"})
+            continue
+
+        project = cached_story_project(root)
+        runtime_scene = project.build_bundle().get("scenes", {}).get(scene_id)
+        source_scene = project.scenes.get(scene_id)
+        if not isinstance(runtime_scene, Mapping) or not isinstance(source_scene, Mapping):
+            receipts.append({"eventId": event_id, "status": "rejected", "reason": "UNKNOWN_SCENE"})
+            continue
+        current_scene = copy.deepcopy(dict(runtime_scene))
+        current_hash = json_value_hash(current_scene)
+        if current_hash == next_hash:
+            receipts.append({
+                "eventId": event_id,
+                "status": "applied",
+                "currentScene": current_scene,
+                "currentSceneHash": current_hash,
+                "idempotent": True,
+            })
+            continue
+        try:
+            merged = merge_mobile_scene(base_scene, next_scene, current_scene)
+        except MobileSceneConflict as conflict:
+            receipts.append({
+                "eventId": event_id,
+                "status": "conflict",
+                "reason": f"SCENE_CONFLICT:{conflict}",
+                "currentScene": current_scene,
+                "currentSceneHash": current_hash,
+            })
+            continue
+
+        target = Path(str(source_scene["_source"])).resolve()
+        result = save_scene(root, {"scene": merged, "revision": revision(target)})
+        if not result.get("saved"):
+            errors = [
+                str(issue.get("message", "")) for issue in result.get("issues", [])
+                if isinstance(issue, Mapping) and issue.get("severity") == "error"
+            ][:5]
+            receipts.append({
+                "eventId": event_id,
+                "status": "rejected",
+                "reason": "VALIDATION_FAILED" + (f": {' / '.join(errors)}" if errors else ""),
+                "currentScene": current_scene,
+                "currentSceneHash": current_hash,
+            })
+            continue
+        saved_scene = cached_story_project(root).build_bundle().get("scenes", {}).get(scene_id, merged)
+        receipts.append({
+            "eventId": event_id,
+            "status": "applied",
+            "currentScene": saved_scene,
+            "currentSceneHash": json_value_hash(saved_scene),
+        })
+    return receipts
 
 
 def apply_mobile_sync_changes(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
     """Apply mobile events using field-level CAS and the normal safe save path."""
 
     root = root.resolve()
-    raw_changes = payload.get("changes")
+    raw_changes = payload.get("changes", [])
+    raw_scene_changes = payload.get("sceneChanges", [])
     if not isinstance(raw_changes, Sequence) or isinstance(raw_changes, (str, bytes)):
         raise RuntimeError("mobile sync changes must be a list")
-    if not raw_changes or len(raw_changes) > MOBILE_SYNC_MAX_CHANGES:
-        raise RuntimeError(f"mobile sync accepts 1-{MOBILE_SYNC_MAX_CHANGES} changes")
+    if not isinstance(raw_scene_changes, Sequence) or isinstance(raw_scene_changes, (str, bytes)):
+        raise RuntimeError("mobile scene sync changes must be a list")
+    if not raw_changes and not raw_scene_changes:
+        raise RuntimeError("mobile sync payload has no changes")
+    if len(raw_changes) > MOBILE_SYNC_MAX_CHANGES:
+        raise RuntimeError(f"mobile sync accepts 1-{MOBILE_SYNC_MAX_CHANGES} text changes")
 
     snapshot = mobile_sync_snapshot(root)
     project_id = snapshot["projectId"]
@@ -1050,8 +1338,10 @@ def apply_mobile_sync_changes(root: Path, payload: Mapping[str, Any]) -> Dict[st
                     "details": issue_messages,
                 })
 
+    scene_receipts = apply_mobile_scene_changes(root, raw_scene_changes, project_id) if raw_scene_changes else []
     return {
         "receipts": receipts,
+        "sceneReceipts": scene_receipts,
         "snapshot": mobile_sync_snapshot(root),
     }
 

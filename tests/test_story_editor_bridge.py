@@ -17,6 +17,7 @@ from story_editor_bridge import (  # noqa: E402
     derive_state_contract,
     duplicate_event,
     duplicate_scene,
+    json_value_hash,
     load_project,
     mobile_sync_snapshot,
     revision,
@@ -550,6 +551,17 @@ class StoryEditorBridgeTests(unittest.TestCase):
         self.assertTrue(all("relativePath" not in entry and "fieldPath" not in entry for entry in snapshot["entries"]))
         self.assertTrue(all(value_hash(entry["value"]) == entry["valueHash"] for entry in snapshot["entries"]))
 
+    def test_mobile_scene_hash_matches_the_browser_canonical_json_contract(self):
+        fixture = {
+            "id": "scene.test",
+            "node_order": ["a", "b"],
+            "nodes": {"a": {"line": "안녕"}, "b": {"locked": True}},
+        }
+        self.assertEqual(
+            "14b38d06fa4be07a96d216959e360fa7e1f05cd4aac68cd21961fa2e85f45f3b",
+            json_value_hash(fixture),
+        )
+
     def test_mobile_sync_rebases_unrelated_file_revision_and_applies(self):
         temporary, root = self.make_project_copy()
         try:
@@ -618,6 +630,80 @@ class StoryEditorBridgeTests(unittest.TestCase):
             self.assertEqual("conflict", receipt["status"])
             self.assertEqual(local_value, receipt["currentValue"])
             self.assertEqual(local_value, story_text_owner(root, key)["currentValue"])
+        finally:
+            temporary.cleanup()
+
+    def test_mobile_scene_sync_three_way_merges_unrelated_mac_edit(self):
+        temporary, root = self.make_project_copy()
+        try:
+            snapshot = mobile_sync_snapshot(root)
+            record = snapshot["workspace"]["scenes"]["seo_a.email_request"]
+            base_scene = copy.deepcopy(record["scene"])
+            mobile_scene = copy.deepcopy(base_scene)
+            mobile_scene["nodes"]["request"]["perceived"]["line"] = "휴대폰에서 고친 요청 대사입니다."
+            mobile_scene["nodes"]["request"]["reality"]["line"] = "휴대폰에서 고친 요청 대사입니다."
+
+            mac_scene = copy.deepcopy(base_scene)
+            mac_scene["title"] = "Mac에서 바꾼 장면 제목"
+            source = StoryProject(root / "story").scenes[mac_scene["id"]]
+            saved = save_scene(root, {
+                "scene": mac_scene,
+                "revision": revision(Path(source["_source"])),
+            })
+            self.assertTrue(saved["saved"])
+
+            result = apply_mobile_sync_changes(root, {
+                "changes": [],
+                "sceneChanges": [{
+                    "eventId": "scene_merge_event_0001",
+                    "projectId": "love_office_story_1",
+                    "sceneId": base_scene["id"],
+                    "baseSceneHash": json_value_hash(base_scene),
+                    "nextSceneHash": json_value_hash(mobile_scene),
+                    "baseScene": base_scene,
+                    "nextScene": mobile_scene,
+                }],
+            })
+
+            self.assertEqual("applied", result["sceneReceipts"][0]["status"])
+            merged = result["snapshot"]["workspace"]["scenes"][base_scene["id"]]["scene"]
+            self.assertEqual("Mac에서 바꾼 장면 제목", merged["title"])
+            self.assertEqual("휴대폰에서 고친 요청 대사입니다.", merged["nodes"]["request"]["reality"]["line"])
+        finally:
+            temporary.cleanup()
+
+    def test_mobile_scene_sync_reports_overlapping_field_conflict(self):
+        temporary, root = self.make_project_copy()
+        try:
+            snapshot = mobile_sync_snapshot(root)
+            base_scene = copy.deepcopy(snapshot["workspace"]["scenes"]["seo_a.email_request"]["scene"])
+            mobile_scene = copy.deepcopy(base_scene)
+            mobile_scene["purpose"] = "휴대폰에서 바꾼 목적"
+            mac_scene = copy.deepcopy(base_scene)
+            mac_scene["purpose"] = "Mac에서 바꾼 목적"
+            source = StoryProject(root / "story").scenes[mac_scene["id"]]
+            self.assertTrue(save_scene(root, {
+                "scene": mac_scene,
+                "revision": revision(Path(source["_source"])),
+            })["saved"])
+
+            result = apply_mobile_sync_changes(root, {
+                "changes": [],
+                "sceneChanges": [{
+                    "eventId": "scene_conflict_event_01",
+                    "projectId": "love_office_story_1",
+                    "sceneId": base_scene["id"],
+                    "baseSceneHash": json_value_hash(base_scene),
+                    "nextSceneHash": json_value_hash(mobile_scene),
+                    "baseScene": base_scene,
+                    "nextScene": mobile_scene,
+                }],
+            })
+
+            receipt = result["sceneReceipts"][0]
+            self.assertEqual("conflict", receipt["status"])
+            self.assertIn("scene.purpose", receipt["reason"])
+            self.assertEqual("Mac에서 바꾼 목적", receipt["currentScene"]["purpose"])
         finally:
             temporary.cleanup()
 

@@ -350,9 +350,7 @@ async fn load_project(state: tauri::State<'_, EditorState>, root: String) -> Res
 /// It never accepts a filesystem path and can only read the project that the
 /// local editor already opened and approved.
 #[tauri::command]
-async fn mobile_sync_snapshot(
-    state: tauri::State<'_, EditorState>,
-) -> Result<Value, String> {
+async fn mobile_sync_snapshot(state: tauri::State<'_, EditorState>) -> Result<Value, String> {
     let root = active_root(&state)?;
     let commit_lock = project_commit_lock(&state, &root)?;
     let worker = project_worker(&state, &root)?;
@@ -364,7 +362,8 @@ async fn mobile_sync_snapshot(
 #[tauri::command]
 async fn apply_mobile_sync_changes(
     state: tauri::State<'_, EditorState>,
-    changes: Value,
+    changes: Option<Value>,
+    scene_changes: Option<Value>,
 ) -> Result<Value, String> {
     let root = active_root(&state)?;
     let commit_lock = project_commit_lock(&state, &root)?;
@@ -372,7 +371,10 @@ async fn apply_mobile_sync_changes(
     run_bridge_background(
         worker,
         "apply-sync",
-        Some(json!({ "changes": changes })),
+        Some(json!({
+            "changes": changes.unwrap_or_else(|| json!([])),
+            "sceneChanges": scene_changes.unwrap_or_else(|| json!([])),
+        })),
         Some(commit_lock),
     )
     .await
