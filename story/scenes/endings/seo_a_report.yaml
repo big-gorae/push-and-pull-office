@@ -29,14 +29,25 @@ nodes:
   - id: leave_request
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: dread
       expression: subjective_shy
-      line: "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
+      line: "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
     reality:
       atmosphere: dread
       expression: actual_tense
-      line: "제 주소를 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
+      line: "같은 건물인 건 알았어도, 제 호수는 어떻게 알았어요? 여기까지 찾아오지 마세요. 돌아가세요."
       intent: self_protection
     next: leave_request_inner
 
@@ -47,6 +58,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: dread
       line: (갑작스러운 고백이라 놀란 거겠지. 사람들 눈 때문에 마음에도 없는 말을 하는 거야.)
@@ -73,6 +91,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: dread
       line: (기록을 보면 다들 내가 얼마나 진지하게 사랑했는지 알게 될 거야.)
@@ -83,7 +104,12 @@ nodes:
     next: mugshot
   - id: mugshot
     kind: dual_narration
-    presentation_flags: [ui_label_reveal]
+    presentation_flags: [ui_label_reveal, protagonist_art_reveal]
+    stage:
+      perceived:
+        - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
+      reality:
+        - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
     perceived:
       atmosphere: dread
       line: "플래시 속에는 사랑을 오해받은, 단정하고 훤칠한 중년 남자가 서 있었다."
@@ -100,6 +126,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: dread
       line: (이 사진이 언젠가 서아에게 내 억울함을 증명해 주겠지.)
@@ -143,6 +172,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: cold_office
       line: (회사는 끝내 우리 관계를 지켜 주지 않고 나를 배신했군.)
@@ -170,6 +202,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: dread
       line: (두 번의 사랑이 모두 주변의 오해 때문에 망가진 거야.)

@@ -1,0 +1,14 @@
+schema_version: 1
+id: background.officetel_elevator_lobby
+kind: background
+extends: archetype.background
+title_key: visual.background.officetel_elevator_lobby.title
+title: 오피스텔 엘리베이터 로비
+variants:
+  evening:
+    asset: assets/backgrounds/officetel/elevator-lobby-evening.png
+    match:
+      locations: [officetel_elevator_lobby]
+      times: [evening, night]
+    priority: 120
+tags: [officetel, residential, elevator, evening]

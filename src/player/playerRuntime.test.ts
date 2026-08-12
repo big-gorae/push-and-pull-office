@@ -16,6 +16,7 @@ import {
   finishSelfDevelopmentNight,
   selectSelfDevelopmentActivity,
   selectOption,
+  settleSession,
   startTimelineEvent,
   type PlayerSession,
 } from "./playerRuntime";
@@ -56,6 +57,33 @@ function advanceMeaningfulMoment(value: PlayerSession): PlayerSession {
 }
 
 describe("web player campaign runtime", () => {
+  it("keeps a silent screen presentable and advances without a backlog line", () => {
+    const copy = structuredClone(runtime);
+    const scene = copy.scenes["seo_a.email_request"];
+    scene.nodes.silent_view = {
+      id: "silent_view",
+      kind: "silent",
+      perceived: { atmosphere: "dread", line: "" },
+      reality: { atmosphere: "dread", line: "" },
+      stage: { perceived: [], reality: [] },
+      next: "request",
+    };
+    scene.node_order.unshift("silent_view");
+    scene.start_node = "silent_view";
+
+    const session = createSession(copy, "seo_a");
+    session.phase = "scene";
+    session.sceneId = scene.id;
+    session.nodeId = "silent_view";
+    const settled = settleSession(copy, session);
+    expect(currentNode(copy, settled)?.kind).toBe("silent");
+
+    const advanced = advanceSession(copy, settled);
+    expect(advanced.nodeId).toBe("request");
+    expect(advanced.backlog).toEqual([]);
+    expect(advanced.readNodes).toContain(`${scene.id}:silent_view`);
+  });
+
   it("starts at day one and advances only to meaningful timeline moments", () => {
     let session = createCampaignSession(runtime, "base");
     const initialHidden = structuredClone(session.state.hidden);
@@ -70,8 +98,14 @@ describe("web player campaign runtime", () => {
     session = advanceToNextMoment(runtime, session);
     expect(session.phase).toBe("scene");
     expect(session.sceneId).toBe("common.day_01_parent_pressure");
-    expect(session.state.progress.time).toMatchObject({ day: 1, slot: "after_work" });
+    expect(session.state.progress.time).toMatchObject({ day: 1, slot: "afternoon" });
     expect(session.state.progress.events.seen).toContain("anchor.day_01_parent_pressure");
+    session = finishCurrentScene(session);
+    expect(session.phase).toBe("timeline");
+    session = advanceToNextMoment(runtime, session);
+    expect(session.phase).toBe("scene");
+    expect(session.sceneId).toBe("common.day_01_officetel_seo_a_reveal");
+    expect(session.state.progress.events.seen).toContain("anchor.day_01_officetel_seo_a_reveal");
     session = finishCurrentScene(session);
     expect(session.phase).toBe("timeline");
     expect(session.choices).toHaveLength(0);
@@ -118,6 +152,7 @@ describe("web player campaign runtime", () => {
     }
     expect(weekOneCallbackScenes).toEqual([
       "common.day_03_business_trip_or_cafe",
+      "common.day_03_officetel_min_kyung_move_in",
       "common.day_04_weekend_encounter",
       "common.day_05_weekend_reflection",
     ]);
@@ -279,6 +314,7 @@ describe("web player campaign runtime", () => {
     session.state.progress.events.seen = [
       "anchor.day_01_company_meeting",
       "anchor.day_01_parent_pressure",
+      "anchor.day_01_officetel_seo_a_reveal",
     ];
     session.state.progress.flags.push_pull = {
       combo: 2,

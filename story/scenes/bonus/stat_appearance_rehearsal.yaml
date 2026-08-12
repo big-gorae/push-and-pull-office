@@ -26,6 +26,17 @@ nodes:
   - id: yoo_jin_request
     kind: dual_dialogue
     speaker: kang_yoo_jin
+    stage:
+      perceived:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_bold_flirt
@@ -40,6 +51,9 @@ nodes:
   - id: do_yoon_stands
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -54,6 +68,17 @@ nodes:
   - id: yoo_jin_adjusts
     kind: dual_dialogue
     speaker: kang_yoo_jin
+    stage:
+      perceived:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_bold_flirt
@@ -81,7 +106,10 @@ nodes:
     presentation_flags: [inner_voice]
     speakers:
       perceived: han_do_yoon
-      reality: null
+      reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: playful_tension
       line: (매일 관리한 결과는 이런 순간에 드러난다. 유진의 시선이 내게 머문 장면도 수집해 둘 가치가 있다.)

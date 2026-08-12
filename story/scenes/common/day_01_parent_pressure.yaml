@@ -32,6 +32,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       line: (프로젝트 시작한 날인 걸 기억하고 먼저 전화하셨네.)
@@ -58,6 +61,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (그래, 내가 마음만 먹으면 괜찮은 사람쯤은 금방 만나지.)
@@ -69,6 +75,9 @@ nodes:
   - id: do_yoon_deflects
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -87,6 +96,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (못 만나는 게 아니라 일이 바빠서 아직 고르지 않은 거라고.)
@@ -113,6 +125,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (일만 하기엔 내가 좀 아깝다는 말씀이시군.)
@@ -124,6 +139,9 @@ nodes:
   - id: do_yoon_answers
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -142,6 +160,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (걱정은 받아들이되, 사람은 신중하게 고르는 어른답게 말했어.)
@@ -168,6 +189,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (결국 내가 마음만 열면 관계는 자연스럽게 시작된다는 뜻이네.)
@@ -179,6 +203,9 @@ nodes:
   - id: end_call
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -197,6 +224,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (부모님도 안심시켰고, 내 삶은 내가 정한다는 것도 잘 보여 드렸어.)
@@ -223,6 +253,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (서아 씨와 차 대리라… 나와 잘 맞을 가능성은 서로 다르겠군.)
@@ -249,6 +282,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (작은 것까지 챙겨 주는 사람이라면 함께 있을 때 편하겠지.)
@@ -275,6 +311,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: cha_min_kyung
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (내 능력을 바로 알아볼 만큼 눈이 높고, 나와 대등하게 설 사람일지도 몰라.)
@@ -286,6 +325,9 @@ nodes:
   - id: decision
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -304,6 +346,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (성급하게 정할 필요는 없어. 어떤 사람들인지 천천히 보면 되겠지.)
@@ -330,6 +375,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       line: (서두르진 말자. 그래도 괜찮은 가능성을 그냥 놓칠 필요는 없지.)

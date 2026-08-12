@@ -1,0 +1,14 @@
+schema_version: 1
+id: background.officetel_unit_corridor
+kind: background
+extends: archetype.background
+title_key: visual.background.officetel_unit_corridor.title
+title: 오피스텔 현관 복도
+variants:
+  move_in_evening:
+    asset: assets/backgrounds/officetel/unit-corridor-move-in-evening.png
+    match:
+      locations: [officetel_unit_corridor]
+      times: [evening, night]
+    priority: 120
+tags: [officetel, residential, corridor, move_in, evening]

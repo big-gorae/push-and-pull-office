@@ -4,7 +4,7 @@ export type JsonValue = string | number | boolean | null | JsonValue[] | { [key:
 export type DeepPartial<T> = T extends Array<infer Item>
   ? Array<DeepPartial<Item>>
   : T extends object ? { [Key in keyof T]?: DeepPartial<T[Key]> } : T;
-export type NodeKind = "dual_dialogue" | "dual_narration" | "choice" | "state_gate" | "effect" | "exit";
+export type NodeKind = "dual_dialogue" | "dual_narration" | "silent" | "choice" | "state_gate" | "effect" | "exit";
 export type GameModeId = "base" | "truth_view" | "survivor_view";
 export type ViewLayer = "perceived" | "reality";
 /** @deprecated Use ViewLayer. Kept temporarily for editor-facing compatibility. */
@@ -26,6 +26,7 @@ export type EventAvailability = "automatic" | "player" | "hidden";
 export type LocaleId = string;
 export type VisualKind = "background_archetype" | "background" | "character_archetype" | "character";
 export type StagePosition = "far_left" | "left" | "center" | "right" | "far_right";
+export type ArtworkPosition = "left" | "center" | "right";
 
 export type Condition = {
   path: string;
@@ -83,9 +84,6 @@ export type SelfDevelopmentExpression = {
 
 export type SelfDevelopmentActivity = {
   id: string;
-  title_key: string;
-  description_key: string;
-  reflection_keys: Record<ViewMode, string>;
   selectable?: boolean;
   appeal_delta: number;
   fatigue_delta: number;
@@ -93,6 +91,21 @@ export type SelfDevelopmentActivity = {
   fatigue_lte?: number;
   fatigue_gte?: number;
   hint_charge?: number;
+};
+
+export type SystemFlowOption = {
+  id: string;
+  label: string;
+  description: string;
+};
+
+export type SystemFlow = {
+  schema_version: number;
+  id: string;
+  title: string;
+  node_order: string[];
+  nodes: Record<string, StoryNode>;
+  options?: SystemFlowOption[];
 };
 
 export type SelfDevelopmentConfig = {
@@ -175,7 +188,20 @@ export type StoryNode = {
   transitions?: Transition[];
   effects?: Effect[];
   presentation_flags?: string[];
+  stage?: Partial<Record<ViewMode, StageCharacterCue[]>>;
   next?: string;
+};
+
+export type StageCharacterCue = {
+  position: ArtworkPosition;
+  character: string;
+  visual_id: string;
+  artwork: string;
+};
+
+export type SceneBackgroundCue = {
+  visual_id: string;
+  variant_id: string;
 };
 
 export type Scene = {
@@ -187,6 +213,7 @@ export type Scene = {
   sequence?: number;
   location?: string;
   time?: string;
+  default_background?: SceneBackgroundCue;
   purpose: string;
   cast: string[];
   world_context?: {
@@ -369,6 +396,7 @@ export type LocalizationEntry = {
     | "thread"
     | "route"
     | "scene"
+    | "system_flow"
     | "meta"
     | "visual"
     | "world"
@@ -381,6 +409,7 @@ export type LocalizationEntry = {
   };
   context: {
     sceneId?: string;
+    flowId?: string;
     nodeId?: string;
     variantId?: string;
     optionId?: string;
@@ -421,6 +450,14 @@ export type VisualVariant = {
   priority: number;
 };
 
+export type CharacterArtwork = {
+  asset: string;
+  label?: string;
+  outfits?: string[];
+  poses?: string[];
+  expression_assets?: Record<string, string>;
+};
+
 export type VisualObject = {
   schema_version: number;
   id: string;
@@ -431,6 +468,8 @@ export type VisualObject = {
   title?: string;
   render_strategy?: "flat_portrait" | "layered_sprite" | "background";
   character?: string;
+  default_artwork?: string;
+  artworks?: Record<string, CharacterArtwork>;
   fallback_asset?: string;
   default_reality_expression?: string;
   default_outfit?: string;
@@ -458,6 +497,7 @@ export type ResolvedCharacterVisual = {
   character: string;
   asset: string;
   expression?: string;
+  artwork?: string;
   outfit?: string;
   pose?: string;
   position: StagePosition;
@@ -518,6 +558,7 @@ export type Runtime = {
   meta: Record<string, MetaDocument>;
   routes: Record<string, Route>;
   scenes: Record<string, Scene>;
+  system_flows: Record<string, SystemFlow>;
   world?: {
     entities: Record<string, {
       id: string;
@@ -559,6 +600,7 @@ export type ProjectPayload = {
     meta: Record<string, DocumentMeta>;
     routes: Record<string, DocumentMeta>;
     scenes: Record<string, DocumentMeta>;
+    system_flows: Record<string, DocumentMeta>;
   };
   issues: ValidationIssue[];
 };

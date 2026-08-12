@@ -53,73 +53,304 @@ nodes:
   - id: day_one_activity_reaction
     kind: dual_dialogue
     speaker: han_do_yoon
-    perceived:
-      atmosphere: procedural
-      expression: subjective_confident
-      line: "오늘도 잘 부탁합니다. 참석자표부터 볼까요?"
-    reality:
-      atmosphere: procedural
-      expression: actual_waiting_smile
-      line: "오늘도 잘 부탁합니다. 참석자표부터 볼까요?"
-      intent: work_only
-    self_development_template:
-      source: last_activity
-      perceived:
-        atmosphere: warm_romance
-        line: "오늘도 잘 부탁합니다. {{office_pitch}} 그럼 참석자표부터 볼까요?"
-      reality:
-        line: "오늘도 잘 부탁합니다. {{office_pitch}} 그럼 참석자표부터 볼까요?"
-        intent: self_promotion
+    stage:
+      perceived: []
+      reality: []
     next: day_one_activity_response
 
+    variants:
+      - id: after_workout
+        priority: 100
+        self_development:
+          expression: feedback.last_workout
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_confident
+          line: 오늘도 잘 부탁합니다. 요즘 운동을 다시 시작했습니다. 앉아 있는 시간이 길어서 건강부터 챙기려고요. 그럼 참석자표부터 볼까요?
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 오늘도 잘 부탁합니다. 요즘 운동을 다시 시작했습니다. 앉아 있는 시간이 길어서 건강부터 챙기려고요. 그럼 참석자표부터 볼까요?
+          intent: self_promotion
+      - id: after_reading
+        priority: 90
+        self_development:
+          expression: feedback.last_reading
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_confident
+          line: 오늘도 잘 부탁합니다. 요즘 《말보다 맥락》이라는 책을 읽고 있습니다. 상대가 정한 선을 먼저 이해해야 대화도 된다는 대목이 기억에 남더군요. 그럼 참석자표부터 볼까요?
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 오늘도 잘 부탁합니다. 요즘 《말보다 맥락》이라는 책을 읽고 있습니다. 상대가 정한 선을 먼저 이해해야 대화도 된다는 대목이 기억에 남더군요. 그럼 참석자표부터 볼까요?
+          intent: self_promotion
+      - id: after_ott
+        priority: 80
+        self_development:
+          expression: feedback.last_ott
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_confident
+          line: 오늘도 잘 부탁합니다. 요즘 다들 《퇴근은 내일》이라는 회사 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. 요즘 화제 정도는 알아둬야 할 것 같아서요. 그럼 참석자표부터 볼까요?
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 오늘도 잘 부탁합니다. 요즘 다들 《퇴근은 내일》이라는 회사 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. 요즘 화제 정도는 알아둬야 할 것 같아서요. 그럼 참석자표부터 볼까요?
+          intent: self_promotion
+      - id: after_sleep
+        priority: 70
+        self_development:
+          expression: feedback.last_sleep
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_confident
+          line: 오늘도 잘 부탁합니다. 요즘은 늦게까지 깨어 있는 시간을 줄이고 아침 컨디션을 챙겨 보려고 합니다. 집중력 관리도 실력이라고 생각해서요. 그럼 참석자표부터 볼까요?
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 오늘도 잘 부탁합니다. 요즘은 늦게까지 깨어 있는 시간을 줄이고 아침 컨디션을 챙겨 보려고 합니다. 집중력 관리도 실력이라고 생각해서요. 그럼 참석자표부터 볼까요?
+          intent: self_promotion
+      - id: after_dark_psychology
+        priority: 60
+        self_development:
+          expression: feedback.last_dark_psychology
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_confident
+          line: 오늘도 잘 부탁합니다. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 말보다 타이밍을 먼저 읽으라는 대목이 기억에 남더군요. 그럼 참석자표부터 볼까요?
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 오늘도 잘 부탁합니다. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 말보다 타이밍을 먼저 읽으라는 대목이 기억에 남더군요. 그럼 참석자표부터 볼까요?
+          intent: self_promotion
+      - id: after_solo_drinking
+        priority: 50
+        self_development:
+          expression: feedback.last_solo_drinking
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_confident
+          line: 오늘도 잘 부탁합니다. 어제는 너무 피곤해서 혼자 한잔하고 바로 잤습니다. 오늘은 정신을 좀 차려야겠군요. 그럼 참석자표부터 볼까요?
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 오늘도 잘 부탁합니다. 어제는 너무 피곤해서 혼자 한잔하고 바로 잤습니다. 오늘은 정신을 좀 차려야겠군요. 그럼 참석자표부터 볼까요?
+          intent: self_promotion
+      - id: default
+        default: true
+        perceived:
+          atmosphere: procedural
+          expression: subjective_confident
+          line: "오늘도 잘 부탁합니다. 참석자표부터 볼까요?"
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: "오늘도 잘 부탁합니다. 참석자표부터 볼까요?"
+          intent: work_only
   - id: day_one_activity_response
     kind: dual_dialogue
     speaker: yoon_seo_a
-    perceived:
-      atmosphere: procedural
-      expression: subjective_shy
-      line: "아, 네. 참석자표는 여기 있습니다."
-    reality:
-      atmosphere: procedural
-      expression: actual_social_smile
-      line: "아, 네. 참석자표는 여기 있습니다."
-      intent: work_only
-    self_development_template:
-      source: last_activity
+    stage:
       perceived:
-        atmosphere: warm_romance
-        line: "아, {{acknowledgement}} 참석자표는 여기 있습니다."
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
       reality:
-        line: "아, {{acknowledgement}} 참석자표는 여기 있습니다."
-        intent: courtesy
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     next: day_one_activity_reaction_inner
 
+    variants:
+      - id: after_workout
+        priority: 100
+        self_development:
+          expression: feedback.last_workout
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_shy
+          line: 아, 운동을 다시 시작하셨군요. 참석자표는 여기 있습니다.
+        reality:
+          atmosphere: procedural
+          expression: actual_social_smile
+          line: 아, 운동을 다시 시작하셨군요. 참석자표는 여기 있습니다.
+          intent: courtesy
+      - id: after_reading
+        priority: 90
+        self_development:
+          expression: feedback.last_reading
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_shy
+          line: 아, 요즘 책을 읽고 계시는군요. 참석자표는 여기 있습니다.
+        reality:
+          atmosphere: procedural
+          expression: actual_social_smile
+          line: 아, 요즘 책을 읽고 계시는군요. 참석자표는 여기 있습니다.
+          intent: courtesy
+      - id: after_ott
+        priority: 80
+        self_development:
+          expression: feedback.last_ott
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_shy
+          line: 아, 《퇴근은 내일》을 보셨군요. 참석자표는 여기 있습니다.
+        reality:
+          atmosphere: procedural
+          expression: actual_social_smile
+          line: 아, 《퇴근은 내일》을 보셨군요. 참석자표는 여기 있습니다.
+          intent: courtesy
+      - id: after_sleep
+        priority: 70
+        self_development:
+          expression: feedback.last_sleep
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_shy
+          line: 아, 생활 리듬을 챙기시는군요. 참석자표는 여기 있습니다.
+        reality:
+          atmosphere: procedural
+          expression: actual_social_smile
+          line: 아, 생활 리듬을 챙기시는군요. 참석자표는 여기 있습니다.
+          intent: courtesy
+      - id: after_dark_psychology
+        priority: 60
+        self_development:
+          expression: feedback.last_dark_psychology
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_shy
+          line: 아, 요즘 관계 심리 강의를 보고 계시는군요. 참석자표는 여기 있습니다.
+        reality:
+          atmosphere: procedural
+          expression: actual_social_smile
+          line: 아, 요즘 관계 심리 강의를 보고 계시는군요. 참석자표는 여기 있습니다.
+          intent: courtesy
+      - id: after_solo_drinking
+        priority: 50
+        self_development:
+          expression: feedback.last_solo_drinking
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_shy
+          line: 아, 어제 많이 피곤하셨나 봐요. 참석자표는 여기 있습니다.
+        reality:
+          atmosphere: procedural
+          expression: actual_social_smile
+          line: 아, 어제 많이 피곤하셨나 봐요. 참석자표는 여기 있습니다.
+          intent: courtesy
+      - id: default
+        default: true
+        perceived:
+          atmosphere: procedural
+          expression: subjective_shy
+          line: "아, 네. 참석자표는 여기 있습니다."
+        reality:
+          atmosphere: procedural
+          expression: actual_social_smile
+          line: "아, 네. 참석자표는 여기 있습니다."
+          intent: work_only
   - id: day_one_activity_reaction_inner
     kind: dual_dialogue
     presentation_flags: [inner_voice]
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
-    perceived:
-      atmosphere: procedural
-      line: (첫 실무 회의부터 대화가 자연스럽군.)
-    reality:
-      atmosphere: procedural
-      line: (참석자표를 건네고 바로 발표를 준비하자.)
-      intent: work_only
-    self_development_template:
-      source: last_activity
-      perceived:
-        atmosphere: warm_romance
-        line: "(내가 먼저 화제를 꺼내니 자연스럽게 받아 줬어. {{perceived_self_image}})"
+    stage:
+      perceived: []
       reality:
-        line: "({{reality_response_thought}} 일단 맞장구치고 참석자표부터 드리자.)"
-        intent: courtesy
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     next: agenda
 
+    variants:
+      - id: after_workout
+        priority: 100
+        self_development:
+          expression: feedback.last_workout
+        perceived:
+          atmosphere: warm_romance
+          line: (내가 먼저 화제를 꺼내니 자연스럽게 받아 줬어. 꾸준히 자기관리하는 사람이라는 인상은 남았겠지.)
+        reality:
+          atmosphere: procedural
+          line: (과장님이 운동을 다시 시작했다는 말을 먼저 꺼내셨네. 일단 맞장구치고 참석자표부터 드리자.)
+          intent: courtesy
+      - id: after_reading
+        priority: 90
+        self_development:
+          expression: feedback.last_reading
+        perceived:
+          atmosphere: warm_romance
+          line: (내가 먼저 화제를 꺼내니 자연스럽게 받아 줬어. 말의 맥락까지 읽는 사람이라는 인상은 남았겠지.)
+        reality:
+          atmosphere: procedural
+          line: (과장님이 전날 읽은 책을 대화 소재로 먼저 꺼내셨네. 일단 맞장구치고 참석자표부터 드리자.)
+          intent: courtesy
+      - id: after_ott
+        priority: 80
+        self_development:
+          expression: feedback.last_ott
+        perceived:
+          atmosphere: warm_romance
+          line: (내가 먼저 화제를 꺼내니 자연스럽게 받아 줬어. 세대가 다른 사람과도 화제를 맞출 줄 안다는 인상은 남았겠지.)
+        reality:
+          atmosphere: procedural
+          line: (과장님이 전날 본 코미디를 대화 소재로 먼저 꺼내셨네. 일단 맞장구치고 참석자표부터 드리자.)
+          intent: courtesy
+      - id: after_sleep
+        priority: 70
+        self_development:
+          expression: feedback.last_sleep
+        perceived:
+          atmosphere: warm_romance
+          line: (내가 먼저 화제를 꺼내니 자연스럽게 받아 줬어. 자기 리듬을 관리할 줄 아는 사람으로 보였겠지.)
+        reality:
+          atmosphere: procedural
+          line: (과장님이 생활 리듬을 챙겨 보겠다는 말을 먼저 꺼내셨네. 일단 맞장구치고 참석자표부터 드리자.)
+          intent: courtesy
+      - id: after_dark_psychology
+        priority: 60
+        self_development:
+          expression: feedback.last_dark_psychology
+        perceived:
+          atmosphere: warm_romance
+          line: (내가 먼저 화제를 꺼내니 자연스럽게 받아 줬어. 상대의 마음을 체계적으로 공부하는 사람이라는 인상은 남았겠지.)
+        reality:
+          atmosphere: procedural
+          line: (과장님이 관계를 통제하는 내용의 책과 강의를 먼저 꺼내셨네. 일단 맞장구치고 참석자표부터 드리자.)
+          intent: courtesy
+      - id: after_solo_drinking
+        priority: 50
+        self_development:
+          expression: feedback.last_solo_drinking
+        perceived:
+          atmosphere: warm_romance
+          line: (내가 먼저 화제를 꺼내니 자연스럽게 받아 줬어. 흐트러진 날도 솔직하게 인정하는 사람으로 보였겠지.)
+        reality:
+          atmosphere: procedural
+          line: (과장님이 피곤해서 혼자 술을 마셨다는 이야기까지 먼저 꺼내셨네. 일단 맞장구치고 참석자표부터 드리자.)
+          intent: courtesy
+      - id: default
+        default: true
+        perceived:
+          atmosphere: procedural
+          line: (첫 실무 회의부터 대화가 자연스럽군.)
+        reality:
+          atmosphere: procedural
+          line: (참석자표를 건네고 바로 발표를 준비하자.)
+          intent: work_only
   - id: agenda
     kind: dual_dialogue
     speaker: member.jeong_da_eun
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       line: "윤서아 사원의 홈카페 제품 구성 발표 뒤에 백화점 입점 승인 일정과 디자인 버전을 확인하겠습니다."
@@ -132,6 +363,17 @@ nodes:
   - id: seo_a_begins
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_shy
@@ -146,6 +388,17 @@ nodes:
   - id: wrong_slide
     kind: dual_dialogue
     speaker: kang_yoo_jin
+    stage:
+      perceived:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_bold_flirt
@@ -160,6 +413,17 @@ nodes:
   - id: seo_a_freezes
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_shy
@@ -177,6 +441,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       line: (당황해서 나를 보는군. 이럴 때 어떻게 잡아 주느냐가 중요하지.)
@@ -191,7 +462,10 @@ nodes:
     presentation_flags: [inner_voice]
     speakers:
       perceived: han_do_yoon
-      reality: null
+      reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: playful_tension
       line: (그 강의에서는 상대가 멈춘 순간, 내가 하고 싶은 말보다 방금 보인 반응부터 증거로 삼으랬지. 서아는 사과한 뒤 말을 잇지 못했고, 민경은 아직 안건을 기다리고 있다.)
@@ -264,6 +538,9 @@ nodes:
   - id: empathy_do_yoon
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -278,6 +555,17 @@ nodes:
   - id: empathy_seo_a
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
@@ -295,6 +583,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       line: (역시 마음을 먼저 알아주니 바로 나에게 부탁하는군.)
@@ -307,6 +602,17 @@ nodes:
   - id: empathy_min_kyung
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -321,6 +627,17 @@ nodes:
   - id: gratitude_empathy
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
@@ -335,6 +652,9 @@ nodes:
   - id: facts_do_yoon
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: playful_tension
       expression: subjective_confident
@@ -349,6 +669,17 @@ nodes:
   - id: facts_min_kyung
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -366,6 +697,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: cha_min_kyung
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       line: (내가 범위와 답을 내놓으니 차 대리도 바로 호흡을 맞추는군.)
@@ -378,6 +716,17 @@ nodes:
   - id: facts_seo_a
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_shy
@@ -392,6 +741,17 @@ nodes:
   - id: gratitude_facts
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
@@ -406,6 +766,9 @@ nodes:
   - id: roles_do_yoon
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -420,6 +783,17 @@ nodes:
   - id: roles_seo_a
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
@@ -434,6 +808,17 @@ nodes:
   - id: roles_min_kyung
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -448,6 +833,17 @@ nodes:
   - id: gratitude_roles
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_relieved_smile
@@ -462,6 +858,9 @@ nodes:
   - id: takeover_do_yoon
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       expression: subjective_confident
@@ -476,6 +875,17 @@ nodes:
   - id: takeover_min_kyung
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -490,6 +900,17 @@ nodes:
   - id: takeover_seo_a
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_shy
@@ -507,6 +928,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       line: (말은 못 해도 내가 나서 준 게 든든했겠지.)
@@ -519,6 +947,17 @@ nodes:
   - id: gratitude_takeover
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: guarded_office
       expression: subjective_shy
@@ -536,6 +975,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (다음에는 먼저 물어보라니, 내 도움을 계속 기대한다는 뜻이군.)
@@ -551,6 +993,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (과장님이 계셔서 다행이었다라. 첫 위기부터 나를 특별히 의식하기 시작했군.)
@@ -574,6 +1019,17 @@ nodes:
   - id: yoo_jin_records
     kind: dual_dialogue
     speaker: kang_yoo_jin
+    stage:
+      perceived:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_bold_flirt

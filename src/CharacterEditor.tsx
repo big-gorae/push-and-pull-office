@@ -1,5 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useAssetPreview } from "./assetPreview";
+import { nextHistoryGroup, shouldCaptureHistory, type EditHistoryGroup } from "./editorPerformance";
 import { clone } from "./storyLogic";
 import type { Character, DocumentActivity, JsonValue, ProjectPayload, Runtime, ValidationIssue, ViewMode } from "./types";
 
@@ -90,9 +92,10 @@ export default function CharacterEditor({ active, payload, onPayload, onIssues, 
   const [saveError, setSaveError] = useState(false);
   const [savedAt, setSavedAt] = useState<number>();
   const [history, setHistory] = useState<CharacterHistory>({ past: [], future: [] });
-  const [image, setImage] = useState("");
   const [newExpressionId, setNewExpressionId] = useState("");
-  const lastAutoSaveAttempt = useRef("");
+  const lastAutoSaveAttempt = useRef(-1);
+  const draftVersionRef = useRef(0);
+  const historyGroupRef = useRef<EditHistoryGroup | null>(null);
   const initialRecoveryChecked = useRef(false);
   const handledRequestToken = useRef(0);
 
@@ -127,6 +130,9 @@ export default function CharacterEditor({ active, payload, onPayload, onIssues, 
     setDirty(recovered);
     setSaveError(false);
     setHistory({ past: [], future: [] });
+    historyGroupRef.current = null;
+    draftVersionRef.current = 0;
+    lastAutoSaveAttempt.current = -1;
     setNewExpressionId("");
   };
 
@@ -143,8 +149,16 @@ export default function CharacterEditor({ active, payload, onPayload, onIssues, 
   }, [active, requestedCharacter?.token]);
 
   const applyDraft = (next: Character, previous?: Character) => {
-    if (previous) setHistory((value) => ({ past: [...value.past, clone(previous)].slice(-100), future: [] }));
-    const changed = JSON.stringify(next) !== JSON.stringify(runtime.characters[next.id]);
+    if (previous) {
+      const now = performance.now();
+      const group = `character:${next.id}`;
+      if (shouldCaptureHistory(historyGroupRef.current, group, now)) {
+        setHistory((value) => ({ past: [...value.past, clone(previous)].slice(-100), future: [] }));
+      }
+      historyGroupRef.current = nextHistoryGroup(group, now);
+    } else historyGroupRef.current = null;
+    draftVersionRef.current += 1;
+    const changed = previous ? true : JSON.stringify(next) !== JSON.stringify(runtime.characters[next.id]);
     setDraft(next);
     setDirty(changed);
     setSaveError(false);
@@ -189,13 +203,19 @@ export default function CharacterEditor({ active, payload, onPayload, onIssues, 
         onStatus("인물 문서에 오류가 있어 원본에는 저장하지 않았습니다.");
         return;
       }
-      const nextPayload = clone(payload);
-      nextPayload.runtime = result.runtime;
-      nextPayload.documents.characters[draft.id] = result.document;
+      const nextPayload: ProjectPayload = {
+        ...payload,
+        runtime: result.runtime,
+        documents: {
+          ...payload.documents,
+          characters: { ...payload.documents.characters, [draft.id]: result.document },
+        },
+      };
       onPayload(nextPayload);
       setDraft(clone(result.runtime.characters[draft.id]));
       setRevision(result.document.revision);
       setDirty(false);
+      historyGroupRef.current = null;
       setSavedAt(Date.now());
       localStorage.removeItem(`love-office-character-draft:${payload.root}:${draft.id}`);
       onStatus(`${draft.display_name} 인물 YAML과 런타임을 저장했습니다.`);
@@ -229,10 +249,10 @@ export default function CharacterEditor({ active, payload, onPayload, onIssues, 
 
   useEffect(() => {
     if (!dirty || !draft || saving) return;
-    const signature = JSON.stringify(draft);
-    if (signature === lastAutoSaveAttempt.current) return;
+    const version = draftVersionRef.current;
+    if (version === lastAutoSaveAttempt.current) return;
     const timer = window.setTimeout(() => {
-      lastAutoSaveAttempt.current = signature;
+      lastAutoSaveAttempt.current = version;
       void save();
     }, 1000);
     return () => window.clearTimeout(timer);
@@ -266,16 +286,7 @@ export default function CharacterEditor({ active, payload, onPayload, onIssues, 
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [active, dirty, history, save, saving]);
 
-  useEffect(() => {
-    const art = draft?.visual.concept_art;
-    if (!art) {
-      setImage("");
-      return;
-    }
-    invoke<string>("read_asset", { root: payload.root, relativePath: art })
-      .then(setImage)
-      .catch(() => setImage(""));
-  }, [draft?.id, draft?.visual.concept_art, payload.root]);
+  const image = useAssetPreview(payload.root, draft?.visual.concept_art);
 
   if (!draft) return <div className="character-empty">편집할 인물이 없습니다.</div>;
   const expressions = Object.entries(draft.expressions || {});

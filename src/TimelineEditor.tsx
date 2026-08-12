@@ -104,7 +104,8 @@ export default function TimelineEditor({
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
   const [savedAt, setSavedAt] = useState<number>();
-  const lastAutoSaveAttempt = useRef("");
+  const lastAutoSaveAttempt = useRef(-1);
+  const draftVersionRef = useRef(0);
   const initialRecoveryChecked = useRef(false);
 
   useEffect(() => {
@@ -156,6 +157,8 @@ export default function TimelineEditor({
     setEventDraft(next);
     setEventRevision(revision);
     setEventDirty(recovered);
+    draftVersionRef.current = 0;
+    lastAutoSaveAttempt.current = -1;
     setSaveError(false);
     const day = Math.max(event.window.days[0], Math.min(selectedDay, event.window.days[1]));
     setSelectedDay(day);
@@ -174,6 +177,8 @@ export default function TimelineEditor({
       setEventDraft(clone(nextEvent));
       setEventRevision(payload.documents.events[nextEvent.id]?.revision || "");
       setEventDirty(false);
+      draftVersionRef.current = 0;
+      lastAutoSaveAttempt.current = -1;
       setSaveError(false);
       setSelectedDay(nextEvent.window.days[0]);
       setSelectedSlot(nextEvent.window.slots[0]);
@@ -182,6 +187,8 @@ export default function TimelineEditor({
       setEventDraft(null);
       setEventRevision("");
       setEventDirty(false);
+      draftVersionRef.current = 0;
+      lastAutoSaveAttempt.current = -1;
     }
   };
 
@@ -194,13 +201,12 @@ export default function TimelineEditor({
   }, [requestedEvent?.token]);
 
   const updateEvent = (updater: (event: TimelineEvent) => void) => {
-    setEventDraft((current) => {
-      if (!current) return current;
-      const next = clone(current);
-      updater(next);
-      setEventDirty(JSON.stringify(next) !== JSON.stringify(runtime.events[next.id]));
-      return next;
-    });
+    if (!eventDraft) return;
+    const next = clone(eventDraft);
+    updater(next);
+    draftVersionRef.current += 1;
+    setEventDraft(next);
+    setEventDirty(true);
     setSaveError(false);
   };
 
@@ -227,9 +233,14 @@ export default function TimelineEditor({
         setSaveError(true);
         return;
       }
-      const nextPayload = clone(payload);
-      nextPayload.runtime = result.runtime;
-      nextPayload.documents.events[eventDraft.id] = result.document;
+      const nextPayload: ProjectPayload = {
+        ...payload,
+        runtime: result.runtime,
+        documents: {
+          ...payload.documents,
+          events: { ...payload.documents.events, [eventDraft.id]: result.document },
+        },
+      };
       onPayload(nextPayload);
       setEventDraft(clone(result.runtime.events[eventDraft.id]));
       setEventRevision(result.document.revision);
@@ -284,10 +295,10 @@ export default function TimelineEditor({
 
   useEffect(() => {
     if (!eventDirty || !eventDraft || saving) return;
-    const signature = JSON.stringify(eventDraft);
-    if (signature === lastAutoSaveAttempt.current) return;
+    const version = draftVersionRef.current;
+    if (version === lastAutoSaveAttempt.current) return;
     const timer = window.setTimeout(() => {
-      lastAutoSaveAttempt.current = signature;
+      lastAutoSaveAttempt.current = version;
       void saveEvent();
     }, 1000);
     return () => window.clearTimeout(timer);

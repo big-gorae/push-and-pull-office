@@ -1,17 +1,19 @@
 import type {
   Layer,
   LocaleId,
+  ArtworkPosition,
   ResolvedBackground,
   ResolvedCharacterVisual,
   ResolvedStage,
   Runtime,
   Scene,
-  StagePosition,
   StoryNode,
+  StageCharacterCue,
   ViewMode,
   VisualObject,
 } from "./types";
 import { effectiveSpeaker } from "./storyLogic";
+import { canRevealProtagonistArtwork, isProtagonistArtwork } from "./protagonistArtworkPolicy";
 
 export type MessageVariables = Record<string, string | number>;
 
@@ -65,11 +67,69 @@ function layerFor(node: StoryNode | undefined, mode: ViewMode): Layer | undefine
   return node?.[mode] as Layer | undefined;
 }
 
-function stagePositions(count: number): StagePosition[] {
-  if (count <= 1) return ["center"];
-  if (count === 2) return ["left", "right"];
-  if (count === 3) return ["far_left", "center", "far_right"];
-  return ["far_left", "left", "right", "far_right"];
+export type CharacterArtworkOption = {
+  id: string;
+  visual_id: string;
+  character: string;
+  asset: string;
+  label: string;
+  expression?: string;
+};
+
+function defaultArtworkId(visual: VisualObject): string | undefined {
+  if (visual.default_artwork && visual.artworks?.[visual.default_artwork]) return visual.default_artwork;
+  return Object.keys(visual.artworks || {})[0];
+}
+
+function artworkSelection(visual: VisualObject, artworkId: string | undefined, expression?: string) {
+  const selectedId = artworkId === "default" || !artworkId ? defaultArtworkId(visual) : artworkId;
+  const artwork = selectedId ? visual.artworks?.[selectedId] : undefined;
+  if (artwork) {
+    return {
+      artwork: selectedId,
+      asset: (expression && artwork.expression_assets?.[expression]) || artwork.asset,
+      expression: expression && artwork.expression_assets?.[expression] ? expression : undefined,
+    };
+  }
+  const legacyExpression = artworkId && artworkId !== "default" ? artworkId : expression;
+  return {
+    artwork: artworkId || "default",
+    asset: (legacyExpression && visual.expression_assets?.[legacyExpression]) || visual.fallback_asset,
+    expression: legacyExpression && visual.expression_assets?.[legacyExpression] ? legacyExpression : undefined,
+  };
+}
+
+export function characterArtworkOptions(runtime: Runtime, characterId: string, mode?: ViewMode): CharacterArtworkOption[] {
+  return Object.values(runtime.visuals)
+    .filter((visual) => visual.kind === "character" && !visual.abstract && visual.character === characterId)
+    .flatMap((visual): CharacterArtworkOption[] => {
+      const artworks = Object.entries(visual.artworks || {}).map(([id, artwork]) => ({
+        id,
+        visual_id: visual.id,
+        character: characterId,
+        asset: artwork.asset,
+        label: artwork.label || id.replaceAll("_", " "),
+      }));
+      if (artworks.length) return artworks;
+      const fallback = visual.fallback_asset ? [{
+        id: "default",
+        visual_id: visual.id,
+        character: characterId,
+        asset: visual.fallback_asset,
+        label: "기본 원화",
+      }] : [];
+      const expressions = Object.entries(visual.expression_assets || {})
+        .filter(([expression]) => !mode || runtime.characters[characterId]?.expressions?.[expression]?.layer === mode)
+        .map(([expression, asset]) => ({
+          id: expression,
+          visual_id: visual.id,
+          character: characterId,
+          asset,
+          label: runtime.characters[characterId]?.expressions?.[expression]?.description || expression,
+          expression,
+        }));
+      return [...fallback, ...expressions];
+    });
 }
 
 /**
@@ -88,6 +148,23 @@ export class VisualResolver {
   }
 
   resolveBackground(scene: Scene, node: StoryNode | undefined, mode: ViewMode): ResolvedBackground | undefined {
+    if (scene.default_background) {
+      const visual = this.runtime.visuals[scene.default_background.visual_id];
+      const variant = visual?.kind === "background" && !visual.abstract
+        ? visual.variants?.[scene.default_background.variant_id]
+        : undefined;
+      if (visual && variant) {
+        return {
+          visual_id: visual.id,
+          variant_id: scene.default_background.variant_id,
+          asset: variant.asset,
+          title_key: visual.title_key,
+          defaults: visual.defaults || {},
+          score: Number.MAX_SAFE_INTEGER,
+          matched: ["scene-default"],
+        };
+      }
+    }
     const layer = layerFor(node, mode);
     const dimensions: Record<string, string | undefined> = {
       locations: scene.location,
@@ -122,37 +199,39 @@ export class VisualResolver {
     return candidates.sort((a, b) => b.score - a.score || a.visual_id.localeCompare(b.visual_id) || a.variant_id.localeCompare(b.variant_id))[0];
   }
 
-  resolveCharacter(characterId: string, expression: string | undefined, position: StagePosition, speaker: boolean): ResolvedCharacterVisual | undefined {
-    const visual = this.concrete("character").find((candidate) => candidate.character === characterId);
-    if (!visual?.fallback_asset) return undefined;
+  resolveCharacterCue(cue: StageCharacterCue, speakerId: string | null | undefined): ResolvedCharacterVisual | undefined {
+    const visual = this.concrete("character").find((candidate) =>
+      candidate.id === cue.visual_id && candidate.character === cue.character);
+    if (!visual) return undefined;
+    const selected = artworkSelection(visual, cue.artwork);
+    if (!selected.asset) return undefined;
     return {
       visual_id: visual.id,
-      character: characterId,
-      asset: (expression && visual.expression_assets?.[expression]) || visual.fallback_asset,
-      expression,
+      character: cue.character,
+      asset: selected.asset,
+      expression: selected.expression,
+      artwork: selected.artwork,
       outfit: visual.default_outfit,
       pose: visual.default_pose,
-      position,
-      speaker,
+      position: cue.position as ArtworkPosition,
+      speaker: speakerId === cue.character,
       render_strategy: visual.render_strategy === "layered_sprite" ? "layered_sprite" : "flat_portrait",
     };
   }
 
   resolveStage(scene: Scene, nodeId: string, mode: ViewMode, nodeOverride?: StoryNode): ResolvedStage {
     const node = nodeOverride || scene.nodes[nodeId];
-    const layer = layerFor(node, mode);
     const speaker = effectiveSpeaker(node, mode);
-    const visibleCast = speaker ? scene.cast.filter((characterId) => characterId === speaker) : [];
-    const positions = stagePositions(visibleCast.length);
-    const characters = visibleCast.flatMap((characterId, index) => {
-      const visual = this.resolveCharacter(
-        characterId,
-        speaker === characterId ? layer?.expression : undefined,
-        positions[Math.min(index, positions.length - 1)],
-        speaker === characterId,
-      );
-      return visual ? [visual] : [];
-    });
+    const protagonistReveal = canRevealProtagonistArtwork(scene, node);
+    const hasManualStage = Boolean(node?.stage && Object.prototype.hasOwnProperty.call(node.stage, mode));
+    const manualCues = hasManualStage ? node?.stage?.[mode] || [] : undefined;
+    const characters = manualCues
+      ? manualCues.flatMap((cue) => {
+        if (isProtagonistArtwork(cue.character) && !protagonistReveal) return [];
+        const visual = this.resolveCharacterCue(cue, speaker);
+        return visual ? [visual] : [];
+      })
+      : [];
     return {
       background: this.resolveBackground(scene, node, mode),
       characters,

@@ -10,3 +10,6 @@ src-tauri/target/
 playwright-report/
 test-results/
 .wrangler/
+.story-editor/
+output/
+tmp/

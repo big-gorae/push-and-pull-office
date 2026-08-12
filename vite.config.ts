@@ -39,6 +39,12 @@ export default defineConfig(async () => {
     server: {
       strictPort: true,
       port: 1420,
+      watch: {
+        // Authoring saves rebuild this imported snapshot. The player applies
+        // edited strings from the save response itself, so treating the JSON
+        // write as HMR would discard the live session and return to the title.
+        ignored: ["**/build/story-runtime.json"],
+      },
     },
     envPrefix: ["VITE_", "TAURI_ENV_*"],
     build: {

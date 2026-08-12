@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "defaults": {
+    "edgeBand": 8,
+    "seedTolerance": 0.04,
+    "modelTolerance": 0.018,
+    "stepTolerance": 0.008,
+    "driftTolerance": 0.055,
+    "featherLow": 0.004,
+    "featherHigh": 0.024
+  },
+  "assets": [
+    {
+      "id": "yoon-seo-a-base",
+      "kind": "base",
+      "source": "art-source/archive/characters/yoon-seo-a/office-default/base-with-background.png",
+      "expectedSha256": "77b70731816223b9060890ed3fc9ff9353634d36042e18174780a01e3e96e0ad",
+      "preserveRgbOutput": "art-source/derived/characters/yoon-seo-a/office-default/base-cutout-preserve-rgb.png",
+      "runtimeOutput": "assets/characters/yoon-seo-a/office-default/base-cutout.png",
+      "maskOutput": "art-source/masks/characters/yoon-seo-a/office-default/base-alpha.png"
+    },
+    {
+      "id": "cha-min-kyung-base",
+      "kind": "base",
+      "source": "art-source/archive/characters/cha-min-kyung/office-default/base-with-background.png",
+      "expectedSha256": "eb88573c4fa81ceabdc1134b02417bacbdf3c48d8a63164c5e5d18b660cb2a63",
+      "preserveRgbOutput": "art-source/derived/characters/cha-min-kyung/office-default/base-cutout-preserve-rgb.png",
+      "runtimeOutput": "assets/characters/cha-min-kyung/office-default/base-cutout.png",
+      "maskOutput": "art-source/masks/characters/cha-min-kyung/office-default/base-alpha.png"
+    },
+    {
+      "id": "kang-yoo-jin-base",
+      "kind": "base",
+      "source": "art-source/archive/characters/kang-yoo-jin/office-default/base-with-background.png",
+      "expectedSha256": "d93e91ffbe1c20ad41127156f1e0d802d9eb230f0291f5a848575429342586a7",
+      "preserveRgbOutput": "art-source/derived/characters/kang-yoo-jin/office-default/base-cutout-preserve-rgb.png",
+      "runtimeOutput": "assets/characters/kang-yoo-jin/office-default/base-cutout.png",
+      "maskOutput": "art-source/masks/characters/kang-yoo-jin/office-default/base-alpha.png",
+      "modelTolerance": 0.014,
+      "driftTolerance": 0.045
+    },
+    {
+      "id": "yoon-seo-a-sd",
+      "kind": "sd",
+      "source": "art-source/references/characters/yoon-seo-a/sd.png",
+      "expectedSha256": "340265791670c7f3daecc568e8e4acbd7e11ed5ac79b62c28f18ed3a3234e6e5",
+      "preserveRgbOutput": "art-source/derived/characters/yoon-seo-a/sd/original-cutout-preserve-rgb.png",
+      "runtimeOutput": "assets/characters/yoon-seo-a/sd/original-cutout.png",
+      "maskOutput": "art-source/masks/characters/yoon-seo-a/sd/original-alpha.png",
+      "modelTolerance": 0.018,
+      "stepTolerance": 0.005,
+      "driftTolerance": 0.045,
+      "featherHigh": 0.026,
+      "preservePaperOutline": true,
+      "paperOutlineProbes": [{"x": 416, "y": 200}]
+    },
+    {
+      "id": "cha-min-kyung-sd",
+      "kind": "sd",
+      "source": "art-source/references/characters/cha-min-kyung/sd.png",
+      "expectedSha256": "9951476cea7e88d66dca1d9ff356f8379ced1408746a1687bb6106b6ebd27d68",
+      "preserveRgbOutput": "art-source/derived/characters/cha-min-kyung/sd/original-cutout-preserve-rgb.png",
+      "runtimeOutput": "assets/characters/cha-min-kyung/sd/original-cutout.png",
+      "maskOutput": "art-source/masks/characters/cha-min-kyung/sd/original-alpha.png",
+      "preservePaperOutline": true,
+      "paperOutlineProbes": [{"x": 416, "y": 180}]
+    },
+    {
+      "id": "kang-yoo-jin-sd",
+      "kind": "sd",
+      "source": "art-source/references/characters/kang-yoo-jin/sd.png",
+      "expectedSha256": "4d0a842206de97206b4d17645d2859db551a3881532311667fd8c745c8156335",
+      "preserveRgbOutput": "art-source/derived/characters/kang-yoo-jin/sd/original-cutout-preserve-rgb.png",
+      "runtimeOutput": "assets/characters/kang-yoo-jin/sd/original-cutout.png",
+      "maskOutput": "art-source/masks/characters/kang-yoo-jin/sd/original-alpha.png",
+      "preservePaperOutline": true,
+      "paperOutlineProbes": [{"x": 496, "y": 125}]
+    }
+  ]
+}

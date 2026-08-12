@@ -110,7 +110,6 @@ function cloneState(value: SelfDevelopmentState): SelfDevelopmentState {
 function cloneActivity(value: SelfDevelopmentActivity): SelfDevelopmentActivity {
   return {
     ...value,
-    reflection_keys: { ...value.reflection_keys },
     stat_deltas: { ...value.stat_deltas },
   };
 }

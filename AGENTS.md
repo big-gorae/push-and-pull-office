@@ -11,6 +11,22 @@
 - If the project-only authentication is genuinely missing or expired, authenticate only that directory with `GH_CONFIG_DIR="$love_office_gh_dir" gh auth login -h github.com --git-protocol https --web`. Never switch this repository to another account and never copy tokens into tracked files, shell output, logs, or documentation.
 - The project-only authentication is shared by sessions using this same repository's common Git directory, but it is not committed. A fresh clone must perform the project-only login once before publishing.
 
+## Browser identity
+
+- Use only the Chrome profile `big.gorea.king` for NovelAI and every other Chrome automation performed for this repository. The Chrome extension reports this profile's exact metadata name as `big.gorea.king@gmail.com`.
+- Before claiming or interacting with any Chrome tab, verify that the connected browser metadata reports the exact profile name `big.gorea.king@gmail.com`.
+- If any other Chrome profile is connected, stop immediately. Never navigate, click, type, upload, generate, or otherwise interact with that profile.
+
+## Local launch command mapping
+
+Use these exact Korean commands as user-facing shortcuts. They refer to the named build/surface terms in the project docs; do not collapse them into a generic “debug” request.
+
+- `게임 켜줘`: launch the **Play Build** with `npm run dev`. This is the read-only player surface. Do not open the Tauri editor or enable authoring controls for this command.
+- `디버그 모드`: launch or focus the **Authoring Build** with `make tauri-dev`, then ensure the in-game `디버그 모드` setting is enabled. If the Tauri app is already running, keep the current project and toggle the setting instead of starting a second server. Debug Mode is an inspector inside the Authoring Build, not a separate build.
+- `대사 편집 모드` or `작가 모드`: launch or focus the **Authoring Build** with `make tauri-dev`, open the selected project, and use `제작 플레이 열기`. This is the writable play surface for dialogue, scene, artwork, background, and asset authoring.
+
+Keep the distinction explicit in status messages: **Play Build / 플레이 버전** is read-only, **Authoring Build / 제작 버전** writes approved project files, **제작 플레이** is the in-game authoring screen, and **디버그 모드** only reveals additional inspection controls. A browser `npm run dev` session must never be presented as a writable authoring session.
+
 ## Casual `반영` integration workflow
 
 - Treat casual Korean instructions such as `반영해`, `반영`, or `적용해` as a request to integrate the requested work against the current repository state, not merely to edit files in isolation.
@@ -92,8 +108,11 @@
 
 ## Player experience invariants
 
+- 한도윤의 원화는 후반 반전을 위한 보존 자산이다. 원화 파일, `character.han_do_yoon` 비주얼 정의와 NovelAI 프롬프트 프로필은 삭제하지 않는다.
+- 한도윤이 화자이거나 장면 `cast`에 포함되어 있어도 평상시 수동 `stage`, 제작 미리보기와 플레이 화면에는 그의 원화를 노출하지 않는다. 평상시에는 배경과 다른 인물만 표시한다.
+- 한도윤 원화 공개는 `ending.*` 장면의 `dual_narration` 노드가 `presentation_flags: [protagonist_art_reveal]`를 명시하고 `perceived`와 `reality` 양쪽 `stage`에 `character.han_do_yoon`을 직접 배치한 후반 반전 장면에서만 허용한다. 사용자 지시 없이 공개 시점을 앞당기거나 예외를 추가하지 않는다.
 - The new-game screen contains only the three mode cards. `속마음 모드` and `어나더 스토리` both unlock after the first ending; keep their approved descriptions in `story/ui.yaml`.
-- Render only the character speaking in the active layer. Keep character X/Y/scale adjustable in Debug Mode, and keep previous-dialogue navigation available there.
+- Do not infer character artwork from `cast` or the current speaker at runtime. Every visible character must come from an explicit layer `stage` cue stored in scene YAML. In the editor, a newly added dialogue starts without a speaker; selecting a non-Han-Do-yoon illustrated speaker writes that character as the explicit centered default in both layers. Selecting Han Do-yoon never creates ordinary stage cues. Keep character X/Y/scale adjustable in Debug Mode, and keep previous-dialogue navigation available there.
 - Do not restore the removed interpretation/thought sub-panels, a `나레이션` nameplate, a timeline/calendar selection screen, visible ACT labels, or copy/effects that promote the campaign's day count.
 - Between ordinary moments, present event summaries and selections as dialogue-style in-game beats. Use the cinematic day-change overlay only when the day number changes.
 - Every choice node has a neutral `stimulus` summary. Player-facing prompts and labels describe concrete words, actions, or nuanced interpretations; they never reveal `push`, `pull`, `밀기`, `당기기`, or `밀당`. Direction and numeric effects are Debug Mode only.

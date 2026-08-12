@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-11T15:41:35.576Z",
+  "generator": "tools/image_cutout.mjs",
+  "config": "art-source/cutout-config.json",
+  "originalsPolicy": "immutable-byte-for-byte",
+  "assets": [
+    {
+      "id": "yoon-seo-a-base",
+      "kind": "base",
+      "source": "art-source/archive/characters/yoon-seo-a/office-default/base-with-background.png",
+      "sourceSha256": "77b70731816223b9060890ed3fc9ff9353634d36042e18174780a01e3e96e0ad",
+      "sourceUnchanged": true,
+      "width": 832,
+      "height": 1216,
+      "preserveRgbOutput": "art-source/derived/characters/yoon-seo-a/office-default/base-cutout-preserve-rgb.png",
+      "runtimeOutput": "assets/characters/yoon-seo-a/office-default/base-cutout.png",
+      "maskOutput": "art-source/masks/characters/yoon-seo-a/office-default/base-alpha.png",
+      "qaSheet": "output/cutout-qa/yoon-seo-a-base.png",
+      "preservePaperOutline": false,
+      "transparentPixels": 515240,
+      "partiallyTransparentPixels": 4105,
+      "opaquePixels": 492367,
+      "foregroundRatio": 0.490724633097166,
+      "foregroundBounds": {
+        "x": 112,
+        "y": 44,
+        "width": 609,
+        "height": 1172
+      }
+    },
+    {
+      "id": "cha-min-kyung-base",
+      "kind": "base",
+      "source": "art-source/archive/characters/cha-min-kyung/office-default/base-with-background.png",
+      "sourceSha256": "eb88573c4fa81ceabdc1134b02417bacbdf3c48d8a63164c5e5d18b660cb2a63",
+      "sourceUnchanged": true,
+      "width": 832,
+      "height": 1216,
+      "preserveRgbOutput": "art-source/derived/characters/cha-min-kyung/office-default/base-cutout-preserve-rgb.png",
+      "runtimeOutput": "assets/characters/cha-min-kyung/office-default/base-cutout.png",
+      "maskOutput": "art-source/masks/characters/cha-min-kyung/office-default/base-alpha.png",
+      "qaSheet": "output/cutout-qa/cha-min-kyung-base.png",
+      "preservePaperOutline": false,
+      "transparentPixels": 407661,
+      "partiallyTransparentPixels": 4574,
+      "opaquePixels": 599477,
+      "foregroundRatio": 0.5970582537322875,
+      "foregroundBounds": {
+        "x": 46,
+        "y": 21,
+        "width": 703,
+        "height": 1195
+      }
+    },
+    {
+      "id": "kang-yoo-jin-base",
+      "kind": "base",
+      "source": "art-source/archive/characters/kang-yoo-jin/office-default/base-with-background.png",
+      "sourceSha256": "d93e91ffbe1c20ad41127156f1e0d802d9eb230f0291f5a848575429342586a7",
+      "sourceUnchanged": true,
+      "width": 832,
+      "height": 1216,
+      "preserveRgbOutput": "art-source/derived/characters/kang-yoo-jin/office-default/base-cutout-preserve-rgb.png",
+      "runtimeOutput": "assets/characters/kang-yoo-jin/office-default/base-cutout.png",
+      "maskOutput": "art-source/masks/characters/kang-yoo-jin/office-default/base-alpha.png",
+      "qaSheet": "output/cutout-qa/kang-yoo-jin-base.png",
+      "preservePaperOutline": false,
+      "transparentPixels": 513787,
+      "partiallyTransparentPixels": 5640,
+      "opaquePixels": 492285,
+      "foregroundRatio": 0.4921608125632591,
+      "foregroundBounds": {
+        "x": 39,
+        "y": 15,
+        "width": 681,
+        "height": 1201
+      }
+    },
+    {
+      "id": "yoon-seo-a-sd",
+      "kind": "sd",
+      "source": "art-source/references/characters/yoon-seo-a/sd.png",
+      "sourceSha256": "340265791670c7f3daecc568e8e4acbd7e11ed5ac79b62c28f18ed3a3234e6e5",
+      "sourceUnchanged": true,
+      "width": 832,
+      "height": 1216,
+      "preserveRgbOutput": "art-source/derived/characters/yoon-seo-a/sd/original-cutout-preserve-rgb.png",
+      "runtimeOutput": "assets/characters/yoon-seo-a/sd/original-cutout.png",
+      "maskOutput": "art-source/masks/characters/yoon-seo-a/sd/original-alpha.png",
+      "qaSheet": "output/cutout-qa/yoon-seo-a-sd.png",
+      "preservePaperOutline": true,
+      "transparentPixels": 555789,
+      "partiallyTransparentPixels": 4245,
+      "opaquePixels": 451678,
+      "foregroundRatio": 0.45064504523026316,
+      "foregroundBounds": {
+        "x": 26,
+        "y": 194,
+        "width": 742,
+        "height": 866
+      }
+    },
+    {
+      "id": "cha-min-kyung-sd",
+      "kind": "sd",
+      "source": "art-source/references/characters/cha-min-kyung/sd.png",
+      "sourceSha256": "9951476cea7e88d66dca1d9ff356f8379ced1408746a1687bb6106b6ebd27d68",
+      "sourceUnchanged": true,
+      "width": 832,
+      "height": 1216,
+      "preserveRgbOutput": "art-source/derived/characters/cha-min-kyung/sd/original-cutout-preserve-rgb.png",
+      "runtimeOutput": "assets/characters/cha-min-kyung/sd/original-cutout.png",
+      "maskOutput": "art-source/masks/characters/cha-min-kyung/sd/original-alpha.png",
+      "qaSheet": "output/cutout-qa/cha-min-kyung-sd.png",
+      "preservePaperOutline": true,
+      "transparentPixels": 532847,
+      "partiallyTransparentPixels": 3014,
+      "opaquePixels": 475851,
+      "foregroundRatio": 0.47332145907135625,
+      "foregroundBounds": {
+        "x": 68,
+        "y": 170,
+        "width": 705,
+        "height": 893
+      }
+    },
+    {
+      "id": "kang-yoo-jin-sd",
+      "kind": "sd",
+      "source": "art-source/references/characters/kang-yoo-jin/sd.png",
+      "sourceSha256": "4d0a842206de97206b4d17645d2859db551a3881532311667fd8c745c8156335",
+      "sourceUnchanged": true,
+      "width": 832,
+      "height": 1216,
+      "preserveRgbOutput": "art-source/derived/characters/kang-yoo-jin/sd/original-cutout-preserve-rgb.png",
+      "runtimeOutput": "assets/characters/kang-yoo-jin/sd/original-cutout.png",
+      "maskOutput": "art-source/masks/characters/kang-yoo-jin/sd/original-alpha.png",
+      "qaSheet": "output/cutout-qa/kang-yoo-jin-sd.png",
+      "preservePaperOutline": true,
+      "transparentPixels": 557502,
+      "partiallyTransparentPixels": 3910,
+      "opaquePixels": 450300,
+      "foregroundRatio": 0.4489518756325911,
+      "foregroundBounds": {
+        "x": 61,
+        "y": 118,
+        "width": 703,
+        "height": 1060
+      }
+    }
+  ]
+}

@@ -1,20 +1,20 @@
 {
   "schema_version": 2,
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "c9d5d5830abbc0abb5bd016ee29a6fbcedbe0216919a7a393d7c9ce36a4161ca",
+  "source_sha256": "0df97224c400825426c14c5e60abc0c2d9a4292636ccdad9b4738fc292da4dac",
   "profile": "development",
   "default_locale": "ko",
   "supported_locales": [
     "ko",
     "en"
   ],
-  "total_entries": 1216,
+  "total_entries": 1273,
   "coverage": {
     "ko": {
-      "direct": 1216,
-      "resolved": 1216,
-      "translated": 1216,
-      "total": 1216,
+      "direct": 1273,
+      "resolved": 1273,
+      "translated": 1273,
+      "total": 1273,
       "ratio": 1.0,
       "fallback_used": [],
       "missing": [],
@@ -23,8 +23,8 @@
       "invalid_placeholders": [],
       "by_domain": {
         "ui": {
-          "direct": 210,
-          "total": 210
+          "direct": 181,
+          "total": 181
         },
         "campaign": {
           "direct": 14,
@@ -35,8 +35,8 @@
           "total": 43
         },
         "event": {
-          "direct": 140,
-          "total": 140
+          "direct": 150,
+          "total": 150
         },
         "locale": {
           "direct": 4,
@@ -51,16 +51,20 @@
           "total": 8
         },
         "scene": {
-          "direct": 774,
-          "total": 774
+          "direct": 814,
+          "total": 814
+        },
+        "system_flow": {
+          "direct": 34,
+          "total": 34
         },
         "thread": {
           "direct": 2,
           "total": 2
         },
         "visual": {
-          "direct": 10,
-          "total": 10
+          "direct": 12,
+          "total": 12
         },
         "world": {
           "direct": 7,
@@ -69,11 +73,11 @@
       }
     },
     "en": {
-      "direct": 260,
-      "resolved": 1216,
-      "translated": 260,
-      "total": 1216,
-      "ratio": 0.2138,
+      "direct": 265,
+      "resolved": 1273,
+      "translated": 265,
+      "total": 1273,
+      "ratio": 0.2082,
       "fallback_used": [
         "campaign.main.acts.collisions.purpose",
         "campaign.main.acts.crisis.purpose",
@@ -128,6 +132,11 @@
         "events.anchor.day_01_company_meeting.presentation.reality.summary",
         "events.anchor.day_01_company_meeting.presentation.reality.title",
         "events.anchor.day_01_company_meeting.title",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.summary",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.title",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.summary",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.title",
+        "events.anchor.day_01_officetel_seo_a_reveal.title",
         "events.anchor.day_01_parent_pressure.presentation.perceived.summary",
         "events.anchor.day_01_parent_pressure.presentation.perceived.title",
         "events.anchor.day_01_parent_pressure.presentation.reality.summary",
@@ -148,6 +157,11 @@
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary",
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.title",
         "events.anchor.day_03_business_trip_or_cafe.title",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.summary",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.title",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.summary",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.title",
+        "events.anchor.day_03_officetel_min_kyung_move_in.title",
         "events.anchor.day_04_weekend_encounter.presentation.perceived.summary",
         "events.anchor.day_04_weekend_encounter.presentation.perceived.title",
         "events.anchor.day_04_weekend_encounter.presentation.reality.summary",
@@ -403,6 +417,24 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_timestamp_inner.reality.line",
         "scenes.common.day_01_company_meeting.purpose",
         "scenes.common.day_01_company_meeting.title",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.purpose",
+        "scenes.common.day_01_officetel_seo_a_reveal.title",
         "scenes.common.day_01_parent_pressure.nodes.decision.perceived.line",
         "scenes.common.day_01_parent_pressure.nodes.decision.reality.line",
         "scenes.common.day_01_parent_pressure.nodes.decision_inner.perceived.line",
@@ -672,6 +704,28 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line",
         "scenes.common.day_03_business_trip_or_cafe.purpose",
         "scenes.common.day_03_business_trip_or_cafe.title",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.purpose",
+        "scenes.common.day_03_officetel_min_kyung_move_in.title",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.perceived.line",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.reality.line",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_ott.perceived.line",
@@ -1024,6 +1078,8 @@
         "scenes.seo_a.relief_smile.title",
         "threads.min_kyung.title",
         "threads.seo_a.title",
+        "visual.background.officetel_elevator_lobby.title",
+        "visual.background.officetel_unit_corridor.title",
         "world.members.member.jeong_da_eun.display_name",
         "world.members.member.lee_hyeon_woo.display_name",
         "world.members.member.lee_su_hyeon.display_name",
@@ -1086,6 +1142,11 @@
         "events.anchor.day_01_company_meeting.presentation.reality.summary",
         "events.anchor.day_01_company_meeting.presentation.reality.title",
         "events.anchor.day_01_company_meeting.title",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.summary",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.perceived.title",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.summary",
+        "events.anchor.day_01_officetel_seo_a_reveal.presentation.reality.title",
+        "events.anchor.day_01_officetel_seo_a_reveal.title",
         "events.anchor.day_01_parent_pressure.presentation.perceived.summary",
         "events.anchor.day_01_parent_pressure.presentation.perceived.title",
         "events.anchor.day_01_parent_pressure.presentation.reality.summary",
@@ -1106,6 +1167,11 @@
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.summary",
         "events.anchor.day_03_business_trip_or_cafe.presentation.reality.title",
         "events.anchor.day_03_business_trip_or_cafe.title",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.summary",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.perceived.title",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.summary",
+        "events.anchor.day_03_officetel_min_kyung_move_in.presentation.reality.title",
+        "events.anchor.day_03_officetel_min_kyung_move_in.title",
         "events.anchor.day_04_weekend_encounter.presentation.perceived.summary",
         "events.anchor.day_04_weekend_encounter.presentation.perceived.title",
         "events.anchor.day_04_weekend_encounter.presentation.reality.summary",
@@ -1361,6 +1427,24 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_timestamp_inner.reality.line",
         "scenes.common.day_01_company_meeting.purpose",
         "scenes.common.day_01_company_meeting.title",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.passing_inner.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.perceived.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised_inner.reality.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.purpose",
+        "scenes.common.day_01_officetel_seo_a_reveal.title",
         "scenes.common.day_01_parent_pressure.nodes.decision.perceived.line",
         "scenes.common.day_01_parent_pressure.nodes.decision.reality.line",
         "scenes.common.day_01_parent_pressure.nodes.decision_inner.perceived.line",
@@ -1630,6 +1714,28 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.reality.line",
         "scenes.common.day_03_business_trip_or_cafe.purpose",
         "scenes.common.day_03_business_trip_or_cafe.title",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_confirms.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.do_yoon_directions.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_closes_inner.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.door_opens.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.knock_at_door.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_greeting.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.min_kyung_thanks.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.mutual_surprise_inner.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.perceived.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.nodes.practical_question.reality.line",
+        "scenes.common.day_03_officetel_min_kyung_move_in.purpose",
+        "scenes.common.day_03_officetel_min_kyung_move_in.title",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.perceived.line",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_dark_psychology.reality.line",
         "scenes.common.day_04_weekend_encounter.nodes.activity_callback.variants.after_ott.perceived.line",
@@ -1982,6 +2088,8 @@
         "scenes.seo_a.relief_smile.title",
         "threads.min_kyung.title",
         "threads.seo_a.title",
+        "visual.background.officetel_elevator_lobby.title",
+        "visual.background.officetel_unit_corridor.title",
         "world.members.member.jeong_da_eun.display_name",
         "world.members.member.lee_hyeon_woo.display_name",
         "world.members.member.lee_su_hyeon.display_name",
@@ -1995,8 +2103,8 @@
       "invalid_placeholders": [],
       "by_domain": {
         "ui": {
-          "direct": 210,
-          "total": 210
+          "direct": 181,
+          "total": 181
         },
         "campaign": {
           "direct": 4,
@@ -2008,7 +2116,7 @@
         },
         "event": {
           "direct": 2,
-          "total": 140
+          "total": 150
         },
         "locale": {
           "direct": 2,
@@ -2024,7 +2132,11 @@
         },
         "scene": {
           "direct": 27,
-          "total": 774
+          "total": 814
+        },
+        "system_flow": {
+          "direct": 34,
+          "total": 34
         },
         "thread": {
           "direct": 0,
@@ -2032,7 +2144,7 @@
         },
         "visual": {
           "direct": 10,
-          "total": 10
+          "total": 12
         },
         "world": {
           "direct": 0,
@@ -2112,6 +2224,20 @@
         "missing": 0
       }
     },
+    "common.day_01_officetel_seo_a_reveal": {
+      "ko": {
+        "total": 23,
+        "direct": 23,
+        "fallback": 0,
+        "missing": 0
+      },
+      "en": {
+        "total": 23,
+        "direct": 0,
+        "fallback": 23,
+        "missing": 0
+      }
+    },
     "common.day_01_parent_pressure": {
       "ko": {
         "total": 55,
@@ -2151,6 +2277,20 @@
         "total": 99,
         "direct": 0,
         "fallback": 99,
+        "missing": 0
+      }
+    },
+    "common.day_03_officetel_min_kyung_move_in": {
+      "ko": {
+        "total": 27,
+        "direct": 27,
+        "fallback": 0,
+        "missing": 0
+      },
+      "en": {
+        "total": 27,
+        "direct": 0,
+        "fallback": 27,
         "missing": 0
       }
     },
@@ -2294,6 +2434,15 @@
         "missing": 0
       }
     }
+  },
+  "authoring_coverage": {
+    "narrative_text_units": 808,
+    "editable_units": 808,
+    "missing_editor_target": [],
+    "generated_only": 0,
+    "multiple_source_owners": 0,
+    "narrative_text_in_ui_yaml": 0,
+    "narrative_text_in_manifest": 0
   },
   "issues": []
 }

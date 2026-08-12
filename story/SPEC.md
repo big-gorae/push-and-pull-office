@@ -191,6 +191,7 @@ nodes:
 
 - `dual_dialogue`: 인지 화면과 실제 화면을 동시에 기록하는 대사
 - `dual_narration`: 화자가 없는 이중 서술
+- `silent`: 대사창 없이 배경과 배치 원화만 보여 주는 무대사 화면
 - `choice`: 조건과 효과를 가진 선택지
 - `state_gate`: 수치에 따라 노드 흐름을 나누는 조건문
 - `effect`: 선택 없이 상태를 변경하는 사건
@@ -241,6 +242,59 @@ nodes:
 - 속마음 모드에서는 `reality`를 표시하고, 스토리 모드에서는 `perceived`를 표시한다.
 - 표정 ID는 화자의 인물 파일에 등록되어야 한다.
 - `dual_narration`은 화자 이름표 없이 문장만 표시한다. 플레이어 UI에 `나레이션`이라는 가상 화자명을 만들지 않는다.
+
+### 대사별 화면 원화
+
+모든 노드는 선택적으로 `stage`를 가질 수 있다. `stage`는 대사의 화자와 별개인 화면 배치이며 `choice`에도 사용할 수 있다.
+
+```yaml
+- id: response_choice
+  kind: choice
+  stimulus: "두 사람이 답을 기다린다."
+  stage:
+    perceived:
+      - position: left
+        character: yoon_seo_a
+        visual_id: character.yoon_seo_a
+        artwork: office_default
+      - position: right
+        character: cha_min_kyung
+        visual_id: character.cha_min_kyung
+        artwork: office_default
+    reality: []
+  options: []
+```
+
+- `stage.<layer>` 키가 없으면 해당 레이어에는 인물 원화를 표시하지 않는다. 런타임은 `cast`나 화자를 근거로 원화를 자동 배치하지 않는다.
+- 새 `dual_dialogue`는 화자를 선택하기 전까지 원화가 없다. 편집기에서 한도윤이 아닌 일러스트 화자를 처음 선택하면 두 레이어 `stage`에 해당 인물의 기본 원화를 `center`로 명시 저장한다. 이후 작가는 레이어별 배치를 자유롭게 바꿀 수 있다.
+- 한도윤은 후반 반전 공개 전용 예외다. 화자이거나 `cast`에 포함되어도 평상시 수동 `stage`에 넣을 수 없다.
+- 한도윤 원화는 `ending.*`의 `dual_narration` 노드가 `presentation_flags: [protagonist_art_reveal]`를 선언하고 `perceived`와 `reality` 양쪽 `stage`에 `character.han_do_yoon`을 직접 배치한 경우에만 표시한다. 원화 파일과 비주얼 정의는 이 공개를 위해 보존한다.
+- 자동·직접 배치 모두 현재 화자는 정상 색으로 강조하고, 함께 보이는 비화자는 살짝 어둡고 회색인 톤으로 낮춰 발화 전환을 구분한다.
+- `stage.<layer>: []`는 해당 레이어 원화 전체 OFF다.
+- 직접 배치는 `left`, `center`, `right`에 최대 3명이며 위치와 인물은 각각 중복될 수 없다.
+- 비화자도 표시할 수 있지만 `character`는 장면의 illustrated `cast`에 포함되어야 한다.
+- `visual_id`는 해당 캐릭터의 구체 visual을, `artwork`는 그 visual의 안정적인 artwork ID를 참조한다.
+- 장면 YAML에는 이미지 파일 경로를 넣지 않는다. 실제 경로는 `story/visuals/characters/*.yaml`의 `artworks`에서 해석한다.
+- `perceived`와 `reality`의 배치는 서로 독립적이다.
+
+### 무대사 화면
+
+배경이나 원화를 문구 없이 감상시키려면 `silent` 노드를 사용한다.
+
+```yaml
+- id: empty_office_view
+  kind: silent
+  perceived: {atmosphere: dread, line: ""}
+  reality: {atmosphere: dread, line: ""}
+  stage: {perceived: [], reality: []}
+  next: closing
+```
+
+- 두 레이어와 `line: ""`를 명시해 의도적인 무대사임을 빈 초안과 구분한다.
+- 화자·이름표·대사창·선택지는 표시하지 않는다.
+- 일반 플레이에서는 HUD와 밀당 게이지도 숨기고 화면 클릭으로 다음 노드로 이동한다.
+- `stage`를 비우면 배경만, 직접 배치하면 배경과 지정 원화를 함께 보여 준다.
+- 장면 흐름·세이브·디버그 이전 화면 이동에서는 일반 표시 노드처럼 유지한다.
 
 ### `romance_insert`
 
@@ -341,7 +395,7 @@ self_development:
   converges_at: after_choice
 ```
 
-`manifest.self_development.expressions`가 매력도·능력치·피로·최근 활동 요구를 소유하며 `score_bonus`는 항상 `0`이다. `requires.last_activity`는 알려진 활동 ID 하나를 가리키며 `progress.self_development.last_activity`와 정확히 일치할 때만 표현을 연다. 해금 선택지는 같은 선택 노드의 조건 없는 기준 선택지를 `equivalent_to`로 가리키고, 기준과 같은 `push_pull` 및 `effects`를 사용하며, 짧은 고유 대사 뒤 `converges_at`으로 합류해야 한다. 두 분기의 `next`부터 합류점 직전까지는 `dual_dialogue`와 `dual_narration`만 허용하며 `effect`, `state_gate`, `choice`, `exit`를 둘 수 없다. 즉 스탯 상호작용은 표현과 반응을 늘리지만 밀당 점수와 숨은 상태를 보정하지 않는다.
+`manifest.self_development.expressions`가 매력도·능력치·피로·최근 활동 요구를 소유하며 `score_bonus`는 항상 `0`이다. `requires.last_activity`는 알려진 활동 ID 하나를 가리키며 `progress.self_development.last_activity`와 정확히 일치할 때만 표현을 연다. 해금 선택지는 같은 선택 노드의 조건 없는 기준 선택지를 `equivalent_to`로 가리키고, 기준과 같은 `push_pull` 및 `effects`를 사용하며, 짧은 고유 대사 뒤 `converges_at`으로 합류해야 한다. 두 분기의 `next`부터 합류점 직전까지는 `dual_dialogue`, `dual_narration`, `silent`만 허용하며 `effect`, `state_gate`, `choice`, `exit`를 둘 수 없다. 즉 스탯 상호작용은 표현과 반응을 늘리지만 밀당 점수와 숨은 상태를 보정하지 않는다.
 
 대사 variant는 `self_development: {expression: <id>}`만 선언할 수 있다. 기본 variant는 항상 하나 남기며 자기계발 조건을 붙이지 않는다. 일반 장면과 엔딩은 자기계발 상태를 직접 읽지 않는다.
 
@@ -368,45 +422,30 @@ on_missed: {effects: []}
 
 타이틀과 게임 메뉴의 `갤러리`는 등록된 모든 슬롯과 수집 수를 보여 준다. 잠긴 슬롯은 제목과 이미지를 숨기며, 해금된 원화만 확대 감상할 수 있다.
 
-직전 밤 활동을 다음 날 스몰토크로 회수할 때는 활동별 variant를 장면마다 복제하지 않고 저작 전용 `self_development_template`을 사용할 수 있다. 활동별 공통 소재는 `manifest.self_development.conversation_topics`가 소유한다.
-
-```yaml
-self_development:
-  conversation_topics:
-    workout:
-      variant_id: after_workout
-      expression: feedback.last_workout
-      slots:
-        formal_opener: "요즘 운동을 다시 시작했습니다."
-        formal_pitch: "앉아 있는 시간이 길어서 건강부터 챙기려고요."
-```
-
-`slots`의 값은 조사나 어미 조각이 아니라 그대로 발화할 수 있는 완결된 한국어 문장으로 작성한다. 장면 템플릿이 참조하는 모든 `{{slot_id}}`는 모든 대화 소재에 존재해야 하며, 알 수 없거나 비어 있는 슬롯은 빌드 오류다. `variant_id`와 `expression`은 배포 뒤 유지하고, `expression`은 해당 활동을 `requires.last_activity`로 요구하면서 `score_bonus: 0`인 표현을 가리킨다.
+직전 밤 활동을 다음 날 스몰토크로 회수할 때는 각 화면에 실제로 표시될 완성 문장을 장면의 명시적 variant로 저장한다.
 
 ```yaml
 - id: activity_pitch
   kind: dual_dialogue
   speaker: han_do_yoon
-  perceived:
-    atmosphere: warm_office
-    line: "오늘은 가볍게 안부만 묻는다."
-  reality:
-    atmosphere: neutral_office
-    line: "오늘은 가볍게 안부만 묻는다."
-    intent: work_only
-  self_development_template:
-    source: last_activity
-    perceived:
-      line: "{{formal_opener}} {{formal_pitch}}"
-    reality:
-      line: "{{formal_opener}} {{formal_pitch}}"
-      intent: self_promotion
+  variants:
+    - id: after_workout
+      self_development: {expression: feedback.last_workout}
+      perceived:
+        line: "요즘 운동을 다시 시작했습니다. 앉아 있는 시간이 길어서 건강부터 챙기려고요."
+      reality:
+        line: "요즘 운동을 다시 시작했습니다. 앉아 있는 시간이 길어서 건강부터 챙기려고요."
+        intent: self_promotion
+    - id: default
+      default: true
+      perceived: {line: "오늘은 가볍게 안부만 묻는다."}
+      reality: {line: "오늘은 가볍게 안부만 묻는다.", intent: work_only}
   next: activity_response
 ```
 
-`source`는 `last_activity`만 허용한다. 제공한 각 레이어 overlay에는 `line`이 필수이며, `perceived`는 `atmosphere`, `expression`, `line`을, `reality`는 여기에 `intent`까지 더해 같은 이름의 기본 레이어 스칼라를 덮어쓸 수 있다. 공통 speaker 또는 레이어별 speakers는 노드에만 남아 템플릿이 바꾸지 못한다. 생략한 스칼라는 기본 노드 값을 상속하고, 기본 `perceived`·`reality` 전체는 활동이 없을 때 사용할 조건 없는 fallback이다. 따라서 평소 업무 대사의 현실 intent가 `work_only`여도 활동 variant만 `self_promotion`으로 구분할 수 있다. 빌드는 각 `conversation_topics` 항목을 `variant_id`와 `self_development.expression`을 가진 일반 대사 variant로 펼치고 fallback은 안정 ID `default`인 기본 variant로 만든 뒤, 저작 매크로를 런타임 출력에서 제거한다. 따라서 런타임 대사 선택, 백로그, 세이브와 번역은 기존의 안정 variant ID만 다룬다.
+각 활동 variant는 `self_development.expression`으로 최근 활동 조건을 선언하고, 조건 없는 `default`를 마지막에 둔다. 각 양 레이어 `line`은 하나의 장면 YAML 필드가 직접 소유한다. 빌드는 이를 수정하거나 합성하지 않는다. 따라서 런타임 대사 선택, 백로그, 세이브, 번역, 에디터가 같은 안정 variant ID와 같은 완성 문장을 다룬다.
 
-활동 콜백은 상대가 먼저 외모 변화를 알아보는 보상이 아니다. 한도윤이 운동·옷차림·OTT·짧은 영상·수면을 스몰토크나 자기소개 소재로 먼저 꺼내고, 상대는 그 발화에만 상황에 맞게 반응한다. 특히 하룻밤 활동만으로 체중 감소, 체형 변화나 객관적인 매력 상승을 서술하지 않는다. 생성된 콜백은 문구와 짧은 현실 반응만 바꾸며 `effects`, 밀당 점수, 사건과 엔딩에는 영향을 주지 않는다.
+활동 콜백은 상대가 먼저 외모 변화를 알아보는 보상이 아니다. 한도윤이 운동·옷차림·OTT·짧은 영상·수면을 스몰토크나 자기소개 소재로 먼저 꺼내고, 상대는 그 발화에만 상황에 맞게 반응한다. 특히 하룻밤 활동만으로 체중 감소, 체형 변화나 객관적인 매력 상승을 서술하지 않는다. 활동 콜백은 문구와 짧은 현실 반응만 바꾸며 `effects`, 밀당 점수, 사건과 엔딩에는 영향을 주지 않는다.
 
 ## 10. 전이 우선순위
 
@@ -544,6 +583,19 @@ variants:
 
 장면의 `location`, `time`, 현재 노드의 `atmosphere`, 표시 모드와 일치하는 후보 중 우선순위 점수가 가장 높은 변형을 사용한다. validator는 모든 장면의 모든 노드가 두 모드에서 배경을 얻는지 검사한다.
 
+한 씬에서 배경을 자주 바꾸지 않는 경우에는 씬 기본 배경을 안정 ID로 고정할 수 있다.
+
+```yaml
+default_background:
+  visual_id: background.office_open
+  variant_id: late_afternoon
+```
+
+- `default_background`이 없으면 기존 장소·시간·분위기 자동 판정을 사용한다.
+- 지정하면 씬 안의 모든 노드와 두 보기 모드에서 같은 배경 variant를 기본으로 사용한다.
+- scene에는 `visual_id`와 `variant_id`만 저장하며 실제 asset 경로는 background visual이 소유한다.
+- 존재하지 않는 visual, 추상 visual, 캐릭터 visual 또는 존재하지 않는 variant는 검증 오류다.
+
 ## 15. 런타임 빌드
 
 `build` 명령은 YAML을 하나의 JSON으로 합친다.
@@ -554,7 +606,7 @@ variants:
 - visual 상속을 해석한 구체 객체와 자산 경로 포함
 - 원본 파일 위치를 `_source`에 기록
 - manifest 초기 상태, 수치 정의와 `self_development` 활동·표현 레지스트리 포함
-- `self_development_template`을 manifest의 대화 소재로 치환해 안정 ID의 일반 대사 variant로 확장하고 저작 매크로 제거
+- 시스템 흐름과 장면의 명시적 대사·variant를 합성 없이 안정 ID 맵으로 변환
 - 빌드 시각과 원본 해시 기록
 - 게임 엔진은 YAML이 아니라 생성된 JSON만 읽어도 된다.
 

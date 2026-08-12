@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
 import runtimeJson from "../../build/story-runtime.json";
 import type { Runtime } from "../types";
-import { authoringRoot, inverseStoryTextEdits, runtimeTextValues, sourceLocator } from "./storyAuthoring";
+import {
+  authoringRoot,
+  inverseStoryTextEdits,
+  parseAuthoringTarget,
+  runtimeTextValues,
+  sourceLocator,
+} from "./storyAuthoring";
 
 const runtime = runtimeJson as unknown as Runtime;
 
@@ -57,12 +63,12 @@ describe("story authoring boundary", () => {
     }]);
   });
 
-  it("builds a source-owned inverse patch for a composed template", () => {
-    const key = "scenes.example.nodes.template.variants.after_workout.reality.line";
+  it("builds a source-owned inverse patch for a physical system dialogue", () => {
+    const key = "system_flows.system.night_activity.nodes.activity_result.variants.workout.reality.line";
     const source = {
       label: "운동 활동 문구",
-      relativePath: "story/manifest.yaml",
-      fieldPath: "self_development.conversation_topics.workout.slots.office_pitch",
+      relativePath: "story/system_flows/night_activity.yaml",
+      fieldPath: "nodes.activity_result.variants.workout.reality.line",
       revision: "new-revision",
       currentValue: "새 활동 문구",
       currentValueHash: "new-value-hash",
@@ -77,7 +83,7 @@ describe("story authoring boundary", () => {
       afterValue: "새 활동 문구",
       afterExists: true,
       sourceEdit: true,
-    }], [{ key, kind: "composed_template", editable: false, currentValue: "합성 문장", sources: [source] }], "ko");
+    }], [{ key, kind: "direct_yaml", editable: true, currentValue: "새 활동 문구", sources: [source] }], "ko");
 
     expect(edits[0]).toMatchObject({
       localization_key: key,
@@ -87,6 +93,22 @@ describe("story authoring boundary", () => {
       expected_revision: "new-revision",
       expected_value_hash: "new-value-hash",
       next_value: "이전 활동 문구",
+    });
+  });
+
+  it("round-trips an exact system-flow preview target", () => {
+    expect(parseAuthoringTarget(JSON.stringify({
+      kind: "system_flow",
+      flowId: "system.night_activity",
+      nodeId: "activity_result",
+      variantId: "reading",
+      layer: "reality",
+    }))).toEqual({
+      kind: "system_flow",
+      flowId: "system.night_activity",
+      nodeId: "activity_result",
+      variantId: "reading",
+      layer: "reality",
     });
   });
 });

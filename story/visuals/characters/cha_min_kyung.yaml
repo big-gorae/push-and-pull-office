@@ -6,7 +6,7 @@ title_key: visual.character.cha_min_kyung.title
 title: 차민경 기본 바스트
 character: cha_min_kyung
 default_reality_expression: actual_skeptical
-fallback_asset: assets/concept-art/cha-min-kyung.png
+fallback_asset: assets/characters/cha-min-kyung/office-default/base-cutout.png
 default_outfit: office
 default_pose: assertive
 poses:

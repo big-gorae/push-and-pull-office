@@ -7,7 +7,11 @@ sequence: 1
 location: meeting_room
 time: morning
 purpose: 프로젝트 킥오프에서 서아·민경·유진의 업무 태도와 한도윤의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.
-cast: [han_do_yoon, yoon_seo_a, cha_min_kyung, kang_yoo_jin]
+cast:
+  - han_do_yoon
+  - yoon_seo_a
+  - cha_min_kyung
+  - kang_yoo_jin
 world_context:
   company: company.dawon_living
   project: project.harudam_spring_campaign
@@ -30,10 +34,10 @@ nodes:
     kind: dual_narration
     perceived:
       atmosphere: procedural
-      line: "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 낯선 팀이 한자리에 모이면 사람의 장점도 평소보다 선명하게 보이는 법이다."
+      line: "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나.."
     reality:
       atmosphere: procedural
-      line: "수요일 오전, 영업기획팀과 브랜드마케팅팀 실무자들이 신규 프로젝트 킥오프를 위해 회의실에 모였다."
+      line: "수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나.."
       intent: work_only
     next: arrival_inner
 
@@ -44,9 +48,12 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
-      line: (새 프로젝트라… 내 능력도 보여 주고, 사람들도 천천히 알아볼 기회겠군.)
+      line: (새 프로젝트라.. 기대되는걸)
     reality:
       atmosphere: procedural
       line: 참석자들은 배포 자료와 일정표를 확인한 뒤 각자 맡은 일을 시작할 차례였다.
@@ -56,18 +63,24 @@ nodes:
   - id: jeong_da_eun_opening
     kind: dual_dialogue
     speaker: member.jeong_da_eun
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
-      line: "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다."
+      line: "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다."
     reality:
       atmosphere: procedural
-      line: "오 차장님과 문 부장님까지 참석 확인됐습니다. 마스터 일정부터 공유하겠습니다."
+      line: "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다."
       intent: documentation
     next: oh_se_jin_scope
 
   - id: oh_se_jin_scope
     kind: dual_dialogue
     speaker: member.oh_se_jin
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       line: "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
@@ -79,6 +92,17 @@ nodes:
   - id: seo_a_materials
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_shy
@@ -97,6 +121,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: warm_romance
       line: (내 자료가 빠진 걸 제일 먼저 알아챘네. 자기 몫까지 내주고, 꽤 세심한데.)
@@ -108,6 +139,9 @@ nodes:
   - id: do_yoon_thanks
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       expression: subjective_confident
@@ -126,6 +160,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       line: (먼저 챙긴 걸 알아주고 이름까지 불렀으니 긴장도 풀리겠지. 여유 있는 상사처럼 보였을 거야.)
@@ -137,6 +174,17 @@ nodes:
   - id: seo_a_introduction
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: procedural
       expression: subjective_shy
@@ -155,6 +203,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: procedural
       line: (먼저 챙긴 걸 알아주니 안심했군. 내 앞에서는 표정이 금방 풀리네.)
@@ -166,6 +221,17 @@ nodes:
   - id: min_kyung_question
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -184,6 +250,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: cha_min_kyung
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: playful_tension
       line: (시작부터 핵심을 찌르네. 내 실력을 한번 보겠다는 건가?)
@@ -195,6 +268,9 @@ nodes:
   - id: do_yoon_answer
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: playful_tension
       expression: subjective_confident
@@ -213,6 +289,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: playful_tension
       line: (이 정도 질문은 이미 예상했지. 이제 흐름은 내가 잡았어.)
@@ -224,6 +303,17 @@ nodes:
   - id: min_kyung_accepts
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: procedural
       expression: subjective_challenging
@@ -242,6 +332,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: cha_min_kyung
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: procedural
       line: (시험은 끝났다는 표정이군. 내 답을 인정하고 한발 물러났네.)
@@ -253,6 +350,17 @@ nodes:
   - id: yoo_jin_correction
     kind: dual_dialogue
     speaker: kang_yoo_jin
+    stage:
+      perceived:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_bold_flirt
@@ -271,6 +379,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: kang_yoo_jin
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: playful_tension
       line: (계속 보고 있었군. 작은 오류라도 핑계 삼아 말을 거는 게 꽤 당돌하네.)
@@ -282,6 +397,9 @@ nodes:
   - id: do_yoon_accepts_correction
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       expression: subjective_confident
@@ -300,6 +418,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       line: (실수는 받아들이고 기준은 더 꼼꼼하게. 이런 게 책임자의 여유지.)
@@ -311,6 +432,17 @@ nodes:
   - id: yoo_jin_timestamp
     kind: dual_dialogue
     speaker: kang_yoo_jin
+    stage:
+      perceived:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: procedural
       expression: subjective_bold_flirt
@@ -329,6 +461,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: kang_yoo_jin
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: procedural
       line: (내가 뭘 물을지 기다렸다는 듯 바로 나오네. 호흡이 잘 맞는데.)
@@ -341,6 +480,9 @@ nodes:
   - id: moon_ji_hye_capacity
     kind: dual_dialogue
     speaker: member.moon_ji_hye
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       line: "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요."
@@ -367,6 +509,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       line: (세 사람 모두 자기 장점이 뚜렷하군. 내 앞이라 더 신경 쓴 걸까?)
@@ -378,6 +523,17 @@ nodes:
   - id: seo_a_closing
     kind: dual_dialogue
     speaker: yoon_seo_a
+    stage:
+      perceived:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: procedural
       expression: subjective_shy
@@ -396,6 +552,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: yoon_seo_a
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: yoon_seo_a
+          visual_id: character.yoon_seo_a
+          artwork: default
     perceived:
       atmosphere: procedural
       line: (내가 불편하지 않게 끝까지 챙겨 주려는 건가. 책임감도 있고 세심하네.)
@@ -407,6 +570,17 @@ nodes:
   - id: min_kyung_closing
     kind: dual_dialogue
     speaker: cha_min_kyung
+    stage:
+      perceived:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: procedural
       expression: subjective_challenging
@@ -425,6 +599,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: cha_min_kyung
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: cha_min_kyung
+          visual_id: character.cha_min_kyung
+          artwork: default
     perceived:
       atmosphere: procedural
       line: (내 판단을 믿으면서도 다음 움직임은 함께 맞추겠다는 거군.)
@@ -436,6 +617,17 @@ nodes:
   - id: yoo_jin_closing
     kind: dual_dialogue
     speaker: kang_yoo_jin
+    stage:
+      perceived:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: procedural
       expression: subjective_bold_flirt
@@ -454,6 +646,13 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: kang_yoo_jin
+    stage:
+      perceived: []
+      reality:
+        - position: center
+          character: kang_yoo_jin
+          visual_id: character.kang_yoo_jin
+          artwork: default
     perceived:
       atmosphere: procedural
       line: (나와 같은 기준으로 맞춰 일하겠다는 단호한 약속처럼 들리네.)
@@ -465,6 +664,9 @@ nodes:
   - id: do_yoon_closing
     kind: dual_dialogue
     speaker: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       expression: subjective_confident
@@ -483,6 +685,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       line: (서로 다른 사람들을 편하게 이끄는 책임자라면 이 정도 여유는 보여야지.)
@@ -509,6 +714,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality: han_do_yoon
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: procedural
       line: (셋 다 눈에 띄긴 하지만, 아직은 같이 일하게 된 사람들일 뿐이지.)

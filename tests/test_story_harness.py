@@ -362,7 +362,6 @@ class StoryHarnessTests(unittest.TestCase):
         }
 
         for activity_id, expected_variant in activity_variants.items():
-            self.assertEqual({"perceived", "reality"}, set(activities[activity_id]["reflection_keys"]))
             expression = self.project.manifest["self_development"]["expressions"][
                 f"feedback.last_{activity_id}"
             ]
@@ -1655,13 +1654,43 @@ class StoryHarnessTests(unittest.TestCase):
             "kang_yoo_jin",
             bundle["events"]["anchor.day_01_company_meeting"]["participants"],
         )
-        self.assertEqual(28, len(bundle["events"]))
+        self.assertEqual(30, len(bundle["events"]))
         parent_pressure = bundle["events"]["anchor.day_01_parent_pressure"]
         self.assertEqual([1, 1], parent_pressure["window"]["days"])
-        self.assertEqual(["after_work"], parent_pressure["window"]["slots"])
+        self.assertEqual(["afternoon"], parent_pressure["window"]["slots"])
         self.assertEqual(
             ["anchor.day_01_company_meeting"],
             parent_pressure["requires"]["events"],
+        )
+        seo_a_neighbor = bundle["events"]["anchor.day_01_officetel_seo_a_reveal"]
+        self.assertEqual([1, 1], seo_a_neighbor["window"]["days"])
+        self.assertEqual(["after_work"], seo_a_neighbor["window"]["slots"])
+        self.assertEqual(
+            ["anchor.day_01_parent_pressure"],
+            seo_a_neighbor["requires"]["events"],
+        )
+        self.assertEqual(
+            ["han_do_yoon", "yoon_seo_a"],
+            bundle["scenes"]["common.day_01_officetel_seo_a_reveal"]["cast"],
+        )
+        min_kyung_move_in = bundle["events"]["anchor.day_03_officetel_min_kyung_move_in"]
+        self.assertEqual([3, 3], min_kyung_move_in["window"]["days"])
+        self.assertEqual(["after_work"], min_kyung_move_in["window"]["slots"])
+        self.assertEqual(
+            ["anchor.day_03_business_trip_or_cafe"],
+            min_kyung_move_in["requires"]["events"],
+        )
+        self.assertEqual(
+            ["han_do_yoon", "cha_min_kyung"],
+            bundle["scenes"]["common.day_03_officetel_min_kyung_move_in"]["cast"],
+        )
+        self.assertEqual(
+            ["anchor.day_01_officetel_seo_a_reveal"],
+            bundle["events"]["anchor.day_02_practical_meeting"]["requires"]["events"],
+        )
+        self.assertEqual(
+            ["anchor.day_03_officetel_min_kyung_move_in"],
+            bundle["events"]["anchor.day_04_weekend_encounter"]["requires"]["events"],
         )
         second_weekend_encounter = bundle["events"]["anchor.day_05_weekend_reflection"]
         self.assertEqual(["afternoon"], second_weekend_encounter["window"]["slots"])
@@ -1879,19 +1908,246 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual("background.office_corridor", report["visual_id"])
         self.assertEqual("background.office_corridor", empty["visual_id"])
 
+    def test_officetel_scenes_use_their_two_dedicated_backgrounds(self):
+        visuals = self.project.resolve_visuals()
+        seo_a_scene = self.project.scenes["common.day_01_officetel_seo_a_reveal"]
+        min_kyung_scene = self.project.scenes["common.day_03_officetel_min_kyung_move_in"]
+        seo_a_background = resolve_scene_background(visuals, seo_a_scene, "home_arrival", "perceived")
+        min_kyung_background = resolve_scene_background(visuals, min_kyung_scene, "knock_at_door", "perceived")
+        self.assertEqual("background.officetel_elevator_lobby", seo_a_background["visual_id"])
+        self.assertEqual("evening", seo_a_background["variant_id"])
+        self.assertEqual("background.officetel_unit_corridor", min_kyung_background["visual_id"])
+        self.assertEqual("move_in_evening", min_kyung_background["variant_id"])
+        self.assertNotEqual(seo_a_background["asset"], min_kyung_background["asset"])
+
+    def test_scene_default_background_overrides_automatic_matching(self):
+        scene = copy.deepcopy(self.project.scenes["seo_a.email_request"])
+        scene["default_background"] = {
+            "visual_id": "background.empty_office",
+            "variant_id": "night",
+        }
+        background = resolve_scene_background(
+            self.project.resolve_visuals(), scene, "request", "perceived"
+        )
+        self.assertEqual("background.empty_office", background["visual_id"])
+        self.assertEqual("night", background["variant_id"])
+        self.assertEqual(["scene-default"], background["matched"])
+
+    def test_scene_default_background_rejects_unknown_variant(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        original = copy.deepcopy(scene.get("default_background"))
+        scene["default_background"] = {
+            "visual_id": "background.empty_office",
+            "variant_id": "missing",
+        }
+        try:
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("unknown background variant" in message for message in messages))
+        finally:
+            if original is None:
+                scene.pop("default_background", None)
+            else:
+                scene["default_background"] = original
+
+    def test_silent_node_is_zero_character_presentable_flow(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        original_start = scene["start_node"]
+        silent = {
+            "id": "silent_view_test",
+            "kind": "silent",
+            "perceived": {"atmosphere": "dread", "line": ""},
+            "reality": {"atmosphere": "dread", "line": ""},
+            "stage": {"perceived": [], "reality": []},
+            "next": original_start,
+        }
+        scene["nodes"].insert(0, silent)
+        scene["start_node"] = silent["id"]
+        try:
+            self.assertEqual([], self.project.validate())
+            stage = resolve_scene_stage(
+                self.project.resolve_visuals(), scene, silent["id"], "perceived"
+            )
+            self.assertEqual([], stage["characters"])
+            self.assertIsNotNone(stage["background"])
+        finally:
+            scene["start_node"] = original_start
+            scene["nodes"] = [node for node in scene["nodes"] if node["id"] != silent["id"]]
+
+    def test_silent_node_rejects_nonempty_dialogue(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        original_start = scene["start_node"]
+        silent = {
+            "id": "silent_view_invalid",
+            "kind": "silent",
+            "perceived": {"atmosphere": "dread", "line": "not silent"},
+            "reality": {"atmosphere": "dread", "line": ""},
+            "next": original_start,
+        }
+        scene["nodes"].insert(0, silent)
+        scene["start_node"] = silent["id"]
+        try:
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("silent perceived.line must be an explicit empty string" in message for message in messages))
+        finally:
+            scene["start_node"] = original_start
+            scene["nodes"] = [node for node in scene["nodes"] if node["id"] != silent["id"]]
+
     def test_scene_stage_composes_background_and_character_objects(self):
         scene = self.project.scenes["seo_a.email_request"]
         stage = resolve_scene_stage(self.project.resolve_visuals(), scene, "request", "reality")
         self.assertEqual("background.office_open", stage["background"]["visual_id"])
-        self.assertEqual(["yoon_seo_a"], [item["character"] for item in stage["characters"]])
+        self.assertEqual(
+            [("yoon_seo_a", "center", True)],
+            [(item["character"], item["position"], item["speaker"]) for item in stage["characters"]],
+        )
         seo_a = stage["characters"][0]
-        self.assertEqual("actual_tense", seo_a["expression"])
+        self.assertIsNone(seo_a["expression"])
         self.assertTrue(seo_a["speaker"])
 
         perceived_inner = resolve_scene_stage(self.project.resolve_visuals(), scene, "request_inner", "perceived")
         reality_inner = resolve_scene_stage(self.project.resolve_visuals(), scene, "request_inner", "reality")
-        self.assertEqual(["han_do_yoon"], [item["character"] for item in perceived_inner["characters"]])
-        self.assertEqual(["yoon_seo_a"], [item["character"] for item in reality_inner["characters"]])
+        self.assertEqual(
+            [],
+            [(item["character"], item["speaker"]) for item in perceived_inner["characters"]],
+        )
+        self.assertEqual(
+            [("yoon_seo_a", True)],
+            [(item["character"], item["speaker"]) for item in reality_inner["characters"]],
+        )
+
+    def test_han_do_yoon_artwork_requires_an_explicit_ending_reveal(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        node = scene["nodes"][0]
+        original_stage = copy.deepcopy(node.get("stage"))
+        node["stage"] = {
+            "perceived": [{
+                "position": "center",
+                "character": "han_do_yoon",
+                "visual_id": "character.han_do_yoon",
+                "artwork": "default",
+            }],
+        }
+        try:
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("reserved for an explicit ending reveal" in message for message in messages))
+            stage = resolve_scene_stage(self.project.resolve_visuals(), scene, node["id"], "perceived")
+            self.assertFalse(any(item["character"] == "han_do_yoon" for item in stage["characters"]))
+        finally:
+            if original_stage is None:
+                node.pop("stage", None)
+            else:
+                node["stage"] = original_stage
+
+    def test_han_do_yoon_artwork_appears_on_the_declared_mugshot_reveal(self):
+        scene = self.project.scenes["ending.seo_a.report"]
+        for mode in ("perceived", "reality"):
+            stage = resolve_scene_stage(self.project.resolve_visuals(), scene, "mugshot", mode)
+            self.assertEqual(
+                [("han_do_yoon", "center")],
+                [(item["character"], item["position"]) for item in stage["characters"]],
+            )
+
+    def test_han_do_yoon_artwork_never_leaks_outside_declared_reveal_nodes(self):
+        visuals = self.project.resolve_visuals()
+        reveal_count = 0
+        for scene in self.project.scenes.values():
+            for node in scene["nodes"]:
+                is_reveal = (
+                    scene["id"].startswith("ending.")
+                    and node.get("kind") == "dual_narration"
+                    and "protagonist_art_reveal" in node.get("presentation_flags", [])
+                )
+                for mode in ("perceived", "reality"):
+                    stage = resolve_scene_stage(visuals, scene, node["id"], mode)
+                    has_protagonist_art = any(
+                        item["character"] == "han_do_yoon"
+                        for item in stage["characters"]
+                    )
+                    self.assertEqual(is_reveal, has_protagonist_art, f"{scene['id']}#{node['id']}:{mode}")
+                if is_reveal:
+                    reveal_count += 1
+        self.assertGreater(reveal_count, 0)
+
+    def test_manual_stage_supports_off_and_three_non_speaker_artworks(self):
+        scene = self.project.scenes["common.day_01_company_meeting"]
+        node = scene["nodes"][0]
+        original = copy.deepcopy(node.get("stage"))
+        node["stage"] = {
+            "perceived": [
+                {"position": "left", "character": "yoon_seo_a", "visual_id": "character.yoon_seo_a", "artwork": "default"},
+                {"position": "center", "character": "cha_min_kyung", "visual_id": "character.cha_min_kyung", "artwork": "default"},
+                {"position": "right", "character": "kang_yoo_jin", "visual_id": "character.kang_yoo_jin", "artwork": "default"},
+            ],
+            "reality": [],
+        }
+        try:
+            self.assertEqual([], self.project.validate())
+            perceived = resolve_scene_stage(self.project.resolve_visuals(), scene, node["id"], "perceived")
+            self.assertEqual(
+                [("left", "yoon_seo_a"), ("center", "cha_min_kyung"), ("right", "kang_yoo_jin")],
+                [(item["position"], item["character"]) for item in perceived["characters"]],
+            )
+            self.assertEqual([], resolve_scene_stage(self.project.resolve_visuals(), scene, node["id"], "reality")["characters"])
+        finally:
+            if original is None:
+                node.pop("stage", None)
+            else:
+                node["stage"] = original
+
+    def test_manual_stage_rejects_duplicate_positions_and_out_of_cast_characters(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        node = scene["nodes"][0]
+        original = copy.deepcopy(node.get("stage"))
+        node["stage"] = {"perceived": [
+            {"position": "left", "character": "yoon_seo_a", "visual_id": "character.yoon_seo_a", "artwork": "default"},
+            {"position": "left", "character": "cha_min_kyung", "visual_id": "character.cha_min_kyung", "artwork": "default"},
+        ]}
+        try:
+            messages = [issue.message for issue in self.project.validate()]
+            self.assertTrue(any("duplicate stage position" in message for message in messages))
+            self.assertTrue(any("stage character is not in scene cast" in message for message in messages))
+        finally:
+            if original is None:
+                node.pop("stage", None)
+            else:
+                node["stage"] = original
+
+    def test_character_visual_accepts_multiple_registered_artworks(self):
+        source = self.project.visuals["character.yoon_seo_a"]
+        original_default = source.get("default_artwork")
+        original_artworks = copy.deepcopy(source.get("artworks"))
+        scene = self.project.scenes["seo_a.email_request"]
+        node = scene["nodes"][0]
+        original_stage = copy.deepcopy(node.get("stage"))
+        source["default_artwork"] = "office_default"
+        source["artworks"] = {
+            "office_default": {"asset": source["fallback_asset"], "label": "오피스 기본"},
+            "cardigan_smile": {"asset": source["fallback_asset"], "label": "가디건 미소"},
+        }
+        node["stage"] = {"perceived": [{
+            "position": "center",
+            "character": "yoon_seo_a",
+            "visual_id": "character.yoon_seo_a",
+            "artwork": "cardigan_smile",
+        }]}
+        try:
+            self.assertEqual([], self.project.validate())
+            stage = resolve_scene_stage(self.project.resolve_visuals(), scene, node["id"], "perceived")
+            self.assertEqual("cardigan_smile", stage["characters"][0]["artwork"])
+            self.assertEqual(source["fallback_asset"], stage["characters"][0]["asset"])
+        finally:
+            if original_default is None:
+                source.pop("default_artwork", None)
+            else:
+                source["default_artwork"] = original_default
+            if original_artworks is None:
+                source.pop("artworks", None)
+            else:
+                source["artworks"] = original_artworks
+            if original_stage is None:
+                node.pop("stage", None)
+            else:
+                node["stage"] = original_stage
 
     def test_timeline_scheduler_does_not_expose_retired_collapse_events(self):
         scheduler = TimelineScheduler(self.project, "main")

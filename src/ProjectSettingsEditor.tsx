@@ -1,6 +1,8 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useAssetPreview } from "./assetPreview";
+import { nextHistoryGroup, shouldCaptureHistory, type EditHistoryGroup } from "./editorPerformance";
 import { clone, parseEditorValue, statePaths } from "./storyLogic";
 import type {
   Condition,
@@ -361,9 +363,10 @@ export default function ProjectSettingsEditor({ active, payload, onPayload, onIs
   const [saveError, setSaveError] = useState(false);
   const [savedAt, setSavedAt] = useState<number>();
   const [history, setHistory] = useState<{ past: SettingsDocument[]; future: SettingsDocument[] }>({ past: [], future: [] });
-  const [previewAsset, setPreviewAsset] = useState("");
   const handledRequestToken = useRef(0);
-  const lastAutoSaveAttempt = useRef("");
+  const lastAutoSaveAttempt = useRef(-1);
+  const draftVersionRef = useRef(0);
+  const historyGroupRef = useRef<EditHistoryGroup | null>(null);
   const initialRecoveryChecked = useRef(false);
 
   const sourceFor = (nextKind: SettingsKind, id: string): SettingsDocument | undefined => {
@@ -413,6 +416,9 @@ export default function ProjectSettingsEditor({ active, payload, onPayload, onIs
     setDirty(recovered);
     setSaveError(false);
     setHistory({ past: [], future: [] });
+    historyGroupRef.current = null;
+    draftVersionRef.current = 0;
+    lastAutoSaveAttempt.current = -1;
   };
 
   useEffect(() => {
@@ -427,9 +433,17 @@ export default function ProjectSettingsEditor({ active, payload, onPayload, onIs
   }, [active, requestedDocument?.token]);
 
   const applyDraft = (next: SettingsDocument, previous?: SettingsDocument) => {
-    if (previous) setHistory((value) => ({ past: [...value.past, clone(previous)].slice(-100), future: [] }));
+    if (previous) {
+      const now = performance.now();
+      const group = `${kind}:${next.id}`;
+      if (shouldCaptureHistory(historyGroupRef.current, group, now)) {
+        setHistory((value) => ({ past: [...value.past, clone(previous)].slice(-100), future: [] }));
+      }
+      historyGroupRef.current = nextHistoryGroup(group, now);
+    } else historyGroupRef.current = null;
+    draftVersionRef.current += 1;
     setDraft(next);
-    setDirty(JSON.stringify(next) !== JSON.stringify(sourceFor(kind, next.id)));
+    setDirty(previous ? true : JSON.stringify(next) !== JSON.stringify(sourceFor(kind, next.id)));
     setSaveError(false);
   };
 
@@ -464,13 +478,14 @@ export default function ProjectSettingsEditor({ active, payload, onPayload, onIs
         onStatus("참조 또는 스키마 오류가 있어 디스크에는 쓰지 않았습니다. 아래 검증 결과를 확인하세요.");
         return;
       }
-      const nextPayload = clone(payload);
-      nextPayload.runtime = result.runtime;
-      if (kind === "campaign") nextPayload.documents.campaigns[draft.id] = result.document;
-      else if (kind === "route") nextPayload.documents.routes[draft.id] = result.document;
-      else if (kind === "thread") nextPayload.documents.threads[draft.id] = result.document;
-      else if (kind === "meta") nextPayload.documents.meta[draft.id] = result.document;
-      else nextPayload.documents.visuals[draft.id] = result.document;
+      const nextPayload: ProjectPayload = {
+        ...payload,
+        runtime: result.runtime,
+        documents: {
+          ...payload.documents,
+          [collection]: { ...payload.documents[collection], [draft.id]: result.document },
+        },
+      };
       onPayload(nextPayload);
       const savedDocument = kind === "campaign" ? result.runtime.campaigns[draft.id]
         : kind === "route" ? result.runtime.routes[draft.id]
@@ -480,6 +495,7 @@ export default function ProjectSettingsEditor({ active, payload, onPayload, onIs
       setDraft(clone(savedDocument));
       setRevision(result.document.revision);
       setDirty(false);
+      historyGroupRef.current = null;
       setSavedAt(Date.now());
       localStorage.removeItem(`love-office-settings-draft:${payload.root}:${kind}:${draft.id}`);
       onStatus(`${label} YAML과 런타임을 안전하게 저장했습니다.`);
@@ -510,9 +526,9 @@ export default function ProjectSettingsEditor({ active, payload, onPayload, onIs
 
   useEffect(() => {
     if (!dirty || !draft || saving) return;
-    const signature = JSON.stringify(draft);
-    if (signature === lastAutoSaveAttempt.current) return;
-    const timer = window.setTimeout(() => { lastAutoSaveAttempt.current = signature; void save(); }, 1000);
+    const version = draftVersionRef.current;
+    if (version === lastAutoSaveAttempt.current) return;
+    const timer = window.setTimeout(() => { lastAutoSaveAttempt.current = version; void save(); }, 1000);
     return () => window.clearTimeout(timer);
   }, [dirty, draft, save, saving]);
 
@@ -541,10 +557,7 @@ export default function ProjectSettingsEditor({ active, payload, onPayload, onIs
   }, [active, dirty, history, save, saving]);
 
   const visualAsset = draft && "kind" in draft ? draft.fallback_asset || Object.values(draft.variants || {})[0]?.asset || "" : "";
-  useEffect(() => {
-    if (!visualAsset) { setPreviewAsset(""); return; }
-    invoke<string>("read_asset", { root: payload.root, relativePath: visualAsset }).then(setPreviewAsset).catch(() => setPreviewAsset(""));
-  }, [payload.root, visualAsset]);
+  const previewAsset = useAssetPreview(payload.root, visualAsset);
 
   const chooseAsset = async (assign: (path: string) => void) => {
     const selected = await open({ multiple: false, directory: false, filters: [{ name: "이미지", extensions: ["png", "jpg", "jpeg", "webp", "avif"] }] });

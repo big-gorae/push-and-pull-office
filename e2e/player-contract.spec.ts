@@ -40,6 +40,19 @@ async function enterFirstScene(page: Page) {
   throw new Error("first playable dialogue was not reached");
 }
 
+async function setAuthoringPreviewTarget(page: Page, target: Record<string, unknown>) {
+  await page.addInitScript(({ previewTarget }) => {
+    sessionStorage.setItem("love-office:authoring-root", "/mock/love-office");
+    localStorage.setItem("love-office:authoring-preview-target", JSON.stringify(previewTarget));
+    (window as unknown as { __TAURI_INTERNALS__: unknown }).__TAURI_INTERNALS__ = {
+      invoke: async () => undefined,
+      transformCallback: () => 1,
+      unregisterCallback: () => undefined,
+      convertFileSrc: (path: string) => path,
+    };
+  }, { previewTarget: target });
+}
+
 test.beforeEach(async ({ page }) => {
   await setDeterministicSettings(page);
 });
@@ -170,7 +183,73 @@ test("game flow hides authoring UI and debug restores controlled inspection", as
   await expect(page.getByRole("button", { name: "← 이전 대화" }).first()).toBeEnabled();
 });
 
-test("Tauri authoring edits composed sources, creates a translation, and exposes guarded undo", async ({ page }) => {
+test("authoring preview opens an exact night-activity result in its game screen", async ({ page }) => {
+  await setAuthoringPreviewTarget(page, {
+    kind: "system_flow",
+    flowId: "system.night_activity",
+    nodeId: "activity_result",
+    variantId: "ott",
+    layer: "perceived",
+  });
+  await page.goto("/#/play?authoring=1");
+
+  await expect(page.locator(".vn-night-story")).toBeVisible();
+  await expect(page.getByText(/한 편만 보려 했는데 벌써 세 편이네/)).toBeVisible();
+});
+
+test("authoring preview opens an exact psychology-instructor direction in context", async ({ page }) => {
+  await setAuthoringPreviewTarget(page, {
+    kind: "system_flow",
+    flowId: "system.analysis_hint",
+    nodeId: "lesson",
+    variantId: "pull",
+    layer: "perceived",
+  });
+  await page.goto("/#/play?authoring=1");
+
+  await expect(page.locator(".vn-analysis-instructor")).toBeVisible();
+  await expect(page.locator(".vn-analysis-instructor strong")).toContainText("대화를 이어 가야 합니다");
+});
+
+test("officetel dialogue keeps Han Do-yoon off screen and centers the other character", async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.goto("/");
+  await enterFirstScene(page);
+
+  let reached = false;
+  for (let step = 0; step < 240; step += 1) {
+    const title = await page.locator(".vn-day small").textContent().catch(() => null);
+    if (title?.trim() === "엘리베이터 문이 열리자" && await page.locator('.vn-character img[alt="윤서아"]').count() === 1) {
+      reached = true;
+      break;
+    }
+    const pending = page.locator(".vn-flow-dialogue button").first();
+    if (await pending.count()) await pending.click();
+    else await page.keyboard.press("Enter");
+    await page.waitForTimeout(15);
+  }
+  expect(reached).toBe(true);
+
+  await expect(page.locator(".vn-stage-bg")).toHaveAttribute("src", /elevator-lobby-evening/);
+  await expect(page.locator('.vn-character img[alt="한도윤"]')).toHaveCount(0);
+  await expect(page.locator(".vn-character.center img")).toHaveAttribute("alt", "윤서아");
+  await expect(page.locator(".vn-character.speaking")).toHaveCount(1);
+
+  let doYoonSpeaking = false;
+  for (let step = 0; step < 12; step += 1) {
+    if ((await page.locator(".vn-nameplate").textContent().catch(() => null))?.trim() === "한도윤") {
+      doYoonSpeaking = true;
+      break;
+    }
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(15);
+  }
+  expect(doYoonSpeaking).toBe(true);
+  await expect(page.locator('.vn-character img[alt="한도윤"]')).toHaveCount(0);
+  await expect(page.locator(".vn-character")).toHaveCount(0);
+});
+
+test("Tauri authoring edits direct physical sources, creates a translation, and exposes guarded undo", async ({ page }) => {
   test.setTimeout(60_000);
   await page.addInitScript(({ settingsKey }) => {
     localStorage.clear();
@@ -225,33 +304,20 @@ test("Tauri authoring edits composed sources, creates a translation, and exposes
           const layer = key.includes(".reality.") ? "reality" : "perceived";
           return {
             key,
-            kind: "composed_template",
-            editable: false,
+            kind: "direct_yaml",
+            editable: true,
             locale,
-            reason: "MULTIPLE_SOURCE_OWNERS",
             currentValue: sources[key],
+            revision: `scene-${revision}`,
+            currentValueHash: `scene-hash-${layer}`,
+            relativePath: "story/scenes/common/day_01_company_meeting.yaml",
+            fieldPath: `nodes.opening.${layer}.line`,
             sources: [{
-              label: "장면 공통 문장",
-              relativePath: "story/scenes/common/day_01_morning_briefing.yaml",
-              fieldPath: `nodes.opening.self_development_template.${layer}.line`,
+              label: "원본 YAML",
+              relativePath: "story/scenes/common/day_01_company_meeting.yaml",
+              fieldPath: `nodes.opening.${layer}.line`,
               line: layer === "reality" ? 52 : 45,
               column: 7,
-              editable: true,
-              currentValue: "오늘도 잘 부탁합니다. {{office_pitch}} 참석자표부터 볼까요?",
-              revision: `scene-${revision}`,
-              currentValueHash: `scene-hash-${layer}`,
-              placeholders: ["office_pitch"],
-            }, {
-              label: "workout · office_pitch",
-              relativePath: "story/manifest.yaml",
-              fieldPath: "self_development.conversation_topics.workout.slots.office_pitch",
-              line: 269,
-              column: 9,
-              editable: true,
-              currentValue: "요즘 운동을 다시 시작했습니다.",
-              revision: `manifest-${revision}`,
-              currentValueHash: "manifest-hash",
-              placeholders: [],
             }],
           };
         }
@@ -307,9 +373,9 @@ test("Tauri authoring edits composed sources, creates a translation, and exposes
   await page.getByRole("button", { name: "대사 편집" }).click();
 
   await expect(page.getByRole("dialog", { name: "인게임 원본 문구 편집" })).toBeVisible();
-  await expect(page.getByText("합성 원본 구조화 편집", { exact: true })).toBeVisible();
-  await expect(page.locator(".vn-composed-source-editor textarea")).toHaveCount(3);
-  await expect(page.getByText(/:45:7 · nodes\.opening\.self_development_template\.perceived\.line/)).toBeVisible();
+  await expect(page.getByText("직접 편집", { exact: true })).toHaveCount(2);
+  await expect(page.locator(".vn-story-editor > section textarea")).toHaveCount(2);
+  await expect(page.getByText(/:45:7 · nodes\.opening\.perceived\.line/)).toBeVisible();
 
   await page.getByRole("button", { name: /English 번역/ }).click();
   await expect(page.getByText("en 새 번역", { exact: true })).toHaveCount(2);

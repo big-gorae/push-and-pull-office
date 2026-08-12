@@ -30,7 +30,7 @@ describe("NovelAI prompt catalog", () => {
       displayName: "윤서아",
       age: 24,
       role: "영업기획팀 계약직 사원",
-      conceptArt: "assets/concept-art/yoon-seo-a.png",
+      conceptArt: "assets/characters/yoon-seo-a/office-default/base-cutout.png",
     });
     expect(seoA?.variants[0].identityTags).toContain("long hair");
     expect(seoA?.variants[0].identityInstructions.join(" ")).toContain("dark-brown hair");

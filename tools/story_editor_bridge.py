@@ -23,7 +23,6 @@ from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 from ruamel.yaml.scalarstring import ScalarString
 
-from self_development_dialogue import SelfDevelopmentDialogueCompiler
 from story_harness import StoryProject, collect_localizable_entries, render_json, write_json
 
 
@@ -64,6 +63,7 @@ def document_index(root: Path, project: StoryProject) -> Dict[str, Dict[str, Dic
         ("meta", project.meta),
         ("routes", project.routes),
         ("scenes", project.scenes),
+        ("system_flows", project.system_flows),
     ):
         result[kind] = {}
         for item_id, value in values.items():
@@ -302,92 +302,12 @@ def merge_round_trip(existing: Any, updated: Any, key: str | None = None) -> Any
     return copy.deepcopy(updated)
 
 
-def preserve_source_template_nodes(
-    existing_scene: Mapping[str, Any],
-    updated_scene: MutableMapping[str, Any],
-) -> None:
-    """Keep authoring macros out of the runtime-scene round trip.
-
-    The editor receives compiled runtime nodes, where a source
-    ``self_development_template`` and its fallback layers have been replaced by
-    generated ``variants``.  Those variants are runtime output, not editable
-    story source.  Restore only the authoring-owned fields while leaving the
-    rest of each updated node (for example ``next`` or presentation metadata)
-    available to the normal round-trip merge.
-    """
-
-    existing_nodes = existing_scene.get("nodes")
-    updated_nodes = updated_scene.get("nodes")
-    if not isinstance(existing_nodes, Sequence) or isinstance(existing_nodes, (str, bytes)):
-        return
-    if not isinstance(updated_nodes, Sequence) or isinstance(updated_nodes, (str, bytes)):
-        return
-
-    existing_by_id = {
-        node["id"]: node
-        for node in existing_nodes
-        if isinstance(node, Mapping) and isinstance(node.get("id"), str)
-    }
-    for updated_node in updated_nodes:
-        if not isinstance(updated_node, MutableMapping) or not isinstance(updated_node.get("id"), str):
-            continue
-        existing_node = existing_by_id.get(updated_node["id"])
-        if not isinstance(existing_node, Mapping) or "self_development_template" not in existing_node:
-            continue
-        if "variants" not in updated_node:
-            continue
-
-        updated_node.pop("variants", None)
-        for field in ("perceived", "reality", "self_development_template"):
-            if field in existing_node:
-                updated_node[field] = copy.deepcopy(existing_node[field])
-
-
-def reject_modified_generated_template_variants(
-    existing_scene: Mapping[str, Any],
-    updated_scene: Mapping[str, Any],
-    self_development: Mapping[str, Any],
-) -> None:
-    """Reject editor writes to generated variants instead of silently losing them."""
-    if not isinstance(self_development.get("conversation_topics"), Mapping):
-        return
-    existing_nodes = existing_scene.get("nodes")
-    updated_nodes = updated_scene.get("nodes")
-    if not isinstance(existing_nodes, Sequence) or isinstance(existing_nodes, (str, bytes)):
-        return
-    if not isinstance(updated_nodes, Sequence) or isinstance(updated_nodes, (str, bytes)):
-        return
-
-    compiler = SelfDevelopmentDialogueCompiler(self_development)
-    expected_by_id = {
-        node["id"]: compiler.compile_node(node)
-        for node in existing_nodes
-        if isinstance(node, Mapping)
-        and isinstance(node.get("id"), str)
-        and "self_development_template" in node
-    }
-    for updated_node in updated_nodes:
-        if not isinstance(updated_node, Mapping) or not isinstance(updated_node.get("id"), str):
-            continue
-        expected = expected_by_id.get(updated_node["id"])
-        if expected is None or "variants" not in updated_node:
-            continue
-        if updated_node.get("variants") != expected.get("variants"):
-            raise RuntimeError(
-                "TEMPLATE_VARIANTS_READ_ONLY: generated activity dialogue variants must be edited "
-                "through self_development_template or manifest conversation_topics"
-            )
-
-
 def yaml_text_for_scene(target: Path, scene: Mapping[str, Any]) -> str:
     with target.open("r", encoding="utf-8") as handle:
         current = YAML_RT.load(handle)
     if not isinstance(current, CommentedMap):
         raise RuntimeError(f"YAML root must be a mapping: {target}")
-    self_development = self_development_config(target)
-    prepared = prepare_scene(scene, self_development.get("expressions", {}))
-    reject_modified_generated_template_variants(current, prepared, self_development)
-    preserve_source_template_nodes(current, prepared)
+    prepared = prepare_scene(scene, self_development_expressions(target))
     merged = merge_round_trip(current, prepared)
     from io import StringIO
 
@@ -490,7 +410,7 @@ def find_scene_path(root: Path, scene_id: str) -> Path:
 
 
 def find_document_path(root: Path, kind: str, document_id: str) -> Path:
-    allowed = {"campaigns", "characters", "events", "locales", "visuals", "threads", "meta", "routes"}
+    allowed = {"campaigns", "characters", "events", "locales", "visuals", "threads", "meta", "routes", "system_flows"}
     if kind not in allowed:
         raise RuntimeError(f"unsupported editable document kind: {kind}")
     project = StoryProject(root.resolve() / "story")
@@ -510,6 +430,7 @@ STORY_TEXT_FIELD_PATTERNS = {
         re.compile(r"^nodes\.[a-zA-Z0-9_]+\.(?:perceived|reality)\.line$"),
         re.compile(r"^nodes\.[a-zA-Z0-9_]+\.variants\.[a-zA-Z0-9_]+\.(?:perceived|reality)\.line$"),
         re.compile(r"^nodes\.[a-zA-Z0-9_]+\.(?:prompt|stimulus)$"),
+        re.compile(r"^nodes\.[a-zA-Z0-9_]+\.analysis_hints\.(?:pull|push|none)$"),
         re.compile(r"^nodes\.[a-zA-Z0-9_]+\.options\.[a-zA-Z0-9_]+\.(?:label|interpretation|action)$"),
     ),
     "event": (
@@ -517,6 +438,11 @@ STORY_TEXT_FIELD_PATTERNS = {
         re.compile(r"^presentation\.(?:perceived|reality)\.(?:title|summary)$"),
     ),
     "ui": (re.compile(r"^strings\..+$"),),
+    "system_flow": (
+        re.compile(r"^nodes\.[a-zA-Z0-9_]+\.(?:perceived|reality)\.line$"),
+        re.compile(r"^nodes\.[a-zA-Z0-9_]+\.variants\.[a-zA-Z0-9_]+\.(?:perceived|reality)\.line$"),
+        re.compile(r"^options\.[a-zA-Z0-9_]+\.(?:label|description)$"),
+    ),
 }
 
 
@@ -534,6 +460,8 @@ def source_path_for_entry(root: Path, project: StoryProject, entry: Mapping[str,
         target = Path(project.events[item_id]["_source"])
     elif kind == "ui" and item_id == project.ui.get("id", "game_ui"):
         target = Path(project.ui["_source"])
+    elif kind == "system_flow" and item_id in project.system_flows:
+        target = Path(project.system_flows[item_id]["_source"])
     else:
         raw_path = document.get("path")
         if not isinstance(raw_path, str):
@@ -615,71 +543,6 @@ def yaml_source_locator(target: Path, field_path: str, *, allow_missing_string: 
     return {"fieldPath": field_path, "line": line, "column": column}
 
 
-def editable_source_descriptor(root: Path, target: Path, field_path: str, label: str) -> Dict[str, Any]:
-    with target.open("r", encoding="utf-8") as handle:
-        document = YAML_RT.load(handle)
-    if not isinstance(document, MutableMapping):
-        raise RuntimeError(f"FIELD_NOT_EDITABLE: YAML root is not a mapping: {target}")
-    parent, field = resolve_yaml_text_field(document, field_path)
-    current_value = str(parent[field])
-    return {
-        "label": label,
-        "relativePath": str(target.relative_to(root)),
-        **yaml_source_locator(target, field_path),
-        "editable": True,
-        "currentValue": current_value,
-        "currentValueHash": value_hash(current_value),
-        "revision": revision(target),
-        "placeholders": text_placeholders(current_value),
-    }
-
-
-def raw_scene_node(project: StoryProject, scene_id: str, node_id: str) -> Mapping[str, Any] | None:
-    scene = project.scenes.get(scene_id, {})
-    return next((node for node in scene.get("nodes", []) if node.get("id") == node_id), None)
-
-
-def composed_template_owner(
-    root: Path,
-    project: StoryProject,
-    entry: Mapping[str, Any],
-    raw_node: Mapping[str, Any],
-) -> Dict[str, Any]:
-    context = entry.get("context", {})
-    scene_id = context.get("sceneId")
-    node_id = context.get("nodeId")
-    variant_id = context.get("variantId")
-    layer = context.get("layer")
-    activity_id = variant_id.removeprefix("after_") if isinstance(variant_id, str) else ""
-    template = raw_node.get("self_development_template", {})
-    template_line = template.get(layer, {}).get("line") if isinstance(layer, str) else None
-    slots = sorted(set(re.findall(r"\{\{([a-z][a-z0-9_]*)\}\}", template_line or "")))
-    scene_target = Path(project.scenes[scene_id]["_source"]).resolve()
-    scene_field = f"nodes.{node_id}.self_development_template.{layer}.line"
-    sources = [editable_source_descriptor(root, scene_target, scene_field, "장면 공통 문장")]
-    manifest_target = project.manifest_path.resolve()
-    topic_slots = project.manifest.get("self_development", {}).get("conversation_topics", {}).get(activity_id, {}).get("slots", {})
-    for slot in slots:
-        if slot not in topic_slots:
-            continue
-        manifest_field = f"self_development.conversation_topics.{activity_id}.slots.{slot}"
-        sources.append(editable_source_descriptor(
-            root,
-            manifest_target,
-            manifest_field,
-            f"{activity_id} · {slot}",
-        ))
-    return {
-        "key": entry["key"],
-        "kind": "composed_template",
-        "editable": False,
-        "reason": "MULTIPLE_SOURCE_OWNERS",
-        "locale": project.manifest.get("project", {}).get("default_language", "ko"),
-        "currentValue": entry["source"],
-        "sources": sources,
-    }
-
-
 def story_text_owner(root: Path, localization_key: str, locale: str | None = None) -> Dict[str, Any]:
     root = root.resolve()
     project = StoryProject(root / "story")
@@ -737,15 +600,6 @@ def story_text_owner(root: Path, localization_key: str, locale: str | None = Non
     document = entry["sourceDocument"]
     kind = str(document.get("kind"))
     field_path = str(document.get("fieldPath"))
-    context = entry.get("context", {})
-    if kind == "scene" and isinstance(context.get("sceneId"), str) and isinstance(context.get("nodeId"), str):
-        raw_node = raw_scene_node(project, context["sceneId"], context["nodeId"])
-        variant_id = context.get("variantId")
-        if raw_node and "self_development_template" in raw_node and variant_id and variant_id != "default":
-            return composed_template_owner(root, project, entry, raw_node)
-        if raw_node and "self_development_template" in raw_node and variant_id == "default":
-            field_path = f"nodes.{context['nodeId']}.{context['layer']}.line"
-
     target = source_path_for_entry(root, project, entry)
     source = {
         "label": "원본 YAML",
@@ -942,6 +796,7 @@ def save_story_text(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
         "saved": True,
         "issues": [issue_json(issue) for issue in project_issues],
         "runtime": bundle,
+        "documents": document_index(root, project),
         "owner": updated_owners[0],
         "owners": updated_owners,
         "changes": [{

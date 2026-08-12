@@ -29,62 +29,268 @@ nodes:
   - id: activity_callback
     kind: dual_dialogue
     speaker: han_do_yoon
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_confident
-      line: "주말에도 뵙네요. 여기서 마주칠 줄은 몰랐습니다."
-    reality:
-      atmosphere: procedural
-      expression: actual_waiting_smile
-      line: "주말에도 뵙네요. 여기서 마주칠 줄은 몰랐습니다."
-      intent: courtesy
-    self_development_template:
-      source: last_activity
-      perceived:
-        line: "주말에도 뵙네요. {{weekend_pitch}}"
-      reality:
-        line: "주말에도 뵙네요. {{weekend_pitch}}"
-        intent: self_promotion
+    stage:
+      perceived: []
+      reality: []
     next: activity_response
 
+    variants:
+      - id: after_workout
+        priority: 100
+        self_development:
+          expression: feedback.last_workout
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_confident
+          line: 주말에도 뵙네요. 요즘 운동을 다시 시작했습니다. 주말에는 가볍게 걷는 것도 괜찮더군요. 이 근처도 산책하기 괜찮나요?
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 주말에도 뵙네요. 요즘 운동을 다시 시작했습니다. 주말에는 가볍게 걷는 것도 괜찮더군요. 이 근처도 산책하기 괜찮나요?
+          intent: self_promotion
+      - id: after_reading
+        priority: 90
+        self_development:
+          expression: feedback.last_reading
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_confident
+          line: 주말에도 뵙네요. 요즘 《말보다 맥락》이라는 책을 읽고 있습니다. 주말에 조용히 읽을 곳을 찾고 있었는데, 이 근처도 괜찮습니까?
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 주말에도 뵙네요. 요즘 《말보다 맥락》이라는 책을 읽고 있습니다. 주말에 조용히 읽을 곳을 찾고 있었는데, 이 근처도 괜찮습니까?
+          intent: self_promotion
+      - id: after_ott
+        priority: 80
+        self_development:
+          expression: feedback.last_ott
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_confident
+          line: 주말에도 뵙네요. 요즘 다들 《퇴근은 내일》이라는 회사 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. ‘회의는 끝났지만 내 마음은 야근 중입니다’라는 대사는 원래 어느 장면에 나옵니까?
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 주말에도 뵙네요. 요즘 다들 《퇴근은 내일》이라는 회사 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. ‘회의는 끝났지만 내 마음은 야근 중입니다’라는 대사는 원래 어느 장면에 나옵니까?
+          intent: self_promotion
+      - id: after_sleep
+        priority: 70
+        self_development:
+          expression: feedback.last_sleep
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_confident
+          line: 주말에도 뵙네요. 요즘은 늦게까지 깨어 있는 시간을 줄이고 아침 컨디션을 챙겨 보려고 합니다. 일찍 움직이니 한결 여유롭네요.
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 주말에도 뵙네요. 요즘은 늦게까지 깨어 있는 시간을 줄이고 아침 컨디션을 챙겨 보려고 합니다. 일찍 움직이니 한결 여유롭네요.
+          intent: self_promotion
+      - id: after_dark_psychology
+        priority: 60
+        self_development:
+          expression: feedback.last_dark_psychology
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_confident
+          line: 주말에도 뵙네요. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요.
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 주말에도 뵙네요. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요.
+          intent: self_promotion
+      - id: after_solo_drinking
+        priority: 50
+        self_development:
+          expression: feedback.last_solo_drinking
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_confident
+          line: 주말에도 뵙네요. 어제는 너무 피곤해서 혼자 한잔하고 바로 잤습니다. 오늘은 술 대신 바람이나 쐬려고 나왔어요.
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 주말에도 뵙네요. 어제는 너무 피곤해서 혼자 한잔하고 바로 잤습니다. 오늘은 술 대신 바람이나 쐬려고 나왔어요.
+          intent: self_promotion
+      - id: default
+        default: true
+        perceived:
+          atmosphere: warm_romance
+          expression: subjective_confident
+          line: "주말에도 뵙네요. 여기서 마주칠 줄은 몰랐습니다."
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: "주말에도 뵙네요. 여기서 마주칠 줄은 몰랐습니다."
+          intent: courtesy
   - id: activity_response
     kind: dual_narration
-    perceived:
-      atmosphere: warm_romance
-      line: "동료는 ‘여기서 뵐 줄은 몰랐네요’라고 인사했다."
-    reality:
-      atmosphere: procedural
-      line: "동료는 ‘여기서 뵐 줄은 몰랐네요’라고 인사했다."
-      intent: courtesy
-    self_development_template:
-      source: last_activity
-      perceived:
-        line: "동료는 ‘{{weekend_answer}}’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다."
-      reality:
-        line: "동료는 ‘{{weekend_answer}}’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다."
     next: activity_callback_inner
 
+    variants:
+      - id: after_workout
+        priority: 100
+        self_development:
+          expression: feedback.last_workout
+        perceived:
+          atmosphere: warm_romance
+          line: 동료는 ‘이 근처는 차가 많지 않아 걷기 괜찮은 편이에요.’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다.
+        reality:
+          atmosphere: procedural
+          line: 동료는 ‘이 근처는 차가 많지 않아 걷기 괜찮은 편이에요.’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다.
+          intent: courtesy
+      - id: after_reading
+        priority: 90
+        self_development:
+          expression: feedback.last_reading
+        perceived:
+          atmosphere: warm_romance
+          line: 동료는 ‘조용히 읽으려면 안쪽 자리가 괜찮아요.’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다.
+        reality:
+          atmosphere: procedural
+          line: 동료는 ‘조용히 읽으려면 안쪽 자리가 괜찮아요.’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다.
+          intent: courtesy
+      - id: after_ott
+        priority: 80
+        self_development:
+          expression: feedback.last_ott
+        perceived:
+          atmosphere: warm_romance
+          line: 동료는 ‘그 대사는 첫 회 회식 장면에 나와요.’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다.
+        reality:
+          atmosphere: procedural
+          line: 동료는 ‘그 대사는 첫 회 회식 장면에 나와요.’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다.
+          intent: courtesy
+      - id: after_sleep
+        priority: 70
+        self_development:
+          expression: feedback.last_sleep
+        perceived:
+          atmosphere: warm_romance
+          line: 동료는 ‘주말에는 조금 일찍 움직이면 여유 있게 둘러볼 수 있죠.’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다.
+        reality:
+          atmosphere: procedural
+          line: 동료는 ‘주말에는 조금 일찍 움직이면 여유 있게 둘러볼 수 있죠.’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다.
+          intent: courtesy
+      - id: after_dark_psychology
+        priority: 60
+        self_development:
+          expression: feedback.last_dark_psychology
+        perceived:
+          atmosphere: warm_romance
+          line: 동료는 ‘그런 내용은 사람마다 다르게 받아들일 것 같아요.’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다.
+        reality:
+          atmosphere: procedural
+          line: 동료는 ‘그런 내용은 사람마다 다르게 받아들일 것 같아요.’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다.
+          intent: courtesy
+      - id: after_solo_drinking
+        priority: 50
+        self_development:
+          expression: feedback.last_solo_drinking
+        perceived:
+          atmosphere: warm_romance
+          line: 동료는 ‘오늘은 무리하지 말고 쉬시는 게 좋겠네요.’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다.
+        reality:
+          atmosphere: procedural
+          line: 동료는 ‘오늘은 무리하지 말고 쉬시는 게 좋겠네요.’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다.
+          intent: courtesy
+      - id: default
+        default: true
+        perceived:
+          atmosphere: warm_romance
+          line: "동료는 ‘여기서 뵐 줄은 몰랐네요’라고 인사했다."
+        reality:
+          atmosphere: procedural
+          line: "동료는 ‘여기서 뵐 줄은 몰랐네요’라고 인사했다."
+          intent: courtesy
   - id: activity_callback_inner
     kind: dual_dialogue
     presentation_flags: [inner_voice]
     speakers:
       perceived: han_do_yoon
       reality:
-    perceived:
-      atmosphere: warm_romance
-      line: "(회사 밖에서 마주친 걸 꽤 반가워하는군.)"
-    reality:
-      atmosphere: procedural
-      line: "공공장소에서 직장 동료를 만난 가벼운 놀람이었다."
-      intent: courtesy
-    self_development_template:
-      source: last_activity
-      perceived:
-        line: "(회사 밖에서도 내가 꺼낸 얘기에 바로 답해 주는군. {{perceived_self_image}})"
-      reality:
-        line: "{{reality_limit}} 동료는 눈앞의 질문이나 관찰에 답한 뒤 각자 둘러보기로 했다."
+    stage:
+      perceived: []
+      reality: []
     next: goodbye
 
+    variants:
+      - id: after_workout
+        priority: 100
+        self_development:
+          expression: feedback.last_workout
+        perceived:
+          atmosphere: warm_romance
+          line: (회사 밖에서도 내가 꺼낸 얘기에 바로 답해 주는군. 꾸준히 자기관리하는 사람이라는 인상은 남았겠지.)
+        reality:
+          atmosphere: procedural
+          line: 한 번 운동했다는 자기보고일 뿐, 외형이나 건강의 변화가 확인된 것은 아니었다. 동료는 눈앞의 질문이나 관찰에 답한 뒤 각자 둘러보기로 했다.
+          intent: courtesy
+      - id: after_reading
+        priority: 90
+        self_development:
+          expression: feedback.last_reading
+        perceived:
+          atmosphere: warm_romance
+          line: (회사 밖에서도 내가 꺼낸 얘기에 바로 답해 주는군. 말의 맥락까지 읽는 사람이라는 인상은 남았겠지.)
+        reality:
+          atmosphere: procedural
+          line: 책 한 권을 읽기 시작했다는 자기보고일 뿐, 상대를 더 잘 이해하게 됐다는 증거는 아니었다. 동료는 눈앞의 질문이나 관찰에 답한 뒤 각자 둘러보기로 했다.
+          intent: courtesy
+      - id: after_ott
+        priority: 80
+        self_development:
+          expression: feedback.last_ott
+        perceived:
+          atmosphere: warm_romance
+          line: (회사 밖에서도 내가 꺼낸 얘기에 바로 답해 주는군. 세대가 다른 사람과도 화제를 맞출 줄 안다는 인상은 남았겠지.)
+        reality:
+          atmosphere: procedural
+          line: 대중적인 콘텐츠를 뒤늦게 봤다는 말일 뿐, 서로 잘 통한다는 증거는 아니었다. 동료는 눈앞의 질문이나 관찰에 답한 뒤 각자 둘러보기로 했다.
+          intent: courtesy
+      - id: after_sleep
+        priority: 70
+        self_development:
+          expression: feedback.last_sleep
+        perceived:
+          atmosphere: warm_romance
+          line: (회사 밖에서도 내가 꺼낸 얘기에 바로 답해 주는군. 자기 리듬을 관리할 줄 아는 사람으로 보였겠지.)
+        reality:
+          atmosphere: procedural
+          line: 생활 리듬을 챙겨 보겠다는 자기보고일 뿐, 지속적인 자기관리의 증거는 아니었다. 동료는 눈앞의 질문이나 관찰에 답한 뒤 각자 둘러보기로 했다.
+          intent: courtesy
+      - id: after_dark_psychology
+        priority: 60
+        self_development:
+          expression: feedback.last_dark_psychology
+        perceived:
+          atmosphere: warm_romance
+          line: (회사 밖에서도 내가 꺼낸 얘기에 바로 답해 주는군. 상대의 마음을 체계적으로 공부하는 사람이라는 인상은 남았겠지.)
+        reality:
+          atmosphere: procedural
+          line: 자극적인 관계 강의를 봤다는 자기보고일 뿐, 눈앞의 사람을 이해했다는 증거는 아니었다. 동료는 눈앞의 질문이나 관찰에 답한 뒤 각자 둘러보기로 했다.
+          intent: courtesy
+      - id: after_solo_drinking
+        priority: 50
+        self_development:
+          expression: feedback.last_solo_drinking
+        perceived:
+          atmosphere: warm_romance
+          line: (회사 밖에서도 내가 꺼낸 얘기에 바로 답해 주는군. 흐트러진 날도 솔직하게 인정하는 사람으로 보였겠지.)
+        reality:
+          atmosphere: procedural
+          line: 피곤해서 혼자 술을 마셨다는 자기보고일 뿐, 상대가 친밀감을 느꼈다는 뜻은 아니었다. 동료는 눈앞의 질문이나 관찰에 답한 뒤 각자 둘러보기로 했다.
+          intent: courtesy
+      - id: default
+        default: true
+        perceived:
+          atmosphere: warm_romance
+          line: "(회사 밖에서 마주친 걸 꽤 반가워하는군.)"
+        reality:
+          atmosphere: procedural
+          line: "공공장소에서 직장 동료를 만난 가벼운 놀람이었다."
+          intent: courtesy
   - id: goodbye
     kind: dual_narration
     presentation_flags: [romance_insert]
@@ -103,6 +309,9 @@ nodes:
     speakers:
       perceived: han_do_yoon
       reality:
+    stage:
+      perceived: []
+      reality: []
     perceived:
       atmosphere: warm_romance
       line: (다음에 또 보자는 말까지 붙인 걸 보면, 오늘 마주친 게 싫지는 않았던 모양이야.)

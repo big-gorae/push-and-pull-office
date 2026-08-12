@@ -32,7 +32,7 @@ interaction_preferences:
   context_overrides:
     - 안전이 걸린 상황에서는 감정 설명보다 기록과 공식 절차를 먼저 실행한다.
 visual:
-  concept_art: assets/concept-art/kang-yoo-jin.png
+  concept_art: assets/characters/kang-yoo-jin/office-default/base-cutout.png
   palette: [cobalt, emerald, light_gray]
   silhouette: 164cm의 활동적인 체형, 높은 포니테일과 똑바른 자세.
   props: [태블릿, 스타일러스, 코발트색 사원증 줄]

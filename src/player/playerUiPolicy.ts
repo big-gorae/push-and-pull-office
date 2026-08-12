@@ -1,14 +1,32 @@
-import type { ChoiceOption, GameModeId, ResolvedCharacterVisual, Runtime } from "../types";
+import type { ChoiceOption, GameModeId, NodeKind, ResolvedCharacterVisual, Runtime } from "../types";
 import type { TimelineLogEntry } from "./playerRuntime";
 import type { PlayerProfile } from "./playerStorage";
 import { resolveModeAccess } from "./gameModes";
+import { isProtagonistArtwork } from "../protagonistArtworkPolicy";
 
 export function modeUnlocked(runtime: Runtime, profile: PlayerProfile, mode: GameModeId): boolean {
   return resolveModeAccess(runtime, mode, profile) !== "locked";
 }
 
-export function speakingCharacters(characters: ResolvedCharacterVisual[]): ResolvedCharacterVisual[] {
-  return characters.filter((character) => character.character !== "han_do_yoon" && character.speaker);
+export function visibleStageCharacters(
+  characters: ResolvedCharacterVisual[],
+  allowProtagonistArtwork = false,
+): ResolvedCharacterVisual[] {
+  return allowProtagonistArtwork
+    ? characters
+    : characters.filter((character) => !isProtagonistArtwork(character.character));
+}
+
+export function stageCharacterFocusClass(character: ResolvedCharacterVisual): "speaking" | "listening" {
+  return character.speaker ? "speaking" : "listening";
+}
+
+export function showSceneHud(kind: NodeKind): boolean {
+  return kind !== "silent";
+}
+
+export function showDialogueChrome(kind: NodeKind): boolean {
+  return kind !== "choice" && kind !== "silent";
 }
 
 export function choiceDebugEffect(option: ChoiceOption): { action: ChoiceOption["push_pull"]["action"]; intensity: number } {

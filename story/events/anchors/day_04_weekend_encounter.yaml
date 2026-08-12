@@ -13,7 +13,7 @@ participants: [han_do_yoon]
 location: outside_cafe
 scene: common.day_04_weekend_encounter
 requires:
-  events: [anchor.day_03_business_trip_or_cafe]
+  events: [anchor.day_03_officetel_min_kyung_move_in]
   conditions: []
 on_seen: {effects: []}
 on_missed: {effects: []}
