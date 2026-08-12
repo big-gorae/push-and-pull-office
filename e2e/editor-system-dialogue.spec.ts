@@ -169,4 +169,29 @@ test("system dialogue workspace is navigable, safe while saving, and undoable", 
   await page.keyboard.press("Control+V");
   await expect(nodeRows).toHaveCount(initialNodeCount + 2);
   await expect(page.locator(".node-pill.active span")).toHaveText(copiedPreview);
+
+  await nodeRows.first().click();
+  await page.getByRole("button", { name: "현재 대사 다음에 추가" }).click();
+  await expect(nodeRows).toHaveCount(initialNodeCount + 3);
+  const originalLine = page.getByRole("textbox", { name: "원문 대사" });
+  const innerLine = page.getByRole("textbox", { name: "속마음 대사" });
+  const lineLock = page.getByRole("button", { name: "속마음 대사 잠금 풀기" });
+  await expect(lineLock).toBeVisible();
+  await originalLine.fill("새 대사는 처음에 함께 바뀝니다.");
+  await expect(innerLine).toBeDisabled();
+  await expect(innerLine).toHaveValue("새 대사는 처음에 함께 바뀝니다.");
+  await lineLock.click();
+  await expect(innerLine).toBeEnabled();
+  await innerLine.fill("잠금을 풀면 다르게 입력됩니다.");
+  await expect(originalLine).toHaveValue("새 대사는 처음에 함께 바뀝니다.");
+
+  await page.locator(".node-pill.active").click();
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.keyboard.press("Delete");
+  await expect(nodeRows).toHaveCount(initialNodeCount + 2);
+
+  await nodeRows.nth(1).dispatchEvent("contextmenu", { clientX: 420, clientY: 420 });
+  page.once("dialog", (dialog) => dialog.accept());
+  await dialogueMenu.getByRole("menuitem", { name: /^삭제/ }).click();
+  await expect(nodeRows).toHaveCount(initialNodeCount + 1);
 });

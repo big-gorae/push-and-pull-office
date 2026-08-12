@@ -462,6 +462,8 @@ function LayerEditor({
   speaker,
   narration,
   silent,
+  lineLocked = false,
+  onToggleLineLock,
   onChange,
 }: {
   title: string;
@@ -471,6 +473,8 @@ function LayerEditor({
   speaker?: string;
   narration?: boolean;
   silent?: boolean;
+  lineLocked?: boolean;
+  onToggleLineLock?: () => void;
   onChange: (layer: Layer) => void;
 }) {
   const character = speaker ? runtime.characters[speaker] : undefined;
@@ -490,7 +494,22 @@ function LayerEditor({
           {expressions.map(([id, value]) => <option value={id} key={id}>{id} · {value.description}</option>)}
         </select>
       </Field>}
-      {!silent && <Field label="화면 대사" wide><TextArea value={layer.line || ""} onChange={(event) => update({ line: event.target.value })} /></Field>}
+      {!silent && mode === "reality" && onToggleLineLock ? <div className="field field-wide"><span className="layer-line-label"><span>속마음 대사</span><button
+        type="button"
+        className={lineLocked ? "line-lock-button locked" : "line-lock-button"}
+        aria-label={lineLocked ? "속마음 대사 잠금 풀기" : "속마음 대사를 원문 대사와 같게 잠그기"}
+        title={lineLocked ? "잠금 해제 후 속마음 대사를 다르게 입력" : "원문 대사와 같게 다시 잠금"}
+        onClick={onToggleLineLock}
+      >{lineLocked ? "🔒" : "🔓"}</button></span><TextArea
+        value={layer.line || ""}
+        disabled={lineLocked}
+        aria-label="속마음 대사"
+        onChange={(event) => update({ line: event.target.value })}
+      /></div> : !silent && <Field label="화면 대사" wide><TextArea
+        value={layer.line || ""}
+        aria-label={mode === "perceived" ? "원문 대사" : "속마음 대사"}
+        onChange={(event) => update({ line: event.target.value })}
+      /></Field>}
       {mode === "reality" && !silent && <Field label="실제 의도">
           <select value={layer.intent || "work_only"} onChange={(event) => update({ intent: event.target.value })}>
             {runtime.enums.intent.map((value) => <option value={value} key={value}>{value}</option>)}
@@ -1018,6 +1037,19 @@ function NodeEditor({
 }) {
   const commonNext = node.kind === "dual_dialogue" || node.kind === "dual_narration" || node.kind === "silent" || node.kind === "effect";
   const speakerOptions = sceneSpeakerOptions(runtime, scene);
+  const lineLayersLocked = node.line_layers_locked === true;
+  const updatePerceivedLayer = (perceived: Layer) => onChange({
+    ...node,
+    perceived,
+    ...(lineLayersLocked ? { reality: { ...node.reality, line: perceived.line || "" } } : {}),
+  });
+  const toggleLineLayersLock = () => onChange(lineLayersLocked
+    ? { ...node, line_layers_locked: false }
+    : {
+      ...node,
+      line_layers_locked: true,
+      reality: { ...node.reality, line: node.perceived?.line || "" },
+    });
   return <div className="node-editor">
     <ArtworkStageEditor root={root} runtime={runtime} scene={scene} node={node} mode={mode} onMode={onMode} onChange={onChange} />
     <div className="form-grid compact-grid">
@@ -1031,16 +1063,16 @@ function NodeEditor({
         {(["perceived", "reality"] as ViewMode[]).map((mode) => <Field label={mode === "perceived" ? "스토리 모드 생각 화자" : "속마음 모드 생각 화자"} key={mode}><select value={node.speakers?.[mode] || ""} onChange={(event) => onChange({ ...node, speakers: { ...node.speakers, [mode]: event.target.value || null } })}><option value="">화자 없는 서술</option>{speakerOptions.map(({ id, label }) => <option value={id} key={id}>{label}</option>)}</select></Field>)}
       </div> : <Field label="화자"><select value={node.speaker || ""} onChange={(event) => onChange(applyDialogueSpeakerSelection(runtime, node, event.target.value))}><option value="">화자 선택</option>{speakerOptions.map(({ id, label }) => <option value={id} key={id}>{label}</option>)}</select></Field>}
       {!node.variants && <div className="dual-layer-grid">
-        <LayerEditor title="주인공이 보는 장면" layer={node.perceived || {}} mode="perceived" runtime={runtime} speaker={effectiveSpeaker(node, "perceived")} onChange={(perceived) => onChange({ ...node, perceived })} />
-        <LayerEditor title="실제 장면" layer={node.reality || {}} mode="reality" runtime={runtime} speaker={effectiveSpeaker(node, "reality")} onChange={(reality) => onChange({ ...node, reality })} />
+        <LayerEditor title="주인공이 보는 장면" layer={node.perceived || {}} mode="perceived" runtime={runtime} speaker={effectiveSpeaker(node, "perceived")} onChange={updatePerceivedLayer} />
+        <LayerEditor title="실제 장면" layer={node.reality || {}} mode="reality" runtime={runtime} speaker={effectiveSpeaker(node, "reality")} lineLocked={lineLayersLocked} onToggleLineLock={toggleLineLayersLock} onChange={(reality) => onChange({ ...node, reality })} />
       </div>}
       <DialogueVariantEditor runtime={runtime} state={state} node={node} onChange={onChange} />
     </>}
 
     {node.kind === "dual_narration" && <>
       {!node.variants && <div className="dual-layer-grid">
-        <LayerEditor title="주인공이 보는 서술" narration layer={node.perceived || {}} mode="perceived" runtime={runtime} onChange={(perceived) => onChange({ ...node, perceived })} />
-        <LayerEditor title="실제 서술" narration layer={node.reality || {}} mode="reality" runtime={runtime} onChange={(reality) => onChange({ ...node, reality })} />
+        <LayerEditor title="주인공이 보는 서술" narration layer={node.perceived || {}} mode="perceived" runtime={runtime} onChange={updatePerceivedLayer} />
+        <LayerEditor title="실제 서술" narration layer={node.reality || {}} mode="reality" runtime={runtime} lineLocked={lineLayersLocked} onToggleLineLock={toggleLineLayersLock} onChange={(reality) => onChange({ ...node, reality })} />
       </div>}
       <DialogueVariantEditor runtime={runtime} state={state} node={node} onChange={onChange} />
     </>}
@@ -1563,7 +1595,7 @@ export default function App() {
     event.preventDefault();
     setSelectedNodeId(nodeId);
     const menuWidth = 210;
-    const menuHeight = 92;
+    const menuHeight = 132;
     setDialogueContextMenu({
       nodeId,
       x: Math.max(8, Math.min(event.clientX, window.innerWidth - menuWidth - 8)),
@@ -2047,23 +2079,41 @@ export default function App() {
     setStatus("선택한 대사 바로 다음에 새 대사를 추가했습니다. ID는 자동으로 관리됩니다.");
   };
 
-  const deleteNode = () => {
-    if (!draft || !selectedNodeId) return;
-    if (draft.node_order.length <= 1) return;
-    const replacementId = deletionReplacement(draft, selectedNodeId);
-    if (!replacementId) {
-      setStatus("이 대사 뒤에 연결할 화면이 없습니다. 다음 대사나 장면 이탈을 먼저 추가해 주세요.");
+  const deleteNode = (nodeId = selectedNodeId) => {
+    if (!draft || !nodeId || !draft.nodes[nodeId]) return;
+    if (draft.node_order.length <= 1) {
+      setStatus("장면에는 최소 한 개의 대사가 필요합니다.");
+      setDialogueContextMenu(null);
       return;
     }
-    const inboundCount = incomingReferenceCount(draft, selectedNodeId);
+    const replacementId = deletionReplacement(draft, nodeId);
+    if (!replacementId) {
+      setStatus("이 대사 뒤에 연결할 화면이 없습니다. 다음 대사나 장면 이탈을 먼저 추가해 주세요.");
+      setDialogueContextMenu(null);
+      return;
+    }
+    const inboundCount = incomingReferenceCount(draft, nodeId);
     const replacementLabel = nodePreview(draft.nodes[replacementId]);
-    if (!window.confirm(`“${nodePreview(draft.nodes[selectedNodeId])}” 대사를 삭제할까요?\n\n이 대사를 가리키는 연결 ${inboundCount}개를 “${replacementLabel}” 화면으로 자동 연결합니다.`)) return;
+    if (!window.confirm(`“${nodePreview(draft.nodes[nodeId])}” 대사를 삭제할까요?\n\n이 대사를 가리키는 연결 ${inboundCount}개를 “${replacementLabel}” 화면으로 자동 연결합니다.`)) return;
     updateDraft((scene) => {
-      deleteNodeAndReconnect(scene, selectedNodeId, replacementId);
+      deleteNodeAndReconnect(scene, nodeId, replacementId);
     });
     setSelectedNodeId(replacementId);
+    setDialogueContextMenu(null);
     setStatus(`대사를 삭제하고 연결 ${inboundCount}개를 다음 화면으로 자동 복구했습니다.`);
   };
+
+  useEffect(() => {
+    const onDeleteKey = (event: KeyboardEvent) => {
+      if (workspace !== "scene" || editorTab !== "node" || !selectedNodeId) return;
+      if (event.metaKey || event.ctrlKey || event.altKey || isTextEditingTarget(event.target)) return;
+      if (event.key !== "Delete" && event.key !== "Backspace") return;
+      event.preventDefault();
+      deleteNode();
+    };
+    window.addEventListener("keydown", onDeleteKey);
+    return () => window.removeEventListener("keydown", onDeleteKey);
+  }, [draft, editorTab, selectedNodeId, workspace]);
 
   const moveNode = (offset: number) => {
     if (!draft) return;
@@ -2284,7 +2334,7 @@ export default function App() {
 
         {editorTab === "node" && <div className="node-workspace">
           <aside className="dialogue-sequence">
-            <div className="dialogue-sequence-heading"><div><strong>대사 흐름</strong><small>위에서 아래로 실제 진행 순서</small></div><div className="node-actions"><button type="button" aria-label="대사를 위로" title="위로 이동" onClick={() => moveNode(-1)}>↑</button><button type="button" aria-label="대사를 아래로" title="아래로 이동" onClick={() => moveNode(1)}>↓</button><button type="button" className="danger" onClick={deleteNode}>대사 삭제</button></div></div>
+            <div className="dialogue-sequence-heading"><div><strong>대사 흐름</strong><small>위에서 아래로 실제 진행 순서</small></div><div className="node-actions"><button type="button" aria-label="대사를 위로" title="위로 이동" onClick={() => moveNode(-1)}>↑</button><button type="button" aria-label="대사를 아래로" title="아래로 이동" onClick={() => moveNode(1)}>↓</button><button type="button" className="danger" onClick={() => deleteNode()}>대사 삭제</button></div></div>
             <label className="dialogue-search"><span>대사 내용 검색</span><input type="search" placeholder="화면에 표시되는 문장으로 검색…" value={dialogueSearch} onChange={(event) => setDialogueSearch(event.target.value)} /><small>{visibleDialogueIds.length} / {draft.node_order.length}</small></label>
             <div className="new-node-row"><select aria-label="추가할 대사 종류" value={newNodeKind} onChange={(event) => setNewNodeKind(event.target.value as NodeKind)}>{Object.entries(NODE_LABELS).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select><button type="button" onClick={addNode}>현재 대사 다음에 추가</button></div>
             <div className="node-flow" role="list">{visibleDialogueIds.map((id) => {
@@ -2311,6 +2361,7 @@ export default function App() {
           >
             <button type="button" role="menuitem" onClick={() => copyDialogueNode(dialogueContextMenu.nodeId)}><span>복사</span><kbd>⌘/Ctrl+C</kbd></button>
             <button type="button" role="menuitem" disabled={!dialogueClipboard} onClick={() => pasteDialogueNode(dialogueContextMenu.nodeId)}><span>다음에 붙여넣기</span><kbd>⌘/Ctrl+V</kbd></button>
+            <button type="button" role="menuitem" className="danger" onClick={() => deleteNode(dialogueContextMenu.nodeId)}><span>삭제</span><kbd>Delete</kbd></button>
           </div>}
           <div className="dialogue-detail scroll-area">{selectedNode ? <NodeEditor root={root} runtime={runtime} state={testState} scene={draft} node={selectedNode} mode={mode} onMode={setMode} onChange={updateNode} /> : <p>대사를 선택하세요.</p>}</div>
         </div>}

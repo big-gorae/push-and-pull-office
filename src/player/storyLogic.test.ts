@@ -161,6 +161,7 @@ describe("contextual dialogue", () => {
   it("stores a selected non-protagonist speaker as an explicit centered default", () => {
     const fresh = makeNode("dual_dialogue", "new_dialogue", "yoon_seo_a");
     expect(fresh.speaker).toBe("");
+    expect(fresh.line_layers_locked).toBe(true);
     expect(fresh.stage).toBeUndefined();
 
     const selected = applyDialogueSpeakerSelection(runtime, fresh, "yoon_seo_a");
@@ -278,6 +279,12 @@ describe("contextual dialogue", () => {
       reality: { line: "" },
       stage: { perceived: [], reality: [] },
     });
+  });
+
+  it("locks only newly authored dialogue and narration lines together by default", () => {
+    expect(makeNode("dual_dialogue", "dialogue", "yoon_seo_a").line_layers_locked).toBe(true);
+    expect(makeNode("dual_narration", "narration", "yoon_seo_a").line_layers_locked).toBe(true);
+    expect(makeNode("silent", "silent", "yoon_seo_a").line_layers_locked).toBeUndefined();
   });
 
   it("lists and resolves every registered artwork by its stable id", () => {

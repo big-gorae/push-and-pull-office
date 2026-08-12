@@ -303,6 +303,30 @@ class StoryEditorBridgeTests(unittest.TestCase):
         finally:
             temporary.cleanup()
 
+    def test_save_scene_round_trips_new_dialogue_line_lock_without_changing_legacy_nodes(self):
+        temporary, root = self.make_project_copy()
+        try:
+            project = StoryProject(root / "story")
+            scene = copy.deepcopy(project.build_bundle()["scenes"]["seo_a.email_request"])
+            path = Path(project.scenes[scene["id"]]["_source"])
+            self.assertNotIn("line_layers_locked", scene["nodes"]["request"])
+            scene["nodes"]["request"]["line_layers_locked"] = True
+            scene["nodes"]["request"]["reality"]["line"] = scene["nodes"]["request"]["perceived"]["line"]
+
+            result = save_scene(root, {"scene": scene, "revision": revision(path)})
+
+            self.assertTrue(result["saved"])
+            source = YAML_RT.load(path.read_text(encoding="utf-8"))
+            source_node = next(item for item in source["nodes"] if item["id"] == "request")
+            self.assertTrue(source_node["line_layers_locked"])
+            runtime_node = result["runtime"]["scenes"][scene["id"]]["nodes"]["request"]
+            self.assertTrue(runtime_node["line_layers_locked"])
+            untouched_id = next(node_id for node_id in scene["node_order"] if node_id != "request")
+            untouched = result["runtime"]["scenes"][scene["id"]]["nodes"][untouched_id]
+            self.assertNotIn("line_layers_locked", untouched)
+        finally:
+            temporary.cleanup()
+
     def test_save_scene_round_trips_default_background_and_silent_node(self):
         temporary, root = self.make_project_copy()
         try:

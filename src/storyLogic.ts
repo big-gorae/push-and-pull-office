@@ -503,6 +503,7 @@ export function makeNode(kind: NodeKind, id: string, _heroineId: string): StoryN
       speaker: "",
       perceived: { atmosphere: "warm_romance", expression: "", line: "" },
       reality: { atmosphere: "cold_office", expression: "", line: "", intent: "work_only" },
+      line_layers_locked: true,
       next: "",
     };
   }
@@ -512,6 +513,7 @@ export function makeNode(kind: NodeKind, id: string, _heroineId: string): StoryN
       kind,
       perceived: { atmosphere: "warm_romance", line: "" },
       reality: { atmosphere: "cold_office", line: "", intent: "work_only" },
+      line_layers_locked: true,
       next: "",
     };
   }

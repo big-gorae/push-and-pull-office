@@ -181,6 +181,8 @@ export type StoryNode = {
   speakers?: Partial<Record<ViewMode, string | null>>;
   perceived?: Layer;
   reality?: Layer;
+  /** Editor-only authoring state. Absent on legacy nodes, which remain independently editable. */
+  line_layers_locked?: boolean;
   variants?: DialogueVariant[];
   prompt?: string;
   stimulus?: string;
