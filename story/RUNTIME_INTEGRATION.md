@@ -223,7 +223,7 @@ interaction:
 
 스탯 조건 사건은 `on_seen.effects`로 등록된 갤러리 `unlock_memory`를 `progress.memories`에 추가한다. 자동·수동 저장이 이를 플레이어 프로필의 `memories`에 합치며, 타이틀과 게임 메뉴의 갤러리는 `runtime.gallery.entries`와 프로필 메모리를 비교해 잠금 상태를 복원한다.
 
-직전 밤 활동의 스몰토크는 저작 원본에서 `self_development_template`과 `manifest.self_development.conversation_topics`를 사용한다. 스토리 빌더는 이를 일반 `variants.after_*`와 `default`로 미리 확장하고 매크로와 대화 소재 레지스트리를 런타임 JSON에서 제거한다. 따라서 플레이어 resolver, 세이브, 백로그와 localization key는 기존 variant 계약을 그대로 사용하며, 원본 YAML만 중복 없는 템플릿 형태를 유지한다. 에디터 브리지는 생성 variant를 YAML에 역류시키지 않고, 생성 문구를 직접 고친 저장은 명시적으로 거부한다. 공통 문구는 manifest 슬롯에서, 장면 문맥은 원본 템플릿에서 수정한다.
+직전 밤 활동의 스몰토크는 각 장면 YAML의 명시적 `variants.after_*`와 `default` 완성 문장으로 저장한다. 빌더는 문장을 합성하지 않고 이 variant를 그대로 런타임에 옮기므로 플레이어 resolver, 세이브, 백로그, localization key와 에디터의 물리 원본이 일치한다. 밤 활동 화면과 심리학 강사 오버레이의 서사 문장은 `story/system_flows/`가 소유하고, `story/ui.yaml`에는 버튼·상태 라벨 같은 비서사 UI만 둔다.
 
 최초 엔딩 이후 `밀당 주도권`은 `통제 욕구`, `현재 콤보`는 `통제 시도 연쇄`, 리듬 게이지는 `접근 시도/거리 둠`으로 라벨을 교체한다.
 

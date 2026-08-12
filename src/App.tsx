@@ -5,14 +5,22 @@ import TimelineEditor from "./TimelineEditor";
 import PresentationEditor from "./PresentationEditor";
 import CharacterEditor from "./CharacterEditor";
 import ProjectSettingsEditor, { type SettingsKind, type SettingsRequest } from "./ProjectSettingsEditor";
+import SystemDialogueEditor from "./SystemDialogueEditor";
 import QuickOpen, { type QuickOpenItem } from "./QuickOpen";
 import DuplicateDialog from "./DuplicateDialog";
 import ArtworkStageEditor from "./ArtworkStageEditor";
 import { applyDialogueSpeakerSelection } from "./stageAuthoring";
 import SceneBackgroundEditor from "./SceneBackgroundEditor";
 import { inactiveEditorPropsEqual, nextHistoryGroup, shouldCaptureHistory, type EditHistoryGroup } from "./editorPerformance";
+import { selfDevelopmentVariantDisplayName } from "./player/systemDialogueAuthoring";
 import { deleteNodeAndReconnect, deletionReplacement, incomingReferenceCount } from "./sceneEditing";
-import { consumeAuthoringTarget, openAuthoringPlayWindow, rememberAuthoringRoot, type AuthoringTarget } from "./player/storyAuthoring";
+import {
+  consumeAuthoringTarget,
+  openAuthoringPlayWindow,
+  rememberAuthoringRoot,
+  type AuthoringTarget,
+  type SystemFlowAuthoringTarget,
+} from "./player/storyAuthoring";
 import {
   pushPullPositionLabel,
   pushPullTargetLabel,
@@ -92,12 +100,13 @@ const INTERACTION_CONTEXT_OPTIONS: Array<{ id: InteractionContextKind; label: st
 const STATE_LABELS: Record<string, string> = { push: "밀기", pull: "당기기", neutral: "중립" };
 
 type HistoryState = { past: Scene[]; future: Scene[] };
-type Workspace = "timeline" | "scene" | "character" | "presentation" | "settings";
-const WORKSPACES: Workspace[] = ["timeline", "scene", "character", "presentation", "settings"];
+type Workspace = "timeline" | "scene" | "system" | "character" | "presentation" | "settings";
+const WORKSPACES: Workspace[] = ["timeline", "scene", "system", "character", "presentation", "settings"];
 const DeferredTimelineEditor = memo(TimelineEditor, inactiveEditorPropsEqual);
 const DeferredCharacterEditor = memo(CharacterEditor, inactiveEditorPropsEqual);
 const DeferredPresentationEditor = memo(PresentationEditor, inactiveEditorPropsEqual);
 const DeferredProjectSettingsEditor = memo(ProjectSettingsEditor, inactiveEditorPropsEqual);
+const DeferredSystemDialogueEditor = memo(SystemDialogueEditor, inactiveEditorPropsEqual);
 
 function initialWorkspace(): Workspace {
   try {
@@ -525,6 +534,23 @@ function ChoiceEditor({ runtime, scene, node, onChange }: { runtime: Runtime; sc
     </Field>
     <Field label="선택 질문" wide><TextArea value={node.prompt || ""} onChange={(event) => onChange({ ...node, prompt: event.target.value })} /></Field>
     <Field label="대응할 말·행동 요약" wide><TextArea value={node.stimulus || ""} onChange={(event) => onChange({ ...node, stimulus: event.target.value })} /></Field>
+    <fieldset className="analysis-hint-editor">
+      <legend>심리학 강사 분석 대사</legend>
+      <p>이 선택에서만 쓰는 강사 대사입니다. 비워 두면 시스템 대사의 공통 강사 문구를 사용합니다.</p>
+      {(["none", "pull", "push"] as const).map((direction) => <Field
+        label={direction === "none" ? "첫 방향 대기" : direction === "pull" ? "대화 이어가기" : "말을 줄이고 물러나기"}
+        wide
+        key={direction}
+      ><TextArea
+        value={node.analysis_hints?.[direction] || ""}
+        onChange={(event) => {
+          const next = { ...(node.analysis_hints || {}) };
+          if (event.target.value) next[direction] = event.target.value;
+          else delete next[direction];
+          onChange({ ...node, analysis_hints: Object.keys(next).length ? next : undefined });
+        }}
+      /></Field>)}
+    </fieldset>
     <div className="option-list">
       {options.map((option, index) => <section className="option-editor" key={option.id}>
         <div className="option-heading">
@@ -760,19 +786,27 @@ function DialogueVariantEditor({
 }) {
   const variants = node.variants || [];
   const selectedVariantId = node.variants ? resolveDialogueNode(runtime, state, node).variantId : undefined;
-  const displayedVariants = variants
+  const [focusedVariantId, setFocusedVariantId] = useState("");
+  const materializedSelfDevelopment = variants.some((variant) => Boolean(variant.self_development));
+  const orderedVariants = variants
     .map((variant, index) => ({ variant, index }))
     .sort((left, right) =>
       Number(left.variant.default) - Number(right.variant.default)
       || (right.variant.priority || 0) - (left.variant.priority || 0)
       || left.index - right.index);
+  const activeMaterializedId = variants.some((variant) => variant.id === focusedVariantId)
+    ? focusedVariantId
+    : selectedVariantId || orderedVariants[0]?.variant.id;
+  const displayedVariants = materializedSelfDevelopment
+    ? orderedVariants.filter(({ variant }) => variant.id === activeMaterializedId)
+    : orderedVariants;
   const narration = node.kind === "dual_narration";
   const duplicateConditionIds = new Set<string>();
   variants.forEach((variant, index) => {
-    if (variant.default) return;
+    if (variant.default || variant.self_development) return;
     const signature = JSON.stringify(variant.conditions || []);
     if (variants.some((candidate, candidateIndex) =>
-      candidateIndex < index && !candidate.default && JSON.stringify(candidate.conditions || []) === signature)) {
+      candidateIndex < index && !candidate.default && !candidate.self_development && JSON.stringify(candidate.conditions || []) === signature)) {
       duplicateConditionIds.add(variant.id);
     }
   });
@@ -853,12 +887,20 @@ function DialogueVariantEditor({
 
   return <section className="dialogue-variant-editor">
     <header>
-      <div><strong>상황별 대사 변형</strong><small>우선순위가 높은 조건을 먼저 검사하며, 기본 변형은 항상 마지막 대체값입니다.</small></div>
-      <div className="inline-actions">
+      <div><strong>{materializedSelfDevelopment ? "직전 밤 활동별 대사" : "상황별 대사 변형"}</strong><small>{materializedSelfDevelopment ? "플레이어가 전날 선택한 활동에 따라 실제로 표시되는 완성 대사입니다." : "우선순위가 높은 조건을 먼저 검사하며, 기본 변형은 항상 마지막 대체값입니다."}</small></div>
+      {!materializedSelfDevelopment && <div className="inline-actions">
         <button type="button" onClick={add}>＋ 변형 추가</button>
         <button type="button" onClick={flattenVariants}>기본 대사로 합치기</button>
-      </div>
+      </div>}
     </header>
+    {materializedSelfDevelopment && <nav className="self-development-variant-picker" aria-label="직전 밤 활동별 대사">
+      {orderedVariants.map(({ variant }) => <button
+        type="button"
+        className={variant.id === activeMaterializedId ? "active" : ""}
+        onClick={() => setFocusedVariantId(variant.id)}
+        key={variant.id}
+      ><span>{selfDevelopmentVariantDisplayName(variant.id)}</span>{variant.id === selectedVariantId && <small>현재 미리보기</small>}</button>)}
+    </nav>}
     <div className="dialogue-variant-list">
       {displayedVariants.map(({ variant, index }) => {
         const invalidId = !/^[a-z][a-z0-9_.]*$/.test(variant.id)
@@ -866,11 +908,18 @@ function DialogueVariantEditor({
         const selfDevelopmentVariant = Boolean(variant.self_development);
         return <article className={`dialogue-variant-card ${variant.default ? "default" : ""} ${variant.id === selectedVariantId ? "selected" : ""}`} key={`${variant.id}:${index}`}>
           <div className="dialogue-variant-heading">
-            <div className="dialogue-variant-fields">
+            {materializedSelfDevelopment ? <div className="materialized-variant-title">
+              <strong>{selfDevelopmentVariantDisplayName(variant.id)}</strong>
+              <small>{variant.default ? "앞선 밤 활동 기록이 없거나 일치하지 않을 때 표시됩니다." : `${selfDevelopmentVariantDisplayName(variant.id)}을 선택한 다음 날 표시됩니다.`}</small>
+              <details><summary>고급 정보 · 안정 ID와 우선순위</summary><div className="dialogue-variant-fields">
+                <Field label="안정 ID"><TextInput value={variant.id} readOnly /></Field>
+                <Field label="우선순위"><TextInput type="number" value={variant.priority || 0} readOnly /></Field>
+              </div></details>
+            </div> : <div className="dialogue-variant-fields">
               <Field label="안정 ID"><TextInput value={variant.id} aria-invalid={invalidId} onChange={(event) => update(index, { id: event.target.value })} /></Field>
               <Field label="우선순위"><TextInput type="number" value={variant.priority || 0} onChange={(event) => update(index, { priority: Number(event.target.value) })} /></Field>
-            </div>
-            <div className="inline-actions">
+            </div>}
+            {!materializedSelfDevelopment && <div className="inline-actions">
               {!variant.default && <button
                 type="button"
                 disabled={selfDevelopmentVariant}
@@ -879,9 +928,11 @@ function DialogueVariantEditor({
               >기본값 지정</button>}
               <button type="button" onClick={() => cloneVariant(index)}>복제</button>
               <button type="button" className="icon-button danger" aria-label="변형 삭제" disabled={variant.default} onClick={() => onChange({ ...node, variants: variants.filter((_, itemIndex) => itemIndex !== index) })}>×</button>
-            </div>
+            </div>}
           </div>
-          {variant.default
+          {materializedSelfDevelopment
+            ? <p className="variant-default-note">{variant.default ? "기본 대사" : "자동 조건"} · 이 탭에서는 완성 대사와 연출만 편집합니다.</p>
+            : variant.default
             ? <p className="variant-default-note">기본 변형 · 다른 조건이 모두 실패할 때 사용됩니다.</p>
             : <ConditionEditor runtime={runtime} conditions={variant.conditions || []} onChange={(conditions) => update(index, { conditions })} />}
           {(invalidId || duplicateConditionIds.has(variant.id)) && <p className="variant-warning">
@@ -1196,6 +1247,7 @@ export default function App() {
   const [newNodeKind, setNewNodeKind] = useState<NodeKind>("dual_dialogue");
   const [dialogueSearch, setDialogueSearch] = useState("");
   const [workspace, setWorkspace] = useState<Workspace>(initialWorkspace);
+  const [visitedWorkspaces, setVisitedWorkspaces] = useState<Workspace[]>(() => [initialWorkspace()]);
   const [locale, setLocale] = useState("ko");
   const [documentActivity, setDocumentActivity] = useState<DocumentActivity>({ phase: "saved", label: "프로젝트", path: "" });
   const [quickOpenVisible, setQuickOpenVisible] = useState(false);
@@ -1209,6 +1261,7 @@ export default function App() {
 
   useEffect(() => {
     workspaceRef.current = workspace;
+    setVisitedWorkspaces((current) => current.includes(workspace) ? current : [...current, workspace]);
     try { localStorage.setItem("love-office:last-workspace", workspace); } catch { /* WebView storage can be unavailable in restricted sessions. */ }
   }, [workspace]);
 
@@ -1217,6 +1270,7 @@ export default function App() {
     if (workspaceRef.current === source) setDocumentActivity(activity);
   }, []);
   const reportSceneActivity = useCallback((activity: DocumentActivity) => reportActivity("scene", activity), [reportActivity]);
+  const reportSystemActivity = useCallback((activity: DocumentActivity) => reportActivity("system", activity), [reportActivity]);
   const reportTimelineActivity = useCallback((activity: DocumentActivity) => reportActivity("timeline", activity), [reportActivity]);
   const reportCharacterActivity = useCallback((activity: DocumentActivity) => reportActivity("character", activity), [reportActivity]);
   const reportPresentationActivity = useCallback((activity: DocumentActivity) => reportActivity("presentation", activity), [reportActivity]);
@@ -1313,19 +1367,23 @@ export default function App() {
       setIssues(project.issues);
       const firstRoute = storyRoutes(project.runtime)[0];
       const authoringTarget = consumeAuthoringTarget();
-      const sceneId = authoringTarget && project.runtime.scenes[authoringTarget.sceneId]
-        ? authoringTarget.sceneId
+      const sceneTarget = authoringTarget?.kind !== "system_flow" ? authoringTarget : undefined;
+      const sceneId = sceneTarget && project.runtime.scenes[sceneTarget.sceneId]
+        ? sceneTarget.sceneId
         : firstRoute.entry_scene;
       const recoveredDraft = loadScene(project, sceneId, true);
-      if (authoringTarget?.nodeId && project.runtime.scenes[sceneId]?.nodes[authoringTarget.nodeId]) {
-        setSelectedNodeId(authoringTarget.nodeId);
+      if (sceneTarget?.nodeId && project.runtime.scenes[sceneId]?.nodes[sceneTarget.nodeId]) {
+        setSelectedNodeId(sceneTarget.nodeId);
       }
       if (authoringTarget) {
-        workspaceRef.current = "scene";
-        setWorkspace("scene");
+        const targetWorkspace = authoringTarget.kind === "system_flow" ? "system" : "scene";
+        workspaceRef.current = targetWorkspace;
+        setWorkspace(targetWorkspace);
       }
       if (!recoveredDraft) setStatus(authoringTarget
-        ? `게임에서 보던 ${sceneId}${authoringTarget.nodeId ? ` · ${authoringTarget.nodeId}` : ""} 원본을 열었습니다.`
+        ? authoringTarget.kind === "system_flow"
+          ? "게임에서 보던 시스템 대사 원본을 열었습니다."
+          : `게임에서 보던 ${sceneId}${authoringTarget.nodeId ? ` · ${authoringTarget.nodeId}` : ""} 원본을 열었습니다.`
         : `${Object.keys(project.runtime.scenes).length}개 장면을 불러왔습니다.`);
     } catch (error) {
       setStatus(`프로젝트를 열 수 없습니다: ${String(error)}`);
@@ -1345,6 +1403,12 @@ export default function App() {
   useEffect(() => {
     let unlisten: (() => void) | undefined;
     void import("@tauri-apps/api/event").then(({ listen }) => listen<AuthoringTarget>("authoring:navigate", ({ payload: target }) => {
+      if (target.kind === "system_flow") {
+        workspaceRef.current = "system";
+        setWorkspace("system");
+        setStatus("게임에서 보던 시스템 대사 작업 공간을 열었습니다.");
+        return;
+      }
       if (!payload || !payload.runtime.scenes[target.sceneId]) return;
       if (target.sceneId !== selectedSceneId) loadScene(payload, target.sceneId);
       if (target.nodeId && payload.runtime.scenes[target.sceneId].nodes[target.nodeId]) {
@@ -1732,6 +1796,20 @@ export default function App() {
     }
   };
 
+  const previewSystemDialogue = async (target: SystemFlowAuthoringTarget) => {
+    if (!root) return;
+    if (hasPendingDocument) {
+      setStatus("수정한 시스템 대사가 저장된 뒤 게임에서 확인할 수 있습니다.");
+      return;
+    }
+    try {
+      await openAuthoringPlayWindow(root, target);
+      setStatus("제작 플레이에서 선택한 시스템 대사를 실제 화면으로 열었습니다.");
+    } catch (error) {
+      setStatus(`게임에서 시스템 대사를 열 수 없습니다: ${String(error)}`);
+    }
+  };
+
   const switchWorkspace = (next: Workspace) => {
     workspaceRef.current = next;
     if (next === "scene" && draft && payload) {
@@ -1935,6 +2013,7 @@ export default function App() {
       <div className="workspace-switch" aria-label="편집 작업 공간">
         <button type="button" className={workspace === "timeline" ? "active" : ""} onClick={() => switchWorkspace("timeline")}>시간 설계</button>
         <button type="button" className={workspace === "scene" ? "active" : ""} onClick={() => switchWorkspace("scene")}>장면·대사</button>
+        <button type="button" className={workspace === "system" ? "active" : ""} onClick={() => switchWorkspace("system")}>시스템 대사</button>
         <button type="button" className={workspace === "character" ? "active" : ""} onClick={() => switchWorkspace("character")}>인물 설정</button>
         <button type="button" className={workspace === "presentation" ? "active" : ""} onClick={() => switchWorkspace("presentation")}>연출·번역</button>
         <button type="button" className={workspace === "settings" ? "active" : ""} onClick={() => switchWorkspace("settings")}>구조·자산</button>
@@ -1961,6 +2040,7 @@ export default function App() {
     </div>
 
     <div className={workspace === "timeline" ? "workspace-pane active" : "workspace-pane"} aria-hidden={workspace !== "timeline"}>
+    {visitedWorkspaces.includes("timeline") &&
     <DeferredTimelineEditor
       key={`${payload.root}:timeline`}
       active={workspace === "timeline"}
@@ -1979,9 +2059,10 @@ export default function App() {
         loadScene(payload, sceneId);
         setWorkspace("scene");
       }}
-    />
+    />}
     </div>
     <div className={workspace === "character" ? "workspace-pane active" : "workspace-pane"} aria-hidden={workspace !== "character"}>
+    {visitedWorkspaces.includes("character") &&
     <DeferredCharacterEditor
       key={`${payload.root}:characters`}
       active={workspace === "character"}
@@ -1991,9 +2072,23 @@ export default function App() {
       onIssues={setIssues}
       onDocumentActivity={reportCharacterActivity}
       requestedCharacter={characterRequest}
-    />
+    />}
+    </div>
+    <div className={workspace === "system" ? "workspace-pane active" : "workspace-pane"} aria-hidden={workspace !== "system"}>
+    {visitedWorkspaces.includes("system") &&
+    <DeferredSystemDialogueEditor
+      key={`${payload.root}:system-dialogue`}
+      active={workspace === "system"}
+      payload={payload}
+      onStatus={setStatus}
+      onPayload={setPayload}
+      onIssues={setIssues}
+      onDocumentActivity={reportSystemActivity}
+      onPreview={(target) => void previewSystemDialogue(target)}
+    />}
     </div>
     <div className={workspace === "presentation" ? "workspace-pane active" : "workspace-pane"} aria-hidden={workspace !== "presentation"}>
+    {visitedWorkspaces.includes("presentation") &&
     <DeferredPresentationEditor
       key={`${payload.root}:presentation`}
       active={workspace === "presentation"}
@@ -2006,9 +2101,10 @@ export default function App() {
       onPayload={setPayload}
       onIssues={setIssues}
       onDocumentActivity={reportPresentationActivity}
-    />
+    />}
     </div>
     <div className={workspace === "settings" ? "workspace-pane active" : "workspace-pane"} aria-hidden={workspace !== "settings"}>
+    {visitedWorkspaces.includes("settings") &&
     <DeferredProjectSettingsEditor
       key={`${payload.root}:settings`}
       active={workspace === "settings"}
@@ -2018,7 +2114,7 @@ export default function App() {
       onIssues={setIssues}
       onDocumentActivity={reportSettingsActivity}
       requestedDocument={settingsRequest}
-    />
+    />}
     </div>
     {workspace === "scene" && <div className="editor-layout">
       <nav className="explorer" aria-label="스토리 탐색기">

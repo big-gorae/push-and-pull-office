@@ -84,9 +84,6 @@ export type SelfDevelopmentExpression = {
 
 export type SelfDevelopmentActivity = {
   id: string;
-  title_key: string;
-  description_key: string;
-  reflection_keys: Record<ViewMode, string>;
   selectable?: boolean;
   appeal_delta: number;
   fatigue_delta: number;
@@ -94,6 +91,21 @@ export type SelfDevelopmentActivity = {
   fatigue_lte?: number;
   fatigue_gte?: number;
   hint_charge?: number;
+};
+
+export type SystemFlowOption = {
+  id: string;
+  label: string;
+  description: string;
+};
+
+export type SystemFlow = {
+  schema_version: number;
+  id: string;
+  title: string;
+  node_order: string[];
+  nodes: Record<string, StoryNode>;
+  options?: SystemFlowOption[];
 };
 
 export type SelfDevelopmentConfig = {
@@ -384,6 +396,7 @@ export type LocalizationEntry = {
     | "thread"
     | "route"
     | "scene"
+    | "system_flow"
     | "meta"
     | "visual"
     | "world"
@@ -396,6 +409,7 @@ export type LocalizationEntry = {
   };
   context: {
     sceneId?: string;
+    flowId?: string;
     nodeId?: string;
     variantId?: string;
     optionId?: string;
@@ -544,6 +558,7 @@ export type Runtime = {
   meta: Record<string, MetaDocument>;
   routes: Record<string, Route>;
   scenes: Record<string, Scene>;
+  system_flows: Record<string, SystemFlow>;
   world?: {
     entities: Record<string, {
       id: string;
@@ -585,6 +600,7 @@ export type ProjectPayload = {
     meta: Record<string, DocumentMeta>;
     routes: Record<string, DocumentMeta>;
     scenes: Record<string, DocumentMeta>;
+    system_flows: Record<string, DocumentMeta>;
   };
   issues: ValidationIssue[];
 };

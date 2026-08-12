@@ -422,45 +422,30 @@ on_missed: {effects: []}
 
 타이틀과 게임 메뉴의 `갤러리`는 등록된 모든 슬롯과 수집 수를 보여 준다. 잠긴 슬롯은 제목과 이미지를 숨기며, 해금된 원화만 확대 감상할 수 있다.
 
-직전 밤 활동을 다음 날 스몰토크로 회수할 때는 활동별 variant를 장면마다 복제하지 않고 저작 전용 `self_development_template`을 사용할 수 있다. 활동별 공통 소재는 `manifest.self_development.conversation_topics`가 소유한다.
-
-```yaml
-self_development:
-  conversation_topics:
-    workout:
-      variant_id: after_workout
-      expression: feedback.last_workout
-      slots:
-        formal_opener: "요즘 운동을 다시 시작했습니다."
-        formal_pitch: "앉아 있는 시간이 길어서 건강부터 챙기려고요."
-```
-
-`slots`의 값은 조사나 어미 조각이 아니라 그대로 발화할 수 있는 완결된 한국어 문장으로 작성한다. 장면 템플릿이 참조하는 모든 `{{slot_id}}`는 모든 대화 소재에 존재해야 하며, 알 수 없거나 비어 있는 슬롯은 빌드 오류다. `variant_id`와 `expression`은 배포 뒤 유지하고, `expression`은 해당 활동을 `requires.last_activity`로 요구하면서 `score_bonus: 0`인 표현을 가리킨다.
+직전 밤 활동을 다음 날 스몰토크로 회수할 때는 각 화면에 실제로 표시될 완성 문장을 장면의 명시적 variant로 저장한다.
 
 ```yaml
 - id: activity_pitch
   kind: dual_dialogue
   speaker: han_do_yoon
-  perceived:
-    atmosphere: warm_office
-    line: "오늘은 가볍게 안부만 묻는다."
-  reality:
-    atmosphere: neutral_office
-    line: "오늘은 가볍게 안부만 묻는다."
-    intent: work_only
-  self_development_template:
-    source: last_activity
-    perceived:
-      line: "{{formal_opener}} {{formal_pitch}}"
-    reality:
-      line: "{{formal_opener}} {{formal_pitch}}"
-      intent: self_promotion
+  variants:
+    - id: after_workout
+      self_development: {expression: feedback.last_workout}
+      perceived:
+        line: "요즘 운동을 다시 시작했습니다. 앉아 있는 시간이 길어서 건강부터 챙기려고요."
+      reality:
+        line: "요즘 운동을 다시 시작했습니다. 앉아 있는 시간이 길어서 건강부터 챙기려고요."
+        intent: self_promotion
+    - id: default
+      default: true
+      perceived: {line: "오늘은 가볍게 안부만 묻는다."}
+      reality: {line: "오늘은 가볍게 안부만 묻는다.", intent: work_only}
   next: activity_response
 ```
 
-`source`는 `last_activity`만 허용한다. 제공한 각 레이어 overlay에는 `line`이 필수이며, `perceived`는 `atmosphere`, `expression`, `line`을, `reality`는 여기에 `intent`까지 더해 같은 이름의 기본 레이어 스칼라를 덮어쓸 수 있다. 공통 speaker 또는 레이어별 speakers는 노드에만 남아 템플릿이 바꾸지 못한다. 생략한 스칼라는 기본 노드 값을 상속하고, 기본 `perceived`·`reality` 전체는 활동이 없을 때 사용할 조건 없는 fallback이다. 따라서 평소 업무 대사의 현실 intent가 `work_only`여도 활동 variant만 `self_promotion`으로 구분할 수 있다. 빌드는 각 `conversation_topics` 항목을 `variant_id`와 `self_development.expression`을 가진 일반 대사 variant로 펼치고 fallback은 안정 ID `default`인 기본 variant로 만든 뒤, 저작 매크로를 런타임 출력에서 제거한다. 따라서 런타임 대사 선택, 백로그, 세이브와 번역은 기존의 안정 variant ID만 다룬다.
+각 활동 variant는 `self_development.expression`으로 최근 활동 조건을 선언하고, 조건 없는 `default`를 마지막에 둔다. 각 양 레이어 `line`은 하나의 장면 YAML 필드가 직접 소유한다. 빌드는 이를 수정하거나 합성하지 않는다. 따라서 런타임 대사 선택, 백로그, 세이브, 번역, 에디터가 같은 안정 variant ID와 같은 완성 문장을 다룬다.
 
-활동 콜백은 상대가 먼저 외모 변화를 알아보는 보상이 아니다. 한도윤이 운동·옷차림·OTT·짧은 영상·수면을 스몰토크나 자기소개 소재로 먼저 꺼내고, 상대는 그 발화에만 상황에 맞게 반응한다. 특히 하룻밤 활동만으로 체중 감소, 체형 변화나 객관적인 매력 상승을 서술하지 않는다. 생성된 콜백은 문구와 짧은 현실 반응만 바꾸며 `effects`, 밀당 점수, 사건과 엔딩에는 영향을 주지 않는다.
+활동 콜백은 상대가 먼저 외모 변화를 알아보는 보상이 아니다. 한도윤이 운동·옷차림·OTT·짧은 영상·수면을 스몰토크나 자기소개 소재로 먼저 꺼내고, 상대는 그 발화에만 상황에 맞게 반응한다. 특히 하룻밤 활동만으로 체중 감소, 체형 변화나 객관적인 매력 상승을 서술하지 않는다. 활동 콜백은 문구와 짧은 현실 반응만 바꾸며 `effects`, 밀당 점수, 사건과 엔딩에는 영향을 주지 않는다.
 
 ## 10. 전이 우선순위
 
@@ -621,7 +606,7 @@ default_background:
 - visual 상속을 해석한 구체 객체와 자산 경로 포함
 - 원본 파일 위치를 `_source`에 기록
 - manifest 초기 상태, 수치 정의와 `self_development` 활동·표현 레지스트리 포함
-- `self_development_template`을 manifest의 대화 소재로 치환해 안정 ID의 일반 대사 variant로 확장하고 저작 매크로 제거
+- 시스템 흐름과 장면의 명시적 대사·variant를 합성 없이 안정 ID 맵으로 변환
 - 빌드 시각과 원본 해시 기록
 - 게임 엔진은 YAML이 아니라 생성된 JSON만 읽어도 된다.
 

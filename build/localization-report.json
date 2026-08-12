@@ -1,20 +1,20 @@
 {
   "schema_version": 2,
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "20254f881ed541083b21207a22f52899b4e921feb2d15d54af0fe34f2f7138b3",
+  "source_sha256": "0df97224c400825426c14c5e60abc0c2d9a4292636ccdad9b4738fc292da4dac",
   "profile": "development",
   "default_locale": "ko",
   "supported_locales": [
     "ko",
     "en"
   ],
-  "total_entries": 1268,
+  "total_entries": 1273,
   "coverage": {
     "ko": {
-      "direct": 1268,
-      "resolved": 1268,
-      "translated": 1268,
-      "total": 1268,
+      "direct": 1273,
+      "resolved": 1273,
+      "translated": 1273,
+      "total": 1273,
       "ratio": 1.0,
       "fallback_used": [],
       "missing": [],
@@ -23,8 +23,8 @@
       "invalid_placeholders": [],
       "by_domain": {
         "ui": {
-          "direct": 210,
-          "total": 210
+          "direct": 181,
+          "total": 181
         },
         "campaign": {
           "direct": 14,
@@ -54,6 +54,10 @@
           "direct": 814,
           "total": 814
         },
+        "system_flow": {
+          "direct": 34,
+          "total": 34
+        },
         "thread": {
           "direct": 2,
           "total": 2
@@ -69,11 +73,11 @@
       }
     },
     "en": {
-      "direct": 260,
-      "resolved": 1268,
-      "translated": 260,
-      "total": 1268,
-      "ratio": 0.205,
+      "direct": 265,
+      "resolved": 1273,
+      "translated": 265,
+      "total": 1273,
+      "ratio": 0.2082,
       "fallback_used": [
         "campaign.main.acts.collisions.purpose",
         "campaign.main.acts.crisis.purpose",
@@ -2099,8 +2103,8 @@
       "invalid_placeholders": [],
       "by_domain": {
         "ui": {
-          "direct": 210,
-          "total": 210
+          "direct": 181,
+          "total": 181
         },
         "campaign": {
           "direct": 4,
@@ -2129,6 +2133,10 @@
         "scene": {
           "direct": 27,
           "total": 814
+        },
+        "system_flow": {
+          "direct": 34,
+          "total": 34
         },
         "thread": {
           "direct": 0,
@@ -2426,6 +2434,15 @@
         "missing": 0
       }
     }
+  },
+  "authoring_coverage": {
+    "narrative_text_units": 808,
+    "editable_units": 808,
+    "missing_editor_target": [],
+    "generated_only": 0,
+    "multiple_source_owners": 0,
+    "narrative_text_in_ui_yaml": 0,
+    "narrative_text_in_manifest": 0
   },
   "issues": []
 }

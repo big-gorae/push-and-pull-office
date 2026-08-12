@@ -15,46 +15,43 @@ from story_harness import (  # noqa: E402
 )
 
 
-class StoryTemplateIntegrationTests(unittest.TestCase):
+class MaterializedSelfDevelopmentDialogueTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.project = StoryProject(ROOT / "story")
 
-    def test_source_macro_compiles_to_stable_existing_runtime_variants(self):
-        source_scene = self.project.scenes["common.day_02_practical_meeting"]
-        source_node = next(
-            node for node in source_scene["nodes"]
-            if node["id"] == "day_one_activity_reaction"
-        )
-        self.assertIn("self_development_template", source_node)
-        self.assertNotIn("variants", source_node)
+    def test_every_callback_is_an_explicit_editable_variant(self):
+        expected_ids = [
+            "after_workout",
+            "after_reading",
+            "after_ott",
+            "after_sleep",
+            "after_dark_psychology",
+            "after_solo_drinking",
+            "default",
+        ]
+        callbacks = []
+        for scene in self.project.scenes.values():
+            for node in scene.get("nodes", []):
+                variants = node.get("variants", [])
+                if any(
+                    isinstance(variant, dict)
+                    and isinstance(variant.get("self_development"), dict)
+                    and "expression" in variant["self_development"]
+                    for variant in variants
+                ):
+                    callbacks.append(node)
+                    self.assertEqual(expected_ids, [variant["id"] for variant in variants])
+                    self.assertNotIn("self_development_template", node)
+                    for variant in variants:
+                        self.assertTrue(variant["perceived"]["line"])
+                        self.assertTrue(variant["reality"]["line"])
+        self.assertEqual(12, len(callbacks))
+        self.assertNotIn("conversation_topics", self.project.manifest["self_development"])
 
-        compiled_scene = self.project.compile_scene_dialogue(source_scene)
-        compiled_node = next(
-            node for node in compiled_scene["nodes"]
-            if node["id"] == "day_one_activity_reaction"
-        )
-        self.assertNotIn("self_development_template", compiled_node)
-        self.assertEqual(
-            [
-                "after_workout",
-                "after_reading",
-                "after_ott",
-                "after_sleep",
-                "after_dark_psychology",
-                "after_solo_drinking",
-                "default",
-            ],
-            [variant["id"] for variant in compiled_node["variants"]],
-        )
-        self.assertIn("self_development_template", source_node)
-
-    def test_last_activity_selects_the_compiled_self_promotion_line(self):
+    def test_last_activity_selects_the_materialized_line(self):
         scene = self.project.scenes["common.day_02_practical_meeting"]
-        node = next(
-            item for item in scene["nodes"]
-            if item["id"] == "day_one_activity_reaction"
-        )
+        node = next(item for item in scene["nodes"] if item["id"] == "day_one_activity_reaction")
         state = copy.deepcopy(self.project.initial_state())
         set_path(state, "progress.self_development.last_activity", "workout")
 
@@ -66,27 +63,27 @@ class StoryTemplateIntegrationTests(unittest.TestCase):
             "앉아 있는 시간이 길어서 건강부터 챙기려고요. 그럼 참석자표부터 볼까요?",
             resolved["reality"]["line"],
         )
-        self.assertEqual("self_promotion", resolved["reality"]["intent"])
 
-    def test_runtime_and_localization_expose_only_ordinary_variants(self):
-        bundle = self.project.build_bundle()
-        runtime_node = bundle["scenes"]["common.day_02_practical_meeting"]["nodes"][
-            "day_one_activity_reaction"
-        ]
-        self.assertNotIn("self_development_template", runtime_node)
-        self.assertIn("variants", runtime_node)
-        self.assertNotIn("conversation_topics", bundle["self_development"])
-
+    def test_all_144_activity_lines_have_direct_scene_yaml_owners(self):
         entries = collect_localizable_entries(self.project)
-        key = (
-            "scenes.common.day_02_practical_meeting.nodes."
-            "day_one_activity_reaction.variants.after_workout.reality.line"
+        activity_entries = [
+            entry for key, entry in entries.items()
+            if key.startswith("scenes.")
+            and ".variants.after_" in key
+            and key.endswith(".line")
+        ]
+        self.assertEqual(144, len(activity_entries))
+        self.assertTrue(all(entry["sourceDocument"]["kind"] == "scene" for entry in activity_entries))
+        self.assertTrue(all(".variants." in entry["sourceDocument"]["fieldPath"] for entry in activity_entries))
+
+    def test_runtime_preserves_explicit_variants_without_prose_generation(self):
+        bundle = self.project.build_bundle()
+        runtime_node = bundle["scenes"]["common.day_02_practical_meeting"]["nodes"]["day_one_activity_reaction"]
+        source_node = next(
+            node for node in self.project.scenes["common.day_02_practical_meeting"]["nodes"]
+            if node["id"] == "day_one_activity_reaction"
         )
-        self.assertEqual(
-            "오늘도 잘 부탁합니다. 요즘 운동을 다시 시작했습니다. "
-            "앉아 있는 시간이 길어서 건강부터 챙기려고요. 그럼 참석자표부터 볼까요?",
-            entries[key]["source"],
-        )
+        self.assertEqual(source_node["variants"], runtime_node["variants"])
 
 
 if __name__ == "__main__":

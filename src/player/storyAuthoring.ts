@@ -1,4 +1,4 @@
-import type { Runtime, ValidationIssue } from "../types";
+import type { ProjectPayload, Runtime, ValidationIssue, ViewLayer } from "../types";
 
 const AUTHORING_ROOT_KEY = "love-office:authoring-root";
 const AUTHORING_PLAY_WINDOW = "authoring-play";
@@ -22,7 +22,7 @@ export type StoryTextSource = {
 
 export type StoryTextOwner = {
   key: string;
-  kind: "direct_yaml" | "composed_template" | "generated";
+  kind: "direct_yaml" | "generated";
   editable: boolean;
   reason?: string;
   currentValue: string;
@@ -67,6 +67,7 @@ export type StoryTextSaveResult = {
   errorCode?: string;
   issues: ValidationIssue[];
   runtime?: Runtime;
+  documents?: ProjectPayload["documents"];
   owner?: StoryTextOwner;
   owners?: StoryTextOwner[];
   changes?: StoryTextChange[];
@@ -74,10 +75,44 @@ export type StoryTextSaveResult = {
 
 export type SourceEditor = "system" | "vscode" | "cursor" | "zed";
 
-export type AuthoringTarget = {
+export type SceneAuthoringTarget = {
+  kind?: "scene";
   sceneId: string;
   nodeId?: string;
 };
+
+export type SystemFlowAuthoringTarget = {
+  kind: "system_flow";
+  flowId: string;
+  nodeId?: string;
+  variantId?: string;
+  optionId?: string;
+  layer?: ViewLayer;
+};
+
+export type AuthoringTarget = SceneAuthoringTarget | SystemFlowAuthoringTarget;
+
+export function parseAuthoringTarget(raw: string | null): AuthoringTarget | undefined {
+  if (!raw) return undefined;
+  try {
+    const target = JSON.parse(raw) as Record<string, unknown>;
+    if (target.kind === "system_flow" && typeof target.flowId === "string") {
+      return {
+        kind: "system_flow",
+        flowId: target.flowId,
+        ...(typeof target.nodeId === "string" ? { nodeId: target.nodeId } : {}),
+        ...(typeof target.variantId === "string" ? { variantId: target.variantId } : {}),
+        ...(typeof target.optionId === "string" ? { optionId: target.optionId } : {}),
+        ...(target.layer === "perceived" || target.layer === "reality" ? { layer: target.layer as ViewLayer } : {}),
+      };
+    }
+    return typeof target.sceneId === "string"
+      ? { kind: "scene", sceneId: target.sceneId, nodeId: typeof target.nodeId === "string" ? target.nodeId : undefined }
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 function isTauri(): boolean {
   return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
@@ -219,11 +254,7 @@ export function consumeAuthoringPreviewTarget(): AuthoringTarget | undefined {
   try {
     const raw = window.localStorage.getItem(AUTHORING_PREVIEW_TARGET_KEY);
     window.localStorage.removeItem(AUTHORING_PREVIEW_TARGET_KEY);
-    if (!raw) return undefined;
-    const target = JSON.parse(raw) as Partial<AuthoringTarget>;
-    return typeof target.sceneId === "string"
-      ? { sceneId: target.sceneId, nodeId: typeof target.nodeId === "string" ? target.nodeId : undefined }
-      : undefined;
+    return parseAuthoringTarget(raw);
   } catch {
     return undefined;
   }
@@ -247,11 +278,7 @@ export function consumeAuthoringTarget(): AuthoringTarget | undefined {
   try {
     const raw = window.sessionStorage.getItem("love-office:authoring-target");
     window.sessionStorage.removeItem("love-office:authoring-target");
-    if (!raw) return undefined;
-    const target = JSON.parse(raw) as Partial<AuthoringTarget>;
-    return typeof target.sceneId === "string"
-      ? { sceneId: target.sceneId, nodeId: typeof target.nodeId === "string" ? target.nodeId : undefined }
-      : undefined;
+    return parseAuthoringTarget(raw);
   } catch {
     return undefined;
   }

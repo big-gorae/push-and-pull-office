@@ -10,7 +10,7 @@
     ]
   },
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "20254f881ed541083b21207a22f52899b4e921feb2d15d54af0fe34f2f7138b3",
+  "source_sha256": "0df97224c400825426c14c5e60abc0c2d9a4292636ccdad9b4738fc292da4dac",
   "enums": {
     "perceived_state": [
       "push",
@@ -199,12 +199,6 @@
     "activities": [
       {
         "id": "workout",
-        "title_key": "selfDevelopment.activity.workout.title",
-        "description_key": "selfDevelopment.activity.workout.description",
-        "reflection_keys": {
-          "perceived": "selfDevelopment.activity.workout.reflection.perceived",
-          "reality": "selfDevelopment.activity.workout.reflection.reality"
-        },
         "appeal_delta": 3,
         "fatigue_delta": 2,
         "stat_deltas": {
@@ -215,12 +209,6 @@
       },
       {
         "id": "reading",
-        "title_key": "selfDevelopment.activity.reading.title",
-        "description_key": "selfDevelopment.activity.reading.description",
-        "reflection_keys": {
-          "perceived": "selfDevelopment.activity.reading.reflection.perceived",
-          "reality": "selfDevelopment.activity.reading.reflection.reality"
-        },
         "appeal_delta": 1,
         "fatigue_delta": 1,
         "stat_deltas": {
@@ -230,12 +218,6 @@
       },
       {
         "id": "ott",
-        "title_key": "selfDevelopment.activity.ott.title",
-        "description_key": "selfDevelopment.activity.ott.description",
-        "reflection_keys": {
-          "perceived": "selfDevelopment.activity.ott.reflection.perceived",
-          "reality": "selfDevelopment.activity.ott.reflection.reality"
-        },
         "appeal_delta": -1,
         "fatigue_delta": -1,
         "stat_deltas": {
@@ -244,24 +226,12 @@
       },
       {
         "id": "sleep",
-        "title_key": "selfDevelopment.activity.sleep.title",
-        "description_key": "selfDevelopment.activity.sleep.description",
-        "reflection_keys": {
-          "perceived": "selfDevelopment.activity.sleep.reflection.perceived",
-          "reality": "selfDevelopment.activity.sleep.reflection.reality"
-        },
         "appeal_delta": 0,
         "fatigue_delta": -4,
         "stat_deltas": {}
       },
       {
         "id": "dark_psychology",
-        "title_key": "selfDevelopment.activity.dark_psychology.title",
-        "description_key": "selfDevelopment.activity.dark_psychology.description",
-        "reflection_keys": {
-          "perceived": "selfDevelopment.activity.dark_psychology.reflection.perceived",
-          "reality": "selfDevelopment.activity.dark_psychology.reflection.reality"
-        },
         "appeal_delta": 0,
         "fatigue_delta": 2,
         "stat_deltas": {},
@@ -270,12 +240,6 @@
       },
       {
         "id": "solo_drinking",
-        "title_key": "selfDevelopment.activity.solo_drinking.title",
-        "description_key": "selfDevelopment.activity.solo_drinking.description",
-        "reflection_keys": {
-          "perceived": "selfDevelopment.activity.solo_drinking.reflection.perceived",
-          "reality": "selfDevelopment.activity.solo_drinking.reflection.reality"
-        },
         "selectable": false,
         "appeal_delta": -1,
         "fatigue_delta": -2,
@@ -776,8 +740,6 @@
           "feedback.gain": "Initiative +{{gain}}",
           "feedback.controlGain": "Control +{{gain}}",
           "feedback.expressionBonus": "Self-improvement expression bonus +{{gain}}",
-          "selfDevelopment.intro": "(I read a few pages of Dark Psychology for Dominating Women's Hearts over dinner. What should I do now?)",
-          "selfDevelopment.forcedIntro": "(I read a few lines of Dark Psychology for Dominating Women's Hearts, but none of it registered. I cannot even choose tonight.)",
           "selfDevelopment.status": "Current status",
           "selfDevelopment.appeal": "Appeal",
           "selfDevelopment.fatigue": "Fatigue",
@@ -789,38 +751,45 @@
           "selfDevelopment.result": "Tonight's changes",
           "selfDevelopment.continue": "Turn off the light and sleep",
           "selfDevelopment.blocked": "Unavailable due to fatigue",
-          "selfDevelopment.activity.workout.title": "Go to the gym",
-          "selfDevelopment.activity.workout.description": "Gain health and appearance while building fatigue.",
-          "selfDevelopment.activity.workout.reflection.perceived": "(I am winded, but it was worth moving. That is enough for tonight.)",
-          "selfDevelopment.activity.workout.reflection.reality": "After working out, Do-yoon showered and set his alarm.",
-          "selfDevelopment.activity.reading.title": "Read a book",
-          "selfDevelopment.activity.reading.description": "Gain intelligence and a little fatigue.",
-          "selfDevelopment.activity.reading.reflection.perceived": "(This is easier to read than I expected. I should continue on the commute tomorrow.)",
-          "selfDevelopment.activity.reading.reflection.reality": "Do-yoon folded the page and left the book on the table.",
-          "selfDevelopment.activity.ott.title": "Watch a streaming series",
-          "selfDevelopment.activity.ott.description": "Gain humor and reduce fatigue, with a small loss of appeal.",
-          "selfDevelopment.activity.ott.reflection.perceived": "(I meant to watch one episode, and now it is three. At least I understand the jokes.)",
-          "selfDevelopment.activity.ott.reflection.reality": "Do-yoon disabled autoplay and placed his phone face down.",
-          "selfDevelopment.activity.sleep.title": "Go to bed early",
-          "selfDevelopment.activity.sleep.description": "Recover a large amount of fatigue.",
-          "selfDevelopment.activity.sleep.reflection.perceived": "(No need to push it tonight. Tomorrow can wait until tomorrow.)",
-          "selfDevelopment.activity.sleep.reflection.reality": "Do-yoon set his alarm and turned off the light.",
-          "selfDevelopment.activity.dark_psychology.title": "Study Dark Psychology for Dominating Women's Hearts",
-          "selfDevelopment.activity.dark_psychology.description": "Build fatigue to recall the instructor's analysis once before a choice.",
-          "selfDevelopment.activity.dark_psychology.reflection.perceived": "(I can use tonight's lesson once when the decisive moment comes.)",
-          "selfDevelopment.activity.dark_psychology.reflection.reality": "Do-yoon copied the instructor's repeated phrase into his phone notes.",
-          "selfDevelopment.activity.solo_drinking.title": "Drink alone",
-          "selfDevelopment.activity.solo_drinking.description": "Triggers automatically at high fatigue.",
-          "selfDevelopment.activity.solo_drinking.reflection.perceived": "(I meant to have one drink... There are three empty cans. Time to turn off the light.)",
-          "selfDevelopment.activity.solo_drinking.reflection.reality": "Do-yoon fell asleep on the sofa without clearing the empty cans from the table.",
           "analysisHint.charge": "Hint",
           "analysisHint.charges": "Hints",
           "analysisHint.recall": "Replay the lecture in my head",
           "analysisHint.instructor": "Dark psychology instructor",
           "analysisHint.observation": "Evidence observed so far",
-          "analysisHint.lesson.pull": "“Look at the evidence. To score on this choice, you need to continue the conversation.”",
-          "analysisHint.lesson.push": "“Look at the evidence. On this choice, saying less and stepping back is the scoring move.”",
-          "analysisHint.lesson.none": "“There is no fixed answer yet. This first choice will set the next scoring direction.”",
+          "system_flows.system.night_activity.nodes.intro.perceived.line": "(I read a few pages of Dark Psychology for Dominating Women's Hearts over dinner. What should I do now?)",
+          "system_flows.system.night_activity.nodes.intro.reality.line": "(I read a few pages of Dark Psychology for Dominating Women's Hearts over dinner. What should I do now?)",
+          "system_flows.system.night_activity.nodes.forced_intro.perceived.line": "(I read a few lines of Dark Psychology for Dominating Women's Hearts, but none of it registered. I cannot even choose tonight.)",
+          "system_flows.system.night_activity.nodes.forced_intro.reality.line": "(I read a few lines of Dark Psychology for Dominating Women's Hearts, but none of it registered. I cannot even choose tonight.)",
+          "system_flows.system.night_activity.nodes.activity_result.variants.workout.perceived.line": "(I am winded, but it was worth moving. That is enough for tonight.)",
+          "system_flows.system.night_activity.nodes.activity_result.variants.workout.reality.line": "After working out, Do-yoon showered and set his alarm.",
+          "system_flows.system.night_activity.nodes.activity_result.variants.reading.perceived.line": "(This is easier to read than I expected. I should continue on the commute tomorrow.)",
+          "system_flows.system.night_activity.nodes.activity_result.variants.reading.reality.line": "Do-yoon folded the page and left the book on the table.",
+          "system_flows.system.night_activity.nodes.activity_result.variants.ott.perceived.line": "(I meant to watch one episode, and now it is three. At least I understand the jokes.)",
+          "system_flows.system.night_activity.nodes.activity_result.variants.ott.reality.line": "Do-yoon disabled autoplay and placed his phone face down.",
+          "system_flows.system.night_activity.nodes.activity_result.variants.sleep.perceived.line": "(No need to push it tonight. Tomorrow can wait until tomorrow.)",
+          "system_flows.system.night_activity.nodes.activity_result.variants.sleep.reality.line": "Do-yoon set his alarm and turned off the light.",
+          "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.perceived.line": "(I can use tonight's lesson once when the decisive moment comes.)",
+          "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.reality.line": "Do-yoon copied the instructor's repeated phrase into his phone notes.",
+          "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.perceived.line": "(I meant to have one drink... There are three empty cans. Time to turn off the light.)",
+          "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.reality.line": "Do-yoon fell asleep on the sofa without clearing the empty cans from the table.",
+          "system_flows.system.night_activity.options.workout.label": "Go to the gym",
+          "system_flows.system.night_activity.options.workout.description": "Gain health and appearance while building fatigue.",
+          "system_flows.system.night_activity.options.reading.label": "Read a book",
+          "system_flows.system.night_activity.options.reading.description": "Gain intelligence and a little fatigue.",
+          "system_flows.system.night_activity.options.ott.label": "Watch a streaming series",
+          "system_flows.system.night_activity.options.ott.description": "Gain humor and reduce fatigue, with a small loss of appeal.",
+          "system_flows.system.night_activity.options.sleep.label": "Go to bed early",
+          "system_flows.system.night_activity.options.sleep.description": "Recover a large amount of fatigue.",
+          "system_flows.system.night_activity.options.dark_psychology.label": "Study Dark Psychology for Dominating Women's Hearts",
+          "system_flows.system.night_activity.options.dark_psychology.description": "Build fatigue to recall the instructor's analysis once before a choice.",
+          "system_flows.system.night_activity.options.solo_drinking.label": "Drink alone",
+          "system_flows.system.night_activity.options.solo_drinking.description": "Triggers automatically at high fatigue.",
+          "system_flows.system.analysis_hint.nodes.lesson.variants.pull.perceived.line": "“Look at the evidence. To score on this choice, you need to continue the conversation.”",
+          "system_flows.system.analysis_hint.nodes.lesson.variants.pull.reality.line": "“Look at the evidence. To score on this choice, you need to continue the conversation.”",
+          "system_flows.system.analysis_hint.nodes.lesson.variants.push.perceived.line": "“Look at the evidence. On this choice, saying less and stepping back is the scoring move.”",
+          "system_flows.system.analysis_hint.nodes.lesson.variants.push.reality.line": "“Look at the evidence. On this choice, saying less and stepping back is the scoring move.”",
+          "system_flows.system.analysis_hint.nodes.lesson.variants.none.perceived.line": "“There is no fixed answer yet. This first choice will set the next scoring direction.”",
+          "system_flows.system.analysis_hint.nodes.lesson.variants.none.reality.line": "“There is no fixed answer yet. This first choice will set the next scoring direction.”",
           "save.title": "Save",
           "save.slot": "SLOT {{slot}}",
           "save.here": "Save here",
@@ -908,51 +877,6 @@
           "id": "game_ui",
           "path": "story/ui.yaml",
           "fieldPath": "strings.analysisHint.instructor"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "analysisHint.lesson.none": {
-        "key": "analysisHint.lesson.none",
-        "source": "“아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.analysisHint.lesson.none"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "analysisHint.lesson.pull": {
-        "key": "analysisHint.lesson.pull",
-        "source": "“증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.analysisHint.lesson.pull"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "analysisHint.lesson.push": {
-        "key": "analysisHint.lesson.push",
-        "source": "“증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.analysisHint.lesson.push"
         },
         "context": {},
         "placeholders": [],
@@ -23057,366 +22981,6 @@
         "multiline": false,
         "maxLength": 100
       },
-      "selfDevelopment.activity.dark_psychology.description": {
-        "key": "selfDevelopment.activity.dark_psychology.description",
-        "source": "피로가 쌓이지만 선택 전에 강사의 분석을 한 번 떠올릴 수 있다.",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.dark_psychology.description"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.dark_psychology.reflection.perceived": {
-        "key": "selfDevelopment.activity.dark_psychology.reflection.perceived",
-        "source": "(오늘 배운 강의는 결정적인 순간에 한 번 써먹을 수 있겠군.)",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.dark_psychology.reflection.perceived"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.dark_psychology.reflection.reality": {
-        "key": "selfDevelopment.activity.dark_psychology.reflection.reality",
-        "source": "한도윤은 강사가 되풀이한 문장을 휴대전화 메모장에 옮겼다.",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.dark_psychology.reflection.reality"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.dark_psychology.title": {
-        "key": "selfDevelopment.activity.dark_psychology.title",
-        "source": "《여성의 마음을 지배하는 어둠의 심리학》 추가 학습",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.dark_psychology.title"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.ott.description": {
-        "key": "selfDevelopment.activity.ott.description",
-        "source": "유머가 오르고 피로가 줄지만 매력도가 조금 내려간다.",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.ott.description"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.ott.reflection.perceived": {
-        "key": "selfDevelopment.activity.ott.reflection.perceived",
-        "source": "(한 편만 보려 했는데 벌써 세 편이네. 그래도 요즘 농담은 좀 알겠어.)",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.ott.reflection.perceived"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.ott.reflection.reality": {
-        "key": "selfDevelopment.activity.ott.reflection.reality",
-        "source": "한도윤은 다음 화 자동 재생을 끄고 휴대전화를 뒤집어 놓았다.",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.ott.reflection.reality"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.ott.title": {
-        "key": "selfDevelopment.activity.ott.title",
-        "source": "OTT를 시청한다",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.ott.title"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.reading.description": {
-        "key": "selfDevelopment.activity.reading.description",
-        "source": "지성이 오르고 피로가 조금 쌓인다.",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.reading.description"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.reading.reflection.perceived": {
-        "key": "selfDevelopment.activity.reading.reflection.perceived",
-        "source": "(생각보다 잘 읽히네. 내일 출근길에 조금 더 봐야겠어.)",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.reading.reflection.perceived"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.reading.reflection.reality": {
-        "key": "selfDevelopment.activity.reading.reflection.reality",
-        "source": "한도윤은 읽던 페이지를 접고 책을 식탁 한쪽에 두었다.",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.reading.reflection.reality"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.reading.title": {
-        "key": "selfDevelopment.activity.reading.title",
-        "source": "독서를 한다",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.reading.title"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.sleep.description": {
-        "key": "selfDevelopment.activity.sleep.description",
-        "source": "피로를 크게 회복한다.",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.sleep.description"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.sleep.reflection.perceived": {
-        "key": "selfDevelopment.activity.sleep.reflection.perceived",
-        "source": "(오늘은 욕심내지 말고 자자. 내일 생각은 내일 하고.)",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.sleep.reflection.perceived"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.sleep.reflection.reality": {
-        "key": "selfDevelopment.activity.sleep.reflection.reality",
-        "source": "한도윤은 알람만 맞춘 뒤 불을 껐다.",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.sleep.reflection.reality"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.sleep.title": {
-        "key": "selfDevelopment.activity.sleep.title",
-        "source": "일찍 잠든다",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.sleep.title"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.solo_drinking.description": {
-        "key": "selfDevelopment.activity.solo_drinking.description",
-        "source": "고피로일 때 강제로 발생한다.",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.solo_drinking.description"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.solo_drinking.reflection.perceived": {
-        "key": "selfDevelopment.activity.solo_drinking.reflection.perceived",
-        "source": "(한 잔만 마시려 했는데… 빈 캔이 세 개네. 불부터 끄자.)",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.solo_drinking.reflection.perceived"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.solo_drinking.reflection.reality": {
-        "key": "selfDevelopment.activity.solo_drinking.reflection.reality",
-        "source": "한도윤은 식탁의 빈 캔을 치우지 않은 채 소파에서 잠들었다.",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.solo_drinking.reflection.reality"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.solo_drinking.title": {
-        "key": "selfDevelopment.activity.solo_drinking.title",
-        "source": "혼자 술을 마신다",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.solo_drinking.title"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.workout.description": {
-        "key": "selfDevelopment.activity.workout.description",
-        "source": "건강과 외모가 오르고 피로가 쌓인다.",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.workout.description"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.workout.reflection.perceived": {
-        "key": "selfDevelopment.activity.workout.reflection.perceived",
-        "source": "(숨은 차지만 몸을 쓴 보람은 있네. 오늘은 여기까지 하자.)",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.workout.reflection.perceived"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.workout.reflection.reality": {
-        "key": "selfDevelopment.activity.workout.reflection.reality",
-        "source": "운동을 마친 한도윤은 샤워를 하고 알람을 맞췄다.",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.workout.reflection.reality"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.activity.workout.title": {
-        "key": "selfDevelopment.activity.workout.title",
-        "source": "헬스장에 간다",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.activity.workout.title"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
       "selfDevelopment.appeal": {
         "key": "selfDevelopment.appeal",
         "source": "매력도",
@@ -23486,36 +23050,6 @@
           "id": "game_ui",
           "path": "story/ui.yaml",
           "fieldPath": "strings.selfDevelopment.fatigue"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.forcedIntro": {
-        "key": "selfDevelopment.forcedIntro",
-        "source": "(《여성의 마음을 지배하는 어둠의 심리학》을 몇 줄 읽었지만 눈에 들어오지 않는다. 오늘은 뭘 고를 기운도 없네.)",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.forcedIntro"
-        },
-        "context": {},
-        "placeholders": [],
-        "multiline": false,
-        "maxLength": 100
-      },
-      "selfDevelopment.intro": {
-        "key": "selfDevelopment.intro",
-        "source": "(밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?)",
-        "domain": "ui",
-        "sourceDocument": {
-          "kind": "ui",
-          "id": "game_ui",
-          "path": "story/ui.yaml",
-          "fieldPath": "strings.selfDevelopment.intro"
         },
         "context": {},
         "placeholders": [],
@@ -23836,6 +23370,658 @@
         "placeholders": [],
         "multiline": false,
         "maxLength": 100
+      },
+      "system_flows.system.analysis_hint.nodes.lesson.variants.none.perceived.line": {
+        "key": "system_flows.system.analysis_hint.nodes.lesson.variants.none.perceived.line",
+        "source": "“아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.analysis_hint",
+          "path": "story/system_flows/analysis_hint.yaml",
+          "fieldPath": "nodes.lesson.variants.none.perceived.line"
+        },
+        "context": {
+          "flowId": "system.analysis_hint",
+          "nodeId": "lesson",
+          "variantId": "none",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.analysis_hint.nodes.lesson.variants.none.reality.line": {
+        "key": "system_flows.system.analysis_hint.nodes.lesson.variants.none.reality.line",
+        "source": "“아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.analysis_hint",
+          "path": "story/system_flows/analysis_hint.yaml",
+          "fieldPath": "nodes.lesson.variants.none.reality.line"
+        },
+        "context": {
+          "flowId": "system.analysis_hint",
+          "nodeId": "lesson",
+          "variantId": "none",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.analysis_hint.nodes.lesson.variants.pull.perceived.line": {
+        "key": "system_flows.system.analysis_hint.nodes.lesson.variants.pull.perceived.line",
+        "source": "“증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.analysis_hint",
+          "path": "story/system_flows/analysis_hint.yaml",
+          "fieldPath": "nodes.lesson.variants.pull.perceived.line"
+        },
+        "context": {
+          "flowId": "system.analysis_hint",
+          "nodeId": "lesson",
+          "variantId": "pull",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.analysis_hint.nodes.lesson.variants.pull.reality.line": {
+        "key": "system_flows.system.analysis_hint.nodes.lesson.variants.pull.reality.line",
+        "source": "“증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.analysis_hint",
+          "path": "story/system_flows/analysis_hint.yaml",
+          "fieldPath": "nodes.lesson.variants.pull.reality.line"
+        },
+        "context": {
+          "flowId": "system.analysis_hint",
+          "nodeId": "lesson",
+          "variantId": "pull",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.analysis_hint.nodes.lesson.variants.push.perceived.line": {
+        "key": "system_flows.system.analysis_hint.nodes.lesson.variants.push.perceived.line",
+        "source": "“증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.analysis_hint",
+          "path": "story/system_flows/analysis_hint.yaml",
+          "fieldPath": "nodes.lesson.variants.push.perceived.line"
+        },
+        "context": {
+          "flowId": "system.analysis_hint",
+          "nodeId": "lesson",
+          "variantId": "push",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.analysis_hint.nodes.lesson.variants.push.reality.line": {
+        "key": "system_flows.system.analysis_hint.nodes.lesson.variants.push.reality.line",
+        "source": "“증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.analysis_hint",
+          "path": "story/system_flows/analysis_hint.yaml",
+          "fieldPath": "nodes.lesson.variants.push.reality.line"
+        },
+        "context": {
+          "flowId": "system.analysis_hint",
+          "nodeId": "lesson",
+          "variantId": "push",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.perceived.line": {
+        "key": "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.perceived.line",
+        "source": "(오늘 배운 강의는 결정적인 순간에 한 번 써먹을 수 있겠군.)",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.activity_result.variants.dark_psychology.perceived.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "activity_result",
+          "variantId": "dark_psychology",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.reality.line": {
+        "key": "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.reality.line",
+        "source": "한도윤은 강사가 되풀이한 문장을 휴대전화 메모장에 옮겼다.",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.activity_result.variants.dark_psychology.reality.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "activity_result",
+          "variantId": "dark_psychology",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.activity_result.variants.ott.perceived.line": {
+        "key": "system_flows.system.night_activity.nodes.activity_result.variants.ott.perceived.line",
+        "source": "(한 편만 보려 했는데 벌써 세 편이네. 그래도 요즘 농담은 좀 알겠어.)",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.activity_result.variants.ott.perceived.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "activity_result",
+          "variantId": "ott",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.activity_result.variants.ott.reality.line": {
+        "key": "system_flows.system.night_activity.nodes.activity_result.variants.ott.reality.line",
+        "source": "한도윤은 다음 화 자동 재생을 끄고 휴대전화를 뒤집어 놓았다.",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.activity_result.variants.ott.reality.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "activity_result",
+          "variantId": "ott",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.activity_result.variants.reading.perceived.line": {
+        "key": "system_flows.system.night_activity.nodes.activity_result.variants.reading.perceived.line",
+        "source": "(생각보다 잘 읽히네. 내일 출근길에 조금 더 봐야겠어.)",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.activity_result.variants.reading.perceived.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "activity_result",
+          "variantId": "reading",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.activity_result.variants.reading.reality.line": {
+        "key": "system_flows.system.night_activity.nodes.activity_result.variants.reading.reality.line",
+        "source": "한도윤은 읽던 페이지를 접고 책을 식탁 한쪽에 두었다.",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.activity_result.variants.reading.reality.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "activity_result",
+          "variantId": "reading",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.activity_result.variants.sleep.perceived.line": {
+        "key": "system_flows.system.night_activity.nodes.activity_result.variants.sleep.perceived.line",
+        "source": "(오늘은 욕심내지 말고 자자. 내일 생각은 내일 하고.)",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.activity_result.variants.sleep.perceived.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "activity_result",
+          "variantId": "sleep",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.activity_result.variants.sleep.reality.line": {
+        "key": "system_flows.system.night_activity.nodes.activity_result.variants.sleep.reality.line",
+        "source": "한도윤은 알람만 맞춘 뒤 불을 껐다.",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.activity_result.variants.sleep.reality.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "activity_result",
+          "variantId": "sleep",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.perceived.line": {
+        "key": "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.perceived.line",
+        "source": "(한 잔만 마시려 했는데… 빈 캔이 세 개네. 불부터 끄자.)",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.activity_result.variants.solo_drinking.perceived.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "activity_result",
+          "variantId": "solo_drinking",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.reality.line": {
+        "key": "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.reality.line",
+        "source": "한도윤은 식탁의 빈 캔을 치우지 않은 채 소파에서 잠들었다.",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.activity_result.variants.solo_drinking.reality.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "activity_result",
+          "variantId": "solo_drinking",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.activity_result.variants.workout.perceived.line": {
+        "key": "system_flows.system.night_activity.nodes.activity_result.variants.workout.perceived.line",
+        "source": "(숨은 차지만 몸을 쓴 보람은 있네. 오늘은 여기까지 하자.)",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.activity_result.variants.workout.perceived.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "activity_result",
+          "variantId": "workout",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.activity_result.variants.workout.reality.line": {
+        "key": "system_flows.system.night_activity.nodes.activity_result.variants.workout.reality.line",
+        "source": "운동을 마친 한도윤은 샤워를 하고 알람을 맞췄다.",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.activity_result.variants.workout.reality.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "activity_result",
+          "variantId": "workout",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.forced_intro.perceived.line": {
+        "key": "system_flows.system.night_activity.nodes.forced_intro.perceived.line",
+        "source": "(《여성의 마음을 지배하는 어둠의 심리학》을 몇 줄 읽었지만 눈에 들어오지 않는다. 오늘은 뭘 고를 기운도 없네.)",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.forced_intro.perceived.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "forced_intro",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.forced_intro.reality.line": {
+        "key": "system_flows.system.night_activity.nodes.forced_intro.reality.line",
+        "source": "(《여성의 마음을 지배하는 어둠의 심리학》을 몇 줄 읽었지만 눈에 들어오지 않는다. 오늘은 뭘 고를 기운도 없네.)",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.forced_intro.reality.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "forced_intro",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.intro.perceived.line": {
+        "key": "system_flows.system.night_activity.nodes.intro.perceived.line",
+        "source": "(밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?)",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.intro.perceived.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "intro",
+          "layer": "perceived"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.nodes.intro.reality.line": {
+        "key": "system_flows.system.night_activity.nodes.intro.reality.line",
+        "source": "(밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?)",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "nodes.intro.reality.line"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "nodeId": "intro",
+          "layer": "reality"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "system_flows.system.night_activity.options.dark_psychology.description": {
+        "key": "system_flows.system.night_activity.options.dark_psychology.description",
+        "source": "피로가 쌓이지만 선택 전에 강사의 분석을 한 번 떠올릴 수 있다.",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "options.dark_psychology.description"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "optionId": "dark_psychology"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "system_flows.system.night_activity.options.dark_psychology.label": {
+        "key": "system_flows.system.night_activity.options.dark_psychology.label",
+        "source": "《여성의 마음을 지배하는 어둠의 심리학》 추가 학습",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "options.dark_psychology.label"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "optionId": "dark_psychology"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "system_flows.system.night_activity.options.ott.description": {
+        "key": "system_flows.system.night_activity.options.ott.description",
+        "source": "유머가 오르고 피로가 줄지만 매력도가 조금 내려간다.",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "options.ott.description"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "optionId": "ott"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "system_flows.system.night_activity.options.ott.label": {
+        "key": "system_flows.system.night_activity.options.ott.label",
+        "source": "OTT를 시청한다",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "options.ott.label"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "optionId": "ott"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "system_flows.system.night_activity.options.reading.description": {
+        "key": "system_flows.system.night_activity.options.reading.description",
+        "source": "지성이 오르고 피로가 조금 쌓인다.",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "options.reading.description"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "optionId": "reading"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "system_flows.system.night_activity.options.reading.label": {
+        "key": "system_flows.system.night_activity.options.reading.label",
+        "source": "독서를 한다",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "options.reading.label"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "optionId": "reading"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "system_flows.system.night_activity.options.sleep.description": {
+        "key": "system_flows.system.night_activity.options.sleep.description",
+        "source": "피로를 크게 회복한다.",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "options.sleep.description"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "optionId": "sleep"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "system_flows.system.night_activity.options.sleep.label": {
+        "key": "system_flows.system.night_activity.options.sleep.label",
+        "source": "일찍 잠든다",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "options.sleep.label"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "optionId": "sleep"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "system_flows.system.night_activity.options.solo_drinking.description": {
+        "key": "system_flows.system.night_activity.options.solo_drinking.description",
+        "source": "고피로일 때 강제로 발생한다.",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "options.solo_drinking.description"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "optionId": "solo_drinking"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "system_flows.system.night_activity.options.solo_drinking.label": {
+        "key": "system_flows.system.night_activity.options.solo_drinking.label",
+        "source": "혼자 술을 마신다",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "options.solo_drinking.label"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "optionId": "solo_drinking"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "system_flows.system.night_activity.options.workout.description": {
+        "key": "system_flows.system.night_activity.options.workout.description",
+        "source": "건강과 외모가 오르고 피로가 쌓인다.",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "options.workout.description"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "optionId": "workout"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
+      },
+      "system_flows.system.night_activity.options.workout.label": {
+        "key": "system_flows.system.night_activity.options.workout.label",
+        "source": "헬스장에 간다",
+        "domain": "system_flow",
+        "sourceDocument": {
+          "kind": "system_flow",
+          "id": "system.night_activity",
+          "path": "story/system_flows/night_activity.yaml",
+          "fieldPath": "options.workout.label"
+        },
+        "context": {
+          "flowId": "system.night_activity",
+          "optionId": "workout"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 240
       },
       "threads.min_kyung.title": {
         "key": "threads.min_kyung.title",
@@ -24298,9 +24484,6 @@
       "analysisHint.charge": "힌트",
       "analysisHint.charges": "힌트",
       "analysisHint.instructor": "어둠의 심리학 강사",
-      "analysisHint.lesson.none": "“아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”",
-      "analysisHint.lesson.pull": "“증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”",
-      "analysisHint.lesson.push": "“증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”",
       "analysisHint.observation": "지금까지 본 증거",
       "analysisHint.recall": "머릿속 강의 떠올리기",
       "app.brand": "LOVE OFFICE",
@@ -25482,37 +25665,11 @@
       "scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line": "요즘 젊은 여자들은 《퇴근은 내일》 같은 회사 코미디를 많이 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요.",
       "scenes.seo_a.relief_smile.purpose": "접근이 멈춰 안심한 표정을 주인공이 당기기 신호로 재해석한다.",
       "scenes.seo_a.relief_smile.title": "다시 웃었다",
-      "selfDevelopment.activity.dark_psychology.description": "피로가 쌓이지만 선택 전에 강사의 분석을 한 번 떠올릴 수 있다.",
-      "selfDevelopment.activity.dark_psychology.reflection.perceived": "(오늘 배운 강의는 결정적인 순간에 한 번 써먹을 수 있겠군.)",
-      "selfDevelopment.activity.dark_psychology.reflection.reality": "한도윤은 강사가 되풀이한 문장을 휴대전화 메모장에 옮겼다.",
-      "selfDevelopment.activity.dark_psychology.title": "《여성의 마음을 지배하는 어둠의 심리학》 추가 학습",
-      "selfDevelopment.activity.ott.description": "유머가 오르고 피로가 줄지만 매력도가 조금 내려간다.",
-      "selfDevelopment.activity.ott.reflection.perceived": "(한 편만 보려 했는데 벌써 세 편이네. 그래도 요즘 농담은 좀 알겠어.)",
-      "selfDevelopment.activity.ott.reflection.reality": "한도윤은 다음 화 자동 재생을 끄고 휴대전화를 뒤집어 놓았다.",
-      "selfDevelopment.activity.ott.title": "OTT를 시청한다",
-      "selfDevelopment.activity.reading.description": "지성이 오르고 피로가 조금 쌓인다.",
-      "selfDevelopment.activity.reading.reflection.perceived": "(생각보다 잘 읽히네. 내일 출근길에 조금 더 봐야겠어.)",
-      "selfDevelopment.activity.reading.reflection.reality": "한도윤은 읽던 페이지를 접고 책을 식탁 한쪽에 두었다.",
-      "selfDevelopment.activity.reading.title": "독서를 한다",
-      "selfDevelopment.activity.sleep.description": "피로를 크게 회복한다.",
-      "selfDevelopment.activity.sleep.reflection.perceived": "(오늘은 욕심내지 말고 자자. 내일 생각은 내일 하고.)",
-      "selfDevelopment.activity.sleep.reflection.reality": "한도윤은 알람만 맞춘 뒤 불을 껐다.",
-      "selfDevelopment.activity.sleep.title": "일찍 잠든다",
-      "selfDevelopment.activity.solo_drinking.description": "고피로일 때 강제로 발생한다.",
-      "selfDevelopment.activity.solo_drinking.reflection.perceived": "(한 잔만 마시려 했는데… 빈 캔이 세 개네. 불부터 끄자.)",
-      "selfDevelopment.activity.solo_drinking.reflection.reality": "한도윤은 식탁의 빈 캔을 치우지 않은 채 소파에서 잠들었다.",
-      "selfDevelopment.activity.solo_drinking.title": "혼자 술을 마신다",
-      "selfDevelopment.activity.workout.description": "건강과 외모가 오르고 피로가 쌓인다.",
-      "selfDevelopment.activity.workout.reflection.perceived": "(숨은 차지만 몸을 쓴 보람은 있네. 오늘은 여기까지 하자.)",
-      "selfDevelopment.activity.workout.reflection.reality": "운동을 마친 한도윤은 샤워를 하고 알람을 맞췄다.",
-      "selfDevelopment.activity.workout.title": "헬스장에 간다",
       "selfDevelopment.appeal": "매력도",
       "selfDevelopment.blocked": "피로로 선택 불가",
       "selfDevelopment.choose": "오늘 밤 할 일",
       "selfDevelopment.continue": "불을 끄고 잠든다",
       "selfDevelopment.fatigue": "피로도",
-      "selfDevelopment.forcedIntro": "(《여성의 마음을 지배하는 어둠의 심리학》을 몇 줄 읽었지만 눈에 들어오지 않는다. 오늘은 뭘 고를 기운도 없네.)",
-      "selfDevelopment.intro": "(밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?)",
       "selfDevelopment.result": "오늘의 변화",
       "selfDevelopment.stat.appearance": "외모",
       "selfDevelopment.stat.health": "건강",
@@ -25534,6 +25691,40 @@
       "slot.lunch": "점심",
       "slot.morning": "오전",
       "slot.night": "밤",
+      "system_flows.system.analysis_hint.nodes.lesson.variants.none.perceived.line": "“아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”",
+      "system_flows.system.analysis_hint.nodes.lesson.variants.none.reality.line": "“아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”",
+      "system_flows.system.analysis_hint.nodes.lesson.variants.pull.perceived.line": "“증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”",
+      "system_flows.system.analysis_hint.nodes.lesson.variants.pull.reality.line": "“증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”",
+      "system_flows.system.analysis_hint.nodes.lesson.variants.push.perceived.line": "“증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”",
+      "system_flows.system.analysis_hint.nodes.lesson.variants.push.reality.line": "“증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”",
+      "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.perceived.line": "(오늘 배운 강의는 결정적인 순간에 한 번 써먹을 수 있겠군.)",
+      "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.reality.line": "한도윤은 강사가 되풀이한 문장을 휴대전화 메모장에 옮겼다.",
+      "system_flows.system.night_activity.nodes.activity_result.variants.ott.perceived.line": "(한 편만 보려 했는데 벌써 세 편이네. 그래도 요즘 농담은 좀 알겠어.)",
+      "system_flows.system.night_activity.nodes.activity_result.variants.ott.reality.line": "한도윤은 다음 화 자동 재생을 끄고 휴대전화를 뒤집어 놓았다.",
+      "system_flows.system.night_activity.nodes.activity_result.variants.reading.perceived.line": "(생각보다 잘 읽히네. 내일 출근길에 조금 더 봐야겠어.)",
+      "system_flows.system.night_activity.nodes.activity_result.variants.reading.reality.line": "한도윤은 읽던 페이지를 접고 책을 식탁 한쪽에 두었다.",
+      "system_flows.system.night_activity.nodes.activity_result.variants.sleep.perceived.line": "(오늘은 욕심내지 말고 자자. 내일 생각은 내일 하고.)",
+      "system_flows.system.night_activity.nodes.activity_result.variants.sleep.reality.line": "한도윤은 알람만 맞춘 뒤 불을 껐다.",
+      "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.perceived.line": "(한 잔만 마시려 했는데… 빈 캔이 세 개네. 불부터 끄자.)",
+      "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.reality.line": "한도윤은 식탁의 빈 캔을 치우지 않은 채 소파에서 잠들었다.",
+      "system_flows.system.night_activity.nodes.activity_result.variants.workout.perceived.line": "(숨은 차지만 몸을 쓴 보람은 있네. 오늘은 여기까지 하자.)",
+      "system_flows.system.night_activity.nodes.activity_result.variants.workout.reality.line": "운동을 마친 한도윤은 샤워를 하고 알람을 맞췄다.",
+      "system_flows.system.night_activity.nodes.forced_intro.perceived.line": "(《여성의 마음을 지배하는 어둠의 심리학》을 몇 줄 읽었지만 눈에 들어오지 않는다. 오늘은 뭘 고를 기운도 없네.)",
+      "system_flows.system.night_activity.nodes.forced_intro.reality.line": "(《여성의 마음을 지배하는 어둠의 심리학》을 몇 줄 읽었지만 눈에 들어오지 않는다. 오늘은 뭘 고를 기운도 없네.)",
+      "system_flows.system.night_activity.nodes.intro.perceived.line": "(밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?)",
+      "system_flows.system.night_activity.nodes.intro.reality.line": "(밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?)",
+      "system_flows.system.night_activity.options.dark_psychology.description": "피로가 쌓이지만 선택 전에 강사의 분석을 한 번 떠올릴 수 있다.",
+      "system_flows.system.night_activity.options.dark_psychology.label": "《여성의 마음을 지배하는 어둠의 심리학》 추가 학습",
+      "system_flows.system.night_activity.options.ott.description": "유머가 오르고 피로가 줄지만 매력도가 조금 내려간다.",
+      "system_flows.system.night_activity.options.ott.label": "OTT를 시청한다",
+      "system_flows.system.night_activity.options.reading.description": "지성이 오르고 피로가 조금 쌓인다.",
+      "system_flows.system.night_activity.options.reading.label": "독서를 한다",
+      "system_flows.system.night_activity.options.sleep.description": "피로를 크게 회복한다.",
+      "system_flows.system.night_activity.options.sleep.label": "일찍 잠든다",
+      "system_flows.system.night_activity.options.solo_drinking.description": "고피로일 때 강제로 발생한다.",
+      "system_flows.system.night_activity.options.solo_drinking.label": "혼자 술을 마신다",
+      "system_flows.system.night_activity.options.workout.description": "건강과 외모가 오르고 피로가 쌓인다.",
+      "system_flows.system.night_activity.options.workout.label": "헬스장에 간다",
       "threads.min_kyung.title": "차민경의 기록과 목격자",
       "threads.seo_a.title": "윤서아의 잃어버리는 일상",
       "unlock.notice": "속마음 모드는 첫 엔딩 뒤 열립니다.",
@@ -25569,9 +25760,6 @@
         "analysisHint.charge": "힌트",
         "analysisHint.charges": "힌트",
         "analysisHint.instructor": "어둠의 심리학 강사",
-        "analysisHint.lesson.none": "“아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”",
-        "analysisHint.lesson.pull": "“증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”",
-        "analysisHint.lesson.push": "“증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”",
         "analysisHint.observation": "지금까지 본 증거",
         "analysisHint.recall": "머릿속 강의 떠올리기",
         "app.brand": "LOVE OFFICE",
@@ -26753,37 +26941,11 @@
         "scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line": "요즘 젊은 여자들은 《퇴근은 내일》 같은 회사 코미디를 많이 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요.",
         "scenes.seo_a.relief_smile.purpose": "접근이 멈춰 안심한 표정을 주인공이 당기기 신호로 재해석한다.",
         "scenes.seo_a.relief_smile.title": "다시 웃었다",
-        "selfDevelopment.activity.dark_psychology.description": "피로가 쌓이지만 선택 전에 강사의 분석을 한 번 떠올릴 수 있다.",
-        "selfDevelopment.activity.dark_psychology.reflection.perceived": "(오늘 배운 강의는 결정적인 순간에 한 번 써먹을 수 있겠군.)",
-        "selfDevelopment.activity.dark_psychology.reflection.reality": "한도윤은 강사가 되풀이한 문장을 휴대전화 메모장에 옮겼다.",
-        "selfDevelopment.activity.dark_psychology.title": "《여성의 마음을 지배하는 어둠의 심리학》 추가 학습",
-        "selfDevelopment.activity.ott.description": "유머가 오르고 피로가 줄지만 매력도가 조금 내려간다.",
-        "selfDevelopment.activity.ott.reflection.perceived": "(한 편만 보려 했는데 벌써 세 편이네. 그래도 요즘 농담은 좀 알겠어.)",
-        "selfDevelopment.activity.ott.reflection.reality": "한도윤은 다음 화 자동 재생을 끄고 휴대전화를 뒤집어 놓았다.",
-        "selfDevelopment.activity.ott.title": "OTT를 시청한다",
-        "selfDevelopment.activity.reading.description": "지성이 오르고 피로가 조금 쌓인다.",
-        "selfDevelopment.activity.reading.reflection.perceived": "(생각보다 잘 읽히네. 내일 출근길에 조금 더 봐야겠어.)",
-        "selfDevelopment.activity.reading.reflection.reality": "한도윤은 읽던 페이지를 접고 책을 식탁 한쪽에 두었다.",
-        "selfDevelopment.activity.reading.title": "독서를 한다",
-        "selfDevelopment.activity.sleep.description": "피로를 크게 회복한다.",
-        "selfDevelopment.activity.sleep.reflection.perceived": "(오늘은 욕심내지 말고 자자. 내일 생각은 내일 하고.)",
-        "selfDevelopment.activity.sleep.reflection.reality": "한도윤은 알람만 맞춘 뒤 불을 껐다.",
-        "selfDevelopment.activity.sleep.title": "일찍 잠든다",
-        "selfDevelopment.activity.solo_drinking.description": "고피로일 때 강제로 발생한다.",
-        "selfDevelopment.activity.solo_drinking.reflection.perceived": "(한 잔만 마시려 했는데… 빈 캔이 세 개네. 불부터 끄자.)",
-        "selfDevelopment.activity.solo_drinking.reflection.reality": "한도윤은 식탁의 빈 캔을 치우지 않은 채 소파에서 잠들었다.",
-        "selfDevelopment.activity.solo_drinking.title": "혼자 술을 마신다",
-        "selfDevelopment.activity.workout.description": "건강과 외모가 오르고 피로가 쌓인다.",
-        "selfDevelopment.activity.workout.reflection.perceived": "(숨은 차지만 몸을 쓴 보람은 있네. 오늘은 여기까지 하자.)",
-        "selfDevelopment.activity.workout.reflection.reality": "운동을 마친 한도윤은 샤워를 하고 알람을 맞췄다.",
-        "selfDevelopment.activity.workout.title": "헬스장에 간다",
         "selfDevelopment.appeal": "매력도",
         "selfDevelopment.blocked": "피로로 선택 불가",
         "selfDevelopment.choose": "오늘 밤 할 일",
         "selfDevelopment.continue": "불을 끄고 잠든다",
         "selfDevelopment.fatigue": "피로도",
-        "selfDevelopment.forcedIntro": "(《여성의 마음을 지배하는 어둠의 심리학》을 몇 줄 읽었지만 눈에 들어오지 않는다. 오늘은 뭘 고를 기운도 없네.)",
-        "selfDevelopment.intro": "(밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?)",
         "selfDevelopment.result": "오늘의 변화",
         "selfDevelopment.stat.appearance": "외모",
         "selfDevelopment.stat.health": "건강",
@@ -26805,6 +26967,40 @@
         "slot.lunch": "점심",
         "slot.morning": "오전",
         "slot.night": "밤",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.none.perceived.line": "“아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.none.reality.line": "“아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.pull.perceived.line": "“증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.pull.reality.line": "“증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.push.perceived.line": "“증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.push.reality.line": "“증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”",
+        "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.perceived.line": "(오늘 배운 강의는 결정적인 순간에 한 번 써먹을 수 있겠군.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.reality.line": "한도윤은 강사가 되풀이한 문장을 휴대전화 메모장에 옮겼다.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.ott.perceived.line": "(한 편만 보려 했는데 벌써 세 편이네. 그래도 요즘 농담은 좀 알겠어.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.ott.reality.line": "한도윤은 다음 화 자동 재생을 끄고 휴대전화를 뒤집어 놓았다.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.reading.perceived.line": "(생각보다 잘 읽히네. 내일 출근길에 조금 더 봐야겠어.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.reading.reality.line": "한도윤은 읽던 페이지를 접고 책을 식탁 한쪽에 두었다.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.sleep.perceived.line": "(오늘은 욕심내지 말고 자자. 내일 생각은 내일 하고.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.sleep.reality.line": "한도윤은 알람만 맞춘 뒤 불을 껐다.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.perceived.line": "(한 잔만 마시려 했는데… 빈 캔이 세 개네. 불부터 끄자.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.reality.line": "한도윤은 식탁의 빈 캔을 치우지 않은 채 소파에서 잠들었다.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.workout.perceived.line": "(숨은 차지만 몸을 쓴 보람은 있네. 오늘은 여기까지 하자.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.workout.reality.line": "운동을 마친 한도윤은 샤워를 하고 알람을 맞췄다.",
+        "system_flows.system.night_activity.nodes.forced_intro.perceived.line": "(《여성의 마음을 지배하는 어둠의 심리학》을 몇 줄 읽었지만 눈에 들어오지 않는다. 오늘은 뭘 고를 기운도 없네.)",
+        "system_flows.system.night_activity.nodes.forced_intro.reality.line": "(《여성의 마음을 지배하는 어둠의 심리학》을 몇 줄 읽었지만 눈에 들어오지 않는다. 오늘은 뭘 고를 기운도 없네.)",
+        "system_flows.system.night_activity.nodes.intro.perceived.line": "(밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?)",
+        "system_flows.system.night_activity.nodes.intro.reality.line": "(밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?)",
+        "system_flows.system.night_activity.options.dark_psychology.description": "피로가 쌓이지만 선택 전에 강사의 분석을 한 번 떠올릴 수 있다.",
+        "system_flows.system.night_activity.options.dark_psychology.label": "《여성의 마음을 지배하는 어둠의 심리학》 추가 학습",
+        "system_flows.system.night_activity.options.ott.description": "유머가 오르고 피로가 줄지만 매력도가 조금 내려간다.",
+        "system_flows.system.night_activity.options.ott.label": "OTT를 시청한다",
+        "system_flows.system.night_activity.options.reading.description": "지성이 오르고 피로가 조금 쌓인다.",
+        "system_flows.system.night_activity.options.reading.label": "독서를 한다",
+        "system_flows.system.night_activity.options.sleep.description": "피로를 크게 회복한다.",
+        "system_flows.system.night_activity.options.sleep.label": "일찍 잠든다",
+        "system_flows.system.night_activity.options.solo_drinking.description": "고피로일 때 강제로 발생한다.",
+        "system_flows.system.night_activity.options.solo_drinking.label": "혼자 술을 마신다",
+        "system_flows.system.night_activity.options.workout.description": "건강과 외모가 오르고 피로가 쌓인다.",
+        "system_flows.system.night_activity.options.workout.label": "헬스장에 간다",
         "threads.min_kyung.title": "차민경의 기록과 목격자",
         "threads.seo_a.title": "윤서아의 잃어버리는 일상",
         "unlock.notice": "속마음 모드는 첫 엔딩 뒤 열립니다.",
@@ -26839,9 +27035,6 @@
         "analysisHint.charge": "Hint",
         "analysisHint.charges": "Hints",
         "analysisHint.instructor": "Dark psychology instructor",
-        "analysisHint.lesson.none": "“There is no fixed answer yet. This first choice will set the next scoring direction.”",
-        "analysisHint.lesson.pull": "“Look at the evidence. To score on this choice, you need to continue the conversation.”",
-        "analysisHint.lesson.push": "“Look at the evidence. On this choice, saying less and stepping back is the scoring move.”",
         "analysisHint.observation": "Evidence observed so far",
         "analysisHint.recall": "Replay the lecture in my head",
         "app.brand": "LOVE OFFICE",
@@ -28023,37 +28216,11 @@
         "scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line": "I heard young women are watching that office comedy on OTT these days. I've seen a little too—let's talk over dinner after work.",
         "scenes.seo_a.relief_smile.purpose": "접근이 멈춰 안심한 표정을 주인공이 당기기 신호로 재해석한다.",
         "scenes.seo_a.relief_smile.title": "다시 웃었다",
-        "selfDevelopment.activity.dark_psychology.description": "Build fatigue to recall the instructor's analysis once before a choice.",
-        "selfDevelopment.activity.dark_psychology.reflection.perceived": "(I can use tonight's lesson once when the decisive moment comes.)",
-        "selfDevelopment.activity.dark_psychology.reflection.reality": "Do-yoon copied the instructor's repeated phrase into his phone notes.",
-        "selfDevelopment.activity.dark_psychology.title": "Study Dark Psychology for Dominating Women's Hearts",
-        "selfDevelopment.activity.ott.description": "Gain humor and reduce fatigue, with a small loss of appeal.",
-        "selfDevelopment.activity.ott.reflection.perceived": "(I meant to watch one episode, and now it is three. At least I understand the jokes.)",
-        "selfDevelopment.activity.ott.reflection.reality": "Do-yoon disabled autoplay and placed his phone face down.",
-        "selfDevelopment.activity.ott.title": "Watch a streaming series",
-        "selfDevelopment.activity.reading.description": "Gain intelligence and a little fatigue.",
-        "selfDevelopment.activity.reading.reflection.perceived": "(This is easier to read than I expected. I should continue on the commute tomorrow.)",
-        "selfDevelopment.activity.reading.reflection.reality": "Do-yoon folded the page and left the book on the table.",
-        "selfDevelopment.activity.reading.title": "Read a book",
-        "selfDevelopment.activity.sleep.description": "Recover a large amount of fatigue.",
-        "selfDevelopment.activity.sleep.reflection.perceived": "(No need to push it tonight. Tomorrow can wait until tomorrow.)",
-        "selfDevelopment.activity.sleep.reflection.reality": "Do-yoon set his alarm and turned off the light.",
-        "selfDevelopment.activity.sleep.title": "Go to bed early",
-        "selfDevelopment.activity.solo_drinking.description": "Triggers automatically at high fatigue.",
-        "selfDevelopment.activity.solo_drinking.reflection.perceived": "(I meant to have one drink... There are three empty cans. Time to turn off the light.)",
-        "selfDevelopment.activity.solo_drinking.reflection.reality": "Do-yoon fell asleep on the sofa without clearing the empty cans from the table.",
-        "selfDevelopment.activity.solo_drinking.title": "Drink alone",
-        "selfDevelopment.activity.workout.description": "Gain health and appearance while building fatigue.",
-        "selfDevelopment.activity.workout.reflection.perceived": "(I am winded, but it was worth moving. That is enough for tonight.)",
-        "selfDevelopment.activity.workout.reflection.reality": "After working out, Do-yoon showered and set his alarm.",
-        "selfDevelopment.activity.workout.title": "Go to the gym",
         "selfDevelopment.appeal": "Appeal",
         "selfDevelopment.blocked": "Unavailable due to fatigue",
         "selfDevelopment.choose": "Tonight's activity",
         "selfDevelopment.continue": "Turn off the light and sleep",
         "selfDevelopment.fatigue": "Fatigue",
-        "selfDevelopment.forcedIntro": "(I read a few lines of Dark Psychology for Dominating Women's Hearts, but none of it registered. I cannot even choose tonight.)",
-        "selfDevelopment.intro": "(I read a few pages of Dark Psychology for Dominating Women's Hearts over dinner. What should I do now?)",
         "selfDevelopment.result": "Tonight's changes",
         "selfDevelopment.stat.appearance": "Appearance",
         "selfDevelopment.stat.health": "Health",
@@ -28075,6 +28242,40 @@
         "slot.lunch": "Lunch",
         "slot.morning": "Morning",
         "slot.night": "Night",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.none.perceived.line": "“There is no fixed answer yet. This first choice will set the next scoring direction.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.none.reality.line": "“There is no fixed answer yet. This first choice will set the next scoring direction.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.pull.perceived.line": "“Look at the evidence. To score on this choice, you need to continue the conversation.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.pull.reality.line": "“Look at the evidence. To score on this choice, you need to continue the conversation.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.push.perceived.line": "“Look at the evidence. On this choice, saying less and stepping back is the scoring move.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.push.reality.line": "“Look at the evidence. On this choice, saying less and stepping back is the scoring move.”",
+        "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.perceived.line": "(I can use tonight's lesson once when the decisive moment comes.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.reality.line": "Do-yoon copied the instructor's repeated phrase into his phone notes.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.ott.perceived.line": "(I meant to watch one episode, and now it is three. At least I understand the jokes.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.ott.reality.line": "Do-yoon disabled autoplay and placed his phone face down.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.reading.perceived.line": "(This is easier to read than I expected. I should continue on the commute tomorrow.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.reading.reality.line": "Do-yoon folded the page and left the book on the table.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.sleep.perceived.line": "(No need to push it tonight. Tomorrow can wait until tomorrow.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.sleep.reality.line": "Do-yoon set his alarm and turned off the light.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.perceived.line": "(I meant to have one drink... There are three empty cans. Time to turn off the light.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.reality.line": "Do-yoon fell asleep on the sofa without clearing the empty cans from the table.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.workout.perceived.line": "(I am winded, but it was worth moving. That is enough for tonight.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.workout.reality.line": "After working out, Do-yoon showered and set his alarm.",
+        "system_flows.system.night_activity.nodes.forced_intro.perceived.line": "(I read a few lines of Dark Psychology for Dominating Women's Hearts, but none of it registered. I cannot even choose tonight.)",
+        "system_flows.system.night_activity.nodes.forced_intro.reality.line": "(I read a few lines of Dark Psychology for Dominating Women's Hearts, but none of it registered. I cannot even choose tonight.)",
+        "system_flows.system.night_activity.nodes.intro.perceived.line": "(I read a few pages of Dark Psychology for Dominating Women's Hearts over dinner. What should I do now?)",
+        "system_flows.system.night_activity.nodes.intro.reality.line": "(I read a few pages of Dark Psychology for Dominating Women's Hearts over dinner. What should I do now?)",
+        "system_flows.system.night_activity.options.dark_psychology.description": "Build fatigue to recall the instructor's analysis once before a choice.",
+        "system_flows.system.night_activity.options.dark_psychology.label": "Study Dark Psychology for Dominating Women's Hearts",
+        "system_flows.system.night_activity.options.ott.description": "Gain humor and reduce fatigue, with a small loss of appeal.",
+        "system_flows.system.night_activity.options.ott.label": "Watch a streaming series",
+        "system_flows.system.night_activity.options.reading.description": "Gain intelligence and a little fatigue.",
+        "system_flows.system.night_activity.options.reading.label": "Read a book",
+        "system_flows.system.night_activity.options.sleep.description": "Recover a large amount of fatigue.",
+        "system_flows.system.night_activity.options.sleep.label": "Go to bed early",
+        "system_flows.system.night_activity.options.solo_drinking.description": "Triggers automatically at high fatigue.",
+        "system_flows.system.night_activity.options.solo_drinking.label": "Drink alone",
+        "system_flows.system.night_activity.options.workout.description": "Gain health and appearance while building fatigue.",
+        "system_flows.system.night_activity.options.workout.label": "Go to the gym",
         "threads.min_kyung.title": "차민경의 기록과 목격자",
         "threads.seo_a.title": "윤서아의 잃어버리는 일상",
         "unlock.notice": "Inner Voice Mode unlocks after the first ending.",
@@ -28289,8 +28490,6 @@
         "feedback.gain": "Initiative +{{gain}}",
         "feedback.controlGain": "Control +{{gain}}",
         "feedback.expressionBonus": "Self-improvement expression bonus +{{gain}}",
-        "selfDevelopment.intro": "(I read a few pages of Dark Psychology for Dominating Women's Hearts over dinner. What should I do now?)",
-        "selfDevelopment.forcedIntro": "(I read a few lines of Dark Psychology for Dominating Women's Hearts, but none of it registered. I cannot even choose tonight.)",
         "selfDevelopment.status": "Current status",
         "selfDevelopment.appeal": "Appeal",
         "selfDevelopment.fatigue": "Fatigue",
@@ -28302,38 +28501,45 @@
         "selfDevelopment.result": "Tonight's changes",
         "selfDevelopment.continue": "Turn off the light and sleep",
         "selfDevelopment.blocked": "Unavailable due to fatigue",
-        "selfDevelopment.activity.workout.title": "Go to the gym",
-        "selfDevelopment.activity.workout.description": "Gain health and appearance while building fatigue.",
-        "selfDevelopment.activity.workout.reflection.perceived": "(I am winded, but it was worth moving. That is enough for tonight.)",
-        "selfDevelopment.activity.workout.reflection.reality": "After working out, Do-yoon showered and set his alarm.",
-        "selfDevelopment.activity.reading.title": "Read a book",
-        "selfDevelopment.activity.reading.description": "Gain intelligence and a little fatigue.",
-        "selfDevelopment.activity.reading.reflection.perceived": "(This is easier to read than I expected. I should continue on the commute tomorrow.)",
-        "selfDevelopment.activity.reading.reflection.reality": "Do-yoon folded the page and left the book on the table.",
-        "selfDevelopment.activity.ott.title": "Watch a streaming series",
-        "selfDevelopment.activity.ott.description": "Gain humor and reduce fatigue, with a small loss of appeal.",
-        "selfDevelopment.activity.ott.reflection.perceived": "(I meant to watch one episode, and now it is three. At least I understand the jokes.)",
-        "selfDevelopment.activity.ott.reflection.reality": "Do-yoon disabled autoplay and placed his phone face down.",
-        "selfDevelopment.activity.sleep.title": "Go to bed early",
-        "selfDevelopment.activity.sleep.description": "Recover a large amount of fatigue.",
-        "selfDevelopment.activity.sleep.reflection.perceived": "(No need to push it tonight. Tomorrow can wait until tomorrow.)",
-        "selfDevelopment.activity.sleep.reflection.reality": "Do-yoon set his alarm and turned off the light.",
-        "selfDevelopment.activity.dark_psychology.title": "Study Dark Psychology for Dominating Women's Hearts",
-        "selfDevelopment.activity.dark_psychology.description": "Build fatigue to recall the instructor's analysis once before a choice.",
-        "selfDevelopment.activity.dark_psychology.reflection.perceived": "(I can use tonight's lesson once when the decisive moment comes.)",
-        "selfDevelopment.activity.dark_psychology.reflection.reality": "Do-yoon copied the instructor's repeated phrase into his phone notes.",
-        "selfDevelopment.activity.solo_drinking.title": "Drink alone",
-        "selfDevelopment.activity.solo_drinking.description": "Triggers automatically at high fatigue.",
-        "selfDevelopment.activity.solo_drinking.reflection.perceived": "(I meant to have one drink... There are three empty cans. Time to turn off the light.)",
-        "selfDevelopment.activity.solo_drinking.reflection.reality": "Do-yoon fell asleep on the sofa without clearing the empty cans from the table.",
         "analysisHint.charge": "Hint",
         "analysisHint.charges": "Hints",
         "analysisHint.recall": "Replay the lecture in my head",
         "analysisHint.instructor": "Dark psychology instructor",
         "analysisHint.observation": "Evidence observed so far",
-        "analysisHint.lesson.pull": "“Look at the evidence. To score on this choice, you need to continue the conversation.”",
-        "analysisHint.lesson.push": "“Look at the evidence. On this choice, saying less and stepping back is the scoring move.”",
-        "analysisHint.lesson.none": "“There is no fixed answer yet. This first choice will set the next scoring direction.”",
+        "system_flows.system.night_activity.nodes.intro.perceived.line": "(I read a few pages of Dark Psychology for Dominating Women's Hearts over dinner. What should I do now?)",
+        "system_flows.system.night_activity.nodes.intro.reality.line": "(I read a few pages of Dark Psychology for Dominating Women's Hearts over dinner. What should I do now?)",
+        "system_flows.system.night_activity.nodes.forced_intro.perceived.line": "(I read a few lines of Dark Psychology for Dominating Women's Hearts, but none of it registered. I cannot even choose tonight.)",
+        "system_flows.system.night_activity.nodes.forced_intro.reality.line": "(I read a few lines of Dark Psychology for Dominating Women's Hearts, but none of it registered. I cannot even choose tonight.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.workout.perceived.line": "(I am winded, but it was worth moving. That is enough for tonight.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.workout.reality.line": "After working out, Do-yoon showered and set his alarm.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.reading.perceived.line": "(This is easier to read than I expected. I should continue on the commute tomorrow.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.reading.reality.line": "Do-yoon folded the page and left the book on the table.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.ott.perceived.line": "(I meant to watch one episode, and now it is three. At least I understand the jokes.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.ott.reality.line": "Do-yoon disabled autoplay and placed his phone face down.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.sleep.perceived.line": "(No need to push it tonight. Tomorrow can wait until tomorrow.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.sleep.reality.line": "Do-yoon set his alarm and turned off the light.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.perceived.line": "(I can use tonight's lesson once when the decisive moment comes.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.reality.line": "Do-yoon copied the instructor's repeated phrase into his phone notes.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.perceived.line": "(I meant to have one drink... There are three empty cans. Time to turn off the light.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.reality.line": "Do-yoon fell asleep on the sofa without clearing the empty cans from the table.",
+        "system_flows.system.night_activity.options.workout.label": "Go to the gym",
+        "system_flows.system.night_activity.options.workout.description": "Gain health and appearance while building fatigue.",
+        "system_flows.system.night_activity.options.reading.label": "Read a book",
+        "system_flows.system.night_activity.options.reading.description": "Gain intelligence and a little fatigue.",
+        "system_flows.system.night_activity.options.ott.label": "Watch a streaming series",
+        "system_flows.system.night_activity.options.ott.description": "Gain humor and reduce fatigue, with a small loss of appeal.",
+        "system_flows.system.night_activity.options.sleep.label": "Go to bed early",
+        "system_flows.system.night_activity.options.sleep.description": "Recover a large amount of fatigue.",
+        "system_flows.system.night_activity.options.dark_psychology.label": "Study Dark Psychology for Dominating Women's Hearts",
+        "system_flows.system.night_activity.options.dark_psychology.description": "Build fatigue to recall the instructor's analysis once before a choice.",
+        "system_flows.system.night_activity.options.solo_drinking.label": "Drink alone",
+        "system_flows.system.night_activity.options.solo_drinking.description": "Triggers automatically at high fatigue.",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.pull.perceived.line": "“Look at the evidence. To score on this choice, you need to continue the conversation.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.pull.reality.line": "“Look at the evidence. To score on this choice, you need to continue the conversation.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.push.perceived.line": "“Look at the evidence. On this choice, saying less and stepping back is the scoring move.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.push.reality.line": "“Look at the evidence. On this choice, saying less and stepping back is the scoring move.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.none.perceived.line": "“There is no fixed answer yet. This first choice will set the next scoring direction.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.none.reality.line": "“There is no fixed answer yet. This first choice will set the next scoring direction.”",
         "save.title": "Save",
         "save.slot": "SLOT {{slot}}",
         "save.here": "Save here",
@@ -28378,9 +28584,6 @@
         "analysisHint.charge": "힌트",
         "analysisHint.charges": "힌트",
         "analysisHint.instructor": "어둠의 심리학 강사",
-        "analysisHint.lesson.none": "“아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”",
-        "analysisHint.lesson.pull": "“증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”",
-        "analysisHint.lesson.push": "“증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”",
         "analysisHint.observation": "지금까지 본 증거",
         "analysisHint.recall": "머릿속 강의 떠올리기",
         "app.brand": "LOVE OFFICE",
@@ -29562,37 +29765,11 @@
         "scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line": "요즘 젊은 여자들은 《퇴근은 내일》 같은 회사 코미디를 많이 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요.",
         "scenes.seo_a.relief_smile.purpose": "접근이 멈춰 안심한 표정을 주인공이 당기기 신호로 재해석한다.",
         "scenes.seo_a.relief_smile.title": "다시 웃었다",
-        "selfDevelopment.activity.dark_psychology.description": "피로가 쌓이지만 선택 전에 강사의 분석을 한 번 떠올릴 수 있다.",
-        "selfDevelopment.activity.dark_psychology.reflection.perceived": "(오늘 배운 강의는 결정적인 순간에 한 번 써먹을 수 있겠군.)",
-        "selfDevelopment.activity.dark_psychology.reflection.reality": "한도윤은 강사가 되풀이한 문장을 휴대전화 메모장에 옮겼다.",
-        "selfDevelopment.activity.dark_psychology.title": "《여성의 마음을 지배하는 어둠의 심리학》 추가 학습",
-        "selfDevelopment.activity.ott.description": "유머가 오르고 피로가 줄지만 매력도가 조금 내려간다.",
-        "selfDevelopment.activity.ott.reflection.perceived": "(한 편만 보려 했는데 벌써 세 편이네. 그래도 요즘 농담은 좀 알겠어.)",
-        "selfDevelopment.activity.ott.reflection.reality": "한도윤은 다음 화 자동 재생을 끄고 휴대전화를 뒤집어 놓았다.",
-        "selfDevelopment.activity.ott.title": "OTT를 시청한다",
-        "selfDevelopment.activity.reading.description": "지성이 오르고 피로가 조금 쌓인다.",
-        "selfDevelopment.activity.reading.reflection.perceived": "(생각보다 잘 읽히네. 내일 출근길에 조금 더 봐야겠어.)",
-        "selfDevelopment.activity.reading.reflection.reality": "한도윤은 읽던 페이지를 접고 책을 식탁 한쪽에 두었다.",
-        "selfDevelopment.activity.reading.title": "독서를 한다",
-        "selfDevelopment.activity.sleep.description": "피로를 크게 회복한다.",
-        "selfDevelopment.activity.sleep.reflection.perceived": "(오늘은 욕심내지 말고 자자. 내일 생각은 내일 하고.)",
-        "selfDevelopment.activity.sleep.reflection.reality": "한도윤은 알람만 맞춘 뒤 불을 껐다.",
-        "selfDevelopment.activity.sleep.title": "일찍 잠든다",
-        "selfDevelopment.activity.solo_drinking.description": "고피로일 때 강제로 발생한다.",
-        "selfDevelopment.activity.solo_drinking.reflection.perceived": "(한 잔만 마시려 했는데… 빈 캔이 세 개네. 불부터 끄자.)",
-        "selfDevelopment.activity.solo_drinking.reflection.reality": "한도윤은 식탁의 빈 캔을 치우지 않은 채 소파에서 잠들었다.",
-        "selfDevelopment.activity.solo_drinking.title": "혼자 술을 마신다",
-        "selfDevelopment.activity.workout.description": "건강과 외모가 오르고 피로가 쌓인다.",
-        "selfDevelopment.activity.workout.reflection.perceived": "(숨은 차지만 몸을 쓴 보람은 있네. 오늘은 여기까지 하자.)",
-        "selfDevelopment.activity.workout.reflection.reality": "운동을 마친 한도윤은 샤워를 하고 알람을 맞췄다.",
-        "selfDevelopment.activity.workout.title": "헬스장에 간다",
         "selfDevelopment.appeal": "매력도",
         "selfDevelopment.blocked": "피로로 선택 불가",
         "selfDevelopment.choose": "오늘 밤 할 일",
         "selfDevelopment.continue": "불을 끄고 잠든다",
         "selfDevelopment.fatigue": "피로도",
-        "selfDevelopment.forcedIntro": "(《여성의 마음을 지배하는 어둠의 심리학》을 몇 줄 읽었지만 눈에 들어오지 않는다. 오늘은 뭘 고를 기운도 없네.)",
-        "selfDevelopment.intro": "(밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?)",
         "selfDevelopment.result": "오늘의 변화",
         "selfDevelopment.stat.appearance": "외모",
         "selfDevelopment.stat.health": "건강",
@@ -29614,6 +29791,40 @@
         "slot.lunch": "점심",
         "slot.morning": "오전",
         "slot.night": "밤",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.none.perceived.line": "“아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.none.reality.line": "“아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.pull.perceived.line": "“증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.pull.reality.line": "“증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.push.perceived.line": "“증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.push.reality.line": "“증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”",
+        "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.perceived.line": "(오늘 배운 강의는 결정적인 순간에 한 번 써먹을 수 있겠군.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.reality.line": "한도윤은 강사가 되풀이한 문장을 휴대전화 메모장에 옮겼다.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.ott.perceived.line": "(한 편만 보려 했는데 벌써 세 편이네. 그래도 요즘 농담은 좀 알겠어.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.ott.reality.line": "한도윤은 다음 화 자동 재생을 끄고 휴대전화를 뒤집어 놓았다.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.reading.perceived.line": "(생각보다 잘 읽히네. 내일 출근길에 조금 더 봐야겠어.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.reading.reality.line": "한도윤은 읽던 페이지를 접고 책을 식탁 한쪽에 두었다.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.sleep.perceived.line": "(오늘은 욕심내지 말고 자자. 내일 생각은 내일 하고.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.sleep.reality.line": "한도윤은 알람만 맞춘 뒤 불을 껐다.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.perceived.line": "(한 잔만 마시려 했는데… 빈 캔이 세 개네. 불부터 끄자.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.reality.line": "한도윤은 식탁의 빈 캔을 치우지 않은 채 소파에서 잠들었다.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.workout.perceived.line": "(숨은 차지만 몸을 쓴 보람은 있네. 오늘은 여기까지 하자.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.workout.reality.line": "운동을 마친 한도윤은 샤워를 하고 알람을 맞췄다.",
+        "system_flows.system.night_activity.nodes.forced_intro.perceived.line": "(《여성의 마음을 지배하는 어둠의 심리학》을 몇 줄 읽었지만 눈에 들어오지 않는다. 오늘은 뭘 고를 기운도 없네.)",
+        "system_flows.system.night_activity.nodes.forced_intro.reality.line": "(《여성의 마음을 지배하는 어둠의 심리학》을 몇 줄 읽었지만 눈에 들어오지 않는다. 오늘은 뭘 고를 기운도 없네.)",
+        "system_flows.system.night_activity.nodes.intro.perceived.line": "(밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?)",
+        "system_flows.system.night_activity.nodes.intro.reality.line": "(밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?)",
+        "system_flows.system.night_activity.options.dark_psychology.description": "피로가 쌓이지만 선택 전에 강사의 분석을 한 번 떠올릴 수 있다.",
+        "system_flows.system.night_activity.options.dark_psychology.label": "《여성의 마음을 지배하는 어둠의 심리학》 추가 학습",
+        "system_flows.system.night_activity.options.ott.description": "유머가 오르고 피로가 줄지만 매력도가 조금 내려간다.",
+        "system_flows.system.night_activity.options.ott.label": "OTT를 시청한다",
+        "system_flows.system.night_activity.options.reading.description": "지성이 오르고 피로가 조금 쌓인다.",
+        "system_flows.system.night_activity.options.reading.label": "독서를 한다",
+        "system_flows.system.night_activity.options.sleep.description": "피로를 크게 회복한다.",
+        "system_flows.system.night_activity.options.sleep.label": "일찍 잠든다",
+        "system_flows.system.night_activity.options.solo_drinking.description": "고피로일 때 강제로 발생한다.",
+        "system_flows.system.night_activity.options.solo_drinking.label": "혼자 술을 마신다",
+        "system_flows.system.night_activity.options.workout.description": "건강과 외모가 오르고 피로가 쌓인다.",
+        "system_flows.system.night_activity.options.workout.label": "헬스장에 간다",
         "threads.min_kyung.title": "차민경의 기록과 목격자",
         "threads.seo_a.title": "윤서아의 잃어버리는 일상",
         "unlock.notice": "속마음 모드는 첫 엔딩 뒤 열립니다.",
@@ -29648,9 +29859,6 @@
         "analysisHint.charge": "Hint",
         "analysisHint.charges": "Hints",
         "analysisHint.instructor": "Dark psychology instructor",
-        "analysisHint.lesson.none": "“There is no fixed answer yet. This first choice will set the next scoring direction.”",
-        "analysisHint.lesson.pull": "“Look at the evidence. To score on this choice, you need to continue the conversation.”",
-        "analysisHint.lesson.push": "“Look at the evidence. On this choice, saying less and stepping back is the scoring move.”",
         "analysisHint.observation": "Evidence observed so far",
         "analysisHint.recall": "Replay the lecture in my head",
         "app.brand": "LOVE OFFICE",
@@ -30832,37 +31040,11 @@
         "scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line": "I heard young women are watching that office comedy on OTT these days. I've seen a little too—let's talk over dinner after work.",
         "scenes.seo_a.relief_smile.purpose": "접근이 멈춰 안심한 표정을 주인공이 당기기 신호로 재해석한다.",
         "scenes.seo_a.relief_smile.title": "다시 웃었다",
-        "selfDevelopment.activity.dark_psychology.description": "Build fatigue to recall the instructor's analysis once before a choice.",
-        "selfDevelopment.activity.dark_psychology.reflection.perceived": "(I can use tonight's lesson once when the decisive moment comes.)",
-        "selfDevelopment.activity.dark_psychology.reflection.reality": "Do-yoon copied the instructor's repeated phrase into his phone notes.",
-        "selfDevelopment.activity.dark_psychology.title": "Study Dark Psychology for Dominating Women's Hearts",
-        "selfDevelopment.activity.ott.description": "Gain humor and reduce fatigue, with a small loss of appeal.",
-        "selfDevelopment.activity.ott.reflection.perceived": "(I meant to watch one episode, and now it is three. At least I understand the jokes.)",
-        "selfDevelopment.activity.ott.reflection.reality": "Do-yoon disabled autoplay and placed his phone face down.",
-        "selfDevelopment.activity.ott.title": "Watch a streaming series",
-        "selfDevelopment.activity.reading.description": "Gain intelligence and a little fatigue.",
-        "selfDevelopment.activity.reading.reflection.perceived": "(This is easier to read than I expected. I should continue on the commute tomorrow.)",
-        "selfDevelopment.activity.reading.reflection.reality": "Do-yoon folded the page and left the book on the table.",
-        "selfDevelopment.activity.reading.title": "Read a book",
-        "selfDevelopment.activity.sleep.description": "Recover a large amount of fatigue.",
-        "selfDevelopment.activity.sleep.reflection.perceived": "(No need to push it tonight. Tomorrow can wait until tomorrow.)",
-        "selfDevelopment.activity.sleep.reflection.reality": "Do-yoon set his alarm and turned off the light.",
-        "selfDevelopment.activity.sleep.title": "Go to bed early",
-        "selfDevelopment.activity.solo_drinking.description": "Triggers automatically at high fatigue.",
-        "selfDevelopment.activity.solo_drinking.reflection.perceived": "(I meant to have one drink... There are three empty cans. Time to turn off the light.)",
-        "selfDevelopment.activity.solo_drinking.reflection.reality": "Do-yoon fell asleep on the sofa without clearing the empty cans from the table.",
-        "selfDevelopment.activity.solo_drinking.title": "Drink alone",
-        "selfDevelopment.activity.workout.description": "Gain health and appearance while building fatigue.",
-        "selfDevelopment.activity.workout.reflection.perceived": "(I am winded, but it was worth moving. That is enough for tonight.)",
-        "selfDevelopment.activity.workout.reflection.reality": "After working out, Do-yoon showered and set his alarm.",
-        "selfDevelopment.activity.workout.title": "Go to the gym",
         "selfDevelopment.appeal": "Appeal",
         "selfDevelopment.blocked": "Unavailable due to fatigue",
         "selfDevelopment.choose": "Tonight's activity",
         "selfDevelopment.continue": "Turn off the light and sleep",
         "selfDevelopment.fatigue": "Fatigue",
-        "selfDevelopment.forcedIntro": "(I read a few lines of Dark Psychology for Dominating Women's Hearts, but none of it registered. I cannot even choose tonight.)",
-        "selfDevelopment.intro": "(I read a few pages of Dark Psychology for Dominating Women's Hearts over dinner. What should I do now?)",
         "selfDevelopment.result": "Tonight's changes",
         "selfDevelopment.stat.appearance": "Appearance",
         "selfDevelopment.stat.health": "Health",
@@ -30884,6 +31066,40 @@
         "slot.lunch": "Lunch",
         "slot.morning": "Morning",
         "slot.night": "Night",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.none.perceived.line": "“There is no fixed answer yet. This first choice will set the next scoring direction.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.none.reality.line": "“There is no fixed answer yet. This first choice will set the next scoring direction.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.pull.perceived.line": "“Look at the evidence. To score on this choice, you need to continue the conversation.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.pull.reality.line": "“Look at the evidence. To score on this choice, you need to continue the conversation.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.push.perceived.line": "“Look at the evidence. On this choice, saying less and stepping back is the scoring move.”",
+        "system_flows.system.analysis_hint.nodes.lesson.variants.push.reality.line": "“Look at the evidence. On this choice, saying less and stepping back is the scoring move.”",
+        "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.perceived.line": "(I can use tonight's lesson once when the decisive moment comes.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.reality.line": "Do-yoon copied the instructor's repeated phrase into his phone notes.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.ott.perceived.line": "(I meant to watch one episode, and now it is three. At least I understand the jokes.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.ott.reality.line": "Do-yoon disabled autoplay and placed his phone face down.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.reading.perceived.line": "(This is easier to read than I expected. I should continue on the commute tomorrow.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.reading.reality.line": "Do-yoon folded the page and left the book on the table.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.sleep.perceived.line": "(No need to push it tonight. Tomorrow can wait until tomorrow.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.sleep.reality.line": "Do-yoon set his alarm and turned off the light.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.perceived.line": "(I meant to have one drink... There are three empty cans. Time to turn off the light.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.reality.line": "Do-yoon fell asleep on the sofa without clearing the empty cans from the table.",
+        "system_flows.system.night_activity.nodes.activity_result.variants.workout.perceived.line": "(I am winded, but it was worth moving. That is enough for tonight.)",
+        "system_flows.system.night_activity.nodes.activity_result.variants.workout.reality.line": "After working out, Do-yoon showered and set his alarm.",
+        "system_flows.system.night_activity.nodes.forced_intro.perceived.line": "(I read a few lines of Dark Psychology for Dominating Women's Hearts, but none of it registered. I cannot even choose tonight.)",
+        "system_flows.system.night_activity.nodes.forced_intro.reality.line": "(I read a few lines of Dark Psychology for Dominating Women's Hearts, but none of it registered. I cannot even choose tonight.)",
+        "system_flows.system.night_activity.nodes.intro.perceived.line": "(I read a few pages of Dark Psychology for Dominating Women's Hearts over dinner. What should I do now?)",
+        "system_flows.system.night_activity.nodes.intro.reality.line": "(I read a few pages of Dark Psychology for Dominating Women's Hearts over dinner. What should I do now?)",
+        "system_flows.system.night_activity.options.dark_psychology.description": "Build fatigue to recall the instructor's analysis once before a choice.",
+        "system_flows.system.night_activity.options.dark_psychology.label": "Study Dark Psychology for Dominating Women's Hearts",
+        "system_flows.system.night_activity.options.ott.description": "Gain humor and reduce fatigue, with a small loss of appeal.",
+        "system_flows.system.night_activity.options.ott.label": "Watch a streaming series",
+        "system_flows.system.night_activity.options.reading.description": "Gain intelligence and a little fatigue.",
+        "system_flows.system.night_activity.options.reading.label": "Read a book",
+        "system_flows.system.night_activity.options.sleep.description": "Recover a large amount of fatigue.",
+        "system_flows.system.night_activity.options.sleep.label": "Go to bed early",
+        "system_flows.system.night_activity.options.solo_drinking.description": "Triggers automatically at high fatigue.",
+        "system_flows.system.night_activity.options.solo_drinking.label": "Drink alone",
+        "system_flows.system.night_activity.options.workout.description": "Gain health and appearance while building fatigue.",
+        "system_flows.system.night_activity.options.workout.label": "Go to the gym",
         "threads.min_kyung.title": "차민경의 기록과 목격자",
         "threads.seo_a.title": "윤서아의 잃어버리는 일상",
         "unlock.notice": "Inner Voice Mode unlocks after the first ending.",
@@ -30917,10 +31133,10 @@
     },
     "coverage": {
       "ko": {
-        "direct": 1268,
-        "resolved": 1268,
-        "translated": 1268,
-        "total": 1268,
+        "direct": 1273,
+        "resolved": 1273,
+        "translated": 1273,
+        "total": 1273,
         "ratio": 1.0,
         "fallback_used": [],
         "missing": [],
@@ -30929,8 +31145,8 @@
         "invalid_placeholders": [],
         "by_domain": {
           "ui": {
-            "direct": 210,
-            "total": 210
+            "direct": 181,
+            "total": 181
           },
           "campaign": {
             "direct": 14,
@@ -30960,6 +31176,10 @@
             "direct": 814,
             "total": 814
           },
+          "system_flow": {
+            "direct": 34,
+            "total": 34
+          },
           "thread": {
             "direct": 2,
             "total": 2
@@ -30975,11 +31195,11 @@
         }
       },
       "en": {
-        "direct": 260,
-        "resolved": 1268,
-        "translated": 260,
-        "total": 1268,
-        "ratio": 0.205,
+        "direct": 265,
+        "resolved": 1273,
+        "translated": 265,
+        "total": 1273,
+        "ratio": 0.2082,
         "fallback_used": [
           "campaign.main.acts.collisions.purpose",
           "campaign.main.acts.crisis.purpose",
@@ -33005,8 +33225,8 @@
         "invalid_placeholders": [],
         "by_domain": {
           "ui": {
-            "direct": 210,
-            "total": 210
+            "direct": 181,
+            "total": 181
           },
           "campaign": {
             "direct": 4,
@@ -33035,6 +33255,10 @@
           "scene": {
             "direct": 27,
             "total": 814
+          },
+          "system_flow": {
+            "direct": 34,
+            "total": 34
           },
           "thread": {
             "direct": 0,
@@ -46765,6 +46989,189 @@
             {
               "default": true,
               "scene": "ending.seo_a.ambiguous"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "system_flows": {
+    "system.analysis_hint": {
+      "schema_version": 1,
+      "id": "system.analysis_hint",
+      "title": "심리학 강사 분석",
+      "node_order": [
+        "lesson"
+      ],
+      "nodes": {
+        "lesson": {
+          "id": "lesson",
+          "kind": "dual_dialogue",
+          "variants": [
+            {
+              "id": "pull",
+              "perceived": {
+                "line": "“증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”"
+              },
+              "reality": {
+                "line": "“증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”"
+              }
+            },
+            {
+              "id": "push",
+              "perceived": {
+                "line": "“증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”"
+              },
+              "reality": {
+                "line": "“증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”"
+              }
+            },
+            {
+              "id": "none",
+              "perceived": {
+                "line": "“아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”"
+              },
+              "reality": {
+                "line": "“아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "system.night_activity": {
+      "schema_version": 1,
+      "id": "system.night_activity",
+      "title": "밤 활동",
+      "options": [
+        {
+          "id": "workout",
+          "label": "헬스장에 간다",
+          "description": "건강과 외모가 오르고 피로가 쌓인다."
+        },
+        {
+          "id": "reading",
+          "label": "독서를 한다",
+          "description": "지성이 오르고 피로가 조금 쌓인다."
+        },
+        {
+          "id": "ott",
+          "label": "OTT를 시청한다",
+          "description": "유머가 오르고 피로가 줄지만 매력도가 조금 내려간다."
+        },
+        {
+          "id": "sleep",
+          "label": "일찍 잠든다",
+          "description": "피로를 크게 회복한다."
+        },
+        {
+          "id": "dark_psychology",
+          "label": "《여성의 마음을 지배하는 어둠의 심리학》 추가 학습",
+          "description": "피로가 쌓이지만 선택 전에 강사의 분석을 한 번 떠올릴 수 있다."
+        },
+        {
+          "id": "solo_drinking",
+          "label": "혼자 술을 마신다",
+          "description": "고피로일 때 강제로 발생한다."
+        }
+      ],
+      "node_order": [
+        "intro",
+        "forced_intro",
+        "activity_result"
+      ],
+      "nodes": {
+        "intro": {
+          "id": "intro",
+          "kind": "dual_dialogue",
+          "speakers": {
+            "perceived": "han_do_yoon",
+            "reality": "han_do_yoon"
+          },
+          "presentation_flags": [
+            "inner_voice"
+          ],
+          "perceived": {
+            "line": "(밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?)"
+          },
+          "reality": {
+            "line": "(밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?)"
+          }
+        },
+        "forced_intro": {
+          "id": "forced_intro",
+          "kind": "dual_dialogue",
+          "speakers": {
+            "perceived": "han_do_yoon",
+            "reality": "han_do_yoon"
+          },
+          "presentation_flags": [
+            "inner_voice"
+          ],
+          "perceived": {
+            "line": "(《여성의 마음을 지배하는 어둠의 심리학》을 몇 줄 읽었지만 눈에 들어오지 않는다. 오늘은 뭘 고를 기운도 없네.)"
+          },
+          "reality": {
+            "line": "(《여성의 마음을 지배하는 어둠의 심리학》을 몇 줄 읽었지만 눈에 들어오지 않는다. 오늘은 뭘 고를 기운도 없네.)"
+          }
+        },
+        "activity_result": {
+          "id": "activity_result",
+          "kind": "dual_dialogue",
+          "variants": [
+            {
+              "id": "workout",
+              "perceived": {
+                "line": "(숨은 차지만 몸을 쓴 보람은 있네. 오늘은 여기까지 하자.)"
+              },
+              "reality": {
+                "line": "운동을 마친 한도윤은 샤워를 하고 알람을 맞췄다."
+              }
+            },
+            {
+              "id": "reading",
+              "perceived": {
+                "line": "(생각보다 잘 읽히네. 내일 출근길에 조금 더 봐야겠어.)"
+              },
+              "reality": {
+                "line": "한도윤은 읽던 페이지를 접고 책을 식탁 한쪽에 두었다."
+              }
+            },
+            {
+              "id": "ott",
+              "perceived": {
+                "line": "(한 편만 보려 했는데 벌써 세 편이네. 그래도 요즘 농담은 좀 알겠어.)"
+              },
+              "reality": {
+                "line": "한도윤은 다음 화 자동 재생을 끄고 휴대전화를 뒤집어 놓았다."
+              }
+            },
+            {
+              "id": "sleep",
+              "perceived": {
+                "line": "(오늘은 욕심내지 말고 자자. 내일 생각은 내일 하고.)"
+              },
+              "reality": {
+                "line": "한도윤은 알람만 맞춘 뒤 불을 껐다."
+              }
+            },
+            {
+              "id": "dark_psychology",
+              "perceived": {
+                "line": "(오늘 배운 강의는 결정적인 순간에 한 번 써먹을 수 있겠군.)"
+              },
+              "reality": {
+                "line": "한도윤은 강사가 되풀이한 문장을 휴대전화 메모장에 옮겼다."
+              }
+            },
+            {
+              "id": "solo_drinking",
+              "perceived": {
+                "line": "(한 잔만 마시려 했는데… 빈 캔이 세 개네. 불부터 끄자.)"
+              },
+              "reality": {
+                "line": "한도윤은 식탁의 빈 캔을 치우지 않은 채 소파에서 잠들었다."
+              }
             }
           ]
         }

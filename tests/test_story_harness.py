@@ -362,7 +362,6 @@ class StoryHarnessTests(unittest.TestCase):
         }
 
         for activity_id, expected_variant in activity_variants.items():
-            self.assertEqual({"perceived", "reality"}, set(activities[activity_id]["reflection_keys"]))
             expression = self.project.manifest["self_development"]["expressions"][
                 f"feedback.last_{activity_id}"
             ]

@@ -25,9 +25,6 @@ const CONFIG: SelfDevelopmentConfig = {
   activities: [
     {
       id: "workout",
-      title_key: "workout.title",
-      description_key: "workout.description",
-      reflection_keys: { perceived: "workout.perceived", reality: "workout.reality" },
       appeal_delta: 3,
       fatigue_delta: 2,
       stat_deltas: { health: 2, appearance: 1 },
@@ -35,9 +32,6 @@ const CONFIG: SelfDevelopmentConfig = {
     },
     {
       id: "reading",
-      title_key: "reading.title",
-      description_key: "reading.description",
-      reflection_keys: { perceived: "reading.perceived", reality: "reading.reality" },
       appeal_delta: 1,
       fatigue_delta: 1,
       stat_deltas: { intelligence: 2 },
@@ -45,27 +39,18 @@ const CONFIG: SelfDevelopmentConfig = {
     },
     {
       id: "ott",
-      title_key: "ott.title",
-      description_key: "ott.description",
-      reflection_keys: { perceived: "ott.perceived", reality: "ott.reality" },
       appeal_delta: -1,
       fatigue_delta: -1,
       stat_deltas: { humor: 2 },
     },
     {
       id: "sleep",
-      title_key: "sleep.title",
-      description_key: "sleep.description",
-      reflection_keys: { perceived: "sleep.perceived", reality: "sleep.reality" },
       appeal_delta: 0,
       fatigue_delta: -4,
       stat_deltas: {},
     },
     {
       id: "dark_psychology",
-      title_key: "dark_psychology.title",
-      description_key: "dark_psychology.description",
-      reflection_keys: { perceived: "dark_psychology.perceived", reality: "dark_psychology.reality" },
       appeal_delta: 0,
       fatigue_delta: 2,
       stat_deltas: {},
@@ -74,9 +59,6 @@ const CONFIG: SelfDevelopmentConfig = {
     },
     {
       id: "solo_drinking",
-      title_key: "solo_drinking.title",
-      description_key: "solo_drinking.description",
-      reflection_keys: { perceived: "solo_drinking.perceived", reality: "solo_drinking.reality" },
       selectable: false,
       appeal_delta: -1,
       fatigue_delta: -2,

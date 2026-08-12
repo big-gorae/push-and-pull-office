@@ -3,7 +3,9 @@ import { createRoot } from "react-dom/client";
 
 const isPromptBuilder = window.location.pathname.startsWith("/prompts")
   || window.location.hash.startsWith("#/prompts");
-const isWebGame = !isPromptBuilder && (import.meta.env.VITE_APP_SURFACE === "game"
+const isEditorRoute = window.location.pathname.startsWith("/editor")
+  || window.location.hash.startsWith("#/editor");
+const isWebGame = !isPromptBuilder && !isEditorRoute && (import.meta.env.VITE_APP_SURFACE === "game"
   || window.location.pathname.startsWith("/play")
   || window.location.hash.startsWith("#/play"));
 const PromptBuilder = lazy(() => import("./prompt-builder/PromptBuilder"));

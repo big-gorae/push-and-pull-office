@@ -50,6 +50,7 @@ import {
   type ChoiceAnalysisHint,
   type PlayerSession,
 } from "./playerRuntime";
+import { nightPhaseCoordinator } from "./nightPhase";
 import { resolveModeAccess } from "./gameModes";
 import {
   choiceDebugEffect,
@@ -191,8 +192,25 @@ export function dialogueKey(
   return `scenes.${sceneId}.nodes.${nodeId}${variant}.${mode}.${field}`;
 }
 
-function selfDevelopmentMessage(i18n: GameLocalizer, key: string): string {
-  return i18n.ui(key as Parameters<GameLocalizer["ui"]>[0]);
+const NIGHT_FLOW_ID = "system.night_activity";
+const ANALYSIS_FLOW_ID = "system.analysis_hint";
+
+function systemFlowKey(flowId: string, nodeId: string, mode: ViewLayer, variantId?: string): string {
+  const variant = variantId ? `.variants.${variantId}` : "";
+  return `system_flows.${flowId}.nodes.${nodeId}${variant}.${mode}.line`;
+}
+
+function systemFlowLine(i18n: GameLocalizer, flowId: string, nodeId: string, mode: ViewLayer, variantId?: string): string {
+  const node = runtime.system_flows[flowId]?.nodes[nodeId];
+  const source = variantId
+    ? node?.variants?.find((variant) => variant.id === variantId)?.[mode]?.line
+    : node?.[mode]?.line;
+  return i18n.story(systemFlowKey(flowId, nodeId, mode, variantId), source || "");
+}
+
+function nightOption(i18n: GameLocalizer, activityId: string, field: "label" | "description"): string {
+  const source = runtime.system_flows[NIGHT_FLOW_ID]?.options?.find((option) => option.id === activityId)?.[field] || activityId;
+  return i18n.story(`system_flows.${NIGHT_FLOW_ID}.options.${activityId}.${field}`, source);
 }
 
 function signedValue(value: number): string {
@@ -251,8 +269,8 @@ export function savePreview(slot: ReadableSaveSlot, i18n: GameLocalizer): { titl
     return {
       title: i18n.ui("slot.night"),
       line: activity
-        ? selfDevelopmentMessage(i18n, activity.title_key)
-        : i18n.ui("selfDevelopment.intro"),
+        ? nightOption(i18n, activity.id, "label")
+        : systemFlowLine(i18n, NIGHT_FLOW_ID, "intro", preview.viewLayer),
     };
   }
   if (preview.kind === "ending") {
@@ -311,23 +329,8 @@ type StoryTextUndo = {
   locale: GameLocale;
 };
 
-type OwnedStorySource = {
-  ownerKey: string;
-  source: StoryTextSource;
-};
-
 function storySourceId(source: StoryTextSource): string {
   return `${source.relativePath}::${source.fieldPath}`;
-}
-
-function editableComposedSources(owners: StoryTextOwner[]): OwnedStorySource[] {
-  const unique = new Map<string, OwnedStorySource>();
-  owners.forEach((owner) => owner.sources.forEach((source) => {
-    if (owner.kind === "composed_template" && source.editable && !unique.has(storySourceId(source))) {
-      unique.set(storySourceId(source), { ownerKey: owner.key, source });
-    }
-  }));
-  return [...unique.values()];
 }
 
 function storyOwnersFingerprint(owners: StoryTextOwner[]): string {
@@ -362,11 +365,9 @@ function StoryTextEditor({
   const [editingLocale, setEditingLocale] = useState(locale);
   const [owners, setOwners] = useState<StoryTextOwner[]>([]);
   const [values, setValues] = useState<Record<string, string>>({});
-  const [sourceValues, setSourceValues] = useState<Record<string, string>>({});
   const [sourceEditor, setSourceEditor] = useState<SourceEditor>(() => readSourceEditor());
   const [busy, setBusy] = useState(true);
   const [message, setMessage] = useState("원본 위치를 찾는 중…");
-  const composedSources = useMemo(() => editableComposedSources(owners), [owners]);
   const draftKey = useMemo(
     () => `love-office:story-text-draft:${encodeURIComponent(root)}:${editingLocale}:${keys.join("|")}`,
     [editingLocale, keys, root],
@@ -375,10 +376,6 @@ function StoryTextEditor({
   const installOwners = useCallback((loaded: StoryTextOwner[]) => {
     setOwners(loaded);
     setValues(Object.fromEntries(loaded.map((owner) => [owner.key, owner.currentValue])));
-    setSourceValues(Object.fromEntries(editableComposedSources(loaded).map(({ source }) => [
-      storySourceId(source),
-      source.currentValue || "",
-    ])));
   }, []);
 
   const load = useCallback(async () => {
@@ -391,22 +388,18 @@ function StoryTextEditor({
       try {
         const rawDraft = window.localStorage.getItem(draftKey);
         if (rawDraft) {
-          const draft = JSON.parse(rawDraft) as { fingerprint?: string; values?: Record<string, string>; sourceValues?: Record<string, string> };
+          const draft = JSON.parse(rawDraft) as { fingerprint?: string; values?: Record<string, string> };
           if (draft.fingerprint === storyOwnersFingerprint(loaded)) {
             setValues((current) => ({ ...current, ...draft.values }));
-            setSourceValues((current) => ({ ...current, ...draft.sourceValues }));
             recoveredDraft = true;
           } else window.localStorage.removeItem(draftKey);
         }
       } catch {
         // Restricted WebViews may not expose localStorage; editing still works without draft recovery.
       }
-      const hasComposed = loaded.some((owner) => owner.kind === "composed_template");
       const missingTranslations = loaded.filter((owner) => owner.isTranslation && !owner.translationExists).length;
       setMessage(recoveredDraft
         ? "저장하지 않은 인게임 편집 초안을 복구했습니다."
-        : hasComposed
-        ? "합성 문장을 만드는 장면 템플릿과 활동 문구를 각각 수정할 수 있습니다. 저장 전 placeholder와 전체 스토리를 검증합니다."
         : missingTranslations
           ? `${missingTranslations}개 문장은 아직 직접 번역이 없습니다. 현재 원문을 바탕으로 새 번역을 만들 수 있습니다.`
           : "저장하면 YAML과 게임 런타임을 함께 검증해 현재 화면에 반영합니다.");
@@ -420,9 +413,7 @@ function StoryTextEditor({
   useEffect(() => { void load(); }, [load]);
 
   const directChanged = owners.filter((owner) => owner.editable && values[owner.key] !== owner.currentValue);
-  const sourceChanged = composedSources.filter(({ source }) =>
-    sourceValues[storySourceId(source)] !== source.currentValue);
-  const hasChanges = directChanged.length > 0 || sourceChanged.length > 0;
+  const hasChanges = directChanged.length > 0;
 
   useEffect(() => {
     if (busy || !owners.length) return;
@@ -434,12 +425,11 @@ function StoryTextEditor({
       window.localStorage.setItem(draftKey, JSON.stringify({
         fingerprint: storyOwnersFingerprint(owners),
         values,
-        sourceValues,
       }));
     } catch {
       // A failed draft cache must never block the authoritative YAML workflow.
     }
-  }, [busy, draftKey, hasChanges, owners, sourceValues, values]);
+  }, [busy, draftKey, hasChanges, owners, values]);
 
   const save = async () => {
     if (!hasChanges) {
@@ -453,15 +443,6 @@ function StoryTextEditor({
         expected_revision: owner.revision!,
         expected_value_hash: owner.currentValueHash!,
         next_value: values[owner.key],
-      })),
-      ...sourceChanged.map(({ ownerKey, source }) => ({
-        localization_key: ownerKey,
-        locale: editingLocale,
-        source_relative_path: source.relativePath,
-        source_field_path: source.fieldPath,
-        expected_revision: source.revision!,
-        expected_value_hash: source.currentValueHash!,
-        next_value: sourceValues[storySourceId(source)],
       })),
     ];
     setBusy(true);
@@ -525,7 +506,7 @@ function StoryTextEditor({
       </div>
       <p className="vn-story-editor-status" role="status">{message}</p>
       {owners.map((owner) => <section className={owner.editable ? "editable" : "fallback"} key={owner.key}>
-        <header><strong>{owner.isTranslation ? (owner.translationExists ? `${editingLocale} 번역 편집` : `${editingLocale} 새 번역`) : owner.editable ? "직접 편집" : "합성 문구"}</strong><code>{owner.key}</code></header>
+        <header><strong>{owner.isTranslation ? (owner.translationExists ? `${editingLocale} 번역 편집` : `${editingLocale} 새 번역`) : owner.editable ? "직접 편집" : "편집 불가"}</strong><code>{owner.key}</code></header>
         {owner.isTranslation && !owner.translationExists && <small className="vn-translation-fallback">현재 한국어 원문: {owner.sourceValue}</small>}
         {owner.editable && <textarea
           autoFocus={owner.key === owners.find((candidate) => candidate.editable)?.key}
@@ -535,22 +516,14 @@ function StoryTextEditor({
           onChange={(event) => setValues((current) => ({ ...current, [owner.key]: event.target.value }))}
           disabled={busy}
         />}
-        {!owner.editable && owner.kind !== "composed_template" && <blockquote>{owner.currentValue}</blockquote>}
-        <div className="vn-story-source-list">{owner.sources.filter((source) => owner.kind !== "composed_template" || !source.editable).map((source) => <div key={storySourceId(source)}>
+        {!owner.editable && <blockquote>{owner.currentValue}</blockquote>}
+        <div className="vn-story-source-list">{owner.sources.map((source) => <div key={storySourceId(source)}>
           <code>{sourceLocator(source)}</code>
           <button type="button" onClick={() => openSource(source)}>원본 파일 열기</button>
           <button type="button" onClick={() => void revealStorySource(root, source)}>Finder에서 보기</button>
           <button type="button" onClick={() => void copySourceLocator(source)}>위치 복사</button>
         </div>)}</div>
       </section>)}
-      {composedSources.length > 0 && <section className="vn-composed-source-editor">
-        <header><strong>합성 원본 구조화 편집</strong><code>완성 variant를 덮어쓰지 않고 실제 조합 원본만 수정합니다.</code></header>
-        {composedSources.map(({ source }) => <label key={storySourceId(source)}>
-          <span><strong>{source.label}</strong><code>{sourceLocator(source)}</code></span>
-          <textarea autoFocus={!owners.some((owner) => owner.editable) && source === composedSources[0]?.source} rows={4} value={sourceValues[storySourceId(source)] || ""} onChange={(event) => setSourceValues((current) => ({ ...current, [storySourceId(source)]: event.target.value }))} disabled={busy} />
-          <span className="vn-composed-source-actions"><button type="button" onClick={() => openSource(source)}>원본 파일 열기</button><button type="button" onClick={() => void revealStorySource(root, source)}>Finder에서 보기</button><button type="button" onClick={() => void copySourceLocator(source)}>위치 복사</button></span>
-        </label>)}
-      </section>}
       <footer>
         <button type="button" onClick={() => void load()} disabled={busy}>원본 다시 불러오기</button>
         <button type="button" onClick={onClose}>닫기</button>
@@ -847,9 +820,10 @@ function NightDialogueFlow({
       ? [`${i18n.ui("analysisHint.charge")} ${signedValue(option.activity.hint_charge)}`]
       : []),
   ];
+  const introNodeId = night?.status === "intro" && night.forcedActivityId ? "forced_intro" : "intro";
   const visibleTextKeys = [
-    "selfDevelopment.intro",
-    "selfDevelopment.forcedIntro",
+    systemFlowKey(NIGHT_FLOW_ID, introNodeId, "perceived"),
+    systemFlowKey(NIGHT_FLOW_ID, introNodeId, "reality"),
     "selfDevelopment.status",
     "selfDevelopment.appeal",
     "selfDevelopment.fatigue",
@@ -859,21 +833,19 @@ function NightDialogueFlow({
     "analysisHint.charges",
     ...SELF_DEVELOPMENT_STATS.map((stat) => `selfDevelopment.stat.${stat}`),
     ...(night?.status === "selecting" ? options.flatMap((option) => [
-      option.activity.title_key,
-      option.activity.description_key,
+      `system_flows.${NIGHT_FLOW_ID}.options.${option.activity.id}.label`,
+      `system_flows.${NIGHT_FLOW_ID}.options.${option.activity.id}.description`,
     ]) : []),
     ...(resultActivity ? [
-      resultActivity.title_key,
-      resultActivity.reflection_keys.perceived,
-      resultActivity.reflection_keys.reality,
+      `system_flows.${NIGHT_FLOW_ID}.options.${resultActivity.id}.label`,
+      systemFlowKey(NIGHT_FLOW_ID, "activity_result", "perceived", resultActivity.id),
+      systemFlowKey(NIGHT_FLOW_ID, "activity_result", "reality", resultActivity.id),
     ] : []),
   ];
   const reflection = resultActivity
-    ? selfDevelopmentMessage(i18n, resultActivity.reflection_keys[session.viewLayer])
+    ? systemFlowLine(i18n, NIGHT_FLOW_ID, "activity_result", session.viewLayer, resultActivity.id)
     : "";
-  const intro = i18n.ui(night?.status === "intro" && night.forcedActivityId
-    ? "selfDevelopment.forcedIntro"
-    : "selfDevelopment.intro");
+  const intro = systemFlowLine(i18n, NIGHT_FLOW_ID, introNodeId, session.viewLayer);
   const dialogueLine = night?.status === "result" ? reflection : intro;
   const dialogueAction = night?.status === "result" ? onContinue : onBegin;
   const showHanName = night?.status !== "result" || session.viewLayer === "perceived";
@@ -906,7 +878,7 @@ function NightDialogueFlow({
       <section className="vn-choices vn-night-choices" aria-label={i18n.ui("selfDevelopment.choose")}>
         <div className="vn-night-activity-list">
           {options.map((option) => {
-            const title = selfDevelopmentMessage(i18n, option.activity.title_key);
+            const title = nightOption(i18n, option.activity.id, "label");
             return <button
               type="button"
               className={option.available ? "" : "blocked"}
@@ -1309,6 +1281,58 @@ export default function WebGame() {
   }, []);
 
   const previewAuthoringDialogue = useCallback((target: AuthoringTarget) => {
+    if (target.kind === "system_flow") {
+      const route = Object.values(runtime.routes)[0];
+      if (!route) {
+        notify("시스템 대사를 표시할 플레이 루트가 없습니다.");
+        return;
+      }
+      if (target.flowId === NIGHT_FLOW_ID) {
+        const preview = createSession(runtime, route.id, target.layer || "perceived");
+        preview.phase = "self_development";
+        preview.state.progress.time.day = 1;
+        preview.state.progress.time.slot = "after_work";
+        preview.state.progress.self_development.completed_days = [];
+        preview.state.visible.protagonist.self_development.fatigue = target.nodeId === "forced_intro" || target.variantId === "solo_drinking" || target.optionId === "solo_drinking" ? 6 : 1;
+        const coordinator = nightPhaseCoordinator(runtime);
+        try {
+          preview.nightPhase = coordinator.start(preview.state);
+          if (target.optionId) {
+            preview.nightPhase = coordinator.continueIntro(preview.state, preview.nightPhase);
+          } else if (target.nodeId === "activity_result" && target.variantId) {
+            const next = coordinator.continueIntro(preview.state, preview.nightPhase);
+            preview.nightPhase = next.status === "result"
+              ? next
+              : coordinator.choose(preview.state, target.variantId);
+          }
+          loadSession(preview);
+          notify(`밤 활동 · ${target.variantId || target.optionId || target.nodeId || "도입 대사"} 화면을 열었습니다.`);
+        } catch (error) {
+          notify(`밤 활동 미리보기를 만들 수 없습니다: ${String(error)}`);
+        }
+        return;
+      }
+      if (target.flowId === ANALYSIS_FLOW_ID) {
+        const direction = target.variantId === "pull" || target.variantId === "push" ? target.variantId : "none";
+        const choiceScene = Object.values(runtime.scenes).find((scene) => Object.values(scene.nodes).some((node) => node.kind === "choice"));
+        const choiceNode = choiceScene && Object.values(choiceScene.nodes).find((node) => node.kind === "choice");
+        if (!choiceScene || !choiceNode) {
+          notify("강사 분석을 표시할 선택 장면이 없습니다.");
+          return;
+        }
+        const preview = createSession(runtime, choiceScene.route, target.layer || "perceived");
+        preview.phase = "scene";
+        preview.sceneId = choiceScene.id;
+        preview.nodeId = choiceNode.id;
+        preview.lastEntryDecision = { sceneId: choiceScene.id, ...canEnterScene(runtime, preview.state, choiceScene.id) };
+        loadSession(preview);
+        window.setTimeout(() => setChoiceHint({ direction, sceneId: choiceScene.id, nodeId: choiceNode.id }), 0);
+        notify(`심리학 강사 · ${direction} 분석 화면을 열었습니다.`);
+        return;
+      }
+      notify("선택한 시스템 대사를 게임 런타임에서 찾을 수 없습니다.");
+      return;
+    }
     const targetScene = runtime.scenes[target.sceneId];
     const targetNodeId = target.nodeId || targetScene?.start_node;
     if (!targetScene || !targetNodeId || !targetScene.nodes[targetNodeId]) {
@@ -1757,7 +1781,10 @@ export default function WebGame() {
       `scenes.${session.sceneId}.nodes.${node.id}.analysis_hints.${hintDirection}`,
       activeChoiceHint.lesson,
     )
-    : i18n.ui(`analysisHint.lesson.${hintDirection}` as Parameters<GameLocalizer["ui"]>[0]);
+    : systemFlowLine(i18n, ANALYSIS_FLOW_ID, "lesson", activeViewLayer || session.viewLayer, hintDirection);
+  const hintEditKey = activeChoiceHint?.lesson
+    ? `scenes.${session.sceneId}.nodes.${node.id}.analysis_hints.${hintDirection}`
+    : systemFlowKey(ANALYSIS_FLOW_ID, "lesson", activeViewLayer || session.viewLayer, hintDirection);
   const scene = runtime.scenes[session.sceneId];
   const isCommonScene = scene?.id.startsWith("common.") ?? false;
   const hasChoice = scene ? Object.values(scene.nodes).some((candidate) => candidate.kind === "choice") : false;
@@ -1780,6 +1807,7 @@ export default function WebGame() {
     {settings.debugMode && <button type="button" disabled={!debugHistory.length} onClick={stepBack}>{i18n.ui("debug.previous")}</button>}
     {projectRoot && settings.debugMode && currentDialogueEditKeys.length > 0 && <button type="button" className="vn-authoring-button" onClick={() => editStoryText(currentDialogueEditKeys)}>대사 편집</button>}
     {projectRoot && settings.debugMode && choiceEditKeys.length > 0 && <button type="button" className="vn-authoring-button" onClick={() => editStoryText(choiceEditKeys)}>선택지 문구 편집</button>}
+    {projectRoot && settings.debugMode && activeChoiceHint && <button type="button" className="vn-authoring-button" onClick={() => editStoryText([hintEditKey])}>강사 대사 편집</button>}
     <button type="button" onClick={() => setOverlay("backlog")}>{i18n.ui("menu.backlog")}</button>
     <button type="button" className={auto ? "active" : ""} onClick={() => { setAuto((value) => !value); setSkip(false); }}>{i18n.ui("menu.auto")}</button>
     <button type="button" className={skip ? "active" : ""} onClick={() => { setSkip((value) => !value); setAuto(false); }}>{i18n.ui("menu.skip")}</button>

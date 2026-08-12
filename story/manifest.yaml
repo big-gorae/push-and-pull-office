@@ -221,132 +221,35 @@ self_development:
   max_night_day: 16
   activities:
     - id: workout
-      title_key: selfDevelopment.activity.workout.title
-      description_key: selfDevelopment.activity.workout.description
-      reflection_keys:
-        perceived: selfDevelopment.activity.workout.reflection.perceived
-        reality: selfDevelopment.activity.workout.reflection.reality
       appeal_delta: 3
       fatigue_delta: 2
       stat_deltas: {health: 2, appearance: 1}
       fatigue_lte: 4
     - id: reading
-      title_key: selfDevelopment.activity.reading.title
-      description_key: selfDevelopment.activity.reading.description
-      reflection_keys:
-        perceived: selfDevelopment.activity.reading.reflection.perceived
-        reality: selfDevelopment.activity.reading.reflection.reality
       appeal_delta: 1
       fatigue_delta: 1
       stat_deltas: {intelligence: 2}
       fatigue_lte: 5
     - id: ott
-      title_key: selfDevelopment.activity.ott.title
-      description_key: selfDevelopment.activity.ott.description
-      reflection_keys:
-        perceived: selfDevelopment.activity.ott.reflection.perceived
-        reality: selfDevelopment.activity.ott.reflection.reality
       appeal_delta: -1
       fatigue_delta: -1
       stat_deltas: {humor: 2}
     - id: sleep
-      title_key: selfDevelopment.activity.sleep.title
-      description_key: selfDevelopment.activity.sleep.description
-      reflection_keys:
-        perceived: selfDevelopment.activity.sleep.reflection.perceived
-        reality: selfDevelopment.activity.sleep.reflection.reality
       appeal_delta: 0
       fatigue_delta: -4
       stat_deltas: {}
     - id: dark_psychology
-      title_key: selfDevelopment.activity.dark_psychology.title
-      description_key: selfDevelopment.activity.dark_psychology.description
-      reflection_keys:
-        perceived: selfDevelopment.activity.dark_psychology.reflection.perceived
-        reality: selfDevelopment.activity.dark_psychology.reflection.reality
       appeal_delta: 0
       fatigue_delta: 2
       stat_deltas: {}
       fatigue_lte: 4
       hint_charge: 1
     - id: solo_drinking
-      title_key: selfDevelopment.activity.solo_drinking.title
-      description_key: selfDevelopment.activity.solo_drinking.description
-      reflection_keys:
-        perceived: selfDevelopment.activity.solo_drinking.reflection.perceived
-        reality: selfDevelopment.activity.solo_drinking.reflection.reality
       selectable: false
       appeal_delta: -1
       fatigue_delta: -2
       stat_deltas: {health: -1}
       fatigue_gte: 5
-  conversation_topics:
-    workout:
-      variant_id: after_workout
-      expression: feedback.last_workout
-      slots:
-        office_pitch: "요즘 운동을 다시 시작했습니다. 앉아 있는 시간이 길어서 건강부터 챙기려고요."
-        weekend_pitch: "요즘 운동을 다시 시작했습니다. 주말에는 가볍게 걷는 것도 괜찮더군요. 이 근처도 산책하기 괜찮나요?"
-        acknowledgement: "운동을 다시 시작하셨군요."
-        weekend_answer: "이 근처는 차가 많지 않아 걷기 괜찮은 편이에요."
-        perceived_self_image: "꾸준히 자기관리하는 사람이라는 인상은 남았겠지."
-        reality_response_thought: "과장님이 운동을 다시 시작했다는 말을 먼저 꺼내셨네."
-        reality_limit: "한 번 운동했다는 자기보고일 뿐, 외형이나 건강의 변화가 확인된 것은 아니었다."
-    reading:
-      variant_id: after_reading
-      expression: feedback.last_reading
-      slots:
-        office_pitch: "요즘 《말보다 맥락》이라는 책을 읽고 있습니다. 상대가 정한 선을 먼저 이해해야 대화도 된다는 대목이 기억에 남더군요."
-        weekend_pitch: "요즘 《말보다 맥락》이라는 책을 읽고 있습니다. 주말에 조용히 읽을 곳을 찾고 있었는데, 이 근처도 괜찮습니까?"
-        acknowledgement: "요즘 책을 읽고 계시는군요."
-        weekend_answer: "조용히 읽으려면 안쪽 자리가 괜찮아요."
-        perceived_self_image: "말의 맥락까지 읽는 사람이라는 인상은 남았겠지."
-        reality_response_thought: "과장님이 전날 읽은 책을 대화 소재로 먼저 꺼내셨네."
-        reality_limit: "책 한 권을 읽기 시작했다는 자기보고일 뿐, 상대를 더 잘 이해하게 됐다는 증거는 아니었다."
-    ott:
-      variant_id: after_ott
-      expression: feedback.last_ott
-      slots:
-        office_pitch: "요즘 다들 《퇴근은 내일》이라는 회사 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. 요즘 화제 정도는 알아둬야 할 것 같아서요."
-        weekend_pitch: "요즘 다들 《퇴근은 내일》이라는 회사 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. ‘회의는 끝났지만 내 마음은 야근 중입니다’라는 대사는 원래 어느 장면에 나옵니까?"
-        acknowledgement: "《퇴근은 내일》을 보셨군요."
-        weekend_answer: "그 대사는 첫 회 회식 장면에 나와요."
-        perceived_self_image: "세대가 다른 사람과도 화제를 맞출 줄 안다는 인상은 남았겠지."
-        reality_response_thought: "과장님이 전날 본 코미디를 대화 소재로 먼저 꺼내셨네."
-        reality_limit: "대중적인 콘텐츠를 뒤늦게 봤다는 말일 뿐, 서로 잘 통한다는 증거는 아니었다."
-    sleep:
-      variant_id: after_sleep
-      expression: feedback.last_sleep
-      slots:
-        office_pitch: "요즘은 늦게까지 깨어 있는 시간을 줄이고 아침 컨디션을 챙겨 보려고 합니다. 집중력 관리도 실력이라고 생각해서요."
-        weekend_pitch: "요즘은 늦게까지 깨어 있는 시간을 줄이고 아침 컨디션을 챙겨 보려고 합니다. 일찍 움직이니 한결 여유롭네요."
-        acknowledgement: "생활 리듬을 챙기시는군요."
-        weekend_answer: "주말에는 조금 일찍 움직이면 여유 있게 둘러볼 수 있죠."
-        perceived_self_image: "자기 리듬을 관리할 줄 아는 사람으로 보였겠지."
-        reality_response_thought: "과장님이 생활 리듬을 챙겨 보겠다는 말을 먼저 꺼내셨네."
-        reality_limit: "생활 리듬을 챙겨 보겠다는 자기보고일 뿐, 지속적인 자기관리의 증거는 아니었다."
-    dark_psychology:
-      variant_id: after_dark_psychology
-      expression: feedback.last_dark_psychology
-      slots:
-        office_pitch: "요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 말보다 타이밍을 먼저 읽으라는 대목이 기억에 남더군요."
-        weekend_pitch: "요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요."
-        acknowledgement: "요즘 관계 심리 강의를 보고 계시는군요."
-        weekend_answer: "그런 내용은 사람마다 다르게 받아들일 것 같아요."
-        perceived_self_image: "상대의 마음을 체계적으로 공부하는 사람이라는 인상은 남았겠지."
-        reality_response_thought: "과장님이 관계를 통제하는 내용의 책과 강의를 먼저 꺼내셨네."
-        reality_limit: "자극적인 관계 강의를 봤다는 자기보고일 뿐, 눈앞의 사람을 이해했다는 증거는 아니었다."
-    solo_drinking:
-      variant_id: after_solo_drinking
-      expression: feedback.last_solo_drinking
-      slots:
-        office_pitch: "어제는 너무 피곤해서 혼자 한잔하고 바로 잤습니다. 오늘은 정신을 좀 차려야겠군요."
-        weekend_pitch: "어제는 너무 피곤해서 혼자 한잔하고 바로 잤습니다. 오늘은 술 대신 바람이나 쐬려고 나왔어요."
-        acknowledgement: "어제 많이 피곤하셨나 봐요."
-        weekend_answer: "오늘은 무리하지 말고 쉬시는 게 좋겠네요."
-        perceived_self_image: "흐트러진 날도 솔직하게 인정하는 사람으로 보였겠지."
-        reality_response_thought: "과장님이 피곤해서 혼자 술을 마셨다는 이야기까지 먼저 꺼내셨네."
-        reality_limit: "피곤해서 혼자 술을 마셨다는 자기보고일 뿐, 상대가 친밀감을 느꼈다는 뜻은 아니었다."
   expressions:
     feedback.last_workout:
       requires: {last_activity: workout}
@@ -429,6 +332,7 @@ files:
   meta: meta/*.yaml
   routes: routes/*.yaml
   scenes: scenes/**/*.yaml
+  system_flows: system_flows/*.yaml
 
 localization_quality:
   required_accessibility_keys:

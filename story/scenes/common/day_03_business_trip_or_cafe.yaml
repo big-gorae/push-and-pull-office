@@ -38,25 +38,98 @@ nodes:
     stage:
       perceived: []
       reality: []
-    perceived:
-      atmosphere: procedural
-      expression: subjective_confident
-      line: "돌아왔으니 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠."
-    reality:
-      atmosphere: procedural
-      expression: actual_waiting_smile
-      line: "돌아왔으니 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠."
-      intent: work_only
-    self_development_template:
-      source: last_activity
-      perceived:
-        atmosphere: playful_tension
-        line: "돌아왔으니 정리하기 전에 하나만. {{office_pitch}} 그럼 오늘 남은 쟁점부터 보죠."
-      reality:
-        line: "돌아왔으니 정리하기 전에 하나만. {{office_pitch}} 그럼 오늘 남은 쟁점부터 보죠."
-        intent: self_promotion
     next: activity_response
 
+    variants:
+      - id: after_workout
+        priority: 100
+        self_development:
+          expression: feedback.last_workout
+        perceived:
+          atmosphere: playful_tension
+          expression: subjective_confident
+          line: 돌아왔으니 정리하기 전에 하나만. 요즘 운동을 다시 시작했습니다. 앉아 있는 시간이 길어서 건강부터 챙기려고요. 그럼 오늘 남은 쟁점부터 보죠.
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 돌아왔으니 정리하기 전에 하나만. 요즘 운동을 다시 시작했습니다. 앉아 있는 시간이 길어서 건강부터 챙기려고요. 그럼 오늘 남은 쟁점부터 보죠.
+          intent: self_promotion
+      - id: after_reading
+        priority: 90
+        self_development:
+          expression: feedback.last_reading
+        perceived:
+          atmosphere: playful_tension
+          expression: subjective_confident
+          line: 돌아왔으니 정리하기 전에 하나만. 요즘 《말보다 맥락》이라는 책을 읽고 있습니다. 상대가 정한 선을 먼저 이해해야 대화도 된다는 대목이 기억에 남더군요. 그럼 오늘 남은 쟁점부터 보죠.
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 돌아왔으니 정리하기 전에 하나만. 요즘 《말보다 맥락》이라는 책을 읽고 있습니다. 상대가 정한 선을 먼저 이해해야 대화도 된다는 대목이 기억에 남더군요. 그럼 오늘 남은 쟁점부터 보죠.
+          intent: self_promotion
+      - id: after_ott
+        priority: 80
+        self_development:
+          expression: feedback.last_ott
+        perceived:
+          atmosphere: playful_tension
+          expression: subjective_confident
+          line: 돌아왔으니 정리하기 전에 하나만. 요즘 다들 《퇴근은 내일》이라는 회사 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. 요즘 화제 정도는 알아둬야 할 것 같아서요. 그럼 오늘 남은 쟁점부터 보죠.
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 돌아왔으니 정리하기 전에 하나만. 요즘 다들 《퇴근은 내일》이라는 회사 코미디를 본다면서요? 저도 어제 몇 편 봤습니다. 요즘 화제 정도는 알아둬야 할 것 같아서요. 그럼 오늘 남은 쟁점부터 보죠.
+          intent: self_promotion
+      - id: after_sleep
+        priority: 70
+        self_development:
+          expression: feedback.last_sleep
+        perceived:
+          atmosphere: playful_tension
+          expression: subjective_confident
+          line: 돌아왔으니 정리하기 전에 하나만. 요즘은 늦게까지 깨어 있는 시간을 줄이고 아침 컨디션을 챙겨 보려고 합니다. 집중력 관리도 실력이라고 생각해서요. 그럼 오늘 남은 쟁점부터 보죠.
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 돌아왔으니 정리하기 전에 하나만. 요즘은 늦게까지 깨어 있는 시간을 줄이고 아침 컨디션을 챙겨 보려고 합니다. 집중력 관리도 실력이라고 생각해서요. 그럼 오늘 남은 쟁점부터 보죠.
+          intent: self_promotion
+      - id: after_dark_psychology
+        priority: 60
+        self_development:
+          expression: feedback.last_dark_psychology
+        perceived:
+          atmosphere: playful_tension
+          expression: subjective_confident
+          line: 돌아왔으니 정리하기 전에 하나만. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 말보다 타이밍을 먼저 읽으라는 대목이 기억에 남더군요. 그럼 오늘 남은 쟁점부터 보죠.
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 돌아왔으니 정리하기 전에 하나만. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 말보다 타이밍을 먼저 읽으라는 대목이 기억에 남더군요. 그럼 오늘 남은 쟁점부터 보죠.
+          intent: self_promotion
+      - id: after_solo_drinking
+        priority: 50
+        self_development:
+          expression: feedback.last_solo_drinking
+        perceived:
+          atmosphere: playful_tension
+          expression: subjective_confident
+          line: 돌아왔으니 정리하기 전에 하나만. 어제는 너무 피곤해서 혼자 한잔하고 바로 잤습니다. 오늘은 정신을 좀 차려야겠군요. 그럼 오늘 남은 쟁점부터 보죠.
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: 돌아왔으니 정리하기 전에 하나만. 어제는 너무 피곤해서 혼자 한잔하고 바로 잤습니다. 오늘은 정신을 좀 차려야겠군요. 그럼 오늘 남은 쟁점부터 보죠.
+          intent: self_promotion
+      - id: default
+        default: true
+        perceived:
+          atmosphere: procedural
+          expression: subjective_confident
+          line: "돌아왔으니 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠."
+        reality:
+          atmosphere: procedural
+          expression: actual_waiting_smile
+          line: "돌아왔으니 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠."
+          intent: work_only
   - id: activity_response
     kind: dual_dialogue
     speaker: cha_min_kyung
@@ -71,24 +144,98 @@ nodes:
           character: cha_min_kyung
           visual_id: character.cha_min_kyung
           artwork: default
-    perceived:
-      atmosphere: procedural
-      expression: subjective_challenging
-      line: "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠."
-    reality:
-      atmosphere: procedural
-      expression: actual_focused
-      line: "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠."
-      intent: work_only
-    self_development_template:
-      source: last_activity
-      perceived:
-        atmosphere: playful_tension
-        line: "네, {{acknowledgement}} 지금은 오늘 남은 쟁점 세 개부터 보죠."
-      reality:
-        line: "네, {{acknowledgement}} 지금은 오늘 남은 쟁점 세 개부터 보죠."
     next: activity_callback_inner
 
+    variants:
+      - id: after_workout
+        priority: 100
+        self_development:
+          expression: feedback.last_workout
+        perceived:
+          atmosphere: playful_tension
+          expression: subjective_challenging
+          line: 네, 운동을 다시 시작하셨군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.
+        reality:
+          atmosphere: procedural
+          expression: actual_focused
+          line: 네, 운동을 다시 시작하셨군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.
+          intent: work_only
+      - id: after_reading
+        priority: 90
+        self_development:
+          expression: feedback.last_reading
+        perceived:
+          atmosphere: playful_tension
+          expression: subjective_challenging
+          line: 네, 요즘 책을 읽고 계시는군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.
+        reality:
+          atmosphere: procedural
+          expression: actual_focused
+          line: 네, 요즘 책을 읽고 계시는군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.
+          intent: work_only
+      - id: after_ott
+        priority: 80
+        self_development:
+          expression: feedback.last_ott
+        perceived:
+          atmosphere: playful_tension
+          expression: subjective_challenging
+          line: 네, 《퇴근은 내일》을 보셨군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.
+        reality:
+          atmosphere: procedural
+          expression: actual_focused
+          line: 네, 《퇴근은 내일》을 보셨군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.
+          intent: work_only
+      - id: after_sleep
+        priority: 70
+        self_development:
+          expression: feedback.last_sleep
+        perceived:
+          atmosphere: playful_tension
+          expression: subjective_challenging
+          line: 네, 생활 리듬을 챙기시는군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.
+        reality:
+          atmosphere: procedural
+          expression: actual_focused
+          line: 네, 생활 리듬을 챙기시는군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.
+          intent: work_only
+      - id: after_dark_psychology
+        priority: 60
+        self_development:
+          expression: feedback.last_dark_psychology
+        perceived:
+          atmosphere: playful_tension
+          expression: subjective_challenging
+          line: 네, 요즘 관계 심리 강의를 보고 계시는군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.
+        reality:
+          atmosphere: procedural
+          expression: actual_focused
+          line: 네, 요즘 관계 심리 강의를 보고 계시는군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.
+          intent: work_only
+      - id: after_solo_drinking
+        priority: 50
+        self_development:
+          expression: feedback.last_solo_drinking
+        perceived:
+          atmosphere: playful_tension
+          expression: subjective_challenging
+          line: 네, 어제 많이 피곤하셨나 봐요. 지금은 오늘 남은 쟁점 세 개부터 보죠.
+        reality:
+          atmosphere: procedural
+          expression: actual_focused
+          line: 네, 어제 많이 피곤하셨나 봐요. 지금은 오늘 남은 쟁점 세 개부터 보죠.
+          intent: work_only
+      - id: default
+        default: true
+        perceived:
+          atmosphere: procedural
+          expression: subjective_challenging
+          line: "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠."
+        reality:
+          atmosphere: procedural
+          expression: actual_focused
+          line: "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠."
+          intent: work_only
   - id: response_choice
     kind: choice
     prompt: 민경이 남은 쟁점 세 가지부터 정리하자고 한 말에 어떻게 답할까?
@@ -371,22 +518,84 @@ nodes:
           character: cha_min_kyung
           visual_id: character.cha_min_kyung
           artwork: default
-    perceived:
-      atmosphere: procedural
-      line: (회사 밖에서 본 뒤라 대화의 호흡도 조금 달라졌군.)
-    reality:
-      atmosphere: procedural
-      line: (오늘 확인한 내용과 다음 마감만 정리하면 돼.)
-      intent: work_only
-    self_development_template:
-      source: last_activity
-      perceived:
-        atmosphere: playful_tension
-        line: "(짧게 받았지만 내가 꺼낸 화제는 바로 알아들었군. {{perceived_self_image}})"
-      reality:
-        line: "({{reality_response_thought}} 잡담은 여기까지 하고 남은 안건부터 보자.)"
     next: lecture_recall_before_issues
 
+    variants:
+      - id: after_workout
+        priority: 100
+        self_development:
+          expression: feedback.last_workout
+        perceived:
+          atmosphere: playful_tension
+          line: (짧게 받았지만 내가 꺼낸 화제는 바로 알아들었군. 꾸준히 자기관리하는 사람이라는 인상은 남았겠지.)
+        reality:
+          atmosphere: procedural
+          line: (과장님이 운동을 다시 시작했다는 말을 먼저 꺼내셨네. 잡담은 여기까지 하고 남은 안건부터 보자.)
+          intent: work_only
+      - id: after_reading
+        priority: 90
+        self_development:
+          expression: feedback.last_reading
+        perceived:
+          atmosphere: playful_tension
+          line: (짧게 받았지만 내가 꺼낸 화제는 바로 알아들었군. 말의 맥락까지 읽는 사람이라는 인상은 남았겠지.)
+        reality:
+          atmosphere: procedural
+          line: (과장님이 전날 읽은 책을 대화 소재로 먼저 꺼내셨네. 잡담은 여기까지 하고 남은 안건부터 보자.)
+          intent: work_only
+      - id: after_ott
+        priority: 80
+        self_development:
+          expression: feedback.last_ott
+        perceived:
+          atmosphere: playful_tension
+          line: (짧게 받았지만 내가 꺼낸 화제는 바로 알아들었군. 세대가 다른 사람과도 화제를 맞출 줄 안다는 인상은 남았겠지.)
+        reality:
+          atmosphere: procedural
+          line: (과장님이 전날 본 코미디를 대화 소재로 먼저 꺼내셨네. 잡담은 여기까지 하고 남은 안건부터 보자.)
+          intent: work_only
+      - id: after_sleep
+        priority: 70
+        self_development:
+          expression: feedback.last_sleep
+        perceived:
+          atmosphere: playful_tension
+          line: (짧게 받았지만 내가 꺼낸 화제는 바로 알아들었군. 자기 리듬을 관리할 줄 아는 사람으로 보였겠지.)
+        reality:
+          atmosphere: procedural
+          line: (과장님이 생활 리듬을 챙겨 보겠다는 말을 먼저 꺼내셨네. 잡담은 여기까지 하고 남은 안건부터 보자.)
+          intent: work_only
+      - id: after_dark_psychology
+        priority: 60
+        self_development:
+          expression: feedback.last_dark_psychology
+        perceived:
+          atmosphere: playful_tension
+          line: (짧게 받았지만 내가 꺼낸 화제는 바로 알아들었군. 상대의 마음을 체계적으로 공부하는 사람이라는 인상은 남았겠지.)
+        reality:
+          atmosphere: procedural
+          line: (과장님이 관계를 통제하는 내용의 책과 강의를 먼저 꺼내셨네. 잡담은 여기까지 하고 남은 안건부터 보자.)
+          intent: work_only
+      - id: after_solo_drinking
+        priority: 50
+        self_development:
+          expression: feedback.last_solo_drinking
+        perceived:
+          atmosphere: playful_tension
+          line: (짧게 받았지만 내가 꺼낸 화제는 바로 알아들었군. 흐트러진 날도 솔직하게 인정하는 사람으로 보였겠지.)
+        reality:
+          atmosphere: procedural
+          line: (과장님이 피곤해서 혼자 술을 마셨다는 이야기까지 먼저 꺼내셨네. 잡담은 여기까지 하고 남은 안건부터 보자.)
+          intent: work_only
+      - id: default
+        default: true
+        perceived:
+          atmosphere: procedural
+          line: (회사 밖에서 본 뒤라 대화의 호흡도 조금 달라졌군.)
+        reality:
+          atmosphere: procedural
+          line: (오늘 확인한 내용과 다음 마감만 정리하면 돼.)
+          intent: work_only
   - id: lecture_recall_before_issues
     kind: dual_dialogue
     presentation_flags: [inner_voice]

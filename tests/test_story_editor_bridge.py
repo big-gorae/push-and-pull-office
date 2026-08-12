@@ -16,7 +16,6 @@ from story_editor_bridge import (  # noqa: E402
     duplicate_event,
     duplicate_scene,
     load_project,
-    preserve_source_template_nodes,
     revision,
     save_document,
     save_scene,
@@ -44,6 +43,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
         self.assertEqual([], result["issues"])
         self.assertEqual(64, len(result["documents"]["scenes"]["seo_a.email_request"]["revision"]))
         self.assertEqual(30, len(result["documents"]["events"]))
+        self.assertEqual({"system.night_activity", "system.analysis_hint"}, set(result["documents"]["system_flows"]))
         self.assertIn("common.day_01_company_meeting", result["documents"]["scenes"])
         self.assertIn("common.day_01_parent_pressure", result["documents"]["scenes"])
         self.assertIn("common.day_01_officetel_seo_a_reveal", result["documents"]["scenes"])
@@ -368,211 +368,6 @@ class StoryEditorBridgeTests(unittest.TestCase):
         finally:
             temporary.cleanup()
 
-    def test_runtime_template_variants_do_not_replace_source_authoring_macro(self):
-        with tempfile.TemporaryDirectory() as raw_temp:
-            root = Path(raw_temp)
-            target = root / "story" / "scenes" / "template_scene.yaml"
-            target.parent.mkdir(parents=True)
-            (root / "story" / "manifest.yaml").write_text(
-                "self_development:\n"
-                "  expressions:\n"
-                "    feedback.last_workout:\n"
-                "      requires:\n"
-                "        last_activity: workout\n",
-                encoding="utf-8",
-            )
-            target.write_text(
-                "id: common.template_scene\n"
-                "title: 원래 제목\n"
-                "state_contract:\n"
-                "  reads: [progress.self_development.last_activity]\n"
-                "  writes: []\n"
-                "nodes:\n"
-                "  - id: callback\n"
-                "    kind: dual_dialogue\n"
-                "    speaker: han_do_yoon\n"
-                "    perceived:\n"
-                "      atmosphere: procedural\n"
-                "      line: 원래 기본 인지 대사\n"
-                "    reality:\n"
-                "      atmosphere: procedural\n"
-                "      line: 원래 기본 현실 대사\n"
-                "      intent: work_only\n"
-                "    # authoring-template-sentinel\n"
-                "    self_development_template:\n"
-                "      source: last_activity\n"
-                "      perceived:\n"
-                "        line: '{{office_pitch}}'\n"
-                "      reality:\n"
-                "        line: '{{office_pitch}}'\n"
-                "        intent: self_promotion\n"
-                "    next: finish\n"
-                "  - id: finish\n"
-                "    kind: dual_narration\n"
-                "    perceived:\n"
-                "      atmosphere: procedural\n"
-                "      line: 원래 일반 노드 대사\n"
-                "    reality:\n"
-                "      atmosphere: procedural\n"
-                "      line: 원래 일반 노드 대사\n"
-                "      intent: work_only\n"
-                "    next: exit\n"
-                "  - id: exit\n"
-                "    kind: exit\n"
-                "    transitions: []\n",
-                encoding="utf-8",
-            )
-            runtime_scene = {
-                "id": "common.template_scene",
-                "title": "에디터에서 바꾼 제목",
-                "state_contract": {
-                    "reads": ["progress.self_development.last_activity"],
-                    "writes": [],
-                },
-                "nodes": [
-                    {
-                        "id": "callback",
-                        "kind": "dual_dialogue",
-                        "speaker": "han_do_yoon",
-                        "presentation_flags": ["inner_voice"],
-                        "variants": [
-                            {
-                                "id": "after_workout",
-                                "self_development": {"expression": "feedback.last_workout"},
-                                "perceived": {
-                                    "atmosphere": "warm_romance",
-                                    "line": "생성된 운동 인지 대사",
-                                },
-                                "reality": {
-                                    "atmosphere": "procedural",
-                                    "line": "생성된 운동 현실 대사",
-                                    "intent": "self_promotion",
-                                },
-                            },
-                            {
-                                "id": "default",
-                                "default": True,
-                                "perceived": {
-                                    "atmosphere": "procedural",
-                                    "line": "런타임 기본 인지 대사",
-                                },
-                                "reality": {
-                                    "atmosphere": "procedural",
-                                    "line": "런타임 기본 현실 대사",
-                                    "intent": "work_only",
-                                },
-                            },
-                        ],
-                        "next": "finish_edited",
-                    },
-                    {
-                        "id": "finish",
-                        "kind": "dual_narration",
-                        "perceived": {
-                            "atmosphere": "procedural",
-                            "line": "에디터에서 바꾼 일반 노드 대사",
-                        },
-                        "reality": {
-                            "atmosphere": "procedural",
-                            "line": "에디터에서 바꾼 일반 노드 대사",
-                            "intent": "work_only",
-                        },
-                        "next": "exit",
-                    },
-                    {"id": "exit", "kind": "exit", "transitions": []},
-                ],
-            }
-
-            yaml_text = yaml_text_for_scene(target, runtime_scene)
-            parsed = YAML_RT.load(yaml_text)
-            nodes = {node["id"]: node for node in parsed["nodes"]}
-            callback = nodes["callback"]
-
-            self.assertEqual("에디터에서 바꾼 제목", parsed["title"])
-            self.assertNotIn("variants", callback)
-            self.assertEqual("원래 기본 인지 대사", callback["perceived"]["line"])
-            self.assertEqual("원래 기본 현실 대사", callback["reality"]["line"])
-            self.assertEqual(
-                "{{office_pitch}}",
-                callback["self_development_template"]["perceived"]["line"],
-            )
-            self.assertIn("# authoring-template-sentinel", yaml_text)
-            self.assertEqual(["inner_voice"], callback["presentation_flags"])
-            self.assertEqual("finish_edited", callback["next"])
-            self.assertEqual(
-                "에디터에서 바꾼 일반 노드 대사",
-                nodes["finish"]["perceived"]["line"],
-            )
-
-    def test_source_template_edits_are_not_treated_as_compiled_runtime_nodes(self):
-        existing = {
-            "nodes": [{
-                "id": "callback",
-                "perceived": {"line": "기존 기본 대사"},
-                "reality": {"line": "기존 기본 대사"},
-                "self_development_template": {
-                    "source": "last_activity",
-                    "perceived": {"line": "{{office_pitch}}"},
-                },
-            }],
-        }
-        updated = {
-            "nodes": [{
-                "id": "callback",
-                "perceived": {"line": "수정한 기본 대사"},
-                "reality": {"line": "수정한 기본 대사"},
-                "self_development_template": {
-                    "source": "last_activity",
-                    "perceived": {"line": "{{weekend_pitch}}"},
-                },
-            }],
-        }
-
-        preserve_source_template_nodes(existing, updated)
-
-        node = updated["nodes"][0]
-        self.assertEqual("수정한 기본 대사", node["perceived"]["line"])
-        self.assertEqual(
-            "{{weekend_pitch}}",
-            node["self_development_template"]["perceived"]["line"],
-        )
-
-    def test_load_project_reports_invalid_template_without_rebuilding(self):
-        temporary, root = self.make_project_copy()
-        try:
-            target = root / "story/scenes/common/day_02_practical_meeting.yaml"
-            source = target.read_text(encoding="utf-8")
-            target.write_text(
-                source.replace("{{office_pitch}}", "{{missing_slot}}", 1),
-                encoding="utf-8",
-            )
-
-            result = load_project(root)
-
-            self.assertEqual({}, result["runtime"])
-            self.assertTrue(any(
-                "unknown template slots: missing_slot" in issue["message"]
-                for issue in result["issues"]
-            ))
-        finally:
-            temporary.cleanup()
-
-    def test_generated_template_variant_edits_are_rejected_explicitly(self):
-        temporary, root = self.make_project_copy()
-        try:
-            project = StoryProject(root / "story")
-            scene = project.build_bundle()["scenes"]["common.day_02_practical_meeting"]
-            clean_yaml = yaml_text_for_scene(target := root / "story/scenes/common/day_02_practical_meeting.yaml", scene)
-            self.assertIn("self_development_template:", clean_yaml)
-            self.assertNotIn("variants:", clean_yaml.split("  - id: agenda", 1)[0])
-
-            callback = scene["nodes"]["day_one_activity_reaction"]
-            callback["variants"][0]["reality"]["line"] = "에디터에서 바꾼 생성 대사"
-
-            with self.assertRaisesRegex(RuntimeError, "TEMPLATE_VARIANTS_READ_ONLY"):
-                yaml_text_for_scene(target, scene)
-        finally:
-            temporary.cleanup()
 
     def test_save_scene_rejects_stale_revision(self):
         temporary, root = self.make_project_copy()
@@ -597,24 +392,34 @@ class StoryEditorBridgeTests(unittest.TestCase):
         self.assertGreater(owner["sources"][0]["line"], 0)
         self.assertEqual(value_hash(owner["currentValue"]), owner["currentValueHash"])
 
-    def test_story_text_owner_rejects_compiled_template_as_single_source(self):
-        owner = story_text_owner(
-            ROOT,
-            "scenes.common.day_02_practical_meeting.nodes."
-            "day_one_activity_reaction.variants.after_workout.reality.line",
-        )
+    def test_system_dialogue_owner_and_save_are_direct_physical_yaml(self):
+        temporary, root = self.make_project_copy()
+        try:
+            key = "system_flows.system.night_activity.nodes.activity_result.variants.workout.reality.line"
+            owner = story_text_owner(root, key)
+            self.assertTrue(owner["editable"])
+            self.assertEqual("direct_yaml", owner["kind"])
+            self.assertEqual("story/system_flows/night_activity.yaml", owner["relativePath"])
+            self.assertEqual("nodes.activity_result.variants.workout.reality.line", owner["fieldPath"])
 
-        self.assertFalse(owner["editable"])
-        self.assertEqual("composed_template", owner["kind"])
-        self.assertEqual("MULTIPLE_SOURCE_OWNERS", owner["reason"])
-        self.assertEqual(2, len(owner["sources"]))
-        self.assertEqual(
-            {
-                "story/scenes/common/day_02_practical_meeting.yaml",
-                "story/manifest.yaml",
-            },
-            {source["relativePath"] for source in owner["sources"]},
-        )
+            result = save_story_text(root, {"edits": [{
+                "localization_key": key,
+                "expected_revision": owner["revision"],
+                "expected_value_hash": owner["currentValueHash"],
+                "next_value": "운동을 마치고 새 문장을 기록했다.",
+            }]})
+
+            self.assertTrue(result["saved"])
+            self.assertEqual("운동을 마치고 새 문장을 기록했다.", result["owner"]["currentValue"])
+            variant = next(
+                item for item in result["runtime"]["system_flows"]["system.night_activity"]["nodes"]["activity_result"]["variants"]
+                if item["id"] == "workout"
+            )
+            self.assertEqual("운동을 마치고 새 문장을 기록했다.", variant["reality"]["line"])
+            self.assertIn("system_flows", result["documents"])
+        finally:
+            temporary.cleanup()
+
 
     def test_save_story_text_updates_only_target_scalar_and_runtime(self):
         temporary, root = self.make_project_copy()
@@ -746,83 +551,6 @@ class StoryEditorBridgeTests(unittest.TestCase):
         finally:
             temporary.cleanup()
 
-    def test_save_composed_template_sources_rebuilds_generated_variant(self):
-        temporary, root = self.make_project_copy()
-        try:
-            base = (
-                "scenes.common.day_02_practical_meeting.nodes."
-                "day_one_activity_reaction.variants.after_workout"
-            )
-            owners = [
-                story_text_owner(root, f"{base}.perceived.line"),
-                story_text_owner(root, f"{base}.reality.line"),
-            ]
-            original_variant = next(
-                item for item in StoryProject(root / "story").build_bundle()
-                ["scenes"]["common.day_02_practical_meeting"]
-                ["nodes"]["day_one_activity_reaction"]["variants"]
-                if item["id"] == "after_workout"
-            )
-            source_by_field = {}
-            for owner in owners:
-                for source in owner["sources"]:
-                    source_by_field[(source["relativePath"], source["fieldPath"])] = (owner, source)
-            edits = []
-            for (relative_path, field_path), (owner, source) in source_by_field.items():
-                if field_path.endswith("perceived.line") or field_path.endswith("reality.line"):
-                    next_value = "회의를 시작하죠. {{office_pitch}} 참석자표를 확인할까요?"
-                else:
-                    next_value = "어젯밤 가볍게 운동해서 오늘은 몸이 한결 가볍습니다."
-                edits.append({
-                    "localization_key": owner["key"],
-                    "source_relative_path": relative_path,
-                    "source_field_path": field_path,
-                    "expected_revision": source["revision"],
-                    "expected_value_hash": source["currentValueHash"],
-                    "next_value": next_value,
-                })
-
-            result = save_story_text(root, {"edits": edits})
-
-            self.assertTrue(result["saved"])
-            variant = next(
-                item for item in result["runtime"]["scenes"]["common.day_02_practical_meeting"]
-                ["nodes"]["day_one_activity_reaction"]["variants"]
-                if item["id"] == "after_workout"
-            )
-            expected = "회의를 시작하죠. 어젯밤 가볍게 운동해서 오늘은 몸이 한결 가볍습니다. 참석자표를 확인할까요?"
-            self.assertEqual(expected, variant["perceived"]["line"])
-            self.assertEqual(expected, variant["reality"]["line"])
-            self.assertEqual(3, len(result["changes"]))
-
-            refreshed = {
-                owner["key"]: owner for owner in result["owners"]
-            }
-            undo_edits = []
-            for change in result["changes"]:
-                source = next(
-                    item for item in refreshed[change["localizationKey"]]["sources"]
-                    if item["relativePath"] == change["relativePath"]
-                    and item["fieldPath"] == change["fieldPath"]
-                )
-                undo_edits.append({
-                    "localization_key": change["localizationKey"],
-                    "source_relative_path": change["relativePath"],
-                    "source_field_path": change["fieldPath"],
-                    "expected_revision": source["revision"],
-                    "expected_value_hash": source["currentValueHash"],
-                    "next_value": change["beforeValue"],
-                })
-            undone = save_story_text(root, {"edits": undo_edits})
-            restored = next(
-                item for item in undone["runtime"]["scenes"]["common.day_02_practical_meeting"]
-                ["nodes"]["day_one_activity_reaction"]["variants"]
-                if item["id"] == "after_workout"
-            )
-            self.assertEqual(original_variant["perceived"]["line"], restored["perceived"]["line"])
-            self.assertEqual(original_variant["reality"]["line"], restored["reality"]["line"])
-        finally:
-            temporary.cleanup()
 
     def test_save_timeline_event_round_trips_and_rebuilds_runtime(self):
         temporary, root = self.make_project_copy()
