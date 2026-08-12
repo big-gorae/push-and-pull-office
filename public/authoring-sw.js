@@ -1,6 +1,6 @@
-const CACHE_VERSION = "love-office-authoring-v3";
+const CACHE_VERSION = "love-office-authoring-v4";
 const APP_SHELL = [
-  "/author/",
+  "/",
   "/authoring.webmanifest",
   "/icons/authoring-192.png",
   "/icons/authoring-512.png",
@@ -38,10 +38,10 @@ async function navigation(request) {
   const cache = await caches.open(CACHE_VERSION);
   try {
     const response = await fetch(request);
-    if (response.ok) await cache.put("/author/", response.clone());
+    if (response.ok) await cache.put("/", response.clone());
     return response;
   } catch {
-    return (await cache.match("/author/", { ignoreVary: true })) || Response.error();
+    return (await cache.match("/", { ignoreVary: true })) || Response.error();
   }
 }
 

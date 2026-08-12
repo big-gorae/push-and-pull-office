@@ -152,7 +152,7 @@ export default function MobileAuthoringApp() {
     const title = document.title;
     document.title = "밀당 오피스 · 모바일 대사 편집";
     if ("serviceWorker" in navigator) {
-      void navigator.serviceWorker.register("/authoring-sw.js", { scope: "/author/" })
+      void navigator.serviceWorker.register("/authoring-sw.js", { scope: "/" })
         .then(async (registration) => {
           const readyRegistration = await navigator.serviceWorker.ready;
           const urls = performance.getEntriesByType("resource")
