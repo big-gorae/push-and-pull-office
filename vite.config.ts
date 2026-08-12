@@ -1,5 +1,8 @@
 import { defineConfig } from "vite";
 import { sites } from "./build/sites-vite-plugin";
+import hostingConfig from "./.openai/hosting.json";
+
+const SITE_CREATOR_PLACEHOLDER_DATABASE_ID = "00000000-0000-4000-8000-000000000000";
 
 export default defineConfig(async () => {
   const isGameBuild = process.env.VITE_APP_SURFACE === "game";
@@ -25,6 +28,11 @@ export default defineConfig(async () => {
             binding: "ASSETS",
             not_found_handling: "single-page-application",
           },
+          d1_databases: hostingConfig.d1 ? [{
+            binding: hostingConfig.d1,
+            database_name: "love-office-authoring",
+            database_id: SITE_CREATOR_PLACEHOLDER_DATABASE_ID,
+          }] : [],
         },
       }),
     );

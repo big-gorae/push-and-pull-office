@@ -177,6 +177,18 @@
       "description": "Permission identifier",
       "oneOf": [
         {
+          "description": "Allows the authenticated mobile sync surface to submit path-free dialogue events to the active project's validated save pipeline.",
+          "type": "string",
+          "const": "allow-apply-mobile-sync-changes",
+          "markdownDescription": "Allows the authenticated mobile sync surface to submit path-free dialogue events to the active project's validated save pipeline."
+        },
+        {
+          "description": "Allows the authenticated mobile sync surface to read the active project's path-free dialogue catalog.",
+          "type": "string",
+          "const": "allow-mobile-sync-snapshot",
+          "markdownDescription": "Allows the authenticated mobile sync surface to read the active project's path-free dialogue catalog."
+        },
+        {
           "description": "Default core plugins set.\n#### This default permission set includes:\n\n- `core:path:default`\n- `core:event:default`\n- `core:window:default`\n- `core:webview:default`\n- `core:app:default`\n- `core:image:default`\n- `core:resources:default`\n- `core:menu:default`\n- `core:tray:default`",
           "type": "string",
           "const": "core:default",

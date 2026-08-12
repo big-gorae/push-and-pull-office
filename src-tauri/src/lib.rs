@@ -11,8 +11,18 @@ use std::{
 #[derive(Default)]
 struct EditorState {
     allowed_roots: Mutex<HashSet<PathBuf>>,
+    active_root: Mutex<Option<PathBuf>>,
     commit_locks: Mutex<HashMap<PathBuf, Arc<Mutex<()>>>>,
     workers: Mutex<HashMap<PathBuf, Arc<Mutex<ProjectWorker>>>>,
+}
+
+fn active_root(state: &tauri::State<'_, EditorState>) -> Result<PathBuf, String> {
+    state
+        .active_root
+        .lock()
+        .map_err(|_| "활성 프로젝트 상태를 읽을 수 없습니다.".to_string())?
+        .clone()
+        .ok_or_else(|| "먼저 스토리 에디터에서 프로젝트를 여세요.".to_string())
 }
 
 fn project_commit_lock(
@@ -327,9 +337,45 @@ async fn load_project(state: tauri::State<'_, EditorState>, root: String) -> Res
         .lock()
         .map_err(|_| "프로젝트 권한 상태를 저장할 수 없습니다.".to_string())?
         .insert(root.clone());
+    *state
+        .active_root
+        .lock()
+        .map_err(|_| "활성 프로젝트 상태를 저장할 수 없습니다.".to_string())? = Some(root.clone());
     let commit_lock = project_commit_lock(&state, &root)?;
     let worker = project_worker(&state, &root)?;
     run_bridge_background(worker, "load", None, Some(commit_lock)).await
+}
+
+/// Narrow bridge used by the authenticated mobile synchronization WebView.
+/// It never accepts a filesystem path and can only read the project that the
+/// local editor already opened and approved.
+#[tauri::command]
+async fn mobile_sync_snapshot(
+    state: tauri::State<'_, EditorState>,
+) -> Result<Value, String> {
+    let root = active_root(&state)?;
+    let commit_lock = project_commit_lock(&state, &root)?;
+    let worker = project_worker(&state, &root)?;
+    run_bridge_background(worker, "sync-snapshot", None, Some(commit_lock)).await
+}
+
+/// Apply path-free localization events through the authoritative story bridge.
+/// The Python side performs field-level CAS, full validation and atomic writes.
+#[tauri::command]
+async fn apply_mobile_sync_changes(
+    state: tauri::State<'_, EditorState>,
+    changes: Value,
+) -> Result<Value, String> {
+    let root = active_root(&state)?;
+    let commit_lock = project_commit_lock(&state, &root)?;
+    let worker = project_worker(&state, &root)?;
+    run_bridge_background(
+        worker,
+        "apply-sync",
+        Some(json!({ "changes": changes })),
+        Some(commit_lock),
+    )
+    .await
 }
 
 #[tauri::command]
@@ -683,6 +729,8 @@ pub fn run() {
             save_document,
             get_story_text_owner,
             save_story_text,
+            mobile_sync_snapshot,
+            apply_mobile_sync_changes,
             duplicate_scene,
             duplicate_event,
             build_runtime,

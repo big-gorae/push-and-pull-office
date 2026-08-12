@@ -1,0 +1,9 @@
+[[permission]]
+identifier = "allow-mobile-sync-snapshot"
+description = "Allows the authenticated mobile sync surface to read the active project's path-free dialogue catalog."
+commands.allow = ["mobile_sync_snapshot"]
+
+[[permission]]
+identifier = "allow-apply-mobile-sync-changes"
+description = "Allows the authenticated mobile sync surface to submit path-free dialogue events to the active project's validated save pipeline."
+commands.allow = ["apply_mobile_sync_changes"]

@@ -32,6 +32,10 @@ YAML_RT.indent(mapping=2, sequence=4, offset=2)
 
 _PROJECT_CACHE: Dict[Path, tuple[tuple[tuple[str, int, int], ...], StoryProject]] = {}
 
+MOBILE_SYNC_EVENT_ID = re.compile(r"^[a-zA-Z0-9_-]{16,96}$")
+MOBILE_SYNC_HASH = re.compile(r"^[a-f0-9]{64}$")
+MOBILE_SYNC_MAX_CHANGES = 100
+
 
 def project_signature(root: Path) -> tuple[tuple[str, int, int], ...]:
     story_root = root.resolve() / "story"
@@ -798,6 +802,260 @@ def story_text_owner(
     }
 
 
+def mobile_sync_snapshot(root: Path) -> Dict[str, Any]:
+    """Return the narrow, path-free text catalog exposed to the mobile PWA.
+
+    The catalog deliberately contains stable localization keys rather than source
+    paths.  A remote WebView can therefore request text synchronization without
+    receiving a general-purpose view of the local filesystem.
+    """
+
+    root = root.resolve()
+    project = cached_story_project(root)
+    settings = project.manifest.get("project", {})
+    project_id = str(settings.get("id", "love-office"))
+    default_locale = str(settings.get("default_language", "ko"))
+    entries: List[Dict[str, Any]] = []
+    localizable = collect_localizable_entries(project)
+
+    for key, entry in sorted(localizable.items()):
+        document = entry.get("sourceDocument", {})
+        kind = str(document.get("kind", ""))
+        field_path = str(document.get("fieldPath", ""))
+        if kind not in {"scene", "system_flow"} or not editable_story_text_field(kind, field_path):
+            continue
+        current_value = str(entry.get("source", ""))
+        if not current_value.strip():
+            continue
+        context = entry.get("context") if isinstance(entry.get("context"), Mapping) else {}
+        document_id = str(document.get("id", ""))
+        source_document = project.scenes.get(document_id) if kind == "scene" else project.system_flows.get(document_id)
+        title = str(source_document.get("title", document_id)) if isinstance(source_document, Mapping) else document_id
+        linked_keys: List[str] = []
+        counterpart = key.replace(".perceived.line", ".reality.line") \
+            if ".perceived.line" in key else key.replace(".reality.line", ".perceived.line")
+        counterpart_entry = localizable.get(counterpart)
+        # Equal physical layers must remain equal whether the node opted into
+        # the explicit lock flag or predates it; otherwise the normal validator
+        # would reject a one-sided mobile edit.
+        if counterpart != key and counterpart_entry and counterpart_entry.get("source") == current_value:
+            linked_keys.append(counterpart)
+        entries.append({
+            "localizationKey": key,
+            "locale": default_locale,
+            "value": current_value,
+            "valueHash": value_hash(current_value),
+            "domain": kind,
+            "documentId": document_id,
+            "documentTitle": title,
+            "context": dict(context),
+            "maxLength": entry.get("maxLength"),
+            "placeholders": list(entry.get("placeholders", [])),
+            "multiline": bool(entry.get("multiline", False)),
+            "linkedLocalizationKeys": linked_keys,
+        })
+
+    generation_source = "\n".join(
+        f"{entry['localizationKey']}\0{entry['valueHash']}" for entry in entries
+    )
+    return {
+        "schemaVersion": 1,
+        "projectId": project_id,
+        "projectTitle": str(settings.get("title", project_id)),
+        "defaultLocale": default_locale,
+        "generation": value_hash(generation_source),
+        "entries": entries,
+    }
+
+
+def apply_mobile_sync_changes(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
+    """Apply mobile events using field-level CAS and the normal safe save path."""
+
+    root = root.resolve()
+    raw_changes = payload.get("changes")
+    if not isinstance(raw_changes, Sequence) or isinstance(raw_changes, (str, bytes)):
+        raise RuntimeError("mobile sync changes must be a list")
+    if not raw_changes or len(raw_changes) > MOBILE_SYNC_MAX_CHANGES:
+        raise RuntimeError(f"mobile sync accepts 1-{MOBILE_SYNC_MAX_CHANGES} changes")
+
+    snapshot = mobile_sync_snapshot(root)
+    project_id = snapshot["projectId"]
+    default_locale = snapshot["defaultLocale"]
+    receipts: List[Dict[str, Any]] = []
+    prepared_groups: List[tuple[str, List[Dict[str, Any]]]] = []
+    seen_keys: set[tuple[str, str]] = set()
+    snapshot_entries = {
+        str(entry["localizationKey"]): entry for entry in snapshot["entries"]
+    }
+
+    for raw in raw_changes:
+        if not isinstance(raw, Mapping):
+            raise RuntimeError("mobile sync change is invalid")
+        event_id = raw.get("eventId")
+        change_project_id = raw.get("projectId")
+        localization_key = raw.get("localizationKey")
+        locale = raw.get("locale")
+        base_value = raw.get("baseValue")
+        base_value_hash = raw.get("baseValueHash")
+        next_value = raw.get("nextValue")
+        if not all(isinstance(value, str) for value in (
+            event_id, change_project_id, localization_key, locale,
+            base_value, base_value_hash, next_value,
+        )):
+            raise RuntimeError("mobile sync change fields are invalid")
+        if not MOBILE_SYNC_EVENT_ID.fullmatch(event_id):
+            raise RuntimeError("mobile sync event id is invalid")
+        if change_project_id != project_id or locale != default_locale:
+            receipts.append({
+                "eventId": event_id,
+                "status": "rejected",
+                "reason": "PROJECT_OR_LOCALE_MISMATCH",
+            })
+            continue
+        if not MOBILE_SYNC_HASH.fullmatch(base_value_hash) or value_hash(base_value) != base_value_hash:
+            receipts.append({
+                "eventId": event_id,
+                "status": "rejected",
+                "reason": "INVALID_BASE_HASH",
+            })
+            continue
+        catalog_entry = snapshot_entries.get(localization_key)
+        if not catalog_entry:
+            receipts.append({
+                "eventId": event_id,
+                "status": "rejected",
+                "reason": "UNKNOWN_STORY_TEXT",
+            })
+            continue
+        target_keys = [
+            localization_key,
+            *[
+                str(key) for key in catalog_entry.get("linkedLocalizationKeys", [])
+                if isinstance(key, str) and key != localization_key
+            ],
+        ]
+        identities = [(key, locale) for key in target_keys]
+        if any(identity in seen_keys for identity in identities):
+            receipts.append({
+                "eventId": event_id,
+                "status": "rejected",
+                "reason": "DUPLICATE_KEY_IN_BATCH",
+            })
+            continue
+        seen_keys.update(identities)
+
+        try:
+            owners = [story_text_owner(root, key, locale) for key in target_keys]
+        except RuntimeError as error:
+            receipts.append({
+                "eventId": event_id,
+                "status": "rejected",
+                "reason": str(error).split(":", 1)[0],
+            })
+            continue
+        if any(not owner.get("editable") or owner.get("kind") != "direct_yaml" for owner in owners):
+            receipts.append({
+                "eventId": event_id,
+                "status": "rejected",
+                "reason": "FIELD_NOT_EDITABLE",
+            })
+            continue
+        owner = owners[0]
+        current_value = str(owner["currentValue"])
+        current_hash = str(owner["currentValueHash"])
+        next_hash = value_hash(next_value)
+        owner_hashes = [str(candidate["currentValueHash"]) for candidate in owners]
+        if all(owner_hash == next_hash for owner_hash in owner_hashes):
+            receipts.append({
+                "eventId": event_id,
+                "status": "applied",
+                "currentValue": current_value,
+                "currentValueHash": current_hash,
+                "idempotent": True,
+            })
+            continue
+        if any(owner_hash not in {base_value_hash, next_hash} for owner_hash in owner_hashes):
+            conflicting_owner = next(
+                candidate for candidate in owners
+                if str(candidate["currentValueHash"]) not in {base_value_hash, next_hash}
+            )
+            receipts.append({
+                "eventId": event_id,
+                "status": "conflict",
+                "reason": "VALUE_CONFLICT",
+                "currentValue": str(conflicting_owner["currentValue"]),
+                "currentValueHash": str(conflicting_owner["currentValueHash"]),
+            })
+            continue
+        if not next_value.strip():
+            receipts.append({
+                "eventId": event_id,
+                "status": "rejected",
+                "reason": "TEXT_EMPTY",
+            })
+            continue
+        if any(text_placeholders(next_value) != sorted(candidate.get("placeholders", [])) for candidate in owners):
+            receipts.append({
+                "eventId": event_id,
+                "status": "rejected",
+                "reason": "PLACEHOLDER_MISMATCH",
+            })
+            continue
+        max_lengths = [candidate.get("maxLength") for candidate in owners]
+        if any(isinstance(max_length, int) and len(next_value) > max_length for max_length in max_lengths):
+            receipts.append({
+                "eventId": event_id,
+                "status": "rejected",
+                "reason": "TEXT_TOO_LONG",
+            })
+            continue
+        group = [{
+            "localization_key": target_key,
+            "locale": locale,
+            # Rebase a matching field hash onto the current file revision. This
+            # avoids false conflicts when another field in the same YAML changed.
+            "expected_revision": candidate["revision"],
+            "expected_value_hash": candidate["currentValueHash"],
+            "next_value": next_value,
+        } for target_key, candidate in zip(target_keys, owners)]
+        prepared_groups.append((event_id, group))
+
+    prepared = [edit for _, group in prepared_groups for edit in group]
+    if prepared:
+        result = save_story_text(root, {"edits": prepared})
+        if result.get("saved"):
+            updated_by_key = {
+                str(owner.get("key")): owner for owner in result.get("owners", [])
+                if isinstance(owner, Mapping)
+            }
+            for event_id, group in prepared_groups:
+                edit = group[0]
+                owner = updated_by_key.get(edit["localization_key"], {})
+                receipts.append({
+                    "eventId": event_id,
+                    "status": "applied",
+                    "currentValue": owner.get("currentValue", edit["next_value"]),
+                    "currentValueHash": owner.get("currentValueHash", value_hash(edit["next_value"])),
+                })
+        else:
+            issue_messages = [
+                str(issue.get("message", "")) for issue in result.get("issues", [])
+                if isinstance(issue, Mapping) and issue.get("severity") == "error"
+            ][:5]
+            for event_id, _ in prepared_groups:
+                receipts.append({
+                    "eventId": event_id,
+                    "status": "rejected",
+                    "reason": str(result.get("errorCode", "VALIDATION_FAILED")),
+                    "details": issue_messages,
+                })
+
+    return {
+        "receipts": receipts,
+        "snapshot": mobile_sync_snapshot(root),
+    }
+
+
 def save_story_text(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
     root = root.resolve()
     raw_edits = payload.get("edits")
@@ -1264,7 +1522,7 @@ def build_runtime(root: Path) -> Dict[str, Any]:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=["load", "validate", "validate-scene", "save-scene", "save-document", "duplicate-scene", "duplicate-event", "text-owner", "save-text", "build", "serve"])
+    parser.add_argument("command", choices=["load", "validate", "validate-scene", "save-scene", "save-document", "duplicate-scene", "duplicate-event", "text-owner", "save-text", "sync-snapshot", "apply-sync", "build", "serve"])
     parser.add_argument("--root", required=True)
     return parser.parse_args()
 
@@ -1295,6 +1553,10 @@ def execute_command(root: Path, command: str, payload: Mapping[str, Any] | None 
         result = story_text_owner(root, localization_key, locale)
     elif command == "save-text":
         result = save_story_text(root, payload)
+    elif command == "sync-snapshot":
+        result = mobile_sync_snapshot(root)
+    elif command == "apply-sync":
+        result = apply_mobile_sync_changes(root, payload)
     elif command == "build":
         result = build_runtime(root)
     else:
@@ -1336,7 +1598,7 @@ def main() -> int:
         return serve(root)
 
     payload: Dict[str, Any] = {}
-    if args.command in {"validate-scene", "save-scene", "save-document", "duplicate-scene", "duplicate-event", "text-owner", "save-text"}:
+    if args.command in {"validate-scene", "save-scene", "save-document", "duplicate-scene", "duplicate-event", "text-owner", "save-text", "apply-sync"}:
         payload = json.load(sys.stdin)
     result = execute_command(root, args.command, payload)
     print(json.dumps(result, ensure_ascii=False))

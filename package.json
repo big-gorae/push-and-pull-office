@@ -13,6 +13,7 @@
     "build:pages": "VITE_APP_SURFACE=game VITE_HOSTING_TARGET=github-pages npm run build",
     "build:site": "VITE_APP_SURFACE=game npm run build",
     "test:player": "vitest run src/player",
+    "test:mobile-authoring": "vitest run src/mobile-authoring && node --test sites-worker/authoring-sync.test.mjs",
     "test:prompts": "vitest run src/prompt-builder",
     "test:prompt-harness": "node --test tools/prompt_harness.test.mjs",
     "test:e2e": "playwright test",

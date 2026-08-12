@@ -21,6 +21,7 @@ import { selfDevelopmentVariantDisplayName } from "./player/systemDialogueAuthor
 import { deleteNodeAndReconnect, deletionReplacement, incomingReferenceCount, insertNodeCopyAfter } from "./sceneEditing";
 import {
   consumeAuthoringTarget,
+  openMobileAuthoringSyncWindow,
   openAuthoringPlayWindow,
   rememberAuthoringRoot,
   type AuthoringTarget,
@@ -1926,6 +1927,15 @@ export default function App() {
     }
   };
 
+  const launchMobileSync = async () => {
+    try {
+      await openMobileAuthoringSyncWindow();
+      setStatus("모바일 대사 동기화 창을 열었습니다. 처음 한 번 로그인하면 이후 변경을 자동으로 맞춥니다.");
+    } catch (error) {
+      setStatus(`모바일 대사 동기화 창을 열 수 없습니다: ${String(error)}`);
+    }
+  };
+
   const previewCurrentDialogue = async () => {
     if (!root || !draft || !selectedNodeId) return;
     if (dirty || hasPendingDocument) {
@@ -2183,6 +2193,7 @@ export default function App() {
       <div className="top-actions">
         <button type="button" className="quick-open-button" onClick={() => setQuickOpenVisible(true)} title="모든 스토리 문서 빠른 열기 (⌘P)">⌕ 빠른 열기 <kbd>⌘P</kbd></button>
         <button type="button" onClick={launchAuthoringPlay} disabled={busy || dirty || hasPendingDocument} title="실제 게임 화면에서 원본 대사를 편집합니다">▶ 게임에서 대사 편집</button>
+        <button type="button" onClick={() => void launchMobileSync()} disabled={busy || dirty || hasPendingDocument} title="휴대폰의 오프라인 대사 변경을 안전하게 가져옵니다">☁ 모바일 동기화</button>
         <button type="button" onClick={selectProject} disabled={busy}>프로젝트 열기</button>
         {workspace === "scene" && <button type="button" onClick={undo} disabled={!history.past.length || busy} aria-label="동작 취소" title="동작 취소 (⌘/Ctrl+Z)">↶</button>}
         {workspace === "scene" && <button type="button" onClick={redo} disabled={!history.future.length || busy} aria-label="다시 실행" title="다시 실행 (⇧⌘/Ctrl+Z 또는 Ctrl+Y)">↷</button>}

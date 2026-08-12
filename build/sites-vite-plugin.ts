@@ -34,6 +34,10 @@ export function sites(): Plugin {
       if (await exists(hostingConfig)) {
         await cp(hostingConfig, resolve(outputDirectory, "hosting.json"));
       }
+      const migrations = resolve(root, ".openai", "drizzle");
+      if (await exists(migrations)) {
+        await cp(migrations, resolve(outputDirectory, "drizzle"), { recursive: true });
+      }
     },
   };
 }

@@ -1,0 +1,13 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "mobile-sync-capability",
+  "description": "The owner-only Sites PWA can synchronize dialogue through two path-free commands and has no general editor, dialog, shell or filesystem permissions.",
+  "windows": ["mobile-sync"],
+  "remote": {
+    "urls": ["https://love-office-game.dlwlsgh4687.chatgpt.site/*"]
+  },
+  "permissions": [
+    "allow-mobile-sync-snapshot",
+    "allow-apply-mobile-sync-changes"
+  ]
+}

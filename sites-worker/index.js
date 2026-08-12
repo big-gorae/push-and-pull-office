@@ -1,7 +1,12 @@
+import { handleAuthoringSync } from "./authoring-sync.js";
+
 const HTML_FALLBACK_PATH = "/index.html";
 
 export default {
   async fetch(request, env) {
+    const authoringResponse = await handleAuthoringSync(request, env);
+    if (authoringResponse) return authoringResponse;
+
     const response = await env.ASSETS.fetch(request);
     if (response.status !== 404 || request.method !== "GET") return response;
 

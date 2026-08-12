@@ -13,10 +13,12 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 from story_editor_bridge import (  # noqa: E402
     YAML_RT,
+    apply_mobile_sync_changes,
     derive_state_contract,
     duplicate_event,
     duplicate_scene,
     load_project,
+    mobile_sync_snapshot,
     revision,
     save_document,
     save_scene,
@@ -535,6 +537,87 @@ class StoryEditorBridgeTests(unittest.TestCase):
                     "expected_value_hash": owner["currentValueHash"],
                     "next_value": "남은 날짜를 제거한 문구",
                 })
+        finally:
+            temporary.cleanup()
+
+    def test_mobile_sync_snapshot_exposes_only_path_free_editable_dialogue(self):
+        snapshot = mobile_sync_snapshot(ROOT)
+
+        self.assertEqual("love_office_story_1", snapshot["projectId"])
+        self.assertEqual("ko", snapshot["defaultLocale"])
+        self.assertGreater(len(snapshot["entries"]), 100)
+        self.assertTrue(all(entry["domain"] in {"scene", "system_flow"} for entry in snapshot["entries"]))
+        self.assertTrue(all("relativePath" not in entry and "fieldPath" not in entry for entry in snapshot["entries"]))
+        self.assertTrue(all(value_hash(entry["value"]) == entry["valueHash"] for entry in snapshot["entries"]))
+
+    def test_mobile_sync_rebases_unrelated_file_revision_and_applies(self):
+        temporary, root = self.make_project_copy()
+        try:
+            key = "scenes.seo_a.email_request.nodes.request.reality.line"
+            owner = story_text_owner(root, key)
+            target = root / owner["relativePath"]
+            target.write_text("# unrelated revision\n" + target.read_text(encoding="utf-8"), encoding="utf-8")
+
+            result = apply_mobile_sync_changes(root, {"changes": [{
+                "eventId": "event_rebase_00000001",
+                "projectId": "love_office_story_1",
+                "localizationKey": key,
+                "locale": "ko",
+                "baseValue": owner["currentValue"],
+                "baseValueHash": owner["currentValueHash"],
+                "nextValue": "모바일에서 안전하게 바꾼 현실 대사입니다.",
+            }]})
+
+            self.assertEqual("applied", result["receipts"][0]["status"])
+            updated = story_text_owner(root, key)
+            self.assertEqual("모바일에서 안전하게 바꾼 현실 대사입니다.", updated["currentValue"])
+            paired = story_text_owner(
+                root,
+                "scenes.seo_a.email_request.nodes.request.perceived.line",
+            )
+            self.assertEqual(updated["currentValue"], paired["currentValue"])
+            self.assertIn("# unrelated revision", target.read_text(encoding="utf-8"))
+        finally:
+            temporary.cleanup()
+
+    def test_mobile_sync_reports_same_field_conflict_without_overwrite(self):
+        temporary, root = self.make_project_copy()
+        try:
+            key = "scenes.seo_a.email_request.nodes.request.reality.line"
+            original = story_text_owner(root, key)
+            paired_key = "scenes.seo_a.email_request.nodes.request.perceived.line"
+            paired = story_text_owner(root, paired_key)
+            local_value = "Mac에서 먼저 수정한 현실 대사입니다."
+            saved = save_story_text(root, {"edits": [
+                {
+                    "localization_key": key,
+                    "expected_revision": original["revision"],
+                    "expected_value_hash": original["currentValueHash"],
+                    "next_value": local_value,
+                },
+                {
+                    "localization_key": paired_key,
+                    "expected_revision": paired["revision"],
+                    "expected_value_hash": paired["currentValueHash"],
+                    "next_value": local_value,
+                },
+            ]})
+            self.assertTrue(saved["saved"])
+
+            result = apply_mobile_sync_changes(root, {"changes": [{
+                "eventId": "event_conflict_000001",
+                "projectId": "love_office_story_1",
+                "localizationKey": key,
+                "locale": "ko",
+                "baseValue": original["currentValue"],
+                "baseValueHash": original["currentValueHash"],
+                "nextValue": "휴대폰에서도 따로 수정한 대사입니다.",
+            }]})
+
+            receipt = result["receipts"][0]
+            self.assertEqual("conflict", receipt["status"])
+            self.assertEqual(local_value, receipt["currentValue"])
+            self.assertEqual(local_value, story_text_owner(root, key)["currentValue"])
         finally:
             temporary.cleanup()
 
