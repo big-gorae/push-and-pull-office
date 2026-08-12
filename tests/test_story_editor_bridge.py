@@ -1,4 +1,5 @@
 import copy
+import json
 import shutil
 import sys
 import tempfile
@@ -416,7 +417,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
                 if item["id"] == "workout"
             )
             self.assertEqual("운동을 마치고 새 문장을 기록했다.", variant["reality"]["line"])
-            self.assertIn("system_flows", result["documents"])
+            self.assertIn("system_flows", result["documentUpdates"])
         finally:
             temporary.cleanup()
 
@@ -547,7 +548,9 @@ class StoryEditorBridgeTests(unittest.TestCase):
 
             self.assertTrue(undo["saved"])
             self.assertFalse(undo["owner"]["translationExists"])
-            self.assertNotIn(key, undo["runtime"]["localization"]["direct_catalogs"]["en"])
+            self.assertIn("runtimePatch", undo)
+            persisted_runtime = json.loads((root / "build" / "story-runtime.json").read_text(encoding="utf-8"))
+            self.assertNotIn(key, persisted_runtime["localization"]["direct_catalogs"]["en"])
         finally:
             temporary.cleanup()
 

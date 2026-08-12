@@ -61,6 +61,7 @@
 
 | 상태 | 이전 제안 번호 | 문서 | 핵심 목적 |
 |---|---:|---|---|
+| 미구현 | - | [에디터 비차단 저장 아키텍처](editor-nonblocking-save-architecture.md) | 입력과 영속화를 분리한 공통 자동 저장, 수동 flush, 버전 승인과 증분 백엔드 |
 | 미구현 | 1 | [게임 모드·캠페인 분리](game-mode-campaign-separation.md) | 스토리·속마음·어나더 스토리의 실행 상태와 연속성 분리 |
 | 부분 구현 | 3 | [MBTI 요소·밀당 학습 피드백](push-pull-onboarding-feedback.md) | MBTI 요소용 지원 화법·두 대상·2일차 수직 슬라이스는 구현, 의미 이벤트·학습 플래그·전용 연출과 접근성은 남음 |
 | 미구현 | 4 | [엔딩·회상 갤러리](ending-memory-gallery.md) | 엔딩 수집, 장면 재생과 두 레이어 비교 |

@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "0df97224c400825426c14c5e60abc0c2d9a4292636ccdad9b4738fc292da4dac",
+  "source_sha256": "0265a774b5e18e1a3c6ed43f2507a2ac5052dd557d62d051a1f93c19ee9986b3",
   "profile": "development",
   "default_locale": "ko",
   "supported_locales": [

@@ -13,7 +13,6 @@ import hashlib
 import json
 import os
 import re
-import shutil
 import sys
 import tempfile
 from pathlib import Path
@@ -30,6 +29,33 @@ YAML_RT = YAML()
 YAML_RT.preserve_quotes = True
 YAML_RT.width = 1000
 YAML_RT.indent(mapping=2, sequence=4, offset=2)
+
+_PROJECT_CACHE: Dict[Path, tuple[tuple[tuple[str, int, int], ...], StoryProject]] = {}
+
+
+def project_signature(root: Path) -> tuple[tuple[str, int, int], ...]:
+    story_root = root.resolve() / "story"
+    return tuple((
+        str(path.relative_to(story_root)),
+        path.stat().st_mtime_ns,
+        path.stat().st_size,
+    ) for path in sorted(story_root.rglob("*.yaml")))
+
+
+def cached_story_project(root: Path) -> StoryProject:
+    root = root.resolve()
+    signature = project_signature(root)
+    cached = _PROJECT_CACHE.get(root)
+    if cached and cached[0] == signature:
+        return cached[1]
+    project = StoryProject(root / "story")
+    _PROJECT_CACHE[root] = (signature, project)
+    return project
+
+
+def store_cached_project(root: Path, project: StoryProject) -> None:
+    root = root.resolve()
+    _PROJECT_CACHE[root] = (project_signature(root), project)
 
 
 def revision(path: Path) -> str:
@@ -76,6 +102,90 @@ def document_index(root: Path, project: StoryProject) -> Dict[str, Dict[str, Dic
     return result
 
 
+EDITABLE_COLLECTIONS = (
+    "campaigns",
+    "characters",
+    "events",
+    "locales",
+    "visuals",
+    "threads",
+    "meta",
+    "routes",
+    "scenes",
+    "system_flows",
+)
+
+
+def document_meta(root: Path, document: Mapping[str, Any]) -> Dict[str, str]:
+    path = Path(str(document["_source"])).resolve()
+    return {
+        "path": str(path.relative_to(root)),
+        "revision": revision(path),
+        "source": path.read_text(encoding="utf-8"),
+    }
+
+
+def document_updates(root: Path, project: StoryProject, relative_paths: Iterable[str]) -> Dict[str, Dict[str, Dict[str, str]]]:
+    selected = {str(Path(path)) for path in relative_paths}
+    updates: Dict[str, Dict[str, Dict[str, str]]] = {}
+    for kind in EDITABLE_COLLECTIONS:
+        collection = getattr(project, kind)
+        for item_id, document in collection.items():
+            relative = str(Path(document["_source"]).resolve().relative_to(root))
+            if relative in selected:
+                updates.setdefault(kind, {})[item_id] = document_meta(root, document)
+    return updates
+
+
+def project_with_candidates(
+    root: Path,
+    candidates: Mapping[Path, str],
+    project: StoryProject | None = None,
+) -> StoryProject:
+    root = root.resolve()
+    source_project = project or cached_story_project(root)
+    candidate_project = copy.copy(source_project)
+    for kind in EDITABLE_COLLECTIONS:
+        setattr(candidate_project, kind, dict(getattr(source_project, kind)))
+    source_owners: Dict[Path, tuple[str, str]] = {}
+    for kind in EDITABLE_COLLECTIONS:
+        for item_id, document in getattr(candidate_project, kind).items():
+            source_owners[Path(document["_source"]).resolve()] = (kind, item_id)
+
+    for relative_path, yaml_text in candidates.items():
+        target = (root / relative_path).resolve()
+        document = YAML_RT.load(yaml_text)
+        if not isinstance(document, MutableMapping):
+            raise RuntimeError(f"YAML root must be a mapping: {target}")
+        document["_source"] = str(target)
+        if target == Path(candidate_project.ui["_source"]).resolve():
+            candidate_project.ui = document
+            continue
+        if target == Path(candidate_project.game_modes_document["_source"]).resolve():
+            candidate_project.game_modes_document = document
+            candidate_project.game_modes = document.get("modes", {})
+            continue
+        owner = source_owners.get(target)
+        if owner is None:
+            relative_story_path = target.relative_to(root / "story")
+            owner_kind = next((kind for kind in EDITABLE_COLLECTIONS
+                if relative_story_path.match(str(candidate_project.manifest.get("files", {}).get(kind, "<none>")))), None)
+            next_id = document.get("id")
+            if owner_kind is None or not isinstance(next_id, str):
+                raise RuntimeError(f"candidate source is not an editable story document: {relative_path}")
+            getattr(candidate_project, owner_kind)[next_id] = document
+            continue
+        kind, previous_id = owner
+        collection = getattr(candidate_project, kind)
+        next_id = document.get("id")
+        if not isinstance(next_id, str):
+            next_id = previous_id
+        if next_id != previous_id:
+            del collection[previous_id]
+        collection[next_id] = document
+    return candidate_project
+
+
 def runtime_output_path(root: Path, project: StoryProject) -> Path:
     configured = project.manifest.get("build", {}).get("runtime_output")
     if configured != "build/story-runtime.json":
@@ -89,7 +199,7 @@ def runtime_output_path(root: Path, project: StoryProject) -> Path:
 
 def load_project(root: Path) -> Dict[str, Any]:
     root = root.resolve()
-    project = StoryProject(root / "story")
+    project = cached_story_project(root)
     issues = project.validate()
     output = runtime_output_path(root, project)
     if any(issue.severity == "error" for issue in issues):
@@ -333,30 +443,14 @@ def yaml_text_for_document(target: Path, document: Mapping[str, Any]) -> str:
 
 def validate_candidate(root: Path, relative_path: Path, yaml_text: str) -> List[Dict[str, str]]:
     root = root.resolve()
-    with tempfile.TemporaryDirectory(prefix="love-office-story-") as raw_temp:
-        temp_root = Path(raw_temp)
-        temp_story = temp_root / "story"
-        shutil.copytree(root / "story", temp_story)
-        candidate = temp_root / relative_path
-        candidate.parent.mkdir(parents=True, exist_ok=True)
-        candidate.write_text(yaml_text, encoding="utf-8")
-        project = StoryProject(temp_story)
-        issues = project.validate()
-        return [issue_json(issue, temp_root, root) for issue in issues]
+    project = project_with_candidates(root, {relative_path: yaml_text})
+    return [issue_json(issue) for issue in project.validate()]
 
 
 def validate_candidates(root: Path, candidates: Mapping[Path, str]) -> List[Dict[str, str]]:
     root = root.resolve()
-    with tempfile.TemporaryDirectory(prefix="love-office-story-") as raw_temp:
-        temp_root = Path(raw_temp)
-        temp_story = temp_root / "story"
-        shutil.copytree(root / "story", temp_story)
-        for relative_path, yaml_text in candidates.items():
-            candidate = temp_root / relative_path
-            candidate.parent.mkdir(parents=True, exist_ok=True)
-            candidate.write_text(yaml_text, encoding="utf-8")
-        project = StoryProject(temp_story)
-        return [issue_json(issue, temp_root, root) for issue in project.validate()]
+    project = project_with_candidates(root, candidates)
+    return [issue_json(issue) for issue in project.validate()]
 
 
 def atomic_write_text(target: Path, text: str) -> None:
@@ -371,6 +465,62 @@ def atomic_write_text(target: Path, text: str) -> None:
     finally:
         if os.path.exists(temporary_name):
             os.unlink(temporary_name)
+
+
+def json_patch(before: Any, after: Any, path: str = "") -> List[Dict[str, Any]]:
+    if before == after:
+        return []
+    if isinstance(before, Mapping) and isinstance(after, Mapping):
+        operations: List[Dict[str, Any]] = []
+        for key in sorted(set(before) - set(after)):
+            token = str(key).replace("~", "~0").replace("/", "~1")
+            operations.append({"op": "remove", "path": f"{path}/{token}"})
+        for key in sorted(after):
+            token = str(key).replace("~", "~0").replace("/", "~1")
+            child_path = f"{path}/{token}"
+            if key not in before:
+                operations.append({"op": "add", "path": child_path, "value": after[key]})
+            else:
+                operations.extend(json_patch(before[key], after[key], child_path))
+        return operations
+    return [{"op": "replace", "path": path or "/", "value": after}]
+
+
+def runtime_response(bundle: Mapping[str, Any], patch: Mapping[str, Any] | None) -> Dict[str, Any]:
+    return {"runtimePatch": patch} if patch is not None else {"runtime": bundle}
+
+
+def commit_validated_candidates(
+    root: Path,
+    candidates: Mapping[Path, str],
+    project: StoryProject,
+) -> tuple[Dict[str, Any], Dict[str, Any] | None]:
+    absolute_candidates = {(root / path).resolve(): text for path, text in candidates.items()}
+    backups = {target: target.read_text(encoding="utf-8") for target in absolute_candidates}
+    runtime_path = runtime_output_path(root, project)
+    runtime_backup = runtime_path.read_text(encoding="utf-8") if runtime_path.exists() else None
+    before_bundle = json.loads(runtime_backup) if runtime_backup else None
+    try:
+        for target, yaml_text in absolute_candidates.items():
+            atomic_write_text(target, yaml_text)
+        bundle = project.build_bundle()
+        atomic_write_text(runtime_path, render_json(bundle))
+        patch = None if before_bundle is None else {
+            "baseSourceSha256": before_bundle.get("source_sha256"),
+            "sourceSha256": bundle.get("source_sha256"),
+            "operations": json_patch(before_bundle, bundle),
+        }
+        store_cached_project(root, project)
+        return bundle, patch
+    except Exception:
+        for target, before in backups.items():
+            atomic_write_text(target, before)
+        if runtime_backup is None:
+            if runtime_path.exists():
+                runtime_path.unlink()
+        else:
+            atomic_write_text(runtime_path, runtime_backup)
+        raise
 
 
 def clean_document(value: Mapping[str, Any]) -> Dict[str, Any]:
@@ -398,7 +548,7 @@ def duplicate_target(source: Path, new_id: str) -> Path:
 
 def find_scene_path(root: Path, scene_id: str) -> Path:
     root = root.resolve()
-    project = StoryProject(root / "story")
+    project = cached_story_project(root)
     scene = project.scenes.get(scene_id)
     if scene is None:
         raise RuntimeError(f"unknown scene: {scene_id}")
@@ -413,7 +563,7 @@ def find_document_path(root: Path, kind: str, document_id: str) -> Path:
     allowed = {"campaigns", "characters", "events", "locales", "visuals", "threads", "meta", "routes", "system_flows"}
     if kind not in allowed:
         raise RuntimeError(f"unsupported editable document kind: {kind}")
-    project = StoryProject(root.resolve() / "story")
+    project = cached_story_project(root)
     collection = getattr(project, kind)
     document = collection.get(document_id)
     if document is None:
@@ -543,9 +693,14 @@ def yaml_source_locator(target: Path, field_path: str, *, allow_missing_string: 
     return {"fieldPath": field_path, "line": line, "column": column}
 
 
-def story_text_owner(root: Path, localization_key: str, locale: str | None = None) -> Dict[str, Any]:
+def story_text_owner(
+    root: Path,
+    localization_key: str,
+    locale: str | None = None,
+    project: StoryProject | None = None,
+) -> Dict[str, Any]:
     root = root.resolve()
-    project = StoryProject(root / "story")
+    project = project or cached_story_project(root)
     entry = collect_localizable_entries(project).get(localization_key)
     if entry is None:
         raise RuntimeError(f"UNKNOWN_STORY_TEXT: {localization_key}")
@@ -649,6 +804,7 @@ def save_story_text(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
     edits = raw_edits if isinstance(raw_edits, Sequence) and not isinstance(raw_edits, (str, bytes)) else [payload]
     if not edits:
         raise RuntimeError("story text payload has no edits")
+    project = cached_story_project(root)
     prepared: List[Dict[str, Any]] = []
     seen_fields: set[tuple[str, str]] = set()
     owner_requests: List[tuple[str, str | None]] = []
@@ -667,7 +823,7 @@ def save_story_text(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
             raise RuntimeError("story text payload has an invalid locale")
         if not delete and (not isinstance(next_value, str) or not next_value.strip()):
             raise RuntimeError("VALIDATION_FAILED: text must not be empty")
-        owner = story_text_owner(root, localization_key, locale)
+        owner = story_text_owner(root, localization_key, locale, project)
         source_relative_path = edit.get("source_relative_path")
         source_field_path = edit.get("source_field_path")
         source_edit = source_relative_path is not None or source_field_path is not None
@@ -735,13 +891,11 @@ def save_story_text(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
     from io import StringIO
 
     documents: Dict[str, MutableMapping[str, Any]] = {}
-    before_text: Dict[str, str] = {}
     for relative_path in sorted({edit["relativePath"] for edit in prepared}):
         target = (root / relative_path).resolve()
         story_root = (root / "story").resolve()
         if story_root not in target.parents or not target.is_file():
             raise RuntimeError("FIELD_NOT_EDITABLE: source path escaped story root")
-        before_text[relative_path] = target.read_text(encoding="utf-8")
         with target.open("r", encoding="utf-8") as handle:
             document = YAML_RT.load(handle)
         if not isinstance(document, MutableMapping):
@@ -767,36 +921,27 @@ def save_story_text(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
         buffer = StringIO()
         YAML_RT.dump(document, buffer)
         candidates[Path(relative_path)] = buffer.getvalue()
-    issues = validate_candidates(root, candidates)
+    candidate_project = project_with_candidates(root, candidates, project)
+    project_issues = candidate_project.validate()
+    issues = [issue_json(issue) for issue in project_issues]
     if any(issue["severity"] == "error" for issue in issues):
         return {
             "saved": False,
             "errorCode": "VALIDATION_FAILED",
             "issues": issues,
-            "owners": [story_text_owner(root, key, locale) for key, locale in owner_requests],
+            "owners": [story_text_owner(root, key, locale, project) for key, locale in owner_requests],
         }
 
-    written_paths: List[str] = []
-    try:
-        for relative_path, yaml_text in sorted((str(path), text) for path, text in candidates.items()):
-            atomic_write_text(root / relative_path, yaml_text)
-            written_paths.append(relative_path)
-        project = StoryProject(root / "story")
-        project_issues = project.validate()
-        if any(issue.severity == "error" for issue in project_issues):
-            raise RuntimeError("VALIDATION_FAILED: saved story did not validate")
-        bundle = project.build_bundle()
-        atomic_write_text(runtime_output_path(root, project), render_json(bundle))
-    except Exception:
-        for relative_path in written_paths:
-            atomic_write_text(root / relative_path, before_text[relative_path])
-        raise
-    updated_owners = [story_text_owner(root, key, locale) for key, locale in owner_requests]
+    if any(issue.severity == "error" for issue in project_issues):
+        raise RuntimeError("VALIDATION_FAILED: saved story did not validate")
+    bundle, runtime_patch = commit_validated_candidates(root, candidates, candidate_project)
+    written_paths = [str(path) for path in candidates]
+    updated_owners = [story_text_owner(root, key, locale, candidate_project) for key, locale in owner_requests]
     return {
         "saved": True,
         "issues": [issue_json(issue) for issue in project_issues],
-        "runtime": bundle,
-        "documents": document_index(root, project),
+        **runtime_response(bundle, runtime_patch),
+        "documentUpdates": document_updates(root, candidate_project, written_paths),
         "owner": updated_owners[0],
         "owners": updated_owners,
         "changes": [{
@@ -818,10 +963,15 @@ def validate_scene(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
     scene = payload.get("scene")
     if not isinstance(scene, Mapping) or not isinstance(scene.get("id"), str):
         raise RuntimeError("scene payload is invalid")
-    target = find_scene_path(root, scene["id"])
+    project = cached_story_project(root)
+    source_scene = project.scenes.get(scene["id"])
+    if source_scene is None:
+        raise RuntimeError(f"unknown scene: {scene['id']}")
+    target = Path(source_scene["_source"]).resolve()
     yaml_text = yaml_text_for_scene(target, scene)
     relative = target.relative_to(root)
-    issues = validate_candidate(root, relative, yaml_text)
+    candidate_project = project_with_candidates(root, {relative: yaml_text}, project)
+    issues = [issue_json(issue) for issue in candidate_project.validate()]
     return {
         "issues": issues,
         "source": yaml_text,
@@ -841,36 +991,30 @@ def save_scene(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
     if not isinstance(expected_revision, str):
         raise RuntimeError("revision is required")
 
-    target = find_scene_path(root, scene["id"])
+    project = cached_story_project(root)
+    source_scene = project.scenes.get(scene["id"])
+    if source_scene is None:
+        raise RuntimeError(f"unknown scene: {scene['id']}")
+    target = Path(source_scene["_source"]).resolve()
     current_revision = revision(target)
     if current_revision != expected_revision:
         raise RuntimeError("REVISION_CONFLICT: source file changed outside the editor")
 
     yaml_text = yaml_text_for_scene(target, scene)
-    issues = validate_candidate(root, target.relative_to(root), yaml_text)
-    errors = [issue for issue in issues if issue["severity"] == "error"]
+    relative = target.relative_to(root)
+    candidate_project = project_with_candidates(root, {relative: yaml_text}, project)
+    project_issues = candidate_project.validate()
+    issues = [issue_json(issue) for issue in project_issues]
+    errors = [issue for issue in project_issues if issue.severity == "error"]
     if errors:
         return {"saved": False, "issues": issues, "source": yaml_text}
 
-    descriptor, temporary_name = tempfile.mkstemp(prefix=f".{target.name}.", suffix=".tmp", dir=target.parent)
-    try:
-        with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
-            handle.write(yaml_text)
-            handle.flush()
-            os.fsync(handle.fileno())
-        os.replace(temporary_name, target)
-    finally:
-        if os.path.exists(temporary_name):
-            os.unlink(temporary_name)
-
-    project = StoryProject(root / "story")
-    bundle = project.build_bundle()
-    write_json(runtime_output_path(root, project), bundle)
-    updated_document = document_index(root, project)["scenes"][scene["id"]]
+    bundle, runtime_patch = commit_validated_candidates(root, {relative: yaml_text}, candidate_project)
+    updated_document = document_meta(root, candidate_project.scenes[scene["id"]])
     return {
         "saved": True,
-        "issues": [issue_json(issue) for issue in project.validate()],
-        "runtime": bundle,
+        "issues": issues,
+        **runtime_response(bundle, runtime_patch),
         "document": updated_document,
     }
 
@@ -884,34 +1028,30 @@ def save_document(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
         raise RuntimeError("document payload is invalid")
     if not isinstance(expected_revision, str):
         raise RuntimeError("revision is required")
-    target = find_document_path(root, kind, document["id"])
+    if kind not in EDITABLE_COLLECTIONS:
+        raise RuntimeError(f"unsupported editable document kind: {kind}")
+    project = cached_story_project(root)
+    source_document = getattr(project, kind).get(document["id"])
+    if source_document is None:
+        raise RuntimeError(f"unknown {kind} document: {document['id']}")
+    target = Path(source_document["_source"]).resolve()
     if revision(target) != expected_revision:
         raise RuntimeError("REVISION_CONFLICT: source file changed outside the editor")
     yaml_text = yaml_text_for_document(target, document)
-    issues = validate_candidate(root, target.relative_to(root), yaml_text)
-    errors = [issue for issue in issues if issue["severity"] == "error"]
+    relative = target.relative_to(root)
+    candidate_project = project_with_candidates(root, {relative: yaml_text}, project)
+    project_issues = candidate_project.validate()
+    issues = [issue_json(issue) for issue in project_issues]
+    errors = [issue for issue in project_issues if issue.severity == "error"]
     if errors:
         return {"saved": False, "issues": issues, "source": yaml_text}
 
-    descriptor, temporary_name = tempfile.mkstemp(prefix=f".{target.name}.", suffix=".tmp", dir=target.parent)
-    try:
-        with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
-            handle.write(yaml_text)
-            handle.flush()
-            os.fsync(handle.fileno())
-        os.replace(temporary_name, target)
-    finally:
-        if os.path.exists(temporary_name):
-            os.unlink(temporary_name)
-
-    project = StoryProject(root / "story")
-    bundle = project.build_bundle()
-    write_json(runtime_output_path(root, project), bundle)
-    updated_document = document_index(root, project)[kind][document["id"]]
+    bundle, runtime_patch = commit_validated_candidates(root, {relative: yaml_text}, candidate_project)
+    updated_document = document_meta(root, getattr(candidate_project, kind)[document["id"]])
     return {
         "saved": True,
-        "issues": [issue_json(issue) for issue in project.validate()],
-        "runtime": bundle,
+        "issues": issues,
+        **runtime_response(bundle, runtime_patch),
         "document": updated_document,
     }
 
@@ -921,7 +1061,7 @@ def commit_new_documents(root: Path, candidates: Mapping[Path, str]) -> tuple[St
     try:
         for target, yaml_text in candidates.items():
             atomic_write_text(target, yaml_text)
-        project = StoryProject(root / "story")
+        project = cached_story_project(root)
         issues = project.validate()
         errors = [issue for issue in issues if issue.severity == "error"]
         if errors:
@@ -947,7 +1087,7 @@ def duplicate_scene(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
     if not isinstance(source_id, str) or not isinstance(title, str) or not title.strip():
         raise RuntimeError("복제할 장면과 새 제목이 필요합니다")
 
-    project = StoryProject(root / "story")
+    project = cached_story_project(root)
     if new_id in project.scenes:
         raise RuntimeError(f"이미 존재하는 장면 ID입니다: {new_id}")
     source = project.scenes.get(source_id)
@@ -1051,7 +1191,7 @@ def duplicate_event(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
     if not isinstance(source_id, str) or not isinstance(title, str) or not title.strip():
         raise RuntimeError("복제할 사건과 새 제목이 필요합니다")
 
-    project = StoryProject(root / "story")
+    project = cached_story_project(root)
     if new_id in project.events:
         raise RuntimeError(f"이미 존재하는 사건 ID입니다: {new_id}")
     source = project.events.get(source_id)
@@ -1106,13 +1246,13 @@ def duplicate_event(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
 
 def validate_project(root: Path) -> Dict[str, Any]:
     root = root.resolve()
-    project = StoryProject(root / "story")
+    project = cached_story_project(root)
     return {"issues": [issue_json(issue) for issue in project.validate()]}
 
 
 def build_runtime(root: Path) -> Dict[str, Any]:
     root = root.resolve()
-    project = StoryProject(root / "story")
+    project = cached_story_project(root)
     issues = project.validate()
     errors = [issue for issue in issues if issue.severity == "error"]
     if errors:
@@ -1124,9 +1264,66 @@ def build_runtime(root: Path) -> Dict[str, Any]:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=["load", "validate", "validate-scene", "save-scene", "save-document", "duplicate-scene", "duplicate-event", "text-owner", "save-text", "build"])
+    parser.add_argument("command", choices=["load", "validate", "validate-scene", "save-scene", "save-document", "duplicate-scene", "duplicate-event", "text-owner", "save-text", "build", "serve"])
     parser.add_argument("--root", required=True)
     return parser.parse_args()
+
+
+def execute_command(root: Path, command: str, payload: Mapping[str, Any] | None = None) -> Dict[str, Any]:
+    payload = payload or {}
+    if command == "load":
+        result = load_project(root)
+    elif command == "validate":
+        result = validate_project(root)
+    elif command == "validate-scene":
+        result = validate_scene(root, payload)
+    elif command == "save-scene":
+        result = save_scene(root, payload)
+    elif command == "save-document":
+        result = save_document(root, payload)
+    elif command == "duplicate-scene":
+        result = duplicate_scene(root, payload)
+    elif command == "duplicate-event":
+        result = duplicate_event(root, payload)
+    elif command == "text-owner":
+        localization_key = payload.get("localization_key")
+        locale = payload.get("locale")
+        if not isinstance(localization_key, str):
+            raise RuntimeError("localization_key is required")
+        if locale is not None and not isinstance(locale, str):
+            raise RuntimeError("locale must be a string")
+        result = story_text_owner(root, localization_key, locale)
+    elif command == "save-text":
+        result = save_story_text(root, payload)
+    elif command == "build":
+        result = build_runtime(root)
+    else:
+        raise RuntimeError(f"알 수 없는 스토리 명령입니다: {command}")
+    return result
+
+
+def serve(root: Path) -> int:
+    """Serve newline-delimited requests so the editor can reuse the parsed project.
+
+    Each response is isolated: validation or revision failures are returned to the
+    caller without terminating the worker, while the next request can continue.
+    """
+    for raw_line in sys.stdin:
+        try:
+            request = json.loads(raw_line)
+            if not isinstance(request, Mapping):
+                raise RuntimeError("스토리 워커 요청은 JSON 객체여야 합니다")
+            command = request.get("command")
+            payload = request.get("payload")
+            if not isinstance(command, str):
+                raise RuntimeError("스토리 워커 command가 필요합니다")
+            if payload is not None and not isinstance(payload, Mapping):
+                raise RuntimeError("스토리 워커 payload는 JSON 객체여야 합니다")
+            response = {"ok": True, "result": execute_command(root, command, payload)}
+        except Exception as exc:
+            response = {"ok": False, "error": str(exc)}
+        print(json.dumps(response, ensure_ascii=False), flush=True)
+    return 0
 
 
 def main() -> int:
@@ -1135,36 +1332,13 @@ def main() -> int:
     if not (root / "story" / "manifest.yaml").is_file():
         raise RuntimeError("selected folder is not a story project")
 
+    if args.command == "serve":
+        return serve(root)
+
     payload: Dict[str, Any] = {}
     if args.command in {"validate-scene", "save-scene", "save-document", "duplicate-scene", "duplicate-event", "text-owner", "save-text"}:
         payload = json.load(sys.stdin)
-
-    if args.command == "load":
-        result = load_project(root)
-    elif args.command == "validate":
-        result = validate_project(root)
-    elif args.command == "validate-scene":
-        result = validate_scene(root, payload)
-    elif args.command == "save-scene":
-        result = save_scene(root, payload)
-    elif args.command == "save-document":
-        result = save_document(root, payload)
-    elif args.command == "duplicate-scene":
-        result = duplicate_scene(root, payload)
-    elif args.command == "duplicate-event":
-        result = duplicate_event(root, payload)
-    elif args.command == "text-owner":
-        localization_key = payload.get("localization_key")
-        locale = payload.get("locale")
-        if not isinstance(localization_key, str):
-            raise RuntimeError("localization_key is required")
-        if locale is not None and not isinstance(locale, str):
-            raise RuntimeError("locale must be a string")
-        result = story_text_owner(root, localization_key, locale)
-    elif args.command == "save-text":
-        result = save_story_text(root, payload)
-    else:
-        result = build_runtime(root)
+    result = execute_command(root, args.command, payload)
     print(json.dumps(result, ensure_ascii=False))
     return 0
 

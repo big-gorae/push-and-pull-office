@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { deleteNodeAndReconnect, deletionReplacement, incomingReferenceCount } from "../sceneEditing";
+import { deleteNodeAndReconnect, deletionReplacement, incomingReferenceCount, insertNodeCopyAfter } from "../sceneEditing";
 import type { Scene } from "../types";
 
 function fixtureScene(): Scene {
@@ -58,5 +58,33 @@ describe("scene dialogue deletion", () => {
   it("does not offer deletion when no safe following screen exists", () => {
     const scene = fixtureScene();
     expect(deletionReplacement(scene, "closing")).toBeUndefined();
+  });
+});
+
+describe("scene dialogue copy and paste", () => {
+  it("deep-copies a node after the target and preserves the target's former continuation", () => {
+    const scene = fixtureScene();
+    const source = scene.nodes.remove_me;
+
+    const copied = insertNodeCopyAfter(scene, source, "opening", "copied_dialogue");
+
+    expect(scene.node_order).toEqual(["opening", "copied_dialogue", "choice", "remove_me", "closing"]);
+    expect(scene.nodes.opening.next).toBe("copied_dialogue");
+    expect(copied).toEqual({ ...source, id: "copied_dialogue", next: "remove_me" });
+    expect(copied).not.toBe(source);
+    expect(copied.perceived).not.toBe(source.perceived);
+  });
+
+  it("remaps copied self-references to the new node id", () => {
+    const scene = fixtureScene();
+    const source = scene.nodes.choice;
+    source.options![0].next = "choice";
+    source.options![0].self_development!.converges_at = "choice";
+
+    const copied = insertNodeCopyAfter(scene, source, "remove_me", "copied_choice");
+
+    expect(copied.options?.[0].next).toBe("copied_choice");
+    expect(copied.options?.[0].self_development?.converges_at).toBe("copied_choice");
+    expect(source.options?.[0].next).toBe("choice");
   });
 });

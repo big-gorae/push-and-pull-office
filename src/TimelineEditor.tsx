@@ -1,5 +1,9 @@
-import { invoke } from "@tauri-apps/api/core";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useDocumentAutosave } from "./editorAutosave";
+import { editorDraftJournal, useDraftJournal } from "./editorDraftJournal";
+import { editorSaveRepository } from "./editorRepository";
+import { SaveFailure, type DocumentSnapshot, type SaveCommitResult, type SaveCompletion, type SaveState } from "./editorSave";
+import { resolveRuntimeUpdate, type RuntimePatch, type RuntimeUpdate } from "./runtimePatch";
 import { ConditionEditor, EffectEditor } from "./App";
 import {
   applyEffect,
@@ -59,13 +63,18 @@ type Props = {
   mode: ViewMode;
   onMode: (mode: ViewMode) => void;
   onState: (state: RuntimeState) => void;
-  onPayload: (payload: ProjectPayload) => void;
+  onPayload: Dispatch<SetStateAction<ProjectPayload | null>>;
   onIssues: (issues: ValidationIssue[]) => void;
   onStatus: (status: string) => void;
   onOpenScene: (sceneId: string) => void;
   onDuplicateEvent: (event: TimelineEvent) => void;
   requestedEvent: { id: string; token: number } | null;
   onDocumentActivity: (activity: DocumentActivity) => void;
+};
+
+type EventCommitResult = SaveCommitResult & RuntimeUpdate & {
+  document: ProjectPayload["documents"]["events"][string];
+  issues: ValidationIssue[];
 };
 
 function timelineStatus(runtime: Runtime, event: TimelineEvent, state: RuntimeState, day: number) {
@@ -104,9 +113,9 @@ export default function TimelineEditor({
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
   const [savedAt, setSavedAt] = useState<number>();
-  const lastAutoSaveAttempt = useRef(-1);
   const draftVersionRef = useRef(0);
   const initialRecoveryChecked = useRef(false);
+  const recoveredJournalKeys = useRef(new Set<string>());
 
   useEffect(() => {
     const firstDay = Math.floor((selectedDay - 1) / 5);
@@ -158,7 +167,6 @@ export default function TimelineEditor({
     setEventRevision(revision);
     setEventDirty(recovered);
     draftVersionRef.current = 0;
-    lastAutoSaveAttempt.current = -1;
     setSaveError(false);
     const day = Math.max(event.window.days[0], Math.min(selectedDay, event.window.days[1]));
     setSelectedDay(day);
@@ -178,7 +186,6 @@ export default function TimelineEditor({
       setEventRevision(payload.documents.events[nextEvent.id]?.revision || "");
       setEventDirty(false);
       draftVersionRef.current = 0;
-      lastAutoSaveAttempt.current = -1;
       setSaveError(false);
       setSelectedDay(nextEvent.window.days[0]);
       setSelectedSlot(nextEvent.window.slots[0]);
@@ -188,7 +195,6 @@ export default function TimelineEditor({
       setEventRevision("");
       setEventDirty(false);
       draftVersionRef.current = 0;
-      lastAutoSaveAttempt.current = -1;
     }
   };
 
@@ -210,52 +216,69 @@ export default function TimelineEditor({
     setSaveError(false);
   };
 
-  const saveEvent = useCallback(async () => {
-    if (!eventDraft || !eventRevision) return;
-    setSaving(true);
-    setSaveError(false);
-    onStatus("시간 이벤트를 검증하고 저장하는 중…");
+  const commitEvent = useCallback(async (snapshot: DocumentSnapshot<TimelineEvent>): Promise<EventCommitResult> => {
+    onStatus("시간 이벤트를 백그라운드에서 검증하고 저장하는 중…");
     try {
-      const result = await invoke<{
+      const result = await editorSaveRepository.saveDocument<{
         saved: boolean;
         issues: ValidationIssue[];
         runtime?: Runtime;
+        runtimePatch?: RuntimePatch;
         document?: ProjectPayload["documents"]["events"][string];
-      }>("save_document", {
-        root: payload.root,
-        kind: "events",
-        document: eventDraft,
-        revision: eventRevision,
-      });
+      }>(snapshot.projectRoot, "events", snapshot.value, snapshot.baseRevision);
       onIssues(result.issues);
-      if (!result.saved || !result.runtime || !result.document) {
+      if (!result.saved || !result.document || !result.runtime && !result.runtimePatch) {
         onStatus("시간 이벤트에 오류가 있어 저장하지 않았습니다.");
-        setSaveError(true);
-        return;
+        throw new SaveFailure("검증 오류 · 마지막 정상 파일은 보존됨", "validation");
       }
-      const nextPayload: ProjectPayload = {
-        ...payload,
-        runtime: result.runtime,
-        documents: {
-          ...payload.documents,
-          events: { ...payload.documents.events, [eventDraft.id]: result.document },
-        },
-      };
-      onPayload(nextPayload);
-      setEventDraft(clone(result.runtime.events[eventDraft.id]));
-      setEventRevision(result.document.revision);
-      setEventDirty(false);
-      setSavedAt(Date.now());
-      localStorage.removeItem(`love-office-event-draft:${payload.root}:${eventDraft.id}`);
-      onStatus("시간 이벤트 YAML과 런타임을 저장했습니다.");
+      return { revision: result.document.revision, runtime: result.runtime, runtimePatch: result.runtimePatch, document: result.document, issues: result.issues };
     } catch (error) {
+      if (error instanceof SaveFailure) throw error;
       const message = String(error);
-      setSaveError(true);
       onStatus(message.includes("REVISION_CONFLICT") ? "외부에서 이벤트 파일이 변경되었습니다. 프로젝트를 다시 여세요." : `이벤트 저장 실패: ${message}`);
-    } finally {
-      setSaving(false);
+      throw new SaveFailure(message, message.includes("REVISION_CONFLICT") ? "conflict" : "transient");
     }
-  }, [eventDraft, eventRevision, onIssues, onPayload, onStatus, payload]);
+  }, [onIssues, onStatus]);
+
+  const handleEventCommitted = useCallback((result: EventCommitResult, completion: SaveCompletion<TimelineEvent>) => {
+    const eventId = completion.snapshot.value.id;
+    onPayload((current) => current ? {
+      ...current,
+      runtime: resolveRuntimeUpdate(current.runtime, result),
+      documents: {
+        ...current.documents,
+        events: { ...current.documents.events, [eventId]: result.document },
+      },
+    } : current);
+    if (eventDraft?.id === eventId) setEventRevision(result.revision);
+    if (completion.isLatest && eventDraft?.id === eventId) {
+      setEventDirty(false);
+      localStorage.removeItem(`love-office-event-draft:${completion.snapshot.projectRoot}:${eventId}`);
+      onStatus("시간 이벤트 YAML과 런타임을 저장했습니다.");
+    } else {
+      onStatus("시간 이벤트의 이전 변경을 저장했습니다. 최신 입력은 계속 보존합니다.");
+    }
+  }, [eventDraft?.id, onPayload, onStatus]);
+
+  const handleSaveState = useCallback((saveState: SaveState) => {
+    setSaving(saveState.phase === "saving" || saveState.phase === "queued");
+    setSaveError(saveState.phase === "error" || saveState.phase === "conflict");
+    if (saveState.savedAt) setSavedAt(saveState.savedAt);
+  }, []);
+
+  const { flush: saveEvent } = useDocumentAutosave<TimelineEvent, EventCommitResult>({
+    slot: "timeline",
+    active,
+    projectRoot: payload.root,
+    documentKey: `event:${eventDraft?.id || "none"}`,
+    revision: eventRevision,
+    dirty: eventDirty,
+    version: draftVersionRef.current,
+    read: () => eventDraft,
+    commit: commitEvent,
+    onCommitted: handleEventCommitted,
+    onState: handleSaveState,
+  });
 
   useEffect(() => {
     if (!eventDraft) return;
@@ -270,49 +293,36 @@ export default function TimelineEditor({
     });
   }, [eventDirty, eventDraft, onDocumentActivity, payload.documents.events, saveError, savedAt, saving]);
 
-  useEffect(() => {
-    if (!eventDraft) return;
-    const key = `love-office-event-draft:${payload.root}:${eventDraft.id}`;
-    if (!eventDirty) {
-      localStorage.removeItem(key);
-      return;
-    }
-    const timer = window.setTimeout(() => {
-      localStorage.setItem(key, JSON.stringify({ revision: eventRevision, event: eventDraft }));
-    }, 300);
-    return () => window.clearTimeout(timer);
-  }, [eventDirty, eventDraft, eventRevision, payload.root]);
+  const journalKey = `draft:${payload.root}:event:${eventDraft?.id || "none"}`;
+  useDraftJournal({
+    enabled: eventDirty && Boolean(eventDraft && eventRevision),
+    key: journalKey,
+    projectRoot: payload.root,
+    baseRevision: eventRevision,
+    editVersion: draftVersionRef.current,
+    value: eventDraft,
+  });
 
   useEffect(() => {
-    const preserveDraft = () => {
-      if (eventDirty && eventDraft) {
-        localStorage.setItem(`love-office-event-draft:${payload.root}:${eventDraft.id}`, JSON.stringify({ revision: eventRevision, event: eventDraft }));
+    if (!eventDraft || !eventRevision) return;
+    const identity = `${journalKey}:${eventRevision}`;
+    if (recoveredJournalKeys.current.has(identity)) return;
+    recoveredJournalKeys.current.add(identity);
+    let cancelled = false;
+    void editorDraftJournal.read<TimelineEvent>(journalKey).then((record) => {
+      if (cancelled || !record || record.baseRevision !== eventRevision || record.value.id !== eventDraft.id) return;
+      if (JSON.stringify(record.value) === JSON.stringify(runtime.events[eventDraft.id])) return;
+      if (!window.confirm(`저장되지 않은 '${eventDraft.title}' 비동기 복구 초안이 있습니다. 복구할까요?`)) {
+        void editorDraftJournal.remove(journalKey);
+        return;
       }
-    };
-    window.addEventListener("beforeunload", preserveDraft);
-    return () => window.removeEventListener("beforeunload", preserveDraft);
-  }, [eventDirty, eventDraft, eventRevision, payload.root]);
-
-  useEffect(() => {
-    if (!eventDirty || !eventDraft || saving) return;
-    const version = draftVersionRef.current;
-    if (version === lastAutoSaveAttempt.current) return;
-    const timer = window.setTimeout(() => {
-      lastAutoSaveAttempt.current = version;
-      void saveEvent();
-    }, 1000);
-    return () => window.clearTimeout(timer);
-  }, [eventDirty, eventDraft, saveEvent, saving]);
-
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (!active || !(event.metaKey || event.ctrlKey) || event.key.toLocaleLowerCase() !== "s") return;
-      event.preventDefault();
-      if (eventDirty && !saving) void saveEvent();
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [active, eventDirty, saveEvent, saving]);
+      draftVersionRef.current = Math.max(draftVersionRef.current, record.editVersion);
+      setEventDraft(record.value);
+      setEventDirty(true);
+      onStatus("비동기 복구 journal에서 시간 이벤트 초안을 복구했습니다.");
+    }).catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [eventDraft?.id, eventRevision, journalKey, onStatus, runtime.events]);
 
   const setTimelineTime = (next: RuntimeState, day: number, slot: TimeSlot) => {
     setPath(next, "progress.time.day", day);
@@ -498,7 +508,7 @@ export default function TimelineEditor({
           <button type="button" className="primary-button" onClick={runSelectedEvent} disabled={!verdict?.eligible}>사건 실행</button>
           {eventDraft.scene && <button type="button" onClick={() => onOpenScene(eventDraft.scene!)}>연결 장면 열기</button>}
           <button type="button" onClick={() => onDuplicateEvent(eventDraft)} disabled={eventDirty || saving}>사건 복제</button>
-          <button type="button" onClick={saveEvent} disabled={!eventDirty || saving}>{saving ? "저장 중…" : "지금 저장 ⌘S"}</button>
+          <button type="button" onClick={() => void saveEvent()} disabled={!eventDirty}>{saving ? "저장 중 · 최신 변경 예약 가능" : "지금 저장 ⌘S"}</button>
         </div>
         <label><span>제목</span><input value={eventDraft.title} onChange={(event) => updateEvent((draft) => { draft.title = event.target.value; })} /></label>
         <div className="event-field-grid">

@@ -10,7 +10,7 @@
     ]
   },
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "0df97224c400825426c14c5e60abc0c2d9a4292636ccdad9b4738fc292da4dac",
+  "source_sha256": "0265a774b5e18e1a3c6ed43f2507a2ac5052dd557d62d051a1f93c19ee9986b3",
   "enums": {
     "perceived_state": [
       "push",
@@ -8651,7 +8651,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line",
-        "source": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
+        "source": "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -8671,7 +8671,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line",
-        "source": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
+        "source": "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -8971,7 +8971,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line",
-        "source": "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "source": "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -8982,7 +8982,7 @@
         "context": {
           "sceneId": "common.day_01_company_meeting",
           "nodeId": "oh_se_jin_scope",
-          "speakerId": "member.oh_se_jin",
+          "speakerId": "member.jeong_da_eun",
           "layer": "perceived"
         },
         "placeholders": [],
@@ -8991,7 +8991,7 @@
       },
       "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": {
         "key": "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line",
-        "source": "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "source": "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -9002,7 +9002,7 @@
         "context": {
           "sceneId": "common.day_01_company_meeting",
           "nodeId": "oh_se_jin_scope",
-          "speakerId": "member.oh_se_jin",
+          "speakerId": "member.jeong_da_eun",
           "layer": "reality"
         },
         "placeholders": [],
@@ -24935,8 +24935,8 @@
       "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks.reality.line": "고마워요, 윤서아 씨. 한 부가 부족한 걸 바로 챙겨 줬네요. 저는 이걸로 보고, 추가 출력은 회의 끝나고 해도 됩니다.",
       "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.perceived.line": "(먼저 챙긴 걸 알아주고 이름까지 불렀으니 긴장도 풀리겠지. 여유 있는 상사처럼 보였을 거야.)",
       "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.reality.line": "(사원증에 윤서아라고 적혀 있었지. 자료도 생겼으니 시작하자.)",
-      "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
-      "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
+      "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다",
+      "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다",
       "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.perceived.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
       "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.reality.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
       "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts_inner.perceived.line": "(시험은 끝났다는 표정이군. 내 답을 인정하고 한발 물러났네.)",
@@ -24951,8 +24951,8 @@
       "scenes.common.day_01_company_meeting.nodes.min_kyung_question_inner.reality.line": "(승인이 늦으면 제작 일정이 다 밀려. 근거는 지금 확인해야 해.)",
       "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
       "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
-      "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
-      "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+      "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다",
+      "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다",
       "scenes.common.day_01_company_meeting.nodes.seo_a_closing.perceived.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
       "scenes.common.day_01_company_meeting.nodes.seo_a_closing.reality.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
       "scenes.common.day_01_company_meeting.nodes.seo_a_closing_inner.perceived.line": "(내가 불편하지 않게 끝까지 챙겨 주려는 건가. 책임감도 있고 세심하네.)",
@@ -26211,8 +26211,8 @@
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks.reality.line": "고마워요, 윤서아 씨. 한 부가 부족한 걸 바로 챙겨 줬네요. 저는 이걸로 보고, 추가 출력은 회의 끝나고 해도 됩니다.",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.perceived.line": "(먼저 챙긴 걸 알아주고 이름까지 불렀으니 긴장도 풀리겠지. 여유 있는 상사처럼 보였을 거야.)",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.reality.line": "(사원증에 윤서아라고 적혀 있었지. 자료도 생겼으니 시작하자.)",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.perceived.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.reality.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts_inner.perceived.line": "(시험은 끝났다는 표정이군. 내 답을 인정하고 한발 물러났네.)",
@@ -26227,8 +26227,8 @@
         "scenes.common.day_01_company_meeting.nodes.min_kyung_question_inner.reality.line": "(승인이 늦으면 제작 일정이 다 밀려. 근거는 지금 확인해야 해.)",
         "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
         "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.perceived.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.reality.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing_inner.perceived.line": "(내가 불편하지 않게 끝까지 챙겨 주려는 건가. 책임감도 있고 세심하네.)",
@@ -27486,8 +27486,8 @@
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks.reality.line": "고마워요, 윤서아 씨. 한 부가 부족한 걸 바로 챙겨 줬네요. 저는 이걸로 보고, 추가 출력은 회의 끝나고 해도 됩니다.",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.perceived.line": "(먼저 챙긴 걸 알아주고 이름까지 불렀으니 긴장도 풀리겠지. 여유 있는 상사처럼 보였을 거야.)",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.reality.line": "(사원증에 윤서아라고 적혀 있었지. 자료도 생겼으니 시작하자.)",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.perceived.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.reality.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts_inner.perceived.line": "(시험은 끝났다는 표정이군. 내 답을 인정하고 한발 물러났네.)",
@@ -27502,8 +27502,8 @@
         "scenes.common.day_01_company_meeting.nodes.min_kyung_question_inner.reality.line": "(승인이 늦으면 제작 일정이 다 밀려. 근거는 지금 확인해야 해.)",
         "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
         "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.perceived.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.reality.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing_inner.perceived.line": "(내가 불편하지 않게 끝까지 챙겨 주려는 건가. 책임감도 있고 세심하네.)",
@@ -29035,8 +29035,8 @@
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks.reality.line": "고마워요, 윤서아 씨. 한 부가 부족한 걸 바로 챙겨 줬네요. 저는 이걸로 보고, 추가 출력은 회의 끝나고 해도 됩니다.",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.perceived.line": "(먼저 챙긴 걸 알아주고 이름까지 불렀으니 긴장도 풀리겠지. 여유 있는 상사처럼 보였을 거야.)",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.reality.line": "(사원증에 윤서아라고 적혀 있었지. 자료도 생겼으니 시작하자.)",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.perceived.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.reality.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts_inner.perceived.line": "(시험은 끝났다는 표정이군. 내 답을 인정하고 한발 물러났네.)",
@@ -29051,8 +29051,8 @@
         "scenes.common.day_01_company_meeting.nodes.min_kyung_question_inner.reality.line": "(승인이 늦으면 제작 일정이 다 밀려. 근거는 지금 확인해야 해.)",
         "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
         "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.perceived.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.reality.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing_inner.perceived.line": "(내가 불편하지 않게 끝까지 챙겨 주려는 건가. 책임감도 있고 세심하네.)",
@@ -30310,8 +30310,8 @@
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks.reality.line": "고마워요, 윤서아 씨. 한 부가 부족한 걸 바로 챙겨 줬네요. 저는 이걸로 보고, 추가 출력은 회의 끝나고 해도 됩니다.",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.perceived.line": "(먼저 챙긴 걸 알아주고 이름까지 불렀으니 긴장도 풀리겠지. 여유 있는 상사처럼 보였을 거야.)",
         "scenes.common.day_01_company_meeting.nodes.do_yoon_thanks_inner.reality.line": "(사원증에 윤서아라고 적혀 있었지. 자료도 생겼으니 시작하자.)",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
-        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.perceived.line": "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다",
+        "scenes.common.day_01_company_meeting.nodes.jeong_da_eun_opening.reality.line": "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.perceived.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts.reality.line": "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠.",
         "scenes.common.day_01_company_meeting.nodes.min_kyung_accepts_inner.perceived.line": "(시험은 끝났다는 표정이군. 내 답을 인정하고 한발 물러났네.)",
@@ -30326,8 +30326,8 @@
         "scenes.common.day_01_company_meeting.nodes.min_kyung_question_inner.reality.line": "(승인이 늦으면 제작 일정이 다 밀려. 근거는 지금 확인해야 해.)",
         "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.perceived.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
         "scenes.common.day_01_company_meeting.nodes.moon_ji_hye_capacity.reality.line": "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
-        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.perceived.line": "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다",
+        "scenes.common.day_01_company_meeting.nodes.oh_se_jin_scope.reality.line": "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.perceived.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing.reality.line": "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요.",
         "scenes.common.day_01_company_meeting.nodes.seo_a_closing_inner.perceived.line": "(내가 불편하지 않게 끝까지 챙겨 주려는 건가. 책임감도 있고 세심하네.)",
@@ -37462,11 +37462,11 @@
           },
           "perceived": {
             "atmosphere": "procedural",
-            "line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다."
+            "line": "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다"
           },
           "reality": {
             "atmosphere": "procedural",
-            "line": "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다.",
+            "line": "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다",
             "intent": "documentation"
           },
           "next": "oh_se_jin_scope"
@@ -37474,18 +37474,18 @@
         "oh_se_jin_scope": {
           "id": "oh_se_jin_scope",
           "kind": "dual_dialogue",
-          "speaker": "member.oh_se_jin",
+          "speaker": "member.jeong_da_eun",
           "stage": {
             "perceived": [],
             "reality": []
           },
           "perceived": {
             "atmosphere": "procedural",
-            "line": "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
+            "line": "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다"
           },
           "reality": {
             "atmosphere": "procedural",
-            "line": "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요.",
+            "line": "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다",
             "intent": "work_only"
           },
           "next": "seo_a_materials"
@@ -37497,18 +37497,18 @@
           "stage": {
             "perceived": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "yoon_seo_a",
-                "visual_id": "character.yoon_seo_a",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.yoon_seo_a"
               }
             ],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "yoon_seo_a",
-                "visual_id": "character.yoon_seo_a",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.yoon_seo_a"
               }
             ]
           },
@@ -37539,10 +37539,10 @@
             "perceived": [],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "yoon_seo_a",
-                "visual_id": "character.yoon_seo_a",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.yoon_seo_a"
               }
             ]
           },
@@ -37610,18 +37610,18 @@
           "stage": {
             "perceived": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "yoon_seo_a",
-                "visual_id": "character.yoon_seo_a",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.yoon_seo_a"
               }
             ],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "yoon_seo_a",
-                "visual_id": "character.yoon_seo_a",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.yoon_seo_a"
               }
             ]
           },
@@ -37652,10 +37652,10 @@
             "perceived": [],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "yoon_seo_a",
-                "visual_id": "character.yoon_seo_a",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.yoon_seo_a"
               }
             ]
           },
@@ -37677,18 +37677,18 @@
           "stage": {
             "perceived": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "cha_min_kyung",
-                "visual_id": "character.cha_min_kyung",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.cha_min_kyung"
               }
             ],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "cha_min_kyung",
-                "visual_id": "character.cha_min_kyung",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.cha_min_kyung"
               }
             ]
           },
@@ -37719,10 +37719,10 @@
             "perceived": [],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "cha_min_kyung",
-                "visual_id": "character.cha_min_kyung",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.cha_min_kyung"
               }
             ]
           },
@@ -37790,18 +37790,18 @@
           "stage": {
             "perceived": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "cha_min_kyung",
-                "visual_id": "character.cha_min_kyung",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.cha_min_kyung"
               }
             ],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "cha_min_kyung",
-                "visual_id": "character.cha_min_kyung",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.cha_min_kyung"
               }
             ]
           },
@@ -37832,10 +37832,10 @@
             "perceived": [],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "cha_min_kyung",
-                "visual_id": "character.cha_min_kyung",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.cha_min_kyung"
               }
             ]
           },
@@ -37857,18 +37857,18 @@
           "stage": {
             "perceived": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "kang_yoo_jin",
-                "visual_id": "character.kang_yoo_jin",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.kang_yoo_jin"
               }
             ],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "kang_yoo_jin",
-                "visual_id": "character.kang_yoo_jin",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.kang_yoo_jin"
               }
             ]
           },
@@ -37899,10 +37899,10 @@
             "perceived": [],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "kang_yoo_jin",
-                "visual_id": "character.kang_yoo_jin",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.kang_yoo_jin"
               }
             ]
           },
@@ -37970,18 +37970,18 @@
           "stage": {
             "perceived": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "kang_yoo_jin",
-                "visual_id": "character.kang_yoo_jin",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.kang_yoo_jin"
               }
             ],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "kang_yoo_jin",
-                "visual_id": "character.kang_yoo_jin",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.kang_yoo_jin"
               }
             ]
           },
@@ -38012,10 +38012,10 @@
             "perceived": [],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "kang_yoo_jin",
-                "visual_id": "character.kang_yoo_jin",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.kang_yoo_jin"
               }
             ]
           },
@@ -38095,18 +38095,18 @@
           "stage": {
             "perceived": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "yoon_seo_a",
-                "visual_id": "character.yoon_seo_a",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.yoon_seo_a"
               }
             ],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "yoon_seo_a",
-                "visual_id": "character.yoon_seo_a",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.yoon_seo_a"
               }
             ]
           },
@@ -38137,10 +38137,10 @@
             "perceived": [],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "yoon_seo_a",
-                "visual_id": "character.yoon_seo_a",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.yoon_seo_a"
               }
             ]
           },
@@ -38162,18 +38162,18 @@
           "stage": {
             "perceived": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "cha_min_kyung",
-                "visual_id": "character.cha_min_kyung",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.cha_min_kyung"
               }
             ],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "cha_min_kyung",
-                "visual_id": "character.cha_min_kyung",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.cha_min_kyung"
               }
             ]
           },
@@ -38204,10 +38204,10 @@
             "perceived": [],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "cha_min_kyung",
-                "visual_id": "character.cha_min_kyung",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.cha_min_kyung"
               }
             ]
           },
@@ -38229,18 +38229,18 @@
           "stage": {
             "perceived": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "kang_yoo_jin",
-                "visual_id": "character.kang_yoo_jin",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.kang_yoo_jin"
               }
             ],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "kang_yoo_jin",
-                "visual_id": "character.kang_yoo_jin",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.kang_yoo_jin"
               }
             ]
           },
@@ -38271,10 +38271,10 @@
             "perceived": [],
             "reality": [
               {
-                "position": "center",
+                "artwork": "default",
                 "character": "kang_yoo_jin",
-                "visual_id": "character.kang_yoo_jin",
-                "artwork": "default"
+                "position": "center",
+                "visual_id": "character.kang_yoo_jin"
               }
             ]
           },

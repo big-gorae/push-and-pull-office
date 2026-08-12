@@ -70,7 +70,7 @@ test("system dialogue workspace is navigable, safe while saving, and undoable", 
               sourceEdit: true,
             };
           });
-          await new Promise((resolve) => window.setTimeout(resolve, 120));
+          await new Promise((resolve) => window.setTimeout(resolve, 3_000));
           revision += 1;
           runtime = structuredClone(runtime);
           return {
@@ -108,12 +108,14 @@ test("system dialogue workspace is navigable, safe while saving, and undoable", 
   const saveState = page.locator(".system-dialogue-save-state");
   await fields.nth(0).fill("첫 번째 안전 저장 문구");
   await page.getByRole("button", { name: /지금 저장 \(1\)/ }).click();
-  await fields.nth(1).fill("저장 중에도 보존되어야 하는 두 번째 문구");
-  await expect(fields.nth(1)).toHaveValue("저장 중에도 보존되어야 하는 두 번째 문구");
-  await expect(saveState).toContainText("1개 변경됨");
+  await expect(saveState).toContainText("저장하는 중");
+  const continuousInput = "가".repeat(200);
+  await fields.nth(1).fill(continuousInput);
+  await expect(fields.nth(1)).toBeEditable();
+  await expect(fields.nth(1)).toHaveValue(continuousInput);
+  await expect(saveState).toContainText("2개 변경됨");
 
-  await page.getByRole("button", { name: /지금 저장 \(1\)/ }).click();
-  await expect(saveState).toContainText("저장 완료");
+  await expect(saveState).toContainText("저장 완료", { timeout: 10_000 });
   await expect(page.getByRole("button", { name: "↶ 마지막 저장 취소" })).toBeEnabled();
   await page.getByRole("button", { name: "↶ 마지막 저장 취소" }).click();
   await expect(saveState).toContainText("저장 완료");
@@ -146,4 +148,25 @@ test("system dialogue workspace is navigable, safe while saving, and undoable", 
   await expect(page.locator(".dialogue-variant-card .layer-editor.perceived textarea")).toHaveValue(/회사 코미디/);
   await expect(page.locator(".dialogue-variant-card")).toContainText("OTT 시청을 선택한 다음 날 표시됩니다");
   await expect(page.locator(".dialogue-variant-editor")).toHaveScreenshot("self-development-variant-editor.webp");
+
+  const filteredSource = page.locator(".node-pill").first();
+  const copiedPreview = await filteredSource.locator("span").innerText();
+  await filteredSource.dispatchEvent("contextmenu", { clientX: 420, clientY: 360 });
+  const dialogueMenu = page.getByRole("menu", { name: "대사 편집 메뉴" });
+  await expect(dialogueMenu).toBeVisible();
+  await dialogueMenu.getByRole("menuitem", { name: /복사/ }).click();
+
+  await page.getByPlaceholder("화면에 표시되는 문장으로 검색…").fill("");
+  const nodeRows = page.locator(".node-pill");
+  const initialNodeCount = await nodeRows.count();
+  await nodeRows.nth(1).dispatchEvent("contextmenu", { clientX: 420, clientY: 420 });
+  await dialogueMenu.getByRole("menuitem", { name: /다음에 붙여넣기/ }).click();
+  await expect(nodeRows).toHaveCount(initialNodeCount + 1);
+  await expect(page.locator(".node-pill.active span")).toHaveText(copiedPreview);
+
+  await page.keyboard.press("Control+C");
+  await nodeRows.first().click();
+  await page.keyboard.press("Control+V");
+  await expect(nodeRows).toHaveCount(initialNodeCount + 2);
+  await expect(page.locator(".node-pill.active span")).toHaveText(copiedPreview);
 });

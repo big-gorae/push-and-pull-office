@@ -215,6 +215,10 @@ fieldset legend { padding: 0 7px; color: var(--muted); font-size: 0.78rem; }
 .node-pill small { color: var(--muted); font-size: 0.63rem; }
 .node-pill.active { border-color: var(--accent); background: var(--accent-soft); }
 .node-pill.active b { background: var(--accent); color: #17110b; }
+.dialogue-context-menu { position: fixed; z-index: 100; display: grid; width: 210px; overflow: hidden; padding: 5px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); box-shadow: 0 14px 38px rgba(0, 0, 0, .42); }
+.dialogue-context-menu button { display: flex; min-height: 38px; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 9px; border: 0; background: transparent; text-align: left; }
+.dialogue-context-menu button:hover:not(:disabled), .dialogue-context-menu button:focus-visible { background: var(--accent-soft); }
+.dialogue-context-menu kbd { color: var(--muted); font-family: inherit; font-size: .62rem; font-weight: 600; }
 .node-actions { display: flex; gap: 4px; }
 .dialogue-sequence-heading .node-actions button { min-width: 32px; min-height: 32px; padding: 4px 7px; }
 .dialogue-sequence-heading .node-actions .danger { min-width: auto; }

@@ -1,4 +1,5 @@
 import type { ProjectPayload, Runtime, ValidationIssue, ViewLayer } from "../types";
+import type { RuntimePatch } from "../runtimePatch";
 
 const AUTHORING_ROOT_KEY = "love-office:authoring-root";
 const AUTHORING_PLAY_WINDOW = "authoring-play";
@@ -67,11 +68,26 @@ export type StoryTextSaveResult = {
   errorCode?: string;
   issues: ValidationIssue[];
   runtime?: Runtime;
+  runtimePatch?: RuntimePatch;
   documents?: ProjectPayload["documents"];
+  documentUpdates?: Partial<ProjectPayload["documents"]>;
   owner?: StoryTextOwner;
   owners?: StoryTextOwner[];
   changes?: StoryTextChange[];
 };
+
+export function mergeDocumentUpdates(
+  current: ProjectPayload["documents"],
+  updates?: Partial<ProjectPayload["documents"]>,
+): ProjectPayload["documents"] {
+  if (!updates) return current;
+  const next = { ...current };
+  (Object.keys(updates) as Array<keyof ProjectPayload["documents"]>).forEach((kind) => {
+    const collection = updates[kind];
+    if (collection) next[kind] = { ...current[kind], ...collection };
+  });
+  return next;
+}
 
 export type SourceEditor = "system" | "vscode" | "cursor" | "zed";
 

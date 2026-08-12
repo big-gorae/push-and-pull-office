@@ -1,7 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useDocumentAutosave } from "./editorAutosave";
+import { editorDraftJournal, useDraftJournal } from "./editorDraftJournal";
+import { SaveFailure, type DocumentSnapshot, type SaveCommitResult, type SaveCompletion, type SaveState } from "./editorSave";
+import { resolveRuntimeUpdate } from "./runtimePatch";
 import {
   getStoryTextOwner,
   inverseStoryTextEdits,
+  mergeDocumentUpdates,
   saveStoryText,
   type StoryTextEdit,
   type StoryTextSaveResult,
@@ -22,7 +27,7 @@ import type {
 type Props = {
   active: boolean;
   payload: ProjectPayload;
-  onPayload: (payload: ProjectPayload) => void;
+  onPayload: Dispatch<SetStateAction<ProjectPayload | null>>;
   onIssues: (issues: ValidationIssue[]) => void;
   onStatus: (status: string) => void;
   onDocumentActivity: (activity: DocumentActivity) => void;
@@ -33,8 +38,12 @@ type UndoState = {
   edits: StoryTextEdit[];
   count: number;
 };
-
-const AUTO_SAVE_DELAY = 1600;
+type SystemDialogueCommitResult = SaveCommitResult & {
+  result: StoryTextSaveResult;
+  keys: string[];
+  activePath: string;
+  undoEdits: StoryTextEdit[];
+};
 
 function rowsInFlows(flows: ReturnType<typeof systemDialogueFlows>): SystemDialogueRow[] {
   return flows.flatMap((flow) => flow.groups.flatMap((group) => group.items.flatMap((item) => item.rows)));
@@ -85,11 +94,12 @@ export default function SystemDialogueEditor({
   const [saveError, setSaveError] = useState("");
   const [lastSavedAt, setLastSavedAt] = useState<number>();
   const [lastUndo, setLastUndo] = useState<UndoState>();
+  const [editVersion, setEditVersion] = useState(0);
   const searchRef = useRef<HTMLInputElement>(null);
-  const saveTimer = useRef<number | undefined>(undefined);
   const saveInFlight = useRef(false);
   const previousSources = useRef(sourceValues);
   const loadedDraftRoot = useRef("");
+  const recoveredJournalKeys = useRef(new Set<string>());
 
   useEffect(() => {
     const previous = previousSources.current;
@@ -114,6 +124,7 @@ export default function SystemDialogueEditor({
         return;
       }
       setDrafts((current) => ({ ...current, ...cached.values }));
+      setEditVersion((current) => current + 1);
       onStatus("저장하지 않은 시스템 대사 초안을 복구했습니다.");
     } catch {
       // Draft recovery is a convenience layer; authoritative YAML loading must continue.
@@ -126,39 +137,43 @@ export default function SystemDialogueEditor({
   );
   const dirtySet = useMemo(() => new Set(dirtyKeys), [dirtyKeys]);
 
+  const journalKey = `draft:${payload.root}:system-dialogues`;
+  useDraftJournal({
+    enabled: Boolean(dirtyKeys.length),
+    key: journalKey,
+    projectRoot: payload.root,
+    baseRevision: sourceFingerprint,
+    editVersion,
+    value: drafts,
+  });
+
   useEffect(() => {
-    if (loadedDraftRoot.current !== payload.root) return;
-    try {
-      if (!dirtyKeys.length) {
-        window.localStorage.removeItem(draftStorageKey);
+    const identity = `${journalKey}:${sourceFingerprint}`;
+    if (recoveredJournalKeys.current.has(identity)) return;
+    recoveredJournalKeys.current.add(identity);
+    let cancelled = false;
+    void editorDraftJournal.read<Record<string, string>>(journalKey).then((record) => {
+      if (cancelled || !record || record.baseRevision !== sourceFingerprint) return;
+      const changed = rows.some((row) => (record.value[row.key] ?? row.source) !== row.source);
+      if (!changed) return;
+      if (!window.confirm("저장하지 않은 시스템 대사 비동기 복구 초안이 있습니다. 복구할까요?")) {
+        void editorDraftJournal.remove(journalKey);
         return;
       }
-      window.localStorage.setItem(draftStorageKey, JSON.stringify({
-        fingerprint: sourceFingerprint,
-        values: Object.fromEntries(dirtyKeys.map((key) => [key, drafts[key]])),
-      }));
-    } catch {
-      // The editor remains safe because YAML is still the authoritative save target.
-    }
-  }, [dirtyKeys, drafts, draftStorageKey, payload.root, sourceFingerprint]);
+      setDrafts((current) => ({ ...current, ...record.value }));
+      setEditVersion((current) => Math.max(current + 1, record.editVersion));
+      onStatus("비동기 복구 journal에서 시스템 대사 초안을 복구했습니다.");
+    }).catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [journalKey, onStatus, rows, sourceFingerprint]);
 
-  const save = useCallback(async () => {
-    if (!dirtyKeys.length || saveInFlight.current) return;
-    const keys = [...dirtyKeys];
-    const snapshot = Object.fromEntries(keys.map((key) => [key, drafts[key]]));
+  const commitDialogues = useCallback(async (snapshot: DocumentSnapshot<Record<string, string>>): Promise<SystemDialogueCommitResult> => {
+    const keys = rows.filter((row) => (snapshot.value[row.key] ?? row.source) !== row.source).map((row) => row.key);
+    if (!keys.length) throw new SaveFailure("저장할 시스템 대사 변경이 없습니다.", "validation");
     const affected = rows.filter((row) => keys.includes(row.key));
     const activePath = affected[0]?.path || "story/system_flows";
-    saveInFlight.current = true;
-    setSaving(true);
-    setSaveError("");
-    onDocumentActivity({
-      phase: "saving",
-      label: "시스템 대사",
-      path: activePath,
-      detail: `${keys.length}개 문구 검증 후 물리 저장 중`,
-    });
     try {
-      const owners = await Promise.all(keys.map((key) => getStoryTextOwner(payload.root, key)));
+      const owners = await Promise.all(keys.map((key) => getStoryTextOwner(snapshot.projectRoot, key)));
       const edits = owners.map((owner): StoryTextEdit => {
         if (!owner.editable || !owner.revision || !owner.currentValueHash) {
           throw new Error(`${owner.key}: 편집 가능한 단일 YAML 원본이 없습니다.`);
@@ -167,49 +182,85 @@ export default function SystemDialogueEditor({
           localization_key: owner.key,
           expected_revision: owner.revision,
           expected_value_hash: owner.currentValueHash,
-          next_value: snapshot[owner.key],
+          next_value: snapshot.value[owner.key],
         };
       });
-      const result = await saveStoryText(payload.root, edits) as StoryTextSaveResult;
+      const result = await saveStoryText(snapshot.projectRoot, edits) as StoryTextSaveResult;
       onIssues(result.issues);
-      if (!result.saved || !result.runtime) {
+      if (!result.saved || !result.runtime && !result.runtimePatch) {
         const firstError = result.issues.find((issue) => issue.severity === "error");
-        throw new Error(firstError?.message || result.errorCode || "검증에 실패했습니다.");
+        throw new SaveFailure(firstError?.message || result.errorCode || "검증에 실패했습니다.", "validation");
       }
       const undoEdits = inverseStoryTextEdits(
         result.changes || [],
         result.owners || [],
         payload.runtime.localization.default_locale,
       );
-      setLastUndo(undoEdits.length ? { edits: undoEdits, count: keys.length } : undefined);
-      onPayload({
-        ...payload,
-        runtime: result.runtime,
-        documents: result.documents || payload.documents,
-      });
-      const savedAt = Date.now();
-      setLastSavedAt(savedAt);
-      onDocumentActivity({
-        phase: "saved",
-        label: "시스템 대사",
-        path: activePath,
-        detail: `${keys.length}개 문구를 YAML에 저장함`,
-        savedAt,
-      });
-      onStatus(`시스템 대사 ${keys.length}개를 원본 YAML과 게임 런타임에 저장했습니다.`);
+      const nextRevision = (result.owners || []).map((owner) => owner.revision || "").join("|") || snapshot.baseRevision;
+      return { revision: nextRevision, result, keys, activePath, undoEdits };
     } catch (error) {
+      if (error instanceof SaveFailure) throw error;
       const text = String(error);
       const message = text.includes("CONFLICT")
         ? "원본 파일이 다른 곳에서 변경되었습니다. 현재 초안은 보존했습니다. 프로젝트를 다시 열어 비교해 주세요."
         : `저장하지 못했습니다: ${text}`;
-      setSaveError(message);
-      onDocumentActivity({ phase: "error", label: "시스템 대사", path: activePath, detail: message });
       onStatus(message);
-    } finally {
-      saveInFlight.current = false;
-      setSaving(false);
+      throw new SaveFailure(message, text.includes("CONFLICT") ? "conflict" : "transient");
     }
-  }, [dirtyKeys, drafts, onDocumentActivity, onIssues, onPayload, onStatus, payload, rows]);
+  }, [onIssues, onStatus, payload.runtime.localization.default_locale, rows]);
+
+  const handleCommitted = useCallback((commit: SystemDialogueCommitResult, completion: SaveCompletion<Record<string, string>>) => {
+    const { result, keys, activePath, undoEdits } = commit;
+    setLastUndo(undoEdits.length ? { edits: undoEdits, count: keys.length } : undefined);
+    onPayload((current) => current ? {
+      ...current,
+      runtime: resolveRuntimeUpdate(current.runtime, result),
+      documents: result.documents || mergeDocumentUpdates(current.documents, result.documentUpdates),
+    } : current);
+    if (completion.isLatest) window.localStorage.removeItem(draftStorageKey);
+    onStatus(completion.isLatest
+      ? `시스템 대사 ${keys.length}개를 원본 YAML과 게임 런타임에 저장했습니다.`
+      : `시스템 대사 ${keys.length}개의 이전 변경을 저장했습니다. 최신 입력은 계속 보존합니다.`);
+    onDocumentActivity({
+      phase: completion.isLatest ? "saved" : "dirty",
+      label: "시스템 대사",
+      path: activePath,
+      detail: completion.isLatest ? `${keys.length}개 문구를 YAML에 저장함` : "이전 변경 저장 완료 · 최신 입력 자동 저장 대기",
+      savedAt: completion.state.savedAt,
+    });
+  }, [draftStorageKey, onDocumentActivity, onPayload, onStatus]);
+
+  const handleSaveState = useCallback((state: SaveState) => {
+    const isSaving = state.phase === "saving" || state.phase === "queued";
+    setSaving(isSaving);
+    const error = state.phase === "error" || state.phase === "conflict" ? state.error || "저장 실패 · 현재 초안 보존됨" : "";
+    setSaveError(error);
+    if (state.savedAt) setLastSavedAt(state.savedAt);
+    onDocumentActivity({
+      phase: state.phase === "clean" ? "saved" : state.phase === "saving" ? "saving" : state.phase === "error" || state.phase === "conflict" ? "error" : "dirty",
+      label: "시스템 대사",
+      path: rows.find((row) => dirtySet.has(row.key))?.path || "story/system_flows",
+      detail: state.phase === "saving" ? "백그라운드 검증·저장 중"
+        : state.phase === "queued" ? "백그라운드 저장 대기 중"
+          : state.phase === "conflict" ? "외부 변경 충돌 · 현재 초안 보존됨"
+            : error || (state.hasPendingChanges ? `${dirtyKeys.length}개 변경 · 자동 저장 대기` : "원본 YAML과 동기화됨"),
+      savedAt: state.savedAt,
+    });
+  }, [dirtyKeys.length, dirtySet, onDocumentActivity, rows]);
+
+  const { flush: save } = useDocumentAutosave<Record<string, string>, SystemDialogueCommitResult>({
+    slot: "system",
+    active,
+    projectRoot: payload.root,
+    documentKey: "system-dialogues",
+    revision: sourceFingerprint,
+    dirty: Boolean(dirtyKeys.length),
+    version: editVersion,
+    read: () => drafts,
+    commit: commitDialogues,
+    onCommitted: handleCommitted,
+    onState: handleSaveState,
+  });
 
   const undoLastSave = useCallback(async () => {
     if (!lastUndo || dirtyKeys.length || saveInFlight.current) return;
@@ -220,8 +271,12 @@ export default function SystemDialogueEditor({
     try {
       const result = await saveStoryText(payload.root, lastUndo.edits) as StoryTextSaveResult;
       onIssues(result.issues);
-      if (!result.saved || !result.runtime) throw new Error(result.errorCode || "되돌리기 검증에 실패했습니다.");
-      onPayload({ ...payload, runtime: result.runtime, documents: result.documents || payload.documents });
+      if (!result.saved || !result.runtime && !result.runtimePatch) throw new Error(result.errorCode || "되돌리기 검증에 실패했습니다.");
+      onPayload((current) => current ? {
+        ...current,
+        runtime: resolveRuntimeUpdate(current.runtime, result),
+        documents: result.documents || mergeDocumentUpdates(current.documents, result.documentUpdates),
+      } : current);
       setLastUndo(undefined);
       const savedAt = Date.now();
       setLastSavedAt(savedAt);
@@ -241,25 +296,9 @@ export default function SystemDialogueEditor({
   }, [dirtyKeys.length, lastUndo, onDocumentActivity, onIssues, onPayload, onStatus, payload]);
 
   useEffect(() => {
-    window.clearTimeout(saveTimer.current);
-    if (!active || !dirtyKeys.length || saving) return;
-    onDocumentActivity({
-      phase: "dirty",
-      label: "시스템 대사",
-      path: rows.find((row) => dirtySet.has(row.key))?.path || "story/system_flows",
-      detail: `${dirtyKeys.length}개 변경 · ${AUTO_SAVE_DELAY / 1000}초 후 자동 저장`,
-    });
-    saveTimer.current = window.setTimeout(() => void save(), AUTO_SAVE_DELAY);
-    return () => window.clearTimeout(saveTimer.current);
-  }, [active, dirtyKeys, dirtySet, onDocumentActivity, rows, save, saving]);
-
-  useEffect(() => {
     if (!active) return;
     const handleKey = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLocaleLowerCase() === "s") {
-        event.preventDefault();
-        void save();
-      } else if ((event.metaKey || event.ctrlKey) && event.key.toLocaleLowerCase() === "f") {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLocaleLowerCase() === "f") {
         event.preventDefault();
         searchRef.current?.focus();
         searchRef.current?.select();
@@ -269,10 +308,11 @@ export default function SystemDialogueEditor({
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [active, query, save]);
+  }, [active, query]);
 
   const resetKeys = (keys: string[]) => {
     setDrafts((current) => ({ ...current, ...Object.fromEntries(keys.map((key) => [key, sourceValues[key]])) }));
+    setEditVersion((current) => current + 1);
     setSaveError("");
   };
   const resetAll = () => {
@@ -292,7 +332,7 @@ export default function SystemDialogueEditor({
   const saveMessage = saveError || (saving
     ? "전체 스토리를 검증하고 원본 YAML에 저장하는 중…"
     : dirtyKeys.length
-      ? `${dirtyKeys.length}개 변경됨 · 입력을 멈추면 ${AUTO_SAVE_DELAY / 1000}초 후 자동 저장`
+      ? `${dirtyKeys.length}개 변경됨 · 입력을 멈추면 백그라운드 자동 저장`
       : savedTimeLabel(lastSavedAt));
 
   return <section className="system-dialogue-editor">
@@ -316,9 +356,9 @@ export default function SystemDialogueEditor({
       </div>
       <div className="system-dialogue-save-actions">
         <button type="button" disabled={!lastUndo || Boolean(dirtyKeys.length) || saving} onClick={() => void undoLastSave()}>↶ 마지막 저장 취소</button>
-        <button type="button" disabled={!dirtyKeys.length || saving} onClick={resetAll}>변경 취소</button>
-        <button type="button" className="primary-button" disabled={!dirtyKeys.length || saving} onClick={() => void save()}>
-          {saving ? "저장 중…" : <>지금 저장{dirtyKeys.length ? ` (${dirtyKeys.length})` : ""} <kbd>⌘S</kbd></>}
+        <button type="button" disabled={!dirtyKeys.length} onClick={resetAll}>변경 취소</button>
+        <button type="button" className="primary-button" disabled={!dirtyKeys.length} onClick={() => void save()}>
+          {saving ? "저장 중 · 최신 변경 예약 가능" : <>지금 저장{dirtyKeys.length ? ` (${dirtyKeys.length})` : ""} <kbd>⌘S</kbd></>}
         </button>
       </div>
       <p className={`system-dialogue-save-state ${saveError ? "error" : dirtyKeys.length ? "dirty" : "saved"}`} role="status">
@@ -386,6 +426,7 @@ export default function SystemDialogueEditor({
                     value={drafts[row.key] ?? row.source}
                     onChange={(event) => {
                       setDrafts((current) => ({ ...current, [row.key]: event.target.value }));
+                      setEditVersion((current) => current + 1);
                       setSaveError("");
                     }}
                   />
@@ -393,7 +434,10 @@ export default function SystemDialogueEditor({
               </div>
               <footer>
                 <details><summary>저장 위치 보기</summary>{item.rows.map((row) => <code key={row.key}>{row.path} · {row.fieldPath}</code>)}</details>
-                {perceived && reality && drafts[perceived.key] !== drafts[reality.key] && <button type="button" onClick={() => setDrafts((current) => ({ ...current, [reality.key]: current[perceived.key] }))}>화면 대사를 실제 상황에도 복사</button>}
+                {perceived && reality && drafts[perceived.key] !== drafts[reality.key] && <button type="button" onClick={() => {
+                  setDrafts((current) => ({ ...current, [reality.key]: current[perceived.key] }));
+                  setEditVersion((current) => current + 1);
+                }}>화면 대사를 실제 상황에도 복사</button>}
               </footer>
             </article>;
           })}

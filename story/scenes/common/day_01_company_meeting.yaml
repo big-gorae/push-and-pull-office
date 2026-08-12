@@ -68,25 +68,25 @@ nodes:
       reality: []
     perceived:
       atmosphere: procedural
-      line: "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다."
+      line: "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다"
     reality:
       atmosphere: procedural
-      line: "오 차장님과 문 부장님까지 오셨으니, 일정부터 공유하겠습니다."
+      line: "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다"
       intent: documentation
     next: oh_se_jin_scope
 
   - id: oh_se_jin_scope
     kind: dual_dialogue
-    speaker: member.oh_se_jin
+    speaker: member.jeong_da_eun
     stage:
       perceived: []
       reality: []
     perceived:
       atmosphere: procedural
-      line: "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
+      line: "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다"
     reality:
       atmosphere: procedural
-      line: "봄 홈카페 라인 세 제품의 사양과 안전·표시 문구는 오늘 오후까지 확정하겠습니다. 윤서아 사원은 수정본과 회의록을 한 파일로 묶어 주세요."
+      line: "오전에 공유드린 봄 홈카페 라인 문서 5 페이지 부터 보시면 됩니다"
       intent: work_only
     next: seo_a_materials
   - id: seo_a_materials
@@ -94,15 +94,15 @@ nodes:
     speaker: yoon_seo_a
     stage:
       perceived:
-        - position: center
+        - artwork: default
           character: yoon_seo_a
+          position: center
           visual_id: character.yoon_seo_a
-          artwork: default
       reality:
-        - position: center
+        - artwork: default
           character: yoon_seo_a
+          position: center
           visual_id: character.yoon_seo_a
-          artwork: default
     perceived:
       atmosphere: warm_romance
       expression: subjective_shy
@@ -124,10 +124,10 @@ nodes:
     stage:
       perceived: []
       reality:
-        - position: center
+        - artwork: default
           character: yoon_seo_a
+          position: center
           visual_id: character.yoon_seo_a
-          artwork: default
     perceived:
       atmosphere: warm_romance
       line: (내 자료가 빠진 걸 제일 먼저 알아챘네. 자기 몫까지 내주고, 꽤 세심한데.)
@@ -176,15 +176,15 @@ nodes:
     speaker: yoon_seo_a
     stage:
       perceived:
-        - position: center
+        - artwork: default
           character: yoon_seo_a
+          position: center
           visual_id: character.yoon_seo_a
-          artwork: default
       reality:
-        - position: center
+        - artwork: default
           character: yoon_seo_a
+          position: center
           visual_id: character.yoon_seo_a
-          artwork: default
     perceived:
       atmosphere: procedural
       expression: subjective_shy
@@ -206,10 +206,10 @@ nodes:
     stage:
       perceived: []
       reality:
-        - position: center
+        - artwork: default
           character: yoon_seo_a
+          position: center
           visual_id: character.yoon_seo_a
-          artwork: default
     perceived:
       atmosphere: procedural
       line: (먼저 챙긴 걸 알아주니 안심했군. 내 앞에서는 표정이 금방 풀리네.)
@@ -223,15 +223,15 @@ nodes:
     speaker: cha_min_kyung
     stage:
       perceived:
-        - position: center
+        - artwork: default
           character: cha_min_kyung
+          position: center
           visual_id: character.cha_min_kyung
-          artwork: default
       reality:
-        - position: center
+        - artwork: default
           character: cha_min_kyung
+          position: center
           visual_id: character.cha_min_kyung
-          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_challenging
@@ -253,10 +253,10 @@ nodes:
     stage:
       perceived: []
       reality:
-        - position: center
+        - artwork: default
           character: cha_min_kyung
+          position: center
           visual_id: character.cha_min_kyung
-          artwork: default
     perceived:
       atmosphere: playful_tension
       line: (시작부터 핵심을 찌르네. 내 실력을 한번 보겠다는 건가?)
@@ -305,15 +305,15 @@ nodes:
     speaker: cha_min_kyung
     stage:
       perceived:
-        - position: center
+        - artwork: default
           character: cha_min_kyung
+          position: center
           visual_id: character.cha_min_kyung
-          artwork: default
       reality:
-        - position: center
+        - artwork: default
           character: cha_min_kyung
+          position: center
           visual_id: character.cha_min_kyung
-          artwork: default
     perceived:
       atmosphere: procedural
       expression: subjective_challenging
@@ -335,10 +335,10 @@ nodes:
     stage:
       perceived: []
       reality:
-        - position: center
+        - artwork: default
           character: cha_min_kyung
+          position: center
           visual_id: character.cha_min_kyung
-          artwork: default
     perceived:
       atmosphere: procedural
       line: (시험은 끝났다는 표정이군. 내 답을 인정하고 한발 물러났네.)
@@ -352,15 +352,15 @@ nodes:
     speaker: kang_yoo_jin
     stage:
       perceived:
-        - position: center
+        - artwork: default
           character: kang_yoo_jin
+          position: center
           visual_id: character.kang_yoo_jin
-          artwork: default
       reality:
-        - position: center
+        - artwork: default
           character: kang_yoo_jin
+          position: center
           visual_id: character.kang_yoo_jin
-          artwork: default
     perceived:
       atmosphere: playful_tension
       expression: subjective_bold_flirt
@@ -382,10 +382,10 @@ nodes:
     stage:
       perceived: []
       reality:
-        - position: center
+        - artwork: default
           character: kang_yoo_jin
+          position: center
           visual_id: character.kang_yoo_jin
-          artwork: default
     perceived:
       atmosphere: playful_tension
       line: (계속 보고 있었군. 작은 오류라도 핑계 삼아 말을 거는 게 꽤 당돌하네.)
@@ -434,15 +434,15 @@ nodes:
     speaker: kang_yoo_jin
     stage:
       perceived:
-        - position: center
+        - artwork: default
           character: kang_yoo_jin
+          position: center
           visual_id: character.kang_yoo_jin
-          artwork: default
       reality:
-        - position: center
+        - artwork: default
           character: kang_yoo_jin
+          position: center
           visual_id: character.kang_yoo_jin
-          artwork: default
     perceived:
       atmosphere: procedural
       expression: subjective_bold_flirt
@@ -464,10 +464,10 @@ nodes:
     stage:
       perceived: []
       reality:
-        - position: center
+        - artwork: default
           character: kang_yoo_jin
+          position: center
           visual_id: character.kang_yoo_jin
-          artwork: default
     perceived:
       atmosphere: procedural
       line: (내가 뭘 물을지 기다렸다는 듯 바로 나오네. 호흡이 잘 맞는데.)
@@ -525,15 +525,15 @@ nodes:
     speaker: yoon_seo_a
     stage:
       perceived:
-        - position: center
+        - artwork: default
           character: yoon_seo_a
+          position: center
           visual_id: character.yoon_seo_a
-          artwork: default
       reality:
-        - position: center
+        - artwork: default
           character: yoon_seo_a
+          position: center
           visual_id: character.yoon_seo_a
-          artwork: default
     perceived:
       atmosphere: procedural
       expression: subjective_shy
@@ -555,10 +555,10 @@ nodes:
     stage:
       perceived: []
       reality:
-        - position: center
+        - artwork: default
           character: yoon_seo_a
+          position: center
           visual_id: character.yoon_seo_a
-          artwork: default
     perceived:
       atmosphere: procedural
       line: (내가 불편하지 않게 끝까지 챙겨 주려는 건가. 책임감도 있고 세심하네.)
@@ -572,15 +572,15 @@ nodes:
     speaker: cha_min_kyung
     stage:
       perceived:
-        - position: center
+        - artwork: default
           character: cha_min_kyung
+          position: center
           visual_id: character.cha_min_kyung
-          artwork: default
       reality:
-        - position: center
+        - artwork: default
           character: cha_min_kyung
+          position: center
           visual_id: character.cha_min_kyung
-          artwork: default
     perceived:
       atmosphere: procedural
       expression: subjective_challenging
@@ -602,10 +602,10 @@ nodes:
     stage:
       perceived: []
       reality:
-        - position: center
+        - artwork: default
           character: cha_min_kyung
+          position: center
           visual_id: character.cha_min_kyung
-          artwork: default
     perceived:
       atmosphere: procedural
       line: (내 판단을 믿으면서도 다음 움직임은 함께 맞추겠다는 거군.)
@@ -619,15 +619,15 @@ nodes:
     speaker: kang_yoo_jin
     stage:
       perceived:
-        - position: center
+        - artwork: default
           character: kang_yoo_jin
+          position: center
           visual_id: character.kang_yoo_jin
-          artwork: default
       reality:
-        - position: center
+        - artwork: default
           character: kang_yoo_jin
+          position: center
           visual_id: character.kang_yoo_jin
-          artwork: default
     perceived:
       atmosphere: procedural
       expression: subjective_bold_flirt
@@ -649,10 +649,10 @@ nodes:
     stage:
       perceived: []
       reality:
-        - position: center
+        - artwork: default
           character: kang_yoo_jin
+          position: center
           visual_id: character.kang_yoo_jin
-          artwork: default
     perceived:
       atmosphere: procedural
       line: (나와 같은 기준으로 맞춰 일하겠다는 단호한 약속처럼 들리네.)

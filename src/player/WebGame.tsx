@@ -8,6 +8,9 @@ import {
   type MouseEvent,
 } from "react";
 import runtimeJson from "../../build/story-runtime.json";
+import { useDocumentAutosave, useSaveCommandBinding } from "../editorAutosave";
+import { editorDraftJournal, useDraftJournal } from "../editorDraftJournal";
+import { editorSaveCoordinator, SaveFailure, type DocumentSnapshot, type SaveCompletion, type SaveState } from "../editorSave";
 import {
   pushPullPositionLabel,
   pushPullTargetLabel,
@@ -347,6 +350,13 @@ function storyOwnersFingerprint(owners: StoryTextOwner[]): string {
   })));
 }
 
+type StoryTextCommitResult = {
+  revision: string;
+  result: StoryTextSaveResult;
+  refreshed: StoryTextOwner[];
+  undo: StoryTextUndo;
+};
+
 function StoryTextEditor({
   root,
   keys,
@@ -365,34 +375,51 @@ function StoryTextEditor({
   const [editingLocale, setEditingLocale] = useState(locale);
   const [owners, setOwners] = useState<StoryTextOwner[]>([]);
   const [values, setValues] = useState<Record<string, string>>({});
+  const [editVersion, setEditVersion] = useState(0);
   const [sourceEditor, setSourceEditor] = useState<SourceEditor>(() => readSourceEditor());
-  const [busy, setBusy] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("원본 위치를 찾는 중…");
+  const ownersRef = useRef(owners);
+  const valuesRef = useRef(values);
+  ownersRef.current = owners;
+  valuesRef.current = values;
   const draftKey = useMemo(
     () => `love-office:story-text-draft:${encodeURIComponent(root)}:${editingLocale}:${keys.join("|")}`,
     [editingLocale, keys, root],
   );
 
   const installOwners = useCallback((loaded: StoryTextOwner[]) => {
+    ownersRef.current = loaded;
     setOwners(loaded);
-    setValues(Object.fromEntries(loaded.map((owner) => [owner.key, owner.currentValue])));
+    const nextValues = Object.fromEntries(loaded.map((owner) => [owner.key, owner.currentValue]));
+    valuesRef.current = nextValues;
+    setValues(nextValues);
+    setEditVersion(0);
   }, []);
 
   const load = useCallback(async () => {
-    setBusy(true);
+    setLoading(true);
     setMessage("원본 위치를 찾는 중…");
     try {
       const loaded = await Promise.all(keys.map((key) => getStoryTextOwner(root, key, editingLocale)));
       installOwners(loaded);
       let recoveredDraft = false;
       try {
+        const journalDraft = await editorDraftJournal.read<{ fingerprint?: string; values?: Record<string, string> }>(draftKey);
         const rawDraft = window.localStorage.getItem(draftKey);
-        if (rawDraft) {
-          const draft = JSON.parse(rawDraft) as { fingerprint?: string; values?: Record<string, string> };
+        const draft = journalDraft?.value || (rawDraft ? JSON.parse(rawDraft) as { fingerprint?: string; values?: Record<string, string> } : undefined);
+        if (draft) {
           if (draft.fingerprint === storyOwnersFingerprint(loaded)) {
-            setValues((current) => ({ ...current, ...draft.values }));
+            setValues((current) => {
+              const recovered = { ...current, ...draft.values };
+              valuesRef.current = recovered;
+              return recovered;
+            });
+            setEditVersion(Math.max(1, journalDraft?.editVersion || 1));
             recoveredDraft = true;
-          } else window.localStorage.removeItem(draftKey);
+          } else void editorDraftJournal.remove(draftKey);
+          window.localStorage.removeItem(draftKey);
         }
       } catch {
         // Restricted WebViews may not expose localStorage; editing still works without draft recovery.
@@ -406,82 +433,120 @@ function StoryTextEditor({
     } catch (error) {
       setMessage(`원본을 찾지 못했습니다: ${String(error)}`);
     } finally {
-      setBusy(false);
+      setLoading(false);
     }
   }, [draftKey, editingLocale, installOwners, keys, root]);
 
   useEffect(() => { void load(); }, [load]);
 
-  const directChanged = owners.filter((owner) => owner.editable && values[owner.key] !== owner.currentValue);
-  const hasChanges = directChanged.length > 0;
+  const hasChanges = owners.some((owner) => owner.editable && values[owner.key] !== owner.currentValue);
 
-  useEffect(() => {
-    if (busy || !owners.length) return;
-    try {
-      if (!hasChanges) {
-        window.localStorage.removeItem(draftKey);
-        return;
-      }
-      window.localStorage.setItem(draftKey, JSON.stringify({
-        fingerprint: storyOwnersFingerprint(owners),
-        values,
-      }));
-    } catch {
-      // A failed draft cache must never block the authoritative YAML workflow.
-    }
-  }, [busy, draftKey, hasChanges, owners, values]);
+  const sourceFingerprint = useMemo(() => storyOwnersFingerprint(owners), [owners]);
+  useDraftJournal({
+    enabled: hasChanges,
+    key: draftKey,
+    projectRoot: root,
+    baseRevision: sourceFingerprint,
+    editVersion,
+    value: hasChanges ? { fingerprint: sourceFingerprint, values } : null,
+  });
 
-  const save = async () => {
-    if (!hasChanges) {
-      setMessage("변경된 문장이 없습니다.");
-      return;
-    }
-    const edits: StoryTextEdit[] = [
-      ...directChanged.map((owner) => ({
+  const commitStoryText = useCallback(async (snapshot: DocumentSnapshot<Record<string, string>>): Promise<StoryTextCommitResult> => {
+    const activeOwners = ownersRef.current;
+    const edits: StoryTextEdit[] = activeOwners
+      .filter((owner) => owner.editable && snapshot.value[owner.key] !== owner.currentValue)
+      .map((owner) => ({
         localization_key: owner.key,
         locale: editingLocale,
         expected_revision: owner.revision!,
         expected_value_hash: owner.currentValueHash!,
-        next_value: values[owner.key],
-      })),
-    ];
-    setBusy(true);
-    setMessage("전체 스토리를 검증하고 저장하는 중…");
+        next_value: snapshot.value[owner.key],
+      }));
     try {
       const result = await saveStoryText(root, edits);
-      if (!result.saved) {
-        const errors = result.issues.filter((issue) => issue.severity === "error");
-        setMessage(errors.length
-          ? `검증 오류로 저장하지 않았습니다: ${errors[0].message}`
-          : "검증 오류로 저장하지 않았습니다.");
-        return;
+      if (!result.saved || !result.runtime && !result.runtimePatch) {
+        const error = result.issues.find((issue) => issue.severity === "error");
+        throw new SaveFailure(error?.message || result.errorCode || "검증 오류로 저장하지 않았습니다.", "validation");
       }
       const refreshed = await Promise.all(keys.map((key) => getStoryTextOwner(root, key, editingLocale)));
-      const undoEdits = inverseStoryTextEdits(result.changes || [], refreshed, editingLocale);
-      installOwners(refreshed);
-      try { window.localStorage.removeItem(draftKey); } catch { /* YAML save already succeeded. */ }
-      onSaved(result, { edits: undoEdits, keys, locale: editingLocale }, editingLocale);
-      setMessage("저장 완료 · 실제 원본과 현재 게임 화면에 반영했습니다. 화면의 ‘마지막 문구 저장 취소’로 되돌릴 수 있습니다.");
+      ownersRef.current = refreshed;
+      return {
+        revision: storyOwnersFingerprint(refreshed),
+        result,
+        refreshed,
+        undo: { edits: inverseStoryTextEdits(result.changes || [], refreshed, editingLocale), keys, locale: editingLocale },
+      };
     } catch (error) {
+      if (error instanceof SaveFailure) throw error;
       const text = String(error);
-      setMessage(text.includes("REVISION_CONFLICT") || text.includes("VALUE_CONFLICT")
-        ? "외부에서 원본이 변경되었습니다. 초안은 유지했습니다. 다시 불러온 뒤 비교해 주세요."
-        : `저장하지 못했습니다: ${text}`);
-    } finally {
-      setBusy(false);
+      throw new SaveFailure(
+        text.includes("REVISION_CONFLICT") || text.includes("VALUE_CONFLICT")
+          ? "외부에서 원본이 변경되었습니다. 초안은 유지했습니다. 다시 불러온 뒤 비교해 주세요."
+          : `저장하지 못했습니다: ${text}`,
+        text.includes("CONFLICT") ? "conflict" : "transient",
+      );
     }
+  }, [editingLocale, keys, root]);
+
+  const handleCommitted = useCallback((commit: StoryTextCommitResult, completion: SaveCompletion<Record<string, string>>) => {
+    setOwners(commit.refreshed);
+    if (completion.isLatest) {
+      const nextValues = Object.fromEntries(commit.refreshed.map((owner) => [owner.key, owner.currentValue]));
+      valuesRef.current = nextValues;
+      setValues(nextValues);
+      void editorDraftJournal.remove(draftKey);
+    }
+    onSaved(commit.result, commit.undo, editingLocale);
+    setMessage(completion.isLatest
+      ? "저장 완료 · 실제 원본과 현재 게임 화면에 반영했습니다. 화면의 ‘마지막 문구 저장 취소’로 되돌릴 수 있습니다."
+      : "이전 변경 저장 완료 · 저장 중 입력한 최신 문구를 이어서 저장합니다.");
+  }, [draftKey, editingLocale, onSaved]);
+
+  const handleSaveState = useCallback((state: SaveState) => {
+    setSaving(state.phase === "saving" || state.phase === "queued");
+    if (state.phase === "saving") setMessage(state.hasPendingChanges ? "이전 변경 저장 중 · 최신 입력 대기" : "백그라운드 저장 중…");
+    else if (state.phase === "queued") setMessage("백그라운드 저장 대기 중…");
+    else if (state.phase === "error" || state.phase === "conflict") setMessage(state.error || "저장 실패 · 초안은 보존했습니다.");
+  }, []);
+
+  const { flush: save, state: saveState } = useDocumentAutosave<Record<string, string>, StoryTextCommitResult>({
+    slot: "play-story-text",
+    active: true,
+    projectRoot: root,
+    documentKey: `story-text:${editingLocale}:${keys.join("|")}`,
+    revision: sourceFingerprint,
+    dirty: hasChanges,
+    version: editVersion,
+    read: () => valuesRef.current,
+    commit: commitStoryText,
+    onCommitted: handleCommitted,
+    onState: handleSaveState,
+  });
+  useSaveCommandBinding();
+
+  const switchEditingLocale = async (candidate: GameLocale) => {
+    if (candidate === editingLocale) return;
+    if (hasChanges) {
+      await save();
+      if (saveState()?.hasPendingChanges) {
+        setMessage("현재 언어의 저장 문제를 해결한 뒤 다른 언어로 이동할 수 있습니다. 초안은 보존했습니다.");
+        return;
+      }
+    }
+    setLoading(true);
+    setEditingLocale(candidate);
   };
 
-  useEffect(() => {
-    const handleKey = (event: globalThis.KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
-        event.preventDefault();
-        void save();
-      }
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  });
+  const closeEditor = async () => {
+    if (hasChanges) await editorSaveCoordinator.barrier("play-story-text");
+    await editorDraftJournal.flush();
+    onClose();
+  };
+
+  const reloadSource = async () => {
+    if (hasChanges && !window.confirm("저장하지 않은 현재 초안을 원본으로 다시 불러올까요?")) return;
+    await load();
+  };
 
   const openSource = (source: StoryTextSource) => void openStorySource(root, source, sourceEditor);
   const updateSourceEditor = (editor: SourceEditor) => {
@@ -489,11 +554,11 @@ function StoryTextEditor({
     writeSourceEditor(editor);
   };
 
-  return <Modal title="인게임 원본 문구 편집" onClose={onClose} i18n={i18n} wide>
+  return <Modal title="인게임 원본 문구 편집" onClose={() => void closeEditor()} i18n={i18n} wide>
     <div className="vn-story-editor">
       <div className="vn-authoring-toolbar">
         <div className="vn-authoring-locales" aria-label="편집 언어">
-          {gameLocales(runtime).map((candidate) => <button type="button" className={editingLocale === candidate ? "active" : ""} disabled={busy} onClick={() => { setBusy(true); setEditingLocale(candidate); }} key={candidate}>
+          {gameLocales(runtime).map((candidate) => <button type="button" className={editingLocale === candidate ? "active" : ""} disabled={loading} onClick={() => void switchEditingLocale(candidate)} key={candidate}>
             {candidate === runtime.localization.default_locale ? "한국어 원본" : `${i18n.localeName(candidate)} 번역`}
           </button>)}
         </div>
@@ -513,8 +578,16 @@ function StoryTextEditor({
           rows={Math.max(3, Math.min(9, (values[owner.key]?.split("\n").length || 1) + 2))}
           value={values[owner.key] || ""}
           maxLength={owner.maxLength}
-          onChange={(event) => setValues((current) => ({ ...current, [owner.key]: event.target.value }))}
-          disabled={busy}
+          onChange={(event) => {
+            const nextValue = event.target.value;
+            setValues((current) => {
+              const next = { ...current, [owner.key]: nextValue };
+              valuesRef.current = next;
+              return next;
+            });
+            setEditVersion((current) => current + 1);
+          }}
+          disabled={loading}
         />}
         {!owner.editable && <blockquote>{owner.currentValue}</blockquote>}
         <div className="vn-story-source-list">{owner.sources.map((source) => <div key={storySourceId(source)}>
@@ -525,9 +598,9 @@ function StoryTextEditor({
         </div>)}</div>
       </section>)}
       <footer>
-        <button type="button" onClick={() => void load()} disabled={busy}>원본 다시 불러오기</button>
-        <button type="button" onClick={onClose}>닫기</button>
-        <button type="button" className="primary" onClick={() => void save()} disabled={busy || !hasChanges}>{editingLocale === runtime.localization.default_locale ? "원본 저장" : `${editingLocale} 번역 저장`} <kbd>⌘↵</kbd></button>
+        <button type="button" onClick={() => void reloadSource()} disabled={loading}>원본 다시 불러오기</button>
+        <button type="button" onClick={() => void closeEditor()}>닫기</button>
+        <button type="button" className="primary" onClick={() => void save()} disabled={loading || !hasChanges}>{saving ? "저장 중…" : editingLocale === runtime.localization.default_locale ? "원본 저장" : `${editingLocale} 번역 저장`} <kbd>⌘S</kbd></button>
       </footer>
     </div>
   </Modal>;

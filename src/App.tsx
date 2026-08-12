@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
-import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
 import TimelineEditor from "./TimelineEditor";
 import PresentationEditor from "./PresentationEditor";
 import CharacterEditor from "./CharacterEditor";
@@ -11,9 +11,14 @@ import DuplicateDialog from "./DuplicateDialog";
 import ArtworkStageEditor from "./ArtworkStageEditor";
 import { applyDialogueSpeakerSelection } from "./stageAuthoring";
 import SceneBackgroundEditor from "./SceneBackgroundEditor";
+import { useDocumentAutosave, useSaveCommandBinding } from "./editorAutosave";
+import { editorDraftJournal, useDraftJournal } from "./editorDraftJournal";
+import { editorSaveRepository } from "./editorRepository";
 import { inactiveEditorPropsEqual, nextHistoryGroup, shouldCaptureHistory, type EditHistoryGroup } from "./editorPerformance";
+import { editorSaveCoordinator, SaveFailure, type DocumentSnapshot, type SaveCommitResult, type SaveCompletion, type SaveState } from "./editorSave";
+import { resolveRuntimeUpdate, type RuntimePatch, type RuntimeUpdate } from "./runtimePatch";
 import { selfDevelopmentVariantDisplayName } from "./player/systemDialogueAuthoring";
-import { deleteNodeAndReconnect, deletionReplacement, incomingReferenceCount } from "./sceneEditing";
+import { deleteNodeAndReconnect, deletionReplacement, incomingReferenceCount, insertNodeCopyAfter } from "./sceneEditing";
 import {
   consumeAuthoringTarget,
   openAuthoringPlayWindow,
@@ -100,6 +105,12 @@ const INTERACTION_CONTEXT_OPTIONS: Array<{ id: InteractionContextKind; label: st
 const STATE_LABELS: Record<string, string> = { push: "밀기", pull: "당기기", neutral: "중립" };
 
 type HistoryState = { past: Scene[]; future: Scene[] };
+type SceneCommitResult = SaveCommitResult & RuntimeUpdate & {
+  document: ProjectPayload["documents"]["scenes"][string];
+  issues: ValidationIssue[];
+};
+type DialogueClipboard = { node: StoryNode; sourceSceneId: string };
+type DialogueContextMenuState = { nodeId: string; x: number; y: number };
 type Workspace = "timeline" | "scene" | "system" | "character" | "presentation" | "settings";
 const WORKSPACES: Workspace[] = ["timeline", "scene", "system", "character", "presentation", "settings"];
 const DeferredTimelineEditor = memo(TimelineEditor, inactiveEditorPropsEqual);
@@ -144,6 +155,7 @@ const DialogueFlowRow = memo(function DialogueFlowRow({
   kindLabel,
   active,
   onSelect,
+  onContextMenu,
 }: {
   id: string;
   index: number;
@@ -151,11 +163,24 @@ const DialogueFlowRow = memo(function DialogueFlowRow({
   kindLabel: string;
   active: boolean;
   onSelect: (id: string) => void;
+  onContextMenu: (id: string, event: ReactMouseEvent<HTMLButtonElement>) => void;
 }) {
-  return <button type="button" role="listitem" className={active ? "node-pill active" : "node-pill"} onClick={() => onSelect(id)}>
+  return <button
+    type="button"
+    role="listitem"
+    className={active ? "node-pill active" : "node-pill"}
+    title="클릭하여 선택 · 우클릭하여 복사 또는 붙여넣기"
+    onClick={() => onSelect(id)}
+    onContextMenu={(event) => onContextMenu(id, event)}
+  >
     <b>{index + 1}</b><span>{preview}</span><small>{kindLabel}</small>
   </button>;
 });
+
+function isTextEditingTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  return target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName);
+}
 
 function IconText({ children }: { children: ReactNode }) {
   return <span aria-hidden="true" className="icon-text">{children}</span>;
@@ -1233,7 +1258,9 @@ function DecisionPanel({ trace, state }: { trace: DecisionTrace[]; state: Runtim
 }
 
 export default function App() {
+  useSaveCommandBinding();
   const bootStarted = useRef(false);
+  const recoveredJournalKeys = useRef(new Set<string>());
   const [payload, setPayload] = useState<ProjectPayload | null>(null);
   const [selectedSceneId, setSelectedSceneId] = useState("");
   const [selectedNodeId, setSelectedNodeId] = useState("");
@@ -1242,7 +1269,6 @@ export default function App() {
   const dirtyRef = useRef(false);
   const historyGroupRef = useRef<EditHistoryGroup | null>(null);
   const draftVersionRef = useRef(0);
-  const sceneSaveInFlight = useRef(false);
   const [revision, setRevision] = useState("");
   const [dirty, setDirty] = useState(false);
   const [history, setHistory] = useState<HistoryState>({ past: [], future: [] });
@@ -1254,6 +1280,8 @@ export default function App() {
   const [editorTab, setEditorTab] = useState<"scene" | "node" | "source">("node");
   const [newNodeKind, setNewNodeKind] = useState<NodeKind>("dual_dialogue");
   const [dialogueSearch, setDialogueSearch] = useState("");
+  const [dialogueClipboard, setDialogueClipboard] = useState<DialogueClipboard | null>(null);
+  const [dialogueContextMenu, setDialogueContextMenu] = useState<DialogueContextMenuState | null>(null);
   const [storyFlowCollapsed, setStoryFlowCollapsed] = useState(initialStoryFlowCollapsed);
   const [workspace, setWorkspace] = useState<Workspace>(initialWorkspace);
   const [visitedWorkspaces, setVisitedWorkspaces] = useState<Workspace[]>(() => [initialWorkspace()]);
@@ -1264,7 +1292,6 @@ export default function App() {
   const [characterRequest, setCharacterRequest] = useState<{ id: string; token: number } | null>(null);
   const [settingsRequest, setSettingsRequest] = useState<SettingsRequest | null>(null);
   const [duplicateRequest, setDuplicateRequest] = useState<{ kind: "scene" | "event"; id: string; title: string } | null>(null);
-  const lastAutoSaveAttempt = useRef(-1);
   const workspaceRef = useRef<Workspace>(workspace);
   const [workspaceActivities, setWorkspaceActivities] = useState<Partial<Record<Workspace, DocumentActivity>>>({});
 
@@ -1354,7 +1381,6 @@ export default function App() {
     replaceDraft(next);
     historyGroupRef.current = null;
     draftVersionRef.current = 0;
-    lastAutoSaveAttempt.current = -1;
     setRevision(meta.revision);
     setSelectedNodeId(next.start_node);
     setHistory({ past: [], future: [] });
@@ -1433,30 +1459,36 @@ export default function App() {
     return () => unlisten?.();
   }, [loadScene, payload, selectedSceneId]);
 
-  useEffect(() => {
-    if (!draft || !root) return;
-    const key = `love-office-draft:${root}:${draft.id}`;
-    if (!dirty) {
-      localStorage.removeItem(key);
-      return;
-    }
-    if (!revision) return;
-    const timer = window.setTimeout(() => {
-      localStorage.setItem(key, JSON.stringify({ revision, scene: draft }));
-      setStatus("복구용 초안을 임시 보관했습니다. YAML 자동 저장 대기 중…");
-    }, 300);
-    return () => window.clearTimeout(timer);
-  }, [dirty, draft, revision, root]);
+  const sceneJournalKey = `draft:${root || "none"}:scene:${draft?.id || "none"}`;
+  useDraftJournal({
+    enabled: dirty && Boolean(draft && root && revision),
+    key: sceneJournalKey,
+    projectRoot: root || "",
+    baseRevision: revision,
+    editVersion: draftVersionRef.current,
+    value: draft,
+  });
 
   useEffect(() => {
-    const preserveDraft = () => {
-      if (dirty && draft && root && revision) {
-        localStorage.setItem(`love-office-draft:${root}:${draft.id}`, JSON.stringify({ revision, scene: draft }));
+    if (!draft || !root || !revision) return;
+    const recoveryIdentity = `${sceneJournalKey}:${revision}`;
+    if (recoveredJournalKeys.current.has(recoveryIdentity)) return;
+    recoveredJournalKeys.current.add(recoveryIdentity);
+    let cancelled = false;
+    void editorDraftJournal.read<Scene>(sceneJournalKey).then((record) => {
+      if (cancelled || !record || record.baseRevision !== revision || record.value.id !== draft.id) return;
+      if (JSON.stringify(record.value) === JSON.stringify(payload?.runtime.scenes[draft.id])) return;
+      if (!window.confirm(`저장하지 않은 '${draft.title}' 비동기 복구 초안이 있습니다. 복구할까요?`)) {
+        void editorDraftJournal.remove(sceneJournalKey);
+        return;
       }
-    };
-    window.addEventListener("beforeunload", preserveDraft);
-    return () => window.removeEventListener("beforeunload", preserveDraft);
-  }, [dirty, draft, revision, root]);
+      draftVersionRef.current = Math.max(draftVersionRef.current, record.editVersion);
+      replaceDraft(record.value);
+      setSceneDirty(true);
+      setStatus("비동기 복구 journal에서 장면 초안을 복구했습니다.");
+    }).catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [draft?.id, payload?.runtime.scenes, replaceDraft, revision, root, sceneJournalKey, setSceneDirty]);
 
   const commitDraft = useCallback((next: Scene, historyGroup?: string) => {
     const current = draftRef.current;
@@ -1499,6 +1531,68 @@ export default function App() {
     if (!current || current.nodes[node.id] === node) return;
     commitDraft({ ...current, nodes: { ...current.nodes, [node.id]: node } }, `node:${node.id}`);
   }, [commitDraft]);
+
+  const copyDialogueNode = useCallback((nodeId: string) => {
+    const scene = draftRef.current;
+    const node = scene?.nodes[nodeId];
+    if (!scene || !node) return;
+    setDialogueClipboard({ node: clone(node), sourceSceneId: scene.id });
+    setDialogueContextMenu(null);
+    setStatus(`“${nodePreview(node)}” 대사를 복사했습니다. 붙여넣을 대사를 선택하고 ⌘/Ctrl+V를 누르세요.`);
+  }, []);
+
+  const pasteDialogueNode = useCallback((targetId: string) => {
+    const scene = draftRef.current;
+    if (!scene?.nodes[targetId]) return;
+    if (!dialogueClipboard) {
+      setStatus("먼저 복사할 대사를 선택하고 ⌘/Ctrl+C를 누르세요.");
+      setDialogueContextMenu(null);
+      return;
+    }
+
+    const copiedId = automaticDialogueId(scene);
+    updateDraft((next) => {
+      insertNodeCopyAfter(next, dialogueClipboard.node, targetId, copiedId);
+    });
+    setSelectedNodeId(copiedId);
+    setDialogueContextMenu(null);
+    setStatus(`복사한 대사를 선택한 대사 바로 다음에 붙여넣었습니다.${dialogueClipboard.sourceSceneId === scene.id ? "" : " 다른 장면의 연결 대상은 저장 전 검증해 주세요."}`);
+  }, [dialogueClipboard, updateDraft]);
+
+  const openDialogueContextMenu = useCallback((nodeId: string, event: ReactMouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    setSelectedNodeId(nodeId);
+    const menuWidth = 210;
+    const menuHeight = 92;
+    setDialogueContextMenu({
+      nodeId,
+      x: Math.max(8, Math.min(event.clientX, window.innerWidth - menuWidth - 8)),
+      y: Math.max(8, Math.min(event.clientY, window.innerHeight - menuHeight - 8)),
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!dialogueContextMenu) return;
+    const close = () => setDialogueContextMenu(null);
+    const closeOnPrimaryPointer = (event: PointerEvent) => {
+      if (event.button === 0) close();
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+    };
+    window.addEventListener("pointerdown", closeOnPrimaryPointer);
+    window.addEventListener("blur", close);
+    window.addEventListener("resize", close);
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      window.removeEventListener("pointerdown", closeOnPrimaryPointer);
+      window.removeEventListener("blur", close);
+      window.removeEventListener("resize", close);
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [dialogueContextMenu]);
 
   useEffect(() => {
     historyGroupRef.current = null;
@@ -1567,112 +1661,116 @@ export default function App() {
     }
   };
 
-  const save = useCallback(async () => {
-    if (!root || !draft || !payload || sceneSaveInFlight.current) return;
-    const savingVersion = draftVersionRef.current;
+  const commitScene = useCallback(async (snapshot: DocumentSnapshot<Scene>): Promise<SceneCommitResult> => {
+    if (!root || !payload) throw new SaveFailure("프로젝트가 열리지 않았습니다.");
     const sceneToSave = {
-      ...draft,
-      state_contract: deriveStateContract(draft, payload.runtime.routes[draft.route]?.heroine, payload.runtime),
+      ...snapshot.value,
+      state_contract: deriveStateContract(snapshot.value, payload.runtime.routes[snapshot.value.route]?.heroine, payload.runtime),
     };
-    sceneSaveInFlight.current = true;
-    setBusy(true);
     setStatus("전체 프로젝트를 검증하고 안전하게 저장하는 중…");
-    reportSceneActivity({
-      phase: "saving",
-      label: draft.title,
-      path: payload.documents.scenes[draft.id]?.path || "",
-      detail: "검증 후 디스크에 기록 중",
-    });
     try {
-      const result = await invoke<{
+      const result = await editorSaveRepository.saveScene<{
         saved: boolean;
         issues: ValidationIssue[];
         runtime?: Runtime;
+        runtimePatch?: RuntimePatch;
         document?: ProjectPayload["documents"]["scenes"][string];
-      }>("save_scene", { root, scene: sceneToSave, revision });
+      }>(root, sceneToSave, snapshot.baseRevision);
       setIssues(result.issues);
-      if (!result.saved || !result.runtime || !result.document) {
+      if (!result.saved || !result.document || !result.runtime && !result.runtimePatch) {
         setStatus("오류가 있어 원본에는 저장하지 않았습니다.");
-        reportSceneActivity({
-          phase: "error",
-          label: draft.title,
-          path: payload.documents.scenes[draft.id]?.path || "",
-          detail: "검증 오류 · 마지막 정상 파일은 보존됨",
-        });
-        return;
+        throw new SaveFailure("검증 오류 · 마지막 정상 파일은 보존됨", "validation");
       }
-      const nextProject: ProjectPayload = {
-        ...payload,
-        runtime: result.runtime,
-        documents: {
-          ...payload.documents,
-          scenes: { ...payload.documents.scenes, [draft.id]: result.document },
-        },
-      };
-      setPayload(nextProject);
-      setRevision(result.document.revision);
-      if (savingVersion === draftVersionRef.current) {
-        replaceDraft(clone(result.runtime.scenes[draft.id]));
-        historyGroupRef.current = null;
-        setSceneDirty(false);
-        localStorage.removeItem(`love-office-draft:${root}:${draft.id}`);
-        setStatus("YAML과 런타임을 저장했습니다.");
-        reportSceneActivity({
-          phase: "saved",
-          label: result.runtime.scenes[draft.id].title,
-          path: result.document.path,
-          detail: "YAML + 런타임 저장 완료",
-          savedAt: Date.now(),
-        });
-      } else {
-        setStatus("입력 중이던 내용은 유지했습니다. 남은 변경을 이어서 자동 저장합니다.");
-        reportSceneActivity({
-          phase: "dirty",
-          label: draftRef.current?.title || draft.title,
-          path: result.document.path,
-          detail: "이전 입력 저장 완료 · 최신 입력 자동 저장 대기",
-        });
-      }
+      return { revision: result.document.revision, runtime: result.runtime, runtimePatch: result.runtimePatch, document: result.document, issues: result.issues };
     } catch (error) {
+      if (error instanceof SaveFailure) throw error;
       const message = String(error);
       setStatus(message.includes("REVISION_CONFLICT") ? "외부에서 파일이 변경되었습니다. 프로젝트를 다시 불러온 뒤 비교하세요." : `저장 실패: ${message}`);
-      reportSceneActivity({
-        phase: "error",
-        label: draft.title,
-        path: payload.documents.scenes[draft.id]?.path || "",
-        detail: message.includes("REVISION_CONFLICT") ? "외부 변경 충돌 · 원본 보존됨" : "저장 실패 · 원본 보존됨",
-      });
-    } finally {
-      sceneSaveInFlight.current = false;
-      setBusy(false);
+      throw new SaveFailure(message, message.includes("REVISION_CONFLICT") ? "conflict" : "transient");
     }
-  }, [draft, payload, replaceDraft, reportSceneActivity, revision, root, setSceneDirty]);
+  }, [payload, root]);
 
-  useEffect(() => {
-    if (!dirty || !draft || !root || !revision) return;
-    const version = draftVersionRef.current;
-    if (version === lastAutoSaveAttempt.current) return;
-    const timer = window.setTimeout(() => {
-      lastAutoSaveAttempt.current = version;
-      void save();
-    }, 1000);
-    return () => window.clearTimeout(timer);
-  }, [dirty, draft, revision, root, save]);
+  const handleSceneCommitted = useCallback((result: SceneCommitResult, completion: SaveCompletion<Scene>) => {
+    const sceneId = completion.snapshot.value.id;
+    setPayload((current) => current ? {
+      ...current,
+      runtime: resolveRuntimeUpdate(current.runtime, result),
+      documents: {
+        ...current.documents,
+        scenes: { ...current.documents.scenes, [sceneId]: result.document },
+      },
+    } : current);
+    setIssues(result.issues);
+    setRevision(result.revision);
+    if (completion.isLatest && draftRef.current?.id === sceneId) {
+      historyGroupRef.current = null;
+      setSceneDirty(false);
+      localStorage.removeItem(`love-office-draft:${completion.snapshot.projectRoot}:${sceneId}`);
+      setStatus("YAML과 런타임을 저장했습니다.");
+    } else {
+      setStatus("입력 중이던 내용은 유지했습니다. 최신 변경을 이어서 백그라운드 저장합니다.");
+    }
+  }, [replaceDraft, setSceneDirty]);
+
+  const handleSceneSaveState = useCallback((state: SaveState) => {
+    const current = draftRef.current;
+    if (!current || !payload) return;
+    const phase = state.phase === "clean" ? "saved"
+      : state.phase === "queued" ? "dirty"
+      : state.phase === "conflict" ? "error"
+        : state.phase;
+    const detail = state.phase === "saving"
+      ? state.hasPendingChanges ? "이전 변경 저장 중 · 최신 변경 대기" : "백그라운드 검증·저장 중"
+      : state.phase === "queued" ? "백그라운드 저장 대기 중"
+        : state.phase === "conflict" ? "외부 변경 충돌 · 현재 초안 보존됨"
+          : state.phase === "error" ? state.error || "저장 실패 · 현재 초안 보존됨"
+            : state.phase === "dirty" ? "자동 저장 대기" : "YAML + 런타임 저장 완료";
+    reportSceneActivity({
+      phase,
+      label: current.title,
+      path: payload.documents.scenes[current.id]?.path || "",
+      detail,
+      savedAt: state.savedAt,
+    });
+  }, [payload, reportSceneActivity]);
+
+  const { flush: save } = useDocumentAutosave<Scene, SceneCommitResult>({
+    slot: "scene",
+    active: workspace === "scene",
+    projectRoot: root || "",
+    documentKey: `scene:${selectedSceneId || "none"}`,
+    revision,
+    dirty,
+    version: draftVersionRef.current,
+    read: () => draftRef.current,
+    commit: commitScene,
+    onCommitted: handleSceneCommitted,
+    onState: handleSceneSaveState,
+  });
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (!(event.metaKey || event.ctrlKey)) return;
-      if (event.key.toLocaleLowerCase() === "p") {
+      const key = event.key.toLocaleLowerCase();
+      if (key === "p") {
         event.preventDefault();
         setQuickOpenVisible(true);
         return;
       }
       if (workspace !== "scene") return;
-      if (event.key.toLocaleLowerCase() === "s") {
-        event.preventDefault();
-        if (dirty) void save();
+      if (editorTab === "node" && selectedNodeId && !event.altKey && !isTextEditingTarget(event.target)) {
+        if (key === "c" && !window.getSelection()?.toString()) {
+          event.preventDefault();
+          copyDialogueNode(selectedNodeId);
+          return;
+        }
+        if (key === "v") {
+          event.preventDefault();
+          pasteDialogueNode(selectedNodeId);
+          return;
+        }
       }
-      if (event.key.toLocaleLowerCase() === "z") {
+      if (key === "z") {
         event.preventDefault();
         if (event.shiftKey) redo();
         else undo();
@@ -1680,7 +1778,7 @@ export default function App() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [dirty, history, save, workspace]);
+  }, [copyDialogueNode, dirty, editorTab, history, pasteDialogueNode, save, selectedNodeId, workspace]);
 
   const quickOpenItems = useMemo<QuickOpenItem[]>(() => {
     if (!payload || !runtime) return [];
@@ -1862,19 +1960,16 @@ export default function App() {
   };
 
   const requestDuplicate = (kind: "scene" | "event", id: string, title: string) => {
-    const pending = Object.values(workspaceActivities).some((activity) => activity && activity.phase !== "saved");
-    if (pending) {
-      setStatus("다른 문서의 자동 저장이 끝난 뒤 복제해 주세요. 모든 참조를 한 번에 안전하게 갱신하기 위한 대기입니다.");
-      return;
-    }
     setDuplicateRequest({ kind, id, title });
   };
 
   const duplicateDocument = async (newId: string, title: string) => {
     if (!root || !duplicateRequest) return;
-    setBusy(true);
-    setStatus(`${duplicateRequest.kind === "scene" ? "장면과 연결 일정" : "시간 사건"}을 복사 검증하는 중…`);
+    setStatus("최신 편집 내용을 백그라운드 저장한 뒤 복제를 시작합니다…");
     try {
+      await editorSaveCoordinator.barrier(root);
+      setBusy(true);
+      setStatus(`${duplicateRequest.kind === "scene" ? "장면과 연결 일정" : "시간 사건"}을 복사 검증하는 중…`);
       const command = duplicateRequest.kind === "scene" ? "duplicate_scene" : "duplicate_event";
       const result = await invoke<{ created: boolean; issues: ValidationIssue[] }>(command, {
         root,
@@ -1911,12 +2006,14 @@ export default function App() {
   };
 
   const build = async () => {
-    if (!root || dirty) {
-      setStatus(dirty ? "먼저 현재 초안을 소스에 저장하세요." : "프로젝트가 열리지 않았습니다.");
+    if (!root) {
+      setStatus("프로젝트가 열리지 않았습니다.");
       return;
     }
-    setBusy(true);
+    setStatus("최신 편집 내용을 백그라운드 저장한 뒤 런타임을 빌드합니다…");
     try {
+      await editorSaveCoordinator.barrier(root);
+      setBusy(true);
       const result = await invoke<{ built: boolean; issues: ValidationIssue[]; runtime?: Runtime }>("build_runtime", { root });
       setIssues(result.issues);
       if (result.built && result.runtime && payload) {
@@ -2199,10 +2296,22 @@ export default function App() {
                 kindLabel={NODE_LABELS[draft.nodes[id].kind]}
                 active={id === selectedNodeId}
                 onSelect={selectDialogueNode}
+                onContextMenu={openDialogueContextMenu}
                 key={id}
               />;
             })}{visibleDialogueIds.length === 0 && <p className="dialogue-search-empty">검색 결과가 없습니다.</p>}</div>
           </aside>
+          {dialogueContextMenu && <div
+            className="dialogue-context-menu"
+            role="menu"
+            aria-label="대사 편집 메뉴"
+            style={{ left: dialogueContextMenu.x, top: dialogueContextMenu.y }}
+            onPointerDown={(event) => event.stopPropagation()}
+            onContextMenu={(event) => event.preventDefault()}
+          >
+            <button type="button" role="menuitem" onClick={() => copyDialogueNode(dialogueContextMenu.nodeId)}><span>복사</span><kbd>⌘/Ctrl+C</kbd></button>
+            <button type="button" role="menuitem" disabled={!dialogueClipboard} onClick={() => pasteDialogueNode(dialogueContextMenu.nodeId)}><span>다음에 붙여넣기</span><kbd>⌘/Ctrl+V</kbd></button>
+          </div>}
           <div className="dialogue-detail scroll-area">{selectedNode ? <NodeEditor root={root} runtime={runtime} state={testState} scene={draft} node={selectedNode} mode={mode} onMode={setMode} onChange={updateNode} /> : <p>대사를 선택하세요.</p>}</div>
         </div>}
 

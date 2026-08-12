@@ -541,6 +541,8 @@ export type GalleryEntry = {
 };
 
 export type Runtime = {
+  schema_version: number;
+  source_sha256: string;
   project: { id: string; title: string; default_language: string };
   generated_at: string;
   enums: Record<string, string[]>;

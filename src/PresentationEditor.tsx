@@ -1,5 +1,8 @@
 import { invoke } from "@tauri-apps/api/core";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
+import { editorSaveRepository } from "./editorRepository";
+import { SaveFailure, type SaveCommitResult } from "./editorSave";
+import { resolveRuntimeUpdate, type RuntimePatch } from "./runtimePatch";
 import LocalizationTable from "./LocalizationTable";
 import { LocalizationService, storyTextKey, VisualResolver } from "./presentation";
 import { canEnterScene, clone, effectiveSpeaker, resolveDialogueNode, setPath } from "./storyLogic";
@@ -117,12 +120,13 @@ type Props = {
   mode: ViewMode;
   onMode: (mode: ViewMode) => void;
   onStatus: (status: string) => void;
-  onPayload: (payload: ProjectPayload) => void;
+  onPayload: Dispatch<SetStateAction<ProjectPayload | null>>;
   onIssues: (issues: ValidationIssue[]) => void;
   onDocumentActivity: (activity: DocumentActivity) => void;
 };
 
 export default function PresentationEditor({
+  active,
   payload,
   locale,
   onLocale,
@@ -180,46 +184,46 @@ export default function PresentationEditor({
     });
   }, [images, onStatus, payload.root, stage]);
 
-  const saveTranslations = useCallback(async (strings: Record<string, string>): Promise<boolean> => {
+  const saveTranslations = useCallback(async (strings: Record<string, string>, expectedRevision: string): Promise<SaveCommitResult> => {
     const localeDocument = runtime.localization.locales[locale];
     const metadata = payload.documents.locales[locale];
-    if (!localeDocument || !metadata || locale === runtime.localization.default_locale) return false;
+    if (!localeDocument || !metadata || locale === runtime.localization.default_locale) {
+      throw new SaveFailure("저장 가능한 번역 문서가 없습니다.", "validation");
+    }
     setSavingTranslation(true);
     setSaveError(false);
     onStatus(`${localeLabel} 번역 전체를 검증하고 저장하는 중…`);
     try {
-      const result = await invoke<{
+      const result = await editorSaveRepository.saveDocument<{
         saved: boolean;
         issues: ValidationIssue[];
         runtime?: Runtime;
+        runtimePatch?: RuntimePatch;
         document?: ProjectPayload["documents"]["locales"][string];
-      }>("save_document", {
-        root: payload.root,
-        kind: "locales",
-        document: { ...localeDocument, strings },
-        revision: metadata.revision,
-      });
+      }>(payload.root, "locales", { ...localeDocument, strings }, expectedRevision);
       onIssues(result.issues);
-      if (!result.saved || !result.runtime || !result.document) {
-        setSaveError(true);
+      if (!result.saved || !result.document || !result.runtime && !result.runtimePatch) {
         onStatus("번역 전체 검증에 실패해 기존 locale 파일과 런타임을 유지했습니다.");
-        return false;
+        throw new SaveFailure("번역 전체 검증에 실패했습니다.", "validation");
       }
-      onPayload({
-        ...payload,
-        runtime: result.runtime,
+      const savedDocument = result.document;
+      onPayload((current) => current ? {
+        ...current,
+        runtime: resolveRuntimeUpdate(current.runtime, result),
         documents: {
-          ...payload.documents,
-          locales: { ...payload.documents.locales, [locale]: result.document },
+          ...current.documents,
+          locales: { ...current.documents.locales, [locale]: savedDocument },
         },
-      });
+      } : current);
       setSavedAt(Date.now());
       onStatus(`${localeLabel} 번역 파일과 런타임 카탈로그를 한 번에 저장했습니다.`);
-      return true;
+      return { revision: savedDocument.revision };
     } catch (error) {
       setSaveError(true);
       onStatus(`번역 저장 실패: ${String(error)}`);
-      return false;
+      if (error instanceof SaveFailure) throw error;
+      const message = String(error);
+      throw new SaveFailure(message, message.includes("REVISION_CONFLICT") ? "conflict" : "transient");
     } finally {
       setSavingTranslation(false);
     }
@@ -332,6 +336,7 @@ export default function PresentationEditor({
 
     <div className="presentation-localization-workspace">
       <LocalizationTable
+        active={active}
         root={payload.root}
         runtime={runtime}
         locale={locale}

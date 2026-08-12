@@ -1,14 +1,18 @@
-import { invoke } from "@tauri-apps/api/core";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useAssetPreview } from "./assetPreview";
+import { useDocumentAutosave } from "./editorAutosave";
+import { editorDraftJournal, useDraftJournal } from "./editorDraftJournal";
+import { editorSaveRepository } from "./editorRepository";
 import { nextHistoryGroup, shouldCaptureHistory, type EditHistoryGroup } from "./editorPerformance";
+import { SaveFailure, type DocumentSnapshot, type SaveCommitResult, type SaveCompletion, type SaveState } from "./editorSave";
+import { resolveRuntimeUpdate, type RuntimePatch, type RuntimeUpdate } from "./runtimePatch";
 import { clone } from "./storyLogic";
 import type { Character, DocumentActivity, JsonValue, ProjectPayload, Runtime, ValidationIssue, ViewMode } from "./types";
 
 type Props = {
   active: boolean;
   payload: ProjectPayload;
-  onPayload: (payload: ProjectPayload) => void;
+  onPayload: Dispatch<SetStateAction<ProjectPayload | null>>;
   onIssues: (issues: ValidationIssue[]) => void;
   onStatus: (status: string) => void;
   onDocumentActivity: (activity: DocumentActivity) => void;
@@ -17,6 +21,10 @@ type Props = {
 
 type CharacterHistory = { past: Character[]; future: Character[] };
 type StatCondition = { stat: string; op: string; value?: JsonValue };
+type CharacterCommitResult = SaveCommitResult & RuntimeUpdate & {
+  document: ProjectPayload["documents"]["characters"][string];
+  issues: ValidationIssue[];
+};
 
 const ROLE_ORDER: Record<string, number> = {
   unreliable_protagonist: 0,
@@ -93,11 +101,11 @@ export default function CharacterEditor({ active, payload, onPayload, onIssues, 
   const [savedAt, setSavedAt] = useState<number>();
   const [history, setHistory] = useState<CharacterHistory>({ past: [], future: [] });
   const [newExpressionId, setNewExpressionId] = useState("");
-  const lastAutoSaveAttempt = useRef(-1);
   const draftVersionRef = useRef(0);
   const historyGroupRef = useRef<EditHistoryGroup | null>(null);
   const initialRecoveryChecked = useRef(false);
   const handledRequestToken = useRef(0);
+  const recoveredJournalKeys = useRef(new Set<string>());
 
   const selectCharacter = (id: string, force = false) => {
     if (!force && dirty) {
@@ -132,7 +140,6 @@ export default function CharacterEditor({ active, payload, onPayload, onIssues, 
     setHistory({ past: [], future: [] });
     historyGroupRef.current = null;
     draftVersionRef.current = 0;
-    lastAutoSaveAttempt.current = -1;
     setNewExpressionId("");
   };
 
@@ -185,78 +192,101 @@ export default function CharacterEditor({ active, payload, onPayload, onIssues, 
     applyDraft(next);
   };
 
-  const save = useCallback(async () => {
-    if (!draft || !revision) return;
-    setSaving(true);
-    setSaveError(false);
-    onStatus(`${draft.display_name} 인물 문서를 검증하고 저장하는 중…`);
+  const commitCharacter = useCallback(async (snapshot: DocumentSnapshot<Character>): Promise<CharacterCommitResult> => {
+    onStatus(`${snapshot.value.display_name} 인물 문서를 백그라운드에서 검증하고 저장하는 중…`);
     try {
-      const result = await invoke<{
+      const result = await editorSaveRepository.saveDocument<{
         saved: boolean;
         issues: ValidationIssue[];
         runtime?: Runtime;
+        runtimePatch?: RuntimePatch;
         document?: ProjectPayload["documents"]["characters"][string];
-      }>("save_document", { root: payload.root, kind: "characters", document: draft, revision });
+      }>(snapshot.projectRoot, "characters", snapshot.value, snapshot.baseRevision);
       onIssues(result.issues);
-      if (!result.saved || !result.runtime || !result.document) {
-        setSaveError(true);
+      if (!result.saved || !result.document || !result.runtime && !result.runtimePatch) {
         onStatus("인물 문서에 오류가 있어 원본에는 저장하지 않았습니다.");
-        return;
+        throw new SaveFailure("검증 오류 · 마지막 정상 파일은 보존됨", "validation");
       }
-      const nextPayload: ProjectPayload = {
-        ...payload,
-        runtime: result.runtime,
-        documents: {
-          ...payload.documents,
-          characters: { ...payload.documents.characters, [draft.id]: result.document },
-        },
-      };
-      onPayload(nextPayload);
-      setDraft(clone(result.runtime.characters[draft.id]));
-      setRevision(result.document.revision);
-      setDirty(false);
-      historyGroupRef.current = null;
-      setSavedAt(Date.now());
-      localStorage.removeItem(`love-office-character-draft:${payload.root}:${draft.id}`);
-      onStatus(`${draft.display_name} 인물 YAML과 런타임을 저장했습니다.`);
+      return { revision: result.document.revision, runtime: result.runtime, runtimePatch: result.runtimePatch, document: result.document, issues: result.issues };
     } catch (error) {
-      setSaveError(true);
+      if (error instanceof SaveFailure) throw error;
       const message = String(error);
       onStatus(message.includes("REVISION_CONFLICT") ? "외부에서 인물 파일이 변경되었습니다. 프로젝트를 다시 여세요." : `인물 저장 실패: ${message}`);
-    } finally {
-      setSaving(false);
+      throw new SaveFailure(message, message.includes("REVISION_CONFLICT") ? "conflict" : "transient");
     }
-  }, [draft, onIssues, onPayload, onStatus, payload, revision]);
+  }, [onIssues, onStatus]);
 
-  useEffect(() => {
-    if (!draft) return;
-    const key = `love-office-character-draft:${payload.root}:${draft.id}`;
-    if (!dirty) {
-      localStorage.removeItem(key);
-      return;
+  const handleCommitted = useCallback((result: CharacterCommitResult, completion: SaveCompletion<Character>) => {
+    const characterId = completion.snapshot.value.id;
+    onPayload((current) => current ? {
+      ...current,
+      runtime: resolveRuntimeUpdate(current.runtime, result),
+      documents: {
+        ...current.documents,
+        characters: { ...current.documents.characters, [characterId]: result.document },
+      },
+    } : current);
+    if (draft?.id === characterId) setRevision(result.revision);
+    if (completion.isLatest && draft?.id === characterId) {
+      setDirty(false);
+      historyGroupRef.current = null;
+      localStorage.removeItem(`love-office-character-draft:${completion.snapshot.projectRoot}:${characterId}`);
+      onStatus(`${completion.snapshot.value.display_name} 인물 YAML과 런타임을 저장했습니다.`);
+    } else {
+      onStatus(`${completion.snapshot.value.display_name}의 이전 변경을 저장했습니다. 최신 입력은 계속 보존합니다.`);
     }
-    const timer = window.setTimeout(() => localStorage.setItem(key, JSON.stringify({ revision, character: draft })), 300);
-    return () => window.clearTimeout(timer);
-  }, [dirty, draft, payload.root, revision]);
+  }, [draft?.id, onPayload, onStatus]);
+
+  const handleSaveState = useCallback((state: SaveState) => {
+    setSaving(state.phase === "saving" || state.phase === "queued");
+    setSaveError(state.phase === "error" || state.phase === "conflict");
+    if (state.savedAt) setSavedAt(state.savedAt);
+  }, []);
+
+  const { flush: save } = useDocumentAutosave<Character, CharacterCommitResult>({
+    slot: "character",
+    active,
+    projectRoot: payload.root,
+    documentKey: `character:${draft?.id || "none"}`,
+    revision,
+    dirty,
+    version: draftVersionRef.current,
+    read: () => draft,
+    commit: commitCharacter,
+    onCommitted: handleCommitted,
+    onState: handleSaveState,
+  });
+
+  const journalKey = `draft:${payload.root}:character:${draft?.id || "none"}`;
+  useDraftJournal({
+    enabled: dirty && Boolean(draft && revision),
+    key: journalKey,
+    projectRoot: payload.root,
+    baseRevision: revision,
+    editVersion: draftVersionRef.current,
+    value: draft,
+  });
 
   useEffect(() => {
-    const preserveDraft = () => {
-      if (dirty && draft) localStorage.setItem(`love-office-character-draft:${payload.root}:${draft.id}`, JSON.stringify({ revision, character: draft }));
-    };
-    window.addEventListener("beforeunload", preserveDraft);
-    return () => window.removeEventListener("beforeunload", preserveDraft);
-  }, [dirty, draft, payload.root, revision]);
-
-  useEffect(() => {
-    if (!dirty || !draft || saving) return;
-    const version = draftVersionRef.current;
-    if (version === lastAutoSaveAttempt.current) return;
-    const timer = window.setTimeout(() => {
-      lastAutoSaveAttempt.current = version;
-      void save();
-    }, 1000);
-    return () => window.clearTimeout(timer);
-  }, [dirty, draft, save, saving]);
+    if (!draft || !revision) return;
+    const identity = `${journalKey}:${revision}`;
+    if (recoveredJournalKeys.current.has(identity)) return;
+    recoveredJournalKeys.current.add(identity);
+    let cancelled = false;
+    void editorDraftJournal.read<Character>(journalKey).then((record) => {
+      if (cancelled || !record || record.baseRevision !== revision || record.value.id !== draft.id) return;
+      if (JSON.stringify(record.value) === JSON.stringify(runtime.characters[draft.id])) return;
+      if (!window.confirm(`저장되지 않은 '${draft.display_name}' 비동기 복구 초안이 있습니다. 복구할까요?`)) {
+        void editorDraftJournal.remove(journalKey);
+        return;
+      }
+      draftVersionRef.current = Math.max(draftVersionRef.current, record.editVersion);
+      setDraft(record.value);
+      setDirty(true);
+      onStatus("비동기 복구 journal에서 인물 초안을 복구했습니다.");
+    }).catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [draft?.id, journalKey, onStatus, revision, runtime.characters]);
 
   useEffect(() => {
     if (!draft) return;
@@ -273,10 +303,6 @@ export default function CharacterEditor({ active, payload, onPayload, onIssues, 
     const onKeyDown = (event: KeyboardEvent) => {
       if (!active || !(event.metaKey || event.ctrlKey)) return;
       const key = event.key.toLocaleLowerCase();
-      if (key === "s") {
-        event.preventDefault();
-        if (dirty && !saving) void save();
-      }
       if (key === "z") {
         event.preventDefault();
         if (event.shiftKey) redo(); else undo();
@@ -284,7 +310,7 @@ export default function CharacterEditor({ active, payload, onPayload, onIssues, 
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [active, dirty, history, save, saving]);
+  }, [active, history]);
 
   const image = useAssetPreview(payload.root, draft?.visual.concept_art);
 
@@ -305,7 +331,7 @@ export default function CharacterEditor({ active, payload, onPayload, onIssues, 
     <section className="character-editor-panel">
       <header className="character-editor-heading">
         <div><p className="eyebrow">{draft.id}</p><h2>{draft.display_name}</h2><p>{draft.summary}</p></div>
-        <div className="character-actions"><button type="button" onClick={undo} disabled={!history.past.length || saving} title="⌘Z">↶</button><button type="button" onClick={redo} disabled={!history.future.length || saving} title="⇧⌘Z">↷</button><button type="button" className="primary-button" onClick={save} disabled={!dirty || saving}>{saving ? "저장 중…" : "지금 저장 ⌘S"}</button></div>
+        <div className="character-actions"><button type="button" onClick={undo} disabled={!history.past.length} title="⌘Z">↶</button><button type="button" onClick={redo} disabled={!history.future.length} title="⇧⌘Z">↷</button><button type="button" className="primary-button" onClick={() => void save()} disabled={!dirty}>{saving ? "저장 중 · 최신 변경 예약 가능" : "지금 저장 ⌘S"}</button></div>
       </header>
       <div className="character-form-scroll">
         <fieldset><legend>기본 프로필</legend><div className="form-grid">

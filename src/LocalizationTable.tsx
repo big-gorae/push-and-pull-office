@@ -1,4 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useDocumentAutosave } from "./editorAutosave";
+import { editorDraftJournal, useDraftJournal } from "./editorDraftJournal";
+import type { SaveCommitResult, SaveState } from "./editorSave";
 import type { LocaleId, LocalizationEntry, Runtime } from "./types";
 
 type TranslationStatus = "all" | "direct" | "fallback" | "missing" | "invalid" | "orphan";
@@ -33,6 +36,7 @@ export function buildLocalizationRows(runtime: Runtime, locale: LocaleId): Local
 }
 
 type Props = {
+  active: boolean;
   root: string;
   runtime: Runtime;
   locale: LocaleId;
@@ -40,7 +44,7 @@ type Props = {
   nodeId: string;
   saving: boolean;
   revision: string;
-  onSave: (strings: Record<string, string>) => Promise<boolean>;
+  onSave: (strings: Record<string, string>, expectedRevision: string) => Promise<SaveCommitResult>;
   onNavigate: (entry: LocalizationEntry) => void;
   onDirtyChange?: (dirty: boolean) => void;
 };
@@ -100,6 +104,7 @@ function download(name: string, type: string, content: string): void {
 }
 
 export default function LocalizationTable({
+  active,
   root,
   runtime,
   locale,
@@ -121,7 +126,9 @@ export default function LocalizationTable({
   const [domain, setDomain] = useState("all");
   const [status, setStatus] = useState<TranslationStatus>("all");
   const [importError, setImportError] = useState("");
-  const lastAutoSave = useRef("");
+  const [editVersion, setEditVersion] = useState(0);
+  const [coordinatorSaving, setCoordinatorSaving] = useState(false);
+  const recoveredJournalKeys = useRef(new Set<string>());
 
   useEffect(() => {
     const next = { ...stored };
@@ -140,13 +147,43 @@ export default function LocalizationTable({
       });
     }
     setDrafts(next);
-    lastAutoSave.current = "";
+    setEditVersion(0);
   }, [defaultLocale, entries, locale, revision, root, runtime.localization.locales]);
 
   const dirtyKeys = useMemo(() => {
     const keys = new Set([...Object.keys(stored), ...Object.keys(drafts)]);
     return [...keys].filter((key) => (drafts[key] || "") !== (stored[key] || ""));
   }, [drafts, stored]);
+  const journalKey = `draft:${root}:locale:${locale}`;
+
+  useDraftJournal({
+    enabled: dirtyKeys.length > 0 && locale !== defaultLocale,
+    key: journalKey,
+    projectRoot: root,
+    baseRevision: revision,
+    editVersion,
+    value: drafts,
+  });
+
+  useEffect(() => {
+    if (locale === defaultLocale) return;
+    const identity = `${journalKey}:${revision}`;
+    if (recoveredJournalKeys.current.has(identity)) return;
+    recoveredJournalKeys.current.add(identity);
+    let cancelled = false;
+    void editorDraftJournal.read<Record<string, string>>(journalKey).then((record) => {
+      if (cancelled || !record || record.baseRevision !== revision) return;
+      const changed = new Set([...Object.keys(stored), ...Object.keys(record.value)]);
+      if (![...changed].some((key) => (record.value[key] || "") !== (stored[key] || ""))) return;
+      if (!window.confirm(`${locale} 번역의 저장하지 않은 비동기 복구 초안이 있습니다. 복구할까요?`)) {
+        void editorDraftJournal.remove(journalKey);
+        return;
+      }
+      setDrafts(record.value);
+      setEditVersion((current) => Math.max(current + 1, record.editVersion));
+    }).catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [defaultLocale, journalKey, locale, revision, stored]);
 
   useEffect(() => {
     onDirtyChange?.(dirtyKeys.length > 0);
@@ -181,31 +218,30 @@ export default function LocalizationTable({
     Object.entries(drafts).filter(([, value]) => value.trim()),
   );
 
-  const save = async () => {
-    if (!dirtyKeys.length || locale === defaultLocale || saving) return;
-    const success = await onSave(normalizedStrings());
-    if (success) {
+  const commit = useCallback((snapshot: { value: Readonly<Record<string, string>>; baseRevision: string }) =>
+    onSave({ ...snapshot.value }, snapshot.baseRevision), [onSave]);
+
+  const handleSaveState = useCallback((state: SaveState) => {
+    setCoordinatorSaving(state.phase === "saving" || state.phase === "queued");
+  }, []);
+
+  const { flush: save } = useDocumentAutosave<Record<string, string>, SaveCommitResult>({
+    slot: "presentation",
+    active,
+    projectRoot: root,
+    documentKey: `locale:${locale}`,
+    revision,
+    dirty: dirtyKeys.length > 0 && locale !== defaultLocale,
+    version: editVersion,
+    read: normalizedStrings,
+    commit,
+    onCommitted: (_result, completion) => {
+      if (!completion.isLatest) return;
       dirtyKeys.forEach((key) =>
         localStorage.removeItem(`love-office-translation-draft:${root}:${locale}:${key}`));
-    }
-  };
-
-  useEffect(() => {
-    if (!dirtyKeys.length || locale === defaultLocale || saving) return;
-    dirtyKeys.forEach((key) => {
-      localStorage.setItem(
-        `love-office-translation-draft:${root}:${locale}:${key}`,
-        JSON.stringify({ revision, text: drafts[key] || "" }),
-      );
-    });
-    const signature = JSON.stringify(dirtyKeys.map((key) => [key, drafts[key] || ""]));
-    if (signature === lastAutoSave.current) return;
-    const timer = window.setTimeout(() => {
-      lastAutoSave.current = signature;
-      void save();
-    }, 1200);
-    return () => window.clearTimeout(timer);
-  }, [defaultLocale, dirtyKeys, drafts, locale, revision, root, saving]);
+    },
+    onState: handleSaveState,
+  });
 
   const exportCsv = () => {
     const content = [
@@ -246,6 +282,7 @@ export default function LocalizationTable({
       ...current,
       ...Object.fromEntries(parsed.filter((item) => entries[item.key]).map((item) => [item.key, item.translation])),
     }));
+    setEditVersion((current) => current + 1);
   };
 
   return <section className="localization-table">
@@ -255,7 +292,7 @@ export default function LocalizationTable({
         <button type="button" onClick={exportCsv}>CSV 내보내기</button>
         <button type="button" onClick={exportXliff}>XLIFF 내보내기</button>
         <label className="file-button">가져오기<input type="file" accept=".csv,.xlf,.xliff" onChange={(event) => void importFile(event.target.files?.[0])} /></label>
-        <button type="button" disabled={!dirtyKeys.length || saving || locale === defaultLocale} onClick={() => void save()}>{saving ? "저장 중…" : "전체 저장"}</button>
+        <button type="button" disabled={!dirtyKeys.length || locale === defaultLocale} onClick={() => void save()}>{saving || coordinatorSaving ? "저장 중 · 최신 변경 예약 가능" : "전체 저장"}</button>
       </div>
     </header>
     <div className="localization-table-filters">
@@ -293,7 +330,10 @@ export default function LocalizationTable({
           rows={row.entry?.multiline ? 4 : 2}
           value={locale === defaultLocale ? row.source : drafts[row.key] || ""}
           placeholder={row.status === "fallback" ? `Fallback: ${runtime.localization.resolved_catalogs?.[locale]?.[row.key] || row.source}` : "번역 입력"}
-          onChange={(event) => setDrafts((current) => ({ ...current, [row.key]: event.target.value }))}
+          onChange={(event) => {
+            setDrafts((current) => ({ ...current, [row.key]: event.target.value }));
+            setEditVersion((current) => current + 1);
+          }}
         /></label>
       </article>)}
       {!visibleRows.length && <p className="localization-empty">조건에 맞는 문자열이 없습니다.</p>}

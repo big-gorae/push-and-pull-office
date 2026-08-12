@@ -1,8 +1,12 @@
-import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useAssetPreview } from "./assetPreview";
+import { useDocumentAutosave } from "./editorAutosave";
+import { editorDraftJournal, useDraftJournal } from "./editorDraftJournal";
+import { editorSaveRepository } from "./editorRepository";
 import { nextHistoryGroup, shouldCaptureHistory, type EditHistoryGroup } from "./editorPerformance";
+import { SaveFailure, type DocumentSnapshot, type SaveCommitResult, type SaveCompletion, type SaveState } from "./editorSave";
+import { resolveRuntimeUpdate, type RuntimePatch, type RuntimeUpdate } from "./runtimePatch";
 import { clone, parseEditorValue, statePaths } from "./storyLogic";
 import type {
   Condition,
@@ -25,11 +29,16 @@ export type SettingsKind = "campaign" | "route" | "thread" | "meta" | "visual";
 type SettingsDocument = Campaign | Route | TimelineThread | MetaDocument | VisualObject;
 
 export type SettingsRequest = { kind: SettingsKind; id: string; token: number };
+type SettingsCommitResult = SaveCommitResult & RuntimeUpdate & {
+  document: DocumentMeta;
+  issues: ValidationIssue[];
+  collection: "campaigns" | "routes" | "threads" | "meta" | "visuals";
+};
 
 type Props = {
   active: boolean;
   payload: ProjectPayload;
-  onPayload: (payload: ProjectPayload) => void;
+  onPayload: Dispatch<SetStateAction<ProjectPayload | null>>;
   onIssues: (issues: ValidationIssue[]) => void;
   onStatus: (status: string) => void;
   onDocumentActivity: (activity: DocumentActivity) => void;
@@ -364,10 +373,10 @@ export default function ProjectSettingsEditor({ active, payload, onPayload, onIs
   const [savedAt, setSavedAt] = useState<number>();
   const [history, setHistory] = useState<{ past: SettingsDocument[]; future: SettingsDocument[] }>({ past: [], future: [] });
   const handledRequestToken = useRef(0);
-  const lastAutoSaveAttempt = useRef(-1);
   const draftVersionRef = useRef(0);
   const historyGroupRef = useRef<EditHistoryGroup | null>(null);
   const initialRecoveryChecked = useRef(false);
+  const recoveredJournalKeys = useRef(new Set<string>());
 
   const sourceFor = (nextKind: SettingsKind, id: string): SettingsDocument | undefined => {
     if (nextKind === "campaign") return runtime.campaigns[id];
@@ -418,7 +427,6 @@ export default function ProjectSettingsEditor({ active, payload, onPayload, onIs
     setHistory({ past: [], future: [] });
     historyGroupRef.current = null;
     draftVersionRef.current = 0;
-    lastAutoSaveAttempt.current = -1;
   };
 
   useEffect(() => {
@@ -461,76 +469,105 @@ export default function ProjectSettingsEditor({ active, payload, onPayload, onIs
     applyDraft(next);
   };
 
-  const save = useCallback(async () => {
-    if (!draft || !revision) return;
-    setSaving(true);
-    setSaveError(false);
-    const label = documentLabel(draft, runtime);
+  const commitSettings = useCallback(async (snapshot: DocumentSnapshot<SettingsDocument>): Promise<SettingsCommitResult> => {
+    const label = documentLabel(snapshot.value, runtime);
     onStatus(`${label} 설정을 전체 참조와 함께 검증하는 중…`);
     const collection = kind === "campaign" ? "campaigns" : kind === "route" ? "routes" : kind === "thread" ? "threads" : kind === "meta" ? "meta" : "visuals";
     try {
-      const result = await invoke<{ saved: boolean; issues: ValidationIssue[]; runtime?: Runtime; document?: DocumentMeta }>("save_document", {
-        root: payload.root, kind: collection, document: draft, revision,
-      });
+      const result = await editorSaveRepository.saveDocument<{ saved: boolean; issues: ValidationIssue[]; runtime?: Runtime; runtimePatch?: RuntimePatch; document?: DocumentMeta }>(
+        snapshot.projectRoot,
+        collection,
+        snapshot.value,
+        snapshot.baseRevision,
+      );
       onIssues(result.issues);
-      if (!result.saved || !result.runtime || !result.document) {
-        setSaveError(true);
+      if (!result.saved || !result.document || !result.runtime && !result.runtimePatch) {
         onStatus("참조 또는 스키마 오류가 있어 디스크에는 쓰지 않았습니다. 아래 검증 결과를 확인하세요.");
-        return;
+        throw new SaveFailure("검증 오류 · 마지막 정상 파일은 보존됨", "validation");
       }
-      const nextPayload: ProjectPayload = {
-        ...payload,
-        runtime: result.runtime,
-        documents: {
-          ...payload.documents,
-          [collection]: { ...payload.documents[collection], [draft.id]: result.document },
-        },
-      };
-      onPayload(nextPayload);
-      const savedDocument = kind === "campaign" ? result.runtime.campaigns[draft.id]
-        : kind === "route" ? result.runtime.routes[draft.id]
-          : kind === "thread" ? result.runtime.threads[draft.id]
-            : kind === "meta" ? result.runtime.meta[draft.id]
-              : result.runtime.visuals[draft.id];
-      setDraft(clone(savedDocument));
-      setRevision(result.document.revision);
-      setDirty(false);
-      historyGroupRef.current = null;
-      setSavedAt(Date.now());
-      localStorage.removeItem(`love-office-settings-draft:${payload.root}:${kind}:${draft.id}`);
-      onStatus(`${label} YAML과 런타임을 안전하게 저장했습니다.`);
+      return { revision: result.document.revision, runtime: result.runtime, runtimePatch: result.runtimePatch, document: result.document, issues: result.issues, collection };
     } catch (error) {
-      setSaveError(true);
+      if (error instanceof SaveFailure) throw error;
       const message = String(error);
       onStatus(message.includes("REVISION_CONFLICT") ? "외부에서 설정 파일이 변경되었습니다. 프로젝트를 다시 열어 충돌을 피하세요." : `설정 저장 실패: ${message}`);
-    } finally {
-      setSaving(false);
+      throw new SaveFailure(message, message.includes("REVISION_CONFLICT") ? "conflict" : "transient");
     }
-  }, [draft, kind, onIssues, onPayload, onStatus, payload, revision, runtime]);
+  }, [kind, onIssues, onStatus, runtime]);
+
+  const handleCommitted = useCallback((result: SettingsCommitResult, completion: SaveCompletion<SettingsDocument>) => {
+    const documentId = completion.snapshot.value.id;
+    onPayload((current) => current ? {
+      ...current,
+      runtime: resolveRuntimeUpdate(current.runtime, result),
+      documents: {
+        ...current.documents,
+        [result.collection]: { ...current.documents[result.collection], [documentId]: result.document },
+      },
+    } : current);
+    if (draft?.id === documentId) setRevision(result.revision);
+    const label = documentLabel(completion.snapshot.value, runtime);
+    if (completion.isLatest && draft?.id === documentId) {
+      setDirty(false);
+      historyGroupRef.current = null;
+      localStorage.removeItem(`love-office-settings-draft:${completion.snapshot.projectRoot}:${kind}:${documentId}`);
+      onStatus(`${label} YAML과 런타임을 안전하게 저장했습니다.`);
+    } else {
+      onStatus(`${label}의 이전 변경을 저장했습니다. 최신 입력은 계속 보존합니다.`);
+    }
+  }, [draft?.id, kind, onPayload, onStatus, runtime]);
+
+  const handleSaveState = useCallback((state: SaveState) => {
+    setSaving(state.phase === "saving" || state.phase === "queued");
+    setSaveError(state.phase === "error" || state.phase === "conflict");
+    if (state.savedAt) setSavedAt(state.savedAt);
+  }, []);
+
+  const { flush: save } = useDocumentAutosave<SettingsDocument, SettingsCommitResult>({
+    slot: "settings",
+    active,
+    projectRoot: payload.root,
+    documentKey: `${kind}:${draft?.id || "none"}`,
+    revision,
+    dirty,
+    version: draftVersionRef.current,
+    read: () => draft,
+    commit: commitSettings,
+    onCommitted: handleCommitted,
+    onState: handleSaveState,
+  });
+
+  const journalKey = `draft:${payload.root}:${kind}:${draft?.id || "none"}`;
+  useDraftJournal({
+    enabled: dirty && Boolean(draft && revision),
+    key: journalKey,
+    projectRoot: payload.root,
+    baseRevision: revision,
+    editVersion: draftVersionRef.current,
+    value: draft,
+  });
 
   useEffect(() => {
-    if (!draft) return;
-    const key = `love-office-settings-draft:${payload.root}:${kind}:${draft.id}`;
-    if (!dirty) { localStorage.removeItem(key); return; }
-    const timer = window.setTimeout(() => localStorage.setItem(key, JSON.stringify({ revision, document: draft })), 300);
-    return () => window.clearTimeout(timer);
-  }, [dirty, draft, kind, payload.root, revision]);
-
-  useEffect(() => {
-    const preserve = () => {
-      if (dirty && draft) localStorage.setItem(`love-office-settings-draft:${payload.root}:${kind}:${draft.id}`, JSON.stringify({ revision, document: draft }));
-    };
-    window.addEventListener("beforeunload", preserve);
-    return () => window.removeEventListener("beforeunload", preserve);
-  }, [dirty, draft, kind, payload.root, revision]);
-
-  useEffect(() => {
-    if (!dirty || !draft || saving) return;
-    const version = draftVersionRef.current;
-    if (version === lastAutoSaveAttempt.current) return;
-    const timer = window.setTimeout(() => { lastAutoSaveAttempt.current = version; void save(); }, 1000);
-    return () => window.clearTimeout(timer);
-  }, [dirty, draft, save, saving]);
+    if (!draft || !revision) return;
+    const identity = `${journalKey}:${revision}`;
+    if (recoveredJournalKeys.current.has(identity)) return;
+    recoveredJournalKeys.current.add(identity);
+    let cancelled = false;
+    void editorDraftJournal.read<SettingsDocument>(journalKey).then((record) => {
+      if (cancelled || !record || record.baseRevision !== revision || record.value.id !== draft.id) return;
+      if (JSON.stringify(record.value) === JSON.stringify(sourceFor(kind, draft.id))) return;
+      if (!window.confirm(`저장되지 않은 '${documentLabel(draft, runtime)}' 비동기 복구 초안이 있습니다. 복구할까요?`)) {
+        void editorDraftJournal.remove(journalKey);
+        return;
+      }
+      draftVersionRef.current = Math.max(draftVersionRef.current, record.editVersion);
+      setDraft(record.value);
+      setDirty(true);
+      onStatus("비동기 복구 journal에서 설정 초안을 복구했습니다.");
+    }).catch(() => undefined);
+    return () => { cancelled = true; };
+    // sourceFor is stable for the current payload but not memoized.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draft?.id, journalKey, kind, onStatus, revision, runtime]);
 
   useEffect(() => {
     if (!draft) return;
@@ -549,12 +586,11 @@ export default function ProjectSettingsEditor({ active, payload, onPayload, onIs
     const onKeyDown = (event: KeyboardEvent) => {
       if (!active || !(event.metaKey || event.ctrlKey)) return;
       const key = event.key.toLocaleLowerCase();
-      if (key === "s") { event.preventDefault(); if (dirty && !saving) void save(); }
       if (key === "z") { event.preventDefault(); if (event.shiftKey) redo(); else undo(); }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [active, dirty, history, save, saving]);
+  }, [active, history]);
 
   const visualAsset = draft && "kind" in draft ? draft.fallback_asset || Object.values(draft.variants || {})[0]?.asset || "" : "";
   const previewAsset = useAssetPreview(payload.root, visualAsset);
@@ -588,7 +624,7 @@ export default function ProjectSettingsEditor({ active, payload, onPayload, onIs
     </nav>
 
     <section className="settings-editor-panel">
-      <header className="settings-editor-heading"><div><p className="eyebrow">{draft.id}</p><h2>{documentLabel(draft, runtime)}</h2><p>{kind === "campaign" ? "전체 날짜·진입 사건·시스템·막·타임라인 레인을 관리합니다." : kind === "route" ? "플레이 순서·해금·엔딩을 관리합니다." : kind === "thread" ? "캠페인 안에서 시간 사건의 서사적 선후 관계를 관리합니다." : kind === "meta" ? "클리어 후 다음 이야기 예고를 관리합니다. 게임 모드 해금은 story/game_modes.yaml이 원본입니다." : "장면 조건이 어떤 실제 이미지로 해석되는지 관리합니다."}</p></div><div className="character-actions"><button type="button" onClick={undo} disabled={!history.past.length || saving} title="⌘Z">↶</button><button type="button" onClick={redo} disabled={!history.future.length || saving} title="⇧⌘Z">↷</button><button type="button" className="primary-button" onClick={save} disabled={!dirty || saving}>{saving ? "저장 중…" : "지금 저장 ⌘S"}</button></div></header>
+      <header className="settings-editor-heading"><div><p className="eyebrow">{draft.id}</p><h2>{documentLabel(draft, runtime)}</h2><p>{kind === "campaign" ? "전체 날짜·진입 사건·시스템·막·타임라인 레인을 관리합니다." : kind === "route" ? "플레이 순서·해금·엔딩을 관리합니다." : kind === "thread" ? "캠페인 안에서 시간 사건의 서사적 선후 관계를 관리합니다." : kind === "meta" ? "클리어 후 다음 이야기 예고를 관리합니다. 게임 모드 해금은 story/game_modes.yaml이 원본입니다." : "장면 조건이 어떤 실제 이미지로 해석되는지 관리합니다."}</p></div><div className="character-actions"><button type="button" onClick={undo} disabled={!history.past.length} title="⌘Z">↶</button><button type="button" onClick={redo} disabled={!history.future.length} title="⇧⌘Z">↷</button><button type="button" className="primary-button" onClick={() => void save()} disabled={!dirty}>{saving ? "저장 중 · 최신 변경 예약 가능" : "지금 저장 ⌘S"}</button></div></header>
       {kind === "campaign" && "acts" in draft ? <CampaignEditor campaign={draft} runtime={runtime} onChange={(next) => applyDraft(next, draft)} />
         : kind === "route" && "scene_order" in draft ? <RouteEditor route={draft} runtime={runtime} onChange={(next) => applyDraft(next, draft)} />
           : kind === "thread" && "events" in draft ? <ThreadEditor thread={draft} runtime={runtime} onChange={(next) => applyDraft(next, draft)} />

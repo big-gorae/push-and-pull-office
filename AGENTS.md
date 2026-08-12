@@ -46,6 +46,7 @@ Keep the distinction explicit in status messages: **Play Build / 플레이 버�
 
 ## Image prompt authoring workflow
 
+- Unless the user explicitly instructs otherwise for the current task, NovelAI generation is limited to the standard single-image generation control: keep the image count at `1` and use only `Generate 1 Image` when the Opus UI shows a cost of `0 Anlas`. Do not use 2–4 image batches, Enhance, Upscale, Director Tools transformations, or any other generation action that charges Anlas. Before every generation, verify both `Generate 1 Image` and `0 Anlas`; if either condition is not visible, stop without generating and report it to the user.
 - Before adding or changing an unfamiliar visual concept in any NovelAI `*Tags` field, search that one concept with `npm run prompt:harness -- search "<Korean or English concept>"`. Prefer the exact English tag returned by the configured Danbooru tag tool when its description and category match the intended visual meaning.
 - A tag already present in `prompt-config/novelai-v45/tag-registry.json` does not need to be searched again when it is only being reused unchanged. NovelAI special tags documented by NovelAI may use the `novelai_official` source; other newly accepted tags normally use `danbooru_tag_tool`.
 - Never send a full prompt, character profile, story text, or comma-separated tag list to the external search API. Search one short visual concept at a time. The harness rejects prompt-shaped queries for this reason.
