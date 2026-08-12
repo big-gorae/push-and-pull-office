@@ -137,12 +137,17 @@ kbd { display: inline-block; min-width: 18px; padding: 1px 5px; border: 1px soli
 .duplicate-safety strong { color: var(--success); font-size: 0.72rem; }
 .duplicate-dialog > footer { display: flex; justify-content: flex-end; gap: 7px; margin-top: 16px; }
 
-.editor-layout { display: grid; grid-template-columns: minmax(260px, 300px) minmax(0, 1fr); min-height: calc(100vh - 215px); gap: 10px; }
+.editor-layout { display: grid; grid-template-columns: minmax(260px, 300px) minmax(0, 1fr); min-height: calc(100vh - 215px); gap: 10px; transition: grid-template-columns 160ms ease; }
+.editor-layout.story-flow-collapsed { grid-template-columns: 52px minmax(0, 1fr); }
 .explorer, .editor-panel, .preview-panel, .validation-drawer { min-width: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
 .explorer, .preview-panel { padding: 14px; }
 .panel-heading, .editor-title, .validation-heading, .option-heading, .transition-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 
 .explorer { max-height: calc(100vh - 215px); overflow-y: auto; }
+.explorer.collapsed { padding: 9px; overflow: hidden; }
+.explorer.collapsed .panel-heading { justify-content: center; }
+.story-flow-toggle { display: grid; width: 32px; min-width: 32px; height: 32px; min-height: 32px; padding: 0; place-items: center; }
+.story-flow-toggle span { font-size: 1.25rem; line-height: 1; }
 .explorer-help { margin: 7px 0 12px; color: var(--muted); font-size: .7rem; line-height: 1.45; }
 .route-tree { margin-top: 12px; }
 .route-group { margin: 0 -5px 12px; padding: 6px 5px; border-left: 2px solid transparent; }

@@ -124,6 +124,17 @@ test("system dialogue workspace is navigable, safe while saving, and undoable", 
   expect(saves).toBe(3);
 
   await page.getByRole("button", { name: "장면·대사" }).click();
+  const storyFlow = page.getByRole("navigation", { name: "스토리 탐색기" });
+  const storyFlowToggle = page.getByRole("button", { name: "Story Flow 접기" });
+  await expect(storyFlowToggle).toHaveAttribute("aria-expanded", "true");
+  await storyFlowToggle.click();
+  await expect(storyFlow).toHaveClass(/collapsed/);
+  await expect(page.locator("#story-flow-content")).toBeHidden();
+  await expect(page.evaluate(() => localStorage.getItem("love-office:story-flow-collapsed"))).resolves.toBe("true");
+  await page.getByRole("button", { name: "Story Flow 펼치기" }).click();
+  await expect(storyFlow).not.toHaveClass(/collapsed/);
+  await expect(page.locator("#story-flow-content")).toBeVisible();
+
   await page.getByRole("button", { name: /잘못 열린 발표 파일/ }).click();
   await page.getByPlaceholder("화면에 표시되는 문장으로 검색…").fill("요즘 운동을 다시 시작했습니다");
   await page.locator(".node-pill").first().click();

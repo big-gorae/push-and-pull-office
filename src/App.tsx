@@ -117,6 +117,14 @@ function initialWorkspace(): Workspace {
   }
 }
 
+function initialStoryFlowCollapsed(): boolean {
+  try {
+    return localStorage.getItem("love-office:story-flow-collapsed") === "true";
+  } catch {
+    return false;
+  }
+}
+
 function Field({ label, children, wide = false }: { label: string; children: ReactNode; wide?: boolean }) {
   return <label className={wide ? "field field-wide" : "field"}><span>{label}</span>{children}</label>;
 }
@@ -1246,6 +1254,7 @@ export default function App() {
   const [editorTab, setEditorTab] = useState<"scene" | "node" | "source">("node");
   const [newNodeKind, setNewNodeKind] = useState<NodeKind>("dual_dialogue");
   const [dialogueSearch, setDialogueSearch] = useState("");
+  const [storyFlowCollapsed, setStoryFlowCollapsed] = useState(initialStoryFlowCollapsed);
   const [workspace, setWorkspace] = useState<Workspace>(initialWorkspace);
   const [visitedWorkspaces, setVisitedWorkspaces] = useState<Workspace[]>(() => [initialWorkspace()]);
   const [locale, setLocale] = useState("ko");
@@ -1264,6 +1273,10 @@ export default function App() {
     setVisitedWorkspaces((current) => current.includes(workspace) ? current : [...current, workspace]);
     try { localStorage.setItem("love-office:last-workspace", workspace); } catch { /* WebView storage can be unavailable in restricted sessions. */ }
   }, [workspace]);
+
+  useEffect(() => {
+    try { localStorage.setItem("love-office:story-flow-collapsed", String(storyFlowCollapsed)); } catch { /* WebView storage can be unavailable in restricted sessions. */ }
+  }, [storyFlowCollapsed]);
 
   const reportActivity = useCallback((source: Workspace, activity: DocumentActivity) => {
     setWorkspaceActivities((current) => ({ ...current, [source]: activity }));
@@ -2116,20 +2129,33 @@ export default function App() {
       requestedDocument={settingsRequest}
     />}
     </div>
-    {workspace === "scene" && <div className="editor-layout">
-      <nav className="explorer" aria-label="스토리 탐색기">
-        <div className="panel-heading"><div><p className="eyebrow">STORY FLOW</p><h2>날짜별 장면</h2></div></div>
-        <p className="explorer-help">게임의 시간 순서대로 장면을 선택합니다.</p>
-        <div className="day-tree">{sceneDayGroups.map(({ day, scenes }) => <section className={scenes.some((entry) => entry.sceneId === selectedSceneId) ? "day-sector active" : "day-sector"} key={day}>
-          <h3><span>{day}일차</span><small>{scenes.length ? `${scenes.length}개 장면` : "장면 없음"}</small></h3>
-          {scenes.map((entry) => {
-            const scene = runtime.scenes[entry.sceneId];
-            return <button type="button" className={entry.sceneId === selectedSceneId ? "scene-link active" : "scene-link"} key={`${entry.eventId}:${entry.sceneId}`} onClick={() => loadScene(payload, entry.sceneId)}>
-              <span><strong>{scene?.title || entry.eventTitle}</strong><small>{entry.slot}{entry.endDay !== day ? ` · ${day}~${entry.endDay}일` : ""}</small></span>
-              <em>{scene?.node_order.length || 0}</em>
-            </button>;
-          })}
-        </section>)}</div>
+    {workspace === "scene" && <div className={storyFlowCollapsed ? "editor-layout story-flow-collapsed" : "editor-layout"}>
+      <nav className={storyFlowCollapsed ? "explorer collapsed" : "explorer"} aria-label="스토리 탐색기">
+        <div className="panel-heading">
+          <div className="story-flow-heading-copy" hidden={storyFlowCollapsed}><p className="eyebrow">STORY FLOW</p><h2>날짜별 장면</h2></div>
+          <button
+            type="button"
+            className="story-flow-toggle"
+            aria-controls="story-flow-content"
+            aria-expanded={!storyFlowCollapsed}
+            aria-label={storyFlowCollapsed ? "Story Flow 펼치기" : "Story Flow 접기"}
+            title={storyFlowCollapsed ? "Story Flow 펼치기" : "Story Flow 접기"}
+            onClick={() => setStoryFlowCollapsed((current) => !current)}
+          ><span aria-hidden="true">{storyFlowCollapsed ? "›" : "‹"}</span></button>
+        </div>
+        <div id="story-flow-content" hidden={storyFlowCollapsed}>
+          <p className="explorer-help">게임의 시간 순서대로 장면을 선택합니다.</p>
+          <div className="day-tree">{sceneDayGroups.map(({ day, scenes }) => <section className={scenes.some((entry) => entry.sceneId === selectedSceneId) ? "day-sector active" : "day-sector"} key={day}>
+            <h3><span>{day}일차</span><small>{scenes.length ? `${scenes.length}개 장면` : "장면 없음"}</small></h3>
+            {scenes.map((entry) => {
+              const scene = runtime.scenes[entry.sceneId];
+              return <button type="button" className={entry.sceneId === selectedSceneId ? "scene-link active" : "scene-link"} key={`${entry.eventId}:${entry.sceneId}`} onClick={() => loadScene(payload, entry.sceneId)}>
+                <span><strong>{scene?.title || entry.eventTitle}</strong><small>{entry.slot}{entry.endDay !== day ? ` · ${day}~${entry.endDay}일` : ""}</small></span>
+                <em>{scene?.node_order.length || 0}</em>
+              </button>;
+            })}
+          </section>)}</div>
+        </div>
       </nav>
 
       <section className="editor-panel">
