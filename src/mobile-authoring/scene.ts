@@ -1,9 +1,23 @@
 import { deleteNodeAndReconnect, deletionReplacement, insertNodeCopyAfter } from "../sceneEditing";
-import type { NodeKind, Scene, StoryNode } from "../types";
+import type { DialogueVariant, Layer, NodeKind, Scene, StageCharacterCue, StoryNode, ViewMode } from "../types";
 
-export const MOBILE_NODE_LABELS: Partial<Record<NodeKind, string>> = {
+export type LegacyDialogueKind = "dialogue" | "narration";
+export type EditableDialogueKind = NodeKind | LegacyDialogueKind;
+export type CompatibleDialogueVariant = DialogueVariant & { line?: string };
+export type CompatibleStoryNode = StoryNode & {
+  kind: EditableDialogueKind;
+  line?: string;
+  atmosphere?: string;
+  expression?: string;
+  variants?: CompatibleDialogueVariant[];
+  stage?: StoryNode["stage"] | StageCharacterCue[];
+};
+
+export const MOBILE_NODE_LABELS: Partial<Record<EditableDialogueKind, string>> = {
   dual_dialogue: "대사",
   dual_narration: "나레이션",
+  dialogue: "대사",
+  narration: "나레이션",
   silent: "무대사 연출",
   choice: "선택지",
   state_gate: "수치 분기",
@@ -17,9 +31,13 @@ export function cloneScene(scene: Scene): Scene {
 
 export function nodePreview(node: StoryNode | undefined): string {
   if (!node) return "대사를 찾을 수 없음";
+  const compatible = node as CompatibleStoryNode;
+  const variants = (node.variants || []) as CompatibleDialogueVariant[];
   const texts = [
+    compatible.line,
     node.perceived?.line,
     node.reality?.line,
+    ...variants.flatMap((variant) => [variant.line, variant.perceived?.line, variant.reality?.line]),
     node.prompt,
     node.stimulus,
     ...(node.options || []).flatMap((option) => [option.label, option.action]),
@@ -28,6 +46,39 @@ export function nodePreview(node: StoryNode | undefined): string {
     || (node.kind === "silent" ? "배경과 원화만 표시"
       : node.kind === "effect" || node.kind === "state_gate" || node.kind === "exit" ? "화면 표시 없는 진행 노드"
         : "비어 있는 대사");
+}
+
+export function compatibleVariants(node: StoryNode): CompatibleDialogueVariant[] {
+  return (node.variants || []) as CompatibleDialogueVariant[];
+}
+
+export function isLegacyDialogueNode(node: StoryNode): node is CompatibleStoryNode {
+  return (node.kind as string) === "dialogue" || (node.kind as string) === "narration";
+}
+
+export function isEditableDialogueNode(node: StoryNode): boolean {
+  return ["dual_dialogue", "dual_narration", "dialogue", "narration"].includes(node.kind as string);
+}
+
+export function isDialogueNode(node: StoryNode): boolean {
+  return (node.kind as string) === "dual_dialogue" || (node.kind as string) === "dialogue";
+}
+
+export function dialogueLayer(node: StoryNode, mode: ViewMode): Layer {
+  if (isLegacyDialogueNode(node)) return node;
+  return node[mode] || {};
+}
+
+export function stageForMode(node: StoryNode, mode: ViewMode): StageCharacterCue[] {
+  const stage = (node as CompatibleStoryNode).stage;
+  return Array.isArray(stage) ? stage : stage?.[mode] || [];
+}
+
+export function withStageForMode(node: StoryNode, mode: ViewMode, stage: StageCharacterCue[]): StoryNode {
+  if (isLegacyDialogueNode(node) || Array.isArray((node as CompatibleStoryNode).stage)) {
+    return { ...node, stage } as StoryNode;
+  }
+  return { ...node, stage: { ...(node.stage || {}), [mode]: stage } };
 }
 
 export function automaticNodeId(scene: Scene): string {
@@ -89,18 +140,18 @@ export function moveNode(scene: Scene, nodeId: string, offset: number): boolean 
   return true;
 }
 
-export function changeDialogueKind(node: StoryNode, kind: "dual_dialogue" | "dual_narration", defaultSpeaker?: string): StoryNode {
+export function changeDialogueKind(node: StoryNode, kind: "dual_dialogue" | "dual_narration" | LegacyDialogueKind, defaultSpeaker?: string): StoryNode {
   if (node.kind === kind) return node;
-  if (!(["dual_dialogue", "dual_narration"] as NodeKind[]).includes(node.kind)) return node;
-  if (kind === "dual_narration") {
+  if (!isEditableDialogueNode(node)) return node;
+  if (kind === "dual_narration" || kind === "narration") {
     const { speaker: _speaker, speakers: _speakers, ...rest } = node;
-    return { ...rest, kind };
+    return { ...rest, kind } as StoryNode;
   }
-  return { ...node, kind, speaker: node.speaker || defaultSpeaker || "" };
+  return { ...node, kind, speaker: node.speaker || defaultSpeaker || "" } as StoryNode;
 }
 
 export function allowsProtagonistArtwork(scene: Scene, node: StoryNode): boolean {
   return scene.id.startsWith("ending.")
-    && node.kind === "dual_narration"
+    && ((node.kind as string) === "dual_narration" || (node.kind as string) === "narration")
     && Boolean(node.presentation_flags?.includes("protagonist_art_reveal"));
 }
