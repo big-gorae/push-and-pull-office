@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-11T15:41:35.576Z",
+  "generatedAt": "2026-08-13T01:18:35.940Z",
   "generator": "tools/image_cutout.mjs",
   "config": "art-source/cutout-config.json",
   "originalsPolicy": "immutable-byte-for-byte",
@@ -18,15 +18,15 @@
       "maskOutput": "art-source/masks/characters/yoon-seo-a/office-default/base-alpha.png",
       "qaSheet": "output/cutout-qa/yoon-seo-a-base.png",
       "preservePaperOutline": false,
-      "transparentPixels": 515240,
-      "partiallyTransparentPixels": 4105,
-      "opaquePixels": 492367,
-      "foregroundRatio": 0.490724633097166,
+      "transparentPixels": 523902,
+      "partiallyTransparentPixels": 5908,
+      "opaquePixels": 481902,
+      "foregroundRatio": 0.48216290802125505,
       "foregroundBounds": {
-        "x": 112,
-        "y": 44,
-        "width": 609,
-        "height": 1172
+        "x": 113,
+        "y": 45,
+        "width": 607,
+        "height": 1171
       }
     },
     {
@@ -42,15 +42,15 @@
       "maskOutput": "art-source/masks/characters/cha-min-kyung/office-default/base-alpha.png",
       "qaSheet": "output/cutout-qa/cha-min-kyung-base.png",
       "preservePaperOutline": false,
-      "transparentPixels": 407661,
-      "partiallyTransparentPixels": 4574,
-      "opaquePixels": 599477,
-      "foregroundRatio": 0.5970582537322875,
+      "transparentPixels": 414681,
+      "partiallyTransparentPixels": 2792,
+      "opaquePixels": 594239,
+      "foregroundRatio": 0.5901195201796559,
       "foregroundBounds": {
-        "x": 46,
-        "y": 21,
-        "width": 703,
-        "height": 1195
+        "x": 47,
+        "y": 22,
+        "width": 700,
+        "height": 1194
       }
     },
     {
@@ -66,15 +66,15 @@
       "maskOutput": "art-source/masks/characters/kang-yoo-jin/office-default/base-alpha.png",
       "qaSheet": "output/cutout-qa/kang-yoo-jin-base.png",
       "preservePaperOutline": false,
-      "transparentPixels": 513787,
-      "partiallyTransparentPixels": 5640,
-      "opaquePixels": 492285,
-      "foregroundRatio": 0.4921608125632591,
+      "transparentPixels": 536583,
+      "partiallyTransparentPixels": 9469,
+      "opaquePixels": 465660,
+      "foregroundRatio": 0.4696287085652834,
       "foregroundBounds": {
-        "x": 39,
-        "y": 15,
-        "width": 681,
-        "height": 1201
+        "x": 40,
+        "y": 16,
+        "width": 679,
+        "height": 1200
       }
     },
     {

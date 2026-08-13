@@ -145,7 +145,7 @@ function createBackgroundMask(width, height, labs, model, options) {
   let queueStart = 0;
   let queueEnd = 0;
 
-  const enqueueSeed = (index) => {
+  const enqueueSeed = (index, force = false) => {
     if (queued[index]) return;
     const distance = modelDistance(
       labs.labL,
@@ -156,7 +156,7 @@ function createBackgroundMask(width, height, labs, model, options) {
       model.modelB,
       index,
     );
-    if (distance > options.seedTolerance) return;
+    if (!force && distance > options.seedTolerance) return;
     queued[index] = 1;
     background[index] = 1;
     queue[queueEnd] = index;
@@ -174,7 +174,11 @@ function createBackgroundMask(width, height, labs, model, options) {
     enqueueSeed((height - 1) * width + width - 1 - x);
   }
   for (const seed of options.backgroundSeeds ?? []) {
-    enqueueSeed(clamp(Math.round(seed.y), 0, height - 1) * width + clamp(Math.round(seed.x), 0, width - 1));
+    if (seed.force === true) continue;
+    enqueueSeed(
+      clamp(Math.round(seed.y), 0, height - 1) * width + clamp(Math.round(seed.x), 0, width - 1),
+      false,
+    );
   }
 
   const maybeEnqueue = (current, next) => {
@@ -210,15 +214,72 @@ function createBackgroundMask(width, height, labs, model, options) {
     if (y + 1 < height) maybeEnqueue(current, current + width);
   }
 
+  for (const seed of (options.backgroundSeeds ?? []).filter((candidate) => candidate.force === true)) {
+    const seedX = clamp(Math.round(seed.x), 0, width - 1);
+    const seedY = clamp(Math.round(seed.y), 0, height - 1);
+    const seedIndex = seedY * width + seedX;
+    const forceStepTolerance = seed.stepTolerance ?? 0.018;
+    const forceDriftTolerance = seed.driftTolerance ?? 0.12;
+    const visited = new Uint8Array(pixels);
+    const forcedRegion = new Uint8Array(pixels);
+    const forcedQueue = new Int32Array(pixels);
+    let forcedStart = 0;
+    let forcedEnd = 1;
+    forcedQueue[0] = seedIndex;
+    visited[seedIndex] = 1;
+    forcedRegion[seedIndex] = 1;
+    background[seedIndex] = 1;
+
+    const maybeForceEnqueue = (current, next) => {
+      if (visited[next]) return;
+      visited[next] = 1;
+      const localDistance = labDistance(labs.labL, labs.labA, labs.labB, current, next);
+      const seedDistance = labDistance(labs.labL, labs.labA, labs.labB, seedIndex, next);
+      if (localDistance > forceStepTolerance || seedDistance > forceDriftTolerance) return;
+      forcedRegion[next] = 1;
+      background[next] = 1;
+      forcedQueue[forcedEnd] = next;
+      forcedEnd += 1;
+    };
+
+    while (forcedStart < forcedEnd) {
+      const current = forcedQueue[forcedStart];
+      forcedStart += 1;
+      const x = current % width;
+      const y = Math.floor(current / width);
+      if (x > 0) maybeForceEnqueue(current, current - 1);
+      if (x + 1 < width) maybeForceEnqueue(current, current + 1);
+      if (y > 0) maybeForceEnqueue(current, current - width);
+      if (y + 1 < height) maybeForceEnqueue(current, current + width);
+    }
+
+    for (let pass = 0; pass < (seed.edgeContract ?? 0); pass += 1) {
+      const expansion = [];
+      for (let index = 0; index < pixels; index += 1) {
+        if (!forcedRegion[index]) continue;
+        const x = index % width;
+        const y = Math.floor(index / width);
+        if (x > 0 && !background[index - 1]) expansion.push(index - 1);
+        if (x + 1 < width && !background[index + 1]) expansion.push(index + 1);
+        if (y > 0 && !background[index - width]) expansion.push(index - width);
+        if (y + 1 < height && !background[index + width]) expansion.push(index + width);
+      }
+      for (const index of expansion) {
+        forcedRegion[index] = 1;
+        background[index] = 1;
+      }
+    }
+  }
+
   return background;
 }
 
-function hasOppositeNeighbor(mask, width, height, index) {
+function hasOppositeNeighbor(mask, width, height, index, radius = 1) {
   const x = index % width;
   const y = Math.floor(index / width);
   const value = mask[index];
-  for (let offsetY = -1; offsetY <= 1; offsetY += 1) {
-    for (let offsetX = -1; offsetX <= 1; offsetX += 1) {
+  for (let offsetY = -radius; offsetY <= radius; offsetY += 1) {
+    for (let offsetX = -radius; offsetX <= radius; offsetX += 1) {
       if (offsetX === 0 && offsetY === 0) continue;
       const nextX = x + offsetX;
       const nextY = y + offsetY;
@@ -236,11 +297,15 @@ function smoothstep(value) {
 
 function createAlphaMask(background, width, height, labs, model, options) {
   const alpha = new Uint8Array(width * height);
+  const featherRadius = options.featherRadius ?? 1;
   for (let index = 0; index < alpha.length; index += 1) {
     alpha[index] = background[index] ? 0 : 255;
   }
   for (let index = 0; index < alpha.length; index += 1) {
-    if (!hasOppositeNeighbor(background, width, height, index)) continue;
+    if (
+      (options.lockBackgroundAlpha === true && background[index]) ||
+      !hasOppositeNeighbor(background, width, height, index, featherRadius)
+    ) continue;
     const distance = modelDistance(
       labs.labL,
       labs.labA,
@@ -546,6 +611,15 @@ async function verify() {
         const alphaValue = runtime.data[index * runtime.info.channels + 3];
         if (alphaValue < 250) {
           failures.push(`${asset.id}: paper outline probe ${x},${y} was removed (alpha ${alphaValue})`);
+        }
+      }
+      for (const seed of asset.backgroundSeeds ?? []) {
+        const x = clamp(Math.round(seed.x), 0, sourceImage.info.width - 1);
+        const y = clamp(Math.round(seed.y), 0, sourceImage.info.height - 1);
+        const index = y * sourceImage.info.width + x;
+        const alphaValue = runtime.data[index * runtime.info.channels + 3];
+        if (alphaValue > 16) {
+          failures.push(`${asset.id}: enclosed background seed ${x},${y} remains visible (alpha ${alphaValue})`);
         }
       }
     }

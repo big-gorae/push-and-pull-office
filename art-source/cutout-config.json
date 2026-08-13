@@ -17,7 +17,24 @@
       "expectedSha256": "77b70731816223b9060890ed3fc9ff9353634d36042e18174780a01e3e96e0ad",
       "preserveRgbOutput": "art-source/derived/characters/yoon-seo-a/office-default/base-cutout-preserve-rgb.png",
       "runtimeOutput": "assets/characters/yoon-seo-a/office-default/base-cutout.png",
-      "maskOutput": "art-source/masks/characters/yoon-seo-a/office-default/base-alpha.png"
+      "maskOutput": "art-source/masks/characters/yoon-seo-a/office-default/base-alpha.png",
+      "lockBackgroundAlpha": true,
+      "featherRadius": 3,
+      "featherHigh": 0.1,
+      "backgroundSeeds": [
+        {"x": 260, "y": 240},
+        {"x": 263, "y": 288},
+        {"x": 256, "y": 323},
+        {"x": 262, "y": 351},
+        {"x": 245, "y": 394},
+        {"x": 227, "y": 478},
+        {"x": 215, "y": 512},
+        {"x": 211, "y": 593},
+        {"x": 609, "y": 302},
+        {"x": 617, "y": 366},
+        {"x": 639, "y": 397},
+        {"x": 679, "y": 508}
+      ]
     },
     {
       "id": "cha-min-kyung-base",
@@ -26,7 +43,17 @@
       "expectedSha256": "eb88573c4fa81ceabdc1134b02417bacbdf3c48d8a63164c5e5d18b660cb2a63",
       "preserveRgbOutput": "art-source/derived/characters/cha-min-kyung/office-default/base-cutout-preserve-rgb.png",
       "runtimeOutput": "assets/characters/cha-min-kyung/office-default/base-cutout.png",
-      "maskOutput": "art-source/masks/characters/cha-min-kyung/office-default/base-alpha.png"
+      "maskOutput": "art-source/masks/characters/cha-min-kyung/office-default/base-alpha.png",
+      "lockBackgroundAlpha": true,
+      "featherRadius": 3,
+      "featherHigh": 0.1,
+      "backgroundSeeds": [
+        {"x": 241, "y": 274},
+        {"x": 246, "y": 368},
+        {"x": 610, "y": 268, "force": true},
+        {"x": 620, "y": 330, "force": true},
+        {"x": 273, "y": 423}
+      ]
     },
     {
       "id": "kang-yoo-jin-base",
@@ -37,7 +64,28 @@
       "runtimeOutput": "assets/characters/kang-yoo-jin/office-default/base-cutout.png",
       "maskOutput": "art-source/masks/characters/kang-yoo-jin/office-default/base-alpha.png",
       "modelTolerance": 0.014,
-      "driftTolerance": 0.045
+      "driftTolerance": 0.045,
+      "lockBackgroundAlpha": true,
+      "featherRadius": 3,
+      "featherHigh": 0.1,
+      "backgroundSeeds": [
+        {"x": 579, "y": 146},
+        {"x": 283, "y": 278},
+        {"x": 610, "y": 268},
+        {"x": 520, "y": 330},
+        {"x": 512, "y": 384},
+        {"x": 536, "y": 402},
+        {"x": 555, "y": 423},
+        {"x": 397, "y": 433},
+        {"x": 649, "y": 438},
+        {
+          "x": 575,
+          "y": 900,
+          "force": true,
+          "stepTolerance": 0.018,
+          "driftTolerance": 0.08
+        }
+      ]
     },
     {
       "id": "yoon-seo-a-sd",
