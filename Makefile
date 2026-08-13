@@ -52,7 +52,7 @@ editor-setup: rust-setup
 	npm install
 
 tauri-dev:
-	$(RUST_ENV) npm run tauri dev
+	bash tools/run_tauri_dev.sh
 
 tauri-build:
 	$(RUST_ENV) npm run tauri -- build --bundles app
