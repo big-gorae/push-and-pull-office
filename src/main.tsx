@@ -9,6 +9,18 @@ const EditorApp = lazy(async () => {
   return import("./App");
 });
 
+type TauriWindow = Window & {
+  __TAURI_INTERNALS__?: {
+    metadata?: {
+      currentWindow?: { label?: string };
+    };
+  };
+};
+
+function isMobileSyncWindow(): boolean {
+  return (window as TauriWindow).__TAURI_INTERNALS__?.metadata?.currentWindow?.label === "mobile-sync";
+}
+
 function SurfaceRouter() {
   const [, refreshLocation] = useState(0);
   useEffect(() => {
@@ -23,7 +35,11 @@ function SurfaceRouter() {
 
   const isPromptBuilder = window.location.pathname.startsWith("/prompts")
     || window.location.hash.startsWith("#/prompts");
-  const isMobileAuthoring = window.location.pathname.startsWith("/author")
+  // Sites authentication can return a remote Tauri WebView to `/` and strip
+  // both its query string and hash.  The native window label is stable across
+  // that redirect, so the sync window must never fall through to the game.
+  const isMobileAuthoring = isMobileSyncWindow()
+    || window.location.pathname.startsWith("/author")
     || window.location.hash.startsWith("#/author");
   const isEditorRoute = window.location.pathname.startsWith("/editor")
     || window.location.hash.startsWith("#/editor");

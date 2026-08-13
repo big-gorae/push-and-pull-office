@@ -1,5 +1,16 @@
 import { expect, test } from "@playwright/test";
 
+test("Mac mobile sync window returns to authoring after authentication resets the URL", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(window, "__TAURI_INTERNALS__", {
+      configurable: true,
+      value: { metadata: { currentWindow: { label: "mobile-sync" } } },
+    });
+  });
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
+});
+
 test("mobile scene authoring edits a scene and reopens its draft offline", async ({ page, context }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
