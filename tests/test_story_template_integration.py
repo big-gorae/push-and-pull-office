@@ -44,9 +44,8 @@ class MaterializedSelfDevelopmentDialogueTests(unittest.TestCase):
                     self.assertEqual(expected_ids, [variant["id"] for variant in variants])
                     self.assertNotIn("self_development_template", node)
                     for variant in variants:
-                        self.assertTrue(variant["perceived"]["line"])
-                        self.assertTrue(variant["reality"]["line"])
-        self.assertEqual(12, len(callbacks))
+                        self.assertTrue(variant["line"])
+        self.assertEqual(8, len(callbacks))
         self.assertNotIn("conversation_topics", self.project.manifest["self_development"])
 
     def test_last_activity_selects_the_materialized_line(self):
@@ -61,10 +60,10 @@ class MaterializedSelfDevelopmentDialogueTests(unittest.TestCase):
         self.assertEqual(
             "오늘도 잘 부탁합니다. 요즘 운동을 다시 시작했습니다. "
             "앉아 있는 시간이 길어서 건강부터 챙기려고요. 그럼 참석자표부터 볼까요?",
-            resolved["reality"]["line"],
+            resolved["line"],
         )
 
-    def test_all_144_activity_lines_have_direct_scene_yaml_owners(self):
+    def test_all_activity_lines_have_direct_scene_yaml_owners(self):
         entries = collect_localizable_entries(self.project)
         activity_entries = [
             entry for key, entry in entries.items()
@@ -72,7 +71,7 @@ class MaterializedSelfDevelopmentDialogueTests(unittest.TestCase):
             and ".variants.after_" in key
             and key.endswith(".line")
         ]
-        self.assertEqual(144, len(activity_entries))
+        self.assertEqual(48, len(activity_entries))
         self.assertTrue(all(entry["sourceDocument"]["kind"] == "scene" for entry in activity_entries))
         self.assertTrue(all(".variants." in entry["sourceDocument"]["fieldPath"] for entry in activity_entries))
 

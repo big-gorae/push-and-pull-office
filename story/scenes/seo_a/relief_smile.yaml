@@ -11,249 +11,135 @@ cast: [han_do_yoon, yoon_seo_a]
 entry_conditions: []
 state_contract:
   reads:
-    - hidden.heroines.yoon_seo_a.suspicion
-    - hidden.heroines.yoon_seo_a.dislike
-    - hidden.heroines.yoon_seo_a.evidence_count
-    - progress.flags.push_pull
-    - visible.protagonist.self_development.appeal
-    - visible.protagonist.self_development.stats.humor
-    - visible.protagonist.self_development.fatigue
+  - hidden.heroines.yoon_seo_a.suspicion
+  - hidden.heroines.yoon_seo_a.dislike
+  - hidden.heroines.yoon_seo_a.evidence_count
+  - progress.flags.push_pull
+  - visible.protagonist.self_development.appeal
+  - visible.protagonist.self_development.stats.humor
+  - visible.protagonist.self_development.fatigue
   writes:
-    - visible.heroines.yoon_seo_a.initiative
-    - hidden.heroines.yoon_seo_a.suspicion
-    - hidden.heroines.yoon_seo_a.dislike
-    - hidden.heroines.yoon_seo_a.evidence_count
-    - progress.flags.push_pull
+  - visible.heroines.yoon_seo_a.initiative
+  - hidden.heroines.yoon_seo_a.suspicion
+  - hidden.heroines.yoon_seo_a.dislike
+  - hidden.heroines.yoon_seo_a.evidence_count
+  - progress.flags.push_pull
 start_node: mood_gate
 nodes:
-  - id: mood_gate
-    kind: state_gate
-    transitions:
-      - conditions:
-          - {path: hidden.heroines.yoon_seo_a.suspicion, op: gte, value: 20}
-        node: guarded_smile
-      - default: true
-        node: relief_smile
+- id: mood_gate
+  kind: state_gate
+  transitions:
+  - conditions:
+    - {path: hidden.heroines.yoon_seo_a.suspicion, op: gte, value: 20}
+    node: guarded_smile
+  - default: true
+    node: relief_smile
 
-  - id: guarded_smile
-    kind: dual_dialogue
-    speaker: yoon_seo_a
-    stage:
-      perceived:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-      reality:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_relieved_smile
-      line: "안녕하세요."
-    reality:
-      atmosphere: guarded_office
-      expression: actual_tense
-      line: "안녕하세요."
-      intent: self_protection
-    next: guarded_smile_inner
+- id: guarded_smile
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage:
+  - position: center
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: default
+  expression: actual_tense
+  line: "안녕하세요."
+  next: response_choice
 
-  - id: guarded_smile_inner
-    kind: dual_dialogue
-    presentation_flags:
-      - inner_voice
-    speakers:
-      perceived: han_do_yoon
-      reality: yoon_seo_a
-    stage:
-      perceived: []
-      reality:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-    perceived:
-      atmosphere: warm_romance
-      line: (거리를 둔 시간이 길어지니 먼저 관계를 회복하려는군.)
-    reality:
-      atmosphere: guarded_office
-      line: (혼자 있지 말자. 커피만 받아서 바로 나가야 해.)
-      intent: self_protection
-    next: response_choice
-  - id: relief_smile
-    kind: dual_dialogue
-    speaker: yoon_seo_a
-    stage:
-      perceived:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-      reality:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_relieved_smile
-      line: "안녕하세요."
-    reality:
-      atmosphere: cold_office
-      expression: actual_relief
-      line: "안녕하세요."
-      intent: courtesy
-    next: relief_smile_inner
+- id: relief_smile
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage:
+  - position: center
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: default
+  expression: actual_relief
+  line: "안녕하세요."
+  next: response_choice
 
-  - id: relief_smile_inner
-    kind: dual_dialogue
-    presentation_flags:
-      - inner_voice
-    speakers:
-      perceived: han_do_yoon
-      reality: yoon_seo_a
-    stage:
-      perceived: []
-      reality:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-    perceived:
-      atmosphere: warm_romance
-      line: (내가 거리를 두니 서아 씨가 먼저 부드러워졌네.)
-    reality:
-      atmosphere: cold_office
-      line: (며칠 조용했으니 정말 내가 오해했던 걸까?)
-      intent: courtesy
-    next: response_choice
-  - id: response_choice
-    kind: choice
-    prompt: 휴게실에서 다시 마주친 서아에게 어떻게 반응할까?
-    stimulus: 며칠간 사적인 접촉이 없던 뒤, 서아가 휴게실에서 ‘안녕하세요’라고 인사했다.
-    interaction_context:
-      kind: boundary
-    options:
-      - id: interpret_pull
-        label: 퇴근 후 둘이 식사하자고 다시 제안한다
-        interpretation: 안도한 표정을 다시 말을 걸어도 된다는 신호로 오해한다.
-        action: 퇴근 뒤 둘만의 식사를 다시 제안한다.
-        push_pull: {action: approach, intensity: 16, base_score: 4}
-        conditions: []
-        effects:
-          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: 25}
-          - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 18}
-          - {path: hidden.heroines.yoon_seo_a.evidence_count, op: add, value: 1}
-        next: leave
-      - id: trend_dinner_invite
-        label: OTT에서 본 회사 코미디를 화제로 꺼내며 퇴근 후 식사를 다시 제안한다
-        interpretation: 최신 유행을 아는 모습을 보여 주면 서아가 세대 차이 없이 통한다고 느낄 거라 믿는다.
-        action: 젊은 여성이 회사 코미디를 즐겨 본다고 일반화해 말하며 퇴근 뒤 둘만의 식사를 다시 제안한다.
-        push_pull: {action: approach, intensity: 16, base_score: 4}
-        self_development:
-          expression: humor.trend_topic
-          equivalent_to: interpret_pull
-          converges_at: leave
-        conditions: []
-        effects:
-          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: 25}
-          - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 18}
-          - {path: hidden.heroines.yoon_seo_a.evidence_count, op: add, value: 1}
-        next: trend_self_promotion
-      - id: keep_distance
-        label: 업무 인사만 하고 사적인 말은 건네지 않는다
-        interpretation: 먼저 다가오게 만들기 위해 거리를 유지한다.
-        action: 업무 인사만 하고 사적 접촉을 하지 않는다.
-        push_pull: {action: space, intensity: 16, base_score: 4}
-        conditions: []
-        effects:
-          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -5}
-        next: leave
-      - id: stop_game
-        label: 평범한 인사로 받아들이고 자리를 떠난다
-        interpretation: 그녀의 인사를 평범한 직장 인사로 받아들인다.
-        action: 관계에 의미를 부여하지 않고 자리를 떠난다.
-        push_pull: {action: literal, intensity: 12, base_score: 4}
-        interaction:
-          target: yoon_seo_a
-          support_styles: [literal_respect]
-        conditions: []
-        effects:
-          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -8}
-        next: leave
-
-  - id: trend_self_promotion
-    kind: dual_dialogue
-    speaker: han_do_yoon
-    stage:
-      perceived: []
-      reality: []
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_confident
-      line: "요즘 젊은 여자들은 《퇴근은 내일》 같은 회사 코미디를 많이 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요."
-    reality:
-      atmosphere: cold_office
-      expression: actual_waiting_smile
-      line: "요즘 젊은 여자들은 《퇴근은 내일》 같은 회사 코미디를 많이 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요."
-      intent: self_promotion
-    next: trend_response
-
-  - id: trend_response
-    kind: dual_dialogue
-    speaker: yoon_seo_a
-    stage:
-      perceived:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-      reality:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_relieved_smile
-      line: "사람마다 다르죠. 그 드라마는 많이들 보긴 해요. 과장님도 보셨네요. 그런데 저는 저녁은 어렵습니다."
-    reality:
-      atmosphere: guarded_office
-      expression: actual_social_smile
-      line: "사람마다 다르죠. 그 드라마는 많이들 보긴 해요. 과장님도 보셨네요. 그런데 저는 저녁은 어렵습니다."
-      intent: boundary
-    next: trend_response_inner
-
-  - id: trend_response_inner
-    kind: dual_dialogue
-    presentation_flags: [inner_voice]
-    speakers:
-      perceived: han_do_yoon
-      reality: yoon_seo_a
-    stage:
-      perceived: []
-      reality:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-    perceived:
-      atmosphere: warm_romance
-      line: (세대 차이 없이 통한다는 걸 알아봤군. 저녁은 아직 타이밍의 문제겠지.)
-    reality:
-      atmosphere: guarded_office
-      line: (또 ‘젊은 여자들’로 묶어서 말하네. 거절만 분명히 하고 나가자.)
-      intent: boundary
+- id: response_choice
+  kind: choice
+  prompt: 휴게실에서 다시 마주친 서아에게 어떻게 반응할까?
+  stimulus: 며칠간 사적인 접촉이 없던 뒤, 서아가 휴게실에서 ‘안녕하세요’라고 인사했다.
+  interaction_context:
+    kind: boundary
+  options:
+  - id: interpret_pull
+    label: 퇴근 후 둘이 식사하자고 다시 제안한다
+    interpretation: 안도한 표정을 다시 말을 걸어도 된다는 신호로 오해한다.
+    action: 퇴근 뒤 둘만의 식사를 다시 제안한다.
+    push_pull: {action: approach, intensity: 16, base_score: 4}
+    conditions: []
+    effects:
+    - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: 25}
+    - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 18}
+    - {path: hidden.heroines.yoon_seo_a.evidence_count, op: add, value: 1}
+    next: leave
+  - id: trend_dinner_invite
+    label: OTT에서 본 회사 코미디를 화제로 꺼내며 퇴근 후 식사를 다시 제안한다
+    interpretation: 최신 유행을 아는 모습을 보여 주면 서아가 세대 차이 없이 통한다고 느낄 거라 믿는다.
+    action: 젊은 여성이 회사 코미디를 즐겨 본다고 일반화해 말하며 퇴근 뒤 둘만의 식사를 다시 제안한다.
+    push_pull: {action: approach, intensity: 16, base_score: 4}
+    self_development:
+      expression: humor.trend_topic
+      equivalent_to: interpret_pull
+      converges_at: leave
+    conditions: []
+    effects:
+    - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: 25}
+    - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 18}
+    - {path: hidden.heroines.yoon_seo_a.evidence_count, op: add, value: 1}
+    next: trend_self_promotion
+  - id: keep_distance
+    label: 업무 인사만 하고 사적인 말은 건네지 않는다
+    interpretation: 먼저 다가오게 만들기 위해 거리를 유지한다.
+    action: 업무 인사만 하고 사적 접촉을 하지 않는다.
+    push_pull: {action: space, intensity: 16, base_score: 4}
+    conditions: []
+    effects:
+    - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -5}
+    next: leave
+  - id: stop_game
+    label: 평범한 인사로 받아들이고 자리를 떠난다
+    interpretation: 그녀의 인사를 평범한 직장 인사로 받아들인다.
+    action: 관계에 의미를 부여하지 않고 자리를 떠난다.
+    push_pull: {action: literal, intensity: 12, base_score: 4}
+    interaction:
+      target: yoon_seo_a
+      support_styles: [literal_respect]
+    conditions: []
+    effects:
+    - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -8}
     next: leave
 
-  - id: leave
-    kind: exit
-    transitions:
-      - conditions:
-          - {path: hidden.heroines.yoon_seo_a.evidence_count, op: gte, value: 2}
-          - {path: hidden.heroines.yoon_seo_a.dislike, op: gte, value: 25}
-        scene: ending.seo_a.report
-      - default: true
-        scene: ending.seo_a.ambiguous
+- id: trend_self_promotion
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: "요즘 젊은 여자들은 《퇴근은 내일》 같은 회사 코미디를 많이 본다면서요? 저도 좀 봤는데, 퇴근하고 밥 먹으면서 얘기해요."
+  next: trend_response
+
+- id: trend_response
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage:
+  - position: center
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: default
+  expression: actual_social_smile
+  line: "사람마다 다르죠. 그 드라마는 많이들 보긴 해요. 과장님도 보셨네요. 그런데 저는 저녁은 어렵습니다."
+  next: leave
+
+- id: leave
+  kind: exit
+  transitions:
+  - conditions:
+    - {path: hidden.heroines.yoon_seo_a.evidence_count, op: gte, value: 2}
+    - {path: hidden.heroines.yoon_seo_a.dislike, op: gte, value: 25}
+    scene: ending.seo_a.report
+  - default: true
+    scene: ending.seo_a.ambiguous

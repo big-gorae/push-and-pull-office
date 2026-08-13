@@ -93,5 +93,5 @@ export function refreshUnlockedModes(runtime: Runtime, state: RuntimeState): voi
 }
 
 export function isGameModeId(value: JsonValue | unknown): value is GameModeId {
-  return value === "base" || value === "truth_view" || value === "survivor_view";
+  return value === "base" || value === "survivor_view";
 }

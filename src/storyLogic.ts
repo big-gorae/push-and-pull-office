@@ -15,19 +15,14 @@ import type {
   TimelineEvent,
   TimeSlot,
   DialogueVariant,
-  ViewMode,
 } from "./types";
 import { selfDevelopmentSystem } from "./selfDevelopment";
 
 export const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
-/** Resolves the visible speaker for a layer. An explicit null means narration. */
-export function effectiveSpeaker(node: StoryNode | undefined, mode: ViewMode): string | undefined {
-  if (!node) return undefined;
-  if (node.speakers && Object.prototype.hasOwnProperty.call(node.speakers, mode)) {
-    return node.speakers[mode] || undefined;
-  }
-  return node.speaker;
+/** Resolves the visible speaker for a dialogue node. */
+export function effectiveSpeaker(node: StoryNode | undefined): string | undefined {
+  return node?.speaker;
 }
 
 export function getPath(state: RuntimeState, path: string): unknown {
@@ -176,9 +171,7 @@ export function eventsForDay(events: Record<string, TimelineEvent>, day: number)
 
 function statDefinition(runtime: Runtime, path: string) {
   if (runtime.stats[path]) return runtime.stats[path];
-  if (path.includes(".affection")) return runtime.stats["visible.affection"];
   if (path.includes(".initiative")) return runtime.stats["visible.initiative"];
-  if (path.includes(".perceived_state")) return runtime.stats["visible.perceived_state"];
   if (path.includes(".suspicion")) return runtime.stats["hidden.suspicion"];
   if (path.includes(".dislike")) return runtime.stats["hidden.dislike"];
   if (path.includes(".evidence_count")) return runtime.stats["hidden.evidence_count"];
@@ -301,24 +294,24 @@ export type ResolvedDialogueNode = {
 function variantNode(node: StoryNode, variant: DialogueVariant): StoryNode {
   return {
     ...node,
-    perceived: clone(variant.perceived),
-    reality: clone(variant.reality),
+    expression: variant.expression ?? node.expression,
+    line: variant.line,
   };
 }
 
-function withRealityExpressionFallback(
+function withExpressionFallback(
   runtime: Runtime,
   state: RuntimeState,
   node: StoryNode,
 ): StoryNode {
-  const speaker = effectiveSpeaker(node, "reality");
-  if (node.reality?.expression || !speaker) return node;
+  const speaker = effectiveSpeaker(node);
+  if (node.expression || !speaker) return node;
   const context = evaluationContext(runtime, state);
   const derivedExpression = context.derived.characters[speaker]?.default_expression;
   const visualExpression = Object.values(runtime.visuals).find((visual) =>
-    visual.kind === "character" && !visual.abstract && visual.character === speaker)?.default_reality_expression;
+    visual.kind === "character" && !visual.abstract && visual.character === speaker)?.default_expression;
   const expression = derivedExpression || visualExpression;
-  return expression ? { ...node, reality: { ...node.reality, expression } } : node;
+  return expression ? { ...node, expression } : node;
 }
 
 export function resolveDialogueNode(
@@ -329,7 +322,7 @@ export function resolveDialogueNode(
 ): ResolvedDialogueNode {
   if (!node.variants?.length) {
     return {
-      node: withRealityExpressionFallback(runtime, state, node),
+      node: withExpressionFallback(runtime, state, node),
       variantId: "default",
       trace: [{ variantId: "default", priority: 0, met: true, chosen: true }],
     };
@@ -353,7 +346,7 @@ export function resolveDialogueNode(
   }
   selected ||= ordered.find(({ variant }) => variant.default === true)?.variant;
   selected ||= ordered[0].variant;
-  const resolved = withRealityExpressionFallback(runtime, state, variantNode(node, selected));
+  const resolved = withExpressionFallback(runtime, state, variantNode(node, selected));
   return {
     node: resolved,
     variantId: selected.id,
@@ -368,9 +361,7 @@ export function resolveDialogueNode(
 
 export function statePaths(runtime: Runtime): Array<{ value: string; label: string; type: "number" | "enum" | "array" }> {
   const names: Record<string, string> = {
-    affection: "호감도",
     initiative: "밀당 주도권",
-    perceived_state: "현재 해석",
     suspicion: "의심도",
     dislike: "비호감",
     evidence_count: "물리적 증거",
@@ -384,7 +375,7 @@ export function statePaths(runtime: Runtime): Array<{ value: string; label: stri
     Object.keys(visible).forEach((stat) => result.push({
       value: `visible.heroines.${id}.${stat}`,
       label: `${character.display_name} / ${names[stat] || stat}`,
-      type: stat === "perceived_state" ? "enum" : "number",
+      type: "number",
     }));
     Object.keys(hidden).forEach((stat) => result.push({
       value: `hidden.heroines.${id}.${stat}`,
@@ -496,24 +487,21 @@ export function deriveStateContract(
 }
 
 export function makeNode(kind: NodeKind, id: string, _heroineId: string): StoryNode {
-  if (kind === "dual_dialogue") {
+  if (kind === "dialogue") {
     return {
       id,
       kind,
       speaker: "",
-      perceived: { atmosphere: "warm_romance", expression: "", line: "" },
-      reality: { atmosphere: "cold_office", expression: "", line: "", intent: "work_only" },
-      line_layers_locked: true,
+      expression: "",
+      line: "",
       next: "",
     };
   }
-  if (kind === "dual_narration") {
+  if (kind === "narration") {
     return {
       id,
       kind,
-      perceived: { atmosphere: "warm_romance", line: "" },
-      reality: { atmosphere: "cold_office", line: "", intent: "work_only" },
-      line_layers_locked: true,
+      line: "",
       next: "",
     };
   }
@@ -521,9 +509,8 @@ export function makeNode(kind: NodeKind, id: string, _heroineId: string): StoryN
     return {
       id,
       kind,
-      perceived: { atmosphere: "warm_romance", line: "" },
-      reality: { atmosphere: "cold_office", line: "" },
-      stage: { perceived: [], reality: [] },
+      line: "",
+      stage: [],
       next: "",
     };
   }

@@ -15,9 +15,5 @@ requires: {events: [], conditions: []}
 on_seen: {effects: []}
 on_missed: {effects: []}
 presentation:
-  perceived:
-    title: 들켜 버린 사내연애
-    summary: 끊기는 대화와 사진 이야기를 동료들이 둘의 비밀 관계를 알아챈 증거로 받아들인다.
-  reality:
-    title: 원치 않는 접근에 관한 소문
-    summary: 직원들은 특정 여직원에게 계속 접근하는 한도윤을 두고 수군거릴 뿐, 공식 면담이나 신고는 아직 없다.
+  title: 원치 않는 접근에 관한 소문
+  summary: 직원들은 특정 여직원에게 계속 접근하는 한도윤을 두고 수군거릴 뿐, 공식 면담이나 신고는 아직 없다.

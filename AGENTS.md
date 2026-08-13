@@ -89,13 +89,12 @@ Keep the distinction explicit in status messages: **Play Build / 플레이 버�
 
 ## Story invariants
 
-- Every dialogue or narration beat must contain both `perceived` and `reality` layers.
-- `perceived` is Han Do-yoon's interpretation; `reality` is authoritative.
-- Never use the legacy `protagonist_interpretation` or `inner_thought` layer fields. Any inner thought is its own `dual_dialogue` node with `presentation_flags: [inner_voice]`, explicit per-layer `speakers`, and a naturally spoken line enclosed in parentheses. A layer with an explicit null speaker is authoritative narration and stays unparenthesized.
+- Every dialogue or narration beat contains one authoritative `line` and one set of presentation fields.
+- Never use the removed `perceived`, `reality`, `protagonist_interpretation`, `inner_thought`, `inner_voice`, or per-layer `speakers` fields. If an actual spoken monologue is needed, author it as an ordinary `dialogue`; otherwise omit internal thought.
 - Narration has no visible speaker label. An explicit null layer speaker is narration, not a character named “나레이션”.
 - State reads and writes must be declared in `state_contract`.
 - State changes belong only in `effects`.
-- Visible affection is Han Do-yoon's confidence, not a heroine's love.
+- Visible initiative is Han Do-yoon's confidence, not a heroine's love.
 - A decrease in suspicion never implies an automatic decrease in dislike.
 - Expressions must be declared on the speaking character before use.
 - New scenes must be connected to a route and reachable from its entry.
@@ -103,9 +102,9 @@ Keep the distinction explicit in status messages: **Play Build / 플레이 버�
 - Flexible events use a day window and deadline; do not duplicate the same event into daily files.
 - Missed events may advance the world through `on_missed` and hidden offscreen events.
 - Keep Korean story YAML as the default-language source; add translations only through stable keys in `story/locales/`.
-- Do not put asset paths in scenes. Resolve backgrounds from location, time, atmosphere, and view mode through `story/visuals/`.
+- Do not put asset paths in scenes. Resolve backgrounds from location and time through `story/visuals/`.
 - Every character has one concrete visual object extending a character archetype; outfit, pose, and expression are composed rather than copied into scenes.
-- Every scene node must resolve a background in both perceived and reality modes.
+- Every visible scene node must resolve one background.
 - Formal or cross-functional workplace meetings must declare `world_context` with company, project, meeting type, and every actual participant as `member.*` references. The illustrated `cast` is not a substitute for the full participant list.
 - Keep non-illustrated supporting coworkers as `presentation: text_only` world members. They may attend and speak, but must never be placed in the illustrated `cast` or used as a route heroine.
 - Meeting casts must satisfy the selected meeting policy's headcount, participating teams, project responsibilities, and minimum text-only coworker requirements. Do not compose a normal office meeting only from romance-route characters.
@@ -116,8 +115,8 @@ Keep the distinction explicit in status messages: **Play Build / 플레이 버�
 
 - 한도윤의 원화는 후반 반전을 위한 보존 자산이다. 원화 파일, `character.han_do_yoon` 비주얼 정의와 NovelAI 프롬프트 프로필은 삭제하지 않는다.
 - 한도윤이 화자이거나 장면 `cast`에 포함되어 있어도 평상시 수동 `stage`, 제작 미리보기와 플레이 화면에는 그의 원화를 노출하지 않는다. 평상시에는 배경과 다른 인물만 표시한다.
-- 한도윤 원화 공개는 `ending.*` 장면의 `dual_narration` 노드가 `presentation_flags: [protagonist_art_reveal]`를 명시하고 `perceived`와 `reality` 양쪽 `stage`에 `character.han_do_yoon`을 직접 배치한 후반 반전 장면에서만 허용한다. 사용자 지시 없이 공개 시점을 앞당기거나 예외를 추가하지 않는다.
-- The new-game screen contains only the three mode cards. `속마음 모드` and `어나더 스토리` both unlock after the first ending; keep their approved descriptions in `story/ui.yaml`.
+- 한도윤 원화 공개는 `ending.*` 장면의 `narration` 노드가 `presentation_flags: [protagonist_art_reveal]`를 명시하고 단일 `stage`에 `character.han_do_yoon`을 직접 배치한 후반 반전 장면에서만 허용한다. 사용자 지시 없이 공개 시점을 앞당기거나 예외를 추가하지 않는다.
+- The new-game screen contains only the Story Mode and `어나더 스토리` cards. `어나더 스토리` unlocks after the first ending; keep its approved description in `story/ui.yaml`.
 - Do not infer character artwork from `cast` or the current speaker at runtime. Every visible character must come from an explicit layer `stage` cue stored in scene YAML. In the editor, a newly added dialogue starts without a speaker; selecting a non-Han-Do-yoon illustrated speaker writes that character as the explicit centered default in both layers. Selecting Han Do-yoon never creates ordinary stage cues. Keep character X/Y/scale adjustable in Debug Mode, and keep previous-dialogue navigation available there.
 - Do not restore the removed interpretation/thought sub-panels, a `나레이션` nameplate, a timeline/calendar selection screen, visible ACT labels, or copy/effects that promote the campaign's day count.
 - Between ordinary moments, present event summaries and selections as dialogue-style in-game beats. Use the cinematic day-change overlay only when the day number changes.

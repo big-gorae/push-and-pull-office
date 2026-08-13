@@ -24,7 +24,6 @@ import type {
   TimeSlot,
   TimelineEvent,
   ValidationIssue,
-  ViewMode,
 } from "./types";
 
 const SLOT_LABELS: Record<TimeSlot, string> = {
@@ -60,8 +59,6 @@ type Props = {
   active: boolean;
   payload: ProjectPayload;
   state: RuntimeState;
-  mode: ViewMode;
-  onMode: (mode: ViewMode) => void;
   onState: (state: RuntimeState) => void;
   onPayload: Dispatch<SetStateAction<ProjectPayload | null>>;
   onIssues: (issues: ValidationIssue[]) => void;
@@ -86,8 +83,6 @@ export default function TimelineEditor({
   active,
   payload,
   state,
-  mode,
-  onMode,
   onState,
   onPayload,
   onIssues,
@@ -123,7 +118,7 @@ export default function TimelineEditor({
   }, [selectedDay]);
 
   const days = useMemo(() => Array.from({ length: 5 }, (_, index) => week * 5 + index + 1), [week]);
-  const lanes = campaign.lanes.filter((lane) => mode === "reality" || lane.kind !== "truth");
+  const lanes = campaign.lanes;
   const act = campaign.acts.find((item) => selectedDay >= item.days[0] && selectedDay <= item.days[1]);
   const selectedEvent = selectedEventId ? runtime.events[selectedEventId] : undefined;
   const verdict = selectedEvent ? inspectTimelineEvent(runtime, selectedEvent, state, selectedDay, selectedSlot) : undefined;
@@ -420,10 +415,6 @@ export default function TimelineEditor({
         </div>
         <div className="timeline-controls">
           <label className="campaign-picker"><span>캠페인</span><select value={campaignId} onChange={(event) => selectCampaign(event.target.value)}>{Object.values(runtime.campaigns).map((item) => <option value={item.id} key={item.id}>{item.title}</option>)}</select></label>
-          <div className="segmented" aria-label="시간표 시점">
-            <button type="button" className={mode === "perceived" ? "active" : ""} onClick={() => onMode("perceived")}>주인공 인식</button>
-            <button type="button" className={mode === "reality" ? "active" : ""} onClick={() => onMode("reality")}>실제 시간선</button>
-          </div>
           <div className="week-stepper">
             <button type="button" onClick={() => setWeek(Math.max(0, week - 1))} disabled={week === 0}>←</button>
             <strong>{week + 1}주차 · {days[0]}~{days[4]}일</strong>
@@ -442,7 +433,7 @@ export default function TimelineEditor({
           {days.map((day) => <div className={day === selectedDay ? "timeline-cell selected" : "timeline-cell"} key={`${lane.id}-${day}`}>
             {eventsForDay(runtime.events, day).filter((event) => event.campaign_id === campaignId && event.lane === lane.id).map((event) => {
               const check = timelineStatus(runtime, event, state, day);
-              const presentation = event.presentation[mode];
+              const presentation = event.presentation;
               return <button
                 type="button"
                 className={`event-card ${event.type} ${check.status} ${event.id === selectedEventId ? "active" : ""}`}
@@ -541,11 +532,9 @@ export default function TimelineEditor({
         <details><summary>발생 조건 ({eventDraft.requires.conditions.length})</summary><ConditionEditor runtime={runtime} conditions={eventDraft.requires.conditions} onChange={(conditions) => updateEvent((draft) => { draft.requires.conditions = conditions; })} /></details>
         <details><summary>발생 시 효과 ({eventDraft.on_seen.effects.length})</summary><EffectEditor runtime={runtime} effects={eventDraft.on_seen.effects} onChange={(effects) => updateEvent((draft) => { draft.on_seen.effects = effects; })} /></details>
         <details><summary>놓쳤을 때 효과 ({eventDraft.on_missed.effects.length})</summary><EffectEditor runtime={runtime} effects={eventDraft.on_missed.effects} onChange={(effects) => updateEvent((draft) => { draft.on_missed.effects = effects; })} /></details>
-        <fieldset className="dual-event-copy"><legend>두 시점의 일정 카드</legend>
-          <label><span>주인공 제목</span><input value={eventDraft.presentation.perceived.title} onChange={(event) => updateEvent((draft) => { draft.presentation.perceived.title = event.target.value; })} /></label>
-          <label><span>주인공 해석</span><textarea rows={2} value={eventDraft.presentation.perceived.summary} onChange={(event) => updateEvent((draft) => { draft.presentation.perceived.summary = event.target.value; })} /></label>
-          <label><span>실제 제목</span><input value={eventDraft.presentation.reality.title} onChange={(event) => updateEvent((draft) => { draft.presentation.reality.title = event.target.value; })} /></label>
-          <label><span>실제 사건</span><textarea rows={2} value={eventDraft.presentation.reality.summary} onChange={(event) => updateEvent((draft) => { draft.presentation.reality.summary = event.target.value; })} /></label>
+        <fieldset className="dual-event-copy"><legend>일정 카드</legend>
+          <label><span>제목</span><input value={eventDraft.presentation.title} onChange={(event) => updateEvent((draft) => { draft.presentation.title = event.target.value; })} /></label>
+          <label><span>요약</span><textarea rows={2} value={eventDraft.presentation.summary} onChange={(event) => updateEvent((draft) => { draft.presentation.summary = event.target.value; })} /></label>
         </fieldset>
         <small className="document-path">{payload.documents.events[eventDraft.id]?.path}</small>
       </div>}

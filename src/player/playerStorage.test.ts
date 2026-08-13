@@ -71,7 +71,6 @@ describe("locale-independent save schema", () => {
       gameModeId: "base",
       campaignId: "main",
       continuityId: "main",
-      viewLayer: "perceived",
     });
     expect(slot).not.toHaveProperty("sceneTitle");
     expect(slot).not.toHaveProperty("line");
@@ -87,20 +86,19 @@ describe("locale-independent save schema", () => {
 
   it("stores and localizes the nightly self-development preview", () => {
     const slot = sessionSlot(sessionAtNightPlan());
-    expect(slot.schema_version).toBe(5);
+    expect(slot.schema_version).toBe(6);
     expect(slot.preview).toMatchObject({
       kind: "self_development",
       day: 1,
       slot: "after_work",
       gameModeId: "base",
-      viewLayer: "perceived",
     });
 
     const korean = savePreview(slot, new GameLocalizer(runtime, "ko"));
     const english = savePreview(slot, new GameLocalizer(runtime, "en"));
     expect(korean.title).toBe("밤");
     expect(english.title).toBe("Night");
-    expect(korean.line).toBe("(밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?)");
+    expect(korean.line).toBe("밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?");
     expect(korean.line).not.toBe(english.line);
   });
 
@@ -128,7 +126,7 @@ describe("locale-independent save schema", () => {
       session: session as unknown as PlayerSession,
     };
     const migrated = normalizeSaveSlot(legacy, runtime);
-    expect(migrated?.schema_version).toBe(5);
+    expect(migrated?.schema_version).toBe(6);
     expect(migrated?.preview.variantId).toBe("default");
     expect(migrated?.legacy).toEqual({ sceneTitle: "옛 장면 제목", line: "옛 대사" });
     expect(migrated?.session.backlog[0]).not.toHaveProperty("text");
@@ -140,8 +138,8 @@ describe("locale-independent save schema", () => {
     expect(JSON.stringify(rewritten)).not.toContain("옛 번역 문자열");
   });
 
-  it("migrates a v4 reality session to the truth game mode identity", () => {
-    const current = createSession(runtime, "seo_a", "reality");
+  it("migrates a v4 reality session into the single base mode", () => {
+    const current = createSession(runtime, "seo_a");
     const legacy = structuredClone(current) as unknown as Record<string, unknown>;
     legacy.version = 4;
     legacy.mode = "reality";
@@ -152,18 +150,33 @@ describe("locale-independent save schema", () => {
     const migrated = normalizeSaveSlot({ schema_version: 4, savedAt: 456, session: legacy }, runtime);
     expect(legacy).toEqual(original);
     expect(migrated?.session).toMatchObject({
-      version: 5,
-      gameModeId: "truth_view",
+      version: 6,
+      gameModeId: "base",
       campaignId: "main",
       continuityId: "main",
-      viewLayer: "reality",
     });
     expect(migrated?.preview).toMatchObject({
-      gameModeId: "truth_view",
+      gameModeId: "base",
       campaignId: "main",
       continuityId: "main",
-      viewLayer: "reality",
     });
+  });
+
+  it("drops retired affection and perceived-state fields from legacy saves", () => {
+    const legacy = structuredClone(sessionAtTranslatedScene()) as unknown as PlayerSession & {
+      state: PlayerSession["state"] & {
+        visible: PlayerSession["state"]["visible"] & {
+          heroines: Record<string, { initiative: number; affection?: number; perceived_state?: string }>;
+        };
+      };
+    };
+    legacy.state.visible.heroines.yoon_seo_a.affection = 99;
+    legacy.state.visible.heroines.yoon_seo_a.perceived_state = "pull";
+
+    const migrated = normalizeSaveSlot({ schema_version: 6, savedAt: 789, session: legacy }, runtime);
+    expect(migrated?.session.state.visible.heroines.yoon_seo_a).toEqual({ initiative: 50 });
+    expect(JSON.stringify(migrated)).not.toContain("perceived_state");
+    expect(JSON.stringify(migrated)).not.toContain("affection");
   });
 
   it("keeps pre-v4 saves compatible by assigning the only historical main campaign", () => {
@@ -177,11 +190,10 @@ describe("locale-independent save schema", () => {
     delete legacy.viewLayer;
     const migrated = normalizeSaveSlot({ schema_version: 3, savedAt: 455, session: legacy }, runtime);
     expect(migrated?.session).toMatchObject({
-      version: 5,
+      version: 6,
       gameModeId: "base",
       campaignId: "main",
       continuityId: "main",
-      viewLayer: "perceived",
     });
   });
 
@@ -194,7 +206,7 @@ describe("locale-independent save schema", () => {
     const unknownCampaign = structuredClone(current);
     unknownCampaign.campaignId = "missing";
     expect(normalizeSaveSlot({ schema_version: 5, savedAt: 2, session: unknownCampaign }, runtime)).toBeUndefined();
-    expect(normalizeSaveSlot({ schema_version: 6, savedAt: 3, session: current }, runtime)).toBeUndefined();
+    expect(normalizeSaveSlot({ schema_version: 7, savedAt: 3, session: current }, runtime)).toBeUndefined();
 
     const incompleteV4 = structuredClone(current) as unknown as Record<string, unknown>;
     incompleteV4.version = 4;
@@ -206,16 +218,15 @@ describe("locale-independent save schema", () => {
     expect(normalizeSaveSlot({ schema_version: 4, savedAt: 4, session: incompleteV4 }, runtime)).toBeUndefined();
   });
 
-  it("derives v5 preview identity from the normalized session", () => {
+  it("derives preview identity from the normalized session", () => {
     const current = sessionAtTranslatedScene();
     const migrated = normalizeSaveSlot({
       ...sessionSlot(current),
       preview: {
         ...sessionSlot(current).preview,
-        gameModeId: "truth_view",
-        viewLayer: "reality",
+        gameModeId: "survivor_view",
       },
     }, runtime);
-    expect(migrated?.preview).toMatchObject({ gameModeId: "base", viewLayer: "perceived" });
+    expect(migrated?.preview).toMatchObject({ gameModeId: "base" });
   });
 });

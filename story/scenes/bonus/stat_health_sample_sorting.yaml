@@ -12,115 +12,50 @@ entry_conditions: []
 state_contract: {reads: [], writes: []}
 start_node: sample_boxes
 nodes:
-  - id: sample_boxes
-    kind: dual_narration
-    perceived:
-      atmosphere: playful_tension
-      line: 오후 일정 사이에 홈카페 샘플 박스가 한꺼번에 도착했다. 몸을 단련해 둔 보람을 자연스럽게 보여 줄 기회였다.
-    reality:
-      atmosphere: procedural
-      line: 오후 일정 사이에 커피메이커·전기포트·미니오븐 샘플 박스가 도착했고, 서아와 민경은 검수 순서를 확인하고 있었다.
-      intent: work_only
-    next: min_kyung_plan
+- id: sample_boxes
+  kind: narration
+  line: 오후 일정 사이에 커피메이커·전기포트·미니오븐 샘플 박스가 도착했고, 서아와 민경은 검수 순서를 확인하고 있었다.
+  next: min_kyung_plan
 
-  - id: min_kyung_plan
-    kind: dual_dialogue
-    speaker: cha_min_kyung
-    stage:
-      perceived:
-        - position: center
-          character: cha_min_kyung
-          visual_id: character.cha_min_kyung
-          artwork: default
-      reality:
-        - position: center
-          character: cha_min_kyung
-          visual_id: character.cha_min_kyung
-          artwork: default
-    perceived:
-      atmosphere: playful_tension
-      expression: subjective_challenging
-      line: "카트가 다른 층에 있네요. 일단 큰 박스 세 개만 옮기고 나머지는 시설팀에 요청하죠."
-    reality:
-      atmosphere: procedural
-      expression: actual_focused
-      line: "카트가 다른 층에 있네요. 일단 큰 박스 세 개만 옮기고 나머지는 시설팀에 요청하죠."
-      intent: work_only
-    next: do_yoon_split
+- id: min_kyung_plan
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage:
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
+  expression: actual_focused
+  line: "카트가 다른 층에 있네요. 일단 큰 박스 세 개만 옮기고 나머지는 시설팀에 요청하죠."
+  next: do_yoon_split
 
-  - id: do_yoon_split
-    kind: dual_dialogue
-    speaker: han_do_yoon
-    stage:
-      perceived: []
-      reality: []
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_confident
-      line: "제 팀 확인분은 제가 두 번에 나눠 옮기겠습니다. 서아 씨는 품번을 읽어 주시고, 차 대리는 검수 순서만 잡아 주세요."
-    reality:
-      atmosphere: procedural
-      expression: actual_waiting_smile
-      line: "제 팀 확인분은 제가 두 번에 나눠 옮기겠습니다. 서아 씨는 품번을 읽어 주시고, 차 대리는 검수 순서만 잡아 주세요."
-      intent: work_only
-    next: sorting_done
+- id: do_yoon_split
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: "제 팀 확인분은 제가 두 번에 나눠 옮기겠습니다. 서아 씨는 품번을 읽어 주시고, 차 대리는 검수 순서만 잡아 주세요."
+  next: sorting_done
 
-  - id: sorting_done
-    kind: dual_narration
-    perceived:
-      atmosphere: warm_romance
-      line: 두 번째 왕복을 끝냈을 때 민경은 정렬된 박스 앞에서 타이머를 멈췄다. 함께 속도를 맞춘 사람만 아는 만족스러운 표정처럼 보였다.
-    reality:
-      atmosphere: procedural
-      line: 도윤은 무리해서 전부 들지 않고 두 번에 나눠 자기 팀 검수분을 옮겼다. 민경은 예정한 시간 안에 정리가 끝나자 타이머를 멈췄다.
-      intent: work_only
-    next: min_kyung_result
+- id: sorting_done
+  kind: narration
+  line: 도윤은 무리해서 전부 들지 않고 두 번에 나눠 자기 팀 검수분을 옮겼다. 민경은 예정한 시간 안에 정리가 끝나자 타이머를 멈췄다.
+  next: min_kyung_result
 
-  - id: min_kyung_result
-    kind: dual_dialogue
-    speaker: cha_min_kyung
-    stage:
-      perceived:
-        - position: center
-          character: cha_min_kyung
-          visual_id: character.cha_min_kyung
-          artwork: default
-      reality:
-        - position: center
-          character: cha_min_kyung
-          visual_id: character.cha_min_kyung
-          artwork: default
-    perceived:
-      atmosphere: playful_tension
-      expression: subjective_challenging
-      line: "좋습니다. 역할을 먼저 나눠서 생각보다 빨리 끝났네요. 이 상태로 품번 사진을 남기죠."
-    reality:
-      atmosphere: procedural
-      expression: actual_focused
-      line: "좋습니다. 역할을 먼저 나눠서 생각보다 빨리 끝났네요. 이 상태로 품번 사진을 남기죠."
-      intent: documentation
-    next: do_yoon_inner
+- id: min_kyung_result
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage:
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
+  expression: actual_focused
+  line: "좋습니다. 역할을 먼저 나눠서 생각보다 빨리 끝났네요. 이 상태로 품번 사진을 남기죠."
+  next: leave
 
-  - id: do_yoon_inner
-    kind: dual_dialogue
-    presentation_flags: [inner_voice]
-    speakers:
-      perceived: han_do_yoon
-      reality:
-    stage:
-      perceived: []
-      reality: []
-    perceived:
-      atmosphere: playful_tension
-      line: (밤에 올린 체력이 이런 식으로 둘만의 호흡을 만든다. 준비한 사람에게만 보이는 장면이지.)
-    reality:
-      atmosphere: procedural
-      line: 체력은 도윤이 추가 업무에 참여할 여유를 만들었지만, 민경의 평가는 역할 분담과 정리 속도에 관한 것이었다.
-      intent: work_only
-    next: leave
-
-  - id: leave
-    kind: exit
-    transitions:
-      - default: true
-        scene: bonus.stat_intelligence_version_check
+- id: leave
+  kind: exit
+  transitions:
+  - default: true
+    scene: bonus.stat_intelligence_version_check

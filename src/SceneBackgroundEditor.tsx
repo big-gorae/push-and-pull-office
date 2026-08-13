@@ -20,7 +20,6 @@ function backgroundOptions(runtime: Runtime): BackgroundOption[] {
       details: [
         ...(variant.match?.locations || []),
         ...(variant.match?.times || []),
-        ...(variant.match?.atmospheres || []),
       ].join(" · ") || variantId,
     })))
     .sort((left, right) => left.title.localeCompare(right.title, "ko") || left.variant_id.localeCompare(right.variant_id));
@@ -52,14 +51,14 @@ export default function SceneBackgroundEditor({
     : undefined;
   const automatic = useMemo(() => {
     const node = scene.nodes[scene.start_node];
-    return new VisualResolver(runtime).resolveBackground(scene, node, "perceived");
+    return new VisualResolver(runtime).resolveBackground(scene, node);
   }, [runtime, scene]);
   const preview = selected || (automatic ? {
     visual_id: automatic.visual_id,
     variant_id: automatic.variant_id,
     asset: automatic.asset,
     title: runtime.visuals[automatic.visual_id]?.title || automatic.visual_id,
-    details: "장소·시간·분위기로 자동 선택",
+    details: "장소·시간으로 자동 선택",
   } : undefined);
 
   const choose = (option?: BackgroundOption) => {
@@ -84,7 +83,7 @@ export default function SceneBackgroundEditor({
         <header><div><p className="eyebrow">SCENE BACKGROUND</p><h2>씬 기본 배경 선택</h2></div><button type="button" aria-label="닫기" onClick={() => setOpen(false)}>×</button></header>
         <div className="background-picker-grid">
           <button type="button" className={!scene.default_background ? "background-picker-card selected auto" : "background-picker-card auto"} onClick={() => choose(undefined)}>
-            <span>AUTO</span><strong>자동 선택</strong><small>장소·시간·분위기 규칙 사용</small>
+            <span>AUTO</span><strong>자동 선택</strong><small>장소·시간 규칙 사용</small>
           </button>
           {options.map((option) => <button
             type="button"

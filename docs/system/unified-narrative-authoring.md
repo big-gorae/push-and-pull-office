@@ -82,7 +82,6 @@ type AuthoringTextUnit = {
     nodeId?: string;
     variantId?: string;
     optionId?: string;
-    layer?: "perceived" | "reality";
   };
 };
 ```
@@ -181,7 +180,7 @@ self_development:
 - `after_solo_drinking`
 - `default`
 
-각 variant에는 완성된 `perceived.line`과 `reality.line`이 들어간다. 기존 `self_development.expression` 조건 메타데이터는 유지할 수 있다.
+각 variant에는 완성된 단일 `line`이 들어간다. 기존 `self_development.expression` 조건 메타데이터는 유지할 수 있다.
 
 다음 항목은 제거한다.
 

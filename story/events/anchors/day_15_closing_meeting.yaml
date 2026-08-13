@@ -13,9 +13,5 @@ requires: {events: [], conditions: []}
 on_seen: {effects: []}
 on_missed: {effects: []}
 presentation:
-  perceived:
-    title: 그녀의 간병
-    summary: 물과 약, 택시를 챙기는 모습을 숨겨 둔 애정의 표현으로 받아들인다.
-  reality:
-    title: 아픈 상사를 돌려보내는 업무 대응
-    summary: 공략 대상은 발표 준비를 방해하지 않도록 최소한의 조치를 하고 귀가를 권한다.
+  title: 아픈 상사를 돌려보내는 업무 대응
+  summary: 공략 대상은 발표 준비를 방해하지 않도록 최소한의 조치를 하고 귀가를 권한다.

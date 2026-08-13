@@ -1,7 +1,7 @@
 import { normalizePlayerSession, type PlayerSession } from "./playerRuntime";
 import type { GameLocale } from "./gameI18n";
 import { resolveDialogueNode } from "../storyLogic";
-import type { GameModeId, Runtime, ViewLayer } from "../types";
+import type { GameModeId, Runtime } from "../types";
 
 export type PlayerSettings = {
   textSpeed: number;
@@ -15,7 +15,7 @@ export type PlayerSettings = {
 };
 
 export type SaveSlot = {
-  schema_version: 5;
+  schema_version: 6;
   savedAt: number;
   preview: {
     kind: "timeline" | "scene" | "self_development" | "ending";
@@ -28,7 +28,6 @@ export type SaveSlot = {
     gameModeId: GameModeId;
     campaignId: string;
     continuityId: string;
-    viewLayer: ViewLayer;
     endingId?: string;
   };
   session: PlayerSession;
@@ -144,7 +143,7 @@ type LegacySaveSlot = Partial<ReadableSaveSlot> & {
 export function normalizeSaveSlot(value: unknown, runtime?: Runtime): ReadableSaveSlot | undefined {
   if (!value || typeof value !== "object") return undefined;
   const slot = value as LegacySaveSlot;
-  if (typeof slot.schema_version === "number" && slot.schema_version > 5) return undefined;
+  if (typeof slot.schema_version === "number" && slot.schema_version > 6) return undefined;
   if (!slot.session || typeof slot.savedAt !== "number") return undefined;
   let session: PlayerSession;
   try {
@@ -159,7 +158,7 @@ export function normalizeSaveSlot(value: unknown, runtime?: Runtime): ReadableSa
   let variantId = existing?.variantId || slot.variantId;
   if (!variantId && runtime && session.phase === "scene") {
     const node = runtime.scenes[sceneId]?.nodes[nodeId];
-    if (node && (node.kind === "dual_dialogue" || node.kind === "dual_narration")) {
+    if (node && (node.kind === "dialogue" || node.kind === "narration")) {
       variantId = resolveDialogueNode(runtime, session.state, node).variantId;
     }
   }
@@ -175,14 +174,13 @@ export function normalizeSaveSlot(value: unknown, runtime?: Runtime): ReadableSa
     gameModeId: session.gameModeId,
     campaignId: session.campaignId,
     continuityId: session.continuityId,
-    viewLayer: session.viewLayer,
     endingId: existing?.endingId || session.endingId,
   } satisfies SaveSlot["preview"];
   const legacy = slot.legacy || (slot.sceneTitle || slot.line
     ? { sceneTitle: slot.sceneTitle, line: slot.line }
     : undefined);
   return {
-    schema_version: 5,
+    schema_version: 6,
     savedAt: slot.savedAt,
     preview,
     session,

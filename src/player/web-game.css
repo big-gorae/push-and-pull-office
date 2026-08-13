@@ -48,8 +48,6 @@
   --vn-mint: #8bd7c0;
   --vn-lemon: #ffd76a;
   --vn-lilac: #b99ae9;
-  --vn-truth: #61b9e7;
-  --vn-truth-soft: rgba(97, 185, 231, 0.2);
   --vn-night-bg: #171323;
   --vn-night-bg-soft: #2c2440;
   --vn-night-panel: rgba(252, 248, 255, 0.94);
@@ -513,7 +511,6 @@ button { color: inherit; }
 @keyframes vn-rhythm-marker-land { 0%,100% { filter: brightness(1); transform: translate(-50%,-50%) scale(1); } 45% { filter: brightness(1.35); transform: translate(-50%,-50%) scale(1.22); } }
 @keyframes vn-rhythm-gain { 0% { opacity: 0; transform: translate(-50%,0) scale(.72); } 20% { opacity: 1; transform: translate(-50%,-8px) scale(1.08); } 72% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%,-35px) scale(.96); } }
 @keyframes vn-rhythm-score-glow { 0%,100% { filter: drop-shadow(0 3px 8px rgba(255,109,167,.22)); transform: scale(1); } 45% { filter: drop-shadow(0 0 13px rgba(255,241,120,.9)); transform: scale(1.13); } }
-.vn-game.reality { --vn-accent: var(--vn-truth); --vn-accent-soft: var(--vn-truth-soft); }
 .vn-dialogue {
   position: absolute;
   z-index: 7;
@@ -640,7 +637,6 @@ button { color: inherit; }
 
 /* Night activity stays inside the visual-novel flow: home, one line, then a choice. */
 .vn-night-story { --vn-accent: var(--vn-night-accent); background: #171523; }
-.vn-night-story.reality { --vn-accent: var(--vn-truth); --vn-accent-soft: var(--vn-truth-soft); }
 .vn-night-home { position: absolute; inset: 0; overflow: hidden; background: linear-gradient(180deg, #26243a 0 63%, #17131d 63%); }
 .vn-night-home::before { position: absolute; inset: 0; background: radial-gradient(circle at 77% 47%, rgba(255,201,133,.2), transparent 27%), linear-gradient(180deg, rgba(10,11,24,.08), rgba(5,4,11,.5)); content: ""; }
 .vn-night-home .window { position: absolute; top: 13%; left: 9%; width: min(35vw, 520px); height: 40%; border: 14px solid #111321; border-radius: 4px; background: radial-gradient(circle at 74% 22%, #f8edc8 0 2%, transparent 2.4%), linear-gradient(180deg, #161a39, #30395c 72%, #161728); box-shadow: inset 0 0 0 2px rgba(224,225,255,.12), 0 18px 50px rgba(3,4,12,.3); }
@@ -828,7 +824,6 @@ button { color: inherit; }
 
 /* Ending and errors */
 .vn-ending-screen { --vn-accent: #ef6b9f; position: relative; display: grid; min-height: 100dvh; place-items: center; overflow: hidden; padding: 28px; background: radial-gradient(circle at 50% 10%, rgba(255,185,211,.48), transparent 38%), linear-gradient(145deg, #fff7fb, #fffbea); }
-.vn-ending-screen.reality { --vn-accent: var(--vn-truth); }
 .vn-ending-screen::before, .vn-ending-screen::after { position: absolute; color: rgba(239,107,159,.18); font-family: "Jua", sans-serif; font-size: 16rem; content: "♥"; }
 .vn-ending-screen::before { top: -80px; left: -40px; transform: rotate(-18deg); }
 .vn-ending-screen::after { right: -35px; bottom: -100px; transform: rotate(17deg); }

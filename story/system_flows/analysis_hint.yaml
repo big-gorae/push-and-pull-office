@@ -2,21 +2,13 @@ schema_version: 1
 id: system.analysis_hint
 title: 심리학 강사 분석
 nodes:
-  - id: lesson
-    kind: dual_dialogue
-    variants:
-      - id: pull
-        perceived:
-          line: “증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”
-        reality:
-          line: “증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”
-      - id: push
-        perceived:
-          line: “증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”
-        reality:
-          line: “증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”
-      - id: none
-        perceived:
-          line: “아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”
-        reality:
-          line: “아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”
+- id: lesson
+  kind: dialogue
+  variants:
+  - id: pull
+    line: “증거를 보십시오. 이번 선택에서 점수를 얻으려면 대화를 이어 가야 합니다.”
+  - id: push
+    line: “증거를 보십시오. 이번 선택은 말을 줄이고 물러나야 득점입니다.”
+  - id: none
+    line: “아직 정해진 정답은 없습니다. 이번 첫 선택이 다음 득점 방향을 만듭니다.”
+  speaker: dark_psychology_instructor

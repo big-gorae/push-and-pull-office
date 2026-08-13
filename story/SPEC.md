@@ -23,9 +23,7 @@ visible:
       fatigue: 1
   heroines:
     yoon_seo_a:
-      affection: 0
       initiative: 50
-      perceived_state: neutral
 hidden:
   heroines:
     yoon_seo_a:
@@ -56,25 +54,25 @@ progress:
 - `hidden`: 스토리 모드에서 감춰지는 실제 상태
 - `progress`: 현재 시간, 본·놓친 사건, 회차 기억, 루트 완료와 모드 해금
 
-스토리 모드 UI가 표시하는 관계 정보는 `visible.heroines.<id>.initiative`, `progress.flags.push_pull.combo`, `progress.flags.push_pull.position`과 `progress.flags.push_pull.target`이다. 각각 `밀당 주도권`, `x1~x5`의 순간 콤보, 숫자를 숨긴 `당기기↔밀기` 연속 위치와 현재 활성 득점선으로 표시한다. 최초 엔딩 이후 속마음 모드에서는 라벨을 `통제 욕구`, `통제 시도 연쇄`와 `접근 시도/거리 둠`으로 바꾼다. 선택지별 제작 분류와 수치 변화는 디버깅 모드에서만 보인다.
+스토리 모드 UI가 표시하는 관계 정보는 `visible.heroines.<id>.initiative`, `progress.flags.push_pull.combo`, `progress.flags.push_pull.position`과 `progress.flags.push_pull.target`이다. 각각 `밀당 주도권`, `x1~x5`의 순간 콤보, 숫자를 숨긴 `당기기↔밀기` 연속 위치와 현재 활성 득점선으로 표시한다. 선택지별 제작 분류와 수치 변화는 디버깅 모드에서만 보인다.
 
 `position`은 `-100~100` 범위이며 음수는 당기기, 양수는 밀기다. 기본 적정 범위는 `-56~56`, 득점선은 `-32`와 `32`다. 한 선택의 기본 이동량은 12이며 장면 강도에 따라 `8~16`에서 조정한다. `target`은 `pull`, `push`, `none` 중 하나다.
 
-`affection`과 `perceived_state`는 기존 장면·세이브 호환을 위해 상태 모델에 남아 있지만 신규 장면 조건이나 UI에는 사용하지 않는다. 콤보가 이어질 때는 원래 장면 효과와 별도로 반복 패턴 인식에 따른 숨은 효과를 적용할 수 있다.
+히로인의 보이는 상태에는 한도윤이 관계를 통제한다고 믿는 `initiative`만 둔다. 구버전 세이브의 폐기된 호감도와 상대 상태 필드는 로드할 때 버린다. 콤보가 이어질 때는 원래 장면 효과와 별도로 반복 패턴 인식에 따른 숨은 효과를 적용할 수 있다.
 
-감정은 별도 게이지로 만들지 않는다. 각 인물의 `emotion_rules`가 의심도·비호감도 구간을 표정, 속마음, 행동 경향으로 변환한다.
+감정은 별도 게이지로 만들지 않는다. 각 인물의 `emotion_rules`가 의심도·비호감도 구간을 표정과 행동 경향으로 변환한다.
 
-`truth_view`는 유저에게 `속마음 모드`, `survivor_view`는 `어나더 스토리`로 표시하는 안정 ID다. 서아나 민경 루트의 첫 엔딩을 보면 둘을 동시에 해금한다. 속마음 모드의 안내 문구는 `그녀들의 일상과 속마음을 들어 보아요`, 어나더 스토리의 안내 문구는 `새로운 그녀로 새로운 이야기를 만들어 보아요`로 고정한다. `survivor_view` 캠페인의 플레이어 캐릭터는 후속 결정 전까지 스토리 데이터에 고정하지 않는다.
+`survivor_view`는 유저에게 `어나더 스토리`로 표시하는 안정 ID다. 서아나 민경 루트의 첫 엔딩을 보면 해금한다. 안내 문구는 `새로운 그녀로 새로운 이야기를 만들어 보아요`로 고정한다. `survivor_view` 캠페인의 플레이어 캐릭터는 후속 결정 전까지 스토리 데이터에 고정하지 않는다.
 
-게임 모드와 표시 레이어는 서로 다른 값이다. `base`, `truth_view`, `survivor_view`는 `GameModeId`이고 `perceived`, `reality`는 `ViewLayer`다. 게임 모드의 캠페인·연속성·시작 레이어·콘텐츠 상태·해금 조건은 `story/game_modes.yaml` 한 곳에서 관리한다. 일반 플레이 중 모드나 레이어를 바꾸지 않으며, 디버그 레이어 미리보기는 세션에 저장하지 않는다.
+`base`와 `survivor_view`만 `GameModeId`로 사용한다. 장면 표시 레이어는 존재하지 않는다. 게임 모드의 캠페인·연속성·콘텐츠 상태·해금 조건은 `story/game_modes.yaml` 한 곳에서 관리한다.
 
-생존 모드는 스토리 모드의 실제 시간선이나 후일담이 아니라 별도의 평행세계 캠페인이다. 스토리 모드와 같은 출발 상황, 날짜 모티프와 한도윤의 행동 패턴을 재사용해 첫 플레이와 공감대를 만들 수 있지만, 피해자의 선택에 따라 사건의 순서·내용과 결말은 스토리 모드에서 독립적으로 갈라질 수 있다. 스토리 모드 장면의 객관적 진실은 `truth_view`가 담당하며, `survivor_view`의 사건을 스토리 모드에서 누락된 사실로 소급하지 않는다.
+생존 모드는 스토리 모드의 실제 시간선이나 후일담이 아니라 별도의 평행세계 캠페인이다. 스토리 모드와 같은 출발 상황, 날짜 모티프와 한도윤의 행동 패턴을 재사용해 첫 플레이와 공감대를 만들 수 있지만, 피해자의 선택에 따라 사건의 순서·내용과 결말은 스토리 모드에서 독립적으로 갈라질 수 있다. `survivor_view`의 사건을 스토리 모드에서 누락된 사실로 소급하지 않는다.
 
 한도윤의 지속적 공격성은 피해자의 선택 결과가 아니다. 플레이어는 한도윤을 최대한 자극하지 않는 동시에 이미 벌어지는 행동의 물리적 증거를 확보·보존해야 한다. 증거를 위해 폭력을 직접 유도하는 선택은 작성하지 않는다.
 
 스토리 모드의 파국은 생존 모드에서 대신 설명하지 않는다. 스토리 모드 엔딩 안에서 사건의 발생과 즉각적인 결과를 플레이어가 실제로 확인할 수 있어야 한다. 다만 범죄의 세부 방법은 재현하지 않고 피해, 부재, 남은 기록과 주변인의 반응을 중심으로 연출한다.
 
-강유진은 스토리 모드와 `truth_view`에 계속 등장하는 비공략 조연이다. 사실관계를 확인하고 다른 인물의 이상 징후를 알아차릴 수는 있지만, 기본 결말에서 갑자기 모든 증거를 완성하거나 피해자를 구해 파국을 취소하는 해결사로 기능해서는 안 된다. 한도윤이 유진을 직접 사건 당사자로 끌어들인 특수 엔딩 `공략 불가`에서만 공식 대응한다. 생존 모드에서의 플레이어·조력자·조연 역할은 별도로 결정한다.
+강유진은 스토리 모드에 계속 등장하는 비공략 조연이다. 사실관계를 확인하고 다른 인물의 이상 징후를 알아차릴 수는 있지만, 기본 결말에서 갑자기 모든 증거를 완성하거나 피해자를 구해 파국을 취소하는 해결사로 기능해서는 안 된다. 한도윤이 유진을 직접 사건 당사자로 끌어들인 특수 엔딩 `공략 불가`에서만 공식 대응한다. 생존 모드에서의 플레이어·조력자·조연 역할은 별도로 결정한다.
 
 삭제된 `collapse` 모드는 해금 값·루트·사건에서 사용하지 않는다.
 
@@ -139,8 +137,8 @@ on_missed:
   trigger_event: offscreen.seo_a_consults_min_kyung
   effects: []
 presentation:
-  perceived: {title: 서아가 거리를 재는 점심, summary: "..."}
-  reality: {title: 업무 전달 방식을 제한함, summary: "..."}
+  title: 업무 전달 방식을 제한함
+  summary: "..."
 ```
 
 이벤트 상태는 `eligible`, `blocked`, `upcoming`, `seen`, `missed`로 판정한다. 고정·숨은 사건은 우선순위가 높은 것부터 자동 실행하며 같은 `exclusive_group`에서는 하나만 실행한다. 마감이 지난 사건은 `on_missed` 효과를 적용하고 오프스크린 사건을 열 수 있다. 이 판정과 사건 큐는 제작·디버깅 정보이며 일반 플레이 화면에는 타임라인으로 노출하지 않는다.
@@ -166,17 +164,10 @@ state_contract:
   writes: []
 nodes:
   - id: opening
-    kind: dual_dialogue
+    kind: dialogue
     speaker: yoon_seo_a
-    perceived: {}
-    reality: {}
-    next: opening_inner
-  - id: opening_inner
-    kind: dual_dialogue
-    presentation_flags: [inner_voice]
-    speakers: {perceived: han_do_yoon, reality: yoon_seo_a}
-    perceived: {}
-    reality: {}
+    expression: actual_tense
+    line: "그 자료는 메일로 보내주세요."
     next: interpretation
   - id: interpretation
     kind: choice
@@ -189,59 +180,32 @@ nodes:
 
 지원 노드:
 
-- `dual_dialogue`: 인지 화면과 실제 화면을 동시에 기록하는 대사
-- `dual_narration`: 화자가 없는 이중 서술
+- `dialogue`: 화자, 대사와 연출을 기록하는 단일 대사
+- `narration`: 화자 이름표가 없는 단일 서술
 - `silent`: 대사창 없이 배경과 배치 원화만 보여 주는 무대사 화면
 - `choice`: 조건과 효과를 가진 선택지
 - `state_gate`: 수치에 따라 노드 흐름을 나누는 조건문
 - `effect`: 선택 없이 상태를 변경하는 사건
 - `exit`: 다른 장면 또는 엔딩으로 이동
 
-## 8. 이중 레이어
+## 8. 단일 대사와 연출
 
-모든 `dual_dialogue`와 `dual_narration`은 두 레이어를 반드시 가진다. 대사와 생각은 같은 노드의 위아래 보조문단으로 합치지 않고 각각 독립된 발화 노드로 이어 붙인다.
+모든 `dialogue`, `narration`, `silent` 노드는 하나의 대사·서술과 하나의 연출만 가진다. `perceived`, `reality`, `speakers`, `inner_voice`, `inner_thought`, `protagonist_interpretation`은 폐기된 필드·플래그다.
 
 ```yaml
 - id: request
-  kind: dual_dialogue
+  kind: dialogue
   speaker: yoon_seo_a
-  perceived:
-    atmosphere: warm_romance
-    expression: subjective_shy
-    line: "그 자료는 메일로 보내주세요. 제 자리로 오지 마시고요."
-  reality:
-    atmosphere: cold_office
-    expression: actual_tense
-    line: "그 자료는 메일로 보내주세요. 제 자리로 오지 마시고요."
-    intent: boundary
-  next: request_inner
-
-- id: request_inner
-  kind: dual_dialogue
-  presentation_flags: [inner_voice]
-  speakers:
-    perceived: han_do_yoon
-    reality: yoon_seo_a
-  perceived:
-    atmosphere: warm_romance
-    line: "(직접 찾아올 핑계가 없어져서 아쉬운가? 눈을 피하는 게 귀엽네.)"
-  reality:
-    atmosphere: cold_office
-    line: "(또 내 자리로 오면 민경 선배에게 말해야 해.)"
-    intent: boundary
+  expression: actual_tense
+  line: "그 자료는 메일로 보내주세요. 제 자리로 오지 마시고요."
   next: interpretation
 ```
 
-- `reality.line`은 객관적으로 발화된 문장이다. 특별한 환청·기억 왜곡 연출이 아니라면 `perceived.line`도 핵심 사실관계를 유지한다.
-- `protagonist_interpretation`과 `inner_thought`는 폐기된 필드이며 신규·수정 장면에서 사용하지 않는다.
-- 생각과 내적 관찰은 `presentation_flags: [inner_voice]`인 별도 `dual_dialogue`로 작성한다.
-- `inner_voice`는 레이어마다 주체가 다를 수 있으므로 공통 `speaker` 대신 `speakers.perceived`와 `speakers.reality`를 모두 선언한다.
-- 레이어의 speaker가 문자열이면 그 인물의 1인칭 속말이므로 `line`을 괄호로 감싸고 해당 이름표를 표시한다.
-- 레이어의 speaker가 명시적 `null`이면 인물의 생각이 아니라 권위적 서술이다. 괄호 없이 쓰고 이름표를 표시하지 않는다.
-- `intent`는 현실 레이어의 실제 의도를 분류하며 플레이어에게 대사 아래 설명문으로 그대로 출력하지 않는다.
-- 속마음 모드에서는 `reality`를 표시하고, 스토리 모드에서는 `perceived`를 표시한다.
+- `line`은 화면에 표시되는 유일한 문장이다.
+- 속마음 전용 시스템은 없다. 실제 혼잣말이 필요한 경우에만 일반 `dialogue`와 공통 `speaker`를 사용한다.
+- 장면의 사실관계와 다른 숨은 원문을 함께 저장하지 않는다.
 - 표정 ID는 화자의 인물 파일에 등록되어야 한다.
-- `dual_narration`은 화자 이름표 없이 문장만 표시한다. 플레이어 UI에 `나레이션`이라는 가상 화자명을 만들지 않는다.
+- `narration`은 화자 이름표 없이 문장만 표시한다. 플레이어 UI에 `나레이션`이라는 가상 화자명을 만들지 않는다.
 
 ### 대사별 화면 원화
 
@@ -252,30 +216,27 @@ nodes:
   kind: choice
   stimulus: "두 사람이 답을 기다린다."
   stage:
-    perceived:
-      - position: left
-        character: yoon_seo_a
-        visual_id: character.yoon_seo_a
-        artwork: office_default
-      - position: right
-        character: cha_min_kyung
-        visual_id: character.cha_min_kyung
-        artwork: office_default
-    reality: []
+    - position: left
+      character: yoon_seo_a
+      visual_id: character.yoon_seo_a
+      artwork: office_default
+    - position: right
+      character: cha_min_kyung
+      visual_id: character.cha_min_kyung
+      artwork: office_default
   options: []
 ```
 
-- `stage.<layer>` 키가 없으면 해당 레이어에는 인물 원화를 표시하지 않는다. 런타임은 `cast`나 화자를 근거로 원화를 자동 배치하지 않는다.
-- 새 `dual_dialogue`는 화자를 선택하기 전까지 원화가 없다. 편집기에서 한도윤이 아닌 일러스트 화자를 처음 선택하면 두 레이어 `stage`에 해당 인물의 기본 원화를 `center`로 명시 저장한다. 이후 작가는 레이어별 배치를 자유롭게 바꿀 수 있다.
+- `stage` 키가 없으면 인물 원화를 표시하지 않는다. 런타임은 `cast`나 화자를 근거로 원화를 자동 배치하지 않는다.
+- 새 `dialogue`는 화자를 선택하기 전까지 원화가 없다. 편집기에서 한도윤이 아닌 일러스트 화자를 처음 선택하면 `stage`에 해당 인물의 기본 원화를 `center`로 명시 저장한다.
 - 한도윤은 후반 반전 공개 전용 예외다. 화자이거나 `cast`에 포함되어도 평상시 수동 `stage`에 넣을 수 없다.
-- 한도윤 원화는 `ending.*`의 `dual_narration` 노드가 `presentation_flags: [protagonist_art_reveal]`를 선언하고 `perceived`와 `reality` 양쪽 `stage`에 `character.han_do_yoon`을 직접 배치한 경우에만 표시한다. 원화 파일과 비주얼 정의는 이 공개를 위해 보존한다.
+- 한도윤 원화는 `ending.*`의 `narration` 노드가 `presentation_flags: [protagonist_art_reveal]`를 선언하고 `stage`에 `character.han_do_yoon`을 직접 배치한 경우에만 표시한다. 원화 파일과 비주얼 정의는 이 공개를 위해 보존한다.
 - 자동·직접 배치 모두 현재 화자는 정상 색으로 강조하고, 함께 보이는 비화자는 살짝 어둡고 회색인 톤으로 낮춰 발화 전환을 구분한다.
-- `stage.<layer>: []`는 해당 레이어 원화 전체 OFF다.
+- `stage: []`는 원화 전체 OFF다.
 - 직접 배치는 `left`, `center`, `right`에 최대 3명이며 위치와 인물은 각각 중복될 수 없다.
 - 비화자도 표시할 수 있지만 `character`는 장면의 illustrated `cast`에 포함되어야 한다.
 - `visual_id`는 해당 캐릭터의 구체 visual을, `artwork`는 그 visual의 안정적인 artwork ID를 참조한다.
 - 장면 YAML에는 이미지 파일 경로를 넣지 않는다. 실제 경로는 `story/visuals/characters/*.yaml`의 `artworks`에서 해석한다.
-- `perceived`와 `reality`의 배치는 서로 독립적이다.
 
 ### 무대사 화면
 
@@ -284,36 +245,20 @@ nodes:
 ```yaml
 - id: empty_office_view
   kind: silent
-  perceived: {atmosphere: dread, line: ""}
-  reality: {atmosphere: dread, line: ""}
-  stage: {perceived: [], reality: []}
+  line: ""
+  stage: []
   next: closing
 ```
 
-- 두 레이어와 `line: ""`를 명시해 의도적인 무대사임을 빈 초안과 구분한다.
+- `line: ""`를 명시해 의도적인 무대사임을 빈 초안과 구분한다.
 - 화자·이름표·대사창·선택지는 표시하지 않는다.
 - 일반 플레이에서는 HUD와 밀당 게이지도 숨기고 화면 클릭으로 다음 노드로 이동한다.
 - `stage`를 비우면 배경만, 직접 배치하면 배경과 지정 원화를 함께 보여 준다.
 - 장면 흐름·세이브·디버그 이전 화면 이동에서는 일반 표시 노드처럼 유지한다.
 
-### `romance_insert`
+### 폐기된 이중 표현
 
-`romance_insert`는 한도윤이 실제 대사 끝에 없었던 짧은 한 구절을 덧붙여 기억하는 제한적 예외다.
-
-```yaml
-presentation_flags: [romance_insert]
-perceived:
-  line: "월요일에 뵙겠습니다. 다음에 또 봬요."
-reality:
-  line: "월요일에 뵙겠습니다."
-```
-
-- 한 노드에서 실제와 달라지는 부분은 한 문장 또는 한 절이어야 한다.
-- 실제 사건, 선택 결과와 상태 변화는 `reality`와 `effects`를 따른다.
-- 일반적인 호감 해석, 표정 미화와 따뜻한 분위기에는 이 플래그를 쓰지 않는다.
-- 스토리 모드 렌더러는 이 플래그에 최종 선택된 고유 베일 효과를 적용하고, 속마음 모드는 효과 없이 `reality.line`만 표시한다.
-- 제작용 플래그 이름은 플레이어 UI와 도움말에 노출하지 않는다.
-- 스토리 1의 배치와 시각값은 `docs/story-1-romance-insert.md`를 원문으로 삼는다.
+`romance_insert`와 별도의 숨은 원문은 사용하지 않는다. 한도윤의 오해는 실제 대사를 변조하지 않고 선택지 `interpretation`, 후속 행동과 결과로 드러낸다.
 
 ## 9. 선택지
 
@@ -352,7 +297,7 @@ reality:
 
 `support`와 `coordination`의 모든 선택지는 `interaction`을 선언하고 한 노드에 서로 다른 화법 순서를 최소 두 개 둔다. `boundary`에는 `literal_respect` 선택지가 최소 하나 있어야 하며, 침범 행동을 MBTI 요소의 오답처럼 태깅하지 않는다. `not_applicable`에는 `interaction`을 선언하지 않는다.
 
-`push_pull`은 제작·런타임 전용 분류이며 일반 선택지 화면과 결과 연출에는 노출하지 않는다. 선택지별 방향·강도와 계산 결과는 명시적으로 켠 디버깅 모드에서만 표시한다. `action`은 `approach`, `space`, `literal`, `intensity`는 `8~16`, `base_score`는 `2~5`를 사용한다. 런타임은 장면의 일반 `effects`를 먼저 적용한 뒤 이 메타데이터로 위치, 콤보, 득점선, 주도권과 반복 패턴 효과를 계산한다. 장면 효과에서 `affection`, `perceived_state`, `initiative`를 수동으로 변경하지 않는다.
+`push_pull`은 제작·런타임 전용 분류이며 일반 선택지 화면과 결과 연출에는 노출하지 않는다. 선택지별 방향·강도와 계산 결과는 명시적으로 켠 디버깅 모드에서만 표시한다. `action`은 `approach`, `space`, `literal`, `intensity`는 `8~16`, `base_score`는 `2~5`를 사용한다. 런타임은 장면의 일반 `effects`를 먼저 적용한 뒤 이 메타데이터로 위치, 콤보, 득점선, 주도권과 반복 패턴 효과를 계산한다. 장면 효과에서 `initiative`를 수동으로 변경하지 않는다.
 
 MBTI 요소의 인물별 지원 화법을 쓴 선택은 `interaction`을 선언한다. 여러 공략 인물이 함께 있어 밀당 계산 대상도 장면 루트의 기본 히로인과 다르면 `push_pull.target`을 별도로 선언한다.
 
@@ -369,7 +314,7 @@ interaction:
     - practical_resolution
 ```
 
-`interaction.target`은 실제로 그 화법을 받아 반응하는 인물이며 현재 장면 `cast` 안의 캐릭터를 가리킨다. 공략 불가 조연도 자신의 `interaction_preferences`가 있으면 대상이 될 수 있다. `support_styles`는 실제 대사와 행동에 사용한 지원 화법을 발화·행동 순서대로 기록하는 비노출 저작 메타데이터다. 첫 항목이 먼저 전달되는 중심 화법이며, 편집기와 빌드는 이 순서를 보존한다. 같은 대상에 서로 다른 화법 순서를 쓴 선택은 다음 선택이나 장면 종료 전에 대상의 서로 다른 실제 `reality` 반응을 제공해야 한다. 이 메타데이터는 인물별 고유 반응을 검토하는 데 사용하며 그 자체로 호감도·주도권·숨은 수치를 가감하지 않는다.
+`interaction.target`은 실제로 그 화법을 받아 반응하는 인물이며 현재 장면 `cast` 안의 캐릭터를 가리킨다. 공략 불가 조연도 자신의 `interaction_preferences`가 있으면 대상이 될 수 있다. `support_styles`는 실제 대사와 행동에 사용한 지원 화법을 발화·행동 순서대로 기록하는 비노출 저작 메타데이터다. 첫 항목이 먼저 전달되는 중심 화법이며, 편집기와 빌드는 이 순서를 보존한다. 같은 대상에 서로 다른 화법 순서를 쓴 선택은 다음 선택이나 장면 종료 전에 대상의 서로 다른 실제 반응을 제공해야 한다. 이 메타데이터는 인물별 고유 반응을 검토하는 데 사용하며 그 자체로 호감도·주도권·숨은 수치를 가감하지 않는다.
 
 `push_pull.target`은 밀당 위치·콤보·주도권과 반복 패턴을 어느 히로인에게 적용할지 정한다. 생략하면 장면 루트의 히로인을 사용한다. 명시 여부와 관계없이 계산 인물은 현재 장면 `cast` 안에 있어야 한다. 다른 인물을 지정했다면 그 인물의 주도권과 숨은 반복 패턴 경로도 `state_contract.writes`에 선언한다. 대화 반응 대상과 밀당 계산 대상은 같을 수 있지만 의미가 다르므로 런타임은 두 필드를 서로 대신 사용하지 않는다.
 
@@ -395,7 +340,7 @@ self_development:
   converges_at: after_choice
 ```
 
-`manifest.self_development.expressions`가 매력도·능력치·피로·최근 활동 요구를 소유하며 `score_bonus`는 항상 `0`이다. `requires.last_activity`는 알려진 활동 ID 하나를 가리키며 `progress.self_development.last_activity`와 정확히 일치할 때만 표현을 연다. 해금 선택지는 같은 선택 노드의 조건 없는 기준 선택지를 `equivalent_to`로 가리키고, 기준과 같은 `push_pull` 및 `effects`를 사용하며, 짧은 고유 대사 뒤 `converges_at`으로 합류해야 한다. 두 분기의 `next`부터 합류점 직전까지는 `dual_dialogue`, `dual_narration`, `silent`만 허용하며 `effect`, `state_gate`, `choice`, `exit`를 둘 수 없다. 즉 스탯 상호작용은 표현과 반응을 늘리지만 밀당 점수와 숨은 상태를 보정하지 않는다.
+`manifest.self_development.expressions`가 매력도·능력치·피로·최근 활동 요구를 소유하며 `score_bonus`는 항상 `0`이다. `requires.last_activity`는 알려진 활동 ID 하나를 가리키며 `progress.self_development.last_activity`와 정확히 일치할 때만 표현을 연다. 해금 선택지는 같은 선택 노드의 조건 없는 기준 선택지를 `equivalent_to`로 가리키고, 기준과 같은 `push_pull` 및 `effects`를 사용하며, 짧은 고유 대사 뒤 `converges_at`으로 합류해야 한다. 두 분기의 `next`부터 합류점 직전까지는 `dialogue`, `narration`, `silent`만 허용하며 `effect`, `state_gate`, `choice`, `exit`를 둘 수 없다. 즉 스탯 상호작용은 표현과 반응을 늘리지만 밀당 점수와 숨은 상태를 보정하지 않는다.
 
 대사 variant는 `self_development: {expression: <id>}`만 선언할 수 있다. 기본 variant는 항상 하나 남기며 자기계발 조건을 붙이지 않는다. 일반 장면과 엔딩은 자기계발 상태를 직접 읽지 않는다.
 
@@ -426,24 +371,19 @@ on_missed: {effects: []}
 
 ```yaml
 - id: activity_pitch
-  kind: dual_dialogue
+  kind: dialogue
   speaker: han_do_yoon
   variants:
     - id: after_workout
       self_development: {expression: feedback.last_workout}
-      perceived:
-        line: "요즘 운동을 다시 시작했습니다. 앉아 있는 시간이 길어서 건강부터 챙기려고요."
-      reality:
-        line: "요즘 운동을 다시 시작했습니다. 앉아 있는 시간이 길어서 건강부터 챙기려고요."
-        intent: self_promotion
+      line: "요즘 운동을 다시 시작했습니다. 앉아 있는 시간이 길어서 건강부터 챙기려고요."
     - id: default
       default: true
-      perceived: {line: "오늘은 가볍게 안부만 묻는다."}
-      reality: {line: "오늘은 가볍게 안부만 묻는다.", intent: work_only}
+      line: "오늘은 가볍게 안부만 묻는다."
   next: activity_response
 ```
 
-각 활동 variant는 `self_development.expression`으로 최근 활동 조건을 선언하고, 조건 없는 `default`를 마지막에 둔다. 각 양 레이어 `line`은 하나의 장면 YAML 필드가 직접 소유한다. 빌드는 이를 수정하거나 합성하지 않는다. 따라서 런타임 대사 선택, 백로그, 세이브, 번역, 에디터가 같은 안정 variant ID와 같은 완성 문장을 다룬다.
+각 활동 variant는 `self_development.expression`으로 최근 활동 조건을 선언하고, 조건 없는 `default`를 마지막에 둔다. 각 `line`은 하나의 장면 YAML 필드가 직접 소유한다. 빌드는 이를 수정하거나 합성하지 않는다. 따라서 런타임 대사 선택, 백로그, 세이브, 번역, 에디터가 같은 안정 variant ID와 같은 완성 문장을 다룬다.
 
 활동 콜백은 상대가 먼저 외모 변화를 알아보는 보상이 아니다. 한도윤이 운동·옷차림·OTT·짧은 영상·수면을 스몰토크나 자기소개 소재로 먼저 꺼내고, 상대는 그 발화에만 상황에 맞게 반응한다. 특히 하룻밤 활동만으로 체중 감소, 체형 변화나 객관적인 매력 상승을 서술하지 않는다. 활동 콜백은 문구와 짧은 현실 반응만 바꾸며 `effects`, 밀당 점수, 사건과 엔딩에는 영향을 주지 않는다.
 
@@ -501,7 +441,7 @@ interaction_preferences:
     - 마감이 임박하면 복구 행동을 먼저 요청할 수 있다.
 ```
 
-`authoring_shorthand`는 MBTI 요소를 빠르게 논의하기 위한 작가 참고용이며 플레이어에게 성격 검사 결과나 정답표로 노출하지 않는다. 실제 데이터는 유형이 아니라 행동 기반 `support_order`와 `support_styles`를 사용한다. `support_order`는 평상시 기본값이고 현재 상황, 명시적인 요청과 거절이 항상 우선한다. 순서에 맞는 대화는 고유 반응, 정보와 후속 콜백을 만들지만 실제 호감도·주도권 보너스·숨은 악영향을 자동으로 바꾸지 않는다. 장면 선택지의 객관적인 거리와 타이밍은 계속 `push_pull`에서 별도로 판정한다.
+`authoring_shorthand`는 MBTI 요소를 빠르게 논의하기 위한 작가 참고용이며 선택지·대사·상시 HUD에서 성격 검사 결과나 정답표로 노출하지 않는다. 실제 상호작용 데이터와 판정은 유형명이 아니라 행동 기반 `support_order`와 `support_styles`를 사용한다. `support_order`는 평상시 기본값이고 현재 상황, 명시적인 요청과 거절이 항상 우선한다. 순서에 맞는 대화는 고유 반응, 정보와 후속 콜백을 만들지만 실제 호감도·주도권 보너스·숨은 악영향을 자동으로 바꾸지 않는다. 장면 선택지의 객관적인 거리와 타이밍은 계속 `push_pull`에서 별도로 판정한다.
 
 지원 화법의 안정 ID는 다음과 같다.
 
@@ -542,7 +482,7 @@ native_name: English
 fallback: ko
 strings:
   scenes.seo_a.email_request.title: Send It by Email
-  scenes.seo_a.email_request.nodes.request.reality.line: "Please send those materials by email."
+  scenes.seo_a.email_request.nodes.request.line: "Please send those materials by email."
 ```
 
 - 키는 `scenes.<scene_id>.nodes.<node_id>...`처럼 배포 후 유지되는 ID로 만든다.
@@ -564,7 +504,7 @@ VisualObject
 ```
 
 - `extends`는 원형의 기본 렌더 전략, 배치와 공통 파츠를 상속한다.
-- 구체 캐릭터 객체는 `character`를 정확히 하나 가리키고, 레이어 자산이 준비되지 않았을 때 사용할 `fallback_asset`을 가진다.
+- 구체 캐릭터 객체는 `character`를 정확히 하나 가리키고, 기본 자산이 준비되지 않았을 때 사용할 `fallback_asset`을 가진다.
 - `layered_sprite`가 준비되면 기존 장면을 바꾸지 않고 의상·포즈·표정 자산만 추가한다.
 - 상속은 공통값 재사용에만 사용하고, 의상·포즈·표정은 합성으로 조합한다.
 
@@ -577,11 +517,10 @@ variants:
     match:
       locations: [empty_office, design_team_desk]
       times: [evening, night]
-      atmospheres: [dread]
     priority: 100
 ```
 
-장면의 `location`, `time`, 현재 노드의 `atmosphere`, 표시 모드와 일치하는 후보 중 우선순위 점수가 가장 높은 변형을 사용한다. validator는 모든 장면의 모든 노드가 두 모드에서 배경을 얻는지 검사한다.
+장면의 `location`, `time`과 일치하는 후보 중 우선순위 점수가 가장 높은 변형을 사용한다. validator는 모든 장면이 배경을 얻는지 검사한다.
 
 한 씬에서 배경을 자주 바꾸지 않는 경우에는 씬 기본 배경을 안정 ID로 고정할 수 있다.
 
@@ -591,8 +530,8 @@ default_background:
   variant_id: late_afternoon
 ```
 
-- `default_background`이 없으면 기존 장소·시간·분위기 자동 판정을 사용한다.
-- 지정하면 씬 안의 모든 노드와 두 보기 모드에서 같은 배경 variant를 기본으로 사용한다.
+- `default_background`이 없으면 장소·시간 자동 판정을 사용한다.
+- 지정하면 씬 안의 모든 노드에서 같은 배경 variant를 기본으로 사용한다.
 - scene에는 `visual_id`와 `variant_id`만 저장하며 실제 asset 경로는 background visual이 소유한다.
 - 존재하지 않는 visual, 추상 visual, 캐릭터 visual 또는 존재하지 않는 variant는 검증 오류다.
 

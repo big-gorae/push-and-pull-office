@@ -91,7 +91,7 @@ content_fingerprint는 빌드 런타임의 source_sha256을 사용한다. game_v
 
 구현된 v4에서 v5 변환은 다음을 수행한다.
 
-- 기존 `mode`와 `campaignId`를 `gameModeId`, `campaignId`, `continuityId`, `viewLayer`로 변환한다.
+- 기존 `mode`와 `campaignId`를 `gameModeId`, `campaignId`, `continuityId`로 변환하고 과거 표시 레이어 필드는 버린다.
 - 모드 레지스트리에서 연속성과 고정 레이어 정책을 해석한다.
 - 변환할 수 없는 캠페인·모드·레이어 또는 미래 버전은 로드를 거부하며 원본 localStorage를 덮어쓰지 않는다.
 

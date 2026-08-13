@@ -59,13 +59,13 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual(self.project.build_bundle(), self.project.build_bundle())
 
     def test_approved_player_copy_is_a_hard_contract(self):
-        original = self.project.ui["strings"]["mode.truth.copyUnlocked"]
+        original = self.project.ui["strings"]["mode.survivor.copy"]
         try:
-            self.project.ui["strings"]["mode.truth.copyUnlocked"] = "다른 설명"
+            self.project.ui["strings"]["mode.survivor.copy"] = "다른 설명"
             issues = self.project.validate()
             self.assertTrue(any("approved player copy" in issue.message for issue in issues))
         finally:
-            self.project.ui["strings"]["mode.truth.copyUnlocked"] = original
+            self.project.ui["strings"]["mode.survivor.copy"] = original
 
     def test_explorer_covers_every_route_choice_option(self):
         results = {route_id: explore_route(self.project, route_id) for route_id in self.project.routes}
@@ -178,8 +178,8 @@ class StoryHarnessTests(unittest.TestCase):
     def test_dialogue_variant_uses_derived_emotion_and_validates_default(self):
         scene = self.project.scenes["seo_a.email_request"]
         node = next(item for item in scene["nodes"] if item["id"] == "request")
-        original_perceived = node.pop("perceived")
-        original_reality = node.pop("reality")
+        original_line = node.pop("line")
+        original_expression = node.pop("expression")
         node["variants"] = [
             {
                 "id": "guarded",
@@ -189,14 +189,14 @@ class StoryHarnessTests(unittest.TestCase):
                     "op": "eq",
                     "value": "fear",
                 }],
-                "perceived": copy.deepcopy(original_perceived),
-                "reality": copy.deepcopy(original_reality),
+                "line": original_line,
+                "expression": original_expression,
             },
             {
                 "id": "default",
                 "default": True,
-                "perceived": copy.deepcopy(original_perceived),
-                "reality": copy.deepcopy(original_reality),
+                "line": original_line,
+                "expression": original_expression,
             },
         ]
         scene["state_contract"]["reads"].append("derived.characters.yoon_seo_a.emotion")
@@ -214,8 +214,8 @@ class StoryHarnessTests(unittest.TestCase):
             self.assertTrue(any("exactly one default" in issue.message for issue in issues))
         finally:
             node.pop("variants")
-            node["perceived"] = original_perceived
-            node["reality"] = original_reality
+            node["line"] = original_line
+            node["expression"] = original_expression
             scene["state_contract"]["reads"].remove("derived.characters.yoon_seo_a.emotion")
 
     def test_self_development_profile_unlocks_expression_without_overnight_body_notice(self):
@@ -226,7 +226,7 @@ class StoryHarnessTests(unittest.TestCase):
         base_state = self.project.initial_state()
         self.assertEqual("default", resolve_dialogue_variant(self.project, base_state, node)[0])
         self.assertNotIn("variants", node)
-        self.assertNotIn("살이", node["reality"]["line"])
+        self.assertNotIn("살이", node["line"])
         self.assertFalse(
             self_development_expression_matches(self.project, base_state, "health.workout_answer")
         )
@@ -748,38 +748,35 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual([1], payload["progress"]["completed_days"])
         self.assertEqual(33, payload["profile"]["appeal"])
 
-    def test_reality_expression_fallback_priority_preserves_perceived_layer(self):
+    def test_expression_fallback_priority_respects_explicit_expression(self):
         character = self.project.characters["yoon_seo_a"]
         original_rules = character["emotion_rules"]
         node = {
             "id": "expression",
-            "kind": "dual_dialogue",
+            "kind": "dialogue",
             "speaker": "yoon_seo_a",
-            "perceived": {"line": "p", "expression": "subjective_shy"},
-            "reality": {"line": "r"},
+            "line": "대사",
             "next": "done",
         }
         try:
             character["emotion_rules"] = []
             _, resolved = resolve_dialogue_variant(self.project, self.project.initial_state(), node)
-            self.assertEqual("actual_social_smile", resolved["reality"]["expression"])
-            self.assertEqual("subjective_shy", resolved["perceived"]["expression"])
-            node["reality"]["expression"] = "actual_relief"
+            self.assertEqual("actual_social_smile", resolved["expression"])
+            node["expression"] = "actual_relief"
             _, explicit = resolve_dialogue_variant(self.project, self.project.initial_state(), node)
-            self.assertEqual("actual_relief", explicit["reality"]["expression"])
+            self.assertEqual("actual_relief", explicit["expression"])
         finally:
             character["emotion_rules"] = original_rules
 
-    def test_missing_reality_layer_is_rejected(self):
+    def test_removed_reality_layer_is_rejected(self):
         scene = self.project.scenes["seo_a.email_request"]
         node = next(item for item in scene["nodes"] if item["id"] == "request")
-        original = copy.deepcopy(node["reality"])
         try:
-            del node["reality"]
+            node["reality"] = {"line": node["line"]}
             issues = self.project.validate()
-            self.assertTrue(any("reality layer is required" in issue.message for issue in issues))
+            self.assertTrue(any("removed dialogue field is forbidden: reality" in issue.message for issue in issues))
         finally:
-            node["reality"] = original
+            node.pop("reality", None)
 
     def test_legacy_embedded_thought_fields_are_rejected(self):
         node = next(
@@ -787,44 +784,29 @@ class StoryHarnessTests(unittest.TestCase):
             if item["id"] == "request"
         )
         try:
-            node["perceived"]["protagonist_interpretation"] = "legacy"
-            node["reality"]["inner_thought"] = "legacy"
+            node["protagonist_interpretation"] = "legacy"
+            node["inner_thought"] = "legacy"
             issues = []
             self.project._validate_scenes(issues)
             messages = [issue.message for issue in issues]
-            self.assertTrue(any("legacy perceived.protagonist_interpretation is forbidden" in message for message in messages))
-            self.assertTrue(any("legacy reality.inner_thought is forbidden" in message for message in messages))
+            self.assertTrue(any("removed dialogue field is forbidden: protagonist_interpretation" in message for message in messages))
+            self.assertTrue(any("removed dialogue field is forbidden: inner_thought" in message for message in messages))
         finally:
-            node["perceived"].pop("protagonist_interpretation", None)
-            node["reality"].pop("inner_thought", None)
+            node.pop("protagonist_interpretation", None)
+            node.pop("inner_thought", None)
 
-    def test_inner_voice_uses_layer_speakers_and_conditional_parentheses(self):
+    def test_inner_voice_and_layer_speakers_are_rejected(self):
         scene = self.project.scenes["seo_a.email_request"]
-        node = next(item for item in scene["nodes"] if item["id"] == "request_inner")
+        node = next(item for item in scene["nodes"] if item["id"] == "request")
         original = copy.deepcopy(node)
         try:
-            self.assertEqual("han_do_yoon", effective_speaker(node, "perceived"))
-            self.assertEqual("yoon_seo_a", effective_speaker(node, "reality"))
-
-            del node["speakers"]["reality"]
+            node["presentation_flags"] = ["inner_voice"]
+            node["speakers"] = {"perceived": "han_do_yoon", "reality": "yoon_seo_a"}
             issues = []
             self.project._validate_scenes(issues)
-            self.assertTrue(any("speakers.reality is required" in issue.message for issue in issues))
-
-            node.clear()
-            node.update(copy.deepcopy(original))
-            node["perceived"]["line"] = "괄호가 없는 속말"
-            issues = []
-            self.project._validate_scenes(issues)
-            self.assertTrue(any("with a speaker must be parenthesized" in issue.message for issue in issues))
-
-            node.clear()
-            node.update(copy.deepcopy(original))
-            node["speakers"]["reality"] = None
-            node["reality"]["line"] = "(이름표 없는 권위적 서술)"
-            issues = []
-            self.project._validate_scenes(issues)
-            self.assertTrue(any("speakerless inner_voice reality narration must not be parenthesized" in issue.message for issue in issues))
+            messages = [issue.message for issue in issues]
+            self.assertTrue(any("unknown presentation flag: inner_voice" in message for message in messages))
+            self.assertTrue(any("removed dialogue field is forbidden: speakers" in message for message in messages))
         finally:
             node.clear()
             node.update(original)
@@ -838,7 +820,7 @@ class StoryHarnessTests(unittest.TestCase):
             node["speakers"] = {"perceived": "yoon_seo_a", "reality": "yoon_seo_a"}
             issues = []
             self.project._validate_scenes(issues)
-            self.assertTrue(any("regular dual_dialogue must use a single speaker" in issue.message for issue in issues))
+            self.assertTrue(any("removed dialogue field is forbidden: speakers" in issue.message for issue in issues))
         finally:
             node.clear()
             node.update(original)
@@ -952,17 +934,17 @@ class StoryHarnessTests(unittest.TestCase):
             boundary_option["interaction"] = original_boundary_interaction
             interpretation["options"] = original_ending_options
 
-    def test_different_interaction_orders_require_distinct_target_reality_responses(self):
+    def test_different_interaction_orders_require_distinct_target_responses(self):
         scene = self.project.scenes["common.day_03_business_trip_or_cafe"]
         structure = next(item for item in scene["nodes"] if item["id"] == "structure_response")
         fatigue = next(item for item in scene["nodes"] if item["id"] == "fatigue_response")
-        original_line = fatigue["reality"]["line"]
+        original_line = fatigue["line"]
         try:
-            fatigue["reality"]["line"] = structure["reality"]["line"]
+            fatigue["line"] = structure["line"]
             messages = [issue.message for issue in self.project.validate()]
-            self.assertTrue(any("must lead to distinct reality responses" in message for message in messages))
+            self.assertTrue(any("must lead to distinct responses" in message for message in messages))
         finally:
-            fatigue["reality"]["line"] = original_line
+            fatigue["line"] = original_line
 
     def test_interaction_branch_must_reach_the_declared_target_response(self):
         scene = self.project.scenes["common.day_03_business_trip_or_cafe"]
@@ -978,16 +960,16 @@ class StoryHarnessTests(unittest.TestCase):
             })
             option["next"] = "interaction_passthrough"
             messages = [issue.message for issue in self.project.validate()]
-            self.assertFalse(any("must reach a reality response from target: cha_min_kyung" in message for message in messages))
+            self.assertFalse(any("must reach a response from target: cha_min_kyung" in message for message in messages))
 
             option["next"] = "weekend_clues"
             messages = [issue.message for issue in self.project.validate()]
-            self.assertTrue(any("must reach a reality response from target: cha_min_kyung" in message for message in messages))
+            self.assertTrue(any("must reach a response from target: cha_min_kyung" in message for message in messages))
         finally:
             option["next"] = original_next
             scene["nodes"] = [item for item in scene["nodes"] if item["id"] != "interaction_passthrough"]
 
-    def test_new_scene_scaffold_uses_separate_inner_voice_contract(self):
+    def test_new_scene_scaffold_uses_single_dialogue_contract(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "draft.yaml"
             command_new_scene(
@@ -1006,36 +988,41 @@ class StoryHarnessTests(unittest.TestCase):
             serialized = json.dumps(document, ensure_ascii=False)
             self.assertNotIn("protagonist_interpretation", serialized)
             self.assertNotIn("inner_thought", serialized)
-            inner = next(node for node in document["nodes"] if node["id"] == "opening_inner")
-            self.assertEqual(["inner_voice"], inner["presentation_flags"])
-            self.assertEqual("han_do_yoon", inner["speakers"]["perceived"])
-            self.assertIsNone(inner["speakers"]["reality"])
-            self.assertTrue(inner["perceived"]["line"].startswith("("))
-            self.assertFalse(inner["reality"]["line"].startswith("("))
+            opening = next(node for node in document["nodes"] if node["id"] == "opening")
+            self.assertEqual("narration", opening["kind"])
+            self.assertIn("line", opening)
+            self.assertNotIn("perceived", serialized)
+            self.assertNotIn("reality", serialized)
 
-    def test_unmarked_spoken_line_distortion_is_rejected(self):
+    def test_removed_perceived_layer_is_rejected(self):
         scene = self.project.scenes["seo_a.email_request"]
         node = next(item for item in scene["nodes"] if item["id"] == "request")
-        original = node["perceived"]["line"]
         try:
-            node["perceived"]["line"] = "다르게 들린 문장"
+            node["perceived"] = {"line": "다르게 들린 문장"}
             issues = self.project.validate()
-            self.assertTrue(any("spoken lines must match" in issue.message for issue in issues))
+            self.assertTrue(any("removed dialogue field is forbidden: perceived" in issue.message for issue in issues))
         finally:
-            node["perceived"]["line"] = original
+            node.pop("perceived", None)
 
-    def test_romance_insert_allows_marked_spoken_line_distortion(self):
+    def test_removed_atmosphere_is_rejected(self):
         scene = self.project.scenes["seo_a.email_request"]
         node = next(item for item in scene["nodes"] if item["id"] == "request")
-        original_line = node["perceived"]["line"]
+        try:
+            node["atmosphere"] = "cold_office"
+            issues = self.project.validate()
+            self.assertTrue(any("removed dialogue field is forbidden: atmosphere" in issue.message for issue in issues))
+        finally:
+            node.pop("atmosphere", None)
+
+    def test_romance_insert_is_rejected(self):
+        scene = self.project.scenes["seo_a.email_request"]
+        node = next(item for item in scene["nodes"] if item["id"] == "request")
         original_flags = node.get("presentation_flags")
         try:
-            node["perceived"]["line"] = f"{node['reality']['line']} 다음에 또 뵈어요."
             node["presentation_flags"] = ["romance_insert"]
             issues = self.project.validate()
-            self.assertFalse(any("spoken lines must match" in issue.message for issue in issues))
+            self.assertTrue(any("unknown presentation flag: romance_insert" in issue.message for issue in issues))
         finally:
-            node["perceived"]["line"] = original_line
             if original_flags is None:
                 node.pop("presentation_flags", None)
             else:
@@ -1148,7 +1135,7 @@ class StoryHarnessTests(unittest.TestCase):
             })
             messages = [issue.message for issue in self.project.validate()]
             self.assertTrue(any(
-                "push_pull choice must not manually write compatibility stat" in message
+                "push_pull choice must not manually write initiative" in message
                 and "visible.heroines.yoon_seo_a.initiative" in message
                 for message in messages
             ))
@@ -1199,16 +1186,16 @@ class StoryHarnessTests(unittest.TestCase):
         finally:
             character["interaction_preferences"] = original
 
-    def test_invalid_expression_layer_is_rejected(self):
+    def test_unknown_expression_is_rejected(self):
         scene = self.project.scenes["seo_a.email_request"]
         node = next(item for item in scene["nodes"] if item["id"] == "request")
-        original = node["reality"]["expression"]
+        original = node["expression"]
         try:
-            node["reality"]["expression"] = "subjective_shy"
+            node["expression"] = "not_a_registered_expression"
             issues = self.project.validate()
-            self.assertTrue(any("belongs to perceived, not reality" in issue.message for issue in issues))
+            self.assertTrue(any("unknown expression" in issue.message for issue in issues))
         finally:
-            node["reality"]["expression"] = original
+            node["expression"] = original
 
     def test_aggressive_seo_a_choices_reach_report_ending(self):
         result = Simulator(
@@ -1263,7 +1250,7 @@ class StoryHarnessTests(unittest.TestCase):
             self.assertEqual([], option["effects"])
 
         response_lines = {
-            next(node for node in scene["nodes"] if node["id"] == option["next"])["reality"]["line"]
+            next(node for node in scene["nodes"] if node["id"] == option["next"])["line"]
             for option in options.values()
         }
         self.assertEqual(3, len(response_lines))
@@ -1288,13 +1275,13 @@ class StoryHarnessTests(unittest.TestCase):
             self.assertEqual([], option["effects"])
 
         follow_up_response_lines = {
-            next(node for node in scene["nodes"] if node["id"] == option["next"])["reality"]["line"]
+            next(node for node in scene["nodes"] if node["id"] == option["next"])["line"]
             for option in follow_up_options.values()
         }
         self.assertEqual(3, len(follow_up_response_lines))
         resolution = next(node for node in scene["nodes"] if node["id"] == "resolution_complete")
-        self.assertIn("모두 정리됐다", resolution["reality"]["line"])
-        self.assertIn("숨을 내쉬었다", resolution["reality"]["line"])
+        self.assertIn("모두 정리됐다", resolution["line"])
+        self.assertIn("숨을 내쉬었다", resolution["line"])
 
     def test_day_three_common_choice_switches_push_pull_target_to_min_kyung(self):
         result = Simulator(
@@ -1424,7 +1411,7 @@ class StoryHarnessTests(unittest.TestCase):
             reached,
         )
 
-    def test_first_cleared_base_route_unlocks_truth_and_survival_modes(self):
+    def test_first_cleared_base_route_unlocks_survival_mode(self):
         cases = {
             "seo_a": {
                 "seo_a.email_request": "take_literally",
@@ -1440,11 +1427,10 @@ class StoryHarnessTests(unittest.TestCase):
                 result = Simulator(self.project, route_id, choices, "first").run()
                 progress = result["final_state"]["progress"]
                 self.assertEqual([route_id], progress["cleared_routes"])
-                self.assertIn("truth_view", progress["unlocked_modes"])
                 self.assertIn("survivor_view", progress["unlocked_modes"])
                 self.assertNotIn("collapse", progress["unlocked_modes"])
 
-    def test_game_mode_registry_keeps_both_approved_post_clear_unlocks(self):
+    def test_game_mode_registry_keeps_the_approved_post_clear_unlock(self):
         survivor_unlock = self.project.game_modes["survivor_view"]["unlock"]["any"]
         removed = survivor_unlock.pop()
         try:
@@ -1472,12 +1458,12 @@ class StoryHarnessTests(unittest.TestCase):
             self.project,
             state,
             {
-                "path": "visible.heroines.yoon_seo_a.affection",
+                "path": "hidden.heroines.yoon_seo_a.suspicion",
                 "op": "add",
                 "value": 500,
             },
         )
-        self.assertEqual(100, state["visible"]["heroines"]["yoon_seo_a"]["affection"])
+        self.assertEqual(100, state["hidden"]["heroines"]["yoon_seo_a"]["suspicion"])
 
     def test_push_pull_moves_gradually_scores_and_flips_target(self):
         state = self.project.initial_state()
@@ -1703,14 +1689,13 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual([9, 10], bundle["events"]["seo_a.relief_smile"]["window"]["days"])
         self.assertEqual([9, 10], bundle["events"]["min_kyung.witness_meeting"]["window"]["days"])
         self.assertEqual({"seo_a", "min_kyung"}, set(bundle["threads"]))
-        self.assertEqual({"base", "truth_view", "survivor_view"}, set(bundle["game_modes"]))
+        self.assertEqual({"base", "survivor_view"}, set(bundle["game_modes"]))
         self.assertEqual("main", bundle["game_modes"]["base"]["campaign_id"])
-        self.assertEqual("reality", bundle["game_modes"]["truth_view"]["initial_layer"])
         self.assertEqual("coming_soon", bundle["game_modes"]["survivor_view"]["content_status"])
         self.assertIsNone(bundle["game_modes"]["survivor_view"]["campaign_id"])
         self.assertIn("unlocks", bundle["meta"])
         reveals = bundle["meta"]["unlocks"]["mode_teasers"][0]["reveals"]
-        self.assertEqual(["truth_view", "survivor_view"], [reveal["mode"] for reveal in reveals])
+        self.assertEqual(["survivor_view"], [reveal["mode"] for reveal in reveals])
         survival = bundle["meta"]["unlocks"]["survival_mode"]
         self.assertEqual("confirmed", survival["status"])
         self.assertEqual("undecided", survival["playable_character"]["status"])
@@ -1901,9 +1886,9 @@ class StoryHarnessTests(unittest.TestCase):
 
     def test_scene_background_changes_by_location_and_time(self):
         visuals = self.project.resolve_visuals()
-        email = resolve_scene_background(visuals, self.project.scenes["seo_a.email_request"], "request", "perceived")
-        report = resolve_scene_background(visuals, self.project.scenes["ending.seo_a.report"], "mugshot", "reality")
-        empty = resolve_scene_background(visuals, self.project.scenes["ending.seo_a.ambiguous"], "released", "reality")
+        email = resolve_scene_background(visuals, self.project.scenes["seo_a.email_request"], "request")
+        report = resolve_scene_background(visuals, self.project.scenes["ending.seo_a.report"], "mugshot")
+        empty = resolve_scene_background(visuals, self.project.scenes["ending.seo_a.ambiguous"], "released")
         self.assertEqual("background.office_open", email["visual_id"])
         self.assertEqual("background.office_corridor", report["visual_id"])
         self.assertEqual("background.office_corridor", empty["visual_id"])
@@ -1912,8 +1897,8 @@ class StoryHarnessTests(unittest.TestCase):
         visuals = self.project.resolve_visuals()
         seo_a_scene = self.project.scenes["common.day_01_officetel_seo_a_reveal"]
         min_kyung_scene = self.project.scenes["common.day_03_officetel_min_kyung_move_in"]
-        seo_a_background = resolve_scene_background(visuals, seo_a_scene, "home_arrival", "perceived")
-        min_kyung_background = resolve_scene_background(visuals, min_kyung_scene, "knock_at_door", "perceived")
+        seo_a_background = resolve_scene_background(visuals, seo_a_scene, "home_arrival")
+        min_kyung_background = resolve_scene_background(visuals, min_kyung_scene, "knock_at_door")
         self.assertEqual("background.officetel_elevator_lobby", seo_a_background["visual_id"])
         self.assertEqual("evening", seo_a_background["variant_id"])
         self.assertEqual("background.officetel_unit_corridor", min_kyung_background["visual_id"])
@@ -1927,7 +1912,7 @@ class StoryHarnessTests(unittest.TestCase):
             "variant_id": "night",
         }
         background = resolve_scene_background(
-            self.project.resolve_visuals(), scene, "request", "perceived"
+            self.project.resolve_visuals(), scene, "request"
         )
         self.assertEqual("background.empty_office", background["visual_id"])
         self.assertEqual("night", background["variant_id"])
@@ -1955,9 +1940,8 @@ class StoryHarnessTests(unittest.TestCase):
         silent = {
             "id": "silent_view_test",
             "kind": "silent",
-            "perceived": {"atmosphere": "dread", "line": ""},
-            "reality": {"atmosphere": "dread", "line": ""},
-            "stage": {"perceived": [], "reality": []},
+            "line": "",
+            "stage": [],
             "next": original_start,
         }
         scene["nodes"].insert(0, silent)
@@ -1965,7 +1949,7 @@ class StoryHarnessTests(unittest.TestCase):
         try:
             self.assertEqual([], self.project.validate())
             stage = resolve_scene_stage(
-                self.project.resolve_visuals(), scene, silent["id"], "perceived"
+                self.project.resolve_visuals(), scene, silent["id"]
             )
             self.assertEqual([], stage["characters"])
             self.assertIsNotNone(stage["background"])
@@ -1979,22 +1963,21 @@ class StoryHarnessTests(unittest.TestCase):
         silent = {
             "id": "silent_view_invalid",
             "kind": "silent",
-            "perceived": {"atmosphere": "dread", "line": "not silent"},
-            "reality": {"atmosphere": "dread", "line": ""},
+            "line": "not silent",
             "next": original_start,
         }
         scene["nodes"].insert(0, silent)
         scene["start_node"] = silent["id"]
         try:
             messages = [issue.message for issue in self.project.validate()]
-            self.assertTrue(any("silent perceived.line must be an explicit empty string" in message for message in messages))
+            self.assertTrue(any("silent line must be an explicit empty string" in message for message in messages))
         finally:
             scene["start_node"] = original_start
             scene["nodes"] = [node for node in scene["nodes"] if node["id"] != silent["id"]]
 
     def test_scene_stage_composes_background_and_character_objects(self):
         scene = self.project.scenes["seo_a.email_request"]
-        stage = resolve_scene_stage(self.project.resolve_visuals(), scene, "request", "reality")
+        stage = resolve_scene_stage(self.project.resolve_visuals(), scene, "request")
         self.assertEqual("background.office_open", stage["background"]["visual_id"])
         self.assertEqual(
             [("yoon_seo_a", "center", True)],
@@ -2004,33 +1987,21 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertIsNone(seo_a["expression"])
         self.assertTrue(seo_a["speaker"])
 
-        perceived_inner = resolve_scene_stage(self.project.resolve_visuals(), scene, "request_inner", "perceived")
-        reality_inner = resolve_scene_stage(self.project.resolve_visuals(), scene, "request_inner", "reality")
-        self.assertEqual(
-            [],
-            [(item["character"], item["speaker"]) for item in perceived_inner["characters"]],
-        )
-        self.assertEqual(
-            [("yoon_seo_a", True)],
-            [(item["character"], item["speaker"]) for item in reality_inner["characters"]],
-        )
 
     def test_han_do_yoon_artwork_requires_an_explicit_ending_reveal(self):
         scene = self.project.scenes["seo_a.email_request"]
         node = scene["nodes"][0]
         original_stage = copy.deepcopy(node.get("stage"))
-        node["stage"] = {
-            "perceived": [{
+        node["stage"] = [{
                 "position": "center",
                 "character": "han_do_yoon",
                 "visual_id": "character.han_do_yoon",
                 "artwork": "default",
-            }],
-        }
+            }]
         try:
             messages = [issue.message for issue in self.project.validate()]
             self.assertTrue(any("reserved for an explicit ending reveal" in message for message in messages))
-            stage = resolve_scene_stage(self.project.resolve_visuals(), scene, node["id"], "perceived")
+            stage = resolve_scene_stage(self.project.resolve_visuals(), scene, node["id"])
             self.assertFalse(any(item["character"] == "han_do_yoon" for item in stage["characters"]))
         finally:
             if original_stage is None:
@@ -2040,12 +2011,11 @@ class StoryHarnessTests(unittest.TestCase):
 
     def test_han_do_yoon_artwork_appears_on_the_declared_mugshot_reveal(self):
         scene = self.project.scenes["ending.seo_a.report"]
-        for mode in ("perceived", "reality"):
-            stage = resolve_scene_stage(self.project.resolve_visuals(), scene, "mugshot", mode)
-            self.assertEqual(
-                [("han_do_yoon", "center")],
-                [(item["character"], item["position"]) for item in stage["characters"]],
-            )
+        stage = resolve_scene_stage(self.project.resolve_visuals(), scene, "mugshot")
+        self.assertEqual(
+            [("han_do_yoon", "center")],
+            [(item["character"], item["position"]) for item in stage["characters"]],
+        )
 
     def test_han_do_yoon_artwork_never_leaks_outside_declared_reveal_nodes(self):
         visuals = self.project.resolve_visuals()
@@ -2054,16 +2024,15 @@ class StoryHarnessTests(unittest.TestCase):
             for node in scene["nodes"]:
                 is_reveal = (
                     scene["id"].startswith("ending.")
-                    and node.get("kind") == "dual_narration"
+                    and node.get("kind") == "narration"
                     and "protagonist_art_reveal" in node.get("presentation_flags", [])
                 )
-                for mode in ("perceived", "reality"):
-                    stage = resolve_scene_stage(visuals, scene, node["id"], mode)
-                    has_protagonist_art = any(
-                        item["character"] == "han_do_yoon"
-                        for item in stage["characters"]
-                    )
-                    self.assertEqual(is_reveal, has_protagonist_art, f"{scene['id']}#{node['id']}:{mode}")
+                stage = resolve_scene_stage(visuals, scene, node["id"])
+                has_protagonist_art = any(
+                    item["character"] == "han_do_yoon"
+                    for item in stage["characters"]
+                )
+                self.assertEqual(is_reveal, has_protagonist_art, f"{scene['id']}#{node['id']}")
                 if is_reveal:
                     reveal_count += 1
         self.assertGreater(reveal_count, 0)
@@ -2072,22 +2041,18 @@ class StoryHarnessTests(unittest.TestCase):
         scene = self.project.scenes["common.day_01_company_meeting"]
         node = scene["nodes"][0]
         original = copy.deepcopy(node.get("stage"))
-        node["stage"] = {
-            "perceived": [
+        node["stage"] = [
                 {"position": "left", "character": "yoon_seo_a", "visual_id": "character.yoon_seo_a", "artwork": "default"},
                 {"position": "center", "character": "cha_min_kyung", "visual_id": "character.cha_min_kyung", "artwork": "default"},
                 {"position": "right", "character": "kang_yoo_jin", "visual_id": "character.kang_yoo_jin", "artwork": "default"},
-            ],
-            "reality": [],
-        }
+            ]
         try:
             self.assertEqual([], self.project.validate())
-            perceived = resolve_scene_stage(self.project.resolve_visuals(), scene, node["id"], "perceived")
+            stage = resolve_scene_stage(self.project.resolve_visuals(), scene, node["id"])
             self.assertEqual(
                 [("left", "yoon_seo_a"), ("center", "cha_min_kyung"), ("right", "kang_yoo_jin")],
-                [(item["position"], item["character"]) for item in perceived["characters"]],
+                [(item["position"], item["character"]) for item in stage["characters"]],
             )
-            self.assertEqual([], resolve_scene_stage(self.project.resolve_visuals(), scene, node["id"], "reality")["characters"])
         finally:
             if original is None:
                 node.pop("stage", None)
@@ -2098,10 +2063,10 @@ class StoryHarnessTests(unittest.TestCase):
         scene = self.project.scenes["seo_a.email_request"]
         node = scene["nodes"][0]
         original = copy.deepcopy(node.get("stage"))
-        node["stage"] = {"perceived": [
+        node["stage"] = [
             {"position": "left", "character": "yoon_seo_a", "visual_id": "character.yoon_seo_a", "artwork": "default"},
             {"position": "left", "character": "cha_min_kyung", "visual_id": "character.cha_min_kyung", "artwork": "default"},
-        ]}
+        ]
         try:
             messages = [issue.message for issue in self.project.validate()]
             self.assertTrue(any("duplicate stage position" in message for message in messages))
@@ -2124,15 +2089,15 @@ class StoryHarnessTests(unittest.TestCase):
             "office_default": {"asset": source["fallback_asset"], "label": "오피스 기본"},
             "cardigan_smile": {"asset": source["fallback_asset"], "label": "가디건 미소"},
         }
-        node["stage"] = {"perceived": [{
+        node["stage"] = [{
             "position": "center",
             "character": "yoon_seo_a",
             "visual_id": "character.yoon_seo_a",
             "artwork": "cardigan_smile",
-        }]}
+        }]
         try:
             self.assertEqual([], self.project.validate())
-            stage = resolve_scene_stage(self.project.resolve_visuals(), scene, node["id"], "perceived")
+            stage = resolve_scene_stage(self.project.resolve_visuals(), scene, node["id"])
             self.assertEqual("cardigan_smile", stage["characters"][0]["artwork"])
             self.assertEqual(source["fallback_asset"], stage["characters"][0]["asset"])
         finally:
@@ -2177,14 +2142,15 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertIn("seo_a.ending_report", event_ids)
         self.assertNotIn("seo_a.ending_ambiguous", event_ids)
 
-    def test_ai_context_is_bounded_and_contains_both_layers(self):
+    def test_ai_context_is_bounded_and_contains_single_dialogue_fields(self):
         context = self.project.context_package("seo_a.email_request")
         self.assertEqual("seo_a.email_request", context["scene"]["id"])
         self.assertEqual({"han_do_yoon", "yoon_seo_a"}, set(context["cast"]))
         self.assertNotIn("cha_min_kyung", context["cast"])
         first_node = context["scene"]["nodes"][0]
-        self.assertIn("perceived", first_node)
-        self.assertIn("reality", first_node)
+        self.assertIn("line", first_node)
+        self.assertNotIn("perceived", first_node)
+        self.assertNotIn("reality", first_node)
         self.assertIn("authoring_rules", context)
         self.assertIn("literal_respect", context["allowed_system"]["support_styles"])
         self.assertEqual(
@@ -2195,10 +2161,7 @@ class StoryHarnessTests(unittest.TestCase):
             ["emotional_validation", "ask_before_helping", "autonomy_return", "practical_resolution"],
             context["cast"]["yoon_seo_a"]["interaction_preferences"]["support_order"],
         )
-        self.assertEqual(
-            {"perceived": "han_do_yoon", "reality": "yoon_seo_a"},
-            context["effective_speakers"]["request_inner"],
-        )
+        self.assertEqual("yoon_seo_a", context["effective_speakers"]["request"])
 
         shared_context = self.project.context_package("common.day_02_practical_meeting")
         recovery = next(node for node in shared_context["scene"]["nodes"] if node["id"] == "recovery_choice")
@@ -2215,14 +2178,7 @@ class StoryHarnessTests(unittest.TestCase):
             "first",
         ).run(stop_before_scene="seo_a.relief_smile")
         self.assertEqual("seo_a.relief_smile", result["stopped_at"])
-        request_inner = next(
-            event for event in result["trace"]
-            if event.get("scene") == "seo_a.email_request" and event.get("node") == "request_inner"
-        )
-        self.assertEqual(
-            {"perceived": "han_do_yoon", "reality": "yoon_seo_a"},
-            request_inner["speakers"],
-        )
+        self.assertFalse(any(event.get("node") == "request_inner" for event in result["trace"]))
         context = self.project.context_package("seo_a.relief_smile", result["final_state"])
         self.assertEqual(20, context["state_snapshot"]["hidden.heroines.yoon_seo_a.suspicion"])
         self.assertEqual("anxiety", context["derived_emotions"]["yoon_seo_a"]["emotion"])

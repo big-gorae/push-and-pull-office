@@ -14,16 +14,12 @@ location: outside_cafe
 requires:
   events: []
   conditions:
-    - {path: hidden.heroines.yoon_seo_a.suspicion, op: gte, value: 30}
-    - {path: hidden.heroines.cha_min_kyung.suspicion, op: gte, value: 30}
+  - {path: hidden.heroines.yoon_seo_a.suspicion, op: gte, value: 30}
+  - {path: hidden.heroines.cha_min_kyung.suspicion, op: gte, value: 30}
 on_seen:
   effects:
-    - {path: progress.memories, op: append_unique, value: present.notes_connected}
+  - {path: progress.memories, op: append_unique, value: present.notes_connected}
 on_missed: {effects: []}
 presentation:
-  perceived:
-    title: 두 사람이 함께 자리를 비운 점심
-    summary: 자신을 두고 서로의 마음을 확인하러 갔다고 해석한다.
-  reality:
-    title: 서아와 민경의 기록 대조
-    summary: 두 사람은 비슷한 표현과 접근이 반복됐음을 처음 확인한다.
+  title: 서아와 민경의 기록 대조
+  summary: 두 사람은 비슷한 표현과 접근이 반복됐음을 처음 확인한다.

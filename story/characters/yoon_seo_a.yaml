@@ -38,35 +38,27 @@ visual:
   props: [고양이 스티커 수첩, 휴대전화, 텀블러]
 expressions:
   subjective_shy:
-    layer: perceived
     emotion: romantic_shyness
-    description: 볼이 붉고 눈을 마주치지 못하는 호감 표현처럼 보인다.
+    description: 원화 생성 프로필에서만 사용하는, 수줍은 호감으로 오독한 표정 프리셋.
   subjective_relieved_smile:
-    layer: perceived
     emotion: attraction
-    description: 주인공이 물러나자 다시 다가오는 미소처럼 보인다.
+    description: 원화 생성 프로필에서만 사용하는, 다시 다가오는 미소로 오독한 표정 프리셋.
   actual_social_smile:
-    layer: reality
     emotion: appeasement
     description: 갈등을 빨리 끝내기 위한 얇고 짧은 미소.
   actual_tense:
-    layer: reality
     emotion: fear
     description: 어깨가 올라가고 시선이 출입문과 휴대전화를 확인한다.
   actual_relief:
-    layer: reality
     emotion: relief
     description: 접근이 멈춘 뒤 호흡과 어깨가 잠시 풀린다.
   actual_flustered:
-    layer: reality
     emotion: embarrassment
     description: 발표 자료 오류를 알아차리고 호흡이 짧아졌지만 자리를 피하지는 않는 표정.
   actual_grateful:
-    layer: reality
     emotion: gratitude
     description: 발표를 다시 이어 가게 도와준 동료에게 실제 고마움을 보이는 편안한 미소.
   actual_exhausted:
-    layer: reality
     emotion: exhaustion
     description: 수면 부족과 반복되는 주변 확인으로 눈빛이 흐려진다.
 emotion_rules:

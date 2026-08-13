@@ -5,12 +5,6 @@ extends: archetype.background
 title_key: visual.background.meeting_room.title
 title: 유리 회의실
 variants:
-  procedural:
-    asset: assets/backgrounds/glass-meeting-room-afternoon.png
-    match:
-      locations: [meeting_room, glass_meeting_room, hr_interview_room, external_counsel_room, audit_room, conference_room, executive_meeting_room]
-      atmospheres: [procedural, guarded_office, cold_office, dread]
-    priority: 80
   default:
     asset: assets/backgrounds/glass-meeting-room-afternoon.png
     match:

@@ -3,14 +3,9 @@
     status: document.querySelector('#runtime-status'),
     route: document.querySelector('#route-select'),
     scene: document.querySelector('#scene-select'),
-    perceivedMode: document.querySelector('#mode-perceived'),
-    realityMode: document.querySelector('#mode-reality'),
     reset: document.querySelector('#reset-state'),
-    affection: document.querySelector('#affection-input'),
-    affectionOutput: document.querySelector('#affection-output'),
     initiative: document.querySelector('#initiative-input'),
     initiativeOutput: document.querySelector('#initiative-output'),
-    perceivedState: document.querySelector('#perceived-state-input'),
     suspicion: document.querySelector('#suspicion-input'),
     suspicionOutput: document.querySelector('#suspicion-output'),
     dislike: document.querySelector('#dislike-input'),
@@ -27,7 +22,6 @@
     speaker: document.querySelector('#speaker-name'),
     expression: document.querySelector('#expression-name'),
     tools: document.querySelector('#visible-tools'),
-    atmosphere: document.querySelector('#atmosphere'),
     line: document.querySelector('#dialogue-line'),
     interpretation: document.querySelector('#interpretation'),
     flags: document.querySelector('#presentation-flags'),
@@ -44,7 +38,6 @@
   let routeId;
   let sceneId;
   let nodeId;
-  let mode = 'perceived';
   let heroineId;
   let lastDecision = null;
 
@@ -57,15 +50,15 @@
   };
 
   const kindNames = {
-    dual_dialogue: '이중 대사',
-    dual_narration: '이중 내레이션',
+    dialogue: '대사',
+    narration: '내레이션',
+    silent: '무대사',
     choice: '선택지',
     state_gate: '수치 분기',
     effect: '상태 반영',
     exit: '장면 이탈'
   };
 
-  const stateNames = { push: '밀기', pull: '당기기', neutral: '중립' };
   const operationNames = { eq: '=', gte: '≥', lte: '≤', gt: '>', lt: '<', contains: '포함' };
 
   const clone = value => JSON.parse(JSON.stringify(value));
@@ -110,9 +103,7 @@
     if (!effectConditionsMet(effect)) return;
     const current = getPath(effect.path);
     if (effect.op === 'add') {
-      const definitionKey = effect.path.includes('.affection')
-        ? 'visible.affection'
-        : effect.path.includes('.initiative')
+      const definitionKey = effect.path.includes('.initiative')
           ? 'visible.initiative'
           : effect.path.includes('.suspicion')
             ? 'hidden.suspicion'
@@ -248,11 +239,8 @@
 
   function syncStateControls() {
     const values = heroineState();
-    els.affection.value = values.visible.affection;
-    els.affectionOutput.value = values.visible.affection;
     els.initiative.value = values.visible.initiative;
     els.initiativeOutput.value = values.visible.initiative;
-    els.perceivedState.value = values.visible.perceived_state;
     els.suspicion.value = values.hidden.suspicion;
     els.suspicionOutput.value = values.hidden.suspicion;
     els.dislike.value = values.hidden.dislike;
@@ -263,9 +251,7 @@
 
   function updateStateFromControls() {
     const values = heroineState();
-    values.visible.affection = Number(els.affection.value);
     values.visible.initiative = Number(els.initiative.value);
-    values.visible.perceived_state = els.perceivedState.value;
     values.hidden.suspicion = Number(els.suspicion.value);
     values.hidden.dislike = Number(els.dislike.value);
     values.hidden.evidence_count = Number(els.evidence.value);
@@ -300,18 +286,13 @@
   function renderTools(node) {
     const values = heroineState();
     const rule = activeEmotionRule();
-    const labels = mode === 'perceived'
-      ? [
-          '호감도 ' + values.visible.affection,
-          '주도권 ' + values.visible.initiative,
-          '상태 ' + stateNames[values.visible.perceived_state]
-        ]
-      : [
-          '의심 ' + values.hidden.suspicion,
-          '비호감 ' + values.hidden.dislike,
-          '증거 ' + values.hidden.evidence_count,
-          '감정 ' + (rule?.emotion || '미정')
-        ];
+    const labels = [
+      '주도권 ' + values.visible.initiative,
+      '의심 ' + values.hidden.suspicion,
+      '비호감 ' + values.hidden.dislike,
+      '증거 ' + values.hidden.evidence_count,
+      '감정 ' + (rule?.emotion || '미정')
+    ];
     els.tools.replaceChildren();
     labels.forEach(label => {
       const chip = document.createElement('span');
@@ -330,35 +311,23 @@
   }
 
   function renderDialogue(node) {
-    const content = node[mode] || {};
     const speakerId = node.speaker || heroineId;
     const speaker = runtime.characters[speakerId];
-    const expressionId = content.expression || activeEmotionRule()?.default_expression || 'narration';
+    const expressionId = node.expression || activeEmotionRule()?.default_expression || 'narration';
     const expression = speaker?.expressions?.[expressionId];
 
-    els.speaker.textContent = node.kind === 'dual_narration' ? '내레이션' : characterName(speakerId);
+    els.speaker.textContent = node.kind === 'narration' ? '내레이션' : characterName(speakerId);
     els.expression.textContent = expressionId + (expression?.description ? ' · ' + expression.description : '');
     els.image.src = imageByCharacter[speakerId] || imageByCharacter[heroineId];
     els.image.alt = characterName(speakerId) + ' 콘셉트 아트';
-    els.atmosphere.textContent = content.atmosphere || 'office';
-    els.line.textContent = content.line || '표시할 대사가 없습니다.';
-
-    if (mode === 'perceived') {
-      els.interpretation.textContent = content.protagonist_interpretation
-        ? '주인공 해석 · ' + content.protagonist_interpretation
-        : '주인공에게 보이는 장면';
-    } else {
-      const parts = [];
-      if (content.inner_thought) parts.push('속마음 · ' + content.inner_thought);
-      if (content.intent) parts.push('의도 · ' + content.intent);
-      els.interpretation.textContent = parts.join(' / ') || '실제 원문';
-    }
+    els.line.textContent = node.line || '표시할 대사가 없습니다.';
+    els.interpretation.textContent = '장면 원문';
   }
 
   function effectLabel(effect) {
     const shortPath = effect.path.split('.').pop();
     if (effect.op === 'add') return shortPath + ' ' + (effect.value >= 0 ? '+' : '') + effect.value;
-    if (effect.op === 'set') return shortPath + ' → ' + (stateNames[effect.value] || effect.value);
+    if (effect.op === 'set') return shortPath + ' → ' + effect.value;
     return shortPath + ' +' + effect.value;
   }
 
@@ -400,8 +369,6 @@
     els.expression.textContent = activeEmotionRule()?.default_expression || 'state';
     els.image.src = imageByCharacter[heroineId];
     els.image.alt = characterName(heroineId) + ' 콘셉트 아트';
-    els.atmosphere.textContent = kindNames[node.kind] || node.kind;
-
     if (node.kind === 'choice') {
       els.line.textContent = node.prompt;
       els.interpretation.textContent = '선택하면 효과를 적용하고 다음 노드로 이동합니다.';
@@ -436,7 +403,7 @@
 
   function readablePath(path) {
     const names = {
-      affection: '호감도', initiative: '주도권', perceived_state: '현재 해석',
+      initiative: '주도권',
       suspicion: '의심도', dislike: '비호감', evidence_count: '증거',
       cleared_routes: '클리어 루트', unlocked_modes: '해금 모드'
     };
@@ -481,11 +448,6 @@
     const node = selectedNode();
     if (!scene || !node) return;
 
-    els.preview.classList.toggle('truth-mode', mode === 'reality');
-    els.perceivedMode.classList.toggle('active', mode === 'perceived');
-    els.realityMode.classList.toggle('active', mode === 'reality');
-    els.perceivedMode.setAttribute('aria-pressed', String(mode === 'perceived'));
-    els.realityMode.setAttribute('aria-pressed', String(mode === 'reality'));
     els.location.textContent = scene.location + ' · ' + scene.time;
     els.title.textContent = scene.title;
     els.purpose.textContent = scene.purpose;
@@ -496,7 +458,7 @@
     renderTools(node);
     els.choices.replaceChildren();
 
-    if (node.kind === 'dual_dialogue' || node.kind === 'dual_narration') {
+    if (node.kind === 'dialogue' || node.kind === 'narration' || node.kind === 'silent') {
       renderDialogue(node);
     } else {
       renderNonDialogue(node);
@@ -535,14 +497,11 @@
       loadScene(sceneId, true);
     });
     els.scene.addEventListener('change', () => loadScene(els.scene.value));
-    els.perceivedMode.addEventListener('click', () => { mode = 'perceived'; render(); });
-    els.realityMode.addEventListener('click', () => { mode = 'reality'; render(); });
     els.reset.addEventListener('click', () => loadScene(sceneId, true));
     els.next.addEventListener('click', advance);
 
-    [els.affection, els.initiative, els.suspicion, els.dislike, els.evidence]
+    [els.initiative, els.suspicion, els.dislike, els.evidence]
       .forEach(input => input.addEventListener('input', updateStateFromControls));
-    els.perceivedState.addEventListener('change', updateStateFromControls);
   }
 
   async function boot() {

@@ -14,204 +14,82 @@ state_contract:
   writes: []
 start_node: knock_at_door
 nodes:
-  - id: knock_at_door
-    kind: dual_narration
-    perceived:
-      atmosphere: warm_romance
-      line: "금요일 저녁, 현관문 너머에서 짧고 또렷한 노크가 들렸다. 한 주를 끝내고 돌아온 그를 기다린 뜻밖의 방문처럼 들렸다."
-    reality:
-      atmosphere: procedural
-      line: "금요일 저녁, 한도윤이 사는 오피스텔 현관문에 같은 층 새 입주자가 인사를 위해 노크했다."
-      intent: courtesy
-    next: door_opens
+- id: knock_at_door
+  kind: narration
+  line: "금요일 저녁, 한도윤이 사는 오피스텔 현관문에 같은 층 새 입주자가 인사를 위해 노크했다."
+  next: door_opens
 
-  - id: door_opens
-    kind: dual_narration
-    perceived:
-      atmosphere: warm_romance
-      line: "문을 열자 가벼운 셔츠 차림의 민경이 소포장 떡을 들고 서 있었다. 노트북과 일정표 대신 이삿짐 상자가 놓인 복도에서 보니 전혀 다른 사람 같았다."
-    reality:
-      atmosphere: procedural
-      line: "한도윤이 문을 열자, 편한 셔츠 차림의 차민경이 소포장 떡을 들고 서 있었다. 복도 한쪽에는 정리 중인 이삿짐 상자가 남아 있었다."
-      intent: courtesy
-    next: min_kyung_greeting
+- id: door_opens
+  kind: narration
+  line: "한도윤이 문을 열자, 편한 셔츠 차림의 차민경이 소포장 떡을 들고 서 있었다. 복도 한쪽에는 정리 중인 이삿짐 상자가 남아 있었다."
+  next: min_kyung_greeting
 
-  - id: min_kyung_greeting
-    kind: dual_dialogue
-    speaker: cha_min_kyung
-    stage:
-      perceived:
-        - position: center
-          character: cha_min_kyung
-          visual_id: character.cha_min_kyung
-          artwork: default
-      reality:
-        - position: center
-          character: cha_min_kyung
-          visual_id: character.cha_min_kyung
-          artwork: default
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_challenging
-      line: "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요."
-    reality:
-      atmosphere: procedural
-      expression: actual_focused
-      line: "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요."
-      intent: courtesy
-    next: mutual_surprise
+- id: min_kyung_greeting
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage:
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
+  expression: actual_focused
+  line: "오늘 이사 왔습니다. 복도를 잠깐 써서 같은 층에 인사드리고 있습니다. 떡 하나 받으세요."
+  next: mutual_surprise
 
-  - id: mutual_surprise
-    kind: dual_dialogue
-    speaker: cha_min_kyung
-    stage:
-      perceived:
-        - position: center
-          character: cha_min_kyung
-          visual_id: character.cha_min_kyung
-          artwork: default
-      reality:
-        - position: center
-          character: cha_min_kyung
-          visual_id: character.cha_min_kyung
-          artwork: default
-    perceived:
-      atmosphere: playful_tension
-      expression: subjective_challenging
-      line: "한 과장님? 한 과장님도 여기 사십니까?"
-    reality:
-      atmosphere: procedural
-      expression: actual_skeptical
-      line: "한 과장님? 한 과장님도 여기 사십니까?"
-      intent: courtesy
-    next: mutual_surprise_inner
+- id: mutual_surprise
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage:
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
+  expression: actual_skeptical
+  line: "한 과장님? 한 과장님도 여기 사십니까?"
+  next: do_yoon_confirms
 
-  - id: mutual_surprise_inner
-    kind: dual_dialogue
-    presentation_flags: [inner_voice]
-    speakers:
-      perceived: han_do_yoon
-      reality: cha_min_kyung
-    stage:
-      perceived: []
-      reality:
-        - position: center
-          character: cha_min_kyung
-          visual_id: character.cha_min_kyung
-          artwork: default
-    perceived:
-      atmosphere: warm_romance
-      line: (서아 씨에 이어 차 대리까지 같은 건물이라니. 우연치고는 너무 절묘한데.)
-    reality:
-      atmosphere: procedural
-      line: (회사 사람을 같은 층에서 만날 줄은 몰랐네. 그래도 남은 집에도 인사는 마쳐야지.)
-      intent: courtesy
-    next: do_yoon_confirms
+- id: do_yoon_confirms
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다."
+  next: practical_question
 
-  - id: do_yoon_confirms
-    kind: dual_dialogue
-    speaker: han_do_yoon
-    stage:
-      perceived: []
-      reality: []
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_confident
-      line: "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다."
-    reality:
-      atmosphere: procedural
-      expression: actual_waiting_smile
-      line: "네. 저도 여기 삽니다. 차 대리가 이사 올 줄은 정말 몰랐네요. 떡은 잘 먹겠습니다."
-      intent: courtesy
-    next: practical_question
+- id: practical_question
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage:
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
+  expression: actual_focused
+  line: "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?"
+  next: do_yoon_directions
 
-  - id: practical_question
-    kind: dual_dialogue
-    speaker: cha_min_kyung
-    stage:
-      perceived:
-        - position: center
-          character: cha_min_kyung
-          visual_id: character.cha_min_kyung
-          artwork: default
-      reality:
-        - position: center
-          character: cha_min_kyung
-          visual_id: character.cha_min_kyung
-          artwork: default
-    perceived:
-      atmosphere: playful_tension
-      expression: subjective_challenging
-      line: "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?"
-    reality:
-      atmosphere: procedural
-      expression: actual_focused
-      line: "큰 짐은 거의 끝났습니다. 혹시 분리배출장은 지하로 내려가면 됩니까?"
-      intent: courtesy
-    next: do_yoon_directions
+- id: do_yoon_directions
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다."
+  next: min_kyung_thanks
 
-  - id: do_yoon_directions
-    kind: dual_dialogue
-    speaker: han_do_yoon
-    stage:
-      perceived: []
-      reality: []
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_confident
-      line: "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다."
-    reality:
-      atmosphere: procedural
-      expression: actual_waiting_smile
-      line: "지하 주차장 입구 옆입니다. 처음엔 찾기 어려우니 관리 안내 표지만 따라가면 됩니다."
-      intent: courtesy
-    next: min_kyung_thanks
+- id: min_kyung_thanks
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage:
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
+  expression: actual_focused
+  line: "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠."
+  next: leave
 
-  - id: min_kyung_thanks
-    kind: dual_dialogue
-    speaker: cha_min_kyung
-    stage:
-      perceived:
-        - position: center
-          character: cha_min_kyung
-          visual_id: character.cha_min_kyung
-          artwork: default
-      reality:
-        - position: center
-          character: cha_min_kyung
-          visual_id: character.cha_min_kyung
-          artwork: default
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_challenging
-      line: "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠."
-    reality:
-      atmosphere: procedural
-      expression: actual_focused
-      line: "알겠습니다. 덕분에 한 번에 찾겠네요. 다른 집에도 인사드려야 해서 가보겠습니다. 월요일에 뵙죠."
-      intent: courtesy
-    next: door_closes_inner
-
-  - id: door_closes_inner
-    kind: dual_dialogue
-    presentation_flags: [inner_voice]
-    speakers:
-      perceived: han_do_yoon
-      reality:
-    stage:
-      perceived: []
-      reality: []
-    perceived:
-      atmosphere: warm_romance
-      line: (회사에서는 빈틈없던 차 대리가 이사떡을 들고 내 문 앞에 서 있을 줄이야. 생활하는 얼굴까지 보니 더 매력적인 사람이군.)
-    reality:
-      atmosphere: procedural
-      line: 민경은 같은 층의 다른 집에도 같은 인사를 하기 위해 이동했고, 한도윤은 새 이웃이 된 동료에게 받은 떡을 들고 문을 닫았다.
-      intent: courtesy
-    next: leave
-
-  - id: leave
-    kind: exit
-    transitions:
-      - default: true
-        scene: common.day_04_weekend_encounter
+- id: leave
+  kind: exit
+  transitions:
+  - default: true
+    scene: common.day_04_weekend_encounter

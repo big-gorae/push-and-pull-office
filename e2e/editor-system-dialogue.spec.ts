@@ -92,9 +92,9 @@ test("system dialogue workspace is navigable, safe while saving, and undoable", 
 
   await page.goto("/#/editor");
 
-  await expect(page.locator(".system-dialogue-navigation")).toContainText("전체 문구34");
-  await expect(page.getByRole("button", { name: /밤 활동\s*28/ })).toBeVisible();
-  await expect(page.getByRole("button", { name: /심리학 강사\s*6/ })).toBeVisible();
+  await expect(page.locator(".system-dialogue-navigation")).toContainText("전체 문구23");
+  await expect(page.getByRole("button", { name: /밤 활동\s*20/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: /심리학 강사\s*3/ })).toBeVisible();
   await expect(page.locator(".timeline-shell, .presentation-shell, .settings-shell")).toHaveCount(0);
   await expect(page.locator(".system-dialogue-editor")).toHaveScreenshot("system-dialogue-editor.webp");
 
@@ -109,6 +109,7 @@ test("system dialogue workspace is navigable, safe while saving, and undoable", 
   await fields.nth(0).fill("첫 번째 안전 저장 문구");
   await page.getByRole("button", { name: /지금 저장 \(1\)/ }).click();
   await expect(saveState).toContainText("저장하는 중");
+  await page.getByLabel("대사 내용 검색").fill("");
   const continuousInput = "가".repeat(200);
   await fields.nth(1).fill(continuousInput);
   await expect(fields.nth(1)).toBeEditable();
@@ -145,7 +146,7 @@ test("system dialogue workspace is navigable, safe while saving, and undoable", 
   await expect(activityVariants.getByRole("button")).toHaveCount(7);
   await expect(page.locator(".dialogue-variant-card")).toHaveCount(1);
   await activityVariants.getByRole("button", { name: "OTT 시청", exact: true }).click();
-  await expect(page.locator(".dialogue-variant-card .layer-editor.perceived textarea")).toHaveValue(/회사 코미디/);
+  await expect(page.locator(".dialogue-variant-card .layer-editor textarea")).toHaveValue(/회사 코미디/);
   await expect(page.locator(".dialogue-variant-card")).toContainText("OTT 시청을 선택한 다음 날 표시됩니다");
   await expect(page.locator(".dialogue-variant-editor")).toHaveScreenshot("self-development-variant-editor.webp");
 
@@ -173,17 +174,10 @@ test("system dialogue workspace is navigable, safe while saving, and undoable", 
   await nodeRows.first().click();
   await page.getByRole("button", { name: "현재 대사 다음에 추가" }).click();
   await expect(nodeRows).toHaveCount(initialNodeCount + 3);
-  const originalLine = page.getByRole("textbox", { name: "원문 대사" });
-  const innerLine = page.getByRole("textbox", { name: "속마음 대사" });
-  const lineLock = page.getByRole("button", { name: "속마음 대사 잠금 풀기" });
-  await expect(lineLock).toBeVisible();
-  await originalLine.fill("새 대사는 처음에 함께 바뀝니다.");
-  await expect(innerLine).toBeDisabled();
-  await expect(innerLine).toHaveValue("새 대사는 처음에 함께 바뀝니다.");
-  await lineLock.click();
-  await expect(innerLine).toBeEnabled();
-  await innerLine.fill("잠금을 풀면 다르게 입력됩니다.");
-  await expect(originalLine).toHaveValue("새 대사는 처음에 함께 바뀝니다.");
+  const line = page.getByRole("textbox", { name: "대사" });
+  await expect(line).toBeEditable();
+  await line.fill("새 대사는 하나의 원문으로 저장됩니다.");
+  await expect(line).toHaveValue("새 대사는 하나의 원문으로 저장됩니다.");
 
   await page.locator(".node-pill.active").click();
   page.once("dialog", (dialog) => dialog.accept());

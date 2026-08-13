@@ -16,9 +16,5 @@ requires: {events: [], conditions: []}
 on_seen: {effects: []}
 on_missed: {effects: []}
 presentation:
-  perceived:
-    title: 새로운 프로젝트와 세 사람
-    summary: 프로젝트에 합류한 서아·민경·유진의 첫인상을 살펴보지만 아직 신부감을 고르겠다고 결심하지는 않는다.
-  reality:
-    title: 수요일 프로젝트 킥오프
-    summary: 서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.
+  title: 수요일 프로젝트 킥오프
+  summary: 서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.

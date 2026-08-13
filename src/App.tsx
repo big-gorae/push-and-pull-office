@@ -75,12 +75,11 @@ import type {
   SupportStyle,
   Transition,
   ValidationIssue,
-  ViewMode,
 } from "./types";
 
 const NODE_LABELS: Record<NodeKind, string> = {
-  dual_dialogue: "대사",
-  dual_narration: "내레이션",
+  dialogue: "대사",
+  narration: "내레이션",
   silent: "무대사",
   choice: "선택지",
   state_gate: "수치 분기",
@@ -105,7 +104,6 @@ const INTERACTION_CONTEXT_OPTIONS: Array<{ id: InteractionContextKind; label: st
   { id: "not_applicable", label: "MBTI 요소 적용 안 함" },
 ];
 
-const STATE_LABELS: Record<string, string> = { push: "밀기", pull: "당기기", neutral: "중립" };
 
 type HistoryState = { past: Scene[]; future: Scene[] };
 type SceneCommitResult = SaveCommitResult & RuntimeUpdate & {
@@ -196,10 +194,10 @@ function valueText(value: JsonValue | undefined): string {
 }
 
 function nodeScreenTexts(node: StoryNode): string[] {
-  const direct = [node.perceived?.line, node.reality?.line, node.prompt, node.stimulus];
+  const direct = [node.line, node.prompt, node.stimulus];
   const variants = [...(node.variants || [])]
     .sort((left, right) => Number(Boolean(right.default)) - Number(Boolean(left.default)))
-    .flatMap((variant) => [variant.perceived?.line, variant.reality?.line]);
+    .map((variant) => variant.line);
   const choices = node.kind === "choice"
     ? (node.options || []).flatMap((option) => [option.label, option.action, option.interpretation])
     : [];
@@ -375,18 +373,12 @@ export function ConditionEditor({
         <select aria-label="비교 방법" value={condition.op} onChange={(event) => update(index, { op: event.target.value })}>
           {operators.map(([value, label]) => <option value={value} key={value}>{label}</option>)}
         </select>
-        {path.type === "enum" ? <select
-          aria-label="비교 값"
-          value={String(condition.value || "neutral")}
-          onChange={(event) => update(index, { value: event.target.value })}
-        >
-          {runtime.enums.perceived_state.map((value) => <option value={value} key={value}>{STATE_LABELS[value] || value}</option>)}
-        </select> : <input
+        <input
           aria-label="비교 값"
           type={path.type === "number" ? "number" : "text"}
           value={valueText(condition.value)}
           onChange={(event) => update(index, { value: parseEditorValue(event.target.value, path.type) })}
-        />}
+        />
         <button type="button" className="icon-button danger" aria-label="조건 삭제" onClick={() => onChange(conditions.filter((_, itemIndex) => itemIndex !== index))}>×</button>
       </div>;
     })}
@@ -433,18 +425,12 @@ export function EffectEditor({ runtime, effects, onChange }: { runtime: Runtime;
           <select aria-label="변경 방식" value={effect.op} onChange={(event) => update(index, { op: event.target.value })}>
             {operations.map(([value, label]) => <option value={value} key={value}>{label}</option>)}
           </select>
-          {path.type === "enum" ? <select
-            aria-label="변경 값"
-            value={String(effect.value || "neutral")}
-            onChange={(event) => update(index, { value: event.target.value })}
-          >
-            {runtime.enums.perceived_state.map((value) => <option value={value} key={value}>{STATE_LABELS[value] || value}</option>)}
-          </select> : <input
+          <input
             aria-label="변경 값"
             type={path.type === "number" ? "number" : "text"}
             value={valueText(effect.value)}
             onChange={(event) => update(index, { value: parseEditorValue(event.target.value, path.type) })}
-          />}
+          />
           <button type="button" className="icon-button danger" aria-label="효과 삭제" onClick={() => onChange(effects.filter((_, itemIndex) => itemIndex !== index))}>×</button>
         </div>
         <details className="nested-conditions">
@@ -460,64 +446,37 @@ export function EffectEditor({ runtime, effects, onChange }: { runtime: Runtime;
 function LayerEditor({
   title,
   layer,
-  mode,
   runtime,
   speaker,
   narration,
   silent,
-  lineLocked = false,
-  onToggleLineLock,
   onChange,
 }: {
   title: string;
   layer: Layer;
-  mode: ViewMode;
   runtime: Runtime;
   speaker?: string;
   narration?: boolean;
   silent?: boolean;
-  lineLocked?: boolean;
-  onToggleLineLock?: () => void;
   onChange: (layer: Layer) => void;
 }) {
   const character = speaker ? runtime.characters[speaker] : undefined;
-  const expressions = Object.entries(character?.expressions || {}).filter(([, value]) => value.layer === mode);
+  const expressions = Object.entries(character?.expressions || {});
   const update = (patch: Partial<Layer>) => onChange({ ...layer, ...patch });
-  return <fieldset className={`layer-editor ${mode}`}>
+  return <fieldset className="layer-editor">
     <legend>{title}</legend>
     <div className="form-grid">
-      <Field label="분위기">
-        <select value={layer.atmosphere || ""} onChange={(event) => update({ atmosphere: event.target.value })}>
-          {runtime.enums.atmosphere.map((value) => <option value={value} key={value}>{value}</option>)}
-        </select>
-      </Field>
       {!narration && <Field label="표정">
         <select value={layer.expression || ""} onChange={(event) => update({ expression: event.target.value })}>
           <option value="">표정 선택</option>
           {expressions.map(([id, value]) => <option value={id} key={id}>{id} · {value.description}</option>)}
         </select>
       </Field>}
-      {!silent && mode === "reality" && onToggleLineLock ? <div className="field field-wide"><span className="layer-line-label"><span>속마음 대사</span><button
-        type="button"
-        className={lineLocked ? "line-lock-button locked" : "line-lock-button"}
-        aria-label={lineLocked ? "속마음 대사 잠금 풀기" : "속마음 대사를 원문 대사와 같게 잠그기"}
-        title={lineLocked ? "잠금 해제 후 속마음 대사를 다르게 입력" : "원문 대사와 같게 다시 잠금"}
-        onClick={onToggleLineLock}
-      >{lineLocked ? "🔒" : "🔓"}</button></span><TextArea
+      {!silent && <Field label="화면 대사" wide><TextArea
         value={layer.line || ""}
-        disabled={lineLocked}
-        aria-label="속마음 대사"
-        onChange={(event) => update({ line: event.target.value })}
-      /></div> : !silent && <Field label="화면 대사" wide><TextArea
-        value={layer.line || ""}
-        aria-label={mode === "perceived" ? "원문 대사" : "속마음 대사"}
+        aria-label="화면 대사"
         onChange={(event) => update({ line: event.target.value })}
       /></Field>}
-      {mode === "reality" && !silent && <Field label="실제 의도">
-          <select value={layer.intent || "work_only"} onChange={(event) => update({ intent: event.target.value })}>
-            {runtime.enums.intent.map((value) => <option value={value} key={value}>{value}</option>)}
-          </select>
-        </Field>}
     </div>
   </fieldset>;
 }
@@ -855,7 +814,7 @@ function DialogueVariantEditor({
   const displayedVariants = materializedSelfDevelopment
     ? orderedVariants.filter(({ variant }) => variant.id === activeMaterializedId)
     : orderedVariants;
-  const narration = node.kind === "dual_narration";
+  const narration = node.kind === "narration";
   const duplicateConditionIds = new Set<string>();
   variants.forEach((variant, index) => {
     if (variant.default || variant.self_development) return;
@@ -876,12 +835,12 @@ function DialogueVariantEditor({
       id: "default",
       priority: 0,
       default: true,
-      perceived: clone(node.perceived || {}),
-      reality: clone(node.reality || {}),
+      expression: node.expression,
+      line: node.line || "",
     };
     const next = { ...node, variants: [defaultVariant] };
-    delete next.perceived;
-    delete next.reality;
+    delete next.expression;
+    delete next.line;
     onChange(next);
   };
   const flattenVariants = () => {
@@ -889,8 +848,8 @@ function DialogueVariantEditor({
     if (!source) return;
     const next = {
       ...node,
-      perceived: clone(source.perceived),
-      reality: clone(source.reality),
+      expression: source.expression,
+      line: source.line,
     };
     delete next.variants;
     onChange(next);
@@ -903,8 +862,8 @@ function DialogueVariantEditor({
       id: `variant_${counter}`,
       priority: Math.max(10, ...variants.map((variant) => variant.priority || 0)) + 10,
       conditions: [],
-      perceived: clone(source?.perceived || {}),
-      reality: clone(source?.reality || {}),
+      expression: source?.expression,
+      line: source?.line || "",
     };
     onChange({ ...node, variants: [...variants.filter((variant) => !variant.default), next, ...variants.filter((variant) => variant.default)] });
   };
@@ -995,22 +954,12 @@ function DialogueVariantEditor({
           </p>}
           <div className="dual-layer-grid">
             <LayerEditor
-              title={narration ? "주인공이 보는 서술" : "주인공이 보는 장면"}
+              title={narration ? "서술" : "대사"}
               narration={narration}
-              layer={variant.perceived}
-              mode="perceived"
+              layer={variant}
               runtime={runtime}
-              speaker={effectiveSpeaker(node, "perceived")}
-              onChange={(perceived) => update(index, { perceived })}
-            />
-            <LayerEditor
-              title={narration ? "실제 서술" : "실제 장면"}
-              narration={narration}
-              layer={variant.reality}
-              mode="reality"
-              runtime={runtime}
-              speaker={effectiveSpeaker(node, "reality")}
-              onChange={(reality) => update(index, { reality })}
+              speaker={effectiveSpeaker(node)}
+              onChange={(layer) => update(index, { expression: layer.expression, line: layer.line || "" })}
             />
           </div>
         </article>;
@@ -1025,8 +974,6 @@ function NodeEditor({
   state,
   scene,
   node,
-  mode,
-  onMode,
   onChange,
 }: {
   root: string;
@@ -1034,48 +981,30 @@ function NodeEditor({
   state: RuntimeState;
   scene: Scene;
   node: StoryNode;
-  mode: ViewMode;
-  onMode: (mode: ViewMode) => void;
   onChange: (node: StoryNode) => void;
 }) {
-  const commonNext = node.kind === "dual_dialogue" || node.kind === "dual_narration" || node.kind === "silent" || node.kind === "effect";
+  const commonNext = node.kind === "dialogue" || node.kind === "narration" || node.kind === "silent" || node.kind === "effect";
   const speakerOptions = sceneSpeakerOptions(runtime, scene);
-  const lineLayersLocked = node.line_layers_locked === true;
-  const updatePerceivedLayer = (perceived: Layer) => onChange({
-    ...node,
-    perceived,
-    ...(lineLayersLocked ? { reality: { ...node.reality, line: perceived.line || "" } } : {}),
-  });
-  const toggleLineLayersLock = () => onChange(lineLayersLocked
-    ? { ...node, line_layers_locked: false }
-    : {
-      ...node,
-      line_layers_locked: true,
-      reality: { ...node.reality, line: node.perceived?.line || "" },
-    });
+  const updateLayer = (layer: Layer) => onChange({ ...node, expression: layer.expression, line: layer.line || "" });
   return <div className="node-editor">
-    <ArtworkStageEditor root={root} runtime={runtime} scene={scene} node={node} mode={mode} onMode={onMode} onChange={onChange} />
+    <ArtworkStageEditor root={root} runtime={runtime} scene={scene} node={node} onChange={onChange} />
     <div className="form-grid compact-grid">
       <Field label="대사 종류"><select value={node.kind} disabled>{Object.entries(NODE_LABELS).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></Field>
       {commonNext && <Field label="다음 대사"><select value={node.next || ""} onChange={(event) => onChange({ ...node, next: event.target.value })}><option value="">선택</option>{scene.node_order.filter((id) => id !== node.id).map((id) => <option value={id} key={id}>{dialogueOptionLabel(scene, id)}</option>)}</select></Field>}
-      {(node.kind === "dual_dialogue" || node.kind === "dual_narration") && <Field label="연출 플래그"><TextInput placeholder="ui_glitch, original_text_lock, auditory_distortion" value={(node.presentation_flags || []).join(", ")} onChange={(event) => onChange({ ...node, presentation_flags: event.target.value.split(",").map((value) => value.trim()).filter(Boolean) })} /></Field>}
+      {(node.kind === "dialogue" || node.kind === "narration") && <Field label="연출 플래그"><TextInput placeholder="ui_glitch" value={(node.presentation_flags || []).join(", ")} onChange={(event) => onChange({ ...node, presentation_flags: event.target.value.split(",").map((value) => value.trim()).filter(Boolean) })} /></Field>}
     </div>
 
-    {node.kind === "dual_dialogue" && <>
-      {node.presentation_flags?.includes("inner_voice") ? <div className="form-grid compact-grid">
-        {(["perceived", "reality"] as ViewMode[]).map((mode) => <Field label={mode === "perceived" ? "스토리 모드 생각 화자" : "속마음 모드 생각 화자"} key={mode}><select value={node.speakers?.[mode] || ""} onChange={(event) => onChange({ ...node, speakers: { ...node.speakers, [mode]: event.target.value || null } })}><option value="">화자 없는 서술</option>{speakerOptions.map(({ id, label }) => <option value={id} key={id}>{label}</option>)}</select></Field>)}
-      </div> : <Field label="화자"><select value={node.speaker || ""} onChange={(event) => onChange(applyDialogueSpeakerSelection(runtime, node, event.target.value))}><option value="">화자 선택</option>{speakerOptions.map(({ id, label }) => <option value={id} key={id}>{label}</option>)}</select></Field>}
+    {node.kind === "dialogue" && <>
+      <Field label="화자"><select value={node.speaker || ""} onChange={(event) => onChange(applyDialogueSpeakerSelection(runtime, node, event.target.value))}><option value="">화자 선택</option>{speakerOptions.map(({ id, label }) => <option value={id} key={id}>{label}</option>)}</select></Field>
       {!node.variants && <div className="dual-layer-grid">
-        <LayerEditor title="주인공이 보는 장면" layer={node.perceived || {}} mode="perceived" runtime={runtime} speaker={effectiveSpeaker(node, "perceived")} onChange={updatePerceivedLayer} />
-        <LayerEditor title="실제 장면" layer={node.reality || {}} mode="reality" runtime={runtime} speaker={effectiveSpeaker(node, "reality")} lineLocked={lineLayersLocked} onToggleLineLock={toggleLineLayersLock} onChange={(reality) => onChange({ ...node, reality })} />
+        <LayerEditor title="대사" layer={node} runtime={runtime} speaker={effectiveSpeaker(node)} onChange={updateLayer} />
       </div>}
       <DialogueVariantEditor runtime={runtime} state={state} node={node} onChange={onChange} />
     </>}
 
-    {node.kind === "dual_narration" && <>
+    {node.kind === "narration" && <>
       {!node.variants && <div className="dual-layer-grid">
-        <LayerEditor title="주인공이 보는 서술" narration layer={node.perceived || {}} mode="perceived" runtime={runtime} onChange={updatePerceivedLayer} />
-        <LayerEditor title="실제 서술" narration layer={node.reality || {}} mode="reality" runtime={runtime} lineLocked={lineLayersLocked} onToggleLineLock={toggleLineLayersLock} onChange={(reality) => onChange({ ...node, reality })} />
+        <LayerEditor title="서술" narration layer={node} runtime={runtime} onChange={updateLayer} />
       </div>}
       <DialogueVariantEditor runtime={runtime} state={state} node={node} onChange={onChange} />
     </>}
@@ -1083,8 +1012,7 @@ function NodeEditor({
     {node.kind === "silent" && <>
       <p className="silent-node-help">게임에서는 대사창을 숨기고 배경과 배치한 원화만 보여 줍니다. 화면을 클릭하면 다음 대사로 이동합니다.</p>
       <div className="dual-layer-grid">
-        <LayerEditor title="스토리 모드 화면 분위기" narration silent layer={node.perceived || {}} mode="perceived" runtime={runtime} onChange={(perceived) => onChange({ ...node, perceived: { ...perceived, line: "" } })} />
-        <LayerEditor title="속마음 모드 화면 분위기" narration silent layer={node.reality || {}} mode="reality" runtime={runtime} onChange={(reality) => onChange({ ...node, reality: { ...reality, line: "" } })} />
+        <LayerEditor title="무대사 화면" narration silent layer={node} runtime={runtime} onChange={updateLayer} />
       </div>
     </>}
 
@@ -1103,8 +1031,6 @@ function Preview({
   runtime,
   scene,
   selectedNodeId,
-  mode,
-  onMode,
   state,
   initialState,
   onState,
@@ -1113,8 +1039,6 @@ function Preview({
   runtime: Runtime;
   scene: Scene;
   selectedNodeId: string;
-  mode: ViewMode;
-  onMode: (mode: ViewMode) => void;
   state: RuntimeState;
   initialState: RuntimeState;
   onState: (state: RuntimeState) => void;
@@ -1133,11 +1057,11 @@ function Preview({
   const selected = scene.nodes[selectedNodeId];
   const automatic = selected?.kind === "state_gate" ? chooseTransition(state, selected.transitions) : undefined;
   const rawDisplayNode = automatic?.chosen?.node ? scene.nodes[automatic.chosen.node] : selected;
-  const dialogueResolution = rawDisplayNode && (rawDisplayNode.kind === "dual_dialogue" || rawDisplayNode.kind === "dual_narration")
+  const dialogueResolution = rawDisplayNode && (rawDisplayNode.kind === "dialogue" || rawDisplayNode.kind === "narration")
     ? resolveDialogueNode(runtime, state, rawDisplayNode)
     : undefined;
   const displayNode = dialogueResolution?.node || rawDisplayNode;
-  const layer = displayNode?.[mode] as Layer | undefined;
+  const layer = displayNode;
   const exitDecision = displayNode?.kind === "exit" ? chooseTransition(state, displayNode.transitions) : undefined;
   const availableOptions = displayNode?.kind === "choice" ? (displayNode.options || []).filter((option) =>
     conditionsMatch(state, option.conditions)
@@ -1181,14 +1105,13 @@ function Preview({
     onState(next);
   };
 
-  const speaker = effectiveSpeaker(displayNode, mode);
+  const speaker = effectiveSpeaker(displayNode);
   const character = speaker ? runtime.characters[speaker] : undefined;
   const showPreviewImage = Boolean(character && speaker === heroine && image);
   const expression = layer?.expression || emotion?.default_expression || "narration";
-  const truthLabels = mode === "reality" || hasClearedEnding;
-  const rhythmLabelMode: ViewMode = truthLabels ? "reality" : "perceived";
-  const scoreLabel = truthLabels ? "통제 욕구" : "밀당 주도권";
-  const comboLabel = truthLabels ? "통제 시도 연쇄" : "COMBO";
+  const truthLabels = false;
+  const scoreLabel = "밀당 주도권";
+  const comboLabel = "COMBO";
   const markerPosition = `${(rhythmState.position + 100) / 2}%`;
   const targetPosition = rhythmState.target === "pull" ? "34%" : rhythmState.target === "push" ? "66%" : "50%";
   const rhythmStyle = {
@@ -1199,10 +1122,9 @@ function Preview({
   return <aside className="preview-panel">
     <div className="panel-heading">
       <div><p className="eyebrow">LIVE PREVIEW</p><h2>게임 화면</h2></div>
-      <div className="segmented"><button type="button" className={mode === "perceived" ? "active" : ""} onClick={() => onMode("perceived")}>스토리 모드</button><button type="button" className={mode === "reality" ? "active truth" : ""} onClick={() => onMode("reality")}>실제</button></div>
     </div>
 
-    <div className={`mini-game ${mode}`}>
+    <div className="mini-game">
       <div className="mini-portrait">
         {showPreviewImage ? <img src={image} alt={`${character?.display_name || speaker} 콘셉트 아트`} /> : <div className="image-placeholder">{speaker ? "ACTIVE SPEAKER" : "NO SPEAKER"}</div>}
         {character && <div className="portrait-label"><strong>{character.display_name}</strong><span>{expression}</span></div>}
@@ -1218,9 +1140,9 @@ function Preview({
             className={`rhythm-gauge ${rhythmState.target === "none" ? "no-target" : ""}`}
             style={rhythmStyle}
             role="img"
-            aria-label={`현재 ${pushPullPositionLabel(rhythmState.position, rhythmLabelMode)}, 다음 득점선 ${pushPullTargetLabel(rhythmState.target, rhythmLabelMode)}`}
+            aria-label={`현재 ${pushPullPositionLabel(rhythmState.position)}, 다음 득점선 ${pushPullTargetLabel(rhythmState.target)}`}
           >
-            <span>{rhythmLabelMode === "perceived" ? "당기기" : "접근 시도"}</span>
+            <span>당기기</span>
             <div aria-hidden="true">
               <i className="optimal-range"></i>
               <i className="checkpoint pull"></i>
@@ -1228,15 +1150,14 @@ function Preview({
               <i className="active-target"></i>
               <b className="rhythm-marker"></b>
             </div>
-            <span>{rhythmLabelMode === "perceived" ? "밀기" : "거리 둠"}</span>
-            <small>현재: {pushPullPositionLabel(rhythmState.position, rhythmLabelMode)}</small>
-            <small>다음 득점선: {pushPullTargetLabel(rhythmState.target, rhythmLabelMode)}</small>
+            <span>밀기</span>
+            <small>현재: {pushPullPositionLabel(rhythmState.position)}</small>
+            <small>다음 득점선: {pushPullTargetLabel(rhythmState.target)}</small>
           </div>
         </div>
         <div className="dialogue-copy">
-          <small>{layer?.atmosphere || NODE_LABELS[displayNode?.kind || "effect"]}</small>
+          <small>{NODE_LABELS[displayNode?.kind || "effect"]}</small>
           <blockquote>{layer?.line || (displayNode?.kind === "choice" ? displayNode.prompt : displayNode?.kind === "exit" ? "장면을 떠납니다." : "판정 노드")}</blockquote>
-          {mode === "reality" && layer?.intent && <p>{layer.intent}</p>}
         </div>
       </div>}
     </div>
@@ -1262,8 +1183,8 @@ function Preview({
               : "득점 없음"}</strong>
       <span>{pushPullResult.gain > 0 ? `+${pushPullResult.gain}` : `${scoreLabel} 변화 없음`}</span>
       <small>{pushPullResult.kind === "turn"
-        ? `다음 득점선: ${pushPullTargetLabel(pushPullResult.target, rhythmLabelMode)}`
-        : pushPullResult.combo > 0 ? `${comboLabel} x${pushPullResult.combo}` : pushPullPositionLabel(pushPullResult.position, rhythmLabelMode)}</small>
+        ? `다음 득점선: ${pushPullTargetLabel(pushPullResult.target)}`
+        : pushPullResult.combo > 0 ? `${comboLabel} x${pushPullResult.combo}` : pushPullPositionLabel(pushPullResult.position)}</small>
     </div>}
 
     {availableOptions.length > 0 && <div className="preview-choices">{availableOptions.map((option) => <button type="button" key={option.id} onClick={() => simulateChoice(option)}><strong>{option.label}</strong><small>{option.action}</small></button>)}</div>}
@@ -1310,13 +1231,12 @@ export default function App() {
   const [revision, setRevision] = useState("");
   const [dirty, setDirty] = useState(false);
   const [history, setHistory] = useState<HistoryState>({ past: [], future: [] });
-  const [mode, setMode] = useState<ViewMode>("perceived");
   const [testState, setTestState] = useState<RuntimeState | null>(null);
   const [issues, setIssues] = useState<ValidationIssue[]>([]);
   const [status, setStatus] = useState("에디터 준비 중…");
   const [busy, setBusy] = useState(false);
   const [editorTab, setEditorTab] = useState<"scene" | "node" | "source">("node");
-  const [newNodeKind, setNewNodeKind] = useState<NodeKind>("dual_dialogue");
+  const [newNodeKind, setNewNodeKind] = useState<NodeKind>("dialogue");
   const [dialogueSearch, setDialogueSearch] = useState("");
   const [dialogueClipboard, setDialogueClipboard] = useState<DialogueClipboard | null>(null);
   const [dialogueContextMenu, setDialogueContextMenu] = useState<DialogueContextMenuState | null>(null);
@@ -1899,7 +1819,7 @@ export default function App() {
       const route = runtime.routes[scene.route];
       const dialogue = scene.node_order.flatMap((id) => {
         const node = scene.nodes[id];
-        return [node.prompt, node.stimulus, node.perceived?.line, node.reality?.line];
+        return [node.prompt, node.stimulus, node.line];
       }).filter(Boolean).join(" ");
       const context = `${route?.title || scene.route} · ${scene.location || "장소 미정"} · 대사 ${scene.node_order.length}개`;
       return {
@@ -1921,7 +1841,7 @@ export default function App() {
         title: event.title,
         context,
         path: payload.documents.events[event.id]?.path || "",
-        search: `${event.id} ${event.title} ${event.presentation.perceived.title} ${event.presentation.perceived.summary} ${event.presentation.reality.title} ${event.presentation.reality.summary} ${context}`.toLocaleLowerCase(),
+        search: `${event.id} ${event.title} ${event.presentation.title} ${event.presentation.summary} ${context}`.toLocaleLowerCase(),
       };
     });
     const characters = storyRoutes(runtime).map((route) => runtime.characters[route.heroine]).filter(Boolean);
@@ -2294,8 +2214,6 @@ export default function App() {
       active={workspace === "timeline"}
       payload={payload}
       state={testState}
-      mode={mode}
-      onMode={setMode}
       onState={setTestState}
       onPayload={setPayload}
       onIssues={setIssues}
@@ -2343,8 +2261,6 @@ export default function App() {
       payload={payload}
       locale={locale}
       onLocale={setLocale}
-      mode={mode}
-      onMode={setMode}
       onStatus={setStatus}
       onPayload={setPayload}
       onIssues={setIssues}
@@ -2451,7 +2367,7 @@ export default function App() {
             <button type="button" role="menuitem" disabled={!dialogueClipboard} onClick={() => pasteDialogueNode(dialogueContextMenu.nodeId)}><span>다음에 붙여넣기</span><kbd>⌘/Ctrl+V</kbd></button>
             <button type="button" role="menuitem" className="danger" onClick={() => deleteNode(dialogueContextMenu.nodeId)}><span>삭제</span><kbd>Delete</kbd></button>
           </div>}
-          <div className="dialogue-detail scroll-area">{selectedNode ? <NodeEditor root={root} runtime={runtime} state={testState} scene={draft} node={selectedNode} mode={mode} onMode={setMode} onChange={updateNode} /> : <p>대사를 선택하세요.</p>}</div>
+          <div className="dialogue-detail scroll-area">{selectedNode ? <NodeEditor root={root} runtime={runtime} state={testState} scene={draft} node={selectedNode} onChange={updateNode} /> : <p>대사를 선택하세요.</p>}</div>
         </div>}
 
         {editorTab === "source" && <div className="scroll-area source-view"><div className="source-notice">원본은 읽기 전용입니다. 구조화된 폼에서 저장하면 주석과 키 순서를 보존해 갱신합니다.</div><pre><code>{payload.documents.scenes[draft.id]?.source}</code></pre></div>}

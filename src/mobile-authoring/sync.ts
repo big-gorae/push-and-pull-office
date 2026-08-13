@@ -111,7 +111,6 @@ async function bundledWorkspace(): Promise<MobileSceneWorkspace> {
       details: [
         ...(variant.match?.locations || []),
         ...(variant.match?.times || []),
-        ...(variant.match?.atmospheres || []),
       ].join(" · ") || variantId,
       asset: variant.asset,
     })))
@@ -125,7 +124,6 @@ async function bundledWorkspace(): Promise<MobileSceneWorkspace> {
       expressions: Object.entries(runtime.characters[id]?.expressions || {}).map(([expressionId, expression]) => ({
         id: expressionId,
         label: expression.description || expressionId,
-        layer: expression.layer,
       })),
     }));
     const supporting = (scene.world_context?.participants || [])
@@ -147,27 +145,21 @@ async function bundledWorkspace(): Promise<MobileSceneWorkspace> {
     scenes,
     artworks,
     backgrounds,
-    atmospheres: runtime.enums.atmosphere || [],
-    intents: runtime.enums.intent || [],
   };
 }
 
-function mobileEntry(key: string, entry: LocalizationEntry, all: Record<string, LocalizationEntry>): Promise<MobileCatalogEntry | undefined> {
+function mobileEntry(key: string, entry: LocalizationEntry): Promise<MobileCatalogEntry | undefined> {
   const document = entry.sourceDocument;
   const fieldPath = document.fieldPath;
   const editable = (document.kind === "scene" || document.kind === "system_flow") && (
-    /^(nodes\.[^.]+\.(?:perceived|reality)\.line)$/.test(fieldPath)
-    || /^nodes\.[^.]+\.variants\.[^.]+\.(?:perceived|reality)\.line$/.test(fieldPath)
+    /^(nodes\.[^.]+\.line)$/.test(fieldPath)
+    || /^nodes\.[^.]+\.variants\.[^.]+\.line$/.test(fieldPath)
     || /^nodes\.[^.]+\.(?:prompt|stimulus)$/.test(fieldPath)
     || /^nodes\.[^.]+\.analysis_hints\.(?:pull|push|none)$/.test(fieldPath)
     || /^nodes\.[^.]+\.options\.[^.]+\.(?:label|interpretation|action)$/.test(fieldPath)
     || /^options\.[^.]+\.(?:label|description)$/.test(fieldPath)
   );
   if (!editable || !entry.source.trim()) return Promise.resolve(undefined);
-  const counterpart = key.includes(".perceived.line")
-    ? key.replace(".perceived.line", ".reality.line")
-    : key.replace(".reality.line", ".perceived.line");
-  const linked = counterpart !== key && all[counterpart]?.source === entry.source ? [counterpart] : [];
   return sha256(entry.source).then((valueHash) => ({
     localizationKey: key,
     locale: runtime.localization.default_locale,
@@ -182,13 +174,13 @@ function mobileEntry(key: string, entry: LocalizationEntry, all: Record<string, 
     maxLength: entry.maxLength,
     placeholders: entry.placeholders || [],
     multiline: entry.multiline,
-    linkedLocalizationKeys: linked,
+    linkedLocalizationKeys: [],
   }));
 }
 
 export async function bundledCatalog(): Promise<MobileCatalogSnapshot> {
   const source = runtime.localization.entries || {};
-  const entries = (await Promise.all(Object.entries(source).map(([key, entry]) => mobileEntry(key, entry, source))))
+  const entries = (await Promise.all(Object.entries(source).map(([key, entry]) => mobileEntry(key, entry))))
     .filter((entry): entry is MobileCatalogEntry => Boolean(entry))
     .sort((left, right) => left.localizationKey.localeCompare(right.localizationKey));
   const workspace = await bundledWorkspace();

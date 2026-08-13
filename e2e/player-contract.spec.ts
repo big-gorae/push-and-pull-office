@@ -57,19 +57,16 @@ test.beforeEach(async ({ page }) => {
   await setDeterministicSettings(page);
 });
 
-test("new game is exactly the approved three-mode contract", async ({ page }) => {
+test("new game is exactly the approved two-mode contract", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "새 게임" }).click();
 
-  await expect(page.locator(".vn-mode-card")).toHaveCount(3);
+  await expect(page.locator(".vn-mode-card")).toHaveCount(2);
   await expect(page.locator(".vn-mode-card h2")).toHaveText([
     "스토리 모드",
-    "속마음 모드",
     "어나더 스토리",
   ]);
-  await expect(page.getByText("그녀들의 일상과 속마음을 들어 보아요", { exact: true })).toBeVisible();
   await expect(page.getByText("새로운 그녀로 새로운 이야기를 만들어 보아요", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: /속마음 모드/ })).toBeDisabled();
   await expect(page.getByRole("button", { name: /어나더 스토리/ })).toBeDisabled();
   await expect(page.getByText("NEW GAME", { exact: true })).toHaveCount(0);
   await expect(page.getByText("어떤 두근거림으로 시작할까요?", { exact: true })).toHaveCount(0);
@@ -104,7 +101,7 @@ test("gallery restores a stat-event CG from the persistent profile", async ({ pa
   await expect(gallery.getByRole("img", { name: "윤서아 — 웃음이 터진 순간" })).toBeVisible();
 });
 
-test("first ending profile unlocks both post-ending modes", async ({ page }) => {
+test("first ending profile unlocks Another Story", async ({ page }) => {
   await page.addInitScript(({ key }) => {
     localStorage.setItem(key, JSON.stringify({
       clearedRoutes: ["seo_a"],
@@ -115,11 +112,10 @@ test("first ending profile unlocks both post-ending modes", async ({ page }) => 
   await page.goto("/");
   await page.getByRole("button", { name: "새 게임" }).click();
 
-  await expect(page.getByRole("button", { name: /속마음 모드/ })).toBeEnabled();
   await expect(page.getByRole("button", { name: /어나더 스토리/ })).toBeEnabled();
 });
 
-test("mode selection fixes the view layer and separates coming-soon content", async ({ page }) => {
+test("mode selection keeps coming-soon content separate", async ({ page }) => {
   await page.addInitScript(({ key }) => {
     localStorage.setItem(key, JSON.stringify({
       clearedRoutes: ["seo_a"],
@@ -133,8 +129,6 @@ test("mode selection fixes the view layer and separates coming-soon content", as
   await expect(page.locator(".vn-toast")).toHaveText("어나더 스토리의 첫 장면은 준비 중이에요.");
   await expect(page.locator(".vn-route-screen")).toBeVisible();
 
-  await page.getByRole("button", { name: /속마음 모드/ }).click();
-  await expect(page.locator(".vn-game.reality")).toBeVisible();
   await expect(page.getByRole("button", { name: "주인공 인식" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "실제 시간선" })).toHaveCount(0);
 });
@@ -156,14 +150,10 @@ test("game flow hides authoring UI and debug restores controlled inspection", as
   await expect(page.locator(".vn-debug-identity")).toContainText("MODEbase");
   await expect(page.locator(".vn-debug-identity")).toContainText("CAMPAIGNmain");
   await expect(page.locator(".vn-debug-identity")).toContainText("CONTINUITYmain");
-  await expect(page.locator(".vn-debug-identity")).toContainText("LAYERperceived");
   await expect(page.locator(".vn-authoring-button, .vn-authoring-undo, .vn-screen-authoring")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "대사 편집" })).toHaveCount(0);
-  await page.locator(".vn-mode-button").first().click();
-  await expect(page.locator(".vn-debug-identity")).toContainText("LAYERperceived → reality (preview)");
   const persistedLayer = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) || "null")?.session?.viewLayer, AUTOSAVE_KEY);
-  expect(persistedLayer).toBe("perceived");
-  await page.locator(".vn-mode-button").first().click();
+  expect(persistedLayer).toBeUndefined();
 
   await expect(page.locator(".vn-nameplate")).toHaveCount(0);
   await expect(page.locator(".vn-character")).toHaveCount(0);
@@ -191,7 +181,6 @@ test("authoring preview opens an exact night-activity result in its game screen"
     flowId: "system.night_activity",
     nodeId: "activity_result",
     variantId: "ott",
-    layer: "perceived",
   });
   await page.goto("/#/play?authoring=1");
 
@@ -205,7 +194,6 @@ test("authoring preview opens an exact psychology-instructor direction in contex
     flowId: "system.analysis_hint",
     nodeId: "lesson",
     variantId: "pull",
-    layer: "perceived",
   });
   await page.goto("/#/play?authoring=1");
 
@@ -303,7 +291,6 @@ test("Tauri authoring edits direct physical sources, creates a translation, and 
               }],
             };
           }
-          const layer = key.includes(".reality.") ? "reality" : "perceived";
           return {
             key,
             kind: "direct_yaml",
@@ -311,14 +298,14 @@ test("Tauri authoring edits direct physical sources, creates a translation, and 
             locale,
             currentValue: sources[key],
             revision: `scene-${revision}`,
-            currentValueHash: `scene-hash-${layer}`,
+            currentValueHash: "scene-hash-line",
             relativePath: "story/scenes/common/day_01_company_meeting.yaml",
-            fieldPath: `nodes.opening.${layer}.line`,
+            fieldPath: "nodes.opening.line",
             sources: [{
               label: "원본 YAML",
               relativePath: "story/scenes/common/day_01_company_meeting.yaml",
-              fieldPath: `nodes.opening.${layer}.line`,
-              line: layer === "reality" ? 52 : 45,
+              fieldPath: "nodes.opening.line",
+              line: 45,
               column: 7,
             }],
           };
@@ -375,12 +362,12 @@ test("Tauri authoring edits direct physical sources, creates a translation, and 
   await page.getByRole("button", { name: "대사 편집" }).click();
 
   await expect(page.getByRole("dialog", { name: "인게임 원본 문구 편집" })).toBeVisible();
-  await expect(page.getByText("직접 편집", { exact: true })).toHaveCount(2);
-  await expect(page.locator(".vn-story-editor > section textarea")).toHaveCount(2);
-  await expect(page.getByText(/:45:7 · nodes\.opening\.perceived\.line/)).toBeVisible();
+  await expect(page.getByText("직접 편집", { exact: true })).toHaveCount(1);
+  await expect(page.locator(".vn-story-editor > section textarea")).toHaveCount(1);
+  await expect(page.getByText(/:45:7 · nodes\.opening\.line/)).toBeVisible();
 
   await page.getByRole("button", { name: /English 번역/ }).click();
-  await expect(page.getByText("en 새 번역", { exact: true })).toHaveCount(2);
+  await expect(page.getByText("en 새 번역", { exact: true })).toHaveCount(1);
   const translation = page.locator(".vn-story-editor > section textarea").first();
   await translation.fill("Edited English dialogue");
   await page.getByRole("button", { name: /en 번역 저장/ }).click();

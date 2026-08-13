@@ -1,5 +1,7 @@
 # 스토리 평가 기록 — 2026-08-01
 
+> 역사 기록: 이 평가는 2026-08-13에 폐기된 속마음·이중 레이어 구조를 기준으로 작성되었다. 현재 구현·제작·평가 근거로 사용하지 않는다.
+
 이 문서는 [`story-commercial-evaluation-scorecard.md`](story-commercial-evaluation-scorecard.md)를 현재 구현에 적용한 평가 기록이다. `docs/`의 완성형 기획이 아니라 `story/`와 웹 플레이어에서 실제로 경험할 수 있는 범위를 우선해 채점한다.
 
 > 아래 수치와 진단은 개선 착수 직전인 2026-08-01의 10개 장면 기준 스냅샷이다. 이후 반영된 장면 수와 검증 현황은 [`story-implemented-baseline.md`](story-implemented-baseline.md)에서 관리한다.

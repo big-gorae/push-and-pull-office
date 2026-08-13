@@ -17,8 +17,6 @@ describe("GameLocalizer", () => {
     expect(`${i18n.ui("app.catchphrase")} ${i18n.ui("app.edition")}`).toBe(
       "초필살 다크 스킬로 그녀의 마음을 케에에에엣치 존잘 미중년남 이야기",
     );
-    expect(i18n.ui("mode.truth.title")).toBe("속마음 모드");
-    expect(i18n.ui("mode.truth.copyLocked")).toBe("그녀들의 일상과 속마음을 들어 보아요");
     expect(i18n.ui("mode.survivor.copy")).toBe("새로운 그녀로 새로운 이야기를 만들어 보아요");
     expect(i18n.ui("app.kicker")).not.toContain("17");
     expect(i18n.characterName("yoon_seo_a")).toBe("윤서아");
@@ -41,7 +39,7 @@ describe("GameLocalizer", () => {
   });
 
   it("shows newly saved source text immediately in the default locale only", () => {
-    const key = "scenes.common.scene.nodes.greeting.perceived.line";
+    const key = "scenes.common.scene.nodes.greeting.line";
     const overrides = { [key]: "게임 안에서 고친 문장" };
 
     expect(new GameLocalizer(runtime, "ko", overrides).story(key, "원래 문장")).toBe("게임 안에서 고친 문장");
@@ -49,7 +47,7 @@ describe("GameLocalizer", () => {
   });
 
   it("applies a hot edit only to the matching locale", () => {
-    const key = "scenes.seo_a.email_request.nodes.request.reality.line";
+    const key = "scenes.seo_a.email_request.nodes.request.line";
     const overrides = { [`en:${key}`]: "Edited English line" };
 
     expect(new GameLocalizer(runtime, "en", overrides).story(key, "원래 문장")).toBe("Edited English line");
@@ -57,11 +55,11 @@ describe("GameLocalizer", () => {
   });
 
   it("keeps the default variant segment when the source node owns variants", () => {
-    expect(dialogueKey("common.scene", "callback", "default", "reality", "line", true)).toBe(
-      "scenes.common.scene.nodes.callback.variants.default.reality.line",
+    expect(dialogueKey("common.scene", "callback", "default", "line", true)).toBe(
+      "scenes.common.scene.nodes.callback.variants.default.line",
     );
-    expect(dialogueKey("common.scene", "callback", "default", "reality", "line")).toBe(
-      "scenes.common.scene.nodes.callback.reality.line",
+    expect(dialogueKey("common.scene", "callback", "default", "line")).toBe(
+      "scenes.common.scene.nodes.callback.line",
     );
   });
 

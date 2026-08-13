@@ -18,13 +18,9 @@ scene: ending.min_kyung.coverup
 requires:
   events: [min_kyung.witness_meeting, anchor.day_17_home_surprise]
   conditions:
-    - {path: progress.flags.story_mode.target, op: eq, value: cha_min_kyung}
+  - {path: progress.flags.story_mode.target, op: eq, value: cha_min_kyung}
 on_seen: {effects: []}
 on_missed: {effects: []}
 presentation:
-  perceived:
-    title: 돌이킬 수 없는 선택
-    summary: 신고마저 사랑의 시련이나 배신으로 번역하며 자신의 다음 행동을 정한다.
-  reality:
-    title: 증거가 부족한 현장 신고
-    summary: 경찰은 둘을 분리하지만 축적된 기록이 부족하고, 한도윤이 거절을 받아들이지 않아 여러 파국으로 갈라진다.
+  title: 증거가 부족한 현장 신고
+  summary: 경찰은 둘을 분리하지만 축적된 기록이 부족하고, 한도윤이 거절을 받아들이지 않아 여러 파국으로 갈라진다.

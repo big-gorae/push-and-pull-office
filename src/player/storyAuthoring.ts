@@ -1,4 +1,4 @@
-import type { ProjectPayload, Runtime, ValidationIssue, ViewLayer } from "../types";
+import type { ProjectPayload, Runtime, ValidationIssue } from "../types";
 import type { RuntimePatch } from "../runtimePatch";
 
 const AUTHORING_ROOT_KEY = "love-office:authoring-root";
@@ -106,7 +106,6 @@ export type SystemFlowAuthoringTarget = {
   nodeId?: string;
   variantId?: string;
   optionId?: string;
-  layer?: ViewLayer;
 };
 
 export type AuthoringTarget = SceneAuthoringTarget | SystemFlowAuthoringTarget;
@@ -122,7 +121,6 @@ export function parseAuthoringTarget(raw: string | null): AuthoringTarget | unde
         ...(typeof target.nodeId === "string" ? { nodeId: target.nodeId } : {}),
         ...(typeof target.variantId === "string" ? { variantId: target.variantId } : {}),
         ...(typeof target.optionId === "string" ? { optionId: target.optionId } : {}),
-        ...(target.layer === "perceived" || target.layer === "reality" ? { layer: target.layer as ViewLayer } : {}),
       };
     }
     return typeof target.sceneId === "string"

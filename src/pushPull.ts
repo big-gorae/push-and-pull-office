@@ -205,15 +205,15 @@ export function resolvePushPull(
   };
 }
 
-export function pushPullPositionLabel(position: number, mode: "perceived" | "reality"): string {
-  const side = position < -4 ? (mode === "perceived" ? "당기기 쪽" : "접근 시도 쪽")
-    : position > 4 ? (mode === "perceived" ? "밀기 쪽" : "거리 둠 쪽")
+export function pushPullPositionLabel(position: number): string {
+  const side = position < -4 ? "당기기 쪽"
+    : position > 4 ? "밀기 쪽"
       : "균형 지점";
   return side;
 }
 
-export function pushPullTargetLabel(target: PushPullTarget, mode: "perceived" | "reality"): string {
-  if (target === "pull") return mode === "perceived" ? "당기기" : "접근 시도";
-  if (target === "push") return mode === "perceived" ? "밀기" : "거리 둠";
+export function pushPullTargetLabel(target: PushPullTarget): string {
+  if (target === "pull") return "당기기";
+  if (target === "push") return "밀기";
   return "첫 방향";
 }

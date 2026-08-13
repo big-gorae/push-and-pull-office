@@ -12,129 +12,57 @@ entry_conditions: []
 state_contract: {reads: [], writes: []}
 start_node: tasting_table
 nodes:
-  - id: tasting_table
-    kind: dual_narration
-    perceived:
-      atmosphere: playful_tension
-      line: 휴게실 테이블에 홈카페 샘플 세 잔과 시음표가 놓였다. 서아는 마지막 평가 칸 앞에서 유난히 진지한 얼굴이었다.
-    reality:
-      atmosphere: procedural
-      line: 제품 사용성 의견을 모으기 위해 서아와 유진이 커피 농도와 조작 순서를 기록하고 있었다.
-      intent: work_only
-    next: seo_a_worry
+- id: tasting_table
+  kind: narration
+  line: 제품 사용성 의견을 모으기 위해 서아와 유진이 커피 농도와 조작 순서를 기록하고 있었다.
+  next: seo_a_worry
 
-  - id: seo_a_worry
-    kind: dual_dialogue
-    speaker: yoon_seo_a
-    stage:
-      perceived:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-      reality:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_shy
-      line: "쓴맛은 3점인데 향은 4점 같고…… 한 칸에 하나만 쓰라니까 더 어렵네요."
-    reality:
-      atmosphere: procedural
-      expression: actual_social_smile
-      line: "쓴맛은 3점인데 향은 4점 같고…… 한 칸에 하나만 쓰라니까 더 어렵네요."
-      intent: documentation
-    next: do_yoon_joke
+- id: seo_a_worry
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage:
+  - position: center
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: default
+  expression: actual_social_smile
+  line: "쓴맛은 3점인데 향은 4점 같고…… 한 칸에 하나만 쓰라니까 더 어렵네요."
+  next: do_yoon_joke
 
-  - id: do_yoon_joke
-    kind: dual_dialogue
-    speaker: han_do_yoon
-    stage:
-      perceived: []
-      reality: []
-    perceived:
-      atmosphere: playful_tension
-      expression: subjective_confident
-      line: "커피는 이미 추출됐는데 평가표가 아직 우리를 추출하고 있네요. 저는 정신부터 진하게 뽑힌 것 같습니다."
-    reality:
-      atmosphere: playful_tension
-      expression: actual_waiting_smile
-      line: "커피는 이미 추출됐는데 평가표가 아직 우리를 추출하고 있네요. 저는 정신부터 진하게 뽑힌 것 같습니다."
-      intent: courtesy
-    next: seo_a_laugh
+- id: do_yoon_joke
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: "커피는 이미 추출됐는데 평가표가 아직 우리를 추출하고 있네요. 저는 정신부터 진하게 뽑힌 것 같습니다."
+  next: seo_a_laugh
 
-  - id: seo_a_laugh
-    kind: dual_dialogue
-    speaker: yoon_seo_a
-    stage:
-      perceived:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-      reality:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_shy
-      line: "풋, 그럼 정신 농도는 5점으로 적어 드릴게요. 아, 향이랑 쓴맛은 따로 메모하면 되겠네요."
-    reality:
-      atmosphere: playful_tension
-      expression: actual_social_smile
-      line: "풋, 그럼 정신 농도는 5점으로 적어 드릴게요. 아, 향이랑 쓴맛은 따로 메모하면 되겠네요."
-      intent: courtesy
-    next: yoo_jin_records
+- id: seo_a_laugh
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage:
+  - position: center
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: default
+  expression: actual_social_smile
+  line: "풋, 그럼 정신 농도는 5점으로 적어 드릴게요. 아, 향이랑 쓴맛은 따로 메모하면 되겠네요."
+  next: yoo_jin_records
 
-  - id: yoo_jin_records
-    kind: dual_dialogue
-    speaker: kang_yoo_jin
-    stage:
-      perceived:
-        - position: center
-          character: kang_yoo_jin
-          visual_id: character.kang_yoo_jin
-          artwork: default
-      reality:
-        - position: center
-          character: kang_yoo_jin
-          visual_id: character.kang_yoo_jin
-          artwork: default
-    perceived:
-      atmosphere: procedural
-      expression: subjective_bold_flirt
-      line: "비고 칸에 나눠 쓰면 됩니다. 웃은 시간까지 적을 필요는 없고요."
-    reality:
-      atmosphere: procedural
-      expression: actual_fact_check
-      line: "비고 칸에 나눠 쓰면 됩니다. 웃은 시간까지 적을 필요는 없고요."
-      intent: documentation
-    next: do_yoon_inner
+- id: yoo_jin_records
+  kind: dialogue
+  speaker: kang_yoo_jin
+  stage:
+  - position: center
+    character: kang_yoo_jin
+    visual_id: character.kang_yoo_jin
+    artwork: default
+  expression: actual_fact_check
+  line: "비고 칸에 나눠 쓰면 됩니다. 웃은 시간까지 적을 필요는 없고요."
+  next: leave
 
-  - id: do_yoon_inner
-    kind: dual_dialogue
-    presentation_flags: [inner_voice]
-    speakers:
-      perceived: han_do_yoon
-      reality:
-    stage:
-      perceived: []
-      reality: []
-    perceived:
-      atmosphere: warm_romance
-      line: (밤에 익힌 감각으로 서아의 긴장을 단번에 풀었다. 내 말에 터진 웃음은 분명 기억해 둘 만하다.)
-    reality:
-      atmosphere: procedural
-      line: 서아는 공용 시음 자리에서 상황에 맞는 말장난에 웃었고, 곧바로 평가표 작성으로 돌아갔다.
-      intent: courtesy
-    next: leave
-
-  - id: leave
-    kind: exit
-    transitions:
-      - default: true
-        scene: bonus.stat_appearance_rehearsal
+- id: leave
+  kind: exit
+  transitions:
+  - default: true
+    scene: bonus.stat_appearance_rehearsal

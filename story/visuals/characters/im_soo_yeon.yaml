@@ -5,7 +5,6 @@ extends: archetype.character_bust
 title_key: visual.character.im_soo_yeon.title
 title: 임수연 기본 바스트
 character: im_soo_yeon
-default_reality_expression: actual_guarded
 fallback_asset: assets/concept-art/im-soo-yeon.png
 default_outfit: casual
 default_pose: guarded
@@ -15,3 +14,4 @@ poses:
   guarded: {offset_x: 0, offset_y: 0, scale: 1.0}
 expression_assets: {}
 tags: [past_victim, testimony]
+default_expression: actual_guarded

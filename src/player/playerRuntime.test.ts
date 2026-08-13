@@ -63,9 +63,8 @@ describe("web player campaign runtime", () => {
     scene.nodes.silent_view = {
       id: "silent_view",
       kind: "silent",
-      perceived: { atmosphere: "dread", line: "" },
-      reality: { atmosphere: "dread", line: "" },
-      stage: { perceived: [], reality: [] },
+      line: "",
+      stage: [],
       next: "request",
     };
     scene.node_order.unshift("silent_view");
@@ -170,7 +169,7 @@ describe("web player campaign runtime", () => {
     }
     session = startTimelineEvent(runtime, session, "seo_a.email_request");
     expect(session.phase).toBe("scene");
-    expect(session.version).toBe(5);
+    expect(session.version).toBe(6);
 
     session = finishCurrentScene(session);
     expect(session.phase).toBe("timeline");
@@ -179,7 +178,6 @@ describe("web player campaign runtime", () => {
     expect(session.state.progress.events.seen).not.toContain("seo_a.relief_smile");
     const dialogue = session.backlog.find((entry) => entry.kind === "dialogue");
     expect(dialogue?.variantId).toBe("default");
-    expect(dialogue?.layerAtPresentation).toBe("perceived");
     expect(dialogue).not.toHaveProperty("text");
   });
 
@@ -187,19 +185,16 @@ describe("web player campaign runtime", () => {
     const copy = structuredClone(runtime);
     const scene = copy.scenes["seo_a.email_request"];
     const node = scene.nodes.request;
-    const perceived = structuredClone(node.perceived!);
-    const reality = structuredClone(node.reality!);
-    delete node.perceived;
-    delete node.reality;
+    const line = node.line || "";
+    delete node.line;
     node.variants = [
       {
         id: "guarded",
         priority: 100,
         conditions: [{ path: "hidden.heroines.yoon_seo_a.suspicion", op: "gte", value: 60 }],
-        perceived: { ...perceived, line: "guarded" },
-        reality: { ...reality, line: "guarded" },
+        line: "guarded",
       },
-      { id: "default", default: true, perceived, reality },
+      { id: "default", default: true, line },
     ];
     const session = createSession(copy, "seo_a");
     session.phase = "scene";
@@ -462,7 +457,6 @@ describe("web player campaign runtime", () => {
     const completed = finishCurrentScene(prepareTimeSlot(runtime, session));
     expect(completed.phase).toBe("complete");
     expect(completed.state.progress.cleared_routes).toContain("seo_a");
-    expect(completed.state.progress.unlocked_modes).toContain("truth_view");
     expect(completed.state.progress.unlocked_modes).toContain("survivor_view");
   });
 
@@ -477,6 +471,6 @@ describe("web player campaign runtime", () => {
     expect(session.phase).toBe("complete");
     expect(session.endingId).toBe("campaign.complete");
     expect(session.state.progress.cleared_routes).not.toContain("seo_a");
-    expect(session.state.progress.unlocked_modes).not.toContain("truth_view");
+    expect(session.state.progress.unlocked_modes).not.toContain("survivor_view");
   });
 });

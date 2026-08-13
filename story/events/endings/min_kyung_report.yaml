@@ -18,15 +18,11 @@ scene: ending.min_kyung.report
 requires:
   events: [min_kyung.witness_meeting, anchor.day_17_home_surprise]
   conditions:
-    - {path: hidden.heroines.cha_min_kyung.evidence_count, op: gte, value: 2}
-    - {path: hidden.heroines.cha_min_kyung.dislike, op: gte, value: 40}
-    - {path: progress.flags.story_mode.target, op: eq, value: cha_min_kyung}
+  - {path: hidden.heroines.cha_min_kyung.evidence_count, op: gte, value: 2}
+  - {path: hidden.heroines.cha_min_kyung.dislike, op: gte, value: 40}
+  - {path: progress.flags.story_mode.target, op: eq, value: cha_min_kyung}
 on_seen: {effects: []}
 on_missed: {effects: []}
 presentation:
-  perceived:
-    title: 고백을 방해한 오해
-    summary: 여자친구 집에 찾아온 자신을 주변 사람들이 범죄자로 오해했다고 믿는다.
-  reality:
-    title: 현장 신고와 정식 신병 처리
-    summary: 민경의 명시적 퇴거 요구와 신고가 기존 기록에 연결되고, 정식 처리 뒤 머그샷에서 한도윤의 실제 모습이 드러난다.
+  title: 현장 신고와 정식 신병 처리
+  summary: 민경의 명시적 퇴거 요구와 신고가 기존 기록에 연결되고, 정식 처리 뒤 머그샷에서 한도윤의 실제 모습이 드러난다.

@@ -405,16 +405,11 @@ export default function SystemDialogueEditor({
         <div className="system-dialogue-items">
           {visibleItems.map((item) => {
             const itemDirtyKeys = item.rows.filter((row) => dirtySet.has(row.key)).map((row) => row.key);
-            const perceived = item.rows.find((row) => row.fieldRole === "perceived");
-            const reality = item.rows.find((row) => row.fieldRole === "reality");
             return <article className={itemDirtyKeys.length ? "system-dialogue-item dirty" : "system-dialogue-item"} key={item.id}>
               <header>
                 <div><span>{item.flowTitle} · {item.groupLabel}</span><h4>{item.label}</h4><p>{item.context}</p></div>
                 <div>
-                  {perceived && reality ? <>
-                    <button type="button" disabled={saving || Boolean(dirtyKeys.length)} onClick={() => onPreview({ ...item.previewTarget, layer: "perceived" })} title={dirtyKeys.length ? "수정한 문구를 모두 저장한 뒤 확인할 수 있습니다" : "제작 플레이의 스토리 모드 화면으로 확인"}>▶ 화면 대사 보기</button>
-                    <button type="button" disabled={saving || Boolean(dirtyKeys.length)} onClick={() => onPreview({ ...item.previewTarget, layer: "reality" })} title={dirtyKeys.length ? "수정한 문구를 모두 저장한 뒤 확인할 수 있습니다" : "제작 플레이의 원문 모드 화면으로 확인"}>실제 상황 보기</button>
-                  </> : <button type="button" disabled={saving || Boolean(dirtyKeys.length)} onClick={() => onPreview(item.previewTarget)} title={dirtyKeys.length ? "수정한 문구를 모두 저장한 뒤 확인할 수 있습니다" : "제작 플레이에서 실제 화면으로 확인"}>▶ 게임에서 보기</button>}
+                  <button type="button" disabled={saving || Boolean(dirtyKeys.length)} onClick={() => onPreview(item.previewTarget)} title={dirtyKeys.length ? "수정한 문구를 모두 저장한 뒤 확인할 수 있습니다" : "제작 플레이에서 실제 화면으로 확인"}>▶ 게임에서 보기</button>
                   {itemDirtyKeys.length > 0 && <button type="button" onClick={() => resetKeys(itemDirtyKeys)}>이 항목 취소</button>}
                 </div>
               </header>
@@ -434,10 +429,6 @@ export default function SystemDialogueEditor({
               </div>
               <footer>
                 <details><summary>저장 위치 보기</summary>{item.rows.map((row) => <code key={row.key}>{row.path} · {row.fieldPath}</code>)}</details>
-                {perceived && reality && drafts[perceived.key] !== drafts[reality.key] && <button type="button" onClick={() => {
-                  setDrafts((current) => ({ ...current, [reality.key]: current[perceived.key] }));
-                  setEditVersion((current) => current + 1);
-                }}>화면 대사를 실제 상황에도 복사</button>}
               </footer>
             </article>;
           })}

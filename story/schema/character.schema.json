@@ -46,9 +46,8 @@
       "type": "object",
       "additionalProperties": {
         "type": "object",
-        "required": ["layer", "emotion", "description"],
+        "required": ["emotion", "description"],
         "properties": {
-          "layer": {"enum": ["perceived", "reality"]},
           "emotion": {"type": "string"},
           "description": {"type": "string"}
         },

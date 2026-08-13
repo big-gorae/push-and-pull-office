@@ -15,9 +15,5 @@ requires: {events: [], conditions: []}
 on_seen: {effects: []}
 on_missed: {effects: []}
 presentation:
-  perceived:
-    title: 유진의 질투
-    summary: 강유진이 공략 대상과 따로 이야기하고 자신을 확인하는 모습을 새로운 호감 경쟁으로 해석한다.
-  reality:
-    title: 사실관계 관찰
-    summary: 유진은 날짜와 상황을 확인할 뿐이며 기본 결말에 개입하거나 사건을 해결하지 않는다.
+  title: 사실관계 관찰
+  summary: 유진은 날짜와 상황을 확인할 뿐이며 기본 결말에 개입하거나 사건을 해결하지 않는다.

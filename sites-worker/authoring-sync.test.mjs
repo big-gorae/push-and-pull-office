@@ -8,7 +8,7 @@ test("change validation accepts a well-formed event and rejects a corrupt hash",
   const event = {
     eventId: "018f4a56-c0de-7abc-8def-0123456789ab",
     projectId: "love_office_story_1",
-    localizationKey: "scene.intro.node.greeting.perceived.line",
+    localizationKey: "scene.intro.node.greeting.line",
     locale: "ko",
     baseValue: "기존 대사",
     baseValueHash: hash,
@@ -23,7 +23,7 @@ test("change validation accepts a well-formed event and rejects a corrupt hash",
 
 test("catalog validation strips untrusted metadata to the public contract", () => {
   const entry = validateCatalogEntry({
-    localizationKey: "scene.intro.node.greeting.perceived.line",
+    localizationKey: "scene.intro.node.greeting.line",
     locale: "ko",
     value: "대사",
     valueHash: hash,
@@ -59,7 +59,7 @@ test("scene change validation accepts bounded path-free scene documents", () => 
     state_contract: { reads: [], writes: [] },
     start_node: "hello",
     node_order: ["hello"],
-    nodes: { hello: { id: "hello", kind: "dual_narration", perceived: { line: "안녕" }, reality: { line: "안녕" } } },
+    nodes: { hello: { id: "hello", kind: "narration", line: "안녕", stage: [] } },
   };
   const change = validateSceneChange({
     eventId: "018f4a56-c0de-7abc-8def-0123456789ab",
@@ -78,7 +78,7 @@ test("scene change validation accepts bounded path-free scene documents", () => 
 });
 
 test("workspace validation requires the scene editor contract", () => {
-  const workspace = { schemaVersion: 1, days: [], scenes: {}, artworks: [], backgrounds: [], atmospheres: [], intents: [] };
+  const workspace = { schemaVersion: 1, days: [], scenes: {}, artworks: [], backgrounds: [] };
   assert.equal(validateWorkspace(workspace), JSON.stringify(workspace));
   assert.throws(() => validateWorkspace({ schemaVersion: 1, days: [] }), /작업공간/);
 });

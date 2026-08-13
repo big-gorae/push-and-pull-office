@@ -14,15 +14,11 @@ location: public_archive
 requires:
   events: []
   conditions:
-    - {path: hidden.heroines.cha_min_kyung.evidence_count, op: gte, value: 1}
+  - {path: hidden.heroines.cha_min_kyung.evidence_count, op: gte, value: 1}
 on_seen:
   effects:
-    - {path: progress.memories, op: append_unique, value: past_case.date_mismatch}
+  - {path: progress.memories, op: append_unique, value: past_case.date_mismatch}
 on_missed: {effects: []}
 presentation:
-  perceived:
-    title: 오래된 사랑의 추억
-    summary: 주인공은 과거의 기억이 지금의 사랑을 방해한다고 느낀다.
-  reality:
-    title: 과거 진술과 기록 날짜의 불일치
-    summary: 유진은 주인공이 말한 관계 기간과 공개 기록의 날짜가 맞지 않음을 발견한다.
+  title: 과거 진술과 기록 날짜의 불일치
+  summary: 유진은 주인공이 말한 관계 기간과 공개 기록의 날짜가 맞지 않음을 발견한다.

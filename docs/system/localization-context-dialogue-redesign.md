@@ -5,7 +5,7 @@
 
 ## 1. 결정
 
-현재의 안정 ID, 한국어 원문, locale fallback, `perceived`/`reality`, 상태 조건·효과와
+현재의 안정 ID, 한국어 원문, locale fallback, 단일 대사·서술, 상태 조건·효과와
 `state_contract`는 유지한다. 그 위에 다음 여섯 문제를 하나의 제작 파이프라인으로
 해결한다.
 
@@ -104,7 +104,6 @@ type LocalizationEntry = {
     nodeId?: string;
     variantId?: string;
     optionId?: string;
-    layer?: "perceived" | "reality";
     speakerId?: string;
   };
   placeholders: string[];
@@ -180,12 +179,7 @@ UI 키의 오타는 빌드 전에 잡기 위해 레지스트리에서 `UiMessage
 장면: seo_a.email_request / locale: English
 
 노드: request
-  perceived 대사
-  reality 대사
-
-노드: request_inner / inner_voice
-  perceived 화자 / 괄호 발화
-  reality 화자 / 괄호 발화
+  화자 / 대사
 
 선택지
   stimulus
@@ -193,8 +187,7 @@ UI 키의 오타는 빌드 전에 잡기 위해 레지스트리에서 `UiMessage
   pull_harder / label / interpretation / action
 
 연결 이벤트
-  perceived title / summary
-  reality title / summary
+  title / summary
 ```
 
 현재처럼 한 노드에서 하나의 `translationKey`만 선택하지 않는다. 에디터는
@@ -343,12 +336,11 @@ derived.characters.yoon_seo_a.rule_id
 
 ### 6.3 대사 variant 구조
 
-기존 inline 레이어는 `default` variant로 해석해 호환한다. 새 장면은 다음 구조를
-사용한다.
+각 variant는 단일 대사와 단일 연출을 가진다.
 
 ```yaml
 - id: response
-  kind: dual_dialogue
+  kind: dialogue
   speaker: yoon_seo_a
   variants:
     - id: guarded
@@ -357,44 +349,11 @@ derived.characters.yoon_seo_a.rule_id
         - path: derived.characters.yoon_seo_a.emotion
           op: eq
           value: fear
-      perceived:
-        atmosphere: warm_romance
-        expression: subjective_shy
-        line: "메일로 보내주세요."
-      reality:
-        atmosphere: cold_office
-        line: "메일로 보내주세요."
-        intent: boundary
+      expression: guarded
+      line: "메일로 보내주세요."
     - id: default
       default: true
-      perceived: { ... }
-      reality: { ... }
-  next: response_inner
-
-- id: response_inner
-  kind: dual_dialogue
-  presentation_flags: [inner_voice]
-  speakers:
-    perceived: han_do_yoon
-    reality: yoon_seo_a
-  variants:
-    - id: guarded
-      priority: 100
-      conditions:
-        - path: derived.characters.yoon_seo_a.emotion
-          op: eq
-          value: fear
-      perceived:
-        atmosphere: warm_romance
-        line: "(부끄러워서 짧게 말한 건가?)"
-      reality:
-        atmosphere: cold_office
-        line: "(혼자 마주치지 말아야 해.)"
-        intent: boundary
-    - id: default
-      default: true
-      perceived: { ... }
-      reality: { ... }
+      line: "메일로 보내주세요."
   next: leave
 ```
 
@@ -408,22 +367,18 @@ derived.characters.yoon_seo_a.rule_id
 번역 키에는 variant ID가 들어간다.
 
 ```text
-scenes.<scene>.nodes.<node>.variants.<variant>.perceived.line
-scenes.<scene>.nodes.<node>.variants.<variant>.reality.line
+scenes.<scene>.nodes.<node>.variants.<variant>.line
 ```
 
 variant ID도 배포 후 안정 ID로 취급한다.
 
 ### 6.4 표정 해석
 
-실제 레이어의 표정은 다음 우선순위로 정한다.
+표정은 다음 우선순위로 정한다.
 
-1. 선택된 variant의 `reality.expression`
+1. 선택된 variant의 `expression`
 2. 화자의 `DerivedCharacterState.default_expression`
-3. 캐릭터 비주얼 객체의 기본 실제 표정
-
-인지 레이어의 표정은 실제 감정 규칙에서 자동 생성하지 않는다. 선택된 variant의
-`perceived.expression` 또는 명시적인 인지 레이어 기본값만 사용한다.
+3. 캐릭터 비주얼 객체의 기본 표정
 
 ### 6.5 런타임 해석 결과
 
@@ -432,9 +387,9 @@ type ResolvedDialogueNode = {
   sceneId: string;
   nodeId: string;
   variantId: string;
-  perceived: Layer;
-  reality: Layer;
-  speakers: Partial<Record<ViewMode, string | null>>;
+  speaker?: string | null;
+  line: string;
+  expression?: string;
   trace: VariantDecisionTrace[];
 };
 
@@ -453,7 +408,7 @@ resolveDialogueNode(runtime, session, node): ResolvedDialogueNode
 - default 삭제 금지
 - 조건이 겹치는 variant 경고
 - 어떤 테스트 상태에서도 선택되지 않는 variant 경고
-- variant별 두 레이어를 항상 같은 편집 단위로 표시
+- variant별 문장과 연출을 같은 편집 단위로 표시
 - variant를 복제할 때 번역 키 충돌 여부 검사
 
 ## 7. locale 독립 저장과 백로그
@@ -472,7 +427,7 @@ type SaveSlotV3 = {
     sceneId?: string;
     nodeId?: string;
     variantId?: string;
-    mode: ViewMode;
+    gameModeId: GameModeId;
     endingId?: string;
   };
   session: PlayerSessionV3;
@@ -494,19 +449,17 @@ type BacklogEntryV3 = {
   variantId?: string;
   optionId?: string;
   speakerId?: string;
-  layerAtPresentation: ViewLayer;
 };
 ```
 
 - 상태가 나중에 바뀌어도 저장된 `variantId`로 당시 대사를 복원한다.
 - locale를 바꾸면 같은 backlog가 새 언어로 즉시 다시 렌더링된다.
-- 속마음 모드 비교는 같은 variant의 다른 레이어를 읽는다.
 
 ### 7.3 이전 세이브 마이그레이션
 
 v2 세이브를 읽을 때 다음 순서로 v3 preview를 만든다.
 
-1. v4의 `session.sceneId`, `session.nodeId`, `session.mode`를 읽어 v5의 `gameModeId`, `campaignId`, `continuityId`, `viewLayer`로 변환
+1. 이전 세션의 장면·노드·모드 ID를 읽어 v6의 `gameModeId`, `campaignId`, `continuityId`로 변환하고 과거 표시 레이어 필드는 버림
 2. 현재 상태로 variant를 다시 계산하되 기존 장면은 `default` 사용
 3. legacy `timeline` 미리보기면 마지막 내부 사건 로그와 현재 day/slot 사용하되 플레이어용 타임라인 화면은 열지 않음
 4. 기존 `sceneTitle`, `line`은 마이그레이션 실패 시 표시하는 legacy fallback으로만 보존
@@ -654,7 +607,7 @@ build/localization-report.json
 - UI와 장면 문구가 같은 `LocalizationService`에서 조회
 - direct와 fallback coverage가 구분
 - 모든 `LocalizationEntry`가 에디터 표에서 검색·편집 가능
-- 현재 장면 문맥에 일반 line, 별도 `inner_voice` line, choice stimulus, option 3종과 event presentation 포함
+- 현재 장면 문맥에 일반 line, choice stimulus, option 문구와 event presentation 포함
 - unknown key, duplicate key, placeholder 불일치가 저장과 빌드를 차단
 - visual title과 locale name이 coverage에 포함
 
@@ -670,8 +623,7 @@ build/localization-report.json
 - 감정 규칙 priority와 default가 동일하게 계산
 - 상태 변화에 따라 variant가 바뀜
 - 같은 상태에서는 에디터와 player가 같은 variant ID 선택
-- reality expression의 명시값이 파생 기본 표정보다 우선
-- perceived expression이 reality emotion에서 자동 생성되지 않음
+- expression의 명시값이 파생 기본 표정보다 우선
 - variant가 effects나 next를 가지면 schema 오류
 - 조건 불충족 시 default variant 선택
 

@@ -11,7 +11,7 @@ export function canRevealProtagonistArtwork(scene: Scene, node: StoryNode | unde
   return Boolean(
     node
     && scene.id.startsWith("ending.")
-    && node.kind === "dual_narration"
+    && node.kind === "narration"
     && node.presentation_flags?.includes(PROTAGONIST_ARTWORK_REVEAL_FLAG),
   );
 }

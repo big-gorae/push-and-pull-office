@@ -4,7 +4,7 @@ import { performance } from "node:perf_hooks";
 const runtime = JSON.parse(readFileSync(new URL("../build/story-runtime.json", import.meta.url), "utf8"));
 const scene = Object.values(runtime.scenes)
   .sort((left, right) => right.node_order.length - left.node_order.length)[0];
-const nodeId = scene?.node_order.find((id) => typeof scene.nodes[id].perceived?.line === "string");
+const nodeId = scene?.node_order.find((id) => typeof scene.nodes[id].line === "string");
 
 if (!scene || !nodeId) throw new Error("No editable dialogue node found in the runtime.");
 
@@ -17,7 +17,7 @@ function legacyInputPath() {
   const startedAt = performance.now();
   for (let index = 0; index < iterations; index += 1) {
     const next = clone(current);
-    next.nodes[nodeId].perceived.line = `editor benchmark ${index}`;
+    next.nodes[nodeId].line = `editor benchmark ${index}`;
     clone(current); // one undo snapshot for every keystroke
     JSON.stringify(next) !== JSON.stringify(baseline);
     current = next;
@@ -32,7 +32,7 @@ function optimizedInputPath() {
     const node = current.nodes[nodeId];
     const nextNode = {
       ...node,
-      perceived: { ...node.perceived, line: `editor benchmark ${index}` },
+      line: `editor benchmark ${index}`,
     };
     if (index === 0) clone(current); // one snapshot for the continuous typing group
     current = { ...current, nodes: { ...current.nodes, [nodeId]: nextNode } };

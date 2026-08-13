@@ -1,21 +1,16 @@
 import { deleteNodeAndReconnect, deletionReplacement, insertNodeCopyAfter } from "../sceneEditing";
-import type { DialogueVariant, Layer, NodeKind, Scene, StageCharacterCue, StoryNode, ViewMode } from "../types";
+import type { NodeKind, Scene, StageCharacterCue, StoryNode } from "../types";
 
-export type LegacyDialogueKind = "dialogue" | "narration";
-export type EditableDialogueKind = NodeKind | LegacyDialogueKind;
-export type CompatibleDialogueVariant = DialogueVariant & { line?: string };
-export type CompatibleStoryNode = StoryNode & {
-  kind: EditableDialogueKind;
-  line?: string;
-  atmosphere?: string;
-  expression?: string;
-  variants?: CompatibleDialogueVariant[];
-  stage?: StoryNode["stage"] | StageCharacterCue[];
+type CompatibleLayer = { line?: string };
+type CompatibleVariant = { line?: string; perceived?: CompatibleLayer; reality?: CompatibleLayer };
+type CompatibleStoryNode = StoryNode & {
+  perceived?: CompatibleLayer;
+  reality?: CompatibleLayer;
+  variants?: CompatibleVariant[];
+  stage?: StoryNode["stage"] | Record<string, StageCharacterCue[]>;
 };
 
-export const MOBILE_NODE_LABELS: Partial<Record<EditableDialogueKind, string>> = {
-  dual_dialogue: "대사",
-  dual_narration: "나레이션",
+export const MOBILE_NODE_LABELS: Partial<Record<NodeKind, string>> = {
   dialogue: "대사",
   narration: "나레이션",
   silent: "무대사 연출",
@@ -32,11 +27,11 @@ export function cloneScene(scene: Scene): Scene {
 export function nodePreview(node: StoryNode | undefined): string {
   if (!node) return "대사를 찾을 수 없음";
   const compatible = node as CompatibleStoryNode;
-  const variants = (node.variants || []) as CompatibleDialogueVariant[];
+  const variants = (node.variants || []) as CompatibleVariant[];
   const texts = [
     compatible.line,
-    node.perceived?.line,
-    node.reality?.line,
+    compatible.perceived?.line,
+    compatible.reality?.line,
     ...variants.flatMap((variant) => [variant.line, variant.perceived?.line, variant.reality?.line]),
     node.prompt,
     node.stimulus,
@@ -48,37 +43,13 @@ export function nodePreview(node: StoryNode | undefined): string {
         : "비어 있는 대사");
 }
 
-export function compatibleVariants(node: StoryNode): CompatibleDialogueVariant[] {
-  return (node.variants || []) as CompatibleDialogueVariant[];
-}
-
-export function isLegacyDialogueNode(node: StoryNode): node is CompatibleStoryNode {
-  return (node.kind as string) === "dialogue" || (node.kind as string) === "narration";
-}
-
-export function isEditableDialogueNode(node: StoryNode): boolean {
-  return ["dual_dialogue", "dual_narration", "dialogue", "narration"].includes(node.kind as string);
-}
-
-export function isDialogueNode(node: StoryNode): boolean {
-  return (node.kind as string) === "dual_dialogue" || (node.kind as string) === "dialogue";
-}
-
-export function dialogueLayer(node: StoryNode, mode: ViewMode): Layer {
-  if (isLegacyDialogueNode(node)) return node;
-  return node[mode] || {};
-}
-
-export function stageForMode(node: StoryNode, mode: ViewMode): StageCharacterCue[] {
+export function stageForMode(node: StoryNode, mode: "perceived" | "reality"): StageCharacterCue[] {
   const stage = (node as CompatibleStoryNode).stage;
   return Array.isArray(stage) ? stage : stage?.[mode] || [];
 }
 
-export function withStageForMode(node: StoryNode, mode: ViewMode, stage: StageCharacterCue[]): StoryNode {
-  if (isLegacyDialogueNode(node) || Array.isArray((node as CompatibleStoryNode).stage)) {
-    return { ...node, stage } as StoryNode;
-  }
-  return { ...node, stage: { ...(node.stage || {}), [mode]: stage } };
+export function withStageForMode(node: StoryNode, _mode: "perceived" | "reality", stage: StageCharacterCue[]): StoryNode {
+  return { ...node, stage };
 }
 
 export function automaticNodeId(scene: Scene): string {
@@ -89,19 +60,17 @@ export function automaticNodeId(scene: Scene): string {
   return id;
 }
 
-export function newMobileNode(kind: "dual_dialogue" | "dual_narration", id: string, speaker?: string): StoryNode {
+export function newMobileNode(kind: "dialogue" | "narration", id: string, speaker?: string): StoryNode {
   const base = {
     id,
     kind,
-    perceived: { atmosphere: "neutral", line: "새 문장을 입력하세요." },
-    reality: { atmosphere: "neutral", line: "새 문장을 입력하세요.", intent: "work_only" },
-    line_layers_locked: true,
+    line: "새 문장을 입력하세요.",
     next: "",
   } satisfies StoryNode;
-  return kind === "dual_dialogue" ? { ...base, speaker: speaker || "" } : base;
+  return kind === "dialogue" ? { ...base, speaker: speaker || "" } : base;
 }
 
-export function addNodeAfter(scene: Scene, targetId: string, kind: "dual_dialogue" | "dual_narration", speaker?: string): string {
+export function addNodeAfter(scene: Scene, targetId: string, kind: "dialogue" | "narration", speaker?: string): string {
   const id = automaticNodeId(scene);
   const target = scene.nodes[targetId];
   const node = newMobileNode(kind, id, speaker);
@@ -140,18 +109,18 @@ export function moveNode(scene: Scene, nodeId: string, offset: number): boolean 
   return true;
 }
 
-export function changeDialogueKind(node: StoryNode, kind: "dual_dialogue" | "dual_narration" | LegacyDialogueKind, defaultSpeaker?: string): StoryNode {
+export function changeDialogueKind(node: StoryNode, kind: "dialogue" | "narration", defaultSpeaker?: string): StoryNode {
   if (node.kind === kind) return node;
-  if (!isEditableDialogueNode(node)) return node;
-  if (kind === "dual_narration" || kind === "narration") {
-    const { speaker: _speaker, speakers: _speakers, ...rest } = node;
-    return { ...rest, kind } as StoryNode;
+  if (!(["dialogue", "narration"] as NodeKind[]).includes(node.kind)) return node;
+  if (kind === "narration") {
+    const { speaker: _speaker, ...rest } = node;
+    return { ...rest, kind };
   }
   return { ...node, kind, speaker: node.speaker || defaultSpeaker || "" } as StoryNode;
 }
 
 export function allowsProtagonistArtwork(scene: Scene, node: StoryNode): boolean {
   return scene.id.startsWith("ending.")
-    && ((node.kind as string) === "dual_narration" || (node.kind as string) === "narration")
+    && node.kind === "narration"
     && Boolean(node.presentation_flags?.includes("protagonist_art_reveal"));
 }

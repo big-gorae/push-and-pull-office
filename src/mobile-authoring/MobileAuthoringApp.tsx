@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { ArtworkPosition, Layer, Scene, StoryNode, ViewMode } from "../types";
+import type { ArtworkPosition, Layer, Scene, StoryNode } from "../types";
 import {
   deleteSceneDraft,
   deviceId,
@@ -17,18 +17,11 @@ import {
   allowsProtagonistArtwork,
   changeDialogueKind,
   cloneScene,
-  compatibleVariants,
   copyNodeAfter,
-  dialogueLayer,
-  isDialogueNode,
-  isEditableDialogueNode,
-  isLegacyDialogueNode,
   MOBILE_NODE_LABELS,
   moveNode,
   nodePreview,
   removeNode,
-  stageForMode,
-  withStageForMode,
 } from "./scene";
 import {
   CURRENT_BUILD_ID,
@@ -52,7 +45,7 @@ type InstallPromptEvent = Event & {
 };
 
 type Picker =
-  | { kind: "artwork"; mode: ViewMode; position: ArtworkPosition }
+  | { kind: "artwork"; position: ArtworkPosition }
   | { kind: "background" };
 
 type PersistChain = Map<string, Promise<void>>;
@@ -72,8 +65,7 @@ const POSITIONS: Array<{ id: ArtworkPosition; label: string }> = [
   { id: "right", label: "오른쪽" },
 ];
 
-function effectiveSpeaker(node: StoryNode, mode: ViewMode): string | undefined {
-  if (node.presentation_flags?.includes("inner_voice")) return node.speakers?.[mode] || undefined;
+function effectiveSpeaker(node: StoryNode): string | undefined {
   return node.speaker;
 }
 
@@ -87,37 +79,21 @@ function SceneStatus({ draft }: { draft?: StoredSceneDraft }) {
 
 function LayerFields({
   layer,
-  mode,
-  locked,
-  legacy = false,
   speaker,
-  workspace,
   onChange,
-  onToggleLock,
 }: {
   layer: Layer;
-  mode: ViewMode;
-  locked: boolean;
-  legacy?: boolean;
   speaker?: MobileSpeakerOption;
-  workspace: NonNullable<MobileCatalogSnapshot["workspace"]>;
   onChange: (layer: Layer) => void;
-  onToggleLock: () => void;
 }) {
-  const expressions = (speaker?.expressions || []).filter((expression) => legacy || expression.layer === mode);
+  const expressions = speaker?.expressions || [];
   return <div className="mobile-layer-fields">
     <label className="mobile-field wide">
-      <span>{legacy ? "대사" : mode === "perceived" ? "원문 대사" : <><i>속마음 대사</i><button type="button" className={locked ? "line-lock locked" : "line-lock"} onClick={onToggleLock} aria-label={locked ? "속마음 대사 잠금 풀기" : "속마음 대사를 원문과 같게 잠그기"}>{locked ? "🔒" : "🔓"}</button></>}</span>
-      <textarea aria-label={legacy ? "대사" : mode === "perceived" ? "원문 대사" : "속마음 대사"} rows={5} value={layer.line || ""} disabled={!legacy && mode === "reality" && locked} onChange={(event) => onChange({ ...layer, line: event.target.value })} />
+      <span>대사</span>
+      <textarea aria-label="대사" rows={5} value={layer.line || ""} onChange={(event) => onChange({ ...layer, line: event.target.value })} />
     </label>
-    <label className="mobile-field"><span>분위기</span><select value={layer.atmosphere || ""} onChange={(event) => onChange({ ...layer, atmosphere: event.target.value })}>
-      <option value="">선택</option>{workspace.atmospheres.map((item) => <option value={item} key={item}>{item}</option>)}
-    </select></label>
     {speaker && <label className="mobile-field"><span>표정</span><select value={layer.expression || ""} onChange={(event) => onChange({ ...layer, expression: event.target.value || undefined })}>
       <option value="">기본 표정</option>{expressions.map((item) => <option value={item.id} key={item.id}>{item.label}</option>)}
-    </select></label>}
-    {!legacy && mode === "reality" && <label className="mobile-field"><span>실제 의도</span><select value={layer.intent || "work_only"} onChange={(event) => onChange({ ...layer, intent: event.target.value })}>
-      {workspace.intents.map((item) => <option value={item} key={item}>{item}</option>)}
     </select></label>}
   </div>;
 }
@@ -166,7 +142,7 @@ function BackgroundPicker({ options, current, onPick, onClose }: {
     <section className="mobile-picker background" role="dialog" aria-modal="true" aria-label="씬 기본 배경 선택">
       <header><div><small>SCENE BACKGROUND</small><h2>씬 기본 배경 변경</h2></div><button type="button" aria-label="배경 선택 닫기" onClick={onClose}>×</button></header>
       <div className="picker-grid">
-        <button type="button" className={!current ? "picker-card selected" : "picker-card"} onClick={() => onPick(undefined)}><i>AUTO</i><strong>자동 선택</strong><small>장소·시간·분위기 규칙</small></button>
+        <button type="button" className={!current ? "picker-card selected" : "picker-card"} onClick={() => onPick(undefined)}><i>AUTO</i><strong>자동 선택</strong><small>장소·시간 규칙</small></button>
         {options.map((option) => <button type="button" className={current?.visual_id === option.visualId && current.variant_id === option.variantId ? "picker-card selected" : "picker-card"} onClick={() => onPick(option)} key={`${option.visualId}:${option.variantId}`}><i>BG</i><strong>{option.title}</strong><small>{option.variantId} · {option.details}</small></button>)}
       </div>
     </section>
@@ -180,7 +156,6 @@ export default function MobileAuthoringApp() {
   const [legacyDraftCount, setLegacyDraftCount] = useState(0);
   const [selectedSceneId, setSelectedSceneId] = useState<string>();
   const [selectedNodeId, setSelectedNodeId] = useState<string>();
-  const [mode, setMode] = useState<ViewMode>("perceived");
   const [online, setOnline] = useState(() => navigator.onLine);
   const [syncing, setSyncing] = useState(false);
   const [checkingUpdate, setCheckingUpdate] = useState(false);
@@ -197,7 +172,7 @@ export default function MobileAuthoringApp() {
   const [mobileEditorOpen, setMobileEditorOpen] = useState(false);
   const [editorMenuOpen, setEditorMenuOpen] = useState(false);
   const [picker, setPicker] = useState<Picker>();
-  const [addKind, setAddKind] = useState<"dual_dialogue" | "dual_narration">("dual_dialogue");
+  const [addKind, setAddKind] = useState<"dialogue" | "narration">("dialogue");
   const [clipboard, setClipboard] = useState<StoryNode>();
   const syncingRef = useRef(false);
   const persistChains = useRef<PersistChain>(new Map());
@@ -477,18 +452,10 @@ export default function MobileAuthoringApp() {
       const artwork = workspace.artworks.find((item) => item.characterId === speakerId);
       if (artwork) {
         const cue = { position: "center" as const, character: speakerId, visual_id: artwork.visualId, artwork: artwork.id };
-        if (isLegacyDialogueNode(nextNode)) {
-          if (!stageForMode(nextNode, "perceived").length) nextNode = withStageForMode(nextNode, "perceived", [cue]);
-        } else {
-          nextNode = {
-            ...nextNode,
-            stage: {
-              ...(nextNode.stage || {}),
-              ...(!Object.prototype.hasOwnProperty.call(nextNode.stage || {}, "perceived") ? { perceived: [cue] } : {}),
-              ...(!Object.prototype.hasOwnProperty.call(nextNode.stage || {}, "reality") ? { reality: [cue] } : {}),
-            },
-          };
-        }
+        nextNode = {
+          ...nextNode,
+          stage: nextNode.stage === undefined ? [cue] : nextNode.stage,
+        };
       }
     }
     updateNode(nextNode);
@@ -496,10 +463,10 @@ export default function MobileAuthoringApp() {
 
   const selectArtwork = (option?: MobileArtworkOption) => {
     if (!picker || picker.kind !== "artwork" || !node) return;
-    const cues = [...stageForMode(node, picker.mode)].filter((cue) => cue.position !== picker.position);
+    const cues = [...(node.stage || [])].filter((cue) => cue.position !== picker.position);
     const deduplicated = option ? cues.filter((cue) => cue.character !== option.characterId) : cues;
     if (option) deduplicated.push({ position: picker.position, character: option.characterId, visual_id: option.visualId, artwork: option.id });
-    updateNode(withStageForMode(node, picker.mode, deduplicated));
+    updateNode({ ...node, stage: deduplicated });
     setPicker(undefined);
   };
 
@@ -553,7 +520,7 @@ export default function MobileAuthoringApp() {
           <div className="mobile-node-layout">
             <aside className="mobile-node-sequence">
               <label><span>이 장면 대사 검색</span><input type="search" value={nodeQuery} onChange={(event) => setNodeQuery(event.target.value)} placeholder="문장으로 찾기" /></label>
-              <div className="add-node-bar"><select aria-label="추가할 종류" value={addKind} onChange={(event) => setAddKind(event.target.value as typeof addKind)}><option value="dual_dialogue">대사</option><option value="dual_narration">나레이션</option></select><button type="button" onClick={() => mutateScene((next) => { const id = addNodeAfter(next, selectedNodeId || next.node_order.at(-1) || "", addKind, selectedRecord.speakers[0]?.id); openMobileNodeEditor(id); })}>＋ 현재 다음에 추가</button></div>
+              <div className="add-node-bar"><select aria-label="추가할 종류" value={addKind} onChange={(event) => setAddKind(event.target.value as typeof addKind)}><option value="dialogue">대사</option><option value="narration">나레이션</option></select><button type="button" onClick={() => mutateScene((next) => { const id = addNodeAfter(next, selectedNodeId || next.node_order.at(-1) || "", addKind, selectedRecord.speakers[0]?.id); openMobileNodeEditor(id); })}>＋ 현재 다음에 추가</button></div>
               <div className="mobile-node-list">{visibleNodeIds.map((id) => {
                 const item = scene.nodes[id];
                 const index = scene.node_order.indexOf(id);
@@ -573,43 +540,33 @@ export default function MobileAuthoringApp() {
                 {editorMenuOpen && <div className="editor-node-popover"><button type="button" onClick={() => { setClipboard(structuredClone(node)); setEditorMenuOpen(false); setStatus("대사를 복사했습니다."); }}>복사</button><button type="button" disabled={!clipboard} onClick={() => { if (!clipboard) return; mutateScene((next) => { const copied = copyNodeAfter(next, clipboard, node.id); setSelectedNodeId(copied); }); setEditorMenuOpen(false); }}>다음에 붙여넣기</button><button type="button" className="danger" onClick={() => { if (!window.confirm("이 대사를 삭제하고 연결을 다음 화면으로 복구할까요?")) return; mutateScene((next) => { const replacement = removeNode(next, node.id); if (replacement) setSelectedNodeId(replacement); }); setEditorMenuOpen(false); }}>삭제</button></div>}
               </header>
               <div className="node-core-fields">
-                <label className="mobile-field"><span>종류</span><select aria-label="대사 또는 나레이션" value={node.kind} disabled={!isEditableDialogueNode(node)} onChange={(event) => updateNode(changeDialogueKind(node, event.target.value as "dual_dialogue" | "dual_narration" | "dialogue" | "narration", selectedRecord.speakers[0]?.id))}>{isLegacyDialogueNode(node) ? <><option value="dialogue">대사</option><option value="narration">나레이션</option></> : <><option value="dual_dialogue">대사</option><option value="dual_narration">나레이션</option></>}{!isEditableDialogueNode(node) && <option value={node.kind}>{MOBILE_NODE_LABELS[node.kind]}</option>}</select></label>
-                {(isEditableDialogueNode(node) || ["silent", "effect"].includes(node.kind as string)) && <label className="mobile-field"><span>다음 대사</span><select value={node.next || ""} onChange={(event) => updateNode({ ...node, next: event.target.value })}><option value="">연결 없음</option>{scene.node_order.filter((id) => id !== node.id).map((id) => <option value={id} key={id}>{scene.node_order.indexOf(id) + 1}. {nodePreview(scene.nodes[id]).slice(0, 45)}</option>)}</select></label>}
+                <label className="mobile-field"><span>종류</span><select aria-label="대사 또는 나레이션" value={node.kind} disabled={!(["dialogue", "narration"]).includes(node.kind)} onChange={(event) => updateNode(changeDialogueKind(node, event.target.value as "dialogue" | "narration", selectedRecord.speakers[0]?.id))}><option value="dialogue">대사</option><option value="narration">나레이션</option>{!(["dialogue", "narration"]).includes(node.kind) && <option value={node.kind}>{MOBILE_NODE_LABELS[node.kind]}</option>}</select></label>
+                {["dialogue", "narration", "silent", "effect"].includes(node.kind) && <label className="mobile-field"><span>다음 대사</span><select value={node.next || ""} onChange={(event) => updateNode({ ...node, next: event.target.value })}><option value="">연결 없음</option>{scene.node_order.filter((id) => id !== node.id).map((id) => <option value={id} key={id}>{scene.node_order.indexOf(id) + 1}. {nodePreview(scene.nodes[id]).slice(0, 45)}</option>)}</select></label>}
               </div>
 
               <section className="mobile-artwork-stage">
-                <header><div><strong>화면 원화</strong><small>{isLegacyDialogueNode(node) ? "현재 대사" : mode === "perceived" ? "스토리 모드" : "속마음 모드"}에 표시</small></div><button type="button" onClick={() => updateNode(withStageForMode(node, mode, []))}>모두 끄기</button></header>
+                <header><div><strong>화면 원화</strong><small>현재 대사에 표시</small></div><button type="button" onClick={() => updateNode({ ...node, stage: [] })}>모두 끄기</button></header>
                 <div>{POSITIONS.map((position) => {
-                  const cue = stageForMode(node, mode).find((item) => item.position === position.id);
+                  const cue = node.stage?.find((item) => item.position === position.id);
                   const art = cue && workspace.artworks.find((item) => item.visualId === cue.visual_id && item.id === cue.artwork);
-                  return <button type="button" className={cue ? "filled" : ""} onClick={() => setPicker({ kind: "artwork", mode, position: position.id })} key={position.id}><small>{position.label}</small><i>{art ? art.characterLabel.slice(0, 1) : "+"}</i><strong>{art?.characterLabel || "원화 선택"}</strong><span>{art?.label || "비어 있음"}</span></button>;
+                  return <button type="button" className={cue ? "filled" : ""} onClick={() => setPicker({ kind: "artwork", position: position.id })} key={position.id}><small>{position.label}</small><i>{art ? art.characterLabel.slice(0, 1) : "+"}</i><strong>{art?.characterLabel || "원화 선택"}</strong><span>{art?.label || "비어 있음"}</span></button>;
                 })}</div>
               </section>
 
-              {isEditableDialogueNode(node) && <>
-                {isDialogueNode(node) && (!isLegacyDialogueNode(node) && node.presentation_flags?.includes("inner_voice") ? <div className="inner-speakers">{(["perceived", "reality"] as ViewMode[]).map((layerMode) => <label className="mobile-field" key={layerMode}><span>{layerMode === "perceived" ? "원문 생각 화자" : "속마음 생각 화자"}</span><select value={node.speakers?.[layerMode] || ""} onChange={(event) => updateNode({ ...node, speakers: { ...(node.speakers || {}), [layerMode]: event.target.value || null } })}><option value="">화자 없는 서술</option>{selectedRecord.speakers.map((item) => <option value={item.id} key={item.id}>{item.label}</option>)}</select></label>)}</div> : <label className="mobile-field speaker-field"><span>화자</span><select value={node.speaker || ""} onChange={(event) => chooseSpeaker(event.target.value)}><option value="">화자 선택</option>{selectedRecord.speakers.map((item) => <option value={item.id} key={item.id}>{item.label}{item.illustrated ? "" : " · 텍스트"}</option>)}</select></label>)}
-                {!isLegacyDialogueNode(node) && <nav className="layer-tabs" aria-label="대사 레이어"><button type="button" className={mode === "perceived" ? "active" : ""} onClick={() => setMode("perceived")}>원문</button><button type="button" className={mode === "reality" ? "active" : ""} onClick={() => setMode("reality")}>속마음</button></nav>}
+              {(node.kind === "dialogue" || node.kind === "narration") && <>
+                {node.kind === "dialogue" && <label className="mobile-field speaker-field"><span>화자</span><select value={node.speaker || ""} onChange={(event) => chooseSpeaker(event.target.value)}><option value="">화자 선택</option>{selectedRecord.speakers.map((item) => <option value={item.id} key={item.id}>{item.label}{item.illustrated ? "" : " · 텍스트"}</option>)}</select></label>}
                 {!node.variants ? <LayerFields
-                  layer={dialogueLayer(node, mode)}
-                  mode={mode}
-                  legacy={isLegacyDialogueNode(node)}
-                  locked={!isLegacyDialogueNode(node) && node.line_layers_locked === true}
-                  speaker={selectedRecord.speakers.find((item) => item.id === effectiveSpeaker(node, mode))}
-                  workspace={workspace}
-                  onToggleLock={() => { if (!isLegacyDialogueNode(node)) updateNode(node.line_layers_locked ? { ...node, line_layers_locked: false } : { ...node, line_layers_locked: true, reality: { ...(node.reality || {}), line: node.perceived?.line || "" } }); }}
-                  onChange={(layer) => isLegacyDialogueNode(node)
-                    ? updateNode({ ...node, ...layer } as StoryNode)
-                    : updateNode({ ...node, [mode]: layer, ...(mode === "perceived" && node.line_layers_locked ? { reality: { ...(node.reality || {}), line: layer.line || "" } } : {}) })}
-                /> : isLegacyDialogueNode(node)
-                  ? <div className="variant-list">{compatibleVariants(node).map((variant, index) => <label className="mobile-field wide" key={`${variant.id}:${index}`}><span>{variant.default ? "기본 대사" : variant.id}</span><textarea rows={4} value={variant.line || ""} onChange={(event) => { const variants = structuredClone(compatibleVariants(node)); variants[index].line = event.target.value; updateNode({ ...node, variants } as StoryNode); }} /></label>)}</div>
-                  : <div className="variant-list">{node.variants.map((variant, index) => <label className="mobile-field wide" key={`${variant.id}:${index}`}><span>{variant.default ? "기본 대사" : variant.id}</span><textarea rows={4} value={variant[mode]?.line || ""} onChange={(event) => { const variants = structuredClone(node.variants!); variants[index][mode] = { ...variants[index][mode], line: event.target.value }; updateNode({ ...node, variants }); }} /></label>)}</div>}
+                  layer={node}
+                  speaker={selectedRecord.speakers.find((item) => item.id === effectiveSpeaker(node))}
+                  onChange={(layer) => updateNode({ ...node, expression: layer.expression, line: layer.line || "" })}
+                /> : <div className="variant-list">{node.variants.map((variant, index) => <label className="mobile-field wide" key={`${variant.id}:${index}`}><span>{variant.default ? "기본 대사" : variant.id}</span><textarea rows={4} value={variant.line || ""} onChange={(event) => { const variants = structuredClone(node.variants!); variants[index].line = event.target.value; updateNode({ ...node, variants }); }} /></label>)}</div>}
               </>}
 
-              {node.kind === "silent" && <><nav className="layer-tabs"><button type="button" className={mode === "perceived" ? "active" : ""} onClick={() => setMode("perceived")}>원문 화면</button><button type="button" className={mode === "reality" ? "active" : ""} onClick={() => setMode("reality")}>속마음 화면</button></nav><label className="mobile-field"><span>분위기</span><select value={node[mode]?.atmosphere || ""} onChange={(event) => updateNode({ ...node, [mode]: { ...(node[mode] || {}), atmosphere: event.target.value, line: "" } })}>{workspace.atmospheres.map((item) => <option value={item} key={item}>{item}</option>)}</select></label></>}
+              {node.kind === "silent" && <p className="advanced-node-note">이 화면은 대사창 없이 배경과 선택한 원화만 표시합니다.</p>}
 
               {node.kind === "choice" && <div className="choice-mobile-editor"><label className="mobile-field wide"><span>선택 상황</span><textarea value={node.stimulus || ""} onChange={(event) => updateNode({ ...node, stimulus: event.target.value })} /></label>{(node.options || []).map((option, index) => <fieldset key={option.id}><legend>선택지 {index + 1}</legend><label className="mobile-field"><span>표시 문구</span><input value={option.label} onChange={(event) => { const options = structuredClone(node.options!); options[index].label = event.target.value; updateNode({ ...node, options }); }} /></label><label className="mobile-field"><span>행동</span><input value={option.action} onChange={(event) => { const options = structuredClone(node.options!); options[index].action = event.target.value; updateNode({ ...node, options }); }} /></label><label className="mobile-field wide"><span>해석</span><textarea value={option.interpretation} onChange={(event) => { const options = structuredClone(node.options!); options[index].interpretation = event.target.value; updateNode({ ...node, options }); }} /></label></fieldset>)}</div>}
 
-              {!isEditableDialogueNode(node) && !(["silent", "choice"] as string[]).includes(node.kind as string) && <div className="advanced-node-note"><strong>{MOBILE_NODE_LABELS[node.kind] || node.kind}</strong><p>이 노드의 수치·분기 세부 설정은 PC 제작 버전에서 편집하세요. 모바일에서는 순서·복사·삭제와 다음 연결을 안전하게 관리할 수 있습니다.</p></div>}
+              {!(["dialogue", "narration", "silent", "choice"]).includes(node.kind) && <div className="advanced-node-note"><strong>{MOBILE_NODE_LABELS[node.kind] || node.kind}</strong><p>이 노드의 수치·분기 세부 설정은 PC 제작 버전에서 편집하세요. 모바일에서는 순서·복사·삭제와 다음 연결을 안전하게 관리할 수 있습니다.</p></div>}
             </> : <p className="node-empty">왼쪽에서 대사를 선택하세요.</p>}</section>
           </div>
           <footer className="mobile-save-bar">

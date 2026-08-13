@@ -48,7 +48,7 @@ describe("mobile scene compatibility", () => {
       kind: "dual_dialogue",
       perceived: { line: "겉으로 보이는 대사" },
       reality: { line: "실제 대사" },
-    } satisfies StoryNode;
+    } as unknown as StoryNode;
 
     expect(nodePreview(node)).toBe("겉으로 보이는 대사");
   });

@@ -15,15 +15,11 @@ scene: bonus.stat_humor_tasting_vote
 requires:
   events: [anchor.day_03_business_trip_or_cafe]
   conditions:
-    - {path: visible.protagonist.self_development.stats.humor, op: gte, value: 3}
+  - {path: visible.protagonist.self_development.stats.humor, op: gte, value: 3}
 on_seen:
   effects:
-    - {path: progress.memories, op: append_unique, value: cg.stat.humor.seo_a}
+  - {path: progress.memories, op: append_unique, value: cg.stat.humor.seo_a}
 on_missed: {effects: []}
 presentation:
-  perceived:
-    title: 서아가 웃음을 터뜨린 순간
-    summary: 밤마다 익힌 유머 감각으로 시음 자리의 긴장을 풀고, 서아가 웃은 순간을 원화로 남긴다.
-  reality:
-    title: 홈카페 샘플 시음표 작성
-    summary: 서아는 공용 시음 자리에서 상황에 맞는 농담에 웃고, 비고 칸에 향과 쓴맛을 나눠 기록한다.
+  title: 홈카페 샘플 시음표 작성
+  summary: 서아는 공용 시음 자리에서 상황에 맞는 농담에 웃고, 비고 칸에 향과 쓴맛을 나눠 기록한다.

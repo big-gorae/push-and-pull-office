@@ -11,23 +11,8 @@ const cleared = { clearedRoutes: ["seo_a"], unlockedModes: ["base"], memories: [
 describe("game mode and campaign separation", () => {
   it("resolves lock state separately from content readiness", () => {
     expect(resolveModeAccess(runtime, "base", fresh)).toBe("ready");
-    expect(resolveModeAccess(runtime, "truth_view", fresh)).toBe("locked");
     expect(resolveModeAccess(runtime, "survivor_view", fresh)).toBe("locked");
-    expect(resolveModeAccess(runtime, "truth_view", cleared)).toBe("ready");
     expect(resolveModeAccess(runtime, "survivor_view", cleared)).toBe("coming_soon");
-  });
-
-  it("starts truth view in the main continuity with a fixed reality layer", () => {
-    const result = startGameMode(runtime, cleared, "truth_view");
-    expect(result.ok).toBe(true);
-    if (!result.ok) return;
-    expect(result.session).toMatchObject({
-      version: 5,
-      gameModeId: "truth_view",
-      campaignId: "main",
-      continuityId: "main",
-      viewLayer: "reality",
-    });
   });
 
   it("selects main from the mode registry even when another campaign is ordered first", () => {
@@ -46,7 +31,6 @@ describe("game mode and campaign separation", () => {
   });
 
   it("returns stable start errors without choosing substitute content", () => {
-    expect(startGameMode(runtime, fresh, "truth_view")).toEqual({ ok: false, code: "locked" });
     expect(startGameMode(runtime, fresh, "missing" as never)).toEqual({ ok: false, code: "unknown_mode" });
 
     const missingCampaign = structuredClone(runtime);

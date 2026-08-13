@@ -18,9 +18,5 @@ requires:
 on_seen: {effects: []}
 on_missed: {effects: []}
 presentation:
-  perceived:
-    title: 신부감을 찾아볼 때
-    summary: 퇴근 후 부모의 결혼 재촉과 칭찬을 듣고, 오전 프로젝트에서 만난 서아와 민경을 연애 후보로 다시 떠올린다.
-  reality:
-    title: 퇴근길에 걸려 온 가족 전화
-    summary: 부모는 한도윤의 자존심을 다치지 않으려 외모와 조건을 칭찬하며 사람을 만나보라고 권한다.
+  title: 퇴근길에 걸려 온 가족 전화
+  summary: 부모는 한도윤의 자존심을 다치지 않으려 외모와 조건을 칭찬하며 사람을 만나보라고 권한다.

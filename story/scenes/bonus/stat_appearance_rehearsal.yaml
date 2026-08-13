@@ -12,115 +12,50 @@ entry_conditions: []
 state_contract: {reads: [], writes: []}
 start_node: rehearsal_screen
 nodes:
-  - id: rehearsal_screen
-    kind: dual_narration
-    perceived:
-      atmosphere: playful_tension
-      line: 라이브커머스 리허설 화면을 살피던 유진의 시선이 오늘따라 내 옷차림에 오래 머물렀다.
-    reality:
-      atmosphere: procedural
-      line: 유진은 미니오븐 촬영 화면의 흰색 균형을 확인하다가 무채색 재킷을 입은 한도윤을 발견했다.
-      intent: documentation
-    next: yoo_jin_request
+- id: rehearsal_screen
+  kind: narration
+  line: 유진은 미니오븐 촬영 화면의 흰색 균형을 확인하다가 무채색 재킷을 입은 한도윤을 발견했다.
+  next: yoo_jin_request
 
-  - id: yoo_jin_request
-    kind: dual_dialogue
-    speaker: kang_yoo_jin
-    stage:
-      perceived:
-        - position: center
-          character: kang_yoo_jin
-          visual_id: character.kang_yoo_jin
-          artwork: default
-      reality:
-        - position: center
-          character: kang_yoo_jin
-          visual_id: character.kang_yoo_jin
-          artwork: default
-    perceived:
-      atmosphere: playful_tension
-      expression: subjective_bold_flirt
-      line: "한 과장님, 잠깐 화면 옆에 서 주실래요? 오늘 재킷 색이 기준 잡기에 좋습니다. 소매만 제품 옆에 보이면 됩니다."
-    reality:
-      atmosphere: procedural
-      expression: actual_procedural
-      line: "한 과장님, 잠깐 화면 옆에 서 주실래요? 오늘 재킷 색이 기준 잡기에 좋습니다. 소매만 제품 옆에 보이면 됩니다."
-      intent: work_only
-    next: do_yoon_stands
+- id: yoo_jin_request
+  kind: dialogue
+  speaker: kang_yoo_jin
+  stage:
+  - position: center
+    character: kang_yoo_jin
+    visual_id: character.kang_yoo_jin
+    artwork: default
+  expression: actual_procedural
+  line: "한 과장님, 잠깐 화면 옆에 서 주실래요? 오늘 재킷 색이 기준 잡기에 좋습니다. 소매만 제품 옆에 보이면 됩니다."
+  next: do_yoon_stands
 
-  - id: do_yoon_stands
-    kind: dual_dialogue
-    speaker: han_do_yoon
-    stage:
-      perceived: []
-      reality: []
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_confident
-      line: "이 각도면 될까요? 제품 반사가 보이지 않게 손은 여기 두겠습니다."
-    reality:
-      atmosphere: procedural
-      expression: actual_waiting_smile
-      line: "이 각도면 될까요? 제품 반사가 보이지 않게 손은 여기 두겠습니다."
-      intent: work_only
-    next: yoo_jin_adjusts
+- id: do_yoon_stands
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: "이 각도면 될까요? 제품 반사가 보이지 않게 손은 여기 두겠습니다."
+  next: yoo_jin_adjusts
 
-  - id: yoo_jin_adjusts
-    kind: dual_dialogue
-    speaker: kang_yoo_jin
-    stage:
-      perceived:
-        - position: center
-          character: kang_yoo_jin
-          visual_id: character.kang_yoo_jin
-          artwork: default
-      reality:
-        - position: center
-          character: kang_yoo_jin
-          visual_id: character.kang_yoo_jin
-          artwork: default
-    perceived:
-      atmosphere: playful_tension
-      expression: subjective_bold_flirt
-      line: "네, 그대로요. 재킷 명도가 제품 흰색을 잡아먹지 않네요. 화면 저장하고 바로 끝내겠습니다."
-    reality:
-      atmosphere: procedural
-      expression: actual_procedural
-      line: "네, 그대로요. 재킷 명도가 제품 흰색을 잡아먹지 않네요. 화면 저장하고 바로 끝내겠습니다."
-      intent: documentation
-    next: screen_saved
+- id: yoo_jin_adjusts
+  kind: dialogue
+  speaker: kang_yoo_jin
+  stage:
+  - position: center
+    character: kang_yoo_jin
+    visual_id: character.kang_yoo_jin
+    artwork: default
+  expression: actual_procedural
+  line: "네, 그대로요. 재킷 명도가 제품 흰색을 잡아먹지 않네요. 화면 저장하고 바로 끝내겠습니다."
+  next: screen_saved
 
-  - id: screen_saved
-    kind: dual_narration
-    perceived:
-      atmosphere: warm_romance
-      line: 저장 버튼을 누른 유진은 화면과 나를 한 번 더 번갈아 봤다. 디자이너에게 선택받은 모습은 역시 다르게 남았다.
-    reality:
-      atmosphere: procedural
-      line: 유진은 화면 캡처의 색상값을 확인한 뒤 도윤에게 점검이 끝났다는 손짓을 했다.
-      intent: work_only
-    next: do_yoon_inner
+- id: screen_saved
+  kind: narration
+  line: 유진은 화면 캡처의 색상값을 확인한 뒤 도윤에게 점검이 끝났다는 손짓을 했다.
+  next: leave
 
-  - id: do_yoon_inner
-    kind: dual_dialogue
-    presentation_flags: [inner_voice]
-    speakers:
-      perceived: han_do_yoon
-      reality:
-    stage:
-      perceived: []
-      reality: []
-    perceived:
-      atmosphere: playful_tension
-      line: (매일 관리한 결과는 이런 순간에 드러난다. 유진의 시선이 내게 머문 장면도 수집해 둘 가치가 있다.)
-    reality:
-      atmosphere: procedural
-      line: 단정한 옷차림은 추가 화면 점검에 참여할 기회를 만들었지만, 유진이 본 것은 제작 기준에 맞는 재킷의 명도였다.
-      intent: work_only
-    next: leave
-
-  - id: leave
-    kind: exit
-    transitions:
-      - default: true
-        scene: common.day_04_weekend_encounter
+- id: leave
+  kind: exit
+  transitions:
+  - default: true
+    scene: common.day_04_weekend_encounter

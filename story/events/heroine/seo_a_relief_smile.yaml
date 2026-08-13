@@ -19,12 +19,8 @@ requires:
   conditions: []
 on_seen:
   effects:
-    - {path: progress.flags.story_mode.target, op: set, value: yoon_seo_a}
+  - {path: progress.flags.story_mode.target, op: set, value: yoon_seo_a}
 on_missed: {effects: []}
 presentation:
-  perceived:
-    title: 먼저 당겨 온 서아
-    summary: 며칠 거리를 두자 서아가 밝게 인사하며 관계를 회복하려 한다.
-  reality:
-    title: 잠시 경계를 푼 인사
-    summary: 접근이 멈춘 며칠 동안 서아는 자신의 판단이 과민했는지 고민한다.
+  title: 잠시 경계를 푼 인사
+  summary: 접근이 멈춘 며칠 동안 서아는 자신의 판단이 과민했는지 고민한다.

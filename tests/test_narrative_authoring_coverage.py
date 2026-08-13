@@ -38,7 +38,7 @@ class NarrativeAuthoringCoverageTests(unittest.TestCase):
 
     def test_every_player_narrative_unit_has_one_editable_physical_yaml_field(self):
         units = [entry for entry in self.entries.values() if is_player_narrative(entry)]
-        self.assertGreater(len(units), 700)
+        self.assertGreater(len(units), 350)
         owners = set()
         documents = {}
         for entry in units:
@@ -86,8 +86,8 @@ class NarrativeAuthoringCoverageTests(unittest.TestCase):
         system_entries = [entry for entry in self.entries.values() if entry["domain"] == "system_flow"]
         by_flow = {entry["context"]["flowId"] for entry in system_entries}
         self.assertEqual({"system.night_activity", "system.analysis_hint"}, by_flow)
-        # 4 intro layers + 12 result layers + 12 option fields + 6 instructor layers.
-        self.assertEqual(34, len(system_entries))
+        # 2 intro lines + 6 result lines + 12 option fields + 3 instructor lines.
+        self.assertEqual(23, len(system_entries))
 
 
 if __name__ == "__main__":

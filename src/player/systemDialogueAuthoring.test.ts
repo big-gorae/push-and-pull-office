@@ -9,8 +9,8 @@ describe("system dialogue authoring navigation", () => {
   it("organizes every physical system phrase into human-readable work units", () => {
     const flows = systemDialogueFlows(runtime);
     expect(flows.map((flow) => [flow.label, flow.fieldCount])).toEqual([
-      ["밤 활동", 28],
-      ["심리학 강사", 6],
+      ["밤 활동", 20],
+      ["심리학 강사", 3],
     ]);
     expect(flows[0].groups.map((group) => [group.label, group.items.length])).toEqual([
       ["도입 대사", 2],
@@ -24,20 +24,16 @@ describe("system dialogue authoring navigation", () => {
     ]);
   });
 
-  it("pairs perceived and reality fields and creates an exact in-game preview target", () => {
+  it("creates one physical dialogue field and an exact in-game preview target", () => {
     const result = systemDialogueFlows(runtime)[0].groups
       .find((group) => group.id === "results")!.items
       .find((item) => item.label === "OTT 시청")!;
-    expect(result.rows.map((row) => row.fieldLabel)).toEqual([
-      "화면 대사 · 주인공 인식",
-      "실제 상황 · 원문 모드",
-    ]);
+    expect(result.rows.map((row) => row.fieldLabel)).toEqual(["화면 대사"]);
     expect(result.previewTarget).toEqual({
       kind: "system_flow",
       flowId: "system.night_activity",
       nodeId: "activity_result",
       variantId: "ott",
-      layer: "perceived",
     });
   });
 

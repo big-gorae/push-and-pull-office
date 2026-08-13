@@ -20,20 +20,20 @@ describe("story authoring boundary", () => {
     expect(sourceLocator({
       label: "원본 YAML",
       relativePath: "story/scenes/seo_a/email_request.yaml",
-      fieldPath: "nodes.request.reality.line",
+      fieldPath: "nodes.request.line",
       line: 42,
       column: 7,
-    })).toBe("story/scenes/seo_a/email_request.yaml:42:7 · nodes.request.reality.line");
+    })).toBe("story/scenes/seo_a/email_request.yaml:42:7 · nodes.request.line");
   });
 
   it("reads hot-reload values from the edited locale catalog", () => {
-    const key = "scenes.seo_a.email_request.nodes.request.reality.line";
+    const key = "scenes.seo_a.email_request.nodes.request.line";
     expect(runtimeTextValues(runtime, [key], "ko")[key]).toBe(runtime.localization.source_strings[key]);
     expect(runtimeTextValues(runtime, [key], "en")[key]).toBe(runtime.localization.resolved_catalogs?.en[key]);
   });
 
   it("builds a guarded inverse patch for a newly created translation", () => {
-    const key = "scenes.example.nodes.line.reality.line";
+    const key = "scenes.example.nodes.line.line";
     const edits = inverseStoryTextEdits([{
       localizationKey: key,
       locale: "en",
@@ -64,11 +64,11 @@ describe("story authoring boundary", () => {
   });
 
   it("builds a source-owned inverse patch for a physical system dialogue", () => {
-    const key = "system_flows.system.night_activity.nodes.activity_result.variants.workout.reality.line";
+    const key = "system_flows.system.night_activity.nodes.activity_result.variants.workout.line";
     const source = {
       label: "운동 활동 문구",
       relativePath: "story/system_flows/night_activity.yaml",
-      fieldPath: "nodes.activity_result.variants.workout.reality.line",
+      fieldPath: "nodes.activity_result.variants.workout.line",
       revision: "new-revision",
       currentValue: "새 활동 문구",
       currentValueHash: "new-value-hash",
@@ -102,13 +102,11 @@ describe("story authoring boundary", () => {
       flowId: "system.night_activity",
       nodeId: "activity_result",
       variantId: "reading",
-      layer: "reality",
     }))).toEqual({
       kind: "system_flow",
       flowId: "system.night_activity",
       nodeId: "activity_result",
       variantId: "reading",
-      layer: "reality",
     });
   });
 });

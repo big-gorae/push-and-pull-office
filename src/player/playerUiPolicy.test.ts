@@ -17,13 +17,11 @@ import {
 const runtime = runtimeJson as unknown as Runtime;
 
 describe("player UI policy", () => {
-  it("locks both extra modes until the first ending and accepts the persisted unlock", () => {
+  it("locks the remaining extra mode until the first ending and accepts the persisted unlock", () => {
     const fresh = { clearedRoutes: [], unlockedModes: ["base"], memories: [] };
-    expect(modeUnlocked(runtime, fresh, "truth_view")).toBe(false);
     expect(modeUnlocked(runtime, fresh, "survivor_view")).toBe(false);
 
     const cleared = { ...fresh, clearedRoutes: ["seo_a"] };
-    expect(modeUnlocked(runtime, cleared, "truth_view")).toBe(true);
     expect(modeUnlocked(runtime, cleared, "survivor_view")).toBe(true);
   });
 
@@ -48,16 +46,16 @@ describe("player UI policy", () => {
   it("shows a silent beat as artwork only", () => {
     expect(showSceneHud("silent")).toBe(false);
     expect(showDialogueChrome("silent")).toBe(false);
-    expect(showSceneHud("dual_dialogue")).toBe(true);
-    expect(showDialogueChrome("dual_dialogue")).toBe(true);
+    expect(showSceneHud("dialogue")).toBe(true);
+    expect(showDialogueChrome("dialogue")).toBe(true);
   });
 
   it("keeps push-pull mechanics available for debug labels without changing player copy", () => {
     const option = { push_pull: { action: "space", intensity: 16, base_score: 4 } } as ChoiceOption;
     expect(choiceDebugEffect(option)).toEqual({ action: "space", intensity: 16 });
     expect(PUSH_PULL_OPTIMAL_LIMIT).toBe(56);
-    expect(pushPullPositionLabel(0, "perceived")).toBe("균형 지점");
-    expect(pushPullPositionLabel(20, "perceived")).not.toContain("적정 범위");
+    expect(pushPullPositionLabel(0)).toBe("균형 지점");
+    expect(pushPullPositionLabel(20)).not.toContain("적정 범위");
   });
 
   it("shows scene-less event beats in game and hides truth-only beats in story mode", () => {

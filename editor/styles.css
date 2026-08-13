@@ -170,28 +170,6 @@ label > span:first-child {
   font-size: 0.8rem;
 }
 
-.mode-switch {
-  display: flex;
-  margin-left: auto;
-}
-
-.mode-switch button {
-  border-radius: 0;
-}
-
-.mode-switch button:first-child {
-  border-radius: 9px 0 0 9px;
-}
-
-.mode-switch button:last-child {
-  border-radius: 0 9px 9px 0;
-}
-
-.mode-switch button + button {
-  margin-left: -1px;
-}
-
-.mode-switch button.active,
 .primary-button {
   border-color: var(--accent);
   background: var(--accent);
@@ -366,21 +344,8 @@ input[type="range"] {
   color: var(--accent);
 }
 
-.truth-mode .tool-chip {
-  background: var(--truth-soft);
-  color: var(--truth);
-}
-
 .dialogue-content {
   margin: 32px 0;
-}
-
-.atmosphere {
-  margin-bottom: 10px;
-  color: var(--muted);
-  font-size: 0.7rem;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
 }
 
 blockquote {
@@ -397,10 +362,6 @@ blockquote {
   border-left: 3px solid var(--accent);
   color: var(--muted);
   line-height: 1.6;
-}
-
-.truth-mode .interpretation {
-  border-color: var(--truth);
 }
 
 .flag-chip {
@@ -553,15 +514,6 @@ blockquote {
 
   .toolbar > label {
     width: 100%;
-  }
-
-  .mode-switch {
-    width: 100%;
-    margin-left: 0;
-  }
-
-  .mode-switch button {
-    flex: 1;
   }
 
   .state-editor {

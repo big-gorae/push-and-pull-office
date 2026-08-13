@@ -98,7 +98,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
                                     "value": 5,
                                     "conditions": [
                                         {
-                                            "path": "visible.heroines.yoon_seo_a.affection",
+                                            "path": "visible.protagonist.self_development.appeal",
                                             "op": "gte",
                                             "value": 20,
                                         }
@@ -115,7 +115,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
             [
                 "progress.unlocked_modes",
                 "hidden.heroines.yoon_seo_a.suspicion",
-                "visible.heroines.yoon_seo_a.affection",
+                "visible.protagonist.self_development.appeal",
             ],
             scene["state_contract"]["reads"],
         )
@@ -194,7 +194,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
         scene = {
             "entry_conditions": [],
             "nodes": [{
-                "kind": "dual_dialogue",
+                "kind": "dialogue",
                 "variants": [{
                     "self_development": {"expression": "health.answer"},
                 }],
@@ -223,7 +223,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
         scene = {
             "entry_conditions": [],
             "nodes": [{
-                "kind": "dual_dialogue",
+                "kind": "dialogue",
                 "variants": [{
                     "self_development": {"expression": "feedback.last_workout"},
                 }],
@@ -282,51 +282,41 @@ class StoryEditorBridgeTests(unittest.TestCase):
             project = StoryProject(root / "story")
             scene = copy.deepcopy(project.build_bundle()["scenes"]["seo_a.email_request"])
             path = Path(project.scenes[scene["id"]]["_source"])
-            scene["nodes"]["request"]["stage"] = {
-                "perceived": [{
+            scene["nodes"]["request"]["stage"] = [{
                     "position": "right",
                     "character": "yoon_seo_a",
                     "visual_id": "character.yoon_seo_a",
                     "artwork": "default",
-                }],
-                "reality": [],
-            }
+                }]
 
             result = save_scene(root, {"scene": scene, "revision": revision(path)})
 
             self.assertTrue(result["saved"])
             source = YAML_RT.load(path.read_text(encoding="utf-8"))
             source_node = next(item for item in source["nodes"] if item["id"] == "request")
-            self.assertEqual("right", source_node["stage"]["perceived"][0]["position"])
-            self.assertEqual("character.yoon_seo_a", source_node["stage"]["perceived"][0]["visual_id"])
-            self.assertEqual([], list(source_node["stage"]["reality"]))
+            self.assertEqual("right", source_node["stage"][0]["position"])
+            self.assertEqual("character.yoon_seo_a", source_node["stage"][0]["visual_id"])
             runtime_node = result["runtime"]["scenes"][scene["id"]]["nodes"]["request"]
-            self.assertEqual("default", runtime_node["stage"]["perceived"][0]["artwork"])
-            self.assertEqual([], runtime_node["stage"]["reality"])
+            self.assertEqual("default", runtime_node["stage"][0]["artwork"])
         finally:
             temporary.cleanup()
 
-    def test_save_scene_round_trips_new_dialogue_line_lock_without_changing_legacy_nodes(self):
+    def test_save_scene_round_trips_single_dialogue_line(self):
         temporary, root = self.make_project_copy()
         try:
             project = StoryProject(root / "story")
             scene = copy.deepcopy(project.build_bundle()["scenes"]["seo_a.email_request"])
             path = Path(project.scenes[scene["id"]]["_source"])
-            self.assertNotIn("line_layers_locked", scene["nodes"]["request"])
-            scene["nodes"]["request"]["line_layers_locked"] = True
-            scene["nodes"]["request"]["reality"]["line"] = scene["nodes"]["request"]["perceived"]["line"]
+            scene["nodes"]["request"]["line"] = "단일 대사로 저장합니다."
 
             result = save_scene(root, {"scene": scene, "revision": revision(path)})
 
             self.assertTrue(result["saved"])
             source = YAML_RT.load(path.read_text(encoding="utf-8"))
             source_node = next(item for item in source["nodes"] if item["id"] == "request")
-            self.assertTrue(source_node["line_layers_locked"])
+            self.assertEqual("단일 대사로 저장합니다.", source_node["line"])
             runtime_node = result["runtime"]["scenes"][scene["id"]]["nodes"]["request"]
-            self.assertTrue(runtime_node["line_layers_locked"])
-            untouched_id = next(node_id for node_id in scene["node_order"] if node_id != "request")
-            untouched = result["runtime"]["scenes"][scene["id"]]["nodes"][untouched_id]
-            self.assertNotIn("line_layers_locked", untouched)
+            self.assertEqual("단일 대사로 저장합니다.", runtime_node["line"])
         finally:
             temporary.cleanup()
 
@@ -344,9 +334,8 @@ class StoryEditorBridgeTests(unittest.TestCase):
             scene["nodes"]["silent_view_test"] = {
                 "id": "silent_view_test",
                 "kind": "silent",
-                "perceived": {"atmosphere": "dread", "line": ""},
-                "reality": {"atmosphere": "dread", "line": ""},
-                "stage": {"perceived": [], "reality": []},
+                "line": "",
+                "stage": [],
                 "next": original_start,
             }
             scene["node_order"] = ["silent_view_test", *scene["node_order"]]
@@ -360,8 +349,8 @@ class StoryEditorBridgeTests(unittest.TestCase):
             self.assertEqual("night", source["default_background"]["variant_id"])
             source_node = next(item for item in source["nodes"] if item["id"] == "silent_view_test")
             self.assertEqual("silent", source_node["kind"])
-            self.assertEqual("", source_node["perceived"]["line"])
-            self.assertEqual([], list(source_node["stage"]["perceived"]))
+            self.assertEqual("", source_node["line"])
+            self.assertEqual([], list(source_node["stage"]))
             runtime_scene = result["runtime"]["scenes"][scene["id"]]
             self.assertEqual("silent_view_test", runtime_scene["start_node"])
             self.assertEqual("silent", runtime_scene["nodes"]["silent_view_test"]["kind"])
@@ -410,25 +399,25 @@ class StoryEditorBridgeTests(unittest.TestCase):
     def test_story_text_owner_resolves_direct_dialogue_source(self):
         owner = story_text_owner(
             ROOT,
-            "scenes.seo_a.email_request.nodes.request.reality.line",
+            "scenes.seo_a.email_request.nodes.request.line",
         )
 
         self.assertTrue(owner["editable"])
         self.assertEqual("direct_yaml", owner["kind"])
         self.assertEqual("story/scenes/seo_a/email_request.yaml", owner["relativePath"])
-        self.assertEqual("nodes.request.reality.line", owner["fieldPath"])
+        self.assertEqual("nodes.request.line", owner["fieldPath"])
         self.assertGreater(owner["sources"][0]["line"], 0)
         self.assertEqual(value_hash(owner["currentValue"]), owner["currentValueHash"])
 
     def test_system_dialogue_owner_and_save_are_direct_physical_yaml(self):
         temporary, root = self.make_project_copy()
         try:
-            key = "system_flows.system.night_activity.nodes.activity_result.variants.workout.reality.line"
+            key = "system_flows.system.night_activity.nodes.activity_result.variants.workout.line"
             owner = story_text_owner(root, key)
             self.assertTrue(owner["editable"])
             self.assertEqual("direct_yaml", owner["kind"])
             self.assertEqual("story/system_flows/night_activity.yaml", owner["relativePath"])
-            self.assertEqual("nodes.activity_result.variants.workout.reality.line", owner["fieldPath"])
+            self.assertEqual("nodes.activity_result.variants.workout.line", owner["fieldPath"])
 
             result = save_story_text(root, {"edits": [{
                 "localization_key": key,
@@ -443,7 +432,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
                 item for item in result["runtime"]["system_flows"]["system.night_activity"]["nodes"]["activity_result"]["variants"]
                 if item["id"] == "workout"
             )
-            self.assertEqual("운동을 마치고 새 문장을 기록했다.", variant["reality"]["line"])
+            self.assertEqual("운동을 마치고 새 문장을 기록했다.", variant["line"])
             self.assertIn("system_flows", result["documentUpdates"])
         finally:
             temporary.cleanup()
@@ -452,10 +441,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
     def test_save_story_text_updates_only_target_scalar_and_runtime(self):
         temporary, root = self.make_project_copy()
         try:
-            keys = [
-                "scenes.seo_a.email_request.nodes.request.perceived.line",
-                "scenes.seo_a.email_request.nodes.request.reality.line",
-            ]
+            keys = ["scenes.seo_a.email_request.nodes.request.line"]
             owners = [story_text_owner(root, key) for key in keys]
             target = root / owners[0]["relativePath"]
             target.write_text("# dialogue-edit-sentinel\n" + target.read_text(encoding="utf-8"), encoding="utf-8")
@@ -473,8 +459,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
             self.assertIn("# dialogue-edit-sentinel", target.read_text(encoding="utf-8"))
             self.assertEqual("수정된 업무 대사입니다.", result["owner"]["currentValue"])
             runtime_node = result["runtime"]["scenes"]["seo_a.email_request"]["nodes"]["request"]
-            self.assertEqual("수정된 업무 대사입니다.", runtime_node["perceived"]["line"])
-            self.assertEqual("수정된 업무 대사입니다.", runtime_node["reality"]["line"])
+            self.assertEqual("수정된 업무 대사입니다.", runtime_node["line"])
         finally:
             temporary.cleanup()
 
@@ -507,7 +492,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
     def test_save_story_text_rejects_stale_revision_and_value(self):
         temporary, root = self.make_project_copy()
         try:
-            key = "scenes.seo_a.email_request.nodes.request.reality.line"
+            key = "scenes.seo_a.email_request.nodes.request.line"
             owner = story_text_owner(root, key)
             with self.assertRaisesRegex(RuntimeError, "REVISION_CONFLICT"):
                 save_story_text(root, {
@@ -565,7 +550,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
     def test_mobile_sync_rebases_unrelated_file_revision_and_applies(self):
         temporary, root = self.make_project_copy()
         try:
-            key = "scenes.seo_a.email_request.nodes.request.reality.line"
+            key = "scenes.seo_a.email_request.nodes.request.line"
             owner = story_text_owner(root, key)
             target = root / owner["relativePath"]
             target.write_text("# unrelated revision\n" + target.read_text(encoding="utf-8"), encoding="utf-8")
@@ -583,11 +568,6 @@ class StoryEditorBridgeTests(unittest.TestCase):
             self.assertEqual("applied", result["receipts"][0]["status"])
             updated = story_text_owner(root, key)
             self.assertEqual("모바일에서 안전하게 바꾼 현실 대사입니다.", updated["currentValue"])
-            paired = story_text_owner(
-                root,
-                "scenes.seo_a.email_request.nodes.request.perceived.line",
-            )
-            self.assertEqual(updated["currentValue"], paired["currentValue"])
             self.assertIn("# unrelated revision", target.read_text(encoding="utf-8"))
         finally:
             temporary.cleanup()
@@ -595,25 +575,15 @@ class StoryEditorBridgeTests(unittest.TestCase):
     def test_mobile_sync_reports_same_field_conflict_without_overwrite(self):
         temporary, root = self.make_project_copy()
         try:
-            key = "scenes.seo_a.email_request.nodes.request.reality.line"
+            key = "scenes.seo_a.email_request.nodes.request.line"
             original = story_text_owner(root, key)
-            paired_key = "scenes.seo_a.email_request.nodes.request.perceived.line"
-            paired = story_text_owner(root, paired_key)
             local_value = "Mac에서 먼저 수정한 현실 대사입니다."
-            saved = save_story_text(root, {"edits": [
-                {
-                    "localization_key": key,
-                    "expected_revision": original["revision"],
-                    "expected_value_hash": original["currentValueHash"],
-                    "next_value": local_value,
-                },
-                {
-                    "localization_key": paired_key,
-                    "expected_revision": paired["revision"],
-                    "expected_value_hash": paired["currentValueHash"],
-                    "next_value": local_value,
-                },
-            ]})
+            saved = save_story_text(root, {"edits": [{
+                "localization_key": key,
+                "expected_revision": original["revision"],
+                "expected_value_hash": original["currentValueHash"],
+                "next_value": local_value,
+            }]})
             self.assertTrue(saved["saved"])
 
             result = apply_mobile_sync_changes(root, {"changes": [{
@@ -640,8 +610,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
             record = snapshot["workspace"]["scenes"]["seo_a.email_request"]
             base_scene = copy.deepcopy(record["scene"])
             mobile_scene = copy.deepcopy(base_scene)
-            mobile_scene["nodes"]["request"]["perceived"]["line"] = "휴대폰에서 고친 요청 대사입니다."
-            mobile_scene["nodes"]["request"]["reality"]["line"] = "휴대폰에서 고친 요청 대사입니다."
+            mobile_scene["nodes"]["request"]["line"] = "휴대폰에서 고친 요청 대사입니다."
 
             mac_scene = copy.deepcopy(base_scene)
             mac_scene["title"] = "Mac에서 바꾼 장면 제목"
@@ -668,7 +637,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
             self.assertEqual("applied", result["sceneReceipts"][0]["status"])
             merged = result["snapshot"]["workspace"]["scenes"][base_scene["id"]]["scene"]
             self.assertEqual("Mac에서 바꾼 장면 제목", merged["title"])
-            self.assertEqual("휴대폰에서 고친 요청 대사입니다.", merged["nodes"]["request"]["reality"]["line"])
+            self.assertEqual("휴대폰에서 고친 요청 대사입니다.", merged["nodes"]["request"]["line"])
         finally:
             temporary.cleanup()
 
@@ -712,7 +681,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
         try:
             key = (
                 "scenes.common.day_02_practical_meeting.nodes."
-                "day_one_activity_reaction.variants.after_workout.reality.line"
+                "day_one_activity_reaction.variants.after_workout.line"
             )
             owner = story_text_owner(root, key, "en")
             self.assertFalse(owner["translationExists"])
@@ -795,8 +764,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
             target = Path(locale.pop("_source"))
             locale["strings"].update({
                 "scenes.seo_a.email_request.title": "Email Delivery Only",
-                "scenes.seo_a.email_request.nodes.request.perceived.line": "Send it by email and keep your distance.",
-                "scenes.seo_a.email_request.nodes.request.reality.line": "Send it by email and keep your distance.",
+                "scenes.seo_a.email_request.nodes.request.line": "Send it by email and keep your distance.",
             })
             result = save_document(root, {
                 "kind": "locales",
@@ -808,7 +776,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
             self.assertEqual("Email Delivery Only", catalog["scenes.seo_a.email_request.title"])
             self.assertEqual(
                 "Send it by email and keep your distance.",
-                catalog["scenes.seo_a.email_request.nodes.request.reality.line"],
+                catalog["scenes.seo_a.email_request.nodes.request.line"],
             )
         finally:
             temporary.cleanup()
@@ -888,7 +856,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
             visual = copy.deepcopy(project.visuals["background.office_open"])
             target = Path(visual.pop("_source"))
             visual["variants"]["late_afternoon"]["priority"] = 77
-            visual["variants"]["late_afternoon"]["match"]["atmospheres"] = ["awkward"]
+            visual["variants"]["late_afternoon"]["match"]["times"] = ["afternoon"]
 
             result = save_document(root, {
                 "kind": "visuals",
@@ -899,7 +867,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
             self.assertTrue(result["saved"])
             saved = result["runtime"]["visuals"]["background.office_open"]
             self.assertEqual(77, saved["variants"]["late_afternoon"]["priority"])
-            self.assertEqual(["awkward"], saved["variants"]["late_afternoon"]["match"]["atmospheres"])
+            self.assertEqual(["afternoon"], saved["variants"]["late_afternoon"]["match"]["times"])
         finally:
             temporary.cleanup()
 

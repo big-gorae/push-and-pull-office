@@ -19,10 +19,10 @@ test("mobile scene authoring edits a scene and reopens its draft offline", async
   await expect(page).toHaveTitle("office");
   await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "수요일의 첫 회의" })).toBeVisible();
-  await expect(page.locator(".mobile-node-card")).toHaveCount(36);
+  await expect(page.locator(".mobile-node-card")).toHaveCount(20);
 
   await page.locator(".node-card-main").first().click();
-  const editor = page.getByRole("textbox", { name: "원문 대사" });
+  const editor = page.getByRole("textbox", { name: "대사" });
   const original = await editor.inputValue();
   await editor.fill(`${original} 오프라인 장면 초안`);
   await expect(page.locator(".mobile-node-editor .scene-status", { hasText: "이 폰에 초안 저장" })).toBeVisible();
@@ -47,7 +47,7 @@ test("mobile scene authoring edits a scene and reopens its draft offline", async
     await expect(page.locator(".scene-heading .scene-status", { hasText: "이 폰에 초안 저장" })).toBeVisible();
     await expect(page.getByText(/오프라인 ·/)).toBeVisible();
     await page.locator(".node-card-main").first().click();
-    await expect(page.getByRole("textbox", { name: "원문 대사" })).toHaveValue(`${original} 오프라인 장면 초안`);
+    await expect(page.getByRole("textbox", { name: "대사" })).toHaveValue(`${original} 오프라인 장면 초안`);
   } finally {
     await context.setOffline(false);
   }
@@ -64,7 +64,7 @@ test("mobile scene authoring detects a new app version without touching drafts",
 
   await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
   await page.locator(".node-card-main").first().click();
-  const editor = page.getByRole("textbox", { name: "원문 대사" });
+  const editor = page.getByRole("textbox", { name: "대사" });
   const original = await editor.inputValue();
   await editor.fill(`${original} 업데이트 보존 확인`);
   await expect(page.locator(".mobile-node-editor .scene-status", { hasText: "이 폰에 초안 저장" })).toBeVisible();
@@ -75,7 +75,7 @@ test("mobile scene authoring detects a new app version without touching drafts",
   await expect(page).toHaveURL(/\?app-version=future-build-20260814#\/author/, { timeout: 10_000 });
   await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
   await page.locator(".node-card-main").first().click();
-  await expect(page.getByRole("textbox", { name: "원문 대사" })).toHaveValue(`${original} 업데이트 보존 확인`);
+  await expect(page.getByRole("textbox", { name: "대사" })).toHaveValue(`${original} 업데이트 보존 확인`);
 
   await page.getByRole("button", { name: "대사 목록으로 돌아가기" }).click();
   await page.getByRole("button", { name: "날짜별 장면 열기" }).click();
@@ -98,8 +98,7 @@ test("mobile scene authoring exposes structure, artwork and background controls"
   await page.getByRole("button", { name: "원화 선택 닫기" }).click();
 
   await expect(page.getByRole("combobox", { name: "대사 또는 나레이션" })).toBeVisible();
-  await page.getByRole("button", { name: "속마음" }).click();
-  await expect(page.getByRole("button", { name: /속마음 대사/ })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "대사" })).toBeVisible();
 });
 
 test("iPhone 16 Pro Max opens dialogue editing as an isolated page", async ({ page }) => {
@@ -131,7 +130,7 @@ test("mobile scene authoring queues a complete scene for Mac sync", async ({ pag
   await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
 
   await page.locator(".node-card-main").first().click();
-  const editor = page.getByRole("textbox", { name: "원문 대사" });
+  const editor = page.getByRole("textbox", { name: "대사" });
   await editor.fill(`${await editor.inputValue()} 원격 반영 대기`);
   await page.getByRole("button", { name: "장면 저장·동기화" }).click();
 

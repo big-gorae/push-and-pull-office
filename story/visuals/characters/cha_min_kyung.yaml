@@ -5,7 +5,6 @@ extends: archetype.character_bust
 title_key: visual.character.cha_min_kyung.title
 title: 차민경 기본 바스트
 character: cha_min_kyung
-default_reality_expression: actual_skeptical
 fallback_asset: assets/characters/cha-min-kyung/office-default/base-cutout.png
 default_outfit: office
 default_pose: assertive
@@ -14,3 +13,4 @@ poses:
   assertive: {offset_x: 0, offset_y: -4, scale: 1.03}
 expression_assets: {}
 tags: [heroine, witness, assertive]
+default_expression: actual_skeptical

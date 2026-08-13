@@ -13,6 +13,7 @@
     "sequence": {"type": "integer", "minimum": 0},
     "location": {"type": "string"},
     "time": {"type": "string"},
+    "default_background": {"$ref": "#/$defs/background_cue"},
     "purpose": {"type": "string", "minLength": 1},
     "cast": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
     "world_context": {"$ref": "world-context.schema.json"},
@@ -51,33 +52,23 @@
       },
       "additionalProperties": false
     },
-    "perceived": {
+    "background_cue": {
       "type": "object",
-      "required": ["atmosphere", "line"],
+      "required": ["visual_id", "variant_id"],
       "properties": {
-        "atmosphere": {"type": "string"},
-        "expression": {"type": "string"},
-        "line": {"type": "string", "minLength": 1}
+        "visual_id": {"type": "string"},
+        "variant_id": {"type": "string"}
       },
       "additionalProperties": false
     },
-    "reality": {
+    "stage_cue": {
       "type": "object",
-      "required": ["atmosphere", "line", "intent"],
+      "required": ["position", "character", "visual_id", "artwork"],
       "properties": {
-        "atmosphere": {"type": "string"},
-        "expression": {"type": "string"},
-        "line": {"type": "string", "minLength": 1},
-        "intent": {"type": "string"}
-      },
-      "additionalProperties": false
-    },
-    "speakers": {
-      "type": "object",
-      "required": ["perceived", "reality"],
-      "properties": {
-        "perceived": {"type": ["string", "null"]},
-        "reality": {"type": ["string", "null"]}
+        "position": {"enum": ["left", "center", "right"]},
+        "character": {"type": "string"},
+        "visual_id": {"type": "string"},
+        "artwork": {"type": "string"}
       },
       "additionalProperties": false
     },
@@ -182,15 +173,15 @@
     },
     "dialogue_variant": {
       "type": "object",
-      "required": ["id", "perceived", "reality"],
+      "required": ["id", "line"],
       "properties": {
         "id": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
         "priority": {"type": "integer"},
         "conditions": {"type": "array", "items": {"$ref": "#/$defs/condition"}},
         "default": {"type": "boolean"},
         "self_development": {"$ref": "#/$defs/self_development_variant"},
-        "perceived": {"$ref": "#/$defs/perceived"},
-        "reality": {"$ref": "#/$defs/reality"}
+        "expression": {"type": "string"},
+        "line": {"type": "string", "minLength": 1}
       },
       "additionalProperties": false
     },
@@ -199,15 +190,15 @@
       "required": ["id", "kind"],
       "properties": {
         "id": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
-        "kind": {"enum": ["dual_dialogue", "dual_narration", "choice", "state_gate", "effect", "exit"]},
+        "kind": {"enum": ["dialogue", "narration", "silent", "choice", "state_gate", "effect", "exit"]},
         "analysis_hints": {"$ref": "#/$defs/analysis_hints"},
         "interaction_context": {"$ref": "#/$defs/interaction_context"},
         "speaker": {"type": "string"},
-        "speakers": {"$ref": "#/$defs/speakers"},
         "presentation_flags": {"type": "array", "items": {"type": "string"}},
-        "perceived": {"$ref": "#/$defs/perceived"},
-        "reality": {"$ref": "#/$defs/reality"},
+        "expression": {"type": "string"},
+        "line": {"type": "string"},
         "variants": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/dialogue_variant"}},
+        "stage": {"type": "array", "items": {"$ref": "#/$defs/stage_cue"}},
         "prompt": {"type": "string"},
         "stimulus": {"type": "string", "minLength": 1},
         "options": {"type": "array", "items": {"$ref": "#/$defs/option"}},
@@ -216,17 +207,15 @@
         "next": {"type": "string"}
       },
       "allOf": [
-        {"if": {"properties": {"kind": {"const": "dual_dialogue"}}}, "then": {
-          "required": ["next"],
-          "allOf": [
-            {"oneOf": [{"required": ["speaker"]}, {"required": ["speakers"]}]},
-            {"oneOf": [{"required": ["perceived", "reality"]}, {"required": ["variants"]}]}
-          ]
+        {"if": {"properties": {"kind": {"const": "dialogue"}}}, "then": {
+          "required": ["speaker", "next"],
+          "oneOf": [{"required": ["line"]}, {"required": ["variants"]}]
         }},
-        {"if": {"properties": {"kind": {"const": "dual_narration"}}}, "then": {
+        {"if": {"properties": {"kind": {"const": "narration"}}}, "then": {
           "required": ["next"],
-          "oneOf": [{"required": ["perceived", "reality"]}, {"required": ["variants"]}]
+          "oneOf": [{"required": ["line"]}, {"required": ["variants"]}]
         }},
+        {"if": {"properties": {"kind": {"const": "silent"}}}, "then": {"required": ["line", "next"]}},
         {"if": {"properties": {"kind": {"const": "choice"}}}, "then": {"required": ["interaction_context", "prompt", "stimulus", "options"]}},
         {"if": {"properties": {"kind": {"const": "state_gate"}}}, "then": {"required": ["transitions"]}},
         {"if": {"properties": {"kind": {"const": "effect"}}}, "then": {"required": ["effects", "next"]}},

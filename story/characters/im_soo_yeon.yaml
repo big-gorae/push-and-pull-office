@@ -36,19 +36,15 @@ visual:
   props: [책갈피, 옛 서점 명찰, 주소가 지워진 엽서]
 expressions:
   subjective_first_love:
-    layer: perceived
     emotion: romantic_warmth
     description: 따뜻한 역광 속에서 한도윤만 바라보는 첫사랑처럼 보인다.
   actual_customer_service:
-    layer: reality
     emotion: courtesy
     description: 모든 손님에게 같은 친절을 제공하는 업무 표정.
   actual_guarded:
-    layer: reality
     emotion: fear
     description: 반복 방문 뒤 출입문과 동료를 확인한다.
   actual_testimony:
-    layer: reality
     emotion: resolve
     description: 현재의 삶을 지키며 자신의 문장으로 과거를 기록한다.
 relationships:

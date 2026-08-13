@@ -15,15 +15,11 @@ scene: bonus.stat_health_sample_sorting
 requires:
   events: [anchor.day_03_business_trip_or_cafe]
   conditions:
-    - {path: visible.protagonist.self_development.stats.health, op: gte, value: 3}
+  - {path: visible.protagonist.self_development.stats.health, op: gte, value: 3}
 on_seen:
   effects:
-    - {path: progress.memories, op: append_unique, value: cg.stat.health.min_kyung}
+  - {path: progress.memories, op: append_unique, value: cg.stat.health.min_kyung}
 on_missed: {effects: []}
 presentation:
-  perceived:
-    title: 준비한 체력으로 맞춘 호흡
-    summary: 밤마다 단련한 체력으로 샘플 정리에 참여하고, 민경과 역할을 맞춘 순간을 원화로 남긴다.
-  reality:
-    title: 샘플 검수 역할 분담
-    summary: 도윤은 자기 팀 검수분을 무리하지 않고 나눠 옮겼고, 민경은 역할 분담 덕분에 정리가 빨리 끝났다고 평가한다.
+  title: 샘플 검수 역할 분담
+  summary: 도윤은 자기 팀 검수분을 무리하지 않고 나눠 옮겼고, 민경은 역할 분담 덕분에 정리가 빨리 끝났다고 평가한다.

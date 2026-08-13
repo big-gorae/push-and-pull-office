@@ -1,5 +1,4 @@
 import type {
-  Layer,
   LocaleId,
   ArtworkPosition,
   ResolvedBackground,
@@ -9,7 +8,6 @@ import type {
   Scene,
   StoryNode,
   StageCharacterCue,
-  ViewMode,
   VisualObject,
 } from "./types";
 import { effectiveSpeaker } from "./storyLogic";
@@ -63,10 +61,6 @@ export class LocalizationService {
   }
 }
 
-function layerFor(node: StoryNode | undefined, mode: ViewMode): Layer | undefined {
-  return node?.[mode] as Layer | undefined;
-}
-
 export type CharacterArtworkOption = {
   id: string;
   visual_id: string;
@@ -99,7 +93,7 @@ function artworkSelection(visual: VisualObject, artworkId: string | undefined, e
   };
 }
 
-export function characterArtworkOptions(runtime: Runtime, characterId: string, mode?: ViewMode): CharacterArtworkOption[] {
+export function characterArtworkOptions(runtime: Runtime, characterId: string): CharacterArtworkOption[] {
   return Object.values(runtime.visuals)
     .filter((visual) => visual.kind === "character" && !visual.abstract && visual.character === characterId)
     .flatMap((visual): CharacterArtworkOption[] => {
@@ -119,7 +113,6 @@ export function characterArtworkOptions(runtime: Runtime, characterId: string, m
         label: "기본 원화",
       }] : [];
       const expressions = Object.entries(visual.expression_assets || {})
-        .filter(([expression]) => !mode || runtime.characters[characterId]?.expressions?.[expression]?.layer === mode)
         .map(([expression, asset]) => ({
           id: expression,
           visual_id: visual.id,
@@ -147,7 +140,7 @@ export class VisualResolver {
     return Object.values(this.runtime.visuals).filter((visual) => visual.kind === kind && !visual.abstract);
   }
 
-  resolveBackground(scene: Scene, node: StoryNode | undefined, mode: ViewMode): ResolvedBackground | undefined {
+  resolveBackground(scene: Scene, node: StoryNode | undefined): ResolvedBackground | undefined {
     if (scene.default_background) {
       const visual = this.runtime.visuals[scene.default_background.visual_id];
       const variant = visual?.kind === "background" && !visual.abstract
@@ -165,12 +158,9 @@ export class VisualResolver {
         };
       }
     }
-    const layer = layerFor(node, mode);
     const dimensions: Record<string, string | undefined> = {
       locations: scene.location,
       times: scene.time,
-      atmospheres: layer?.atmosphere,
-      modes: mode,
     };
     const candidates: ResolvedBackground[] = [];
     this.concrete("background").forEach((visual) => {
@@ -219,12 +209,11 @@ export class VisualResolver {
     };
   }
 
-  resolveStage(scene: Scene, nodeId: string, mode: ViewMode, nodeOverride?: StoryNode): ResolvedStage {
+  resolveStage(scene: Scene, nodeId: string, nodeOverride?: StoryNode): ResolvedStage {
     const node = nodeOverride || scene.nodes[nodeId];
-    const speaker = effectiveSpeaker(node, mode);
+    const speaker = effectiveSpeaker(node);
     const protagonistReveal = canRevealProtagonistArtwork(scene, node);
-    const hasManualStage = Boolean(node?.stage && Object.prototype.hasOwnProperty.call(node.stage, mode));
-    const manualCues = hasManualStage ? node?.stage?.[mode] || [] : undefined;
+    const manualCues = node?.stage;
     const characters = manualCues
       ? manualCues.flatMap((cue) => {
         if (isProtagonistArtwork(cue.character) && !protagonistReveal) return [];
@@ -233,9 +222,8 @@ export class VisualResolver {
       })
       : [];
     return {
-      background: this.resolveBackground(scene, node, mode),
+      background: this.resolveBackground(scene, node),
       characters,
-      mode,
       node: nodeId,
     };
   }

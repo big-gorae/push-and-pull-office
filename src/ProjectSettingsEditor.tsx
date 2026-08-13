@@ -308,11 +308,6 @@ function VariantEditor({ id, variant, onChange, onDelete, onChooseAsset }: { id:
       <label className="field"><span>우선순위 · 높을수록 먼저</span><input type="number" value={variant.priority} onChange={(event) => onChange({ ...variant, priority: Number(event.target.value) })} /></label>
       <label className="field"><span>장소 · 쉼표 구분</span><input value={csv(variant.match.locations)} onChange={(event) => updateMatch("locations", event.target.value)} /></label>
       <label className="field"><span>시간 · 쉼표 구분</span><input value={csv(variant.match.times)} onChange={(event) => updateMatch("times", event.target.value)} /></label>
-      <label className="field"><span>분위기 · 쉼표 구분</span><input value={csv(variant.match.atmospheres)} onChange={(event) => updateMatch("atmospheres", event.target.value)} /></label>
-      <label className="field"><span>화면 모드</span><div className="mode-checks">{(["perceived", "reality"] as const).map((mode) => <label key={mode}><input type="checkbox" checked={(variant.match.modes || []).includes(mode)} onChange={(event) => {
-        const values = variant.match.modes || [];
-        onChange({ ...variant, match: { ...variant.match, modes: event.target.checked ? [...values, mode] : values.filter((value) => value !== mode) } });
-      }} />{mode === "perceived" ? "주인공 인식" : "실제"}</label>)}</div></label>
     </div>
   </section>;
 }
@@ -334,7 +329,7 @@ function VisualEditor({ visual, runtime, onChange, chooseAsset }: { visual: Visu
     </div></fieldset>
 
     {visual.kind === "background" && <fieldset><legend>조건별 배경 이미지 ({Object.keys(variants).length})</legend>
-      <p className="settings-help">현재 장면의 장소·시간·분위기·보기 모드가 많이 맞고 우선순위가 높은 항목이 표시됩니다.</p>
+      <p className="settings-help">현재 장면의 장소·시간이 많이 맞고 우선순위가 높은 항목이 표시됩니다.</p>
       <div className="settings-card-list">{Object.entries(variants).map(([id, variant]) => <VariantEditor id={id} variant={variant} key={id} onChooseAsset={() => chooseAsset((asset) => update({ variants: { ...variants, [id]: { ...variant, asset } } }))} onChange={(next) => update({ variants: { ...variants, [id]: next } })} onDelete={() => { const next = { ...variants }; delete next[id]; update({ variants: next }); }} />)}
         <div className="settings-add-row"><input placeholder="새 variant ID" value={newVariantId} onChange={(event) => setNewVariantId(event.target.value)} /><button type="button" onClick={() => {
           const id = newVariantId.trim();

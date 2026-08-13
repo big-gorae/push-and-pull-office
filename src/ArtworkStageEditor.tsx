@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useAssetPreview } from "./assetPreview";
 import { characterArtworkOptions, type CharacterArtworkOption } from "./presentation";
-import type { ArtworkPosition, Runtime, Scene, StageCharacterCue, StoryNode, ViewMode } from "./types";
+import type { ArtworkPosition, Runtime, Scene, StageCharacterCue, StoryNode } from "./types";
 import { canRevealProtagonistArtwork, isProtagonistArtwork } from "./protagonistArtworkPolicy";
 
 const POSITIONS: Array<{ id: ArtworkPosition; label: string }> = [
@@ -26,21 +26,20 @@ type ArtworkPickerProps = {
   runtime: Runtime;
   scene: Scene;
   position: ArtworkPosition;
-  mode: ViewMode;
   allowProtagonistArtwork: boolean;
   current?: StageCharacterCue;
   onPick: (option?: CharacterArtworkOption) => void;
   onClose: () => void;
 };
 
-function ArtworkPicker({ root, runtime, scene, position, mode, allowProtagonistArtwork, current, onPick, onClose }: ArtworkPickerProps) {
+function ArtworkPicker({ root, runtime, scene, position, allowProtagonistArtwork, current, onPick, onClose }: ArtworkPickerProps) {
   const characters = useMemo(() => scene.cast
     .map((id) => runtime.characters[id])
     .filter((character) => character && (allowProtagonistArtwork || !isProtagonistArtwork(character.id)))
-    .filter((character) => character && characterArtworkOptions(runtime, character.id, mode).length), [allowProtagonistArtwork, mode, runtime, scene.cast]);
+    .filter((character) => character && characterArtworkOptions(runtime, character.id).length), [allowProtagonistArtwork, runtime, scene.cast]);
   const [characterId, setCharacterId] = useState(current?.character || characters[0]?.id || "");
   const options = characterId && (allowProtagonistArtwork || !isProtagonistArtwork(characterId))
-    ? characterArtworkOptions(runtime, characterId, mode)
+    ? characterArtworkOptions(runtime, characterId)
     : [];
 
   return <div className="artwork-picker-backdrop" role="presentation" onMouseDown={(event) => {
@@ -53,7 +52,7 @@ function ArtworkPicker({ root, runtime, scene, position, mode, allowProtagonistA
       </header>
       <nav className="artwork-character-tabs" aria-label="캐릭터별 원화 디렉토리">
         {characters.map((character) => <button type="button" className={character.id === characterId ? "active" : ""} onClick={() => setCharacterId(character.id)} key={character.id}>
-          {character.display_name}<small>{characterArtworkOptions(runtime, character.id, mode).length}개</small>
+          {character.display_name}<small>{characterArtworkOptions(runtime, character.id).length}개</small>
         </button>)}
       </nav>
       <div className="artwork-picker-grid">
@@ -76,26 +75,22 @@ export default function ArtworkStageEditor({
   runtime,
   scene,
   node,
-  mode,
-  onMode,
   onChange,
 }: {
   root: string;
   runtime: Runtime;
   scene: Scene;
   node: StoryNode;
-  mode: ViewMode;
-  onMode: (mode: ViewMode) => void;
   onChange: (node: StoryNode) => void;
 }) {
   const [pickerPosition, setPickerPosition] = useState<ArtworkPosition | null>(null);
   const allowProtagonistArtwork = canRevealProtagonistArtwork(scene, node);
-  const manual = Boolean(node.stage && Object.prototype.hasOwnProperty.call(node.stage, mode));
-  const cues = node.stage?.[mode] || [];
+  const manual = node.stage !== undefined;
+  const cues = node.stage || [];
 
   const setCues = (next: StageCharacterCue[]) => onChange({
     ...node,
-    stage: { ...(node.stage || {}), [mode]: next },
+    stage: next,
   });
   const choose = (position: ArtworkPosition, option?: CharacterArtworkOption) => {
     const withoutPosition = cues.filter((cue) => cue.position !== position);
@@ -114,10 +109,6 @@ export default function ArtworkStageEditor({
   return <section className="artwork-stage-editor">
     <header>
       <div><strong>화면 원화</strong><small>화자와 별개로 한 위치에 한 명씩, 최대 3명</small></div>
-      <div className="artwork-stage-mode">
-        <button type="button" className={mode === "perceived" ? "active" : ""} onClick={() => onMode("perceived")}>스토리 모드</button>
-        <button type="button" className={mode === "reality" ? "active" : ""} onClick={() => onMode("reality")}>속마음 모드</button>
-      </div>
     </header>
     {!allowProtagonistArtwork && scene.cast.includes("han_do_yoon") && <p className="artwork-stage-policy-note">한도윤 원화는 후반 반전 공개 노드에서만 선택할 수 있습니다.</p>}
     <div className="artwork-stage-toolbar">
@@ -143,7 +134,6 @@ export default function ArtworkStageEditor({
       runtime={runtime}
       scene={scene}
       position={pickerPosition}
-      mode={mode}
       allowProtagonistArtwork={allowProtagonistArtwork}
       current={cues.find((cue) => cue.position === pickerPosition)}
       onPick={(option) => choose(pickerPosition, option)}

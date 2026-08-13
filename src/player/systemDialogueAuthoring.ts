@@ -1,7 +1,7 @@
-import type { Runtime, ViewLayer } from "../types";
+import type { Runtime } from "../types";
 import type { SystemFlowAuthoringTarget } from "./storyAuthoring";
 
-export type SystemDialogueFieldRole = "label" | "description" | ViewLayer;
+export type SystemDialogueFieldRole = "label" | "description" | "line";
 
 export type SystemDialogueRow = {
   key: string;
@@ -97,8 +97,7 @@ const CONTEXT_LABELS: Record<string, string> = {
 const FIELD_ORDER: Record<SystemDialogueFieldRole, number> = {
   label: 0,
   description: 1,
-  perceived: 0,
-  reality: 1,
+  line: 0,
 };
 
 function orderedIndex(order: string[], value: string): number {
@@ -112,8 +111,8 @@ function groupFor(flowId: string, nodeId?: string, optionId?: string): string {
   return nodeId === "activity_result" ? "results" : "intro";
 }
 
-function fieldRoleFor(fieldPath: string, layer?: ViewLayer): SystemDialogueFieldRole {
-  if (layer) return layer;
+function fieldRoleFor(fieldPath: string): SystemDialogueFieldRole {
+  if (fieldPath.endsWith(".line")) return "line";
   return fieldPath.endsWith(".description") ? "description" : "label";
 }
 
@@ -122,8 +121,7 @@ function itemToken(nodeId?: string, variantId?: string, optionId?: string): stri
 }
 
 function fieldLabel(role: SystemDialogueFieldRole): string {
-  if (role === "perceived") return "화면 대사 · 주인공 인식";
-  if (role === "reality") return "실제 상황 · 원문 모드";
+  if (role === "line") return "화면 대사";
   if (role === "description") return "화면 설명";
   return "화면 선택지";
 }
@@ -134,15 +132,12 @@ function itemPreviewTarget(item: SystemDialogueRow[]): SystemFlowAuthoringTarget
   const nodeIndex = entry.indexOf("nodes");
   const variantIndex = entry.indexOf("variants");
   const optionIndex = entry.indexOf("options");
-  const layer = item.find((row) => row.fieldRole === "perceived")?.fieldRole
-    || item.find((row) => row.fieldRole === "reality")?.fieldRole;
   return {
     kind: "system_flow",
     flowId: first.flowId,
     ...(nodeIndex >= 0 ? { nodeId: entry[nodeIndex + 1] } : {}),
     ...(variantIndex >= 0 ? { variantId: entry[variantIndex + 1] } : {}),
     ...(optionIndex >= 0 ? { optionId: entry[optionIndex + 1] } : {}),
-    ...(layer === "perceived" || layer === "reality" ? { layer } : {}),
   };
 }
 
@@ -153,7 +148,7 @@ export function systemDialogueFlows(runtime: Runtime): SystemDialogueFlow[] {
       const flowId = entry.context.flowId || "";
       const groupId = groupFor(flowId, entry.context.nodeId, entry.context.optionId);
       const token = itemToken(entry.context.nodeId, entry.context.variantId, entry.context.optionId);
-      const role = fieldRoleFor(entry.sourceDocument.fieldPath, entry.context.layer);
+      const role = fieldRoleFor(entry.sourceDocument.fieldPath);
       return {
         key: entry.key,
         flowId,

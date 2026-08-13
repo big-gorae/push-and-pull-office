@@ -5,7 +5,7 @@
 ```text
 game_modes/campaigns/events/threads/meta/characters/routes/scenes/locales/visuals YAML
         │
-        ├─ validate: 시간 범위·충돌·의존성·참조·그래프·이중 레이어 검사
+        ├─ validate: 시간 범위·충돌·의존성·참조·그래프·단일 대사 검사
         ├─ timeline: 제작·디버깅용 사건 후보·차단 이유·오프스크린 진행 재현
         ├─ simulate: 선택과 수치 변화 재현
         └─ build
@@ -23,11 +23,10 @@ build/story-runtime.json
 
 ```json
 {
-  "version": 5,
+  "version": 6,
   "gameModeId": "base",
   "campaignId": "main",
   "continuityId": "main",
-  "viewLayer": "perceived",
   "currentEventId": "seo_a.relief_smile",
   "sceneId": "seo_a.relief_smile",
   "nodeId": "response_choice",
@@ -47,8 +46,7 @@ build/story-runtime.json
     {
       "sceneId": "seo_a.email_request",
       "nodeId": "request",
-      "variantId": "default",
-      "layerAtPresentation": "perceived"
+      "variantId": "default"
     }
   ]
 }
@@ -59,14 +57,14 @@ build/story-runtime.json
 - 수치 범위 제한은 런타임과 하네스가 동일한 manifest 정의를 사용한다.
 - `state.progress.time`, `events.seen/missed/expired`, `memories`도 세이브에 포함한다.
 - 표시 문자열과 번역 결과는 저장하지 않는다. 불러오기·백로그는 저장된 ID로 현재 locale에서 다시 해석한다.
-- v2·v3 저장은 읽을 때 자기계발 기본 상태를 보충하고, v4의 `mode`는 `base`/`truth_view` 게임 모드와 `main` 캠페인으로 명시적으로 변환한다.
-- v5 저장은 `gameModeId`, `campaignId`, `continuityId`, `viewLayer`가 모두 있어야 한다. 알 수 없는 캠페인·모드, 고정 레이어 불일치, 미래 버전은 임의의 첫 캠페인으로 대체하지 않고 로드를 거부한다. 원본 localStorage 값은 그대로 보존한다.
+- v2~v5 저장은 읽을 때 자기계발 기본 상태를 보충하고, 폐기된 표시 모드와 레이어는 `base` 게임 모드와 `main` 캠페인으로 변환한다.
+- v6 저장은 `gameModeId`, `campaignId`, `continuityId`가 모두 있어야 한다. 알 수 없는 캠페인·모드와 미래 버전은 임의의 첫 캠페인으로 대체하지 않고 로드를 거부한다. 원본 localStorage 값은 그대로 보존한다.
 
 슬롯 자체는 세션과 별도로 번역 독립적인 미리보기 ID만 저장한다.
 
 ```json
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "savedAt": 1730000000000,
   "preview": {
     "kind": "scene",
@@ -78,15 +76,14 @@ build/story-runtime.json
     "variantId": "default",
     "gameModeId": "base",
     "campaignId": "main",
-    "continuityId": "main",
-    "viewLayer": "perceived"
+    "continuityId": "main"
   },
   "session": {}
 }
 ```
 
 `preview`를 목록이 열리는 시점의 locale로 해석하므로, 저장 후 언어를 바꿔도 제목과 대사가 즉시 함께 바뀐다.
-`preview.kind`는 `timeline`, `scene`, `self_development`, `ending` 중 하나이며 밤의 선택·결과 상태도 같은 v5 세션에서 이어서 불러온다. preview의 모드·캠페인 정체성은 정규화가 끝난 session에서 다시 계산한다.
+`preview.kind`는 `timeline`, `scene`, `self_development`, `ending` 중 하나이며 밤의 선택·결과 상태도 같은 v6 세션에서 이어서 불러온다. preview의 모드·캠페인 정체성은 정규화가 끝난 session에서 다시 계산한다.
 
 ## 시간 이벤트 처리
 
@@ -111,10 +108,10 @@ build/story-runtime.json
 ## 노드 처리
 
 ```text
-dual_dialogue / dual_narration
+dialogue / narration
   emotion_rules로 derived.characters를 계산
   priority, conditions와 self_development.expression으로 dialogue variant를 선택
-  현재 모드의 layer speaker와 레이어를 렌더링하고 next로 이동
+  단일 speaker, line과 연출을 렌더링하고 next로 이동
 
 choice
   conditions가 참이고 self_development.expression이 충족된 option만 표시
@@ -135,31 +132,21 @@ exit
   다음 scene을 열거나 ending을 종료 처리
 ```
 
-## 모드별 렌더링
+## 게임 모드 렌더링
 
 ### 스토리 모드 (`base`)
 
-- `perceived.atmosphere`
-- `perceived.expression`
-- `perceived.line`
+- `expression`
+- `line`
 - 관계 HUD는 밀당 주도권, 현재 콤보 배수와 밀기·당기기 리듬 게이지만 표시
 - 날짜와 사건 마감은 별도 타임라인이 아니라 날짜 전환과 장면의 대사·선택지로 전달
 
-### 속마음 모드 (`truth_view`)
-
-- `reality.atmosphere`
-- `reality.expression`
-- `reality.line`
-- `presentation_flags: [inner_voice]`인 별도 노드의 `reality.line`
-- 의심도, 비호감도와 증거 개수는 상시 HUD가 아니라 장면 종료 기록 또는 디버그 보기에서 제공
-- 같은 노드의 `perceived`를 비교 보기로 제공 가능
-
 ### 생존 모드 (`survivor_view`)
 
-- 기본 렌더링은 `reality`
+- 단일 대사와 연출을 렌더링
 - 스토리 모드의 진실 보기나 후일담이 아닌 평행세계 캠페인으로 로드하며, 스토리 모드 세이브의 사건 결과를 덮어쓰지 않음
 - 스토리 모드의 출발 상황과 날짜 모티프는 재사용할 수 있지만 동일한 핵심 사건과 결말을 강제하지 않음
-- 강유진은 스토리 모드·속마음 모드에도 비공략 조연으로 로드하며, 기본 엔딩에서 파국을 취소하는 해결사 플래그로 사용하지 않음
+- 강유진은 스토리 모드에도 비공략 조연으로 로드하며, 기본 엔딩에서 파국을 취소하는 해결사 플래그로 사용하지 않음
 - 한도윤의 행동·말투·접촉 빈도를 숨은 위험 축의 단서로 표시하되 정확한 수치는 노출하지 않음
 - 선택지의 `action`은 피해자 관점의 구체적인 대화·기록·연결 행동으로 작성하고 `밀기/당기기`라는 판정을 노출하지 않음
 - 증거 인벤토리는 표시하되 엔딩 합격선은 숨김
@@ -225,25 +212,23 @@ interaction:
 
 직전 밤 활동의 스몰토크는 각 장면 YAML의 명시적 `variants.after_*`와 `default` 완성 문장으로 저장한다. 빌더는 문장을 합성하지 않고 이 variant를 그대로 런타임에 옮기므로 플레이어 resolver, 세이브, 백로그, localization key와 에디터의 물리 원본이 일치한다. 밤 활동 화면과 심리학 강사 오버레이의 서사 문장은 `story/system_flows/`가 소유하고, `story/ui.yaml`에는 버튼·상태 라벨 같은 비서사 UI만 둔다.
 
-최초 엔딩 이후 `밀당 주도권`은 `통제 욕구`, `현재 콤보`는 `통제 시도 연쇄`, 리듬 게이지는 `접근 시도/거리 둠`으로 라벨을 교체한다.
-
 리듬 막대는 대사창 바로 위 오른쪽에 충분한 폭과 대비로 배치한다. 적정 구간은 기존보다 넓은 시각 영역으로 표현하되 `중앙 적정 범위 안` 같은 설명 문구를 화면에 반복하지 않는다. 선택지별 `approach`/`space`/`literal`, 강도, 수치 합산과 숨은 효과는 디버깅 모드를 명시적으로 켰을 때만 표시한다.
 
-`visible.heroines.<id>.affection`과 `visible.heroines.<id>.perceived_state`는 기존 데이터 호환을 위해 남아 있어도 스토리 모드 UI와 신규 장면 조건에는 사용하지 않는다.
+구버전 세이브에 남은 폐기 상태 필드는 로드 정규화 과정에서 제거한다. 히로인의 보이는 상태에는 `visible.heroines.<id>.initiative`만 사용한다.
 
-속마음 모드가 아니면 hidden 값을 UI나 게임 로그에 노출하지 않는다.
+hidden 값은 일반 UI나 게임 로그에 노출하지 않는다.
 
 ## 배경·캐릭터 아트 자산
 
-장면은 파일 경로가 아니라 캐릭터의 expression ID를 참조한다. `VisualResolver`가 캐릭터 객체의 의상·포즈·표정 자산을 조합하고, 아직 레이어 자산이 없으면 `fallback_asset`을 사용한다.
+장면은 파일 경로가 아니라 캐릭터의 expression ID를 참조한다. `VisualResolver`가 캐릭터 객체의 의상·포즈·표정 자산을 조합하고, 아직 전용 자산이 없으면 `fallback_asset`을 사용한다.
 
 ```text
 (character_id, expression_id, outfit_id, pose_id) → character visual object → sprite asset
 ```
 
-배경은 `scene.location + scene.time + node.atmosphere + view_mode`로 후보를 거른 뒤 priority와 일치 차원 점수가 가장 높은 variant를 사용한다. 캐릭터 YAML의 `visual.concept_art`는 제작 참고 자산이며, 현재 구체 객체의 `fallback_asset`으로도 사용된다. 레이어 스프라이트가 추가되면 장면 데이터 변경 없이 교체할 수 있다.
+배경은 `scene.location + scene.time`으로 후보를 거른 뒤 priority와 일치 차원 점수가 가장 높은 variant를 사용한다. 캐릭터 YAML의 `visual.concept_art`는 제작 참고 자산이며, 현재 구체 객체의 `fallback_asset`으로도 사용된다. 전용 스프라이트가 추가되면 장면 데이터 변경 없이 교체할 수 있다.
 
-`dual_dialogue`의 현재 화자는 `node.speakers[current_mode]`가 있으면 그 값을, 없으면 공통 `node.speaker`를 사용한다. `inner_voice` 노드는 두 레이어의 주체가 다를 수 있으므로 `speakers.perceived`와 `speakers.reality`를 모두 선언한다. 레이어 speaker가 문자열이면 해당 인물의 1인칭 속말을 괄호로 렌더링하고 이름표를 표시한다. 명시적 `null`이면 권위적 서술을 괄호 없이 렌더링하고 이름표를 숨긴다. 런타임은 현재 레이어의 화자 일러스트만 무대에 표시하며, `text_only` 월드 멤버와 화자가 없는 서술에는 일러스트를 만들지 않는다. `나레이션`이라는 가상 이름은 출력하지 않는다.
+`dialogue`의 현재 화자는 `node.speaker`를 사용한다. 런타임은 단일 `stage`에 명시된 원화만 무대에 표시하며, `text_only` 월드 멤버와 화자가 없는 `narration`에는 임의의 일러스트를 만들지 않는다. `나레이션`이라는 가상 이름은 출력하지 않는다.
 
 디버깅 모드는 캐릭터 X/Y/크기 조절과 이전 대화 이동을 제공한다. 이 배치값은 제작용 설정으로 저장하며 스토리 YAML에 자산 경로나 임시 좌표를 복제하지 않는다.
 
@@ -267,8 +252,7 @@ interaction:
 빌드는 한국어 스토리 YAML과 `story/ui.yaml`에서 다음 안정 키를 자동 수집한다.
 
 ```text
-scenes.<scene_id>.nodes.<node_id>.perceived.line
-scenes.<scene_id>.nodes.<node_id>.reality.line
+scenes.<scene_id>.nodes.<node_id>.line
 scenes.<scene_id>.nodes.<choice_node>.stimulus
 scenes.<scene_id>.nodes.<choice_node>.options.<option_id>.label
 scenes.<scene_id>.nodes.<choice_node>.options.<option_id>.interpretation

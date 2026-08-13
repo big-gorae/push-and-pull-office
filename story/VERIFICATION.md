@@ -28,7 +28,7 @@
 - 문자 그대로 받아들이는 선택이 서아 모호 엔딩으로 이어짐
 - 의심도에 따른 서아의 파생 감정 변화
 - 서아·민경 중 한 루트를 최초 클리어하면 생존 모드가 열리고 폐기된 붕괴 모드는 열리지 않음
-- 생존 모드가 스토리 모드의 `truth_view`가 아니라 독립된 평행세계로 빌드되고 스토리 모드 결말을 보존함
+- 생존 모드가 독립된 평행세계로 빌드되고 스토리 모드 결말을 보존함
 - 강유진이 일반 캠페인 레인과 초기 상태에 존재하지만 공략 루트와 결말 해결사 역할은 갖지 않음
 - 놓친 서아 사건이 보이지 않는 상담 사건을 발생시킴
 - 같은 엔딩 그룹에서 조건과 우선순위에 맞는 결말 하나만 실행됨
@@ -48,20 +48,18 @@
 - 공용 2일차 장면에서 민경 대상 선택은 서아가 아니라 민경의 주도권과 콤보 대상만 갱신함
 - push-pull 선택이 계산 대상과 무관한 다른 히로인의 호환 수치를 수동으로 쓰면 validator가 거부함
 
-## 2. 주인공 분위기·대사와 실제 속마음·표정 기록
+## 2. 단일 대사·표정·연출 기록
 
 구현 증거:
 
-- `dual_dialogue`, `dual_narration`의 `perceived`와 `reality`
-- `perceived`: 분위기, 표정, 대사, 주인공 해석
-- `reality`: 분위기, 실제 표정, 실제 대사, 속마음, 의도
-- 캐릭터 파일의 레이어별 표정 사전
+- `dialogue`, `narration`, `silent`의 단일 `line`, `expression`, `stage`
+- 캐릭터 파일의 단일 표정 사전
 
 검증 테스트:
 
-- reality 레이어 제거 시 validator 오류
-- 다른 인물 또는 잘못된 레이어의 표정 참조 시 validator 오류
-- AI 컨텍스트 안에 두 레이어가 모두 포함됨
+- 폐기된 `perceived`, `reality`, `inner_voice`, `inner_thought` 사용 시 validator 오류
+- 다른 인물의 표정 참조 시 validator 오류
+- AI 컨텍스트가 단일 대사와 연출만 포함함
 
 ## 3. 게임 시스템 구현 용이성
 
@@ -89,7 +87,7 @@
 구현 증거:
 
 - 저장소 루트 `AGENTS.md`: 모든 에이전트가 따라야 할 작업 순서
-- `AI_AUTHORING_RULES.md`: 인지와 현실, 상태 변화, 표현 불변 조건
+- `AI_AUTHORING_RULES.md`: 단일 장면 사실, 상태 변화, 표현 불변 조건
 - 장면별 `state_contract`: 읽기·쓰기 의존성 명시
 - `context --from-route --choose`: 선택 경로를 시뮬레이션해 목표 장면 직전 상태 생성
 - 컨텍스트의 `branch_trace`, `state_snapshot`, `derived_emotions`, 제한된 cast
@@ -111,7 +109,7 @@
 - 런타임 `localization.entries`, `direct_catalogs`, `resolved_catalogs`, `coverage`
 - `build/localization-report.json`: 도메인별 직접 번역·fallback·오류 보고서
 - `visuals/archetypes/`: 배경·캐릭터 공통 원형
-- `visuals/backgrounds/`: 장소·시간·분위기 match와 priority를 가진 5개 구체 배경
+- `visuals/backgrounds/`: 장소·시간 match와 priority를 가진 구체 배경
 - `visuals/characters/`: 모든 캐릭터의 구체 객체, 기본 의상·포즈·표정 자산 슬롯
 - `presentation.ts`: `LocalizationService`와 다형 `VisualResolver`
 - Tauri `연출·번역` 화면: 전체 키 검색·장면 필터·자동 저장, locale 전환, variant·배경 판정 근거, 16:9 무대 프리뷰
@@ -122,14 +120,14 @@
 - 캐릭터 구체 객체가 원형의 렌더 전략과 기본 의상을 상속
 - 장소·시간에 따라 오픈 오피스, 복도, 빈 야간 사무실이 다르게 선택됨
 - 무대 해석이 배경과 출연 캐릭터 객체를 함께 합성
-- 모든 장면의 모든 노드가 스토리·실제 모드에서 배경을 얻음
+- 모든 장면의 모든 화면 노드가 배경을 얻음
 - locale 문서 GUI 저장이 런타임 카탈로그를 다시 빌드
 - 고아 번역 키와 placeholder 불일치가 validator 오류
 - Python·TypeScript가 같은 condition fixture를 통과
 - v3 백로그가 표시 문자열 대신 당시 variant ID를 보존
 - v2 슬롯을 v3 `preview` ID 구조로 읽고 다음 저장에서 문자열 캐시를 제거
 - 같은 슬롯과 백로그가 locale 전환 직후 현재 언어로 다시 렌더링
-- reality 표정은 명시값, 감정 규칙, 비주얼 기본값 순으로 fallback하며 perceived 표정은 바꾸지 않음
+- 표정은 명시값, 감정 규칙, 비주얼 기본값 순으로 fallback함
 
 ## 실행 결과 확인
 

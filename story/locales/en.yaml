@@ -25,35 +25,33 @@ strings:
   characters.kang_yoo_jin.display_name: Kang Yoo-jin
   characters.han_do_yoon.display_name: Han Do-yoon
   characters.im_soo_yeon.display_name: Im Soo-yeon
-  events.seo_a.email_request.presentation.perceived.title: Seo-a Tests the Distance at Lunch
-  events.seo_a.email_request.presentation.reality.title: Restricting How Work Is Delivered
+  events.seo_a.email_request.presentation.title: Restricting How Work Is Delivered
   scenes.seo_a.email_request.title: Send It by Email
-  scenes.seo_a.email_request.nodes.appearance_observation.perceived.line: "Manager Han, I need to tell you something."
-  scenes.seo_a.email_request.nodes.appearance_observation.reality.line: "Manager Han, I need to tell you something."
-  scenes.seo_a.email_request.nodes.appearance_observation_inner.perceived.line: (She must be curious about my reaction if she called me aside.)
-  scenes.seo_a.email_request.nodes.appearance_observation_inner.reality.line: (This time I need to clearly tell him not to come to my desk.)
-  scenes.seo_a.email_request.nodes.request.perceived.line: "Please send those materials by email. Don't come to my desk."
-  scenes.seo_a.email_request.nodes.request.reality.line: "Please send those materials by email. Don't come to my desk."
-  scenes.seo_a.email_request.nodes.request_inner.perceived.line: (Does she regret losing an excuse for me to visit? Looking away like that is cute.)
-  scenes.seo_a.email_request.nodes.request_inner.reality.line: (If he comes to my desk again, I need to tell Min-kyung.)
-  scenes.seo_a.email_request.nodes.interpret.prompt: How should he answer Seo-a after she clearly specified how to deliver the files?
+  scenes.seo_a.email_request.nodes.appearance_observation.line: "Manager Han, I need to tell you something."
+  scenes.seo_a.email_request.nodes.request.line: "Please send those materials by email. Don't come to my desk."
+  scenes.seo_a.email_request.nodes.interpret.prompt: How should he answer Seo-a after she clearly specified how to
+    deliver the files?
   scenes.seo_a.email_request.nodes.interpret.stimulus: "Seo-a said, ‘Email me the files and do not come to my desk.’"
-  scenes.seo_a.email_request.nodes.interpret.options.match_push.label: Briefly say “Understood” and keep his distance for a few days
-  scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.label: Mention working out, then send only the requested files by email
-  scenes.seo_a.email_request.nodes.interpret.options.mention_reading_and_step_back.label: Mention what he learned from reading, then send only the requested files by email
-  scenes.seo_a.email_request.nodes.interpret.options.pull_harder.label: Send a private message after work and ask again why she refused
-  scenes.seo_a.email_request.nodes.interpret.options.take_literally.label: Email only the requested files and return to work
-  scenes.seo_a.email_request.nodes.workout_self_promotion.perceived.line: "I've been working out lately. I'll send the files by email as you asked."
-  scenes.seo_a.email_request.nodes.workout_self_promotion.reality.line: "I've been working out lately. I'll send the files by email as you asked."
-  scenes.seo_a.email_request.nodes.reading_self_promotion.perceived.line: "I read that precise boundaries make collaboration easier. I'll send only the requested files by email."
-  scenes.seo_a.email_request.nodes.reading_self_promotion.reality.line: "I read that precise boundaries make collaboration easier. I'll send only the requested files by email."
-  scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.label: Bring up an OTT comedy trend and invite her to dinner again
-  scenes.seo_a.relief_smile.nodes.trend_self_promotion.perceived.line: "I heard young women are watching that office comedy on OTT these days. I've seen a little too—let's talk over dinner after work."
-  scenes.seo_a.relief_smile.nodes.trend_self_promotion.reality.line: "I heard young women are watching that office comedy on OTT these days. I've seen a little too—let's talk over dinner after work."
-  scenes.seo_a.relief_smile.nodes.trend_response.perceived.line: "Everyone is different. Still, you do seem quick to pick up trends among younger people. But I can't have dinner with you."
-  scenes.seo_a.relief_smile.nodes.trend_response.reality.line: "Everyone is different. Still, you do seem quick to pick up trends among younger people. But I can't have dinner with you."
-  scenes.seo_a.relief_smile.nodes.trend_response_inner.perceived.line: (She sees that we connect without a generation gap. Dinner is only a matter of timing.)
-  scenes.seo_a.relief_smile.nodes.trend_response_inner.reality.line: (He's grouping us as “young women” again. I should make the refusal clear and leave.)
+  scenes.seo_a.email_request.nodes.interpret.options.match_push.label: Briefly say “Understood” and keep his distance
+    for a few days
+  scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.label: Mention working out, then send
+    only the requested files by email
+  scenes.seo_a.email_request.nodes.interpret.options.mention_reading_and_step_back.label: Mention what he learned from
+    reading, then send only the requested files by email
+  scenes.seo_a.email_request.nodes.interpret.options.pull_harder.label: Send a private message after work and ask again
+    why she refused
+  scenes.seo_a.email_request.nodes.interpret.options.take_literally.label: Email only the requested files and return to
+    work
+  scenes.seo_a.email_request.nodes.workout_self_promotion.line: "I've been working out lately. I'll send the files by email
+    as you asked."
+  scenes.seo_a.email_request.nodes.reading_self_promotion.line: "I read that precise boundaries make collaboration easier.
+    I'll send only the requested files by email."
+  scenes.seo_a.relief_smile.nodes.response_choice.options.trend_dinner_invite.label: Bring up an OTT comedy trend and
+    invite her to dinner again
+  scenes.seo_a.relief_smile.nodes.trend_self_promotion.line: "I heard young women are watching that office comedy on OTT these
+    days. I've seen a little too—let's talk over dinner after work."
+  scenes.seo_a.relief_smile.nodes.trend_response.line: "Everyone is different. Still, you do seem quick to pick up trends
+    among younger people. But I can't have dinner with you."
   "app.title": "Love Office - Catch Her Heart with My Ultimate Dark Skill: A Handsome Middle-Aged Man's Story"
   "app.shortTitle": "Love Office"
   "app.catchphrase": "Catch her heart with the ultimate dark skill!"
@@ -117,13 +115,6 @@ strings:
   "mode.story.strong": "A new rhythm begins at the office!"
   "mode.story.copy": "Read the signals, match the rhythm, and complete your sparkling office romance."
   "mode.story.action": "Start the romance →"
-  "mode.truth.label": "02 · INNER VOICE MODE"
-  "mode.truth.title": "Inner Voice Mode"
-  "mode.truth.unlocked": "See the day through their eyes"
-  "mode.truth.locked": "Unlock after one ending"
-  "mode.truth.copyUnlocked": "Listen to their everyday lives and inner thoughts."
-  "mode.truth.copyLocked": "Listen to their everyday lives and inner thoughts."
-  "mode.truth.action": "Listen to their thoughts →"
   "mode.locked": "LOCKED"
   "mode.survivor.label": "03 · ANOTHER STORY"
   "mode.survivor.title": "Another Story"
@@ -149,18 +140,11 @@ strings:
   "deadline.tomorrow": "Due tomorrow"
   "deadline.days": "{{count}} days left"
   "hud.story": "STORY MODE"
-  "hud.original": "INNER VOICE"
-  "hud.subjective": "Romance view"
-  "hud.reality": "Inner thoughts"
   "hud.initiative": "Romance initiative"
-  "hud.control": "Need for control"
   "hud.combo": "HEART COMBO"
-  "hud.controlCombo": "Control chain"
   "hud.gameMenu": "Game menu"
   "rhythm.pull": "Pull"
   "rhythm.push": "Push"
-  "rhythm.approach": "Approach"
-  "rhythm.space": "Give space"
   "rhythm.status": "Conversation rhythm"
   "rhythm.next": "Next rhythm · {{target}}"
   "dialogue.choice": "Choice"
@@ -183,7 +167,6 @@ strings:
   "feedback.literal": "Stopped the game"
   "feedback.break": "Rhythm changed"
   "feedback.gain": "Initiative +{{gain}}"
-  "feedback.controlGain": "Control +{{gain}}"
   "feedback.expressionBonus": "Self-improvement expression bonus +{{gain}}"
   "selfDevelopment.status": "Current status"
   "selfDevelopment.appeal": "Appeal"
@@ -201,22 +184,22 @@ strings:
   "analysisHint.recall": "Replay the lecture in my head"
   "analysisHint.instructor": "Dark psychology instructor"
   "analysisHint.observation": "Evidence observed so far"
-  "system_flows.system.night_activity.nodes.intro.perceived.line": "(I read a few pages of Dark Psychology for Dominating Women's Hearts over dinner. What should I do now?)"
-  "system_flows.system.night_activity.nodes.intro.reality.line": "(I read a few pages of Dark Psychology for Dominating Women's Hearts over dinner. What should I do now?)"
-  "system_flows.system.night_activity.nodes.forced_intro.perceived.line": "(I read a few lines of Dark Psychology for Dominating Women's Hearts, but none of it registered. I cannot even choose tonight.)"
-  "system_flows.system.night_activity.nodes.forced_intro.reality.line": "(I read a few lines of Dark Psychology for Dominating Women's Hearts, but none of it registered. I cannot even choose tonight.)"
-  "system_flows.system.night_activity.nodes.activity_result.variants.workout.perceived.line": "(I am winded, but it was worth moving. That is enough for tonight.)"
-  "system_flows.system.night_activity.nodes.activity_result.variants.workout.reality.line": "After working out, Do-yoon showered and set his alarm."
-  "system_flows.system.night_activity.nodes.activity_result.variants.reading.perceived.line": "(This is easier to read than I expected. I should continue on the commute tomorrow.)"
-  "system_flows.system.night_activity.nodes.activity_result.variants.reading.reality.line": "Do-yoon folded the page and left the book on the table."
-  "system_flows.system.night_activity.nodes.activity_result.variants.ott.perceived.line": "(I meant to watch one episode, and now it is three. At least I understand the jokes.)"
-  "system_flows.system.night_activity.nodes.activity_result.variants.ott.reality.line": "Do-yoon disabled autoplay and placed his phone face down."
-  "system_flows.system.night_activity.nodes.activity_result.variants.sleep.perceived.line": "(No need to push it tonight. Tomorrow can wait until tomorrow.)"
-  "system_flows.system.night_activity.nodes.activity_result.variants.sleep.reality.line": "Do-yoon set his alarm and turned off the light."
-  "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.perceived.line": "(I can use tonight's lesson once when the decisive moment comes.)"
-  "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.reality.line": "Do-yoon copied the instructor's repeated phrase into his phone notes."
-  "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.perceived.line": "(I meant to have one drink... There are three empty cans. Time to turn off the light.)"
-  "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.reality.line": "Do-yoon fell asleep on the sofa without clearing the empty cans from the table."
+  "system_flows.system.night_activity.nodes.intro.line": I read a few pages of Dark Psychology for Dominating Women's
+    Hearts over dinner. What should I do now?
+  "system_flows.system.night_activity.nodes.forced_intro.line": I read a few lines of Dark Psychology for Dominating
+    Women's Hearts, but none of it registered. I cannot even choose tonight.
+  "system_flows.system.night_activity.nodes.activity_result.variants.workout.line": I am winded, but it was worth
+    moving. That is enough for tonight.
+  "system_flows.system.night_activity.nodes.activity_result.variants.reading.line": This is easier to read than I
+    expected. I should continue on the commute tomorrow.
+  "system_flows.system.night_activity.nodes.activity_result.variants.ott.line": I meant to watch one episode, and now it
+    is three. At least I understand the jokes.
+  "system_flows.system.night_activity.nodes.activity_result.variants.sleep.line": No need to push it tonight. Tomorrow
+    can wait until tomorrow.
+  "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.line": I can use tonight's lesson
+    once when the decisive moment comes.
+  "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.line": I meant to have one drink...
+    There are three empty cans. Time to turn off the light.
   "system_flows.system.night_activity.options.workout.label": "Go to the gym"
   "system_flows.system.night_activity.options.workout.description": "Gain health and appearance while building fatigue."
   "system_flows.system.night_activity.options.reading.label": "Read a book"
@@ -226,15 +209,16 @@ strings:
   "system_flows.system.night_activity.options.sleep.label": "Go to bed early"
   "system_flows.system.night_activity.options.sleep.description": "Recover a large amount of fatigue."
   "system_flows.system.night_activity.options.dark_psychology.label": "Study Dark Psychology for Dominating Women's Hearts"
-  "system_flows.system.night_activity.options.dark_psychology.description": "Build fatigue to recall the instructor's analysis once before a choice."
+  "system_flows.system.night_activity.options.dark_psychology.description": "Build fatigue to recall the instructor's analysis
+    once before a choice."
   "system_flows.system.night_activity.options.solo_drinking.label": "Drink alone"
   "system_flows.system.night_activity.options.solo_drinking.description": "Triggers automatically at high fatigue."
-  "system_flows.system.analysis_hint.nodes.lesson.variants.pull.perceived.line": "“Look at the evidence. To score on this choice, you need to continue the conversation.”"
-  "system_flows.system.analysis_hint.nodes.lesson.variants.pull.reality.line": "“Look at the evidence. To score on this choice, you need to continue the conversation.”"
-  "system_flows.system.analysis_hint.nodes.lesson.variants.push.perceived.line": "“Look at the evidence. On this choice, saying less and stepping back is the scoring move.”"
-  "system_flows.system.analysis_hint.nodes.lesson.variants.push.reality.line": "“Look at the evidence. On this choice, saying less and stepping back is the scoring move.”"
-  "system_flows.system.analysis_hint.nodes.lesson.variants.none.perceived.line": "“There is no fixed answer yet. This first choice will set the next scoring direction.”"
-  "system_flows.system.analysis_hint.nodes.lesson.variants.none.reality.line": "“There is no fixed answer yet. This first choice will set the next scoring direction.”"
+  "system_flows.system.analysis_hint.nodes.lesson.variants.pull.line": "“Look at the evidence. To score on this choice, you
+    need to continue the conversation.”"
+  "system_flows.system.analysis_hint.nodes.lesson.variants.push.line": "“Look at the evidence. On this choice, saying less
+    and stepping back is the scoring move.”"
+  "system_flows.system.analysis_hint.nodes.lesson.variants.none.line": "“There is no fixed answer yet. This first choice will
+    set the next scoring direction.”"
   "save.title": "Save"
   "save.slot": "SLOT {{slot}}"
   "save.here": "Save here"
@@ -268,4 +252,3 @@ strings:
   "ending.toTitle": "Title"
   "error.heading": "The scene cannot continue."
   "error.recover": "Return to the story"
-  "unlock.notice": "Inner Voice Mode unlocks after the first ending."

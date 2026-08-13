@@ -14,15 +14,11 @@ location: subway_platform
 requires:
   events: []
   conditions:
-    - {path: progress.events.missed, op: contains, value: seo_a.email_request}
+  - {path: progress.events.missed, op: contains, value: seo_a.email_request}
 on_seen:
   effects:
-    - {path: progress.memories, op: append_unique, value: present.seo_a_first_consult}
+  - {path: progress.memories, op: append_unique, value: present.seo_a_first_consult}
 on_missed: {effects: []}
 presentation:
-  perceived:
-    title: 보이지 않는 빈 시간
-    summary: 주인공은 서아가 자신과 만나지 못해 아쉬워했을 것이라 상상한다.
-  reality:
-    title: 서아가 민경에게 상황을 설명함
-    summary: 서아는 자신의 판단이 맞는지 확인하려고 처음으로 구체적인 날짜를 말한다.
+  title: 서아가 민경에게 상황을 설명함
+  summary: 서아는 자신의 판단이 맞는지 확인하려고 처음으로 구체적인 날짜를 말한다.

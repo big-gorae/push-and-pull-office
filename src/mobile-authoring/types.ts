@@ -1,4 +1,4 @@
-import type { ArtworkPosition, Scene, ViewMode } from "../types";
+import type { ArtworkPosition, Scene } from "../types";
 
 export type MobileCatalogEntry = {
   localizationKey: string;
@@ -15,7 +15,6 @@ export type MobileCatalogEntry = {
     variantId?: string;
     optionId?: string;
     speakerId?: string;
-    layer?: "perceived" | "reality";
   };
   maxLength?: number | null;
   placeholders: string[];
@@ -51,7 +50,7 @@ export type MobileSpeakerOption = {
   id: string;
   label: string;
   illustrated: boolean;
-  expressions?: Array<{ id: string; label: string; layer: ViewMode }>;
+  expressions?: Array<{ id: string; label: string }>;
 };
 
 export type MobileArtworkOption = {
@@ -84,8 +83,6 @@ export type MobileSceneWorkspace = {
   scenes: Record<string, MobileSceneRecord>;
   artworks: MobileArtworkOption[];
   backgrounds: MobileBackgroundOption[];
-  atmospheres: string[];
-  intents: string[];
 };
 
 export type MobileChangeStatus = "editing" | "queued" | "pending" | "applied" | "conflict" | "rejected";
@@ -194,6 +191,5 @@ export type MobileApplyResult = {
 };
 
 export type MobileArtworkSelection = {
-  mode: ViewMode;
   position: ArtworkPosition;
 };

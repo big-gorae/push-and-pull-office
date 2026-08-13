@@ -209,7 +209,6 @@ export default function LocalizationTable({
       row.source,
       drafts[row.key],
       row.entry?.context.speakerId,
-      row.entry?.context.layer,
       row.entry?.sourceDocument.path,
     ].filter(Boolean).join("\n").toLocaleLowerCase().includes(normalized);
   });
@@ -322,7 +321,7 @@ export default function LocalizationTable({
             <code>{row.key}</code>
           </button>
           <span>{row.entry?.domain || "orphan"} · {row.status}</span>
-          {row.entry && <small>{row.entry.context.speakerId || "—"} · {row.entry.context.layer || "—"} · {row.entry.sourceDocument.path}</small>}
+          {row.entry && <small>{row.entry.context.speakerId || "—"} · {row.entry.sourceDocument.path}</small>}
         </div>
         <label><span>원문</span><textarea readOnly rows={row.entry?.multiline ? 4 : 2} value={row.source} /></label>
         <label><span>번역</span><textarea

@@ -5,7 +5,6 @@ extends: archetype.character_bust
 title_key: visual.character.kang_yoo_jin.title
 title: 강유진 기본 바스트
 character: kang_yoo_jin
-default_reality_expression: actual_procedural
 fallback_asset: assets/characters/kang-yoo-jin/office-default/base-cutout.png
 default_outfit: office
 default_pose: direct
@@ -14,3 +13,4 @@ poses:
   direct: {offset_x: 0, offset_y: -8, scale: 1.04}
 expression_assets: {}
 tags: [heroine, fact_checker, unlockable]
+default_expression: actual_procedural

@@ -2,20 +2,16 @@ schema_version: 1
 id: unlocks
 mode_labels:
   base: 스토리 모드
-  truth_view: 속마음 모드
   survivor_view: 어나더 스토리
 unlock_rules: []
 mode_teasers:
-  - id: after_first_clear
-    conditions:
-      - {path: progress.unlocked_modes, op: contains, value: survivor_view}
-    reveals:
-      - mode: truth_view
-        title: 속마음 모드
-        teaser: 그녀들의 일상과 속마음을 들어 보아요.
-      - mode: survivor_view
-        title: 어나더 스토리
-        teaser: 새로운 그녀로 새로운 이야기를 만들어 보아요.
+- id: after_first_clear
+  conditions:
+  - {path: progress.unlocked_modes, op: contains, value: survivor_view}
+  reveals:
+  - mode: survivor_view
+    title: 어나더 스토리
+    teaser: 새로운 그녀로 새로운 이야기를 만들어 보아요.
 
 survival_mode:
   id: survivor_view
@@ -31,7 +27,6 @@ survival_mode:
     may_reuse_date_motifs: true
     same_core_events_required: false
     preserve_base_outcome: true
-    acts_as_base_truth_view: false
   antagonist_stance:
     starts_aggressive: true
     remains_aggressive: true
@@ -51,24 +46,24 @@ survival_mode:
     sufficiency_threshold_visible: false
     qualities: [chronology, credibility, backup, corroboration]
   endings:
-    - id: retaliation_catastrophe
-      rank: failure
-      condition: retaliation_extreme
-      outcome: 보복 위험이 임계를 넘어 사망 또는 회복 불가능한 파국에 이른다.
-    - id: fixation_catastrophe
-      rank: failure
-      condition: fixation_extreme
-      outcome: 집착과 추적이 일상을 침범해 사망 또는 회복 불가능한 파국에 이른다.
-    - id: unfinished_escape
-      rank: partial_failure
-      condition: balanced_but_insufficient_evidence
-      outcome: 당장은 살아남지만 입증에 실패해 위험이 계속된다.
-    - id: costly_survival
-      rank: partial_success
-      condition: sufficient_evidence_without_support
-      outcome: 증거를 지키지만 직장·거주지·관계망 중 중요한 것을 잃고 벗어난다.
-    - id: truth_and_survival
-      rank: best
-      condition: evidence_connection_and_timing_aligned
-      outcome: 증거와 증언을 연결해 신체적 안전과 공적 기록을 모두 확보한다.
+  - id: retaliation_catastrophe
+    rank: failure
+    condition: retaliation_extreme
+    outcome: 보복 위험이 임계를 넘어 사망 또는 회복 불가능한 파국에 이른다.
+  - id: fixation_catastrophe
+    rank: failure
+    condition: fixation_extreme
+    outcome: 집착과 추적이 일상을 침범해 사망 또는 회복 불가능한 파국에 이른다.
+  - id: unfinished_escape
+    rank: partial_failure
+    condition: balanced_but_insufficient_evidence
+    outcome: 당장은 살아남지만 입증에 실패해 위험이 계속된다.
+  - id: costly_survival
+    rank: partial_success
+    condition: sufficient_evidence_without_support
+    outcome: 증거를 지키지만 직장·거주지·관계망 중 중요한 것을 잃고 벗어난다.
+  - id: truth_and_survival
+    rank: best
+    condition: evidence_connection_and_timing_aligned
+    outcome: 증거와 증언을 연결해 신체적 안전과 공적 기록을 모두 확보한다.
   responsibility_rule: 피해자의 선택은 폭력의 원인이 아니며 가해자의 폭력 책임을 감소시키지 않는다.

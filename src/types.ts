@@ -4,12 +4,8 @@ export type JsonValue = string | number | boolean | null | JsonValue[] | { [key:
 export type DeepPartial<T> = T extends Array<infer Item>
   ? Array<DeepPartial<Item>>
   : T extends object ? { [Key in keyof T]?: DeepPartial<T[Key]> } : T;
-export type NodeKind = "dual_dialogue" | "dual_narration" | "silent" | "choice" | "state_gate" | "effect" | "exit";
-export type GameModeId = "base" | "truth_view" | "survivor_view";
-export type ViewLayer = "perceived" | "reality";
-/** @deprecated Use ViewLayer. Kept temporarily for editor-facing compatibility. */
-export type ViewMode = ViewLayer;
-export type LayerPolicy = "fixed" | "switchable";
+export type NodeKind = "dialogue" | "narration" | "silent" | "choice" | "state_gate" | "effect" | "exit";
+export type GameModeId = "base" | "survivor_view";
 export type ContentStatus = "playable" | "coming_soon";
 export type SupportStyle =
   | "emotional_validation"
@@ -51,10 +47,8 @@ export type Transition = {
 };
 
 export type Layer = {
-  atmosphere?: string;
   expression?: string;
   line?: string;
-  intent?: string;
 };
 
 export type SelfDevelopmentStat = "health" | "appearance" | "humor" | "intelligence";
@@ -143,8 +137,8 @@ export type DialogueVariant = {
   conditions?: Condition[];
   default?: boolean;
   self_development?: SelfDevelopmentVariantUse;
-  perceived: Layer;
-  reality: Layer;
+  expression?: string;
+  line: string;
 };
 
 export type ChoiceOption = {
@@ -178,11 +172,8 @@ export type StoryNode = {
     kind: InteractionContextKind;
   };
   speaker?: string;
-  speakers?: Partial<Record<ViewMode, string | null>>;
-  perceived?: Layer;
-  reality?: Layer;
-  /** Editor-only authoring state. Absent on legacy nodes, which remain independently editable. */
-  line_layers_locked?: boolean;
+  expression?: string;
+  line?: string;
   variants?: DialogueVariant[];
   prompt?: string;
   stimulus?: string;
@@ -190,7 +181,7 @@ export type StoryNode = {
   transitions?: Transition[];
   effects?: Effect[];
   presentation_flags?: string[];
-  stage?: Partial<Record<ViewMode, StageCharacterCue[]>>;
+  stage?: StageCharacterCue[];
   next?: string;
 };
 
@@ -283,7 +274,7 @@ export type TimelineEvent = {
   requires: { events: string[]; conditions: Condition[] };
   on_seen: { effects: Effect[] };
   on_missed: { effects: Effect[]; trigger_event?: string };
-  presentation: Record<ViewMode, { title: string; summary: string }>;
+  presentation: { title: string; summary: string };
 };
 
 export type TimelineThread = {
@@ -315,8 +306,6 @@ export type GameModeDefinition = {
   campaign_id: string | null;
   planned_campaign_id?: string;
   continuity_id: string;
-  initial_layer: ViewLayer;
-  layer_policy: LayerPolicy;
   content_status: ContentStatus;
   unlock: GameModeUnlock;
 };
@@ -349,7 +338,7 @@ export type Character = {
     resists: string[];
     context_overrides: string[];
   };
-  expressions?: Record<string, { layer: ViewMode; emotion: string; description: string }>;
+  expressions?: Record<string, { emotion: string; description: string }>;
   emotion_rules?: Array<{
     id: string;
     priority: number;
@@ -418,7 +407,6 @@ export type LocalizationEntry = {
     eventId?: string;
     characterId?: string;
     speakerId?: string;
-    layer?: ViewMode;
   };
   placeholders: string[];
   maxLength?: number;
@@ -442,8 +430,6 @@ export type LocalizationCoverage = {
 export type VisualMatch = {
   locations?: string[];
   times?: string[];
-  atmospheres?: string[];
-  modes?: ViewMode[];
 };
 
 export type VisualVariant = {
@@ -473,7 +459,7 @@ export type VisualObject = {
   default_artwork?: string;
   artworks?: Record<string, CharacterArtwork>;
   fallback_asset?: string;
-  default_reality_expression?: string;
+  default_expression?: string;
   default_outfit?: string;
   default_pose?: string;
   outfits?: Record<string, Record<string, JsonValue>>;
@@ -510,13 +496,12 @@ export type ResolvedCharacterVisual = {
 export type ResolvedStage = {
   background?: ResolvedBackground;
   characters: ResolvedCharacterVisual[];
-  mode: ViewMode;
   node: string;
 };
 
 export type RuntimeState = {
   visible: {
-    heroines: Record<string, { affection: number; initiative: number; perceived_state: string }>;
+    heroines: Record<string, { initiative: number }>;
     protagonist: { self_development: SelfDevelopmentState };
   };
   hidden: { heroines: Record<string, { suspicion: number; dislike: number; evidence_count: number }> };

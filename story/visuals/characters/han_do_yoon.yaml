@@ -5,7 +5,6 @@ extends: archetype.character_bust
 title_key: visual.character.han_do_yoon.title
 title: 한도윤 기본 바스트
 character: han_do_yoon
-default_reality_expression: actual_waiting_smile
 fallback_asset: assets/concept-art/han-do-yoon.png
 default_outfit: office
 default_pose: neutral
@@ -14,3 +13,4 @@ poses:
   looming: {offset_x: 0, offset_y: -12, scale: 1.08}
 expression_assets: {}
 tags: [protagonist, unreliable_view]
+default_expression: actual_waiting_smile

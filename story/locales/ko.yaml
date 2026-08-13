@@ -2,6 +2,6 @@ schema_version: 1
 id: ko
 name: Korean
 native_name: 한국어
-fallback: null
+fallback:
 strings:
   campaign.main.title: 밀당 오피스

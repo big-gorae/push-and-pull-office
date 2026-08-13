@@ -11,254 +11,138 @@ cast: [han_do_yoon, yoon_seo_a]
 entry_conditions: []
 state_contract:
   reads:
-    - progress.flags.push_pull
-    - visible.protagonist.self_development.appeal
-    - visible.protagonist.self_development.stats.health
-    - visible.protagonist.self_development.stats.intelligence
-    - visible.protagonist.self_development.fatigue
+  - progress.flags.push_pull
+  - visible.protagonist.self_development.appeal
+  - visible.protagonist.self_development.stats.health
+  - visible.protagonist.self_development.stats.intelligence
+  - visible.protagonist.self_development.fatigue
   writes:
-    - visible.heroines.yoon_seo_a.initiative
-    - hidden.heroines.yoon_seo_a.suspicion
-    - hidden.heroines.yoon_seo_a.dislike
-    - hidden.heroines.yoon_seo_a.evidence_count
-    - progress.flags.push_pull
+  - visible.heroines.yoon_seo_a.initiative
+  - hidden.heroines.yoon_seo_a.suspicion
+  - hidden.heroines.yoon_seo_a.dislike
+  - hidden.heroines.yoon_seo_a.evidence_count
+  - progress.flags.push_pull
 start_node: appearance_observation
 nodes:
-  - id: appearance_observation
-    kind: dual_dialogue
-    speaker: yoon_seo_a
-    stage:
-      perceived:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-      reality:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_shy
-      line: "과장님, 잠깐 말씀드릴 게 있어요."
-    reality:
-      atmosphere: guarded_office
-      expression: actual_tense
-      line: "과장님, 잠깐 말씀드릴 게 있어요."
-      intent: boundary
-    next: appearance_observation_inner
+- id: appearance_observation
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage:
+  - position: center
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: default
+  expression: actual_tense
+  line: "과장님, 잠깐 말씀드릴 게 있어요."
+  next: request
 
-  - id: appearance_observation_inner
-    kind: dual_dialogue
-    presentation_flags: [inner_voice]
-    speakers:
-      perceived: han_do_yoon
-      reality: yoon_seo_a
-    stage:
-      perceived: []
-      reality:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-    perceived:
-      atmosphere: warm_romance
-      line: (따로 말을 꺼낼 만큼 내 반응이 궁금한 모양이군.)
-    reality:
-      atmosphere: guarded_office
-      line: (이번에는 자리로 오지 말라고 분명히 말하자.)
-      intent: boundary
-    next: request
+- id: request
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage:
+  - position: center
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: default
+  expression: actual_tense
+  line: "그 자료는 메일로 보내주세요. 제 자리로 오지 마시고요."
+  next: interpret
 
-  - id: request
-    kind: dual_dialogue
-    speaker: yoon_seo_a
-    stage:
-      perceived:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-      reality:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_shy
-      line: "그 자료는 메일로 보내주세요. 제 자리로 오지 마시고요."
-    reality:
-      atmosphere: guarded_office
-      expression: actual_tense
-      line: "그 자료는 메일로 보내주세요. 제 자리로 오지 마시고요."
-      intent: boundary
-    next: request_inner
-
-  - id: request_inner
-    kind: dual_dialogue
-    presentation_flags:
-      - inner_voice
-    speakers:
-      perceived: han_do_yoon
-      reality: yoon_seo_a
-    stage:
-      perceived: []
-      reality:
-        - position: center
-          character: yoon_seo_a
-          visual_id: character.yoon_seo_a
-          artwork: default
-    perceived:
-      atmosphere: warm_romance
-      line: (직접 찾아올 핑계가 없어져서 아쉬운가? 눈을 피하는 게 귀엽네.)
-    reality:
-      atmosphere: guarded_office
-      line: (또 내 자리로 오면 민경 선배에게 말해야 해.)
-      intent: boundary
-    next: interpret
-  - id: interpret
-    kind: choice
-    prompt: 자료 전달 방식을 분명히 한 서아에게 어떻게 답할까?
-    stimulus: 서아가 ‘자료는 메일로 보내고 제 자리로 오지 말라’고 말했다.
-    interaction_context:
-      kind: boundary
-    options:
-      - id: match_push
-        label: 짧게 ‘알겠습니다’라고 답하고 며칠간 거리를 둔다
-        interpretation: 요청대로 잠시 거리를 두고 다음 업무 반응을 지켜본다.
-        action: 사적인 접근을 사흘 동안 중단한다.
-        push_pull: {action: space, intensity: 16, base_score: 4}
-        conditions: []
-        effects:
-          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -3}
-          - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 2}
-        next: after_choice
-      - id: mention_workout_and_step_back
-        label: 요즘 운동한다고 말한 뒤 요청대로 자료만 메일로 보낸다
-        interpretation: 건강을 챙기는 모습을 짧게 어필하고 한발 물러난다.
-        action: 운동 이야기를 짧게 덧붙이고 자료를 메일로 보낸 뒤 사적인 접근을 사흘간 중단한다.
-        push_pull: {action: space, intensity: 16, base_score: 4}
-        self_development:
-          expression: health.workout_answer
-          equivalent_to: match_push
-          converges_at: after_choice
-        conditions: []
-        effects:
-          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -3}
-          - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 2}
-        next: workout_self_promotion
-      - id: mention_reading_and_step_back
-        label: 최근 읽은 책을 짧게 언급한 뒤 요청대로 자료만 메일로 보낸다
-        interpretation: 상대의 말을 이해하는 사람이라는 인상을 남기고 한발 물러난다.
-        action: 최근 읽은 책을 짧게 언급하고 자료를 메일로 보낸 뒤 사적인 접근을 사흘간 중단한다.
-        push_pull: {action: space, intensity: 16, base_score: 4}
-        self_development:
-          expression: intelligence.contextual_answer
-          equivalent_to: match_push
-          converges_at: after_choice
-        conditions: []
-        effects:
-          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -3}
-          - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 2}
-        next: reading_self_promotion
-      - id: pull_harder
-        label: 퇴근 후 개인 메시지로 거절 이유를 다시 묻는다
-        interpretation: 밀어낼수록 확신을 보여 주어야 한다.
-        action: 업무가 끝난 뒤 개인 메시지로 거절 이유를 다시 묻는다.
-        push_pull: {action: approach, intensity: 16, base_score: 4}
-        conditions: []
-        effects:
-          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: 20}
-          - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 15}
-          - {path: hidden.heroines.yoon_seo_a.evidence_count, op: add, value: 1}
-        next: after_choice
-      - id: take_literally
-        label: 요청대로 자료만 메일로 보내고 업무로 돌아간다
-        interpretation: 오늘은 연애보다 업무를 우선한다.
-        action: 자료를 메일로 보내고 추가 접촉을 하지 않는다.
-        push_pull: {action: literal, intensity: 12, base_score: 4}
-        interaction:
-          target: yoon_seo_a
-          support_styles: [literal_respect]
-        conditions: []
-        effects:
-          - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -2}
-        next: after_choice
-
-  - id: workout_self_promotion
-    kind: dual_dialogue
-    speaker: han_do_yoon
-    stage:
-      perceived: []
-      reality: []
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_confident
-      line: "요즘 운동을 좀 하거든요. 자료는 말씀하신 대로 메일로 보낼게요."
-    reality:
-      atmosphere: procedural
-      expression: actual_waiting_smile
-      line: "요즘 운동을 좀 하거든요. 자료는 말씀하신 대로 메일로 보낼게요."
-      intent: self_promotion
+- id: interpret
+  kind: choice
+  prompt: 자료 전달 방식을 분명히 한 서아에게 어떻게 답할까?
+  stimulus: 서아가 ‘자료는 메일로 보내고 제 자리로 오지 말라’고 말했다.
+  interaction_context:
+    kind: boundary
+  options:
+  - id: match_push
+    label: 짧게 ‘알겠습니다’라고 답하고 며칠간 거리를 둔다
+    interpretation: 요청대로 잠시 거리를 두고 다음 업무 반응을 지켜본다.
+    action: 사적인 접근을 사흘 동안 중단한다.
+    push_pull: {action: space, intensity: 16, base_score: 4}
+    conditions: []
+    effects:
+    - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -3}
+    - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 2}
+    next: after_choice
+  - id: mention_workout_and_step_back
+    label: 요즘 운동한다고 말한 뒤 요청대로 자료만 메일로 보낸다
+    interpretation: 건강을 챙기는 모습을 짧게 어필하고 한발 물러난다.
+    action: 운동 이야기를 짧게 덧붙이고 자료를 메일로 보낸 뒤 사적인 접근을 사흘간 중단한다.
+    push_pull: {action: space, intensity: 16, base_score: 4}
+    self_development:
+      expression: health.workout_answer
+      equivalent_to: match_push
+      converges_at: after_choice
+    conditions: []
+    effects:
+    - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -3}
+    - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 2}
+    next: workout_self_promotion
+  - id: mention_reading_and_step_back
+    label: 최근 읽은 책을 짧게 언급한 뒤 요청대로 자료만 메일로 보낸다
+    interpretation: 상대의 말을 이해하는 사람이라는 인상을 남기고 한발 물러난다.
+    action: 최근 읽은 책을 짧게 언급하고 자료를 메일로 보낸 뒤 사적인 접근을 사흘간 중단한다.
+    push_pull: {action: space, intensity: 16, base_score: 4}
+    self_development:
+      expression: intelligence.contextual_answer
+      equivalent_to: match_push
+      converges_at: after_choice
+    conditions: []
+    effects:
+    - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -3}
+    - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 2}
+    next: reading_self_promotion
+  - id: pull_harder
+    label: 퇴근 후 개인 메시지로 거절 이유를 다시 묻는다
+    interpretation: 밀어낼수록 확신을 보여 주어야 한다.
+    action: 업무가 끝난 뒤 개인 메시지로 거절 이유를 다시 묻는다.
+    push_pull: {action: approach, intensity: 16, base_score: 4}
+    conditions: []
+    effects:
+    - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: 20}
+    - {path: hidden.heroines.yoon_seo_a.dislike, op: add, value: 15}
+    - {path: hidden.heroines.yoon_seo_a.evidence_count, op: add, value: 1}
+    next: after_choice
+  - id: take_literally
+    label: 요청대로 자료만 메일로 보내고 업무로 돌아간다
+    interpretation: 오늘은 연애보다 업무를 우선한다.
+    action: 자료를 메일로 보내고 추가 접촉을 하지 않는다.
+    push_pull: {action: literal, intensity: 12, base_score: 4}
+    interaction:
+      target: yoon_seo_a
+      support_styles: [literal_respect]
+    conditions: []
+    effects:
+    - {path: hidden.heroines.yoon_seo_a.suspicion, op: add, value: -2}
     next: after_choice
 
-  - id: reading_self_promotion
-    kind: dual_dialogue
-    speaker: han_do_yoon
-    stage:
-      perceived: []
-      reality: []
-    perceived:
-      atmosphere: warm_romance
-      expression: subjective_confident
-      line: "요즘 《말보다 맥락》이라는 책을 읽고 있습니다. 상대가 정한 선을 먼저 이해해야 대화도 된다고 하더군요. 자료는 메일로 보낼게요."
-    reality:
-      atmosphere: procedural
-      expression: actual_waiting_smile
-      line: "요즘 《말보다 맥락》이라는 책을 읽고 있습니다. 상대가 정한 선을 먼저 이해해야 대화도 된다고 하더군요. 자료는 메일로 보낼게요."
-      intent: self_promotion
-    next: after_choice
+- id: workout_self_promotion
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: "요즘 운동을 좀 하거든요. 자료는 말씀하신 대로 메일로 보낼게요."
+  next: after_choice
 
-  - id: after_choice
-    kind: dual_dialogue
-    speaker: han_do_yoon
-    presentation_flags: [auditory_distortion]
-    stage:
-      perceived: []
-      reality: []
-    perceived:
-      atmosphere: playful_tension
-      expression: subjective_confident
-      line: "연애는 타이밍이지."
-    reality:
-      atmosphere: cold_office
-      expression: actual_waiting_smile
-      line: "메일 확인해요."
-      intent: work_only
-    next: after_choice_inner
+- id: reading_self_promotion
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: "요즘 《말보다 맥락》이라는 책을 읽고 있습니다. 상대가 정한 선을 먼저 이해해야 대화도 된다고 하더군요. 자료는 메일로 보낼게요."
+  next: after_choice
 
-  - id: after_choice_inner
-    kind: dual_dialogue
-    presentation_flags:
-      - inner_voice
-    speakers:
-      perceived: han_do_yoon
-      reality: han_do_yoon
-    stage:
-      perceived: []
-      reality: []
-    perceived:
-      atmosphere: playful_tension
-      line: (그래, 관계의 속도는 내가 제대로 조절하고 있어.)
-    reality:
-      atmosphere: cold_office
-      line: (다시 편하게 웃기만 하면, 그걸 나에 대한 호감이라고 보면 돼.)
-      intent: work_only
-    next: leave
-  - id: leave
-    kind: exit
-    transitions:
-      - default: true
-        scene: seo_a.relief_smile
+- id: after_choice
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: "메일 확인해요."
+  next: leave
+
+- id: leave
+  kind: exit
+  transitions:
+  - default: true
+    scene: seo_a.relief_smile

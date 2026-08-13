@@ -7,7 +7,7 @@ import { nextHistoryGroup, shouldCaptureHistory, type EditHistoryGroup } from ".
 import { SaveFailure, type DocumentSnapshot, type SaveCommitResult, type SaveCompletion, type SaveState } from "./editorSave";
 import { resolveRuntimeUpdate, type RuntimePatch, type RuntimeUpdate } from "./runtimePatch";
 import { clone } from "./storyLogic";
-import type { Character, DocumentActivity, JsonValue, ProjectPayload, Runtime, ValidationIssue, ViewMode } from "./types";
+import type { Character, DocumentActivity, JsonValue, ProjectPayload, Runtime, ValidationIssue } from "./types";
 
 type Props = {
   active: boolean;
@@ -40,9 +40,7 @@ const NARRATIVE_ROLE_LABELS: Record<string, string> = {
   past_survivor: "과거 사건 생존자",
 };
 
-const LAYER_LABELS: Record<ViewMode, string> = { perceived: "주인공 인식", reality: "실제" };
 const STAT_LABELS: Record<string, string> = {
-  affection: "호감도",
   initiative: "밀당 주도권",
   suspicion: "의심도",
   dislike: "비호감",
@@ -360,12 +358,12 @@ export default function CharacterEditor({ active, payload, onPayload, onIssues, 
         <fieldset><legend>표정 ({expressions.length})</legend><div className="character-card-list">
           {expressions.map(([id, expression]) => <section className="character-rule-card" key={id}>
             <header><strong>{id}</strong><button type="button" className="icon-button danger" aria-label="표정 삭제" onClick={() => updateDraft((character) => { delete character.expressions?.[id]; })}>×</button></header>
-            <div className="form-grid"><label className="field"><span>화면 레이어</span><select value={expression.layer} onChange={(event) => updateDraft((character) => { character.expressions![id].layer = event.target.value as ViewMode; })}>{Object.entries(LAYER_LABELS).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label><label className="field"><span>감정 ID</span><input value={expression.emotion} onChange={(event) => updateDraft((character) => { character.expressions![id].emotion = event.target.value; })} /></label><label className="field field-wide"><span>표정 설명</span><textarea rows={2} value={expression.description} onChange={(event) => updateDraft((character) => { character.expressions![id].description = event.target.value; })} /></label></div>
+            <div className="form-grid"><label className="field"><span>감정 ID</span><input value={expression.emotion} onChange={(event) => updateDraft((character) => { character.expressions![id].emotion = event.target.value; })} /></label><label className="field field-wide"><span>표정 설명</span><textarea rows={2} value={expression.description} onChange={(event) => updateDraft((character) => { character.expressions![id].description = event.target.value; })} /></label></div>
           </section>)}
           <div className="new-expression-row"><input placeholder="새 표정 ID" value={newExpressionId} onChange={(event) => setNewExpressionId(event.target.value)} /><button type="button" onClick={() => {
             const id = newExpressionId.trim();
             if (!/^[a-z][a-z0-9_]*$/.test(id) || draft.expressions?.[id]) { onStatus("표정 ID는 영문 소문자·숫자·밑줄을 사용하고 중복될 수 없습니다."); return; }
-            updateDraft((character) => { character.expressions = { ...(character.expressions || {}), [id]: { layer: "reality", emotion: "neutral", description: "새 표정 설명" } }; });
+            updateDraft((character) => { character.expressions = { ...(character.expressions || {}), [id]: { emotion: "neutral", description: "새 표정 설명" } }; });
             setNewExpressionId("");
           }}>표정 추가</button></div>
         </div></fieldset>
@@ -376,9 +374,9 @@ export default function CharacterEditor({ active, payload, onPayload, onIssues, 
             <label className="field"><span>우선순위</span><input type="number" value={rule.priority} onChange={(event) => updateDraft((character) => { character.emotion_rules![index].priority = Number(event.target.value); })} /></label>
             <label className="field"><span>파생 감정</span><input value={rule.emotion} onChange={(event) => updateDraft((character) => { character.emotion_rules![index].emotion = event.target.value; })} /></label>
             <label className="field"><span>행동</span><input value={rule.behavior} onChange={(event) => updateDraft((character) => { character.emotion_rules![index].behavior = event.target.value; })} /></label>
-            <label className="field field-wide"><span>기본 실제 표정</span><select value={rule.default_expression} onChange={(event) => updateDraft((character) => { character.emotion_rules![index].default_expression = event.target.value; })}>{expressions.filter(([, value]) => value.layer === "reality").map(([id]) => <option value={id} key={id}>{id}</option>)}</select></label>
+            <label className="field field-wide"><span>기본 표정</span><select value={rule.default_expression} onChange={(event) => updateDraft((character) => { character.emotion_rules![index].default_expression = event.target.value; })}>{expressions.map(([id]) => <option value={id} key={id}>{id}</option>)}</select></label>
           </div><StatConditions conditions={rule.conditions} onChange={(conditions) => updateDraft((character) => { character.emotion_rules![index].conditions = conditions; })} /></section>)}
-          <button type="button" className="add-card-button" onClick={() => updateDraft((character) => { character.emotion_rules = [...(character.emotion_rules || []), { id: "new_rule", priority: 0, conditions: [], emotion: "neutral", behavior: "work_normally", default_expression: expressions.find(([, value]) => value.layer === "reality")?.[0] || expressions[0]?.[0] || "" }]; })}>＋ 감정 규칙 추가</button>
+          <button type="button" className="add-card-button" onClick={() => updateDraft((character) => { character.emotion_rules = [...(character.emotion_rules || []), { id: "new_rule", priority: 0, conditions: [], emotion: "neutral", behavior: "work_normally", default_expression: expressions[0]?.[0] || "" }]; })}>＋ 감정 규칙 추가</button>
         </div></fieldset>
 
         <fieldset><legend>신고 행동 규칙 ({reportingRules.length})</legend><div className="character-card-list">

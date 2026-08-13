@@ -8,41 +8,25 @@ project:
 id_pattern: "^[a-z][a-z0-9_.]*$"
 
 enums:
-  perceived_state: [push, pull, neutral]
   time_slot: [morning, lunch, afternoon, after_work]
   event_type: [anchor, heroine, company, offscreen, ending]
   event_availability: [automatic, player, hidden]
   event_completion: [return_to_timeline, honor_scene_exit]
-  presentation_flag: [original_text_lock, ui_glitch, ui_label_reveal, auditory_distortion, romance_insert, inner_voice, protagonist_art_reveal]
+  presentation_flag:
+  - ui_glitch
+  - ui_label_reveal
+  - protagonist_art_reveal
   visual_kind: [background_archetype, background, character_archetype, character]
   render_strategy: [flat_portrait, layered_sprite, background]
   stage_position: [far_left, left, center, right, far_right]
-  atmosphere:
-    - warm_romance
-    - playful_tension
-    - cold_office
-    - guarded_office
-    - procedural
-    - dread
-  intent:
-    - courtesy
-    - boundary
-    - avoidance
-    - relief
-    - documentation
-    - confrontation
-    - self_protection
-    - self_promotion
-    - work_only
   node_kind:
-    - dual_dialogue
-    - dual_narration
-    - silent
-    - choice
-    - state_gate
-    - effect
-    - exit
-
+  - dialogue
+  - narration
+  - silent
+  - choice
+  - state_gate
+  - effect
+  - exit
 stats:
   visible.protagonist.self_development.appeal:
     type: integer
@@ -74,20 +58,11 @@ stats:
     min: 0
     max: 6
     description: 밤 활동과 고급 표현 사용을 제한하는 피로도
-  visible.affection:
-    type: integer
-    min: 0
-    max: 100
-    description: 주인공이 사랑받는다고 확신하는 정도
   visible.initiative:
     type: integer
     min: 0
     max: 100
     description: 주인공이 밀당을 통제한다고 믿는 정도
-  visible.perceived_state:
-    type: enum
-    values: [push, pull, neutral]
-    description: 주인공이 해석한 상대의 현재 상태
   hidden.suspicion:
     type: integer
     min: 0
@@ -119,34 +94,34 @@ stats:
     description: 현재 시간대
 
 state_path_patterns:
-  - pattern: "^visible\\.protagonist\\.self_development\\.(appeal|fatigue)$"
-    stat_from_path: true
-  - pattern: "^visible\\.protagonist\\.self_development\\.stats\\.(health|appearance|humor|intelligence)$"
-    stat_from_path: true
-  - pattern: "^visible\\.heroines\\.[a-z][a-z0-9_]*\\.(affection|initiative|perceived_state)$"
-    stat_from_suffix: true
-  - pattern: "^hidden\\.heroines\\.[a-z][a-z0-9_]*\\.(suspicion|dislike|evidence_count)$"
-    stat_from_suffix: true
-  - pattern: "^progress\\.(cleared_routes|unlocked_modes)$"
-    type: array
-  - pattern: "^progress\\.flags$"
-    type: map
-  - pattern: "^progress\\.flags\\.[a-z][a-z0-9_.]*$"
-    type: any
-  - pattern: "^progress\\.time\\.(day|act|slot)$"
-    stat_from_path: true
-  - pattern: "^progress\\.events\\.(seen|missed|expired)$"
-    type: array
-  - pattern: "^progress\\.memories$"
-    type: array
-  - pattern: "^progress\\.self_development\\.(completed_days|activity_history)$"
-    type: array
-  - pattern: "^progress\\.self_development\\.last_activity$"
-    type: string
-  - pattern: "^progress\\.self_development\\.hint_charges$"
-    type: integer
-    min: 0
-    max: 9
+- pattern: "^visible\\.protagonist\\.self_development\\.(appeal|fatigue)$"
+  stat_from_path: true
+- pattern: "^visible\\.protagonist\\.self_development\\.stats\\.(health|appearance|humor|intelligence)$"
+  stat_from_path: true
+- pattern: "^visible\\.heroines\\.[a-z][a-z0-9_]*\\.initiative$"
+  stat_from_suffix: true
+- pattern: "^hidden\\.heroines\\.[a-z][a-z0-9_]*\\.(suspicion|dislike|evidence_count)$"
+  stat_from_suffix: true
+- pattern: "^progress\\.(cleared_routes|unlocked_modes)$"
+  type: array
+- pattern: "^progress\\.flags$"
+  type: map
+- pattern: "^progress\\.flags\\.[a-z][a-z0-9_.]*$"
+  type: any
+- pattern: "^progress\\.time\\.(day|act|slot)$"
+  stat_from_path: true
+- pattern: "^progress\\.events\\.(seen|missed|expired)$"
+  type: array
+- pattern: "^progress\\.memories$"
+  type: array
+- pattern: "^progress\\.self_development\\.(completed_days|activity_history)$"
+  type: array
+- pattern: "^progress\\.self_development\\.last_activity$"
+  type: string
+- pattern: "^progress\\.self_development\\.hint_charges$"
+  type: integer
+  min: 0
+  max: 9
 
 initial_state:
   visible:
@@ -161,17 +136,11 @@ initial_state:
         fatigue: 1
     heroines:
       yoon_seo_a:
-        affection: 5
         initiative: 50
-        perceived_state: neutral
       cha_min_kyung:
-        affection: 5
         initiative: 50
-        perceived_state: neutral
       kang_yoo_jin:
-        affection: 0
         initiative: 30
-        perceived_state: neutral
   hidden:
     heroines:
       yoon_seo_a:
@@ -220,36 +189,36 @@ initial_state:
 self_development:
   max_night_day: 16
   activities:
-    - id: workout
-      appeal_delta: 3
-      fatigue_delta: 2
-      stat_deltas: {health: 2, appearance: 1}
-      fatigue_lte: 4
-    - id: reading
-      appeal_delta: 1
-      fatigue_delta: 1
-      stat_deltas: {intelligence: 2}
-      fatigue_lte: 5
-    - id: ott
-      appeal_delta: -1
-      fatigue_delta: -1
-      stat_deltas: {humor: 2}
-    - id: sleep
-      appeal_delta: 0
-      fatigue_delta: -4
-      stat_deltas: {}
-    - id: dark_psychology
-      appeal_delta: 0
-      fatigue_delta: 2
-      stat_deltas: {}
-      fatigue_lte: 4
-      hint_charge: 1
-    - id: solo_drinking
-      selectable: false
-      appeal_delta: -1
-      fatigue_delta: -2
-      stat_deltas: {health: -1}
-      fatigue_gte: 5
+  - id: workout
+    appeal_delta: 3
+    fatigue_delta: 2
+    stat_deltas: {health: 2, appearance: 1}
+    fatigue_lte: 4
+  - id: reading
+    appeal_delta: 1
+    fatigue_delta: 1
+    stat_deltas: {intelligence: 2}
+    fatigue_lte: 5
+  - id: ott
+    appeal_delta: -1
+    fatigue_delta: -1
+    stat_deltas: {humor: 2}
+  - id: sleep
+    appeal_delta: 0
+    fatigue_delta: -4
+    stat_deltas: {}
+  - id: dark_psychology
+    appeal_delta: 0
+    fatigue_delta: 2
+    stat_deltas: {}
+    fatigue_lte: 4
+    hint_charge: 1
+  - id: solo_drinking
+    selectable: false
+    appeal_delta: -1
+    fatigue_delta: -2
+    stat_deltas: {health: -1}
+    fatigue_gte: 5
   expressions:
     feedback.last_workout:
       requires: {last_activity: workout}
@@ -284,40 +253,40 @@ self_development:
 
 gallery:
   entries:
-    - id: office_lineup
-      title_key: gallery.entry.office_lineup.title
-      description_key: gallery.entry.office_lineup.description
-      asset: assets/concept-art/lineup-v1.png
-      unlock_memory: cg.office_lineup
-      default_unlocked: true
-    - id: health_min_kyung
-      title_key: gallery.entry.health_min_kyung.title
-      description_key: gallery.entry.health_min_kyung.description
-      asset: assets/concept-art-archive/cha-min-kyung-original-v1.png
-      unlock_memory: cg.stat.health.min_kyung
-      source_stat: health
-      source_minimum: 3
-    - id: appearance_yoo_jin
-      title_key: gallery.entry.appearance_yoo_jin.title
-      description_key: gallery.entry.appearance_yoo_jin.description
-      asset: assets/concept-art-archive/kang-yoo-jin-original-v1.png
-      unlock_memory: cg.stat.appearance.yoo_jin
-      source_stat: appearance
-      source_minimum: 3
-    - id: humor_seo_a
-      title_key: gallery.entry.humor_seo_a.title
-      description_key: gallery.entry.humor_seo_a.description
-      asset: assets/concept-art-archive/yoon-seo-a-original-v1.png
-      unlock_memory: cg.stat.humor.seo_a
-      source_stat: humor
-      source_minimum: 3
-    - id: intelligence_min_kyung
-      title_key: gallery.entry.intelligence_min_kyung.title
-      description_key: gallery.entry.intelligence_min_kyung.description
-      asset: assets/concept-art/cha-min-kyung.png
-      unlock_memory: cg.stat.intelligence.min_kyung
-      source_stat: intelligence
-      source_minimum: 3
+  - id: office_lineup
+    title_key: gallery.entry.office_lineup.title
+    description_key: gallery.entry.office_lineup.description
+    asset: assets/concept-art/lineup-v1.png
+    unlock_memory: cg.office_lineup
+    default_unlocked: true
+  - id: health_min_kyung
+    title_key: gallery.entry.health_min_kyung.title
+    description_key: gallery.entry.health_min_kyung.description
+    asset: assets/concept-art-archive/cha-min-kyung-original-v1.png
+    unlock_memory: cg.stat.health.min_kyung
+    source_stat: health
+    source_minimum: 3
+  - id: appearance_yoo_jin
+    title_key: gallery.entry.appearance_yoo_jin.title
+    description_key: gallery.entry.appearance_yoo_jin.description
+    asset: assets/concept-art-archive/kang-yoo-jin-original-v1.png
+    unlock_memory: cg.stat.appearance.yoo_jin
+    source_stat: appearance
+    source_minimum: 3
+  - id: humor_seo_a
+    title_key: gallery.entry.humor_seo_a.title
+    description_key: gallery.entry.humor_seo_a.description
+    asset: assets/concept-art-archive/yoon-seo-a-original-v1.png
+    unlock_memory: cg.stat.humor.seo_a
+    source_stat: humor
+    source_minimum: 3
+  - id: intelligence_min_kyung
+    title_key: gallery.entry.intelligence_min_kyung.title
+    description_key: gallery.entry.intelligence_min_kyung.description
+    asset: assets/concept-art/cha-min-kyung.png
+    unlock_memory: cg.stat.intelligence.min_kyung
+    source_stat: intelligence
+    source_minimum: 3
 
 files:
   ui: ui.yaml
@@ -336,12 +305,12 @@ files:
 
 localization_quality:
   required_accessibility_keys:
-    - app.title
-    - locale.label
-    - menu.main
-    - menu.close
-    - hud.gameMenu
-    - menu.game
+  - app.title
+  - locale.label
+  - menu.main
+  - menu.close
+  - hud.gameMenu
+  - menu.game
   profiles:
     development:
       missing_translation: ignore

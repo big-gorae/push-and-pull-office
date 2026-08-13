@@ -6,7 +6,7 @@ role: 브랜드마케팅팀 경력직 대리
 narrative_role: supporting_witness_candidate
 summary: 스토리 모드에서 반복 등장하지만 공략할 수 없으며, 사실관계를 확인하고 이상 징후를 알아차리는 조연. 기본 결말의 해결사나 구원자는 아니며 생존 모드의 세부 역할은 미확정이다.
 immutable_facts:
-  - 스토리 모드와 속마음 모드에 반복 등장하지만 공략 루트는 없다.
+  - 스토리 모드에 반복 등장하지만 공략 루트는 없다.
   - 스토리 모드의 기본 결말에서 증거를 완성하거나 피해자를 구조해 파국을 막는 해결사로 등장하지 않는다.
   - 생존 모드 안에서의 플레이어·조력자·조연 역할은 후속 검토한다.
   - 한도윤을 특별한 연애 상대가 아니라 중단시켜야 할 반복 행동의 주체로 본다.
@@ -38,23 +38,18 @@ visual:
   props: [태블릿, 스타일러스, 코발트색 사원증 줄]
 expressions:
   subjective_bold_flirt:
-    layer: perceived
     emotion: attraction
-    description: 자신과 대등하게 맞서는 당돌한 호감처럼 보인다.
+    description: 원화 생성 프로필에서만 사용하는, 당돌한 호감으로 오독한 표정 프리셋.
   actual_fact_check:
-    layer: reality
     emotion: skepticism
     description: 한쪽 눈썹을 올리고 사실관계 오류를 짚는다.
   actual_warning:
-    layer: reality
     emotion: resolve
     description: 정면을 보고 경고 문장을 분명하게 전달한다.
   actual_procedural:
-    layer: reality
     emotion: focus
     description: 감정 표현보다 기록과 접수 절차에 집중한다.
   actual_worn_down:
-    layer: reality
     emotion: exhaustion
     description: 자신감은 남아 있지만 반복된 묵살로 표정이 지쳐 있다.
 emotion_rules:

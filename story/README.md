@@ -1,6 +1,6 @@
 # 스토리 제작 시스템
 
-`story/`는 서술형 기획 문서와 실제 게임 구현 사이의 구조화 원본이다. Markdown 문서는 콘셉트와 의도를 설명하고, 이 디렉터리의 YAML은 분기·수치·대사·표정·속마음·런타임 진행을 정의한다.
+`story/`는 서술형 기획 문서와 실제 게임 구현 사이의 구조화 원본이다. Markdown 문서는 콘셉트와 의도를 설명하고, 이 디렉터리의 YAML은 분기·수치·단일 대사·표정·런타임 진행을 정의한다.
 
 현재 게임에 실제로 들어간 사건과 장면의 박제 목록은 [`docs/story-implemented-baseline.md`](../docs/story-implemented-baseline.md)를 따른다. 문서에만 있고 `story/`의 이벤트·장면 YAML에 연결되지 않은 사건은 구현된 스토리로 간주하지 않는다.
 
@@ -75,10 +75,10 @@ python3 tools/story_harness.py context \
 3. MBTI 요소를 적용할 때 반응 상대의 행동 기반 `interaction_preferences`와 현재 상황 예외를 확인한다. F/T는 작가용 약칭으로만 사용하고, 명시적 요청·거절에는 `literal_respect`를 우선한다.
 4. 다인물 선택은 `interaction.target`의 반응 상대와 `push_pull.target`의 밀당 계산 인물을 따로 정한다. 둘 다 현재 `cast` 인물이어야 한다.
 5. 장면에서 읽고 쓸 상태를 `state_contract`에 먼저 선언한다. 루트 기본 히로인과 다른 계산 인물을 쓰면 그 인물의 시스템 경로도 포함한다.
-6. 각 대사 노드에 `perceived`와 `reality`를 모두 작성한다.
+6. 각 대사 노드에 단일 `line`, 표정과 필요한 `stage`를 작성한다.
 7. 수치 변화는 선택지나 전이의 `effects`에서만 기록한다.
 8. 새 표정은 인물 파일의 `expressions`에 먼저 등록한다.
-9. 새 장소·시간·분위기가 기존 배경 규칙으로 해석되는지 확인하고, 필요하면 `visuals/backgrounds/`에 변형을 추가한다.
+9. 새 장소·시간이 기존 배경 규칙으로 해석되는지 확인하고, 필요하면 `visuals/backgrounds/`에 변형을 추가한다.
 10. 새 캐릭터는 콘셉트 아트만 직접 참조하지 말고 `visuals/characters/`의 구체 객체를 하나 만든다.
 11. 새 장면을 `events/`의 시간 이벤트에 연결하고, 필요한 경우 `threads/` 순서에도 등록한다.
 12. 번역은 원본 YAML을 바꾸지 않고 `locales/<언어>.yaml`에 안정적인 키로 덮어쓴다.

@@ -25,10 +25,6 @@
         <span>장면</span>
         <select id="scene-select"></select>
       </label>
-      <div class="mode-switch" role="group" aria-label="표시 관점">
-        <button type="button" id="mode-perceived" class="active" aria-pressed="true">본편 화면</button>
-        <button type="button" id="mode-reality" aria-pressed="false">실제 원문</button>
-      </div>
     </section>
 
     <div class="workspace">
@@ -44,20 +40,8 @@
         <div class="state-group">
           <h3>주인공에게 보이는 값</h3>
           <label class="range-field">
-            <span><span>호감도</span><output id="affection-output">0</output></span>
-            <input id="affection-input" type="range" min="0" max="100" value="0">
-          </label>
-          <label class="range-field">
             <span><span>밀당 주도권</span><output id="initiative-output">0</output></span>
             <input id="initiative-input" type="range" min="0" max="100" value="0">
-          </label>
-          <label>
-            <span>현재 해석</span>
-            <select id="perceived-state-input">
-              <option value="push">밀기</option>
-              <option value="pull">당기기</option>
-              <option value="neutral">중립</option>
-            </select>
           </label>
         </div>
 
@@ -102,7 +86,6 @@
           <div class="dialogue-pane">
             <div class="hud" id="visible-tools" aria-label="현재 화면에 보이는 도구"></div>
             <div class="dialogue-content">
-              <p class="atmosphere" id="atmosphere">ATMOSPHERE</p>
               <blockquote id="dialogue-line">장면을 불러오는 중입니다.</blockquote>
               <div class="interpretation" id="interpretation"></div>
             </div>

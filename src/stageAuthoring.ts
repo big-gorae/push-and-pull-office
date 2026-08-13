@@ -1,7 +1,5 @@
 import { PROTAGONIST_ARTWORK_CHARACTER_ID } from "./protagonistArtworkPolicy";
-import type { Runtime, StageCharacterCue, StoryNode, ViewMode } from "./types";
-
-const LAYERS: ViewMode[] = ["perceived", "reality"];
+import type { Runtime, StageCharacterCue, StoryNode } from "./types";
 
 function defaultCue(runtime: Runtime, characterId: string): StageCharacterCue | undefined {
   if (!characterId || characterId === PROTAGONIST_ARTWORK_CHARACTER_ID) return undefined;
@@ -18,13 +16,10 @@ function defaultCue(runtime: Runtime, characterId: string): StageCharacterCue | 
 
 function isDefaultCenteredSpeakerStage(node: StoryNode, speakerId: string | undefined): boolean {
   if (!node.stage || !speakerId) return false;
-  return LAYERS.every((mode) => {
-    const cues = node.stage?.[mode];
-    return cues?.length === 1
-      && cues[0].position === "center"
-      && cues[0].character === speakerId
-      && cues[0].artwork === "default";
-  });
+  return node.stage.length === 1
+    && node.stage[0].position === "center"
+    && node.stage[0].character === speakerId
+    && node.stage[0].artwork === "default";
 }
 
 /** Applies the editor's explicit one-speaker default without overwriting a custom composition. */
@@ -35,10 +30,7 @@ export function applyDialogueSpeakerSelection(runtime: Runtime, node: StoryNode,
   const cue = defaultCue(runtime, speakerId);
   if (cue) return {
     ...next,
-    stage: {
-      perceived: [{ ...cue }],
-      reality: [{ ...cue }],
-    },
+    stage: [{ ...cue }],
   };
   const { stage: _stage, ...withoutStage } = next;
   return withoutStage;

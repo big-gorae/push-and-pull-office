@@ -19,12 +19,8 @@ requires:
   conditions: []
 on_seen:
   effects:
-    - {path: progress.flags.story_mode.target, op: set, value: cha_min_kyung}
+  - {path: progress.flags.story_mode.target, op: set, value: cha_min_kyung}
 on_missed: {effects: []}
 presentation:
-  perceived:
-    title: 질투를 유도하는 배석
-    summary: 민경이 다른 여성을 회의에 부르며 반응을 떠본다고 해석한다.
-  reality:
-    title: 목격자를 둔 공식 회의
-    summary: 민경은 단둘이 남지 않고 대화 내용이 회의록에 남도록 준비한다.
+  title: 목격자를 둔 공식 회의
+  summary: 민경은 단둘이 남지 않고 대화 내용이 회의록에 남도록 준비한다.

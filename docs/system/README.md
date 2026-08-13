@@ -1,6 +1,6 @@
 # [구현] 시스템 설계 문서 허브
 
-> 마지막 정리: 2026-08-02
+> 마지막 정리: 2026-08-13
 > 이 문서는 Love Office의 시스템 설계 문서를 찾고 상태를 판정하는 단일 진입점이다.
 
 ## 관리 원칙
@@ -16,7 +16,7 @@
 5. 문서와 코드가 다르면 현재 구현 설명에는 코드와 생성 런타임을 우선하고, 문서는 차이를 명시한 뒤 수정한다.
 6. 스토리 장면의 사실과 대사는 시스템 문서에 복제하지 않고 안정 ID와 원본 문서만 참조한다.
 
-캐릭터 상호작용 중 반응 화법 축의 내부 명칭은 **MBTI 요소**다. `interaction.target/support_styles`는 실제 반응 상대와 행동으로 관찰되는 지원 화법이고, `push_pull.target`은 한도윤의 리듬 계산 대상이다. 두 필드는 서로를 대신하지 않으며, 명시적인 요청·거절에서는 `literal_respect`와 장면의 현실이 평상시 선호보다 우선한다. 일반 플레이어 화면에는 MBTI/F/T 명칭을 노출하지 않으며, 기계 계약은 `story/SPEC.md`, `story/AI_AUTHORING_RULES.md`와 하네스가 소유한다.
+캐릭터 상호작용 중 반응 화법 축의 내부 명칭은 **MBTI 요소**다. `interaction.target/support_styles`는 실제 반응 상대와 행동으로 관찰되는 지원 화법이고, `push_pull.target`은 한도윤의 리듬 계산 대상이다. 두 필드는 서로를 대신하지 않으며, 명시적인 요청·거절에서는 `literal_respect`와 장면의 현실이 평상시 선호보다 우선한다. 선택지·대사·상시 HUD에는 MBTI/F/T 명칭을 노출하지 않고, 캐릭터 탭의 해금형 프로필에서만 유형을 표시한다. 기계 계약은 `story/SPEC.md`, `story/AI_AUTHORING_RULES.md`와 하네스가 소유한다.
 
 ## 현재 자동화 운영 상태
 
@@ -36,7 +36,7 @@
 | 상태 | 문서 | 책임 |
 |---|---|---|
 | 구현 | [스토리 제작 시스템](../../story/README.md) | 제작 원본, 빌드 산출물과 도구 사용법 |
-| 구현 | [스토리 데이터 명세](../../story/SPEC.md) | 상태, 캠페인, 이벤트, 장면, 이중 레이어 계약 |
+| 구현 | [스토리 데이터 명세](../../story/SPEC.md) | 상태, 캠페인, 이벤트와 단일 대사·연출 장면 계약 |
 | 구현 | [게임 런타임 통합](../../story/RUNTIME_INTEGRATION.md) | 런타임·세이브·백로그 연동 |
 | 구현 | [요구사항 검증표](../../story/VERIFICATION.md) | validator와 테스트가 증명해야 할 항목 |
 | 구현 | [AI 스토리 작성 계약](../../story/AI_AUTHORING_RULES.md) | 에이전트의 제한된 장면 작성 규칙 |
@@ -49,7 +49,7 @@
 | 상태 | 문서 | 현재 구현 근거 또는 남은 범위 |
 |---|---|---|
 | 구현 | [밀당 시스템 설계](push-pull-system.md) | `src/pushPull.ts`, MBTI 요소 데이터인 `interaction_preferences`, 선택지 `interaction`, 독립된 `push_pull.target`, 하네스·플레이어 대상 회귀 테스트와 2일차 수직 슬라이스 |
-| 구현 | [밀당 UI/UX 설계](push-pull-ui-ux.md) | 리듬 막대, 선택 화면, 속마음 라벨, 디버그 표시 |
+| 구현 | [밀당 UI/UX 설계](push-pull-ui-ux.md) | 리듬 막대, 선택 화면과 디버그 표시 |
 | 구현 | [웹 미연시 플레이어 설계](web-game-player-design.md) | 타임라인 런타임, 저장·불러오기, 백로그, 오토·스킵 |
 | 구현 | [다국어·상황별 대사 관리](localization-context-dialogue-redesign.md) | 단일 레지스트리, fallback, variant와 v3 ID 세이브 |
 | 부분 구현 | [Tauri 스토리 에디터 설계](tauri-story-editor-design.md) | 구조화 편집과 안전 저장은 구현, 일부 최종 인수 조건은 잔존 |
@@ -62,9 +62,9 @@
 | 상태 | 이전 제안 번호 | 문서 | 핵심 목적 |
 |---|---:|---|---|
 | 미구현 | - | [에디터 비차단 저장 아키텍처](editor-nonblocking-save-architecture.md) | 입력과 영속화를 분리한 공통 자동 저장, 수동 flush, 버전 승인과 증분 백엔드 |
-| 미구현 | 1 | [게임 모드·캠페인 분리](game-mode-campaign-separation.md) | 스토리·속마음·어나더 스토리의 실행 상태와 연속성 분리 |
+| 구현 | 1 | [게임 모드·캠페인 분리](game-mode-campaign-separation.md) | 스토리와 어나더 스토리의 캠페인·연속성 분리; 장면 레이어 시스템은 폐기 |
 | 부분 구현 | 3 | [MBTI 요소·밀당 학습 피드백](push-pull-onboarding-feedback.md) | MBTI 요소용 지원 화법·두 대상·2일차 수직 슬라이스는 구현, 의미 이벤트·학습 플래그·전용 연출과 접근성은 남음 |
-| 미구현 | 4 | [엔딩·회상 갤러리](ending-memory-gallery.md) | 엔딩 수집, 장면 재생과 두 레이어 비교 |
+| 미구현 | 4 | [엔딩·회상 갤러리](ending-memory-gallery.md) | 엔딩 수집과 단일 장면 재생; 과거 두 레이어 비교안은 폐기 |
 | 미구현 | 5 | [세이브 호환·내보내기](save-versioning-export.md) | 스토리 개정 중 세이브 보호와 로컬 백업 |
 
 ## 상태 변경 절차

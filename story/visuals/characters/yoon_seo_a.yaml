@@ -5,7 +5,6 @@ extends: archetype.character_bust
 title_key: visual.character.yoon_seo_a.title
 title: 윤서아 기본 바스트
 character: yoon_seo_a
-default_reality_expression: actual_social_smile
 fallback_asset: assets/characters/yoon-seo-a/office-default/base-cutout.png
 default_outfit: office
 default_pose: guarded
@@ -14,3 +13,4 @@ poses:
   guarded: {offset_x: 12, offset_y: 0, scale: 0.98}
 expression_assets: {}
 tags: [heroine, freeze_response]
+default_expression: actual_social_smile

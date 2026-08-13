@@ -133,42 +133,39 @@ ID와 파일명은 분리하되 한 번 저장된 ID는 파일 이동과 무관�
 
 - 자동 판정 결과가 마음에 들면 override 없이 저장한다.
 - 다른 배경을 고르면 scene `default_background`에 background visual·variant 안정 ID를 저장한다.
-- 씬 기본 배경은 인지와 실제 레이어 및 씬 안의 모든 대사에 공통 적용한다. 대사마다 바꾸는 고급 override는 기본 편집 흐름에 두지 않는다.
+- 씬 기본 배경은 씬 안의 모든 대사에 공통 적용한다. 대사마다 바꾸는 고급 override는 기본 편집 흐름에 두지 않는다.
 
 캐릭터 원화는 선택한 cast별 artwork picker로 정한다.
 
 - 대사마다 왼쪽·가운데·오른쪽 세 슬롯
 - 캐릭터별 탭과 등록된 artwork 썸네일
 - 화자와 무관한 cast 인물 배치와 선택지 화면 배치
-- 레이어별 명시적 직접 배치와 전체 `OFF`
+- 명시적 직접 배치와 전체 `OFF`
 - fallback 발생 여부와 이유
 
 장면은 실제 asset path를 저장하지 않는다.
 
-대사 `stage`에 해당 레이어 키가 없으면 인물 원화를 표시하지 않는다. 런타임은 `cast`나 화자를 근거로 배치를 추론하지 않는다. 새 대사의 화자를 선택하면 편집기가 한도윤을 제외한 일러스트 화자를 양쪽 레이어 중앙 cue로 명시 저장한다. 레이어 키가 빈 배열이면 원화를 모두 끄고, 1~3개 cue가 있으면 화자 여부와 무관하게 지정한 인물을 표시한다. 한 레이어에서 위치와 인물은 각각 중복될 수 없으며 선택 가능한 인물은 illustrated cast로 제한한다.
+대사 `stage`가 없거나 빈 배열이면 인물 원화를 표시하지 않는다. 런타임은 `cast`나 화자를 근거로 배치를 추론하지 않는다. 새 대사의 화자를 선택하면 편집기가 한도윤을 제외한 일러스트 화자를 중앙 cue로 명시 저장한다. 1~3개 cue가 있으면 화자 여부와 무관하게 지정한 인물을 표시한다. 위치와 인물은 각각 중복될 수 없으며 선택 가능한 인물은 illustrated cast로 제한한다.
 
 ```yaml
 stage:
-  perceived:
-    - position: left
-      character: yoon_seo_a
-      visual_id: character.yoon_seo_a
-      artwork: office_default
-    - position: right
-      character: cha_min_kyung
-      visual_id: character.cha_min_kyung
-      artwork: office_default
-  reality: []
+  - position: left
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: office_default
+  - position: right
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: office_default
 ```
 
 ### 4.6 6단계: 첫 비트
 
 빈 장면과 맥락 템플릿은 최소 하나의 유효한 비트를 요구한다.
 
-- `dual_dialogue` 또는 `dual_narration`
-- 인지·실제 화자
-- 인지·실제 문장과 atmosphere
-- 실제 레이어 intent
+- `dialogue` 또는 `narration`
+- 화자
+- 단일 문장
 - 화자 표정과 원화 표시 여부
 
 마법사가 자동으로 빈 문자열을 정상 대사처럼 저장하지 않는다. 필수 문장이 완성되기 전에는 복구 가능한 초안으로만 유지한다.
@@ -332,7 +329,7 @@ variants:
     priority: 60
 ```
 
-asset picker의 필터 기준은 location, time, atmosphere, mode, tag와 aspect ratio다.
+asset picker의 필터 기준은 location, time, tag와 aspect ratio다.
 
 ### 9.2 캐릭터 원화
 

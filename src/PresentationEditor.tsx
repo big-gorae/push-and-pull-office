@@ -16,7 +16,6 @@ import type {
   Scene,
   StoryNode,
   ValidationIssue,
-  ViewMode,
   VisualObject,
 } from "./types";
 
@@ -32,21 +31,20 @@ type StageCanvasProps = {
 
 export function StageCanvas({ runtime, scene, node, stage, locale, variantId, images }: StageCanvasProps) {
   const i18n = useMemo(() => new LocalizationService(runtime, locale), [runtime, locale]);
-  const layer = node[stage.mode];
   const variantPath = variantId && variantId !== "default" ? `variants.${variantId}.` : "";
-  const speaker = effectiveSpeaker(node, stage.mode);
+  const speaker = effectiveSpeaker(node);
   const speakerName = speaker
     ? i18n.t(
       runtime.characters[speaker] ? `characters.${speaker}.display_name` : `world.${speaker}.display_name`,
       runtime.characters[speaker]?.display_name || runtime.world?.entities[speaker]?.display_name || speaker,
     )
     : "";
-  const line = layer?.line
-    ? i18n.t(storyTextKey(scene.id, node.id, `${variantPath}${stage.mode}.line`), layer.line)
+  const line = node.line
+    ? i18n.t(storyTextKey(scene.id, node.id, `${variantPath}line`), node.line)
     : node.prompt
       ? i18n.t(storyTextKey(scene.id, node.id, "prompt"), node.prompt)
       : node.kind === "exit" ? "장면을 떠납니다." : "상태를 계산합니다.";
-  return <div className={`stage-canvas ${stage.mode}`} aria-label={`${scene.title} 연출 프리뷰`}>
+  return <div className="stage-canvas" aria-label={`${scene.title} 연출 프리뷰`}>
     {stage.background?.asset && images[stage.background.asset]
       ? <img className="stage-background" src={images[stage.background.asset]} alt="" />
       : <div className="stage-background-placeholder">BACKGROUND</div>}
@@ -117,8 +115,6 @@ type Props = {
   payload: ProjectPayload;
   locale: LocaleId;
   onLocale: (locale: LocaleId) => void;
-  mode: ViewMode;
-  onMode: (mode: ViewMode) => void;
   onStatus: (status: string) => void;
   onPayload: Dispatch<SetStateAction<ProjectPayload | null>>;
   onIssues: (issues: ValidationIssue[]) => void;
@@ -130,8 +126,6 @@ export default function PresentationEditor({
   payload,
   locale,
   onLocale,
-  mode,
-  onMode,
   onStatus,
   onPayload,
   onIssues,
@@ -151,11 +145,11 @@ export default function PresentationEditor({
   const resolver = useMemo(() => new VisualResolver(runtime), [runtime]);
   const i18n = useMemo(() => new LocalizationService(runtime, locale), [runtime, locale]);
   const rawNode = scene?.nodes[nodeId] || scene?.nodes[scene?.start_node];
-  const resolvedDialogue = rawNode && (rawNode.kind === "dual_dialogue" || rawNode.kind === "dual_narration")
+  const resolvedDialogue = rawNode && (rawNode.kind === "dialogue" || rawNode.kind === "narration")
     ? resolveDialogueNode(runtime, previewState, rawNode)
     : undefined;
   const node = resolvedDialogue?.node || rawNode;
-  const stage = scene && node ? resolver.resolveStage(scene, node.id, mode, node) : undefined;
+  const stage = scene && node ? resolver.resolveStage(scene, node.id, node) : undefined;
   const coverage = i18n.coverage();
   const entryDecision = scene ? canEnterScene(runtime, previewState, scene.id) : undefined;
   const localeLabel = runtime.localization.locale_names[locale]?.native_name || locale;
@@ -269,10 +263,6 @@ export default function PresentationEditor({
             {runtime.localization.supported_locales.map((id) =>
               <option value={id} key={id}>{runtime.localization.locale_names[id]?.native_name || id}</option>)}
           </select></label>
-          <div className="segmented">
-            <button type="button" className={mode === "perceived" ? "active" : ""} onClick={() => onMode("perceived")}>주인공 인식</button>
-            <button type="button" className={mode === "reality" ? "active" : ""} onClick={() => onMode("reality")}>실제</button>
-          </div>
         </div>
       </div>
       <div className="presentation-selector">

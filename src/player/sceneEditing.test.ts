@@ -14,7 +14,7 @@ function fixtureScene(): Scene {
     start_node: "opening",
     node_order: ["opening", "choice", "remove_me", "closing"],
     nodes: {
-      opening: { id: "opening", kind: "silent", perceived: { atmosphere: "dread", line: "" }, reality: { atmosphere: "dread", line: "" }, next: "remove_me" },
+      opening: { id: "opening", kind: "silent", line: "", next: "remove_me" },
       choice: {
         id: "choice",
         kind: "choice",
@@ -33,7 +33,7 @@ function fixtureScene(): Scene {
           next: "remove_me",
         }],
       },
-      remove_me: { id: "remove_me", kind: "silent", perceived: { atmosphere: "dread", line: "" }, reality: { atmosphere: "dread", line: "" }, next: "closing" },
+      remove_me: { id: "remove_me", kind: "silent", line: "", next: "closing" },
       closing: { id: "closing", kind: "exit", transitions: [{ default: true, ending: true, ending_id: "test.end" }] },
     },
   };
@@ -72,7 +72,7 @@ describe("scene dialogue copy and paste", () => {
     expect(scene.nodes.opening.next).toBe("copied_dialogue");
     expect(copied).toEqual({ ...source, id: "copied_dialogue", next: "remove_me" });
     expect(copied).not.toBe(source);
-    expect(copied.perceived).not.toBe(source.perceived);
+    expect(copied).not.toBe(source);
   });
 
   it("remaps copied self-references to the new node id", () => {

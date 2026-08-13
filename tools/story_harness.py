@@ -88,9 +88,6 @@ VISIBLE_INITIATIVE_CONDITION_PATTERN = re.compile(
     r"^visible\.heroines\.[a-z][a-z0-9_]*\.initiative$"
 )
 APPROVED_UI_STRINGS = {
-    "mode.truth.title": "속마음 모드",
-    "mode.truth.copyUnlocked": "그녀들의 일상과 속마음을 들어 보아요",
-    "mode.truth.copyLocked": "그녀들의 일상과 속마음을 들어 보아요",
     "mode.survivor.title": "어나더 스토리",
     "mode.survivor.copy": "새로운 그녀로 새로운 이야기를 만들어 보아요",
 }
@@ -124,17 +121,17 @@ def narrative_entry_has_direct_editor_target(entry: Mapping[str, Any]) -> bool:
     field_path = str(document.get("fieldPath", ""))
     if kind == "scene":
         return bool(re.fullmatch(
-            r"nodes\.[a-zA-Z0-9_]+(?:\.variants\.[a-zA-Z0-9_]+)?\.(?:perceived|reality)\.line"
+            r"nodes\.[a-zA-Z0-9_]+(?:\.variants\.[a-zA-Z0-9_]+)?\.line"
             r"|nodes\.[a-zA-Z0-9_]+\.(?:prompt|stimulus)"
             r"|nodes\.[a-zA-Z0-9_]+\.analysis_hints\.(?:pull|push|none)"
             r"|nodes\.[a-zA-Z0-9_]+\.options\.[a-zA-Z0-9_]+\.(?:label|interpretation|action)",
             field_path,
         ))
     if kind == "event":
-        return bool(re.fullmatch(r"presentation\.(?:perceived|reality)\.(?:title|summary)", field_path))
+        return bool(re.fullmatch(r"presentation\.(?:title|summary)", field_path))
     if kind == "system_flow":
         return bool(re.fullmatch(
-            r"nodes\.[a-zA-Z0-9_]+(?:\.variants\.[a-zA-Z0-9_]+)?\.(?:perceived|reality)\.line"
+            r"nodes\.[a-zA-Z0-9_]+(?:\.variants\.[a-zA-Z0-9_]+)?\.line"
             r"|options\.[a-zA-Z0-9_]+\.(?:label|description)",
             field_path,
         ))
@@ -145,7 +142,7 @@ def can_reveal_protagonist_artwork(scene: Mapping[str, Any], node: Optional[Mapp
     return bool(
         isinstance(node, Mapping)
         and str(scene.get("id", "")).startswith("ending.")
-        and node.get("kind") == "dual_narration"
+        and node.get("kind") == "narration"
         and PROTAGONIST_ARTWORK_REVEAL_FLAG in node.get("presentation_flags", [])
     )
 
@@ -165,16 +162,8 @@ def reproducible_generated_at() -> str:
     return dt.datetime.fromtimestamp(timestamp, tz=dt.timezone.utc).isoformat()
 
 
-def effective_speaker(node: Mapping[str, Any], mode: str) -> Optional[str]:
-    """Resolve the nameplate/portrait speaker for one presentation layer.
-
-    An explicitly null layered speaker is meaningful: it selects authoritative,
-    nameplate-free narration and must not fall back to the legacy single speaker.
-    """
-    speakers = node.get("speakers")
-    if isinstance(speakers, Mapping) and mode in speakers:
-        speaker = speakers[mode]
-        return speaker if isinstance(speaker, str) else None
+def effective_speaker(node: Mapping[str, Any], mode: Optional[str] = None) -> Optional[str]:
+    """Resolve the single nameplate/portrait speaker for a dialogue node."""
     speaker = node.get("speaker")
     return speaker if isinstance(speaker, str) else None
 
@@ -417,7 +406,7 @@ class StoryProject:
         if not isinstance(self.game_modes, dict):
             self._error(issues, location, "modes must be a mapping")
             return
-        required_ids = {"base", "truth_view", "survivor_view"}
+        required_ids = {"base", "survivor_view"}
         actual_ids = set(self.game_modes)
         if actual_ids != required_ids:
             self._error(
@@ -430,10 +419,10 @@ class StoryProject:
             if not isinstance(mode, dict):
                 self._error(issues, mode_location, "mode definition must be a mapping")
                 continue
-            allowed_keys = {"campaign_id", "planned_campaign_id", "continuity_id", "initial_layer", "layer_policy", "content_status", "unlock"}
+            allowed_keys = {"campaign_id", "planned_campaign_id", "continuity_id", "content_status", "unlock"}
             for key in sorted(set(mode) - allowed_keys):
                 self._error(issues, mode_location, f"unknown mode property: {key}")
-            for key in ("campaign_id", "continuity_id", "initial_layer", "layer_policy", "content_status", "unlock"):
+            for key in ("campaign_id", "continuity_id", "content_status", "unlock"):
                 if key not in mode:
                     self._error(issues, mode_location, f"required key is missing: {key}")
             campaign_id = mode.get("campaign_id")
@@ -445,10 +434,6 @@ class StoryProject:
                     self._error(issues, mode_location, f"playable mode requires a known campaign: {campaign_id}")
             elif campaign_id is not None and campaign_id not in self.campaigns:
                 self._error(issues, mode_location, f"unknown campaign: {campaign_id}")
-            if mode.get("initial_layer") not in {"perceived", "reality"}:
-                self._error(issues, mode_location, f"unknown initial_layer: {mode.get('initial_layer')}")
-            if mode.get("layer_policy") not in {"fixed", "switchable"}:
-                self._error(issues, mode_location, f"unknown layer_policy: {mode.get('layer_policy')}")
             if not self.id_is_valid(mode.get("continuity_id")):
                 self._error(issues, mode_location, "continuity_id must be a valid stable id")
             unlock = mode.get("unlock")
@@ -470,20 +455,13 @@ class StoryProject:
                         self._validate_conditions(issues, group_location, group.get("conditions", []), None)
 
         base = self.game_modes.get("base", {})
-        truth = self.game_modes.get("truth_view", {})
         survivor = self.game_modes.get("survivor_view", {})
-        if base.get("campaign_id") != "main" or truth.get("campaign_id") != "main":
-            self._error(issues, location, "base and truth_view must reference the stable main campaign")
-        if base.get("content_status") != "playable" or truth.get("content_status") != "playable":
-            self._error(issues, location, "base and truth_view must remain playable")
+        if base.get("campaign_id") != "main" or base.get("content_status") != "playable":
+            self._error(issues, location, "base must remain playable on the stable main campaign")
         if survivor.get("content_status") != "coming_soon" or survivor.get("campaign_id") is not None:
             self._error(issues, location, "survivor_view must remain coming_soon without a campaign until implemented")
         if survivor.get("planned_campaign_id") != "survivor":
             self._error(issues, location, "survivor_view must reserve planned_campaign_id survivor")
-        if base.get("continuity_id") != truth.get("continuity_id"):
-            self._error(issues, location, "base and truth_view must share one continuity")
-        if base.get("initial_layer") != "perceived" or truth.get("initial_layer") != "reality":
-            self._error(issues, location, "base must start perceived and truth_view must start reality")
         if survivor.get("continuity_id") == base.get("continuity_id"):
             self._error(issues, location, "survivor_view must use a separate continuity")
         approved_post_clear_unlock = {
@@ -494,11 +472,8 @@ class StoryProject:
         }
         if base.get("unlock") != {"always": True}:
             self._error(issues, location, "base must always be unlocked")
-        if truth.get("unlock") != approved_post_clear_unlock or survivor.get("unlock") != approved_post_clear_unlock:
-            self._error(issues, location, "truth_view and survivor_view must unlock after either approved main route clear")
-        for mode_id, mode in self.game_modes.items():
-            if mode.get("layer_policy") != "fixed":
-                self._error(issues, f"{location}#modes.{mode_id}", "approved player modes must use a fixed layer")
+        if survivor.get("unlock") != approved_post_clear_unlock:
+            self._error(issues, location, "survivor_view must unlock after either approved main route clear")
 
     def _validate_self_development(self, issues: List[Issue]) -> None:
         location = f"{relative_source(self.manifest.get('_source', 'manifest.yaml'))}#self_development"
@@ -719,10 +694,9 @@ class StoryProject:
                             self._error(issues, unit_location, f"invalid or duplicate system variant id: {variant_id}")
                         elif isinstance(variant_id, str):
                             variant_ids.add(variant_id)
-                    for layer in ("perceived", "reality"):
-                        line = unit.get(layer, {}).get("line") if isinstance(unit.get(layer), dict) else None
-                        if not isinstance(line, str) or not line.strip():
-                            self._error(issues, unit_location, f"system dialogue requires a non-empty {layer}.line")
+                    line = unit.get("line")
+                    if not isinstance(line, str) or not line.strip():
+                        self._error(issues, unit_location, "system dialogue requires a non-empty line")
 
         night = self.system_flows.get("system.night_activity", {})
         night_nodes = {node.get("id"): node for node in night.get("nodes", []) if isinstance(node, dict)}
@@ -1070,9 +1044,8 @@ class StoryProject:
             elif trigger_id and self.events[trigger_id].get("campaign_id") != campaign_id:
                 self._error(issues, location, f"on_missed trigger belongs to another campaign: {trigger_id}")
             presentation = event.get("presentation", {})
-            for layer in ("perceived", "reality"):
-                if not isinstance(presentation.get(layer), dict) or not presentation[layer].get("title") or not presentation[layer].get("summary"):
-                    self._error(issues, location, f"presentation.{layer} requires title and summary")
+            if not isinstance(presentation, dict) or not presentation.get("title") or not presentation.get("summary"):
+                self._error(issues, location, "presentation requires title and summary")
 
     def _validate_threads(self, issues: List[Issue]) -> None:
         for thread_id, thread in self.threads.items():
@@ -1210,8 +1183,6 @@ class StoryProject:
                 exp_location = f"{location}#expressions.{expression_id}"
                 if not self.id_is_valid(expression_id):
                     self._error(issues, exp_location, "invalid expression id")
-                if expression.get("layer") not in {"perceived", "reality"}:
-                    self._error(issues, exp_location, "layer must be perceived or reality")
                 for key in ("emotion", "description"):
                     if not expression.get(key):
                         self._error(issues, exp_location, f"required key is missing: {key}")
@@ -1220,8 +1191,6 @@ class StoryProject:
                 expression_id = rule.get("default_expression")
                 if expression_id not in expressions:
                     self._error(issues, rule_location, f"unknown default_expression: {expression_id}")
-                elif expressions[expression_id].get("layer") != "reality":
-                    self._error(issues, rule_location, "emotion default_expression must use reality layer")
                 self._validate_relative_conditions(issues, rule_location, rule.get("conditions", []))
             for index, rule in enumerate(character.get("reporting_rules", [])):
                 self._validate_relative_conditions(issues, f"{location}#reporting_rules[{index}]", rule.get("conditions", []))
@@ -1428,7 +1397,7 @@ class StoryProject:
                     if not isinstance(asset, str) or not (PROJECT_ROOT / asset).is_file():
                         self._error(issues, variant_location, f"background asset does not exist: {asset}")
                     match = variant.get("match", {}) if isinstance(variant, dict) else {}
-                    if not any(match.get(key) for key in ("locations", "times", "atmospheres", "modes")):
+                    if not any(match.get(key) for key in ("locations", "times")):
                         self._error(issues, variant_location, "background variant needs at least one match dimension")
             elif visual.get("kind") == "character":
                 character_id = visual.get("character")
@@ -1469,11 +1438,9 @@ class StoryProject:
                 if visual.get("default_pose") not in poses:
                     self._error(issues, location, "default_pose is not declared in poses")
                 expressions = self.characters.get(character_id, {}).get("expressions", {})
-                default_reality_expression = visual.get("default_reality_expression")
-                if not isinstance(default_reality_expression, str) or default_reality_expression not in expressions:
-                    self._error(issues, location, "default_reality_expression must reference a declared character expression")
-                elif expressions[default_reality_expression].get("layer") != "reality":
-                    self._error(issues, location, "default_reality_expression must use a reality-layer expression")
+                default_expression = visual.get("default_expression")
+                if not isinstance(default_expression, str) or default_expression not in expressions:
+                    self._error(issues, location, "default_expression must reference a declared character expression")
                 for expression_id in visual.get("expression_assets", {}):
                     if expression_id not in expressions:
                         self._error(issues, location, f"unknown expression asset binding: {expression_id}")
@@ -1488,17 +1455,12 @@ class StoryProject:
                 node_id = node.get("id")
                 variants = node.get("variants") if isinstance(node.get("variants"), list) else [None]
                 for variant in variants:
-                    candidate = node if variant is None else {
-                        **node,
-                        "perceived": variant.get("perceived"),
-                        "reality": variant.get("reality"),
-                    }
+                    candidate = node if variant is None else {**node, **variant}
                     variant_suffix = f".variants.{variant.get('id')}" if variant else ""
-                    for mode in ("perceived", "reality"):
-                        background = resolve_scene_background(resolved, scene, node_id, mode, candidate)
-                        if background is None:
-                            location = relative_source(scene.get("_source", scene_id))
-                            self._error(issues, f"{location}#nodes.{node_id}{variant_suffix}", f"no background resolves in {mode} mode")
+                    background = resolve_scene_background(resolved, scene, node_id, candidate)
+                    if background is None:
+                        location = relative_source(scene.get("_source", scene_id))
+                        self._error(issues, f"{location}#nodes.{node_id}{variant_suffix}", "no background resolves")
 
     def _validate_relative_conditions(self, issues: List[Issue], location: str, conditions: Any) -> None:
         if not isinstance(conditions, list):
@@ -2099,33 +2061,25 @@ class StoryProject:
             elif any(not isinstance(value, str) or not value.strip() for value in analysis_hints.values()):
                 self._error(issues, location, "choice analysis_hints values must be non-empty strings")
         if kind == "silent":
-            if "speaker" in node or "speakers" in node:
+            if "speaker" in node:
                 self._error(issues, location, "silent node cannot declare a speaker")
             if "variants" in node:
                 self._error(issues, location, "silent node cannot declare dialogue variants")
-            atmospheres = set(self.manifest.get("enums", {}).get("atmosphere", []))
-            for layer_name in ("perceived", "reality"):
-                layer = node.get(layer_name)
-                if not isinstance(layer, Mapping):
-                    self._error(issues, location, f"silent node requires {layer_name} layer")
-                    continue
-                if layer.get("line") != "":
-                    self._error(issues, location, f"silent {layer_name}.line must be an explicit empty string")
-                if layer.get("atmosphere") not in atmospheres:
-                    self._error(issues, location, f"unknown silent {layer_name} atmosphere: {layer.get('atmosphere')}")
-                for key in sorted(set(layer) - {"atmosphere", "line"}):
-                    self._error(issues, location, f"silent {layer_name} cannot declare {key}")
+            if node.get("line") != "":
+                self._error(issues, location, "silent line must be an explicit empty string")
+            if "atmosphere" in node:
+                self._error(issues, location, "removed dialogue field is forbidden: atmosphere")
             if not node.get("next"):
                 self._error(issues, location, "silent node requires next")
-        elif kind in {"dual_dialogue", "dual_narration"}:
+        elif kind in {"dialogue", "narration"}:
             variants = node.get("variants")
             if variants is None:
-                self._validate_dual_node(issues, scene, node, location)
+                self._validate_presentation_node(issues, scene, node, location)
             elif not isinstance(variants, list) or not variants:
                 self._error(issues, location, "variants must be a non-empty list")
             else:
-                if "perceived" in node or "reality" in node:
-                    self._error(issues, location, "dual node must use either inline layers or variants, not both")
+                if "line" in node:
+                    self._error(issues, location, "dialogue node must use either an inline line or variants, not both")
                 variant_ids: Set[str] = set()
                 condition_signatures: Dict[str, str] = {}
                 defaults = 0
@@ -2170,16 +2124,12 @@ class StoryProject:
                             kind="variant",
                             reads=reads,
                         )
-                    variant_node = {
-                        **node,
-                        "perceived": variant.get("perceived"),
-                        "reality": variant.get("reality"),
-                    }
-                    self._validate_dual_node(issues, scene, variant_node, variant_location)
+                    variant_node = {**node, **variant}
+                    self._validate_presentation_node(issues, scene, variant_node, variant_location)
                 if defaults != 1:
                     self._error(issues, location, "variants require exactly one default")
             if not node.get("next"):
-                self._error(issues, location, "dual node requires next")
+                self._error(issues, location, "dialogue or narration node requires next")
         elif kind == "choice":
             if not node.get("prompt"):
                 self._error(issues, location, "choice prompt is required")
@@ -2308,13 +2258,12 @@ class StoryProject:
                         if path not in writes:
                             self._error(issues, option_location, f"push_pull system path is not declared in state_contract.writes: {path}")
                     forbidden = {
-                        f"visible.heroines.{character_id}.{field}"
+                        f"visible.heroines.{character_id}.initiative"
                         for character_id in self.manifest.get("initial_state", {}).get("visible", {}).get("heroines", {})
-                        for field in ("affection", "initiative", "perceived_state")
                     }
                     for effect in option.get("effects", []):
                         if effect.get("path") in forbidden:
-                            self._error(issues, option_location, f"push_pull choice must not manually write compatibility stat: {effect.get('path')}")
+                            self._error(issues, option_location, f"push_pull choice must not manually write initiative: {effect.get('path')}")
                 if "self_development" in option:
                     self._validate_self_development_use(
                         issues,
@@ -2347,104 +2296,84 @@ class StoryProject:
             self._error(
                 issues,
                 location,
-                "protagonist_art_reveal is allowed only on dual_narration nodes in ending scenes",
+                "protagonist_art_reveal is allowed only on narration nodes in ending scenes",
             )
         stage = node.get("stage")
         if stage is None:
             if has_reveal_flag:
-                self._error(issues, location, "protagonist_art_reveal requires explicit perceived and reality stage cues")
+                self._error(issues, location, "protagonist_art_reveal requires an explicit stage cue")
             return
-        if not isinstance(stage, Mapping):
-            self._error(issues, location, "stage must be a mapping")
+        if not isinstance(stage, list):
+            self._error(issues, location, "stage must be a list")
             return
-        for unknown in sorted(set(stage) - {"perceived", "reality"}):
-            self._error(issues, location, f"unknown stage layer: {unknown}")
         visuals = self.resolve_visuals()
-        reveal_layers: Set[str] = set()
-        for layer_name in ("perceived", "reality"):
-            if layer_name not in stage:
+        reveal_present = False
+        if len(stage) > 3:
+            self._error(issues, location, "stage allows at most three character artworks")
+        positions: Set[str] = set()
+        characters: Set[str] = set()
+        for index, cue in enumerate(stage):
+            item_location = f"{location}.stage[{index}]"
+            if not isinstance(cue, Mapping):
+                self._error(issues, item_location, "stage cue must be a mapping")
                 continue
-            cues = stage.get(layer_name)
-            cue_location = f"{location}.stage.{layer_name}"
-            if not isinstance(cues, list):
-                self._error(issues, cue_location, "stage layer must be a list")
+            for unknown in sorted(set(cue) - {"position", "character", "visual_id", "artwork"}):
+                self._error(issues, item_location, f"unknown stage cue property: {unknown}")
+            for required in ("position", "character", "visual_id", "artwork"):
+                if not isinstance(cue.get(required), str) or not cue.get(required):
+                    self._error(issues, item_location, f"stage cue requires {required}")
+            if any(not isinstance(cue.get(required), str) or not cue.get(required)
+                   for required in ("position", "character", "visual_id", "artwork")):
                 continue
-            if len(cues) > 3:
-                self._error(issues, cue_location, "stage layer allows at most three character artworks")
-            positions: Set[str] = set()
-            characters: Set[str] = set()
-            for index, cue in enumerate(cues):
-                item_location = f"{cue_location}[{index}]"
-                if not isinstance(cue, Mapping):
-                    self._error(issues, item_location, "stage cue must be a mapping")
-                    continue
-                for unknown in sorted(set(cue) - {"position", "character", "visual_id", "artwork"}):
-                    self._error(issues, item_location, f"unknown stage cue property: {unknown}")
-                for required in ("position", "character", "visual_id", "artwork"):
-                    if not isinstance(cue.get(required), str) or not cue.get(required):
-                        self._error(issues, item_location, f"stage cue requires {required}")
-                if any(not isinstance(cue.get(required), str) or not cue.get(required)
-                       for required in ("position", "character", "visual_id", "artwork")):
-                    continue
-                position = cue.get("position")
-                character_id = cue.get("character")
-                visual_id = cue.get("visual_id")
-                artwork = cue.get("artwork")
-                if character_id == PROTAGONIST_ARTWORK_CHARACTER_ID:
-                    if not protagonist_reveal:
-                        self._error(
-                            issues,
-                            item_location,
-                            "Han Do-yoon artwork is reserved for an explicit ending reveal",
-                        )
-                    else:
-                        reveal_layers.add(layer_name)
-                if position not in {"left", "center", "right"}:
-                    self._error(issues, item_location, f"unknown stage position: {position}")
-                elif position in positions:
-                    self._error(issues, item_location, f"duplicate stage position: {position}")
-                else:
-                    positions.add(position)
-                if character_id not in self.characters:
-                    self._error(issues, item_location, f"unknown stage character: {character_id}")
-                elif character_id not in scene.get("cast", []):
-                    self._error(issues, item_location, f"stage character is not in scene cast: {character_id}")
-                elif character_id in characters:
-                    self._error(issues, item_location, f"duplicate stage character: {character_id}")
-                else:
-                    characters.add(character_id)
-                visual = visuals.get(visual_id) if isinstance(visual_id, str) else None
-                if not isinstance(visual, Mapping) or visual.get("kind") != "character" or visual.get("abstract"):
-                    self._error(issues, item_location, f"unknown concrete character visual: {visual_id}")
-                    continue
-                if visual.get("character") != character_id:
-                    self._error(issues, item_location, "stage visual belongs to a different character")
-                if artwork == "default":
-                    artworks = visual.get("artworks", {})
-                    if isinstance(artworks, Mapping) and artworks:
-                        if visual.get("default_artwork") not in artworks:
-                            self._error(issues, item_location, "default artwork is not declared")
-                    elif not visual.get("fallback_asset"):
-                        self._error(issues, item_location, "default artwork requires a fallback asset")
-                    continue
-                artworks = visual.get("artworks", {})
-                if isinstance(artworks, Mapping) and artwork in artworks:
-                    continue
-                expression_assets = visual.get("expression_assets", {})
-                if not isinstance(expression_assets, Mapping) or artwork not in expression_assets:
-                    self._error(issues, item_location, f"unknown artwork id for stage visual: {artwork}")
-                    continue
-                expression = self.characters.get(character_id, {}).get("expressions", {}).get(artwork, {})
-                if isinstance(expression, Mapping) and expression.get("layer") != layer_name:
-                    self._error(issues, item_location, f"artwork expression belongs to {expression.get('layer')}, not {layer_name}")
-        if protagonist_reveal:
-            for layer_name in ("perceived", "reality"):
-                if layer_name not in reveal_layers:
+            position = cue.get("position")
+            character_id = cue.get("character")
+            visual_id = cue.get("visual_id")
+            artwork = cue.get("artwork")
+            if character_id == PROTAGONIST_ARTWORK_CHARACTER_ID:
+                if not protagonist_reveal:
                     self._error(
                         issues,
-                        f"{location}.stage.{layer_name}",
-                        "protagonist_art_reveal must explicitly place Han Do-yoon artwork in both layers",
+                        item_location,
+                        "Han Do-yoon artwork is reserved for an explicit ending reveal",
                     )
+                else:
+                    reveal_present = True
+            if position not in {"left", "center", "right"}:
+                self._error(issues, item_location, f"unknown stage position: {position}")
+            elif position in positions:
+                self._error(issues, item_location, f"duplicate stage position: {position}")
+            else:
+                positions.add(position)
+            if character_id not in self.characters:
+                self._error(issues, item_location, f"unknown stage character: {character_id}")
+            elif character_id not in scene.get("cast", []):
+                self._error(issues, item_location, f"stage character is not in scene cast: {character_id}")
+            elif character_id in characters:
+                self._error(issues, item_location, f"duplicate stage character: {character_id}")
+            else:
+                characters.add(character_id)
+            visual = visuals.get(visual_id) if isinstance(visual_id, str) else None
+            if not isinstance(visual, Mapping) or visual.get("kind") != "character" or visual.get("abstract"):
+                self._error(issues, item_location, f"unknown concrete character visual: {visual_id}")
+                continue
+            if visual.get("character") != character_id:
+                self._error(issues, item_location, "stage visual belongs to a different character")
+            if artwork == "default":
+                artworks = visual.get("artworks", {})
+                if isinstance(artworks, Mapping) and artworks:
+                    if visual.get("default_artwork") not in artworks:
+                        self._error(issues, item_location, "default artwork is not declared")
+                elif not visual.get("fallback_asset"):
+                    self._error(issues, item_location, "default artwork requires a fallback asset")
+                continue
+            artworks = visual.get("artworks", {})
+            if isinstance(artworks, Mapping) and artwork in artworks:
+                continue
+            expression_assets = visual.get("expression_assets", {})
+            if not isinstance(expression_assets, Mapping) or artwork not in expression_assets:
+                self._error(issues, item_location, f"unknown artwork id for stage visual: {artwork}")
+        if protagonist_reveal and not reveal_present:
+            self._error(issues, location, "protagonist_art_reveal must explicitly place Han Do-yoon artwork")
     def _validate_choice_interaction_contexts(
         self,
         issues: List[Issue],
@@ -2561,7 +2490,7 @@ class StoryProject:
         node_map: Mapping[str, Mapping[str, Any]],
         option_rows: Sequence[Tuple[int, Mapping[str, Any]]],
     ) -> None:
-        """Require different support orders for one target to produce different reality replies."""
+        """Require different support orders for one target to produce different replies."""
         by_target: Dict[str, List[Tuple[int, Mapping[str, Any], Tuple[str, ...]]]] = {}
         cast = scene.get("cast", [])
         if not isinstance(cast, list):
@@ -2600,7 +2529,7 @@ class StoryProject:
                     self._error(
                         issues,
                         option_location,
-                        f"interaction branch must reach a reality response from target: {target}",
+                        f"interaction branch must reach a response from target: {target}",
                     )
                     continue
                 for previous_index, previous_styles, previous_response in resolved:
@@ -2609,7 +2538,7 @@ class StoryProject:
                             issues,
                             option_location,
                             "different ordered support style signatures for the same target must lead to "
-                            f"distinct reality responses: options[{previous_index}] and options[{option_index}] ({target})",
+                            f"distinct responses: options[{previous_index}] and options[{option_index}] ({target})",
                         )
                         break
                 resolved.append((option_index, style_signature, response_signature))
@@ -2626,29 +2555,24 @@ class StoryProject:
             visited.add(current)
             node = node_map[current]
             kind = node.get("kind")
-            if kind == "dual_dialogue" and effective_speaker(node, "reality") == target:
+            if kind == "dialogue" and effective_speaker(node) == target:
                 lines: Set[str] = set()
-                reality = node.get("reality")
-                if isinstance(reality, Mapping):
-                    line = reality.get("line")
-                    if isinstance(line, str) and line:
-                        lines.add(line)
+                line = node.get("line")
+                if isinstance(line, str) and line:
+                    lines.add(line)
                 variants = node.get("variants")
                 if isinstance(variants, list):
                     for variant in variants:
                         if not isinstance(variant, Mapping):
                             continue
-                        variant_reality = variant.get("reality")
-                        if not isinstance(variant_reality, Mapping):
-                            continue
-                        line = variant_reality.get("line")
+                        line = variant.get("line")
                         if isinstance(line, str) and line:
                             lines.add(line)
                 return tuple(sorted(lines)) if lines else None
             if kind in {"effect", "silent"}:
                 current = node.get("next")
                 continue
-            if kind not in {"dual_dialogue", "dual_narration"}:
+            if kind not in {"dialogue", "narration"}:
                 return None
             current = node.get("next")
         return None
@@ -2803,7 +2727,7 @@ class StoryProject:
             visited.add(current)
             node = node_map[current]
             kind = node.get("kind")
-            if kind not in {"dual_dialogue", "dual_narration", "silent"}:
+            if kind not in {"dialogue", "narration", "silent"}:
                 self._error(
                     issues,
                     location,
@@ -2845,37 +2769,12 @@ class StoryProject:
             self._error(issues, location, f"text_only speaker must not appear in illustrated cast: {speaker}")
         return "text_only"
 
-    def _validate_dual_node(self, issues: List[Issue], scene: Mapping[str, Any], node: Mapping[str, Any], location: str) -> None:
-        perceived = node.get("perceived")
-        reality = node.get("reality")
-        if not isinstance(perceived, dict):
-            self._error(issues, location, "perceived layer is required")
-            return
-        if not isinstance(reality, dict):
-            self._error(issues, location, "reality layer is required")
-            return
-        for layer_name, layer in (("perceived", perceived), ("reality", reality)):
-            for legacy_field in ("protagonist_interpretation", "inner_thought"):
-                if legacy_field in layer:
-                    self._error(
-                        issues,
-                        location,
-                        f"legacy {layer_name}.{legacy_field} is forbidden; author a separate inner_voice beat",
-                    )
-        for key in ("atmosphere", "line"):
-            if not perceived.get(key):
-                self._error(issues, location, f"perceived.{key} is required")
-        for key in ("atmosphere", "line", "intent"):
-            if not reality.get(key):
-                self._error(issues, location, f"reality.{key} is required")
-        atmospheres = set(self.manifest.get("enums", {}).get("atmosphere", []))
-        intents = set(self.manifest.get("enums", {}).get("intent", []))
-        if perceived.get("atmosphere") not in atmospheres:
-            self._error(issues, location, f"unknown perceived atmosphere: {perceived.get('atmosphere')}")
-        if reality.get("atmosphere") not in atmospheres:
-            self._error(issues, location, f"unknown reality atmosphere: {reality.get('atmosphere')}")
-        if reality.get("intent") not in intents:
-            self._error(issues, location, f"unknown reality intent: {reality.get('intent')}")
+    def _validate_presentation_node(self, issues: List[Issue], scene: Mapping[str, Any], node: Mapping[str, Any], location: str) -> None:
+        for legacy_field in ("perceived", "reality", "speakers", "inner_thought", "protagonist_interpretation", "atmosphere"):
+            if legacy_field in node:
+                self._error(issues, location, f"removed dialogue field is forbidden: {legacy_field}")
+        if not isinstance(node.get("line"), str) or not node.get("line"):
+            self._error(issues, location, "line is required")
 
         raw_flags = node.get("presentation_flags", [])
         if not isinstance(raw_flags, list):
@@ -2890,101 +2789,26 @@ class StoryProject:
             if flag not in valid_flags:
                 self._error(issues, location, f"unknown presentation flag: {flag}")
 
-        inner_voice = "inner_voice" in flags
-        if node.get("kind") == "dual_narration":
-            if inner_voice:
-                self._error(issues, location, "inner_voice must use dual_dialogue with layer speakers")
-            if "speaker" in node or "speakers" in node:
-                self._error(issues, location, "dual_narration must not declare speaker or speakers")
-            return
-
-        if node.get("kind") != "dual_dialogue":
-            return
-
-        speaker_kinds: Dict[str, Optional[str]] = {}
-        if inner_voice:
+        if node.get("kind") == "narration":
             if "speaker" in node:
-                self._error(issues, location, "inner_voice must use speakers, not a single speaker")
-            speakers = node.get("speakers")
-            if not isinstance(speakers, dict):
-                self._error(issues, location, "inner_voice requires speakers.perceived and speakers.reality")
-                speakers = {}
-            else:
-                unknown_keys = sorted(set(speakers) - {"perceived", "reality"})
-                for key in unknown_keys:
-                    self._error(issues, location, f"unknown inner_voice speaker layer: {key}")
-                for layer_name in ("perceived", "reality"):
-                    if layer_name not in speakers:
-                        self._error(issues, location, f"inner_voice speakers.{layer_name} is required")
-            for layer_name, layer in (("perceived", perceived), ("reality", reality)):
-                speaker = speakers.get(layer_name)
-                line = layer.get("line")
-                if isinstance(speaker, str):
-                    speaker_kinds[layer_name] = self._validate_speaker_reference(
-                        issues,
-                        scene,
-                        speaker,
-                        f"{location}.{layer_name}",
-                        require_cast=False,
-                    )
-                    if not is_parenthesized_utterance(line):
-                        self._error(
-                            issues,
-                            location,
-                            f"inner_voice {layer_name} line with a speaker must be parenthesized",
-                        )
-                elif speaker is None and layer_name in speakers:
-                    speaker_kinds[layer_name] = None
-                    if is_parenthesized_utterance(line):
-                        self._error(
-                            issues,
-                            location,
-                            f"speakerless inner_voice {layer_name} narration must not be parenthesized",
-                        )
-                elif layer_name in speakers:
-                    self._error(
-                        issues,
-                        location,
-                        f"inner_voice speakers.{layer_name} must be a speaker id or null",
-                    )
-        else:
-            if "speakers" in node:
-                self._error(issues, location, "regular dual_dialogue must use a single speaker")
-            speaker = node.get("speaker")
-            kind = self._validate_speaker_reference(issues, scene, speaker, location)
-            speaker_kinds = {"perceived": kind, "reality": kind}
-            distortion_flags = {"auditory_distortion", "romance_insert"}
-            if perceived.get("line") != reality.get("line") and distortion_flags.isdisjoint(flags):
-                self._error(
-                    issues,
-                    location,
-                    "spoken lines must match unless auditory_distortion or romance_insert is explicit",
-                )
+                self._error(issues, location, "narration must not declare a speaker")
+            return
 
-        for layer_name, layer in (("perceived", perceived), ("reality", reality)):
-            speaker = effective_speaker(node, layer_name)
-            expression_id = layer.get("expression")
-            speaker_kind = speaker_kinds.get(layer_name)
-            if not expression_id:
-                if not inner_voice and speaker_kind == "illustrated" and layer_name == "perceived":
-                    self._error(issues, location, f"unknown perceived expression {expression_id} for {speaker}")
-                continue
-            if speaker_kind != "illustrated" or speaker not in self.characters:
-                self._error(
-                    issues,
-                    location,
-                    f"{layer_name} expression requires an illustrated character speaker",
-                )
-                continue
-            expressions = self.characters[speaker].get("expressions", {})
-            if expression_id not in expressions:
-                self._error(issues, location, f"unknown {layer_name} expression {expression_id} for {speaker}")
-            elif expressions[expression_id].get("layer") != layer_name:
-                self._error(
-                    issues,
-                    location,
-                    f"expression {expression_id} belongs to {expressions[expression_id].get('layer')}, not {layer_name}",
-                )
+        if node.get("kind") != "dialogue":
+            return
+        speaker = effective_speaker(node)
+        speaker_kind = self._validate_speaker_reference(issues, scene, speaker, location)
+        expression_id = node.get("expression")
+        if not expression_id:
+            if speaker_kind == "illustrated":
+                self._error(issues, location, f"expression is required for illustrated speaker {speaker}")
+            return
+        if speaker_kind != "illustrated" or speaker not in self.characters:
+            self._error(issues, location, "expression requires an illustrated character speaker")
+            return
+        expressions = self.characters[speaker].get("expressions", {})
+        if expression_id not in expressions:
+            self._error(issues, location, f"unknown expression {expression_id} for {speaker}")
 
     def _validate_conditions(
         self,
@@ -3354,17 +3178,11 @@ class StoryProject:
                 selected_variant, preview_node = resolve_dialogue_variant(self, current_state, preview_node)
             preview_nodes.append(preview_node)
         preview_scene["nodes"] = preview_nodes
-        visual_scene = {
-            mode: resolve_scene_stage(self.resolve_visuals(), preview_scene, scene.get("start_node"), mode)
-            for mode in ("perceived", "reality")
-        }
+        visual_scene = resolve_scene_stage(self.resolve_visuals(), preview_scene, scene.get("start_node"))
         effective_speakers = {
-            node.get("id"): {
-                mode: effective_speaker(node, mode)
-                for mode in ("perceived", "reality")
-            }
+            node.get("id"): effective_speaker(node)
             for node in preview_scene.get("nodes", [])
-            if node.get("kind") in {"dual_dialogue", "dual_narration"}
+            if node.get("kind") in {"dialogue", "narration"}
         }
         return {
             "purpose": "Bounded context for an AI agent editing exactly one scene",
@@ -3502,7 +3320,6 @@ def resolve_scene_background(
     visuals: Mapping[str, Mapping[str, Any]],
     scene: Mapping[str, Any],
     node_id: Optional[str],
-    mode: str,
     node_override: Optional[Mapping[str, Any]] = None,
 ) -> Optional[Dict[str, Any]]:
     fixed = scene.get("default_background")
@@ -3527,13 +3344,9 @@ def resolve_scene_background(
                 "score": sys.maxsize,
                 "matched": ["scene-default"],
             }
-    node = node_override or scene_node(scene, node_id)
-    layer = node.get(mode, {}) if isinstance(node, Mapping) else {}
     dimensions = {
         "locations": scene.get("location"),
         "times": scene.get("time"),
-        "atmospheres": layer.get("atmosphere") if isinstance(layer, Mapping) else None,
-        "modes": mode,
     }
     candidates: List[Dict[str, Any]] = []
     for visual_id, visual in visuals.items():
@@ -3576,16 +3389,15 @@ def resolve_scene_stage(
     visuals: Mapping[str, Mapping[str, Any]],
     scene: Mapping[str, Any],
     node_id: Optional[str],
-    mode: str,
 ) -> Dict[str, Any]:
-    background = resolve_scene_background(visuals, scene, node_id, mode)
+    background = resolve_scene_background(visuals, scene, node_id)
     node = scene_node(scene, node_id)
-    speaker = effective_speaker(node, mode) if isinstance(node, Mapping) else None
+    speaker = effective_speaker(node) if isinstance(node, Mapping) else None
     protagonist_reveal = can_reveal_protagonist_artwork(scene, node)
     characters = []
     raw_stage = node.get("stage") if isinstance(node, Mapping) else None
-    if isinstance(raw_stage, Mapping) and mode in raw_stage:
-        cues = raw_stage.get(mode)
+    if isinstance(raw_stage, Sequence) and not isinstance(raw_stage, (str, bytes)):
+        cues = raw_stage
         if not isinstance(cues, Sequence) or isinstance(cues, (str, bytes)):
             cues = []
         for cue in cues:
@@ -3621,8 +3433,8 @@ def resolve_scene_stage(
                 "speaker": character_id == speaker,
                 "render_strategy": visual.get("render_strategy"),
             })
-        return {"background": background, "characters": characters, "mode": mode, "node": node_id}
-    return {"background": background, "characters": characters, "mode": mode, "node": node_id}
+        return {"background": background, "characters": characters, "node": node_id}
+    return {"background": background, "characters": characters, "node": node_id}
 
 
 def placeholders(value: str) -> Set[str]:
@@ -3706,19 +3518,20 @@ def collect_localizable_entries(project: StoryProject) -> Dict[str, Dict[str, An
         for expression_id, expression in character.get("expressions", {}).items():
             add(f"{base}.expressions.{expression_id}.description", expression.get("description"), domain="character", kind="character", item_id=character_id, source=source, field_path=f"expressions.{expression_id}.description", context={"characterId": character_id}, max_length=240)
     for member_id, member in project.world.items():
-        if member.get("kind") != "member" or member.get("presentation") != "text_only":
+        if member.get("kind") != "member":
             continue
-        add(
-            f"world.members.{member_id}.display_name",
-            member.get("display_name"),
-            domain="world",
-            kind="member",
-            item_id=member_id,
-            source=member.get("_source", member_id),
-            field_path="display_name",
-            context={"memberId": member_id, "presentation": "text_only"},
-            max_length=80,
-        )
+        if member.get("presentation") == "text_only":
+            add(
+                f"world.members.{member_id}.display_name",
+                member.get("display_name"),
+                domain="world",
+                kind="member",
+                item_id=member_id,
+                source=member.get("_source", member_id),
+                field_path="display_name",
+                context={"memberId": member_id, "presentation": "text_only"},
+                max_length=80,
+            )
     for event_id, event in project.events.items():
         base = f"events.{event_id}"
         source = event.get("_source", event_id)
@@ -3726,11 +3539,9 @@ def collect_localizable_entries(project: StoryProject) -> Dict[str, Dict[str, An
         if event.get("scene"):
             context["sceneId"] = event["scene"]
         add(f"{base}.title", event.get("title"), domain="event", kind="event", item_id=event_id, source=source, field_path="title", context=context, max_length=100)
-        for mode in ("perceived", "reality"):
-            presentation = event.get("presentation", {}).get(mode, {})
-            mode_context = {**context, "layer": mode}
-            add(f"{base}.presentation.{mode}.title", presentation.get("title"), domain="event", kind="event", item_id=event_id, source=source, field_path=f"presentation.{mode}.title", context=mode_context, max_length=100)
-            add(f"{base}.presentation.{mode}.summary", presentation.get("summary"), domain="event", kind="event", item_id=event_id, source=source, field_path=f"presentation.{mode}.summary", context=mode_context, max_length=240)
+        presentation = event.get("presentation", {})
+        add(f"{base}.presentation.title", presentation.get("title"), domain="event", kind="event", item_id=event_id, source=source, field_path="presentation.title", context=context, max_length=100)
+        add(f"{base}.presentation.summary", presentation.get("summary"), domain="event", kind="event", item_id=event_id, source=source, field_path="presentation.summary", context=context, max_length=240)
     for thread_id, thread in project.threads.items():
         add(f"threads.{thread_id}.title", thread.get("title"), domain="thread", kind="thread", item_id=thread_id, source=thread.get("_source", thread_id), field_path="title", max_length=100)
     for route_id, route in project.routes.items():
@@ -3768,24 +3579,18 @@ def collect_localizable_entries(project: StoryProject) -> Dict[str, Dict[str, An
                     context=node_context,
                     max_length=320,
                 )
-            for mode in ("perceived", "reality"):
-                layer = node.get(mode, {})
-                mode_speaker = effective_speaker(node, mode)
-                mode_context = {**node_context, "layer": mode}
-                if mode_speaker:
-                    mode_context["speakerId"] = mode_speaker
-                add(f"{node_base}.{mode}.line", layer.get("line"), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.{mode}.line", context=mode_context, max_length=320)
+            speaker = effective_speaker(node)
+            line_context = dict(node_context)
+            if speaker:
+                line_context["speakerId"] = speaker
+            add(f"{node_base}.line", node.get("line"), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.line", context=line_context, max_length=320)
             for variant in node.get("variants", []):
                 variant_id = variant.get("id")
                 variant_context = {**node_context, "variantId": variant_id}
                 variant_base = f"{node_base}.variants.{variant_id}"
-                for mode in ("perceived", "reality"):
-                    layer = variant.get(mode, {})
-                    mode_speaker = effective_speaker(node, mode)
-                    mode_context = {**variant_context, "layer": mode}
-                    if mode_speaker:
-                        mode_context["speakerId"] = mode_speaker
-                    add(f"{variant_base}.{mode}.line", layer.get("line"), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.variants.{variant_id}.{mode}.line", context=mode_context, max_length=320)
+                if speaker:
+                    variant_context["speakerId"] = speaker
+                add(f"{variant_base}.line", variant.get("line"), domain="scene", kind="scene", item_id=scene_id, source=source, field_path=f"nodes.{node_id}.variants.{variant_id}.line", context=variant_context, max_length=320)
             for option in node.get("options", []):
                 option_id = option.get("id")
                 option_base = f"{node_base}.options.{option_id}"
@@ -3808,33 +3613,29 @@ def collect_localizable_entries(project: StoryProject) -> Dict[str, Dict[str, An
                         continue
                     variant_id = variant.get("id")
                     variant_base = f"{node_base}.variants.{variant_id}"
-                    for mode in ("perceived", "reality"):
-                        layer = variant.get(mode, {})
-                        add(
-                            f"{variant_base}.{mode}.line",
-                            layer.get("line") if isinstance(layer, Mapping) else None,
-                            domain="system_flow",
-                            kind="system_flow",
-                            item_id=flow_id,
-                            source=source,
-                            field_path=f"nodes.{node_id}.variants.{variant_id}.{mode}.line",
-                            context={**node_context, "variantId": variant_id, "layer": mode},
-                            max_length=320,
-                        )
-            else:
-                for mode in ("perceived", "reality"):
-                    layer = node.get(mode, {})
                     add(
-                        f"{node_base}.{mode}.line",
-                        layer.get("line") if isinstance(layer, Mapping) else None,
+                        f"{variant_base}.line",
+                        variant.get("line"),
                         domain="system_flow",
                         kind="system_flow",
                         item_id=flow_id,
                         source=source,
-                        field_path=f"nodes.{node_id}.{mode}.line",
-                        context={**node_context, "layer": mode},
+                        field_path=f"nodes.{node_id}.variants.{variant_id}.line",
+                        context={**node_context, "variantId": variant_id},
                         max_length=320,
                     )
+            else:
+                add(
+                    f"{node_base}.line",
+                    node.get("line"),
+                    domain="system_flow",
+                    kind="system_flow",
+                    item_id=flow_id,
+                    source=source,
+                    field_path=f"nodes.{node_id}.line",
+                    context=node_context,
+                    max_length=320,
+                )
         for option in flow.get("options", []):
             if not isinstance(option, Mapping):
                 continue
@@ -4804,13 +4605,13 @@ def resolve_dialogue_variant(
         )
         selected = selected or next((variant for _, variant in ordered if variant.get("default") is True), ordered[0][1])
         resolved = dict(node)
-        resolved["perceived"] = selected.get("perceived", {})
-        resolved["reality"] = copy.deepcopy(selected.get("reality", {}))
+        for key in ("expression", "line"):
+            if key in selected:
+                resolved[key] = copy.deepcopy(selected[key])
         selected_id = str(selected.get("id"))
     context = evaluation_state(project, state)
-    speaker = effective_speaker(resolved, "reality")
-    reality = resolved.get("reality")
-    if speaker and isinstance(reality, MutableMapping) and not reality.get("expression"):
+    speaker = effective_speaker(resolved)
+    if speaker and not resolved.get("expression"):
         expression = context.get("derived", {}).get("characters", {}).get(speaker, {}).get("default_expression")
         if not expression:
             visual = next(
@@ -4820,9 +4621,9 @@ def resolve_dialogue_variant(
                 ),
                 {},
             )
-            expression = visual.get("default_reality_expression")
+            expression = visual.get("default_expression")
         if expression:
-            reality["expression"] = expression
+            resolved["expression"] = expression
     return selected_id, resolved
 
 
@@ -5068,20 +4869,15 @@ class Simulator:
                     "node": node_id,
                 })
                 node_id = node["next"]
-            elif kind in {"dual_dialogue", "dual_narration"}:
+            elif kind in {"dialogue", "narration"}:
                 variant_id, resolved_node = resolve_dialogue_variant(self.project, self.state, node)
                 self.trace.append({
                     "type": kind,
                     "scene": scene_id,
                     "node": node_id,
-                    "speaker": effective_speaker(resolved_node, "reality"),
-                    "speakers": {
-                        mode: effective_speaker(resolved_node, mode)
-                        for mode in ("perceived", "reality")
-                    },
+                    "speaker": effective_speaker(resolved_node),
                     "variant": variant_id,
-                    "perceived": resolved_node["perceived"]["line"],
-                    "reality": resolved_node["reality"]["line"],
+                    "line": resolved_node["line"],
                 })
                 node_id = node["next"]
             elif kind == "choice":
@@ -5245,7 +5041,7 @@ def explore_route(
             raise RuntimeError(f"unknown node during exploration: {scene_id}:{node_id}")
         kind = node["kind"]
 
-        if kind in {"dual_dialogue", "dual_narration", "silent"}:
+        if kind in {"dialogue", "narration", "silent"}:
             queue.append((scene_id, node["next"], current_state, path))
         elif kind == "choice":
             enabled = [
@@ -5375,18 +5171,10 @@ def print_simulation(result: Mapping[str, Any]) -> None:
         event_type = event["type"]
         if event_type == "scene":
             print(f"\nSCENE {event['scene']} — {event['title']}")
-        elif event_type in {"dual_dialogue", "dual_narration"}:
-            layer_speakers = event.get("speakers", {})
-            if layer_speakers.get("perceived") != layer_speakers.get("reality"):
-                speaker = (
-                    f" [perceived:{layer_speakers.get('perceived') or 'narration'}"
-                    f" | reality:{layer_speakers.get('reality') or 'narration'}]"
-                )
-            else:
-                speaker = f" [{event['speaker']}]" if event.get("speaker") else ""
+        elif event_type in {"dialogue", "narration"}:
+            speaker = f" [{event['speaker']}]" if event.get("speaker") else ""
             print(f"  {event_type}{speaker}")
-            print(f"    perceived: {event['perceived']}")
-            print(f"    reality:   {event['reality']}")
+            print(f"    {event['line']}")
         elif event_type == "choice":
             print(f"  CHOICE {event['option']}: {event['label']}")
             print(f"    action: {event['action']}")
@@ -5762,35 +5550,8 @@ def command_new_scene(project: StoryProject, args: argparse.Namespace) -> int:
         "nodes": [
             {
                 "id": "opening",
-                "kind": "dual_narration",
-                "perceived": {
-                    "atmosphere": "warm_romance",
-                    "line": "TODO",
-                },
-                "reality": {
-                    "atmosphere": "cold_office",
-                    "line": "TODO",
-                    "intent": "work_only",
-                },
-                "next": "opening_inner",
-            },
-            {
-                "id": "opening_inner",
-                "kind": "dual_dialogue",
-                "presentation_flags": ["inner_voice"],
-                "speakers": {
-                    "perceived": "han_do_yoon",
-                    "reality": None,
-                },
-                "perceived": {
-                    "atmosphere": "warm_romance",
-                    "line": "(TODO: 한도윤의 자연스러운 속말)",
-                },
-                "reality": {
-                    "atmosphere": "cold_office",
-                    "line": "TODO: 이름표 없는 권위적 서술",
-                    "intent": "work_only",
-                },
+                "kind": "narration",
+                "line": "TODO",
                 "next": "leave",
             },
             {

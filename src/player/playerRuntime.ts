@@ -42,7 +42,6 @@ import type {
   TimelineEvent,
   TimeSlot,
   Transition,
-  ViewLayer,
 } from "../types";
 
 export type BacklogEntry = {
@@ -53,7 +52,6 @@ export type BacklogEntry = {
   speakerId?: string;
   optionId?: string;
   variantId?: string;
-  layerAtPresentation: ViewLayer;
 };
 
 export type TimelineLogEntry = {
@@ -66,7 +64,7 @@ export type TimelineLogEntry = {
 };
 
 export type PlayerSession = {
-  version: 5;
+  version: 6;
   phase: "timeline" | "scene" | "self_development" | "complete";
   gameModeId: GameModeId;
   campaignId: string;
@@ -74,7 +72,6 @@ export type PlayerSession = {
   routeId: string;
   sceneId: string;
   nodeId: string;
-  viewLayer: ViewLayer;
   state: RuntimeState;
   backlog: BacklogEntry[];
   choices: Array<{ sceneId: string; nodeId: string; optionId: string }>;
@@ -179,7 +176,7 @@ export function settleSession(runtime: Runtime, value: PlayerSession): PlayerSes
       finishEnding(runtime, session, `missing-node:${session.sceneId}:${session.nodeId}`);
       break;
     }
-    if (node.kind === "dual_dialogue" || node.kind === "dual_narration" || node.kind === "silent" || node.kind === "choice") {
+    if (node.kind === "dialogue" || node.kind === "narration" || node.kind === "silent" || node.kind === "choice") {
       break;
     }
     if (node.kind === "effect") {
@@ -211,16 +208,16 @@ export function settleSession(runtime: Runtime, value: PlayerSession): PlayerSes
   return session;
 }
 
-export function createSession(runtime: Runtime, routeId: string, viewLayer: ViewLayer = "perceived"): PlayerSession {
+export function createSession(runtime: Runtime, routeId: string): PlayerSession {
   const route = runtime.routes[routeId];
   if (!route) throw new Error("플레이할 루트가 없습니다.");
-  const gameModeId: GameModeId = viewLayer === "reality" ? "truth_view" : "base";
+  const gameModeId: GameModeId = "base";
   const definition = modeDefinition(runtime, gameModeId);
   if (!definition || definition.campaign_id !== route.campaign_id) {
     throw new Error(`route-mode-campaign-mismatch:${routeId}:${gameModeId}`);
   }
   const initial: PlayerSession = {
-    version: 5,
+    version: 6,
     phase: "scene",
     gameModeId,
     campaignId: route.campaign_id,
@@ -228,7 +225,6 @@ export function createSession(runtime: Runtime, routeId: string, viewLayer: View
     routeId: route.id,
     sceneId: route.entry_scene,
     nodeId: runtime.scenes[route.entry_scene]?.start_node || "",
-    viewLayer,
     state: campaignInitialState(runtime, route.campaign_id),
     backlog: [],
     choices: [],
@@ -248,9 +244,11 @@ export function normalizePlayerSession(value: unknown, runtime?: Runtime): Playe
   if (!value || typeof value !== "object") throw new Error("invalid-player-session");
   const legacy = clone(value) as Omit<Partial<PlayerSession>, "version" | "backlog"> & {
     version?: number;
-    mode?: ViewLayer;
+    mode?: "perceived" | "reality";
+    viewLayer?: "perceived" | "reality";
     backlog?: Array<Partial<BacklogEntry> & {
-      modeAtPresentation?: ViewLayer;
+      modeAtPresentation?: "perceived" | "reality";
+      layerAtPresentation?: "perceived" | "reality";
       speaker?: string;
       text?: string;
       interpretation?: string;
@@ -260,20 +258,20 @@ export function normalizePlayerSession(value: unknown, runtime?: Runtime): Playe
       realityInterpretation?: string;
     }>;
   };
-  if (typeof legacy.version === "number" && legacy.version > 5) {
+  if (typeof legacy.version === "number" && legacy.version > 6) {
     throw new Error(`unsupported-player-session-version:${legacy.version}`);
   }
-  const isCurrentVersion = legacy.version === 5;
+  const isCurrentVersion = legacy.version === 6;
+  const isV5 = legacy.version === 5;
   const isV4 = legacy.version === 4;
   if (isCurrentVersion && !legacy.campaignId) throw new Error("missing-campaign-identity");
   if (isCurrentVersion && !isGameModeId(legacy.gameModeId)) throw new Error(`unknown-game-mode:${String(legacy.gameModeId)}`);
   if (isCurrentVersion && !legacy.continuityId) throw new Error("missing-continuity-identity");
-  if (isCurrentVersion && !legacy.viewLayer) throw new Error("missing-view-layer");
   if (isV4 && !legacy.campaignId) throw new Error("missing-v4-campaign-identity");
   if (isV4 && legacy.mode !== "perceived" && legacy.mode !== "reality") throw new Error("missing-v4-view-layer");
   const campaignId = legacy.campaignId || "main";
-  const migratedModeId = legacy.mode === "reality" ? "truth_view" : "base";
-  const gameModeId = isGameModeId(legacy.gameModeId) ? legacy.gameModeId : migratedModeId;
+  const legacyModeId = (legacy as { gameModeId?: string }).gameModeId;
+  const gameModeId: GameModeId = legacyModeId === "survivor_view" ? "survivor_view" : "base";
   const definition = runtime?.game_modes[gameModeId];
   if (runtime && !runtime.campaigns[campaignId]) throw new Error(`unknown-campaign:${campaignId}`);
   if (runtime && !definition) throw new Error(`unknown-game-mode:${gameModeId}`);
@@ -289,14 +287,10 @@ export function normalizePlayerSession(value: unknown, runtime?: Runtime): Playe
   if (runtime && legacy.currentEventId && runtime.events[legacy.currentEventId]?.campaign_id !== campaignId) {
     throw new Error(`event-campaign-mismatch:${legacy.currentEventId}:${campaignId}`);
   }
-  const viewLayer = legacy.viewLayer || legacy.mode || definition?.initial_layer || "perceived";
-  if (definition?.layer_policy === "fixed" && viewLayer !== definition.initial_layer) {
-    throw new Error(`fixed-layer-mismatch:${gameModeId}:${viewLayer}`);
-  }
   if (!legacy.state) throw new Error("missing-player-session-state");
   const normalized: PlayerSession = {
     ...(legacy as PlayerSession),
-    version: 5,
+    version: 6,
     phase: legacy.phase || (legacy.endingId ? "complete" : "scene"),
     gameModeId,
     campaignId,
@@ -304,8 +298,7 @@ export function normalizePlayerSession(value: unknown, runtime?: Runtime): Playe
     routeId: legacy.routeId || "",
     sceneId: legacy.sceneId || "",
     nodeId: legacy.nodeId || "",
-    viewLayer,
-    state: legacy.state,
+    state: removeRetiredVisibleHeroineFields(legacy.state),
     choices: legacy.choices || [],
     readNodes: legacy.readNodes || [],
     timelineLog: legacy.timelineLog || [],
@@ -317,13 +310,13 @@ export function normalizePlayerSession(value: unknown, runtime?: Runtime): Playe
       ...(entry.speakerId ? { speakerId: entry.speakerId } : {}),
       ...(entry.optionId ? { optionId: entry.optionId } : {}),
       ...(entry.variantId ? { variantId: entry.variantId } : {}),
-      layerAtPresentation: entry.layerAtPresentation
-        || (entry as { modeAtPresentation?: ViewLayer }).modeAtPresentation
-        || legacy.mode
-        || viewLayer,
     })),
   };
-  delete (normalized as PlayerSession & { mode?: ViewLayer }).mode;
+  delete (normalized as PlayerSession & { mode?: string }).mode;
+  delete (normalized as PlayerSession & { viewLayer?: string }).viewLayer;
+  if (isV5 || isV4) {
+    normalized.backlog.forEach((entry) => delete (entry as BacklogEntry & { layerAtPresentation?: string }).layerAtPresentation);
+  }
   if (runtime) selfDevelopmentSystem(runtime).hydrate(normalized.state);
   return normalized;
 }
@@ -454,7 +447,7 @@ export function createCampaignSession(
   }
   refreshUnlockedModes(runtime, state);
   const session: PlayerSession = {
-    version: 5,
+    version: 6,
     phase: "timeline",
     gameModeId,
     campaignId,
@@ -462,7 +455,6 @@ export function createCampaignSession(
     routeId: "",
     sceneId: "",
     nodeId: "",
-    viewLayer: definition.initial_layer,
     state,
     backlog: [],
     choices: [],
@@ -576,7 +568,7 @@ export function advanceToNextMoment(runtime: Runtime, value: PlayerSession): Pla
     if (session.phase !== "timeline") return session;
     if (availableTimelineEvents(runtime, session).length > 0) return session;
     const visibleNewLog = session.timelineLog.slice(previousLogCount).some((entry) =>
-      entry.status === "missed" || session.viewLayer === "reality" || entry.availability !== "hidden");
+      entry.status === "missed" || entry.availability !== "hidden");
     if (visibleNewLog) return session;
     previousLogCount = session.timelineLog.length;
   }
@@ -586,6 +578,18 @@ export function advanceToNextMoment(runtime: Runtime, value: PlayerSession): Pla
 export function currentNode(runtime: Runtime, session: PlayerSession): StoryNode | undefined {
   if (session.phase !== "scene") return undefined;
   return runtime.scenes[session.sceneId]?.nodes[session.nodeId];
+}
+
+function removeRetiredVisibleHeroineFields(state: RuntimeState): RuntimeState {
+  Object.values(state.visible?.heroines || {}).forEach((heroine) => {
+    const legacyHeroine = heroine as typeof heroine & {
+      affection?: unknown;
+      perceived_state?: unknown;
+    };
+    delete legacyHeroine.affection;
+    delete legacyHeroine.perceived_state;
+  });
+  return state;
 }
 
 export function availableOptions(runtime: Runtime, session: PlayerSession): ChoiceOption[] {
@@ -618,16 +622,15 @@ function logCurrent(runtime: Runtime, session: PlayerSession): void {
     if (!session.readNodes.includes(key)) session.readNodes.push(key);
     return;
   }
-  if (node.kind !== "dual_dialogue" && node.kind !== "dual_narration") return;
+  if (node.kind !== "dialogue" && node.kind !== "narration") return;
   const resolved = resolveDialogueNode(runtime, session.state, node);
   session.backlog.push({
     id: `${readId(session.sceneId, node.id)}:${session.backlog.length}`,
-    kind: node.kind === "dual_dialogue" ? "dialogue" : "narration",
+    kind: node.kind,
     sceneId: session.sceneId,
     nodeId: node.id,
-    speakerId: effectiveSpeaker(resolved.node, session.viewLayer),
+    speakerId: effectiveSpeaker(resolved.node),
     variantId: resolved.variantId,
-    layerAtPresentation: session.viewLayer,
   });
   if (!session.readNodes.includes(key)) session.readNodes.push(key);
 }
@@ -635,7 +638,7 @@ function logCurrent(runtime: Runtime, session: PlayerSession): void {
 export function advanceSession(runtime: Runtime, value: PlayerSession): PlayerSession {
   const session = clone(value);
   const node = currentNode(runtime, session);
-  if (!node || (node.kind !== "dual_dialogue" && node.kind !== "dual_narration" && node.kind !== "silent")) return session;
+  if (!node || (node.kind !== "dialogue" && node.kind !== "narration" && node.kind !== "silent")) return session;
   logCurrent(runtime, session);
   if (!node.next) {
     finishEnding(runtime, session, `dead-end:${session.sceneId}:${node.id}`);
@@ -671,7 +674,6 @@ export function selectOption(runtime: Runtime, value: PlayerSession, optionId: s
     sceneId: session.sceneId,
     nodeId: node.id,
     optionId: option.id,
-    layerAtPresentation: session.viewLayer,
   });
   session.choices.push({ sceneId: session.sceneId, nodeId: node.id, optionId: option.id });
   const key = readId(session.sceneId, node.id);

@@ -586,20 +586,20 @@ def find_document_path(root: Path, kind: str, document_id: str) -> Path:
 
 STORY_TEXT_FIELD_PATTERNS = {
     "scene": (
-        re.compile(r"^nodes\.[a-zA-Z0-9_]+\.(?:perceived|reality)\.line$"),
-        re.compile(r"^nodes\.[a-zA-Z0-9_]+\.variants\.[a-zA-Z0-9_]+\.(?:perceived|reality)\.line$"),
+        re.compile(r"^nodes\.[a-zA-Z0-9_]+\.line$"),
+        re.compile(r"^nodes\.[a-zA-Z0-9_]+\.variants\.[a-zA-Z0-9_]+\.line$"),
         re.compile(r"^nodes\.[a-zA-Z0-9_]+\.(?:prompt|stimulus)$"),
         re.compile(r"^nodes\.[a-zA-Z0-9_]+\.analysis_hints\.(?:pull|push|none)$"),
         re.compile(r"^nodes\.[a-zA-Z0-9_]+\.options\.[a-zA-Z0-9_]+\.(?:label|interpretation|action)$"),
     ),
     "event": (
         re.compile(r"^title$"),
-        re.compile(r"^presentation\.(?:perceived|reality)\.(?:title|summary)$"),
+        re.compile(r"^presentation\.(?:title|summary)$"),
     ),
     "ui": (re.compile(r"^strings\..+$"),),
     "system_flow": (
-        re.compile(r"^nodes\.[a-zA-Z0-9_]+\.(?:perceived|reality)\.line$"),
-        re.compile(r"^nodes\.[a-zA-Z0-9_]+\.variants\.[a-zA-Z0-9_]+\.(?:perceived|reality)\.line$"),
+        re.compile(r"^nodes\.[a-zA-Z0-9_]+\.line$"),
+        re.compile(r"^nodes\.[a-zA-Z0-9_]+\.variants\.[a-zA-Z0-9_]+\.line$"),
         re.compile(r"^options\.[a-zA-Z0-9_]+\.(?:label|description)$"),
     ),
 }
@@ -870,7 +870,6 @@ def mobile_scene_workspace(root: Path, project: StoryProject) -> Dict[str, Any]:
             "expressions": [{
                 "id": str(expression_id),
                 "label": str(expression.get("description", expression_id)),
-                "layer": str(expression.get("layer", "perceived")),
             } for expression_id, expression in characters.get(character_id, {}).get("expressions", {}).items()
             if isinstance(expression, Mapping)],
         } for character_id in scene.get("cast", []) if isinstance(character_id, str)]
@@ -936,7 +935,7 @@ def mobile_scene_workspace(root: Path, project: StoryProject) -> Dict[str, Any]:
                 match = variant.get("match", {}) if isinstance(variant.get("match"), Mapping) else {}
                 details = [
                     str(value)
-                    for dimension in ("locations", "times", "atmospheres")
+                    for dimension in ("locations", "times")
                     for value in (match.get(dimension, []) if isinstance(match.get(dimension), Sequence) else [])
                 ]
                 backgrounds.append({
@@ -953,8 +952,6 @@ def mobile_scene_workspace(root: Path, project: StoryProject) -> Dict[str, Any]:
         "scenes": scene_records,
         "artworks": artworks,
         "backgrounds": sorted(backgrounds, key=lambda item: (item["title"], item["variantId"])),
-        "atmospheres": list(bundle.get("enums", {}).get("atmosphere", [])),
-        "intents": list(bundle.get("enums", {}).get("intent", [])),
     }
 
 
@@ -987,15 +984,6 @@ def mobile_sync_snapshot(root: Path) -> Dict[str, Any]:
         document_id = str(document.get("id", ""))
         source_document = project.scenes.get(document_id) if kind == "scene" else project.system_flows.get(document_id)
         title = str(source_document.get("title", document_id)) if isinstance(source_document, Mapping) else document_id
-        linked_keys: List[str] = []
-        counterpart = key.replace(".perceived.line", ".reality.line") \
-            if ".perceived.line" in key else key.replace(".reality.line", ".perceived.line")
-        counterpart_entry = localizable.get(counterpart)
-        # Equal physical layers must remain equal whether the node opted into
-        # the explicit lock flag or predates it; otherwise the normal validator
-        # would reject a one-sided mobile edit.
-        if counterpart != key and counterpart_entry and counterpart_entry.get("source") == current_value:
-            linked_keys.append(counterpart)
         entries.append({
             "localizationKey": key,
             "locale": default_locale,
@@ -1008,7 +996,7 @@ def mobile_sync_snapshot(root: Path) -> Dict[str, Any]:
             "maxLength": entry.get("maxLength"),
             "placeholders": list(entry.get("placeholders", [])),
             "multiline": bool(entry.get("multiline", False)),
-            "linkedLocalizationKeys": linked_keys,
+            "linkedLocalizationKeys": [],
         })
 
     workspace = mobile_scene_workspace(root, project)
@@ -1687,10 +1675,9 @@ def duplicate_scene(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
     event["scene"] = new_id
     if isinstance(event.get("sequence"), int):
         event["sequence"] += 1
-    for mode in ("perceived", "reality"):
-        presentation = event.get("presentation", {}).get(mode)
-        if isinstance(presentation, MutableMapping):
-            presentation["title"] = f"{presentation.get('title', title).rstrip()} 복사본"
+    presentation = event.get("presentation")
+    if isinstance(presentation, MutableMapping):
+        presentation["title"] = f"{presentation.get('title', title).rstrip()} 복사본"
 
     candidates = {
         target: yaml_text_for_scene(source_path, runtime_scene),
@@ -1752,10 +1739,9 @@ def duplicate_event(root: Path, payload: Mapping[str, Any]) -> Dict[str, Any]:
     event["title"] = title.strip()
     if isinstance(event.get("sequence"), int):
         event["sequence"] += 1
-    for mode in ("perceived", "reality"):
-        presentation = event.get("presentation", {}).get(mode)
-        if isinstance(presentation, MutableMapping):
-            presentation["title"] = f"{presentation.get('title', title).rstrip()} 복사본"
+    presentation = event.get("presentation")
+    if isinstance(presentation, MutableMapping):
+        presentation["title"] = f"{presentation.get('title', title).rstrip()} 복사본"
 
     candidates: Dict[Path, str] = {target: yaml_text_for_document(source_path, event)}
     thread_id = event.get("thread")

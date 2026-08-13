@@ -35,19 +35,13 @@
     "on_missed": { "type": "object", "required": ["effects"], "properties": { "effects": { "type": "array" }, "trigger_event": { "type": "string" } } },
     "presentation": {
       "type": "object",
-      "required": ["perceived", "reality"],
+      "required": ["title", "summary"],
       "properties": {
-        "perceived": { "$ref": "#/$defs/presentation" },
-        "reality": { "$ref": "#/$defs/presentation" }
-      }
+        "title": {"type": "string", "minLength": 1},
+        "summary": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
     }
   },
-  "additionalProperties": false,
-  "$defs": {
-    "presentation": {
-      "type": "object",
-      "required": ["title", "summary"],
-      "properties": { "title": { "type": "string", "minLength": 1 }, "summary": { "type": "string", "minLength": 1 } }
-    }
-  }
+  "additionalProperties": false
 }

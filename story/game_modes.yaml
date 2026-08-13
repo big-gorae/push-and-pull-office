@@ -4,35 +4,18 @@ modes:
   base:
     campaign_id: main
     continuity_id: main
-    initial_layer: perceived
-    layer_policy: fixed
     content_status: playable
     unlock:
       always: true
 
-  truth_view:
-    campaign_id: main
-    continuity_id: main
-    initial_layer: reality
-    layer_policy: fixed
-    content_status: playable
-    unlock:
-      any:
-        - conditions:
-            - {path: progress.cleared_routes, op: contains, value: seo_a}
-        - conditions:
-            - {path: progress.cleared_routes, op: contains, value: min_kyung}
-
   survivor_view:
-    campaign_id: null
+    campaign_id:
     planned_campaign_id: survivor
     continuity_id: survivor
-    initial_layer: reality
-    layer_policy: fixed
     content_status: coming_soon
     unlock:
       any:
-        - conditions:
-            - {path: progress.cleared_routes, op: contains, value: seo_a}
-        - conditions:
-            - {path: progress.cleared_routes, op: contains, value: min_kyung}
+      - conditions:
+        - {path: progress.cleared_routes, op: contains, value: seo_a}
+      - conditions:
+        - {path: progress.cleared_routes, op: contains, value: min_kyung}
