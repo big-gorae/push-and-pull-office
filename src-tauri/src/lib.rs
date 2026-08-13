@@ -7,6 +7,7 @@ use std::{
     process::{Child, ChildStdin, ChildStdout, Command, Stdio},
     sync::{Arc, Mutex},
 };
+use tauri::Emitter;
 
 #[derive(Default)]
 struct EditorState {
@@ -350,17 +351,23 @@ async fn load_project(state: tauri::State<'_, EditorState>, root: String) -> Res
 /// It never accepts a filesystem path and can only read the project that the
 /// local editor already opened and approved.
 #[tauri::command]
-async fn mobile_sync_snapshot(state: tauri::State<'_, EditorState>) -> Result<Value, String> {
+async fn mobile_sync_snapshot(
+    app: tauri::AppHandle,
+    state: tauri::State<'_, EditorState>,
+) -> Result<Value, String> {
     let root = active_root(&state)?;
     let commit_lock = project_commit_lock(&state, &root)?;
     let worker = project_worker(&state, &root)?;
-    run_bridge_background(worker, "sync-snapshot", None, Some(commit_lock)).await
+    let snapshot = run_bridge_background(worker, "sync-snapshot", None, Some(commit_lock)).await?;
+    let _ = app.emit_to("main", "mobile-sync:ready", json!({ "ready": true }));
+    Ok(snapshot)
 }
 
 /// Apply path-free localization events through the authoritative story bridge.
 /// The Python side performs field-level CAS, full validation and atomic writes.
 #[tauri::command]
 async fn apply_mobile_sync_changes(
+    app: tauri::AppHandle,
     state: tauri::State<'_, EditorState>,
     changes: Option<Value>,
     scene_changes: Option<Value>,
@@ -368,7 +375,7 @@ async fn apply_mobile_sync_changes(
     let root = active_root(&state)?;
     let commit_lock = project_commit_lock(&state, &root)?;
     let worker = project_worker(&state, &root)?;
-    run_bridge_background(
+    let result = run_bridge_background(
         worker,
         "apply-sync",
         Some(json!({
@@ -377,7 +384,35 @@ async fn apply_mobile_sync_changes(
         })),
         Some(commit_lock),
     )
-    .await
+    .await?;
+    let applied_text = result
+        .get("receipts")
+        .and_then(Value::as_array)
+        .map(|receipts| {
+            receipts
+                .iter()
+                .filter(|receipt| receipt.get("status").and_then(Value::as_str) == Some("applied"))
+                .count()
+        })
+        .unwrap_or(0);
+    let applied_scenes = result
+        .get("sceneReceipts")
+        .and_then(Value::as_array)
+        .map(|receipts| {
+            receipts
+                .iter()
+                .filter(|receipt| receipt.get("status").and_then(Value::as_str) == Some("applied"))
+                .count()
+        })
+        .unwrap_or(0);
+    if applied_text + applied_scenes > 0 {
+        let _ = app.emit_to(
+            "main",
+            "mobile-sync:applied",
+            json!({ "appliedText": applied_text, "appliedScenes": applied_scenes }),
+        );
+    }
+    Ok(result)
 }
 
 #[tauri::command]

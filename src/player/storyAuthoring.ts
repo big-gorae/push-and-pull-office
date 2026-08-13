@@ -8,6 +8,7 @@ const AUTHORING_PREVIEW_EVENT = "authoring:preview-dialogue";
 const AUTHORING_PREVIEW_TARGET_KEY = "love-office:authoring-preview-target";
 const MOBILE_SYNC_WINDOW = "mobile-sync";
 const MOBILE_SYNC_URL = "https://love-office-game.dlwlsgh4687.chatgpt.site/?mac=1#/author";
+export const MOBILE_SYNC_READY_KEY = "love-office:mobile-sync-ready";
 
 export type StoryTextSource = {
   label: string;
@@ -268,28 +269,39 @@ export async function openAuthoringPlayWindow(root: string, target?: AuthoringTa
   });
 }
 
-export async function openMobileAuthoringSyncWindow(): Promise<void> {
+async function ensureMobileAuthoringSyncWindow(foreground: boolean): Promise<void> {
   if (!isTauri()) throw new Error("AUTHORING_UNAVAILABLE: Tauri 에디터에서만 사용할 수 있습니다.");
   const { WebviewWindow } = await import("@tauri-apps/api/webviewWindow");
   const existing = await WebviewWindow.getByLabel(MOBILE_SYNC_WINDOW);
   if (existing) {
-    await existing.show();
-    await existing.setFocus();
+    if (foreground) {
+      await existing.show();
+      await existing.setFocus();
+    }
     return;
   }
   const syncWindow = new WebviewWindow(MOBILE_SYNC_WINDOW, {
     url: MOBILE_SYNC_URL,
-    title: "밀당 오피스 · 모바일 대사 동기화",
+    title: "office",
     width: 520,
     height: 860,
     minWidth: 390,
     minHeight: 640,
     resizable: true,
+    visible: foreground,
   });
   await new Promise<void>((resolve, reject) => {
     syncWindow.once("tauri://created", () => resolve());
     syncWindow.once("tauri://error", (event) => reject(new Error(String(event.payload))));
   });
+}
+
+export function startMobileAuthoringSyncWindow(foreground = false): Promise<void> {
+  return ensureMobileAuthoringSyncWindow(foreground);
+}
+
+export function openMobileAuthoringSyncWindow(): Promise<void> {
+  return ensureMobileAuthoringSyncWindow(true);
 }
 
 export function consumeAuthoringPreviewTarget(): AuthoringTarget | undefined {

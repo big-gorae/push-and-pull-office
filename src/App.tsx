@@ -21,9 +21,11 @@ import { selfDevelopmentVariantDisplayName } from "./player/systemDialogueAuthor
 import { deleteNodeAndReconnect, deletionReplacement, incomingReferenceCount, insertNodeCopyAfter } from "./sceneEditing";
 import {
   consumeAuthoringTarget,
+  MOBILE_SYNC_READY_KEY,
   openMobileAuthoringSyncWindow,
   openAuthoringPlayWindow,
   rememberAuthoringRoot,
+  startMobileAuthoringSyncWindow,
   type AuthoringTarget,
   type SystemFlowAuthoringTarget,
 } from "./player/storyAuthoring";
@@ -1294,6 +1296,9 @@ export default function App() {
   useSaveCommandBinding();
   const bootStarted = useRef(false);
   const recoveredJournalKeys = useRef(new Set<string>());
+  const mobileSyncStartedRoot = useRef<string | undefined>(undefined);
+  const mobileRefreshPending = useRef<{ appliedText: number; appliedScenes: number } | undefined>(undefined);
+  const mobileRefreshInFlight = useRef(false);
   const [payload, setPayload] = useState<ProjectPayload | null>(null);
   const [selectedSceneId, setSelectedSceneId] = useState("");
   const [selectedNodeId, setSelectedNodeId] = useState("");
@@ -1327,6 +1332,7 @@ export default function App() {
   const [duplicateRequest, setDuplicateRequest] = useState<{ kind: "scene" | "event"; id: string; title: string } | null>(null);
   const workspaceRef = useRef<Workspace>(workspace);
   const [workspaceActivities, setWorkspaceActivities] = useState<Partial<Record<Workspace, DocumentActivity>>>({});
+  const hasPendingDocument = Object.values(workspaceActivities).some((activity) => activity && ["dirty", "saving", "error"].includes(activity.phase));
 
   useEffect(() => {
     workspaceRef.current = workspace;
@@ -1471,6 +1477,78 @@ export default function App() {
       .then((projectRoot) => projectRoot ? loadProject(projectRoot) : setStatus("스토리 프로젝트 폴더를 여세요."))
       .catch(() => setStatus("Tauri 앱에서 실행해 주세요."));
   }, [loadProject]);
+
+  const refreshProjectAfterMobileSync = useCallback(async (summary: { appliedText: number; appliedScenes: number }) => {
+    if (!root || mobileRefreshInFlight.current) return;
+    if (dirtyRef.current || hasPendingDocument) {
+      mobileRefreshPending.current = summary;
+      setStatus("휴대폰 변경을 받았습니다. 현재 Mac 저장이 끝나면 화면을 자동으로 새로고칩니다.");
+      return;
+    }
+    mobileRefreshInFlight.current = true;
+    setBusy(true);
+    setStatus("휴대폰에서 저장한 변경을 Mac 화면에 반영하는 중…");
+    try {
+      await editorSaveCoordinator.barrier(root);
+      const project = await invoke<ProjectPayload>("load_project", { root });
+      setPayload(project);
+      setLocale(project.runtime.localization.default_locale);
+      setIssues(project.issues);
+      setWorkspaceActivities({});
+      const fallbackScene = storyRoutes(project.runtime)[0]?.entry_scene;
+      const sceneId = project.runtime.scenes[selectedSceneId] ? selectedSceneId : fallbackScene;
+      if (sceneId) loadScene(project, sceneId, true);
+      mobileRefreshPending.current = undefined;
+      const applied = summary.appliedScenes
+        ? `장면 ${summary.appliedScenes}개`
+        : `대사 ${summary.appliedText}개`;
+      setStatus(`휴대폰에서 저장한 ${applied}를 Mac 원문과 화면에 반영했습니다.`);
+    } catch (error) {
+      mobileRefreshPending.current = summary;
+      setStatus(`휴대폰 변경은 받았지만 Mac 화면을 새로고치지 못했습니다: ${String(error)}`);
+    } finally {
+      mobileRefreshInFlight.current = false;
+      setBusy(false);
+    }
+  }, [hasPendingDocument, loadScene, root, selectedSceneId]);
+
+  useEffect(() => {
+    let disposed = false;
+    let disposeReady: (() => void) | undefined;
+    let disposeApplied: (() => void) | undefined;
+    void import("@tauri-apps/api/event").then(async ({ listen }) => {
+      disposeReady = await listen("mobile-sync:ready", () => {
+        try { localStorage.setItem(MOBILE_SYNC_READY_KEY, "true"); } catch { /* restricted WebViews may not expose storage */ }
+      });
+      disposeApplied = await listen<{ appliedText: number; appliedScenes: number }>("mobile-sync:applied", ({ payload: summary }) => {
+        if (!disposed) void refreshProjectAfterMobileSync(summary);
+      });
+    }).catch(() => undefined);
+    return () => {
+      disposed = true;
+      disposeReady?.();
+      disposeApplied?.();
+    };
+  }, [refreshProjectAfterMobileSync]);
+
+  useEffect(() => {
+    if (!root || mobileSyncStartedRoot.current === root) return;
+    mobileSyncStartedRoot.current = root;
+    let foreground = true;
+    try { foreground = localStorage.getItem(MOBILE_SYNC_READY_KEY) !== "true"; } catch { /* show the sign-in window when readiness is unknown */ }
+    void startMobileAuthoringSyncWindow(foreground).then(() => {
+      if (foreground) setStatus("모바일 동기화를 시작하려면 열린 office 창에서 한 번 로그인해 주세요.");
+    }).catch((error) => {
+      mobileSyncStartedRoot.current = undefined;
+      setStatus(`모바일 자동 동기화를 시작하지 못했습니다: ${String(error)}`);
+    });
+  }, [root]);
+
+  useEffect(() => {
+    const pending = mobileRefreshPending.current;
+    if (!pending || dirty || hasPendingDocument || mobileRefreshInFlight.current) return;
+    void refreshProjectAfterMobileSync(pending);
+  }, [dirty, hasPendingDocument, refreshProjectAfterMobileSync]);
 
   useEffect(() => {
     let unlisten: (() => void) | undefined;
@@ -2176,8 +2254,6 @@ export default function App() {
       : documentActivity.phase === "error" ? "저장 확인 필요"
         : documentActivity.savedAt ? `저장됨 ${new Date(documentActivity.savedAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}`
           : "저장됨";
-  const hasPendingDocument = Object.values(workspaceActivities).some((activity) => activity && ["dirty", "saving", "error"].includes(activity.phase));
-
   return <main className="app-shell">
     <header className="topbar">
       <div className="brand"><p className="eyebrow">PUSH &amp; PULL OFFICE</p><h1>스토리 에디터</h1></div>
