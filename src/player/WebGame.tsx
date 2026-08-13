@@ -105,6 +105,10 @@ import "./web-game.css";
 
 const runtime = runtimeJson as unknown as Runtime;
 const selfDevelopment = selfDevelopmentSystem(runtime);
+// Keep the finished title art and localized title data intact so the normal
+// lobby can be restored later by changing only this switch.
+const DISCREET_PUBLIC_LOBBY = true;
+const DISCREET_PUBLIC_TITLE = "office";
 const SELF_DEVELOPMENT_STATS: readonly SelfDevelopmentStat[] = [
   "health",
   "appearance",
@@ -669,14 +673,16 @@ function TitleScreen({
   i18n: GameLocalizer;
   onLocale: (locale: GameLocale) => void;
 }) {
-  return <main className="vn-title">
-    <img
+  return <main className={`vn-title ${DISCREET_PUBLIC_LOBBY ? "discreet" : ""}`}>
+    {!DISCREET_PUBLIC_LOBBY && <img
       className="vn-title-key-art"
       src={`${import.meta.env.BASE_URL}og.png`}
       alt=""
       aria-hidden="true"
-    />
-    <h1 className="vn-visually-hidden">{i18n.ui("app.title")}</h1>
+    />}
+    <h1 className={DISCREET_PUBLIC_LOBBY ? "vn-title-private-name" : "vn-visually-hidden"}>
+      {DISCREET_PUBLIC_LOBBY ? DISCREET_PUBLIC_TITLE : i18n.ui("app.title")}
+    </h1>
     <header className="vn-title-topbar">
       <div className="vn-language-tabs" aria-label={i18n.ui("locale.label")}>
         {gameLocales(runtime).map((locale) => <button
@@ -688,7 +694,6 @@ function TitleScreen({
       </div>
     </header>
     <section className="vn-title-lobby">
-      <p>{i18n.ui("app.subtitle")}</p>
       <nav className="vn-title-menu" aria-label={i18n.ui("menu.main")}>
         <button type="button" data-icon="♥" className={autosave ? "primary" : ""} disabled={!autosave} onClick={onContinue}><span>{i18n.ui("menu.continue")}</span><small>{autosave ? savePreview(autosave, i18n).title : i18n.ui("menu.noSave")}</small></button>
         <button type="button" data-icon="✦" className={!autosave ? "primary" : ""} onClick={onNewGame}><span>{i18n.ui("menu.newGame")}</span></button>
@@ -1538,7 +1543,7 @@ export default function WebGame() {
   };
 
   useEffect(() => {
-    document.title = i18n.ui("app.title");
+    document.title = DISCREET_PUBLIC_LOBBY ? DISCREET_PUBLIC_TITLE : i18n.ui("app.title");
     document.documentElement.lang = i18n.locale;
   }, [i18n]);
 

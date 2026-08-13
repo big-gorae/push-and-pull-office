@@ -143,7 +143,9 @@ test("game flow hides authoring UI and debug restores controlled inspection", as
   test.setTimeout(60_000);
   await setDeterministicSettings(page, true);
   await page.goto("/");
-  await expect(page.locator(".vn-title-key-art")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "office" })).toBeVisible();
+  await expect(page.locator(".vn-title-key-art")).toHaveCount(0);
+  await expect(page.getByText("네 사람과 마주치는 순간", { exact: false })).toHaveCount(0);
   await enterFirstScene(page);
 
   await expect(page.locator(".timeline-shell, .timeline-board")).toHaveCount(0);

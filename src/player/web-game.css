@@ -966,6 +966,25 @@ button { color: inherit; }
   object-position: center center;
   animation: vn-lobby-reveal 900ms cubic-bezier(.2,.75,.2,1) both;
 }
+.vn-title-private-name {
+  position: absolute;
+  z-index: 4;
+  top: clamp(52px, 8vw, 108px);
+  left: clamp(28px, 6vw, 96px);
+  margin: 0;
+  color: #262626;
+  font-family: "Noto Sans KR", sans-serif;
+  font-size: clamp(2.4rem, 7vw, 6.5rem);
+  font-weight: 500;
+  letter-spacing: -.06em;
+}
+.vn-title.discreet {
+  background: #f4f3ef;
+}
+.vn-title.discreet::before,
+.vn-title.discreet::after {
+  display: none;
+}
 @keyframes vn-lobby-reveal {
   from { opacity: 0; transform: scale(1.025); }
   to { opacity: 1; transform: scale(1); }
@@ -1147,6 +1166,13 @@ button { color: inherit; }
     flex: none;
     object-fit: contain;
     object-position: center;
+  }
+  .vn-title-private-name {
+    position: relative;
+    top: auto;
+    left: auto;
+    padding: 88px 24px 34px;
+    font-size: clamp(3.4rem, 17vw, 5.6rem);
   }
   .vn-title::before {
     z-index: 1;
