@@ -182,6 +182,8 @@ export default function MobileAuthoringApp() {
   const [clipboard, setClipboard] = useState<StoryNode>();
   const syncingRef = useRef(false);
   const persistChains = useRef<PersistChain>(new Map());
+  const listScrollPosition = useRef(0);
+  const editorWasOpen = useRef(false);
 
   const workspace = catalog?.workspace;
   const draftMap = useMemo(() => new Map(drafts.map((draft) => [draft.sceneId, draft])), [drafts]);
@@ -284,6 +286,31 @@ export default function MobileAuthoringApp() {
     const timer = window.setInterval(() => navigator.onLine && document.visibilityState === "visible" && void syncNow(true), macBridge ? 20_000 : 60_000);
     return () => { window.removeEventListener("online", onOnline); window.removeEventListener("offline", onOffline); document.removeEventListener("visibilitychange", onVisibility); window.clearInterval(timer); };
   }, [macBridge, syncNow]);
+
+  useEffect(() => {
+    const isPhoneLayout = window.matchMedia("(max-width: 899px)").matches;
+    if (!isPhoneLayout) {
+      editorWasOpen.current = mobileEditorOpen;
+      return;
+    }
+    if (mobileEditorOpen && !editorWasOpen.current) {
+      window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "auto" }));
+    } else if (!mobileEditorOpen && editorWasOpen.current) {
+      const top = listScrollPosition.current;
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ top, behavior: "auto" });
+        window.requestAnimationFrame(() => window.scrollTo({ top, behavior: "auto" }));
+      });
+    }
+    editorWasOpen.current = mobileEditorOpen;
+  }, [mobileEditorOpen]);
+
+  useEffect(() => {
+    if (!picker) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [picker]);
 
   const persistDraft = useCallback((draft: StoredSceneDraft, previous?: StoredSceneDraft) => {
     const prior = persistChains.current.get(draft.sceneId) || Promise.resolve();
@@ -392,7 +419,14 @@ export default function MobileAuthoringApp() {
     setPicker(undefined);
   };
 
-  return <main className="mobile-authoring-shell">
+  const openMobileNodeEditor = (nodeId: string) => {
+    if (window.matchMedia("(max-width: 899px)").matches) listScrollPosition.current = window.scrollY;
+    setSelectedNodeId(nodeId);
+    setNodeMenu(undefined);
+    setMobileEditorOpen(true);
+  };
+
+  return <main className={mobileEditorOpen ? "mobile-authoring-shell editing-node" : "mobile-authoring-shell"}>
     <header className="mobile-authoring-header">
       <button type="button" className="scene-nav-trigger" onClick={() => setNavOpen(true)} aria-label="날짜별 장면 열기">☰</button>
       <div><p>LOVE OFFICE · MOBILE AUTHORING</p><h1>대사 장면 편집기</h1></div>
@@ -429,14 +463,14 @@ export default function MobileAuthoringApp() {
           <div className="mobile-node-layout">
             <aside className="mobile-node-sequence">
               <label><span>이 장면 대사 검색</span><input type="search" value={nodeQuery} onChange={(event) => setNodeQuery(event.target.value)} placeholder="문장으로 찾기" /></label>
-              <div className="add-node-bar"><select aria-label="추가할 종류" value={addKind} onChange={(event) => setAddKind(event.target.value as typeof addKind)}><option value="dual_dialogue">대사</option><option value="dual_narration">나레이션</option></select><button type="button" onClick={() => mutateScene((next) => { const id = addNodeAfter(next, selectedNodeId || next.node_order.at(-1) || "", addKind, selectedRecord.speakers[0]?.id); setSelectedNodeId(id); setMobileEditorOpen(true); })}>＋ 현재 다음에 추가</button></div>
+              <div className="add-node-bar"><select aria-label="추가할 종류" value={addKind} onChange={(event) => setAddKind(event.target.value as typeof addKind)}><option value="dual_dialogue">대사</option><option value="dual_narration">나레이션</option></select><button type="button" onClick={() => mutateScene((next) => { const id = addNodeAfter(next, selectedNodeId || next.node_order.at(-1) || "", addKind, selectedRecord.speakers[0]?.id); openMobileNodeEditor(id); })}>＋ 현재 다음에 추가</button></div>
               <div className="mobile-node-list">{visibleNodeIds.map((id) => {
                 const item = scene.nodes[id];
                 const index = scene.node_order.indexOf(id);
                 return <article className={id === selectedNodeId ? "mobile-node-card active" : "mobile-node-card"} key={id}>
-                  <button type="button" className="node-card-main" onClick={() => { setSelectedNodeId(id); setNodeMenu(undefined); setMobileEditorOpen(true); }}><b>{index + 1}</b><span><strong>{nodePreview(item)}</strong><small>{MOBILE_NODE_LABELS[item.kind] || item.kind}</small></span></button>
+                  <button type="button" className="node-card-main" onClick={() => openMobileNodeEditor(id)}><b>{index + 1}</b><span><strong>{nodePreview(item)}</strong><small>{MOBILE_NODE_LABELS[item.kind] || item.kind}</small></span></button>
                   {reordering ? <div className="node-order-actions"><button type="button" disabled={index === 0} onClick={() => mutateScene((next) => { moveNode(next, id, -1); })}>↑ 위로</button><button type="button" disabled={index === scene.node_order.length - 1} onClick={() => mutateScene((next) => { moveNode(next, id, 1); })}>↓ 아래로</button></div> : <button type="button" className="node-more" aria-label={`${index + 1}번 대사 편집 메뉴`} onClick={() => setNodeMenu(nodeMenu === id ? undefined : id)}>•••</button>}
-                  {nodeMenu === id && <div className="node-popover"><button type="button" onClick={() => { setClipboard(structuredClone(item)); setNodeMenu(undefined); setStatus("대사를 복사했습니다. 원하는 위치에서 붙여넣으세요."); }}>복사</button><button type="button" disabled={!clipboard} onClick={() => { if (!clipboard) return; mutateScene((next) => { const copied = copyNodeAfter(next, clipboard, id); setSelectedNodeId(copied); setMobileEditorOpen(true); }); setNodeMenu(undefined); }}>다음에 붙여넣기</button><button type="button" className="danger" onClick={() => { if (!window.confirm("이 대사를 삭제하고 연결을 다음 화면으로 복구할까요?")) return; mutateScene((next) => { const replacement = removeNode(next, id); if (replacement) setSelectedNodeId(replacement); }); setNodeMenu(undefined); }}>삭제</button></div>}
+                  {nodeMenu === id && <div className="node-popover"><button type="button" onClick={() => { setClipboard(structuredClone(item)); setNodeMenu(undefined); setStatus("대사를 복사했습니다. 원하는 위치에서 붙여넣으세요."); }}>복사</button><button type="button" disabled={!clipboard} onClick={() => { if (!clipboard) return; mutateScene((next) => { const copied = copyNodeAfter(next, clipboard, id); openMobileNodeEditor(copied); }); setNodeMenu(undefined); }}>다음에 붙여넣기</button><button type="button" className="danger" onClick={() => { if (!window.confirm("이 대사를 삭제하고 연결을 다음 화면으로 복구할까요?")) return; mutateScene((next) => { const replacement = removeNode(next, id); if (replacement) setSelectedNodeId(replacement); }); setNodeMenu(undefined); }}>삭제</button></div>}
                 </article>;
               })}</div>
             </aside>
@@ -444,7 +478,7 @@ export default function MobileAuthoringApp() {
             <section className={mobileEditorOpen ? "mobile-node-editor open" : "mobile-node-editor"}>{node ? <>
               <header>
                 <button type="button" className="node-editor-back" onClick={() => { setMobileEditorOpen(false); setEditorMenuOpen(false); }} aria-label="대사 목록으로 돌아가기">←</button>
-                <div><small>{scene.node_order.indexOf(node.id) + 1} / {scene.node_order.length}</small><h3>{nodePreview(node)}</h3></div>
+                <div className="node-editor-title"><small>{scene.node_order.indexOf(node.id) + 1} / {scene.node_order.length}</small><h3>{nodePreview(node)}</h3><SceneStatus draft={selectedDraft} /></div>
                 <div className="node-editor-actions"><button type="button" disabled={scene.node_order.indexOf(node.id) === 0} onClick={() => setSelectedNodeId(scene.node_order[scene.node_order.indexOf(node.id) - 1])} aria-label="이전 대사">‹</button><button type="button" disabled={scene.node_order.indexOf(node.id) === scene.node_order.length - 1} onClick={() => setSelectedNodeId(scene.node_order[scene.node_order.indexOf(node.id) + 1])} aria-label="다음 대사">›</button><button type="button" onClick={() => setEditorMenuOpen((value) => !value)} aria-label="현재 대사 편집 메뉴">•••</button></div>
                 {editorMenuOpen && <div className="editor-node-popover"><button type="button" onClick={() => { setClipboard(structuredClone(node)); setEditorMenuOpen(false); setStatus("대사를 복사했습니다."); }}>복사</button><button type="button" disabled={!clipboard} onClick={() => { if (!clipboard) return; mutateScene((next) => { const copied = copyNodeAfter(next, clipboard, node.id); setSelectedNodeId(copied); }); setEditorMenuOpen(false); }}>다음에 붙여넣기</button><button type="button" className="danger" onClick={() => { if (!window.confirm("이 대사를 삭제하고 연결을 다음 화면으로 복구할까요?")) return; mutateScene((next) => { const replacement = removeNode(next, node.id); if (replacement) setSelectedNodeId(replacement); }); setEditorMenuOpen(false); }}>삭제</button></div>}
               </header>

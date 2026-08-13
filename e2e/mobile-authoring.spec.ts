@@ -14,7 +14,7 @@ test("mobile scene authoring edits a scene and reopens its draft offline", async
   const editor = page.getByRole("textbox", { name: "원문 대사" });
   const original = await editor.inputValue();
   await editor.fill(`${original} 오프라인 장면 초안`);
-  await expect(page.locator(".scene-status", { hasText: "이 폰에 초안 저장" })).toBeVisible();
+  await expect(page.locator(".mobile-node-editor .scene-status", { hasText: "이 폰에 초안 저장" })).toBeVisible();
 
   await page.getByRole("button", { name: "대사 목록으로 돌아가기" }).click();
   await page.getByRole("button", { name: "순서 편집" }).click();
@@ -33,7 +33,7 @@ test("mobile scene authoring edits a scene and reopens its draft offline", async
   try {
     await page.reload({ waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
-    await expect(page.locator(".scene-status", { hasText: "이 폰에 초안 저장" })).toBeVisible();
+    await expect(page.locator(".scene-heading .scene-status", { hasText: "이 폰에 초안 저장" })).toBeVisible();
     await expect(page.getByText(/오프라인 ·/)).toBeVisible();
     await page.locator(".node-card-main").first().click();
     await expect(page.getByRole("textbox", { name: "원문 대사" })).toHaveValue(`${original} 오프라인 장면 초안`);
@@ -61,6 +61,29 @@ test("mobile scene authoring exposes structure, artwork and background controls"
   await expect(page.getByRole("button", { name: /속마음 대사/ })).toBeVisible();
 });
 
+test("iPhone 16 Pro Max opens dialogue editing as an isolated page", async ({ page }) => {
+  await page.setViewportSize({ width: 430, height: 932 });
+  await page.goto("/#/author");
+  await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
+
+  const target = page.locator(".node-card-main").nth(12);
+  await target.scrollIntoViewIfNeeded();
+  const listScrollY = await page.evaluate(() => window.scrollY);
+  await target.click();
+
+  await expect(page.locator(".mobile-node-editor.open")).toBeVisible();
+  await expect(page.locator(".mobile-node-sequence")).toBeHidden();
+  await expect(page.locator(".mobile-authoring-header")).toBeHidden();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+  expect(await page.locator(".mobile-node-editor.open").evaluate((element) => getComputedStyle(element).position)).toBe("relative");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+  await page.getByRole("button", { name: "대사 목록으로 돌아가기" }).click();
+  await expect(page.locator(".mobile-node-sequence")).toBeVisible();
+  await expect(page.locator(".mobile-authoring-header")).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(listScrollY);
+});
+
 test("mobile scene authoring queues a complete scene for Mac sync", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/#/author");
@@ -71,5 +94,5 @@ test("mobile scene authoring queues a complete scene for Mac sync", async ({ pag
   await editor.fill(`${await editor.inputValue()} 원격 반영 대기`);
   await page.getByRole("button", { name: "장면 저장·동기화" }).click();
 
-  await expect(page.locator(".scene-status.pending")).toContainText("Mac 반영 대기", { timeout: 10_000 });
+  await expect(page.locator(".mobile-node-editor .scene-status.pending")).toContainText("Mac 반영 대기", { timeout: 10_000 });
 });
