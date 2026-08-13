@@ -261,7 +261,6 @@ async function syncMac(projectId: string): Promise<MobileCatalogSnapshot | undef
     serverChanges(projectId, "pending"),
     serverSceneChanges(projectId, "pending"),
   ]);
-  if (!pending.length && !pendingScenes.length) return snapshot;
   const result = await invoke<MobileApplyResult>("apply_mobile_sync_changes", {
     changes: pending,
     sceneChanges: pendingScenes,

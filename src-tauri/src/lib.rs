@@ -7,7 +7,7 @@ use std::{
     process::{Child, ChildStdin, ChildStdout, Command, Stdio},
     sync::{Arc, Mutex},
 };
-use tauri::Emitter;
+use tauri::{Emitter, Manager};
 
 #[derive(Default)]
 struct EditorState {
@@ -351,16 +351,11 @@ async fn load_project(state: tauri::State<'_, EditorState>, root: String) -> Res
 /// It never accepts a filesystem path and can only read the project that the
 /// local editor already opened and approved.
 #[tauri::command]
-async fn mobile_sync_snapshot(
-    app: tauri::AppHandle,
-    state: tauri::State<'_, EditorState>,
-) -> Result<Value, String> {
+async fn mobile_sync_snapshot(state: tauri::State<'_, EditorState>) -> Result<Value, String> {
     let root = active_root(&state)?;
     let commit_lock = project_commit_lock(&state, &root)?;
     let worker = project_worker(&state, &root)?;
-    let snapshot = run_bridge_background(worker, "sync-snapshot", None, Some(commit_lock)).await?;
-    let _ = app.emit_to("main", "mobile-sync:ready", json!({ "ready": true }));
-    Ok(snapshot)
+    run_bridge_background(worker, "sync-snapshot", None, Some(commit_lock)).await
 }
 
 /// Apply path-free localization events through the authoritative story bridge.
@@ -411,6 +406,14 @@ async fn apply_mobile_sync_changes(
             "mobile-sync:applied",
             json!({ "appliedText": applied_text, "appliedScenes": applied_scenes }),
         );
+    }
+    // Readiness means the remote surface already uploaded the Mac snapshot and
+    // successfully reached the server change queue.  Emitting this from the
+    // snapshot command alone produced a false success when Sites sign-in or the
+    // catalog upload failed, leaving phones on their stale IndexedDB catalog.
+    let _ = app.emit_to("main", "mobile-sync:ready", json!({ "ready": true }));
+    if let Some(window) = app.get_webview_window("mobile-sync") {
+        let _ = window.hide();
     }
     Ok(result)
 }

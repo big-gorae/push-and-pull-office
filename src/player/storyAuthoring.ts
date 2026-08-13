@@ -8,7 +8,7 @@ const AUTHORING_PREVIEW_EVENT = "authoring:preview-dialogue";
 const AUTHORING_PREVIEW_TARGET_KEY = "love-office:authoring-preview-target";
 const MOBILE_SYNC_WINDOW = "mobile-sync";
 const MOBILE_SYNC_URL = "https://love-office-game.dlwlsgh4687.chatgpt.site/?mac=1#/author";
-export const MOBILE_SYNC_READY_KEY = "love-office:mobile-sync-ready";
+export const MOBILE_SYNC_READY_KEY = "love-office:mobile-sync-ready-v2";
 
 export type StoryTextSource = {
   label: string;
