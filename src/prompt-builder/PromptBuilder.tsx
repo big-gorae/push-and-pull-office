@@ -162,7 +162,7 @@ export default function PromptBuilder() {
     const previousTitle = document.title;
     const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
     const previousThemeColor = themeColor?.content;
-    document.title = "Love Office · NovelAI 프롬프트 빌더";
+    document.title = "office";
     if (themeColor) themeColor.content = "#0d1015";
     return () => {
       document.title = previousTitle;

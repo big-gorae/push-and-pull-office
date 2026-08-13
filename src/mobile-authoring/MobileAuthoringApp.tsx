@@ -258,7 +258,7 @@ export default function MobileAuthoringApp() {
     theme.content = "#f6f0e7";
     document.head.append(manifest, theme);
     const originalTitle = document.title;
-    document.title = "밀당 오피스 · 모바일 장면 편집";
+    document.title = "office";
     if ("serviceWorker" in navigator) void navigator.serviceWorker.register("/authoring-sw.js", { scope: "/" })
       .then(async (registration) => {
         const ready = await navigator.serviceWorker.ready;

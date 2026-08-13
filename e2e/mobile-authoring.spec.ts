@@ -5,6 +5,7 @@ test("mobile scene authoring edits a scene and reopens its draft offline", async
   await page.goto("/");
   await page.evaluate(() => { window.location.hash = "/author"; });
 
+  await expect(page).toHaveTitle("office");
   await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "수요일의 첫 회의" })).toBeVisible();
   await expect(page.locator(".mobile-node-card")).toHaveCount(36);
@@ -22,7 +23,7 @@ test("mobile scene authoring edits a scene and reopens its draft offline", async
 
   await page.waitForFunction(async () => {
     if (!("serviceWorker" in navigator) || !navigator.serviceWorker.controller) return false;
-    const cache = await caches.open("love-office-authoring-v5");
+    const cache = await caches.open("love-office-authoring-v6");
     const urls = (await cache.keys()).map((request) => request.url);
     return urls.some((url) => url.includes("MobileAuthoringApp-"))
       && urls.some((url) => url.includes("story-runtime-"));

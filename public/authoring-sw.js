@@ -1,4 +1,4 @@
-const CACHE_VERSION = "love-office-authoring-v5";
+const CACHE_VERSION = "love-office-authoring-v6";
 const APP_SHELL = [
   "/",
   "/authoring.webmanifest",
