@@ -30,6 +30,13 @@ import {
   stageForMode,
   withStageForMode,
 } from "./scene";
+import {
+  CURRENT_BUILD_ID,
+  fetchLatestBuildId,
+  installBuildWorker,
+  reloadUrlForBuild,
+  shortBuildId,
+} from "./appUpdate";
 import type {
   MobileArtworkOption,
   MobileBackgroundOption,
@@ -176,6 +183,9 @@ export default function MobileAuthoringApp() {
   const [mode, setMode] = useState<ViewMode>("perceived");
   const [online, setOnline] = useState(() => navigator.onLine);
   const [syncing, setSyncing] = useState(false);
+  const [checkingUpdate, setCheckingUpdate] = useState(false);
+  const [updatingApp, setUpdatingApp] = useState(false);
+  const [latestBuildId, setLatestBuildId] = useState<string>();
   const [status, setStatus] = useState("오프라인 작업공간을 준비하는 중…");
   const [lastSyncedAt, setLastSyncedAt] = useState<Date>();
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent>();
@@ -233,6 +243,49 @@ export default function MobileAuthoringApp() {
     }
   }, [macBridge, refreshLocal]);
 
+  const checkForUpdate = useCallback(async (announce = false) => {
+    if (!navigator.onLine) {
+      if (announce) setStatus("최신 버전 확인에는 인터넷 연결이 필요합니다.");
+      return undefined;
+    }
+    setCheckingUpdate(true);
+    try {
+      const nextBuildId = await fetchLatestBuildId();
+      setLatestBuildId(nextBuildId);
+      if (announce) setStatus(nextBuildId === CURRENT_BUILD_ID ? "이미 최신 버전입니다." : "새 버전을 불러올 수 있습니다.");
+      return nextBuildId;
+    } catch {
+      if (announce) setStatus("최신 버전을 확인하지 못했습니다. 연결 후 다시 시도해 주세요.");
+      return undefined;
+    } finally {
+      setCheckingUpdate(false);
+    }
+  }, []);
+
+  const applyLatestBuild = useCallback(async () => {
+    if (!navigator.onLine || updatingApp) {
+      if (!navigator.onLine) setStatus("최신 버전을 불러오려면 인터넷에 연결해 주세요.");
+      return;
+    }
+    setUpdatingApp(true);
+    setStatus("휴대폰 초안을 보존하고 최신 버전을 준비하는 중…");
+    try {
+      await Promise.all([...persistChains.current.values()]);
+      const nextBuildId = await fetchLatestBuildId();
+      if (nextBuildId === CURRENT_BUILD_ID) {
+        setLatestBuildId(nextBuildId);
+        setStatus("이미 최신 버전입니다.");
+        setUpdatingApp(false);
+        return;
+      }
+      await installBuildWorker(nextBuildId);
+      window.location.replace(reloadUrlForBuild(window.location.href, nextBuildId));
+    } catch {
+      setStatus("새 버전을 불러오지 못했습니다. 초안은 이 폰에 그대로 보관되어 있습니다.");
+      setUpdatingApp(false);
+    }
+  }, [updatingApp]);
+
   useEffect(() => {
     let cancelled = false;
     void (async () => {
@@ -270,7 +323,7 @@ export default function MobileAuthoringApp() {
     document.head.append(manifest, theme);
     const originalTitle = document.title;
     document.title = "office";
-    if ("serviceWorker" in navigator) void navigator.serviceWorker.register("/authoring-sw.js", { scope: "/" })
+    if ("serviceWorker" in navigator) void navigator.serviceWorker.register(`/authoring-sw.js?v=${encodeURIComponent(CURRENT_BUILD_ID)}`, { scope: "/", updateViaCache: "none" })
       .then(async (registration) => {
         const ready = await navigator.serviceWorker.ready;
         const urls = performance.getEntriesByType("resource")
@@ -286,7 +339,24 @@ export default function MobileAuthoringApp() {
   }, []);
 
   useEffect(() => {
-    const onOnline = () => { setOnline(true); void syncNow(); };
+    if (macBridge) return;
+    const check = () => document.visibilityState === "visible" && navigator.onLine && void checkForUpdate(false);
+    const initial = window.setTimeout(check, 2_000);
+    const timer = window.setInterval(check, 5 * 60_000);
+    document.addEventListener("visibilitychange", check);
+    return () => {
+      window.clearTimeout(initial);
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", check);
+    };
+  }, [checkForUpdate, macBridge]);
+
+  useEffect(() => {
+    const onOnline = () => {
+      setOnline(true);
+      void syncNow();
+      if (!macBridge) void checkForUpdate(false);
+    };
     const onOffline = () => { setOnline(false); setStatus("오프라인 · 편집 내용은 이 폰에 보관됩니다."); };
     const onVisibility = () => document.visibilityState === "visible" && navigator.onLine && void syncNow(true);
     window.addEventListener("online", onOnline);
@@ -294,7 +364,7 @@ export default function MobileAuthoringApp() {
     document.addEventListener("visibilitychange", onVisibility);
     const timer = window.setInterval(() => navigator.onLine && document.visibilityState === "visible" && void syncNow(true), macBridge ? 20_000 : 60_000);
     return () => { window.removeEventListener("online", onOnline); window.removeEventListener("offline", onOffline); document.removeEventListener("visibilitychange", onVisibility); window.clearInterval(timer); };
-  }, [macBridge, syncNow]);
+  }, [checkForUpdate, macBridge, syncNow]);
 
   useEffect(() => {
     const isPhoneLayout = window.matchMedia("(max-width: 899px)").matches;
@@ -395,6 +465,7 @@ export default function MobileAuthoringApp() {
   const visibleNodeIds = scene?.node_order.filter((id) => !nodeQuery.trim() || nodePreview(scene.nodes[id]).toLocaleLowerCase().includes(nodeQuery.trim().toLocaleLowerCase())) || [];
   const pendingCount = drafts.filter((draft) => ["queued", "pending"].includes(draft.status)).length + legacyDraftCount;
   const attentionCount = drafts.filter((draft) => ["conflict", "rejected"].includes(draft.status)).length;
+  const updateAvailable = Boolean(latestBuildId && latestBuildId !== CURRENT_BUILD_ID);
 
   if (!catalog || !workspace) return <main className="mobile-authoring-loading"><span /><p>장면 편집기를 여는 중…</p></main>;
 
@@ -452,6 +523,11 @@ export default function MobileAuthoringApp() {
       {installPrompt && !macBridge && <button type="button" onClick={() => void installPrompt.prompt().then(() => installPrompt.userChoice).then(() => setInstallPrompt(undefined))}>홈 화면에 설치</button>}
     </section>
 
+    {updateAvailable && <section className="mobile-update-banner" aria-live="polite">
+      <div><strong>새 버전이 있습니다.</strong><small>휴대폰 초안과 이미지 캐시는 그대로 유지됩니다.</small></div>
+      <button type="button" onClick={() => void applyLatestBuild()} disabled={updatingApp}>{updatingApp ? "준비 중…" : "최신 버전 불러오기"}</button>
+    </section>}
+
     <div className="mobile-scene-layout">
       {navOpen && <button type="button" className="scene-nav-scrim" aria-label="장면 목록 닫기" onClick={() => setNavOpen(false)} />}
       <aside className={navOpen ? "mobile-scene-nav open" : "mobile-scene-nav"}>
@@ -461,6 +537,7 @@ export default function MobileAuthoringApp() {
           const target = workspace.scenes[entry.sceneId]?.scene;
           const targetDraft = draftMap.get(entry.sceneId);
           return <button type="button" className={entry.sceneId === selectedSceneId ? "active" : ""} key={`${entry.eventId}:${entry.sceneId}`} onClick={() => { setSelectedSceneId(entry.sceneId); setSelectedNodeId(undefined); setNavOpen(false); setNodeMenu(undefined); setMobileEditorOpen(false); }}><span><strong>{target?.title || entry.eventTitle}</strong><small>{entry.slot}{entry.endDay !== day.day ? ` · ${day.day}~${entry.endDay}일` : ""}</small></span><em>{targetDraft ? "●" : target?.node_order.length || 0}</em></button>})}</section>)}</div>
+        <footer className="mobile-version-panel"><button type="button" onClick={() => void checkForUpdate(true)} disabled={!online || checkingUpdate || updatingApp}>{checkingUpdate ? "확인 중…" : "최신 버전 확인"}</button><small>현재 {shortBuildId()}</small></footer>
       </aside>
 
       <section className="mobile-scene-workspace">

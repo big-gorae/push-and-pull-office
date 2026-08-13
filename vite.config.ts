@@ -1,14 +1,43 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import { sites } from "./build/sites-vite-plugin";
 import hostingConfig from "./.openai/hosting.json";
 
 const SITE_CREATOR_PLACEHOLDER_DATABASE_ID = "00000000-0000-4000-8000-000000000000";
+const APP_BUILD_ID = (
+  process.env.GITHUB_SHA
+  || process.env.SITES_COMMIT_SHA
+  || process.env.VITE_APP_BUILD_ID
+  || new Date().toISOString().replace(/\D/g, "").slice(0, 14)
+).slice(0, 40);
+
+function appVersionPlugin(): Plugin {
+  const developmentBody = `${JSON.stringify({ buildId: APP_BUILD_ID, assets: [] })}\n`;
+  return {
+    name: "love-office-app-version",
+    configureServer(server) {
+      server.middlewares.use("/app-version.json", (_request, response) => {
+        response.statusCode = 200;
+        response.setHeader("content-type", "application/json; charset=utf-8");
+        response.setHeader("cache-control", "no-store, max-age=0");
+        response.end(developmentBody);
+      });
+    },
+    generateBundle(_options, bundle) {
+      const assets = Object.keys(bundle)
+        .filter((fileName) => /\.(?:css|js)$/.test(fileName))
+        .map((fileName) => `/${fileName}`)
+        .sort();
+      const source = `${JSON.stringify({ buildId: APP_BUILD_ID, assets })}\n`;
+      this.emitFile({ type: "asset", fileName: "app-version.json", source });
+    },
+  };
+}
 
 export default defineConfig(async () => {
   const isGameBuild = process.env.VITE_APP_SURFACE === "game";
   const isGitHubPagesBuild = process.env.VITE_HOSTING_TARGET === "github-pages";
   const isSiteBuild = isGameBuild && !isGitHubPagesBuild;
-  const plugins = [];
+  const plugins: Plugin[] = [appVersionPlugin()];
 
   if (isSiteBuild) {
     process.env.WRANGLER_WRITE_LOGS ??= "false";
@@ -44,6 +73,9 @@ export default defineConfig(async () => {
       : "/",
     clearScreen: false,
     plugins,
+    define: {
+      __LOVE_OFFICE_BUILD_ID__: JSON.stringify(APP_BUILD_ID),
+    },
     server: {
       strictPort: true,
       port: 1420,
