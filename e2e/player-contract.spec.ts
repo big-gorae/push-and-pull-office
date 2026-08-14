@@ -57,6 +57,14 @@ test.beforeEach(async ({ page }) => {
   await setDeterministicSettings(page);
 });
 
+test("game settings expose force refresh", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "설정" }).click();
+  const settings = page.getByRole("dialog", { name: "설정" });
+  await expect(settings.getByRole("button", { name: "강제 갱신" })).toBeVisible();
+  await expect(settings.getByText(/현재 [A-Za-z0-9._-]+/)).toBeVisible();
+});
+
 test("new game is exactly the approved two-mode contract", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "새 게임" }).click();

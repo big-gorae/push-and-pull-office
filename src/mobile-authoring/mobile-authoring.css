@@ -118,7 +118,9 @@ button { -webkit-tap-highlight-color: transparent; }
 .mobile-day-tree button small { color: var(--muted); font-size: .58rem; }
 .mobile-day-tree button em { color: var(--beige-deep); font-size: .65rem; font-style: normal; font-weight: 850; }
 .mobile-version-panel { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 11px 14px max(11px, env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: rgba(247, 243, 236, .96); }
+.mobile-version-panel > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
 .mobile-version-panel button { min-height: 40px; border: 1px solid #bfae97; border-radius: 12px; background: var(--paper); color: var(--ink); font-size: .65rem; font-weight: 850; }
+.mobile-version-panel button.force { border-color: var(--charcoal); background: var(--charcoal); color: white; }
 .mobile-version-panel button:disabled { color: #aaa399; }
 .mobile-version-panel small { color: var(--muted); font-size: .52rem; white-space: nowrap; }
 

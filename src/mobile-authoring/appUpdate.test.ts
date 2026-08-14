@@ -19,6 +19,11 @@ describe("mobile app updates", () => {
       .toBe("https://office.example/?app-version=build-20260814#/author");
   });
 
+  it("adds a unique reload token for a forced refresh", () => {
+    expect(reloadUrlForBuild("https://office.example/#/author", "build-20260814", 1234))
+      .toBe("https://office.example/?app-version=build-20260814&app-reload=1234#/author");
+  });
+
   it("uses a compact build label", () => {
     expect(shortBuildId("1234567890abcdef")).toBe("1234567890ab");
   });

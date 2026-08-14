@@ -21,10 +21,11 @@ export async function fetchLatestBuildId(
   return body.buildId;
 }
 
-export function reloadUrlForBuild(currentUrl: string, buildId: string): string {
+export function reloadUrlForBuild(currentUrl: string, buildId: string, cacheToken?: number): string {
   if (!validBuildId(buildId)) throw new Error("VERSION_INVALID");
   const url = new URL(currentUrl);
   url.searchParams.set("app-version", buildId);
+  if (cacheToken !== undefined) url.searchParams.set("app-reload", String(cacheToken));
   return url.toString();
 }
 
@@ -43,12 +44,40 @@ export async function installBuildWorker(
   });
   if (activated(registration, buildId)) return;
 
-  registration.waiting?.postMessage({ type: "SKIP_WAITING" });
-  registration.installing?.postMessage({ type: "SKIP_WAITING" });
+  const pendingWorker = registration.waiting || registration.installing;
+  if (!pendingWorker && registration.active) return;
+
+  pendingWorker?.postMessage({ type: "SKIP_WAITING" });
   await Promise.race([
     new Promise<void>((resolve) => serviceWorker.addEventListener("controllerchange", () => resolve(), { once: true })),
-    new Promise<void>((resolve) => window.setTimeout(resolve, 3_000)),
+    new Promise<void>((resolve) => window.setTimeout(resolve, 5_000)),
   ]);
+}
+
+export async function refreshBuildShell(
+  buildId: string,
+  serviceWorker: ServiceWorkerContainer = navigator.serviceWorker,
+): Promise<void> {
+  await installBuildWorker(buildId, serviceWorker);
+  const registration = await serviceWorker.ready;
+  const worker = serviceWorker.controller || registration.active;
+  if (!worker) throw new Error("APP_REFRESH_WORKER_MISSING");
+
+  await new Promise<void>((resolve, reject) => {
+    const channel = new MessageChannel();
+    const finish = (error?: Error) => {
+      window.clearTimeout(timeout);
+      channel.port1.close();
+      if (error) reject(error);
+      else resolve();
+    };
+    const timeout = window.setTimeout(() => finish(new Error("APP_REFRESH_TIMEOUT")), 10_000);
+    channel.port1.onmessage = (event: MessageEvent<{ ok?: boolean; buildId?: string }>) => {
+      if (event.data?.ok && event.data.buildId === buildId) finish();
+      else finish(new Error("APP_REFRESH_FAILED"));
+    };
+    worker.postMessage({ type: "REFRESH_SHELL", buildId }, [channel.port2]);
+  });
 }
 
 export function shortBuildId(buildId = CURRENT_BUILD_ID): string {

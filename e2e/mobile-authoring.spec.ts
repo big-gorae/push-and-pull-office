@@ -58,7 +58,7 @@ test("mobile scene authoring detects a new app version without touching drafts",
   await page.route("**/app-version.json?**", (route) => route.fulfill({
     status: 200,
     contentType: "application/json",
-    body: JSON.stringify({ buildId: "future-build-20260814" }),
+    body: JSON.stringify({ buildId: "future-build-20260814", assets: [] }),
   }));
   await page.goto("/#/author");
 
@@ -71,16 +71,35 @@ test("mobile scene authoring detects a new app version without touching drafts",
   await page.getByRole("button", { name: "대사 목록으로 돌아가기" }).click();
 
   await expect(page.getByText("새 버전이 있습니다.")).toBeVisible({ timeout: 6_000 });
-  await page.getByRole("button", { name: "최신 버전 불러오기" }).click();
-  await expect(page).toHaveURL(/\?app-version=future-build-20260814#\/author/, { timeout: 10_000 });
-  await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "최신 버전 불러오기" })).toBeVisible();
   await page.locator(".node-card-main").first().click();
   await expect(page.getByRole("textbox", { name: "대사" })).toHaveValue(`${original} 업데이트 보존 확인`);
 
   await page.getByRole("button", { name: "대사 목록으로 돌아가기" }).click();
   await page.getByRole("button", { name: "날짜별 장면 열기" }).click();
   await expect(page.getByRole("button", { name: "최신 버전 확인" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "강제 갱신" })).toBeVisible();
   await expect(page.getByText(/현재 [A-Za-z0-9._-]+/)).toBeVisible();
+});
+
+test("mobile scene authoring force refreshes the current build and keeps drafts", async ({ page }) => {
+  await page.setViewportSize({ width: 430, height: 932 });
+  await page.goto("/#/author");
+  await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
+
+  await page.locator(".node-card-main").first().click();
+  const editor = page.getByRole("textbox", { name: "대사" });
+  const original = await editor.inputValue();
+  await editor.fill(`${original} 강제 갱신 보존 확인`);
+  await expect(page.locator(".mobile-node-editor .scene-status", { hasText: "이 폰에 초안 저장" })).toBeVisible();
+  await page.getByRole("button", { name: "대사 목록으로 돌아가기" }).click();
+  await page.getByRole("button", { name: "날짜별 장면 열기" }).click();
+  await page.getByRole("button", { name: "강제 갱신", exact: true }).click();
+
+  await expect(page).toHaveURL(/app-reload=\d+.*#\/author/, { timeout: 15_000 });
+  await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
+  await page.locator(".node-card-main").first().click();
+  await expect(page.getByRole("textbox", { name: "대사" })).toHaveValue(`${original} 강제 갱신 보존 확인`);
 });
 
 test("mobile scene authoring exposes structure, artwork and background controls", async ({ page }) => {

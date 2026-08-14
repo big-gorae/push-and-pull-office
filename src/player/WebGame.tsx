@@ -78,6 +78,12 @@ import {
 } from "./playerStorage";
 import { GameLocalizer, gameLocales, type GameLocale } from "./gameI18n";
 import {
+  fetchLatestBuildId,
+  refreshBuildShell,
+  reloadUrlForBuild,
+  shortBuildId,
+} from "../mobile-authoring/appUpdate";
+import {
   authoringRoot,
   consumeAuthoringPreviewTarget,
   copySourceLocator,
@@ -1185,7 +1191,19 @@ function SaveGrid({
   </div>;
 }
 
-function SettingsPanel({ value, onChange, i18n }: { value: PlayerSettings; onChange: (value: PlayerSettings) => void; i18n: GameLocalizer }) {
+function SettingsPanel({
+  value,
+  onChange,
+  i18n,
+  refreshingApp,
+  onForceRefresh,
+}: {
+  value: PlayerSettings;
+  onChange: (value: PlayerSettings) => void;
+  i18n: GameLocalizer;
+  refreshingApp: boolean;
+  onForceRefresh?: () => void;
+}) {
   return <div className="vn-settings">
     <fieldset className="vn-locale-setting">
       <legend>{i18n.ui("locale.label")}</legend>
@@ -1195,6 +1213,7 @@ function SettingsPanel({ value, onChange, i18n }: { value: PlayerSettings; onCha
     <label><span><strong>{i18n.ui("settings.autoDelay")}</strong><small>{i18n.ui("settings.autoDelayHint")}</small></span><input type="range" min="600" max="3500" step="100" value={value.autoDelay} onChange={(event) => onChange({ ...value, autoDelay: Number(event.target.value) })} /><output>{(value.autoDelay / 1000).toFixed(1)}s</output></label>
     <label className="vn-switch"><span><strong>{i18n.ui("settings.reducedMotion")}</strong><small>{i18n.ui("settings.reducedMotionHint")}</small></span><input type="checkbox" checked={value.reducedMotion} onChange={(event) => onChange({ ...value, reducedMotion: event.target.checked })} /><i /></label>
     <label className="vn-switch"><span><strong>{i18n.ui("settings.debugMode")}</strong><small>{i18n.ui("settings.debugModeHint")}</small></span><input type="checkbox" checked={value.debugMode} onChange={(event) => onChange({ ...value, debugMode: event.target.checked })} /><i /></label>
+    {onForceRefresh && <div className="vn-app-refresh"><small>현재 {shortBuildId()}</small><button type="button" onClick={onForceRefresh} disabled={refreshingApp}>{refreshingApp ? "갱신 중…" : "강제 갱신"}</button></div>}
     <button type="button" className="vn-fullscreen" onClick={() => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()}>{i18n.ui("settings.fullscreen")}</button>
   </div>;
 }
@@ -1225,6 +1244,7 @@ export default function WebGame() {
   const [sourceOverrides, setSourceOverrides] = useState<Record<string, string>>({});
   const [lastTextUndo, setLastTextUndo] = useState<StoryTextUndo>();
   const [undoBusy, setUndoBusy] = useState(false);
+  const [refreshingApp, setRefreshingApp] = useState(false);
   const toastTimer = useRef<number | undefined>(undefined);
   const i18n = useMemo(() => new GameLocalizer(runtime, settings.locale, sourceOverrides), [settings.locale, sourceOverrides]);
   const rawNode = session ? currentNode(runtime, session) : undefined;
@@ -1247,6 +1267,22 @@ export default function WebGame() {
     window.clearTimeout(toastTimer.current);
     toastTimer.current = window.setTimeout(() => setToast(""), 1800);
   }, []);
+
+  const forceRefreshApp = useCallback(async () => {
+    if (!navigator.onLine || refreshingApp) {
+      if (!navigator.onLine) notify("강제 갱신에는 인터넷 연결이 필요합니다.");
+      return;
+    }
+    setRefreshingApp(true);
+    try {
+      const nextBuildId = await fetchLatestBuildId();
+      await refreshBuildShell(nextBuildId);
+      window.location.replace(reloadUrlForBuild(window.location.href, nextBuildId, Date.now()));
+    } catch {
+      setRefreshingApp(false);
+      notify("강제 갱신에 실패했습니다. 저장 데이터는 그대로 유지됩니다.");
+    }
+  }, [notify, refreshingApp]);
 
   const applySavedRuntimeText = useCallback((result: StoryTextSaveResult, keys: string[], locale: GameLocale) => {
     if (!result.runtime) return;
@@ -1639,7 +1675,7 @@ export default function WebGame() {
     {overlay === "save" && <Modal title={i18n.ui("save.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><SaveGrid mode="save" session={session} onLoad={loadSession} onSaved={() => notify(i18n.ui("save.done"))} i18n={i18n} /></Modal>}
     {overlay === "load" && <Modal title={i18n.ui("load.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><SaveGrid mode="load" onLoad={loadSession} onSaved={() => undefined} i18n={i18n} /></Modal>}
     {overlay === "gallery" && <Modal title={i18n.ui("gallery.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><GalleryPanel profile={readProfile()} i18n={i18n} /></Modal>}
-    {overlay === "settings" && <Modal title={i18n.ui("settings.title")} onClose={() => setOverlay(null)} i18n={i18n}><SettingsPanel value={settings} onChange={setSettings} i18n={i18n} /></Modal>}
+    {overlay === "settings" && <Modal title={i18n.ui("settings.title")} onClose={() => setOverlay(null)} i18n={i18n}><SettingsPanel value={settings} onChange={setSettings} i18n={i18n} refreshingApp={refreshingApp} onForceRefresh={projectRoot ? undefined : forceRefreshApp} /></Modal>}
     {overlay === "menu" && <Modal title={i18n.ui("menu.game")} onClose={() => setOverlay(null)} i18n={i18n}>
       <div className="vn-pause-menu">
         <button type="button" onClick={() => setOverlay(null)}>{i18n.ui("menu.resume")}</button>
@@ -1672,7 +1708,8 @@ export default function WebGame() {
       <TitleScreen autosave={autosave} onContinue={() => autosave && loadSession(autosave.session)} onNewGame={() => setScreen("new-game")} onLoad={() => setOverlay("load")} onGallery={() => setOverlay("gallery")} onSettings={() => setOverlay("settings")} i18n={i18n} onLocale={(locale) => setSettings((value) => ({ ...value, locale }))} />
       {overlay === "load" && <Modal title={i18n.ui("load.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><SaveGrid mode="load" onLoad={loadSession} onSaved={() => undefined} i18n={i18n} /></Modal>}
       {overlay === "gallery" && <Modal title={i18n.ui("gallery.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><GalleryPanel profile={readProfile()} i18n={i18n} /></Modal>}
-      {overlay === "settings" && <Modal title={i18n.ui("settings.title")} onClose={() => setOverlay(null)} i18n={i18n}><SettingsPanel value={settings} onChange={setSettings} i18n={i18n} /></Modal>}
+      {overlay === "settings" && <Modal title={i18n.ui("settings.title")} onClose={() => setOverlay(null)} i18n={i18n}><SettingsPanel value={settings} onChange={setSettings} i18n={i18n} refreshingApp={refreshingApp} onForceRefresh={projectRoot ? undefined : forceRefreshApp} /></Modal>}
+      {toast && <div className="vn-toast">{toast}</div>}
     </div>;
   }
 

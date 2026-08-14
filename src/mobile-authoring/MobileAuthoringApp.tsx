@@ -26,7 +26,7 @@ import {
 import {
   CURRENT_BUILD_ID,
   fetchLatestBuildId,
-  installBuildWorker,
+  refreshBuildShell,
   reloadUrlForBuild,
   shortBuildId,
 } from "./appUpdate";
@@ -237,7 +237,7 @@ export default function MobileAuthoringApp() {
     }
   }, []);
 
-  const applyLatestBuild = useCallback(async () => {
+  const applyLatestBuild = useCallback(async (force = false) => {
     if (!navigator.onLine || updatingApp) {
       if (!navigator.onLine) setStatus("최신 버전을 불러오려면 인터넷에 연결해 주세요.");
       return;
@@ -247,14 +247,14 @@ export default function MobileAuthoringApp() {
     try {
       await Promise.all([...persistChains.current.values()]);
       const nextBuildId = await fetchLatestBuildId();
-      if (nextBuildId === CURRENT_BUILD_ID) {
+      if (!force && nextBuildId === CURRENT_BUILD_ID) {
         setLatestBuildId(nextBuildId);
         setStatus("이미 최신 버전입니다.");
         setUpdatingApp(false);
         return;
       }
-      await installBuildWorker(nextBuildId);
-      window.location.replace(reloadUrlForBuild(window.location.href, nextBuildId));
+      await refreshBuildShell(nextBuildId);
+      window.location.replace(reloadUrlForBuild(window.location.href, nextBuildId, force ? Date.now() : undefined));
     } catch {
       setStatus("새 버전을 불러오지 못했습니다. 초안은 이 폰에 그대로 보관되어 있습니다.");
       setUpdatingApp(false);
@@ -504,7 +504,7 @@ export default function MobileAuthoringApp() {
           const target = workspace.scenes[entry.sceneId]?.scene;
           const targetDraft = draftMap.get(entry.sceneId);
           return <button type="button" className={entry.sceneId === selectedSceneId ? "active" : ""} key={`${entry.eventId}:${entry.sceneId}`} onClick={() => { setSelectedSceneId(entry.sceneId); setSelectedNodeId(undefined); setNavOpen(false); setNodeMenu(undefined); setMobileEditorOpen(false); }}><span><strong>{target?.title || entry.eventTitle}</strong><small>{entry.slot}{entry.endDay !== day.day ? ` · ${day.day}~${entry.endDay}일` : ""}</small></span><em>{targetDraft ? "●" : target?.node_order.length || 0}</em></button>})}</section>)}</div>
-        <footer className="mobile-version-panel"><button type="button" onClick={() => void checkForUpdate(true)} disabled={!online || checkingUpdate || updatingApp}>{checkingUpdate ? "확인 중…" : "최신 버전 확인"}</button><small>현재 {shortBuildId()}</small></footer>
+        <footer className="mobile-version-panel"><div><button type="button" onClick={() => void checkForUpdate(true)} disabled={!online || checkingUpdate || updatingApp}>{checkingUpdate ? "확인 중…" : "최신 버전 확인"}</button><button type="button" className="force" onClick={() => void applyLatestBuild(true)} disabled={!online || updatingApp}>{updatingApp ? "갱신 중…" : "강제 갱신"}</button></div><small>현재 {shortBuildId()}</small></footer>
       </aside>
 
       <section className="mobile-scene-workspace">

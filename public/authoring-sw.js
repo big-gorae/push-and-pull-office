@@ -2,6 +2,8 @@ const BUILD_ID = new URL(self.location.href).searchParams.get("v") || "legacy";
 const SHELL_PREFIX = "love-office-authoring-shell-";
 const SHELL_CACHE = `${SHELL_PREFIX}${BUILD_ID}`;
 const ASSET_CACHE = "love-office-authoring-assets-v1";
+const META_CACHE = "love-office-authoring-meta-v1";
+const ACTIVE_BUILD_KEY = "/__love-office-active-build";
 const LEGACY_PREFIX = "love-office-authoring-";
 const APP_SHELL = [
   "/",
@@ -25,19 +27,33 @@ function isPersistentAsset(value) {
     && /\.(?:avif|gif|jpe?g|png|svg|webp|woff2?|ttf|otf|mp3|ogg|wav|m4a|mp4|webm)$/i.test(url.pathname));
 }
 
-async function cacheFreshShell() {
-  const cache = await caches.open(SHELL_CACHE);
+function validBuildId(value) {
+  return typeof value === "string" && /^[A-Za-z0-9._-]{6,40}$/.test(value);
+}
+
+async function activeShellCacheName() {
+  const response = await (await caches.open(META_CACHE)).match(ACTIVE_BUILD_KEY);
+  const buildId = response ? await response.text() : undefined;
+  return validBuildId(buildId) ? `${SHELL_PREFIX}${buildId}` : SHELL_CACHE;
+}
+
+async function cacheFreshShell(buildId = BUILD_ID) {
+  if (!validBuildId(buildId)) throw new Error("VERSION_INVALID");
+  const cacheName = `${SHELL_PREFIX}${buildId}`;
+  const cache = await caches.open(cacheName);
   const paths = [...APP_SHELL];
-  const markerResponse = await fetch(`/app-version.json?install=${encodeURIComponent(BUILD_ID)}`, { cache: "reload" });
+  const markerResponse = await fetch(`/app-version.json?install=${encodeURIComponent(buildId)}`, { cache: "reload" });
   if (!markerResponse.ok) throw new Error(`VERSION_MARKER_${markerResponse.status}`);
   const marker = await markerResponse.json();
-  if (marker?.buildId !== BUILD_ID || !Array.isArray(marker.assets)) throw new Error("VERSION_MARKER_INVALID");
+  if (marker?.buildId !== buildId || !Array.isArray(marker.assets)) throw new Error("VERSION_MARKER_INVALID");
   paths.push(...marker.assets.filter((value) => typeof value === "string" && sameOriginUrl(value) && !isPersistentAsset(value)));
   await Promise.all([...new Set(paths)].map(async (path) => {
     const response = await fetch(path, { cache: "reload" });
     if (!response.ok) throw new Error(`SHELL_ASSET_${response.status}`);
     await cache.put(path, response);
   }));
+  await (await caches.open(META_CACHE)).put(ACTIVE_BUILD_KEY, new Response(buildId));
+  return cacheName;
 }
 
 async function migrateAssets(cacheName) {
@@ -57,8 +73,9 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
+    const activeCache = await activeShellCacheName();
     const names = await caches.keys();
-    const obsolete = names.filter((name) => name !== SHELL_CACHE && name !== ASSET_CACHE
+    const obsolete = names.filter((name) => name !== activeCache && name !== ASSET_CACHE && name !== META_CACHE
       && (name.startsWith(SHELL_PREFIX) || name.startsWith(LEGACY_PREFIX)));
     await Promise.allSettled(obsolete.map(migrateAssets));
     await Promise.all(obsolete.map((name) => caches.delete(name)));
@@ -71,10 +88,23 @@ self.addEventListener("message", (event) => {
     self.skipWaiting();
     return;
   }
+  if (event.data?.type === "REFRESH_SHELL") {
+    const port = event.ports?.[0];
+    event.waitUntil((async () => {
+      try {
+        if (!validBuildId(event.data.buildId)) throw new Error("BUILD_INVALID");
+        await cacheFreshShell(event.data.buildId);
+        port?.postMessage({ ok: true, buildId: event.data.buildId });
+      } catch {
+        port?.postMessage({ ok: false, buildId: event.data.buildId });
+      }
+    })());
+    return;
+  }
   if (event.data?.type !== "CACHE_ASSETS" || !Array.isArray(event.data.urls)) return;
   const urls = event.data.urls.slice(0, 100).map(sameOriginUrl).filter(Boolean);
   event.waitUntil((async () => {
-    const [assetCache, shellCache] = await Promise.all([caches.open(ASSET_CACHE), caches.open(SHELL_CACHE)]);
+    const [assetCache, shellCache] = await Promise.all([caches.open(ASSET_CACHE), activeShellCacheName().then((name) => caches.open(name))]);
     await Promise.allSettled(urls.map(async (url) => {
       const cache = isPersistentAsset(url.href) ? assetCache : shellCache;
       if (await cache.match(url.href)) return;
@@ -85,7 +115,7 @@ self.addEventListener("message", (event) => {
 });
 
 async function navigation(request) {
-  const cache = await caches.open(SHELL_CACHE);
+  const cache = await caches.open(await activeShellCacheName());
   try {
     const response = await fetch(request, { cache: "no-store" });
     if (response.ok) await cache.put("/", response.clone());
@@ -109,7 +139,7 @@ async function immutableAsset(request) {
 }
 
 async function currentStatic(request) {
-  const cache = await caches.open(SHELL_CACHE);
+  const cache = await caches.open(await activeShellCacheName());
   try {
     const response = await fetch(request, { cache: "no-store" });
     if (response.ok) await cache.put(request, response.clone());
