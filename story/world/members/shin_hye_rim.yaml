@@ -7,6 +7,7 @@ display_name: 신차장
 team: team.people_operations
 role: role.deputy_general_manager
 title: 차장·인사운영 책임자
+compendium_summary: 인사 정책과 고충 접수 절차를 담당하는 차장. 확인된 기록과 절차 범위를 먼저 짚는다.
 manager: null
 employment: permanent
 presentation: text_only

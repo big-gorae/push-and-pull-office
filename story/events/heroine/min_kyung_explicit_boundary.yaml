@@ -15,7 +15,9 @@ participants: [han_do_yoon, cha_min_kyung]
 location: meeting_room
 scene: min_kyung.explicit_boundary
 requires: {events: [], conditions: []}
-on_seen: {effects: []}
+on_seen:
+  effects:
+  - {path: progress.memories, op: append_unique, value: profile.cha_min_kyung.ideal_type}
 on_missed: {effects: []}
 presentation:
   title: 명시적인 사적 연락 거부

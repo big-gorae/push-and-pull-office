@@ -35,6 +35,7 @@
     "route_eligible": {"type": "boolean"},
     "responsibilities": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
     "voice": {"type": "string"},
+    "compendium_summary": {"type": "string", "minLength": 1},
     "project_type": {"type": "string"},
     "summary": {"type": "string"},
     "owner_team": {"type": "string", "pattern": "^team\\."},

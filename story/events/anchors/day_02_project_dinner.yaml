@@ -13,7 +13,11 @@ participants: [han_do_yoon, yoon_seo_a, cha_min_kyung, kang_yoo_jin]
 requires:
   events: [anchor.day_02_practical_meeting]
   conditions: []
-on_seen: {effects: []}
+on_seen:
+  effects:
+  - {path: progress.memories, op: append_unique, value: profile.yoon_seo_a.likes}
+  - {path: progress.memories, op: append_unique, value: profile.cha_min_kyung.likes}
+  - {path: progress.memories, op: append_unique, value: profile.kang_yoo_jin.likes}
 on_missed: {effects: []}
 presentation:
   title: 첫 실무 회의를 끝낸 팀 회식

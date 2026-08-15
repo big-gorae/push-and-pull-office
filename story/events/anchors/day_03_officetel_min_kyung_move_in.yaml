@@ -15,7 +15,9 @@ scene: common.day_03_officetel_min_kyung_move_in
 requires:
   events: [anchor.day_03_business_trip_or_cafe]
   conditions: []
-on_seen: {effects: []}
+on_seen:
+  effects:
+  - {path: progress.memories, op: append_unique, value: profile.cha_min_kyung.residence}
 on_missed: {effects: []}
 presentation:
   title: 같은 층 새 입주자의 인사

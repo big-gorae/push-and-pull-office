@@ -10,7 +10,7 @@
     ]
   },
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "87e45ca102264bd59ff199085430950929b06bb4db145395d99f7301f0dd2c45",
+  "source_sha256": "2ce4df5cd58ad028c5f9ae39c3bbf987509fc27257bc0ad4e76e3612a2edba33",
   "enums": {
     "time_slot": [
       "morning",
@@ -498,6 +498,41 @@
           "characters.kang_yoo_jin.display_name": "Kang Yoo-jin",
           "characters.han_do_yoon.display_name": "Han Do-yoon",
           "characters.im_soo_yeon.display_name": "Im Soo-yeon",
+          "characters.yoon_seo_a.player_profile.fields.name.value": "Yoon Seo-a",
+          "characters.yoon_seo_a.player_profile.fields.affiliation.value": "Sales Planning · Fixed-term Coordinator",
+          "characters.yoon_seo_a.player_profile.fields.mbti.value": "INFP",
+          "characters.yoon_seo_a.player_profile.fields.hobby.value": "Collecting cat stationery · visiting cat cafés across the country",
+          "characters.yoon_seo_a.player_profile.fields.likes.value": "Matcha desserts · pretty stationery · walks after work",
+          "characters.yoon_seo_a.player_profile.fields.ideal_type.value": "Someone bear-like and affectionate",
+          "characters.yoon_seo_a.player_profile.fields.residence.value": "An officetel near work · long-time resident",
+          "characters.yoon_seo_a.player_profile.fields.tmi.value": "She changes the cat stickers on her tumbler every season.",
+          "characters.cha_min_kyung.player_profile.fields.name.value": "Cha Min-kyung",
+          "characters.cha_min_kyung.player_profile.fields.affiliation.value": "Brand Marketing · Senior Associate · Project Lead",
+          "characters.cha_min_kyung.player_profile.fields.mbti.value": "ESTJ",
+          "characters.cha_min_kyung.player_profile.fields.hobby.value": "Running · Pilates · studying foreign languages · professional development",
+          "characters.cha_min_kyung.player_profile.fields.likes.value": "Punctual plans · dry wine · well-organized documents",
+          "characters.cha_min_kyung.player_profile.fields.ideal_type.value": "Someone who takes good care of themselves",
+          "characters.cha_min_kyung.player_profile.fields.residence.value": "An officetel near work · new resident",
+          "characters.cha_min_kyung.player_profile.fields.tmi.value": "She owns several copies of the same metal pen for meetings.",
+          "characters.kang_yoo_jin.player_profile.fields.name.value": "Kang Yoo-jin",
+          "characters.kang_yoo_jin.player_profile.fields.affiliation.value": "Brand Marketing · Experienced Senior Associate",
+          "characters.kang_yoo_jin.player_profile.fields.mbti.value": "ENFP",
+          "characters.kang_yoo_jin.player_profile.fields.hobby.value": "Exploring restaurants · cooking · hiking",
+          "characters.kang_yoo_jin.player_profile.fields.likes.value": "Eating delicious food",
+          "characters.kang_yoo_jin.player_profile.fields.ideal_type.value": "Someone with a good sense of humor",
+          "characters.kang_yoo_jin.player_profile.fields.residence.value": "A neighborhood separate from the office area",
+          "characters.kang_yoo_jin.player_profile.fields.tmi.value": "She almost never forgets the date and version in a filename.",
+          "world.members.member.han_do_yoon.compendium_summary": "A Sales Planning manager handling key accounts, commercial terms, and the project's client approval calendar.",
+          "world.members.member.oh_se_jin.compendium_summary": "A Sales Planning deputy manager who defines product requirements and approval boundaries before work begins.",
+          "world.members.member.park_jae_hyun.compendium_summary": "The Sales Planning department head responsible for sales approvals and major account escalations.",
+          "world.members.member.lee_hyeon_woo.compendium_summary": "An assistant manager who maintains sales data and account documents and quickly finds the right figures and files.",
+          "world.members.member.jeong_da_eun.compendium_summary": "An assistant manager responsible for campaign calendars and meeting records who catches missing owners and deadlines.",
+          "world.members.member.lee_su_hyeon.compendium_summary": "A Brand Marketing deputy manager who approves budgets and execution while clearly delegating hands-on decisions.",
+          "world.members.member.moon_ji_hye.compendium_summary": "The Brand Marketing department head responsible for final creative approval and brand consistency.",
+          "world.members.member.shin_hye_rim.compendium_summary": "The People Operations lead who handles HR policy and grievances by checking records and procedural scope first.",
+          "world.members.member.yoon_seo_a.compendium_summary": "A Sales Planning coordinator responsible for project materials, meeting notes, and product specification sheets.",
+          "world.members.member.cha_min_kyung.compendium_summary": "The project lead coordinating the master schedule and marketing strategy.",
+          "world.members.member.kang_yoo_jin.compendium_summary": "An experienced designer responsible for production, asset versions, and factual review of product copy.",
           "events.seo_a.email_request.presentation.title": "Restricting How Work Is Delivered",
           "scenes.seo_a.email_request.title": "Send It by Email",
           "scenes.seo_a.email_request.nodes.appearance_observation.line": "Manager Han, I need to tell you something.",
@@ -532,6 +567,8 @@
           "menu.loadHint": "Open your memory album",
           "menu.gallery": "Gallery",
           "menu.galleryHint": "View collected artwork",
+          "menu.characters": "Characters",
+          "menu.charactersHint": "Profiles you have discovered",
           "menu.settings": "Settings",
           "menu.settingsHint": "Language and effects",
           "menu.backlog": "Backlog",
@@ -559,6 +596,19 @@
           "gallery.entry.humor_seo_a.description": "Yoon Seo-a artwork collected from a Humor stat bonus event.",
           "gallery.entry.intelligence_min_kyung.title": "Cha Min-kyung — Evidence in Three Timestamps",
           "gallery.entry.intelligence_min_kyung.description": "Cha Min-kyung artwork collected from an Intelligence stat bonus event.",
+          "character.title": "Characters",
+          "character.others": "Others",
+          "character.main": "Main Cast",
+          "character.progress": "Info {{unlocked}} / {{total}}",
+          "character.locked": "Not discovered yet",
+          "character.field.name": "Name",
+          "character.field.affiliation": "Team · Title",
+          "character.field.mbti": "MBTI",
+          "character.field.hobby": "Hobbies",
+          "character.field.likes": "Likes",
+          "character.field.ideal_type": "Ideal Type",
+          "character.field.residence": "Lives In",
+          "character.field.tmi": "Fun Fact",
           "locale.label": "Language",
           "locale.ko": "한국어",
           "locale.en": "English",
@@ -1151,6 +1201,204 @@
         "multiline": false,
         "maxLength": 100
       },
+      "character.field.affiliation": {
+        "key": "character.field.affiliation",
+        "source": "소속 · 직급",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.character.field.affiliation"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "character.field.hobby": {
+        "key": "character.field.hobby",
+        "source": "취미",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.character.field.hobby"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "character.field.ideal_type": {
+        "key": "character.field.ideal_type",
+        "source": "이상형",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.character.field.ideal_type"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "character.field.likes": {
+        "key": "character.field.likes",
+        "source": "좋아하는 것",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.character.field.likes"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "character.field.mbti": {
+        "key": "character.field.mbti",
+        "source": "MBTI",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.character.field.mbti"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "character.field.name": {
+        "key": "character.field.name",
+        "source": "이름",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.character.field.name"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "character.field.residence": {
+        "key": "character.field.residence",
+        "source": "사는 곳",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.character.field.residence"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "character.field.tmi": {
+        "key": "character.field.tmi",
+        "source": "TMI",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.character.field.tmi"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "character.locked": {
+        "key": "character.locked",
+        "source": "아직 알 수 없음",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.character.locked"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "character.main": {
+        "key": "character.main",
+        "source": "주요 인물",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.character.main"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "character.others": {
+        "key": "character.others",
+        "source": "나머지",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.character.others"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "character.progress": {
+        "key": "character.progress",
+        "source": "정보 {{unlocked}} / {{total}}",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.character.progress"
+        },
+        "context": {},
+        "placeholders": [
+          "total",
+          "unlocked"
+        ],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "character.title": {
+        "key": "character.title",
+        "source": "캐릭터",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.character.title"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
       "characters.cha_min_kyung.display_name": {
         "key": "characters.cha_min_kyung.display_name",
         "source": "차민경",
@@ -1286,6 +1534,150 @@
         "placeholders": [],
         "multiline": false,
         "maxLength": 240
+      },
+      "characters.cha_min_kyung.player_profile.fields.affiliation.value": {
+        "key": "characters.cha_min_kyung.player_profile.fields.affiliation.value",
+        "source": "브랜드마케팅팀 · 대리 · 프로젝트 실무 리드",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "cha_min_kyung",
+          "path": "story/characters/cha_min_kyung.yaml",
+          "fieldPath": "player_profile.fields.affiliation.value"
+        },
+        "context": {
+          "characterId": "cha_min_kyung",
+          "profileFieldId": "affiliation"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.cha_min_kyung.player_profile.fields.hobby.value": {
+        "key": "characters.cha_min_kyung.player_profile.fields.hobby.value",
+        "source": "러닝 · 필라테스 · 외국어 공부 · 직무 공부",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "cha_min_kyung",
+          "path": "story/characters/cha_min_kyung.yaml",
+          "fieldPath": "player_profile.fields.hobby.value"
+        },
+        "context": {
+          "characterId": "cha_min_kyung",
+          "profileFieldId": "hobby"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.cha_min_kyung.player_profile.fields.ideal_type.value": {
+        "key": "characters.cha_min_kyung.player_profile.fields.ideal_type.value",
+        "source": "자기관리 잘하는 사람",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "cha_min_kyung",
+          "path": "story/characters/cha_min_kyung.yaml",
+          "fieldPath": "player_profile.fields.ideal_type.value"
+        },
+        "context": {
+          "characterId": "cha_min_kyung",
+          "profileFieldId": "ideal_type"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.cha_min_kyung.player_profile.fields.likes.value": {
+        "key": "characters.cha_min_kyung.player_profile.fields.likes.value",
+        "source": "일정이 정확한 약속 · 드라이한 와인 · 잘 정리된 문서",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "cha_min_kyung",
+          "path": "story/characters/cha_min_kyung.yaml",
+          "fieldPath": "player_profile.fields.likes.value"
+        },
+        "context": {
+          "characterId": "cha_min_kyung",
+          "profileFieldId": "likes"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.cha_min_kyung.player_profile.fields.mbti.value": {
+        "key": "characters.cha_min_kyung.player_profile.fields.mbti.value",
+        "source": "ESTJ",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "cha_min_kyung",
+          "path": "story/characters/cha_min_kyung.yaml",
+          "fieldPath": "player_profile.fields.mbti.value"
+        },
+        "context": {
+          "characterId": "cha_min_kyung",
+          "profileFieldId": "mbti"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.cha_min_kyung.player_profile.fields.name.value": {
+        "key": "characters.cha_min_kyung.player_profile.fields.name.value",
+        "source": "차민경",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "cha_min_kyung",
+          "path": "story/characters/cha_min_kyung.yaml",
+          "fieldPath": "player_profile.fields.name.value"
+        },
+        "context": {
+          "characterId": "cha_min_kyung",
+          "profileFieldId": "name"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.cha_min_kyung.player_profile.fields.residence.value": {
+        "key": "characters.cha_min_kyung.player_profile.fields.residence.value",
+        "source": "회사 근처 오피스텔 · 새 입주민",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "cha_min_kyung",
+          "path": "story/characters/cha_min_kyung.yaml",
+          "fieldPath": "player_profile.fields.residence.value"
+        },
+        "context": {
+          "characterId": "cha_min_kyung",
+          "profileFieldId": "residence"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.cha_min_kyung.player_profile.fields.tmi.value": {
+        "key": "characters.cha_min_kyung.player_profile.fields.tmi.value",
+        "source": "회의용 금속 볼펜은 같은 모델만 여러 자루 쓴다.",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "cha_min_kyung",
+          "path": "story/characters/cha_min_kyung.yaml",
+          "fieldPath": "player_profile.fields.tmi.value"
+        },
+        "context": {
+          "characterId": "cha_min_kyung",
+          "profileFieldId": "tmi"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
       },
       "characters.cha_min_kyung.role": {
         "key": "characters.cha_min_kyung.role",
@@ -1661,6 +2053,150 @@
         "multiline": false,
         "maxLength": 240
       },
+      "characters.kang_yoo_jin.player_profile.fields.affiliation.value": {
+        "key": "characters.kang_yoo_jin.player_profile.fields.affiliation.value",
+        "source": "브랜드마케팅팀 · 경력직 대리",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "kang_yoo_jin",
+          "path": "story/characters/kang_yoo_jin.yaml",
+          "fieldPath": "player_profile.fields.affiliation.value"
+        },
+        "context": {
+          "characterId": "kang_yoo_jin",
+          "profileFieldId": "affiliation"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.kang_yoo_jin.player_profile.fields.hobby.value": {
+        "key": "characters.kang_yoo_jin.player_profile.fields.hobby.value",
+        "source": "맛집 탐방 · 요리 · 등산",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "kang_yoo_jin",
+          "path": "story/characters/kang_yoo_jin.yaml",
+          "fieldPath": "player_profile.fields.hobby.value"
+        },
+        "context": {
+          "characterId": "kang_yoo_jin",
+          "profileFieldId": "hobby"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.kang_yoo_jin.player_profile.fields.ideal_type.value": {
+        "key": "characters.kang_yoo_jin.player_profile.fields.ideal_type.value",
+        "source": "유머러스한 사람",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "kang_yoo_jin",
+          "path": "story/characters/kang_yoo_jin.yaml",
+          "fieldPath": "player_profile.fields.ideal_type.value"
+        },
+        "context": {
+          "characterId": "kang_yoo_jin",
+          "profileFieldId": "ideal_type"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.kang_yoo_jin.player_profile.fields.likes.value": {
+        "key": "characters.kang_yoo_jin.player_profile.fields.likes.value",
+        "source": "맛있는 음식 먹기",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "kang_yoo_jin",
+          "path": "story/characters/kang_yoo_jin.yaml",
+          "fieldPath": "player_profile.fields.likes.value"
+        },
+        "context": {
+          "characterId": "kang_yoo_jin",
+          "profileFieldId": "likes"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.kang_yoo_jin.player_profile.fields.mbti.value": {
+        "key": "characters.kang_yoo_jin.player_profile.fields.mbti.value",
+        "source": "ENFP",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "kang_yoo_jin",
+          "path": "story/characters/kang_yoo_jin.yaml",
+          "fieldPath": "player_profile.fields.mbti.value"
+        },
+        "context": {
+          "characterId": "kang_yoo_jin",
+          "profileFieldId": "mbti"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.kang_yoo_jin.player_profile.fields.name.value": {
+        "key": "characters.kang_yoo_jin.player_profile.fields.name.value",
+        "source": "강유진",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "kang_yoo_jin",
+          "path": "story/characters/kang_yoo_jin.yaml",
+          "fieldPath": "player_profile.fields.name.value"
+        },
+        "context": {
+          "characterId": "kang_yoo_jin",
+          "profileFieldId": "name"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.kang_yoo_jin.player_profile.fields.residence.value": {
+        "key": "characters.kang_yoo_jin.player_profile.fields.residence.value",
+        "source": "회사와 분리된 외부 생활권",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "kang_yoo_jin",
+          "path": "story/characters/kang_yoo_jin.yaml",
+          "fieldPath": "player_profile.fields.residence.value"
+        },
+        "context": {
+          "characterId": "kang_yoo_jin",
+          "profileFieldId": "residence"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.kang_yoo_jin.player_profile.fields.tmi.value": {
+        "key": "characters.kang_yoo_jin.player_profile.fields.tmi.value",
+        "source": "파일명에 날짜와 버전을 빠뜨린 적이 거의 없다.",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "kang_yoo_jin",
+          "path": "story/characters/kang_yoo_jin.yaml",
+          "fieldPath": "player_profile.fields.tmi.value"
+        },
+        "context": {
+          "characterId": "kang_yoo_jin",
+          "profileFieldId": "tmi"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
       "characters.kang_yoo_jin.role": {
         "key": "characters.kang_yoo_jin.role",
         "source": "브랜드마케팅팀 경력직 대리",
@@ -1847,6 +2383,150 @@
         "placeholders": [],
         "multiline": false,
         "maxLength": 240
+      },
+      "characters.yoon_seo_a.player_profile.fields.affiliation.value": {
+        "key": "characters.yoon_seo_a.player_profile.fields.affiliation.value",
+        "source": "영업기획팀 · 계약직 사원",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "yoon_seo_a",
+          "path": "story/characters/yoon_seo_a.yaml",
+          "fieldPath": "player_profile.fields.affiliation.value"
+        },
+        "context": {
+          "characterId": "yoon_seo_a",
+          "profileFieldId": "affiliation"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.yoon_seo_a.player_profile.fields.hobby.value": {
+        "key": "characters.yoon_seo_a.player_profile.fields.hobby.value",
+        "source": "고양이 문구 수집 · 전국 고양이 카페 탐방",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "yoon_seo_a",
+          "path": "story/characters/yoon_seo_a.yaml",
+          "fieldPath": "player_profile.fields.hobby.value"
+        },
+        "context": {
+          "characterId": "yoon_seo_a",
+          "profileFieldId": "hobby"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.yoon_seo_a.player_profile.fields.ideal_type.value": {
+        "key": "characters.yoon_seo_a.player_profile.fields.ideal_type.value",
+        "source": "곰같은 사람 · 다정한 사람",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "yoon_seo_a",
+          "path": "story/characters/yoon_seo_a.yaml",
+          "fieldPath": "player_profile.fields.ideal_type.value"
+        },
+        "context": {
+          "characterId": "yoon_seo_a",
+          "profileFieldId": "ideal_type"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.yoon_seo_a.player_profile.fields.likes.value": {
+        "key": "characters.yoon_seo_a.player_profile.fields.likes.value",
+        "source": "말차 디저트 · 예쁜 문구 · 퇴근 후 산책",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "yoon_seo_a",
+          "path": "story/characters/yoon_seo_a.yaml",
+          "fieldPath": "player_profile.fields.likes.value"
+        },
+        "context": {
+          "characterId": "yoon_seo_a",
+          "profileFieldId": "likes"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.yoon_seo_a.player_profile.fields.mbti.value": {
+        "key": "characters.yoon_seo_a.player_profile.fields.mbti.value",
+        "source": "INFP",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "yoon_seo_a",
+          "path": "story/characters/yoon_seo_a.yaml",
+          "fieldPath": "player_profile.fields.mbti.value"
+        },
+        "context": {
+          "characterId": "yoon_seo_a",
+          "profileFieldId": "mbti"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.yoon_seo_a.player_profile.fields.name.value": {
+        "key": "characters.yoon_seo_a.player_profile.fields.name.value",
+        "source": "윤서아",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "yoon_seo_a",
+          "path": "story/characters/yoon_seo_a.yaml",
+          "fieldPath": "player_profile.fields.name.value"
+        },
+        "context": {
+          "characterId": "yoon_seo_a",
+          "profileFieldId": "name"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.yoon_seo_a.player_profile.fields.residence.value": {
+        "key": "characters.yoon_seo_a.player_profile.fields.residence.value",
+        "source": "회사 근처 오피스텔 · 기존 입주민",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "yoon_seo_a",
+          "path": "story/characters/yoon_seo_a.yaml",
+          "fieldPath": "player_profile.fields.residence.value"
+        },
+        "context": {
+          "characterId": "yoon_seo_a",
+          "profileFieldId": "residence"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
+      },
+      "characters.yoon_seo_a.player_profile.fields.tmi.value": {
+        "key": "characters.yoon_seo_a.player_profile.fields.tmi.value",
+        "source": "텀블러의 고양이 스티커를 계절마다 바꾼다.",
+        "domain": "character",
+        "sourceDocument": {
+          "kind": "character",
+          "id": "yoon_seo_a",
+          "path": "story/characters/yoon_seo_a.yaml",
+          "fieldPath": "player_profile.fields.tmi.value"
+        },
+        "context": {
+          "characterId": "yoon_seo_a",
+          "profileFieldId": "tmi"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 160
       },
       "characters.yoon_seo_a.role": {
         "key": "characters.yoon_seo_a.role",
@@ -4621,6 +5301,36 @@
           "id": "game_ui",
           "path": "story/ui.yaml",
           "fieldPath": "strings.menu.backlog"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "menu.characters": {
+        "key": "menu.characters",
+        "source": "캐릭터",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.menu.characters"
+        },
+        "context": {},
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 100
+      },
+      "menu.charactersHint": {
+        "key": "menu.charactersHint",
+        "source": "알게 된 인물 정보",
+        "domain": "ui",
+        "sourceDocument": {
+          "kind": "ui",
+          "id": "game_ui",
+          "path": "story/ui.yaml",
+          "fieldPath": "strings.menu.charactersHint"
         },
         "context": {},
         "placeholders": [],
@@ -13817,6 +14527,60 @@
         "multiline": false,
         "maxLength": 100
       },
+      "world.members.member.cha_min_kyung.compendium_summary": {
+        "key": "world.members.member.cha_min_kyung.compendium_summary",
+        "source": "마스터 일정과 마케팅 전략을 조율하는 프로젝트 실무 리드.",
+        "domain": "world",
+        "sourceDocument": {
+          "kind": "member",
+          "id": "member.cha_min_kyung",
+          "path": "story/world/members/cha_min_kyung.yaml",
+          "fieldPath": "compendium_summary"
+        },
+        "context": {
+          "memberId": "member.cha_min_kyung",
+          "presentation": "illustrated"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 180
+      },
+      "world.members.member.han_do_yoon.compendium_summary": {
+        "key": "world.members.member.han_do_yoon.compendium_summary",
+        "source": "영업기획팀의 핵심 거래처와 상업 조건을 맡은 과장. 이번 프로젝트에서 거래처 승인 일정을 관리한다.",
+        "domain": "world",
+        "sourceDocument": {
+          "kind": "member",
+          "id": "member.han_do_yoon",
+          "path": "story/world/members/han_do_yoon.yaml",
+          "fieldPath": "compendium_summary"
+        },
+        "context": {
+          "memberId": "member.han_do_yoon",
+          "presentation": "illustrated"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 180
+      },
+      "world.members.member.jeong_da_eun.compendium_summary": {
+        "key": "world.members.member.jeong_da_eun.compendium_summary",
+        "source": "캠페인 일정표와 회의 기록을 맡은 주임. 마감과 담당자 누락을 그냥 지나치지 않는다.",
+        "domain": "world",
+        "sourceDocument": {
+          "kind": "member",
+          "id": "member.jeong_da_eun",
+          "path": "story/world/members/jeong_da_eun.yaml",
+          "fieldPath": "compendium_summary"
+        },
+        "context": {
+          "memberId": "member.jeong_da_eun",
+          "presentation": "text_only"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 180
+      },
       "world.members.member.jeong_da_eun.display_name": {
         "key": "world.members.member.jeong_da_eun.display_name",
         "source": "정주임",
@@ -13834,6 +14598,42 @@
         "placeholders": [],
         "multiline": false,
         "maxLength": 80
+      },
+      "world.members.member.kang_yoo_jin.compendium_summary": {
+        "key": "world.members.member.kang_yoo_jin.compendium_summary",
+        "source": "디자인 제작과 자산 버전, 제품 문구의 사실 확인을 맡은 경력직 대리.",
+        "domain": "world",
+        "sourceDocument": {
+          "kind": "member",
+          "id": "member.kang_yoo_jin",
+          "path": "story/world/members/kang_yoo_jin.yaml",
+          "fieldPath": "compendium_summary"
+        },
+        "context": {
+          "memberId": "member.kang_yoo_jin",
+          "presentation": "illustrated"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 180
+      },
+      "world.members.member.lee_hyeon_woo.compendium_summary": {
+        "key": "world.members.member.lee_hyeon_woo.compendium_summary",
+        "source": "영업 자료와 거래처 문서를 관리하는 주임. 필요한 수치와 파일 위치를 빠르게 찾아낸다.",
+        "domain": "world",
+        "sourceDocument": {
+          "kind": "member",
+          "id": "member.lee_hyeon_woo",
+          "path": "story/world/members/lee_hyeon_woo.yaml",
+          "fieldPath": "compendium_summary"
+        },
+        "context": {
+          "memberId": "member.lee_hyeon_woo",
+          "presentation": "text_only"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 180
       },
       "world.members.member.lee_hyeon_woo.display_name": {
         "key": "world.members.member.lee_hyeon_woo.display_name",
@@ -13853,6 +14653,24 @@
         "multiline": false,
         "maxLength": 80
       },
+      "world.members.member.lee_su_hyeon.compendium_summary": {
+        "key": "world.members.member.lee_su_hyeon.compendium_summary",
+        "source": "브랜드마케팅팀의 예산과 실행 승인을 맡은 차장. 실무 판단은 담당 리드에게 명확히 위임한다.",
+        "domain": "world",
+        "sourceDocument": {
+          "kind": "member",
+          "id": "member.lee_su_hyeon",
+          "path": "story/world/members/lee_su_hyeon.yaml",
+          "fieldPath": "compendium_summary"
+        },
+        "context": {
+          "memberId": "member.lee_su_hyeon",
+          "presentation": "text_only"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 180
+      },
       "world.members.member.lee_su_hyeon.display_name": {
         "key": "world.members.member.lee_su_hyeon.display_name",
         "source": "이차장",
@@ -13870,6 +14688,24 @@
         "placeholders": [],
         "multiline": false,
         "maxLength": 80
+      },
+      "world.members.member.moon_ji_hye.compendium_summary": {
+        "key": "world.members.member.moon_ji_hye.compendium_summary",
+        "source": "브랜드마케팅팀을 이끄는 부장. 최종 시안과 브랜드 일관성을 책임진다.",
+        "domain": "world",
+        "sourceDocument": {
+          "kind": "member",
+          "id": "member.moon_ji_hye",
+          "path": "story/world/members/moon_ji_hye.yaml",
+          "fieldPath": "compendium_summary"
+        },
+        "context": {
+          "memberId": "member.moon_ji_hye",
+          "presentation": "text_only"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 180
       },
       "world.members.member.moon_ji_hye.display_name": {
         "key": "world.members.member.moon_ji_hye.display_name",
@@ -13889,6 +14725,24 @@
         "multiline": false,
         "maxLength": 80
       },
+      "world.members.member.oh_se_jin.compendium_summary": {
+        "key": "world.members.member.oh_se_jin.compendium_summary",
+        "source": "영업기획팀의 제품 요건과 승인 범위를 확정하는 차장. 실무가 움직이기 전 결정선을 분명히 한다.",
+        "domain": "world",
+        "sourceDocument": {
+          "kind": "member",
+          "id": "member.oh_se_jin",
+          "path": "story/world/members/oh_se_jin.yaml",
+          "fieldPath": "compendium_summary"
+        },
+        "context": {
+          "memberId": "member.oh_se_jin",
+          "presentation": "text_only"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 180
+      },
       "world.members.member.oh_se_jin.display_name": {
         "key": "world.members.member.oh_se_jin.display_name",
         "source": "오차장",
@@ -13906,6 +14760,24 @@
         "placeholders": [],
         "multiline": false,
         "maxLength": 80
+      },
+      "world.members.member.park_jae_hyun.compendium_summary": {
+        "key": "world.members.member.park_jae_hyun.compendium_summary",
+        "source": "영업기획팀을 이끄는 부장. 영업 승인과 주요 거래처 이슈의 최종 책임을 맡는다.",
+        "domain": "world",
+        "sourceDocument": {
+          "kind": "member",
+          "id": "member.park_jae_hyun",
+          "path": "story/world/members/park_jae_hyun.yaml",
+          "fieldPath": "compendium_summary"
+        },
+        "context": {
+          "memberId": "member.park_jae_hyun",
+          "presentation": "text_only"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 180
       },
       "world.members.member.park_jae_hyun.display_name": {
         "key": "world.members.member.park_jae_hyun.display_name",
@@ -13925,6 +14797,24 @@
         "multiline": false,
         "maxLength": 80
       },
+      "world.members.member.shin_hye_rim.compendium_summary": {
+        "key": "world.members.member.shin_hye_rim.compendium_summary",
+        "source": "인사 정책과 고충 접수 절차를 담당하는 차장. 확인된 기록과 절차 범위를 먼저 짚는다.",
+        "domain": "world",
+        "sourceDocument": {
+          "kind": "member",
+          "id": "member.shin_hye_rim",
+          "path": "story/world/members/shin_hye_rim.yaml",
+          "fieldPath": "compendium_summary"
+        },
+        "context": {
+          "memberId": "member.shin_hye_rim",
+          "presentation": "text_only"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 180
+      },
       "world.members.member.shin_hye_rim.display_name": {
         "key": "world.members.member.shin_hye_rim.display_name",
         "source": "신차장",
@@ -13942,6 +14832,24 @@
         "placeholders": [],
         "multiline": false,
         "maxLength": 80
+      },
+      "world.members.member.yoon_seo_a.compendium_summary": {
+        "key": "world.members.member.yoon_seo_a.compendium_summary",
+        "source": "프로젝트 자료와 회의록, 제품 사양표를 챙기는 영업기획팀 사원.",
+        "domain": "world",
+        "sourceDocument": {
+          "kind": "member",
+          "id": "member.yoon_seo_a",
+          "path": "story/world/members/yoon_seo_a.yaml",
+          "fieldPath": "compendium_summary"
+        },
+        "context": {
+          "memberId": "member.yoon_seo_a",
+          "presentation": "illustrated"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 180
       }
     },
     "source_strings": {
@@ -13974,6 +14882,19 @@
       "campaign.main.lanes.personal.title": "가족과 사적 시간",
       "campaign.main.lanes.yoon_seo_a.title": "윤서아",
       "campaign.main.title": "오피스의 신호들",
+      "character.field.affiliation": "소속 · 직급",
+      "character.field.hobby": "취미",
+      "character.field.ideal_type": "이상형",
+      "character.field.likes": "좋아하는 것",
+      "character.field.mbti": "MBTI",
+      "character.field.name": "이름",
+      "character.field.residence": "사는 곳",
+      "character.field.tmi": "TMI",
+      "character.locked": "아직 알 수 없음",
+      "character.main": "주요 인물",
+      "character.others": "나머지",
+      "character.progress": "정보 {{unlocked}} / {{total}}",
+      "character.title": "캐릭터",
       "characters.cha_min_kyung.display_name": "차민경",
       "characters.cha_min_kyung.expressions.actual_disgust.description": "턱이 굳고 시선이 차가워지지만 자세는 무너지지 않는다.",
       "characters.cha_min_kyung.expressions.actual_exhausted.description": "혼자 남은 뒤에만 굳은 어깨와 피로가 드러난다.",
@@ -13982,6 +14903,14 @@
       "characters.cha_min_kyung.expressions.actual_skeptical.description": "눈썹을 올리고 발언의 부적절함을 확인한다.",
       "characters.cha_min_kyung.expressions.subjective_challenging.description": "원화 생성 프로필에서만 사용하는, 도발로 오독한 표정 프리셋.",
       "characters.cha_min_kyung.expressions.subjective_jealous.description": "원화 생성 프로필에서만 사용하는, 질투로 오독한 표정 프리셋.",
+      "characters.cha_min_kyung.player_profile.fields.affiliation.value": "브랜드마케팅팀 · 대리 · 프로젝트 실무 리드",
+      "characters.cha_min_kyung.player_profile.fields.hobby.value": "러닝 · 필라테스 · 외국어 공부 · 직무 공부",
+      "characters.cha_min_kyung.player_profile.fields.ideal_type.value": "자기관리 잘하는 사람",
+      "characters.cha_min_kyung.player_profile.fields.likes.value": "일정이 정확한 약속 · 드라이한 와인 · 잘 정리된 문서",
+      "characters.cha_min_kyung.player_profile.fields.mbti.value": "ESTJ",
+      "characters.cha_min_kyung.player_profile.fields.name.value": "차민경",
+      "characters.cha_min_kyung.player_profile.fields.residence.value": "회사 근처 오피스텔 · 새 입주민",
+      "characters.cha_min_kyung.player_profile.fields.tmi.value": "회의용 금속 볼펜은 같은 모델만 여러 자루 쓴다.",
       "characters.cha_min_kyung.role": "브랜드마케팅팀 대리 겸 프로젝트 실무 책임자",
       "characters.cha_min_kyung.summary": "직접 선을 긋고 후배를 보호하지만 과거 회사의 신고 축소를 목격해 기록을 우선하는 인물.",
       "characters.han_do_yoon.display_name": "한도윤",
@@ -14004,6 +14933,14 @@
       "characters.kang_yoo_jin.expressions.actual_warning.description": "정면을 보고 경고 문장을 분명하게 전달한다.",
       "characters.kang_yoo_jin.expressions.actual_worn_down.description": "자신감은 남아 있지만 반복된 묵살로 표정이 지쳐 있다.",
       "characters.kang_yoo_jin.expressions.subjective_bold_flirt.description": "원화 생성 프로필에서만 사용하는, 당돌한 호감으로 오독한 표정 프리셋.",
+      "characters.kang_yoo_jin.player_profile.fields.affiliation.value": "브랜드마케팅팀 · 경력직 대리",
+      "characters.kang_yoo_jin.player_profile.fields.hobby.value": "맛집 탐방 · 요리 · 등산",
+      "characters.kang_yoo_jin.player_profile.fields.ideal_type.value": "유머러스한 사람",
+      "characters.kang_yoo_jin.player_profile.fields.likes.value": "맛있는 음식 먹기",
+      "characters.kang_yoo_jin.player_profile.fields.mbti.value": "ENFP",
+      "characters.kang_yoo_jin.player_profile.fields.name.value": "강유진",
+      "characters.kang_yoo_jin.player_profile.fields.residence.value": "회사와 분리된 외부 생활권",
+      "characters.kang_yoo_jin.player_profile.fields.tmi.value": "파일명에 날짜와 버전을 빠뜨린 적이 거의 없다.",
       "characters.kang_yoo_jin.role": "브랜드마케팅팀 경력직 대리",
       "characters.kang_yoo_jin.summary": "스토리 모드에서 반복 등장하지만 공략할 수 없으며, 사실관계를 확인하고 이상 징후를 알아차리는 조연. 기본 결말의 해결사나 구원자는 아니며 생존 모드의 세부 역할은 미확정이다.",
       "characters.yoon_seo_a.display_name": "윤서아",
@@ -14015,6 +14952,14 @@
       "characters.yoon_seo_a.expressions.actual_tense.description": "어깨가 올라가고 시선이 출입문과 휴대전화를 확인한다.",
       "characters.yoon_seo_a.expressions.subjective_relieved_smile.description": "원화 생성 프로필에서만 사용하는, 다시 다가오는 미소로 오독한 표정 프리셋.",
       "characters.yoon_seo_a.expressions.subjective_shy.description": "원화 생성 프로필에서만 사용하는, 수줍은 호감으로 오독한 표정 프리셋.",
+      "characters.yoon_seo_a.player_profile.fields.affiliation.value": "영업기획팀 · 계약직 사원",
+      "characters.yoon_seo_a.player_profile.fields.hobby.value": "고양이 문구 수집 · 전국 고양이 카페 탐방",
+      "characters.yoon_seo_a.player_profile.fields.ideal_type.value": "곰같은 사람 · 다정한 사람",
+      "characters.yoon_seo_a.player_profile.fields.likes.value": "말차 디저트 · 예쁜 문구 · 퇴근 후 산책",
+      "characters.yoon_seo_a.player_profile.fields.mbti.value": "INFP",
+      "characters.yoon_seo_a.player_profile.fields.name.value": "윤서아",
+      "characters.yoon_seo_a.player_profile.fields.residence.value": "회사 근처 오피스텔 · 기존 입주민",
+      "characters.yoon_seo_a.player_profile.fields.tmi.value": "텀블러의 고양이 스티커를 계절마다 바꾼다.",
       "characters.yoon_seo_a.role": "영업기획팀 계약직 사원",
       "characters.yoon_seo_a.summary": "갈등 상황에서 얼어붙지만 안전한 관계에서는 유머가 많고 기획자로서의 꿈이 뚜렷한 인물.",
       "dayChange.label": "다음 날",
@@ -14183,6 +15128,8 @@
       "locale.label": "언어",
       "menu.auto": "오토",
       "menu.backlog": "대화 기록",
+      "menu.characters": "캐릭터",
+      "menu.charactersHint": "알게 된 인물 정보",
       "menu.close": "닫기",
       "menu.continue": "이어하기",
       "menu.continueHint": "두근거림 이어서",
@@ -14695,13 +15642,24 @@
       "weekday.thu": "목요일",
       "weekday.tue": "화요일",
       "weekday.wed": "수요일",
+      "world.members.member.cha_min_kyung.compendium_summary": "마스터 일정과 마케팅 전략을 조율하는 프로젝트 실무 리드.",
+      "world.members.member.han_do_yoon.compendium_summary": "영업기획팀의 핵심 거래처와 상업 조건을 맡은 과장. 이번 프로젝트에서 거래처 승인 일정을 관리한다.",
+      "world.members.member.jeong_da_eun.compendium_summary": "캠페인 일정표와 회의 기록을 맡은 주임. 마감과 담당자 누락을 그냥 지나치지 않는다.",
       "world.members.member.jeong_da_eun.display_name": "정주임",
+      "world.members.member.kang_yoo_jin.compendium_summary": "디자인 제작과 자산 버전, 제품 문구의 사실 확인을 맡은 경력직 대리.",
+      "world.members.member.lee_hyeon_woo.compendium_summary": "영업 자료와 거래처 문서를 관리하는 주임. 필요한 수치와 파일 위치를 빠르게 찾아낸다.",
       "world.members.member.lee_hyeon_woo.display_name": "이주임",
+      "world.members.member.lee_su_hyeon.compendium_summary": "브랜드마케팅팀의 예산과 실행 승인을 맡은 차장. 실무 판단은 담당 리드에게 명확히 위임한다.",
       "world.members.member.lee_su_hyeon.display_name": "이차장",
+      "world.members.member.moon_ji_hye.compendium_summary": "브랜드마케팅팀을 이끄는 부장. 최종 시안과 브랜드 일관성을 책임진다.",
       "world.members.member.moon_ji_hye.display_name": "문부장",
+      "world.members.member.oh_se_jin.compendium_summary": "영업기획팀의 제품 요건과 승인 범위를 확정하는 차장. 실무가 움직이기 전 결정선을 분명히 한다.",
       "world.members.member.oh_se_jin.display_name": "오차장",
+      "world.members.member.park_jae_hyun.compendium_summary": "영업기획팀을 이끄는 부장. 영업 승인과 주요 거래처 이슈의 최종 책임을 맡는다.",
       "world.members.member.park_jae_hyun.display_name": "박부장",
-      "world.members.member.shin_hye_rim.display_name": "신차장"
+      "world.members.member.shin_hye_rim.compendium_summary": "인사 정책과 고충 접수 절차를 담당하는 차장. 확인된 기록과 절차 범위를 먼저 짚는다.",
+      "world.members.member.shin_hye_rim.display_name": "신차장",
+      "world.members.member.yoon_seo_a.compendium_summary": "프로젝트 자료와 회의록, 제품 사양표를 챙기는 영업기획팀 사원."
     },
     "catalogs": {
       "ko": {
@@ -14734,6 +15692,19 @@
         "campaign.main.lanes.personal.title": "가족과 사적 시간",
         "campaign.main.lanes.yoon_seo_a.title": "윤서아",
         "campaign.main.title": "밀당 오피스",
+        "character.field.affiliation": "소속 · 직급",
+        "character.field.hobby": "취미",
+        "character.field.ideal_type": "이상형",
+        "character.field.likes": "좋아하는 것",
+        "character.field.mbti": "MBTI",
+        "character.field.name": "이름",
+        "character.field.residence": "사는 곳",
+        "character.field.tmi": "TMI",
+        "character.locked": "아직 알 수 없음",
+        "character.main": "주요 인물",
+        "character.others": "나머지",
+        "character.progress": "정보 {{unlocked}} / {{total}}",
+        "character.title": "캐릭터",
         "characters.cha_min_kyung.display_name": "차민경",
         "characters.cha_min_kyung.expressions.actual_disgust.description": "턱이 굳고 시선이 차가워지지만 자세는 무너지지 않는다.",
         "characters.cha_min_kyung.expressions.actual_exhausted.description": "혼자 남은 뒤에만 굳은 어깨와 피로가 드러난다.",
@@ -14742,6 +15713,14 @@
         "characters.cha_min_kyung.expressions.actual_skeptical.description": "눈썹을 올리고 발언의 부적절함을 확인한다.",
         "characters.cha_min_kyung.expressions.subjective_challenging.description": "원화 생성 프로필에서만 사용하는, 도발로 오독한 표정 프리셋.",
         "characters.cha_min_kyung.expressions.subjective_jealous.description": "원화 생성 프로필에서만 사용하는, 질투로 오독한 표정 프리셋.",
+        "characters.cha_min_kyung.player_profile.fields.affiliation.value": "브랜드마케팅팀 · 대리 · 프로젝트 실무 리드",
+        "characters.cha_min_kyung.player_profile.fields.hobby.value": "러닝 · 필라테스 · 외국어 공부 · 직무 공부",
+        "characters.cha_min_kyung.player_profile.fields.ideal_type.value": "자기관리 잘하는 사람",
+        "characters.cha_min_kyung.player_profile.fields.likes.value": "일정이 정확한 약속 · 드라이한 와인 · 잘 정리된 문서",
+        "characters.cha_min_kyung.player_profile.fields.mbti.value": "ESTJ",
+        "characters.cha_min_kyung.player_profile.fields.name.value": "차민경",
+        "characters.cha_min_kyung.player_profile.fields.residence.value": "회사 근처 오피스텔 · 새 입주민",
+        "characters.cha_min_kyung.player_profile.fields.tmi.value": "회의용 금속 볼펜은 같은 모델만 여러 자루 쓴다.",
         "characters.cha_min_kyung.role": "브랜드마케팅팀 대리 겸 프로젝트 실무 책임자",
         "characters.cha_min_kyung.summary": "직접 선을 긋고 후배를 보호하지만 과거 회사의 신고 축소를 목격해 기록을 우선하는 인물.",
         "characters.han_do_yoon.display_name": "한도윤",
@@ -14764,6 +15743,14 @@
         "characters.kang_yoo_jin.expressions.actual_warning.description": "정면을 보고 경고 문장을 분명하게 전달한다.",
         "characters.kang_yoo_jin.expressions.actual_worn_down.description": "자신감은 남아 있지만 반복된 묵살로 표정이 지쳐 있다.",
         "characters.kang_yoo_jin.expressions.subjective_bold_flirt.description": "원화 생성 프로필에서만 사용하는, 당돌한 호감으로 오독한 표정 프리셋.",
+        "characters.kang_yoo_jin.player_profile.fields.affiliation.value": "브랜드마케팅팀 · 경력직 대리",
+        "characters.kang_yoo_jin.player_profile.fields.hobby.value": "맛집 탐방 · 요리 · 등산",
+        "characters.kang_yoo_jin.player_profile.fields.ideal_type.value": "유머러스한 사람",
+        "characters.kang_yoo_jin.player_profile.fields.likes.value": "맛있는 음식 먹기",
+        "characters.kang_yoo_jin.player_profile.fields.mbti.value": "ENFP",
+        "characters.kang_yoo_jin.player_profile.fields.name.value": "강유진",
+        "characters.kang_yoo_jin.player_profile.fields.residence.value": "회사와 분리된 외부 생활권",
+        "characters.kang_yoo_jin.player_profile.fields.tmi.value": "파일명에 날짜와 버전을 빠뜨린 적이 거의 없다.",
         "characters.kang_yoo_jin.role": "브랜드마케팅팀 경력직 대리",
         "characters.kang_yoo_jin.summary": "스토리 모드에서 반복 등장하지만 공략할 수 없으며, 사실관계를 확인하고 이상 징후를 알아차리는 조연. 기본 결말의 해결사나 구원자는 아니며 생존 모드의 세부 역할은 미확정이다.",
         "characters.yoon_seo_a.display_name": "윤서아",
@@ -14775,6 +15762,14 @@
         "characters.yoon_seo_a.expressions.actual_tense.description": "어깨가 올라가고 시선이 출입문과 휴대전화를 확인한다.",
         "characters.yoon_seo_a.expressions.subjective_relieved_smile.description": "원화 생성 프로필에서만 사용하는, 다시 다가오는 미소로 오독한 표정 프리셋.",
         "characters.yoon_seo_a.expressions.subjective_shy.description": "원화 생성 프로필에서만 사용하는, 수줍은 호감으로 오독한 표정 프리셋.",
+        "characters.yoon_seo_a.player_profile.fields.affiliation.value": "영업기획팀 · 계약직 사원",
+        "characters.yoon_seo_a.player_profile.fields.hobby.value": "고양이 문구 수집 · 전국 고양이 카페 탐방",
+        "characters.yoon_seo_a.player_profile.fields.ideal_type.value": "곰같은 사람 · 다정한 사람",
+        "characters.yoon_seo_a.player_profile.fields.likes.value": "말차 디저트 · 예쁜 문구 · 퇴근 후 산책",
+        "characters.yoon_seo_a.player_profile.fields.mbti.value": "INFP",
+        "characters.yoon_seo_a.player_profile.fields.name.value": "윤서아",
+        "characters.yoon_seo_a.player_profile.fields.residence.value": "회사 근처 오피스텔 · 기존 입주민",
+        "characters.yoon_seo_a.player_profile.fields.tmi.value": "텀블러의 고양이 스티커를 계절마다 바꾼다.",
         "characters.yoon_seo_a.role": "영업기획팀 계약직 사원",
         "characters.yoon_seo_a.summary": "갈등 상황에서 얼어붙지만 안전한 관계에서는 유머가 많고 기획자로서의 꿈이 뚜렷한 인물.",
         "dayChange.label": "다음 날",
@@ -14943,6 +15938,8 @@
         "locale.label": "언어",
         "menu.auto": "오토",
         "menu.backlog": "대화 기록",
+        "menu.characters": "캐릭터",
+        "menu.charactersHint": "알게 된 인물 정보",
         "menu.close": "닫기",
         "menu.continue": "이어하기",
         "menu.continueHint": "두근거림 이어서",
@@ -15455,13 +16452,24 @@
         "weekday.thu": "목요일",
         "weekday.tue": "화요일",
         "weekday.wed": "수요일",
+        "world.members.member.cha_min_kyung.compendium_summary": "마스터 일정과 마케팅 전략을 조율하는 프로젝트 실무 리드.",
+        "world.members.member.han_do_yoon.compendium_summary": "영업기획팀의 핵심 거래처와 상업 조건을 맡은 과장. 이번 프로젝트에서 거래처 승인 일정을 관리한다.",
+        "world.members.member.jeong_da_eun.compendium_summary": "캠페인 일정표와 회의 기록을 맡은 주임. 마감과 담당자 누락을 그냥 지나치지 않는다.",
         "world.members.member.jeong_da_eun.display_name": "정주임",
+        "world.members.member.kang_yoo_jin.compendium_summary": "디자인 제작과 자산 버전, 제품 문구의 사실 확인을 맡은 경력직 대리.",
+        "world.members.member.lee_hyeon_woo.compendium_summary": "영업 자료와 거래처 문서를 관리하는 주임. 필요한 수치와 파일 위치를 빠르게 찾아낸다.",
         "world.members.member.lee_hyeon_woo.display_name": "이주임",
+        "world.members.member.lee_su_hyeon.compendium_summary": "브랜드마케팅팀의 예산과 실행 승인을 맡은 차장. 실무 판단은 담당 리드에게 명확히 위임한다.",
         "world.members.member.lee_su_hyeon.display_name": "이차장",
+        "world.members.member.moon_ji_hye.compendium_summary": "브랜드마케팅팀을 이끄는 부장. 최종 시안과 브랜드 일관성을 책임진다.",
         "world.members.member.moon_ji_hye.display_name": "문부장",
+        "world.members.member.oh_se_jin.compendium_summary": "영업기획팀의 제품 요건과 승인 범위를 확정하는 차장. 실무가 움직이기 전 결정선을 분명히 한다.",
         "world.members.member.oh_se_jin.display_name": "오차장",
+        "world.members.member.park_jae_hyun.compendium_summary": "영업기획팀을 이끄는 부장. 영업 승인과 주요 거래처 이슈의 최종 책임을 맡는다.",
         "world.members.member.park_jae_hyun.display_name": "박부장",
-        "world.members.member.shin_hye_rim.display_name": "신차장"
+        "world.members.member.shin_hye_rim.compendium_summary": "인사 정책과 고충 접수 절차를 담당하는 차장. 확인된 기록과 절차 범위를 먼저 짚는다.",
+        "world.members.member.shin_hye_rim.display_name": "신차장",
+        "world.members.member.yoon_seo_a.compendium_summary": "프로젝트 자료와 회의록, 제품 사양표를 챙기는 영업기획팀 사원."
       },
       "en": {
         "analysisHint.charge": "Hint",
@@ -15493,6 +16501,19 @@
         "campaign.main.lanes.personal.title": "가족과 사적 시간",
         "campaign.main.lanes.yoon_seo_a.title": "윤서아",
         "campaign.main.title": "Love Office",
+        "character.field.affiliation": "Team · Title",
+        "character.field.hobby": "Hobbies",
+        "character.field.ideal_type": "Ideal Type",
+        "character.field.likes": "Likes",
+        "character.field.mbti": "MBTI",
+        "character.field.name": "Name",
+        "character.field.residence": "Lives In",
+        "character.field.tmi": "Fun Fact",
+        "character.locked": "Not discovered yet",
+        "character.main": "Main Cast",
+        "character.others": "Others",
+        "character.progress": "Info {{unlocked}} / {{total}}",
+        "character.title": "Characters",
         "characters.cha_min_kyung.display_name": "Cha Min-kyung",
         "characters.cha_min_kyung.expressions.actual_disgust.description": "턱이 굳고 시선이 차가워지지만 자세는 무너지지 않는다.",
         "characters.cha_min_kyung.expressions.actual_exhausted.description": "혼자 남은 뒤에만 굳은 어깨와 피로가 드러난다.",
@@ -15501,6 +16522,14 @@
         "characters.cha_min_kyung.expressions.actual_skeptical.description": "눈썹을 올리고 발언의 부적절함을 확인한다.",
         "characters.cha_min_kyung.expressions.subjective_challenging.description": "원화 생성 프로필에서만 사용하는, 도발로 오독한 표정 프리셋.",
         "characters.cha_min_kyung.expressions.subjective_jealous.description": "원화 생성 프로필에서만 사용하는, 질투로 오독한 표정 프리셋.",
+        "characters.cha_min_kyung.player_profile.fields.affiliation.value": "Brand Marketing · Senior Associate · Project Lead",
+        "characters.cha_min_kyung.player_profile.fields.hobby.value": "Running · Pilates · studying foreign languages · professional development",
+        "characters.cha_min_kyung.player_profile.fields.ideal_type.value": "Someone who takes good care of themselves",
+        "characters.cha_min_kyung.player_profile.fields.likes.value": "Punctual plans · dry wine · well-organized documents",
+        "characters.cha_min_kyung.player_profile.fields.mbti.value": "ESTJ",
+        "characters.cha_min_kyung.player_profile.fields.name.value": "Cha Min-kyung",
+        "characters.cha_min_kyung.player_profile.fields.residence.value": "An officetel near work · new resident",
+        "characters.cha_min_kyung.player_profile.fields.tmi.value": "She owns several copies of the same metal pen for meetings.",
         "characters.cha_min_kyung.role": "브랜드마케팅팀 대리 겸 프로젝트 실무 책임자",
         "characters.cha_min_kyung.summary": "직접 선을 긋고 후배를 보호하지만 과거 회사의 신고 축소를 목격해 기록을 우선하는 인물.",
         "characters.han_do_yoon.display_name": "Han Do-yoon",
@@ -15523,6 +16552,14 @@
         "characters.kang_yoo_jin.expressions.actual_warning.description": "정면을 보고 경고 문장을 분명하게 전달한다.",
         "characters.kang_yoo_jin.expressions.actual_worn_down.description": "자신감은 남아 있지만 반복된 묵살로 표정이 지쳐 있다.",
         "characters.kang_yoo_jin.expressions.subjective_bold_flirt.description": "원화 생성 프로필에서만 사용하는, 당돌한 호감으로 오독한 표정 프리셋.",
+        "characters.kang_yoo_jin.player_profile.fields.affiliation.value": "Brand Marketing · Experienced Senior Associate",
+        "characters.kang_yoo_jin.player_profile.fields.hobby.value": "Exploring restaurants · cooking · hiking",
+        "characters.kang_yoo_jin.player_profile.fields.ideal_type.value": "Someone with a good sense of humor",
+        "characters.kang_yoo_jin.player_profile.fields.likes.value": "Eating delicious food",
+        "characters.kang_yoo_jin.player_profile.fields.mbti.value": "ENFP",
+        "characters.kang_yoo_jin.player_profile.fields.name.value": "Kang Yoo-jin",
+        "characters.kang_yoo_jin.player_profile.fields.residence.value": "A neighborhood separate from the office area",
+        "characters.kang_yoo_jin.player_profile.fields.tmi.value": "She almost never forgets the date and version in a filename.",
         "characters.kang_yoo_jin.role": "브랜드마케팅팀 경력직 대리",
         "characters.kang_yoo_jin.summary": "스토리 모드에서 반복 등장하지만 공략할 수 없으며, 사실관계를 확인하고 이상 징후를 알아차리는 조연. 기본 결말의 해결사나 구원자는 아니며 생존 모드의 세부 역할은 미확정이다.",
         "characters.yoon_seo_a.display_name": "Yoon Seo-a",
@@ -15534,6 +16571,14 @@
         "characters.yoon_seo_a.expressions.actual_tense.description": "어깨가 올라가고 시선이 출입문과 휴대전화를 확인한다.",
         "characters.yoon_seo_a.expressions.subjective_relieved_smile.description": "원화 생성 프로필에서만 사용하는, 다시 다가오는 미소로 오독한 표정 프리셋.",
         "characters.yoon_seo_a.expressions.subjective_shy.description": "원화 생성 프로필에서만 사용하는, 수줍은 호감으로 오독한 표정 프리셋.",
+        "characters.yoon_seo_a.player_profile.fields.affiliation.value": "Sales Planning · Fixed-term Coordinator",
+        "characters.yoon_seo_a.player_profile.fields.hobby.value": "Collecting cat stationery · visiting cat cafés across the country",
+        "characters.yoon_seo_a.player_profile.fields.ideal_type.value": "Someone bear-like and affectionate",
+        "characters.yoon_seo_a.player_profile.fields.likes.value": "Matcha desserts · pretty stationery · walks after work",
+        "characters.yoon_seo_a.player_profile.fields.mbti.value": "INFP",
+        "characters.yoon_seo_a.player_profile.fields.name.value": "Yoon Seo-a",
+        "characters.yoon_seo_a.player_profile.fields.residence.value": "An officetel near work · long-time resident",
+        "characters.yoon_seo_a.player_profile.fields.tmi.value": "She changes the cat stickers on her tumbler every season.",
         "characters.yoon_seo_a.role": "영업기획팀 계약직 사원",
         "characters.yoon_seo_a.summary": "갈등 상황에서 얼어붙지만 안전한 관계에서는 유머가 많고 기획자로서의 꿈이 뚜렷한 인물.",
         "dayChange.label": "The next day",
@@ -15702,6 +16747,8 @@
         "locale.label": "Language",
         "menu.auto": "Auto",
         "menu.backlog": "Backlog",
+        "menu.characters": "Characters",
+        "menu.charactersHint": "Profiles you have discovered",
         "menu.close": "Close",
         "menu.continue": "Continue",
         "menu.continueHint": "Keep the heartbeat going",
@@ -16214,13 +17261,24 @@
         "weekday.thu": "Thursday",
         "weekday.tue": "Tuesday",
         "weekday.wed": "Wednesday",
+        "world.members.member.cha_min_kyung.compendium_summary": "The project lead coordinating the master schedule and marketing strategy.",
+        "world.members.member.han_do_yoon.compendium_summary": "A Sales Planning manager handling key accounts, commercial terms, and the project's client approval calendar.",
+        "world.members.member.jeong_da_eun.compendium_summary": "An assistant manager responsible for campaign calendars and meeting records who catches missing owners and deadlines.",
         "world.members.member.jeong_da_eun.display_name": "정주임",
+        "world.members.member.kang_yoo_jin.compendium_summary": "An experienced designer responsible for production, asset versions, and factual review of product copy.",
+        "world.members.member.lee_hyeon_woo.compendium_summary": "An assistant manager who maintains sales data and account documents and quickly finds the right figures and files.",
         "world.members.member.lee_hyeon_woo.display_name": "이주임",
+        "world.members.member.lee_su_hyeon.compendium_summary": "A Brand Marketing deputy manager who approves budgets and execution while clearly delegating hands-on decisions.",
         "world.members.member.lee_su_hyeon.display_name": "이차장",
+        "world.members.member.moon_ji_hye.compendium_summary": "The Brand Marketing department head responsible for final creative approval and brand consistency.",
         "world.members.member.moon_ji_hye.display_name": "문부장",
+        "world.members.member.oh_se_jin.compendium_summary": "A Sales Planning deputy manager who defines product requirements and approval boundaries before work begins.",
         "world.members.member.oh_se_jin.display_name": "오차장",
+        "world.members.member.park_jae_hyun.compendium_summary": "The Sales Planning department head responsible for sales approvals and major account escalations.",
         "world.members.member.park_jae_hyun.display_name": "박부장",
-        "world.members.member.shin_hye_rim.display_name": "신차장"
+        "world.members.member.shin_hye_rim.compendium_summary": "The People Operations lead who handles HR policy and grievances by checking records and procedural scope first.",
+        "world.members.member.shin_hye_rim.display_name": "신차장",
+        "world.members.member.yoon_seo_a.compendium_summary": "A Sales Planning coordinator responsible for project materials, meeting notes, and product specification sheets."
       }
     },
     "direct_catalogs": {
@@ -16246,6 +17304,41 @@
         "characters.kang_yoo_jin.display_name": "Kang Yoo-jin",
         "characters.han_do_yoon.display_name": "Han Do-yoon",
         "characters.im_soo_yeon.display_name": "Im Soo-yeon",
+        "characters.yoon_seo_a.player_profile.fields.name.value": "Yoon Seo-a",
+        "characters.yoon_seo_a.player_profile.fields.affiliation.value": "Sales Planning · Fixed-term Coordinator",
+        "characters.yoon_seo_a.player_profile.fields.mbti.value": "INFP",
+        "characters.yoon_seo_a.player_profile.fields.hobby.value": "Collecting cat stationery · visiting cat cafés across the country",
+        "characters.yoon_seo_a.player_profile.fields.likes.value": "Matcha desserts · pretty stationery · walks after work",
+        "characters.yoon_seo_a.player_profile.fields.ideal_type.value": "Someone bear-like and affectionate",
+        "characters.yoon_seo_a.player_profile.fields.residence.value": "An officetel near work · long-time resident",
+        "characters.yoon_seo_a.player_profile.fields.tmi.value": "She changes the cat stickers on her tumbler every season.",
+        "characters.cha_min_kyung.player_profile.fields.name.value": "Cha Min-kyung",
+        "characters.cha_min_kyung.player_profile.fields.affiliation.value": "Brand Marketing · Senior Associate · Project Lead",
+        "characters.cha_min_kyung.player_profile.fields.mbti.value": "ESTJ",
+        "characters.cha_min_kyung.player_profile.fields.hobby.value": "Running · Pilates · studying foreign languages · professional development",
+        "characters.cha_min_kyung.player_profile.fields.likes.value": "Punctual plans · dry wine · well-organized documents",
+        "characters.cha_min_kyung.player_profile.fields.ideal_type.value": "Someone who takes good care of themselves",
+        "characters.cha_min_kyung.player_profile.fields.residence.value": "An officetel near work · new resident",
+        "characters.cha_min_kyung.player_profile.fields.tmi.value": "She owns several copies of the same metal pen for meetings.",
+        "characters.kang_yoo_jin.player_profile.fields.name.value": "Kang Yoo-jin",
+        "characters.kang_yoo_jin.player_profile.fields.affiliation.value": "Brand Marketing · Experienced Senior Associate",
+        "characters.kang_yoo_jin.player_profile.fields.mbti.value": "ENFP",
+        "characters.kang_yoo_jin.player_profile.fields.hobby.value": "Exploring restaurants · cooking · hiking",
+        "characters.kang_yoo_jin.player_profile.fields.likes.value": "Eating delicious food",
+        "characters.kang_yoo_jin.player_profile.fields.ideal_type.value": "Someone with a good sense of humor",
+        "characters.kang_yoo_jin.player_profile.fields.residence.value": "A neighborhood separate from the office area",
+        "characters.kang_yoo_jin.player_profile.fields.tmi.value": "She almost never forgets the date and version in a filename.",
+        "world.members.member.han_do_yoon.compendium_summary": "A Sales Planning manager handling key accounts, commercial terms, and the project's client approval calendar.",
+        "world.members.member.oh_se_jin.compendium_summary": "A Sales Planning deputy manager who defines product requirements and approval boundaries before work begins.",
+        "world.members.member.park_jae_hyun.compendium_summary": "The Sales Planning department head responsible for sales approvals and major account escalations.",
+        "world.members.member.lee_hyeon_woo.compendium_summary": "An assistant manager who maintains sales data and account documents and quickly finds the right figures and files.",
+        "world.members.member.jeong_da_eun.compendium_summary": "An assistant manager responsible for campaign calendars and meeting records who catches missing owners and deadlines.",
+        "world.members.member.lee_su_hyeon.compendium_summary": "A Brand Marketing deputy manager who approves budgets and execution while clearly delegating hands-on decisions.",
+        "world.members.member.moon_ji_hye.compendium_summary": "The Brand Marketing department head responsible for final creative approval and brand consistency.",
+        "world.members.member.shin_hye_rim.compendium_summary": "The People Operations lead who handles HR policy and grievances by checking records and procedural scope first.",
+        "world.members.member.yoon_seo_a.compendium_summary": "A Sales Planning coordinator responsible for project materials, meeting notes, and product specification sheets.",
+        "world.members.member.cha_min_kyung.compendium_summary": "The project lead coordinating the master schedule and marketing strategy.",
+        "world.members.member.kang_yoo_jin.compendium_summary": "An experienced designer responsible for production, asset versions, and factual review of product copy.",
         "events.seo_a.email_request.presentation.title": "Restricting How Work Is Delivered",
         "scenes.seo_a.email_request.title": "Send It by Email",
         "scenes.seo_a.email_request.nodes.appearance_observation.line": "Manager Han, I need to tell you something.",
@@ -16280,6 +17373,8 @@
         "menu.loadHint": "Open your memory album",
         "menu.gallery": "Gallery",
         "menu.galleryHint": "View collected artwork",
+        "menu.characters": "Characters",
+        "menu.charactersHint": "Profiles you have discovered",
         "menu.settings": "Settings",
         "menu.settingsHint": "Language and effects",
         "menu.backlog": "Backlog",
@@ -16307,6 +17402,19 @@
         "gallery.entry.humor_seo_a.description": "Yoon Seo-a artwork collected from a Humor stat bonus event.",
         "gallery.entry.intelligence_min_kyung.title": "Cha Min-kyung — Evidence in Three Timestamps",
         "gallery.entry.intelligence_min_kyung.description": "Cha Min-kyung artwork collected from an Intelligence stat bonus event.",
+        "character.title": "Characters",
+        "character.others": "Others",
+        "character.main": "Main Cast",
+        "character.progress": "Info {{unlocked}} / {{total}}",
+        "character.locked": "Not discovered yet",
+        "character.field.name": "Name",
+        "character.field.affiliation": "Team · Title",
+        "character.field.mbti": "MBTI",
+        "character.field.hobby": "Hobbies",
+        "character.field.likes": "Likes",
+        "character.field.ideal_type": "Ideal Type",
+        "character.field.residence": "Lives In",
+        "character.field.tmi": "Fun Fact",
         "locale.label": "Language",
         "locale.ko": "한국어",
         "locale.en": "English",
@@ -16486,6 +17594,19 @@
         "campaign.main.lanes.personal.title": "가족과 사적 시간",
         "campaign.main.lanes.yoon_seo_a.title": "윤서아",
         "campaign.main.title": "밀당 오피스",
+        "character.field.affiliation": "소속 · 직급",
+        "character.field.hobby": "취미",
+        "character.field.ideal_type": "이상형",
+        "character.field.likes": "좋아하는 것",
+        "character.field.mbti": "MBTI",
+        "character.field.name": "이름",
+        "character.field.residence": "사는 곳",
+        "character.field.tmi": "TMI",
+        "character.locked": "아직 알 수 없음",
+        "character.main": "주요 인물",
+        "character.others": "나머지",
+        "character.progress": "정보 {{unlocked}} / {{total}}",
+        "character.title": "캐릭터",
         "characters.cha_min_kyung.display_name": "차민경",
         "characters.cha_min_kyung.expressions.actual_disgust.description": "턱이 굳고 시선이 차가워지지만 자세는 무너지지 않는다.",
         "characters.cha_min_kyung.expressions.actual_exhausted.description": "혼자 남은 뒤에만 굳은 어깨와 피로가 드러난다.",
@@ -16494,6 +17615,14 @@
         "characters.cha_min_kyung.expressions.actual_skeptical.description": "눈썹을 올리고 발언의 부적절함을 확인한다.",
         "characters.cha_min_kyung.expressions.subjective_challenging.description": "원화 생성 프로필에서만 사용하는, 도발로 오독한 표정 프리셋.",
         "characters.cha_min_kyung.expressions.subjective_jealous.description": "원화 생성 프로필에서만 사용하는, 질투로 오독한 표정 프리셋.",
+        "characters.cha_min_kyung.player_profile.fields.affiliation.value": "브랜드마케팅팀 · 대리 · 프로젝트 실무 리드",
+        "characters.cha_min_kyung.player_profile.fields.hobby.value": "러닝 · 필라테스 · 외국어 공부 · 직무 공부",
+        "characters.cha_min_kyung.player_profile.fields.ideal_type.value": "자기관리 잘하는 사람",
+        "characters.cha_min_kyung.player_profile.fields.likes.value": "일정이 정확한 약속 · 드라이한 와인 · 잘 정리된 문서",
+        "characters.cha_min_kyung.player_profile.fields.mbti.value": "ESTJ",
+        "characters.cha_min_kyung.player_profile.fields.name.value": "차민경",
+        "characters.cha_min_kyung.player_profile.fields.residence.value": "회사 근처 오피스텔 · 새 입주민",
+        "characters.cha_min_kyung.player_profile.fields.tmi.value": "회의용 금속 볼펜은 같은 모델만 여러 자루 쓴다.",
         "characters.cha_min_kyung.role": "브랜드마케팅팀 대리 겸 프로젝트 실무 책임자",
         "characters.cha_min_kyung.summary": "직접 선을 긋고 후배를 보호하지만 과거 회사의 신고 축소를 목격해 기록을 우선하는 인물.",
         "characters.han_do_yoon.display_name": "한도윤",
@@ -16516,6 +17645,14 @@
         "characters.kang_yoo_jin.expressions.actual_warning.description": "정면을 보고 경고 문장을 분명하게 전달한다.",
         "characters.kang_yoo_jin.expressions.actual_worn_down.description": "자신감은 남아 있지만 반복된 묵살로 표정이 지쳐 있다.",
         "characters.kang_yoo_jin.expressions.subjective_bold_flirt.description": "원화 생성 프로필에서만 사용하는, 당돌한 호감으로 오독한 표정 프리셋.",
+        "characters.kang_yoo_jin.player_profile.fields.affiliation.value": "브랜드마케팅팀 · 경력직 대리",
+        "characters.kang_yoo_jin.player_profile.fields.hobby.value": "맛집 탐방 · 요리 · 등산",
+        "characters.kang_yoo_jin.player_profile.fields.ideal_type.value": "유머러스한 사람",
+        "characters.kang_yoo_jin.player_profile.fields.likes.value": "맛있는 음식 먹기",
+        "characters.kang_yoo_jin.player_profile.fields.mbti.value": "ENFP",
+        "characters.kang_yoo_jin.player_profile.fields.name.value": "강유진",
+        "characters.kang_yoo_jin.player_profile.fields.residence.value": "회사와 분리된 외부 생활권",
+        "characters.kang_yoo_jin.player_profile.fields.tmi.value": "파일명에 날짜와 버전을 빠뜨린 적이 거의 없다.",
         "characters.kang_yoo_jin.role": "브랜드마케팅팀 경력직 대리",
         "characters.kang_yoo_jin.summary": "스토리 모드에서 반복 등장하지만 공략할 수 없으며, 사실관계를 확인하고 이상 징후를 알아차리는 조연. 기본 결말의 해결사나 구원자는 아니며 생존 모드의 세부 역할은 미확정이다.",
         "characters.yoon_seo_a.display_name": "윤서아",
@@ -16527,6 +17664,14 @@
         "characters.yoon_seo_a.expressions.actual_tense.description": "어깨가 올라가고 시선이 출입문과 휴대전화를 확인한다.",
         "characters.yoon_seo_a.expressions.subjective_relieved_smile.description": "원화 생성 프로필에서만 사용하는, 다시 다가오는 미소로 오독한 표정 프리셋.",
         "characters.yoon_seo_a.expressions.subjective_shy.description": "원화 생성 프로필에서만 사용하는, 수줍은 호감으로 오독한 표정 프리셋.",
+        "characters.yoon_seo_a.player_profile.fields.affiliation.value": "영업기획팀 · 계약직 사원",
+        "characters.yoon_seo_a.player_profile.fields.hobby.value": "고양이 문구 수집 · 전국 고양이 카페 탐방",
+        "characters.yoon_seo_a.player_profile.fields.ideal_type.value": "곰같은 사람 · 다정한 사람",
+        "characters.yoon_seo_a.player_profile.fields.likes.value": "말차 디저트 · 예쁜 문구 · 퇴근 후 산책",
+        "characters.yoon_seo_a.player_profile.fields.mbti.value": "INFP",
+        "characters.yoon_seo_a.player_profile.fields.name.value": "윤서아",
+        "characters.yoon_seo_a.player_profile.fields.residence.value": "회사 근처 오피스텔 · 기존 입주민",
+        "characters.yoon_seo_a.player_profile.fields.tmi.value": "텀블러의 고양이 스티커를 계절마다 바꾼다.",
         "characters.yoon_seo_a.role": "영업기획팀 계약직 사원",
         "characters.yoon_seo_a.summary": "갈등 상황에서 얼어붙지만 안전한 관계에서는 유머가 많고 기획자로서의 꿈이 뚜렷한 인물.",
         "dayChange.label": "다음 날",
@@ -16695,6 +17840,8 @@
         "locale.label": "언어",
         "menu.auto": "오토",
         "menu.backlog": "대화 기록",
+        "menu.characters": "캐릭터",
+        "menu.charactersHint": "알게 된 인물 정보",
         "menu.close": "닫기",
         "menu.continue": "이어하기",
         "menu.continueHint": "두근거림 이어서",
@@ -17207,13 +18354,24 @@
         "weekday.thu": "목요일",
         "weekday.tue": "화요일",
         "weekday.wed": "수요일",
+        "world.members.member.cha_min_kyung.compendium_summary": "마스터 일정과 마케팅 전략을 조율하는 프로젝트 실무 리드.",
+        "world.members.member.han_do_yoon.compendium_summary": "영업기획팀의 핵심 거래처와 상업 조건을 맡은 과장. 이번 프로젝트에서 거래처 승인 일정을 관리한다.",
+        "world.members.member.jeong_da_eun.compendium_summary": "캠페인 일정표와 회의 기록을 맡은 주임. 마감과 담당자 누락을 그냥 지나치지 않는다.",
         "world.members.member.jeong_da_eun.display_name": "정주임",
+        "world.members.member.kang_yoo_jin.compendium_summary": "디자인 제작과 자산 버전, 제품 문구의 사실 확인을 맡은 경력직 대리.",
+        "world.members.member.lee_hyeon_woo.compendium_summary": "영업 자료와 거래처 문서를 관리하는 주임. 필요한 수치와 파일 위치를 빠르게 찾아낸다.",
         "world.members.member.lee_hyeon_woo.display_name": "이주임",
+        "world.members.member.lee_su_hyeon.compendium_summary": "브랜드마케팅팀의 예산과 실행 승인을 맡은 차장. 실무 판단은 담당 리드에게 명확히 위임한다.",
         "world.members.member.lee_su_hyeon.display_name": "이차장",
+        "world.members.member.moon_ji_hye.compendium_summary": "브랜드마케팅팀을 이끄는 부장. 최종 시안과 브랜드 일관성을 책임진다.",
         "world.members.member.moon_ji_hye.display_name": "문부장",
+        "world.members.member.oh_se_jin.compendium_summary": "영업기획팀의 제품 요건과 승인 범위를 확정하는 차장. 실무가 움직이기 전 결정선을 분명히 한다.",
         "world.members.member.oh_se_jin.display_name": "오차장",
+        "world.members.member.park_jae_hyun.compendium_summary": "영업기획팀을 이끄는 부장. 영업 승인과 주요 거래처 이슈의 최종 책임을 맡는다.",
         "world.members.member.park_jae_hyun.display_name": "박부장",
-        "world.members.member.shin_hye_rim.display_name": "신차장"
+        "world.members.member.shin_hye_rim.compendium_summary": "인사 정책과 고충 접수 절차를 담당하는 차장. 확인된 기록과 절차 범위를 먼저 짚는다.",
+        "world.members.member.shin_hye_rim.display_name": "신차장",
+        "world.members.member.yoon_seo_a.compendium_summary": "프로젝트 자료와 회의록, 제품 사양표를 챙기는 영업기획팀 사원."
       },
       "en": {
         "analysisHint.charge": "Hint",
@@ -17245,6 +18403,19 @@
         "campaign.main.lanes.personal.title": "가족과 사적 시간",
         "campaign.main.lanes.yoon_seo_a.title": "윤서아",
         "campaign.main.title": "Love Office",
+        "character.field.affiliation": "Team · Title",
+        "character.field.hobby": "Hobbies",
+        "character.field.ideal_type": "Ideal Type",
+        "character.field.likes": "Likes",
+        "character.field.mbti": "MBTI",
+        "character.field.name": "Name",
+        "character.field.residence": "Lives In",
+        "character.field.tmi": "Fun Fact",
+        "character.locked": "Not discovered yet",
+        "character.main": "Main Cast",
+        "character.others": "Others",
+        "character.progress": "Info {{unlocked}} / {{total}}",
+        "character.title": "Characters",
         "characters.cha_min_kyung.display_name": "Cha Min-kyung",
         "characters.cha_min_kyung.expressions.actual_disgust.description": "턱이 굳고 시선이 차가워지지만 자세는 무너지지 않는다.",
         "characters.cha_min_kyung.expressions.actual_exhausted.description": "혼자 남은 뒤에만 굳은 어깨와 피로가 드러난다.",
@@ -17253,6 +18424,14 @@
         "characters.cha_min_kyung.expressions.actual_skeptical.description": "눈썹을 올리고 발언의 부적절함을 확인한다.",
         "characters.cha_min_kyung.expressions.subjective_challenging.description": "원화 생성 프로필에서만 사용하는, 도발로 오독한 표정 프리셋.",
         "characters.cha_min_kyung.expressions.subjective_jealous.description": "원화 생성 프로필에서만 사용하는, 질투로 오독한 표정 프리셋.",
+        "characters.cha_min_kyung.player_profile.fields.affiliation.value": "Brand Marketing · Senior Associate · Project Lead",
+        "characters.cha_min_kyung.player_profile.fields.hobby.value": "Running · Pilates · studying foreign languages · professional development",
+        "characters.cha_min_kyung.player_profile.fields.ideal_type.value": "Someone who takes good care of themselves",
+        "characters.cha_min_kyung.player_profile.fields.likes.value": "Punctual plans · dry wine · well-organized documents",
+        "characters.cha_min_kyung.player_profile.fields.mbti.value": "ESTJ",
+        "characters.cha_min_kyung.player_profile.fields.name.value": "Cha Min-kyung",
+        "characters.cha_min_kyung.player_profile.fields.residence.value": "An officetel near work · new resident",
+        "characters.cha_min_kyung.player_profile.fields.tmi.value": "She owns several copies of the same metal pen for meetings.",
         "characters.cha_min_kyung.role": "브랜드마케팅팀 대리 겸 프로젝트 실무 책임자",
         "characters.cha_min_kyung.summary": "직접 선을 긋고 후배를 보호하지만 과거 회사의 신고 축소를 목격해 기록을 우선하는 인물.",
         "characters.han_do_yoon.display_name": "Han Do-yoon",
@@ -17275,6 +18454,14 @@
         "characters.kang_yoo_jin.expressions.actual_warning.description": "정면을 보고 경고 문장을 분명하게 전달한다.",
         "characters.kang_yoo_jin.expressions.actual_worn_down.description": "자신감은 남아 있지만 반복된 묵살로 표정이 지쳐 있다.",
         "characters.kang_yoo_jin.expressions.subjective_bold_flirt.description": "원화 생성 프로필에서만 사용하는, 당돌한 호감으로 오독한 표정 프리셋.",
+        "characters.kang_yoo_jin.player_profile.fields.affiliation.value": "Brand Marketing · Experienced Senior Associate",
+        "characters.kang_yoo_jin.player_profile.fields.hobby.value": "Exploring restaurants · cooking · hiking",
+        "characters.kang_yoo_jin.player_profile.fields.ideal_type.value": "Someone with a good sense of humor",
+        "characters.kang_yoo_jin.player_profile.fields.likes.value": "Eating delicious food",
+        "characters.kang_yoo_jin.player_profile.fields.mbti.value": "ENFP",
+        "characters.kang_yoo_jin.player_profile.fields.name.value": "Kang Yoo-jin",
+        "characters.kang_yoo_jin.player_profile.fields.residence.value": "A neighborhood separate from the office area",
+        "characters.kang_yoo_jin.player_profile.fields.tmi.value": "She almost never forgets the date and version in a filename.",
         "characters.kang_yoo_jin.role": "브랜드마케팅팀 경력직 대리",
         "characters.kang_yoo_jin.summary": "스토리 모드에서 반복 등장하지만 공략할 수 없으며, 사실관계를 확인하고 이상 징후를 알아차리는 조연. 기본 결말의 해결사나 구원자는 아니며 생존 모드의 세부 역할은 미확정이다.",
         "characters.yoon_seo_a.display_name": "Yoon Seo-a",
@@ -17286,6 +18473,14 @@
         "characters.yoon_seo_a.expressions.actual_tense.description": "어깨가 올라가고 시선이 출입문과 휴대전화를 확인한다.",
         "characters.yoon_seo_a.expressions.subjective_relieved_smile.description": "원화 생성 프로필에서만 사용하는, 다시 다가오는 미소로 오독한 표정 프리셋.",
         "characters.yoon_seo_a.expressions.subjective_shy.description": "원화 생성 프로필에서만 사용하는, 수줍은 호감으로 오독한 표정 프리셋.",
+        "characters.yoon_seo_a.player_profile.fields.affiliation.value": "Sales Planning · Fixed-term Coordinator",
+        "characters.yoon_seo_a.player_profile.fields.hobby.value": "Collecting cat stationery · visiting cat cafés across the country",
+        "characters.yoon_seo_a.player_profile.fields.ideal_type.value": "Someone bear-like and affectionate",
+        "characters.yoon_seo_a.player_profile.fields.likes.value": "Matcha desserts · pretty stationery · walks after work",
+        "characters.yoon_seo_a.player_profile.fields.mbti.value": "INFP",
+        "characters.yoon_seo_a.player_profile.fields.name.value": "Yoon Seo-a",
+        "characters.yoon_seo_a.player_profile.fields.residence.value": "An officetel near work · long-time resident",
+        "characters.yoon_seo_a.player_profile.fields.tmi.value": "She changes the cat stickers on her tumbler every season.",
         "characters.yoon_seo_a.role": "영업기획팀 계약직 사원",
         "characters.yoon_seo_a.summary": "갈등 상황에서 얼어붙지만 안전한 관계에서는 유머가 많고 기획자로서의 꿈이 뚜렷한 인물.",
         "dayChange.label": "The next day",
@@ -17454,6 +18649,8 @@
         "locale.label": "Language",
         "menu.auto": "Auto",
         "menu.backlog": "Backlog",
+        "menu.characters": "Characters",
+        "menu.charactersHint": "Profiles you have discovered",
         "menu.close": "Close",
         "menu.continue": "Continue",
         "menu.continueHint": "Keep the heartbeat going",
@@ -17966,21 +19163,32 @@
         "weekday.thu": "Thursday",
         "weekday.tue": "Tuesday",
         "weekday.wed": "Wednesday",
+        "world.members.member.cha_min_kyung.compendium_summary": "The project lead coordinating the master schedule and marketing strategy.",
+        "world.members.member.han_do_yoon.compendium_summary": "A Sales Planning manager handling key accounts, commercial terms, and the project's client approval calendar.",
+        "world.members.member.jeong_da_eun.compendium_summary": "An assistant manager responsible for campaign calendars and meeting records who catches missing owners and deadlines.",
         "world.members.member.jeong_da_eun.display_name": "정주임",
+        "world.members.member.kang_yoo_jin.compendium_summary": "An experienced designer responsible for production, asset versions, and factual review of product copy.",
+        "world.members.member.lee_hyeon_woo.compendium_summary": "An assistant manager who maintains sales data and account documents and quickly finds the right figures and files.",
         "world.members.member.lee_hyeon_woo.display_name": "이주임",
+        "world.members.member.lee_su_hyeon.compendium_summary": "A Brand Marketing deputy manager who approves budgets and execution while clearly delegating hands-on decisions.",
         "world.members.member.lee_su_hyeon.display_name": "이차장",
+        "world.members.member.moon_ji_hye.compendium_summary": "The Brand Marketing department head responsible for final creative approval and brand consistency.",
         "world.members.member.moon_ji_hye.display_name": "문부장",
+        "world.members.member.oh_se_jin.compendium_summary": "A Sales Planning deputy manager who defines product requirements and approval boundaries before work begins.",
         "world.members.member.oh_se_jin.display_name": "오차장",
+        "world.members.member.park_jae_hyun.compendium_summary": "The Sales Planning department head responsible for sales approvals and major account escalations.",
         "world.members.member.park_jae_hyun.display_name": "박부장",
-        "world.members.member.shin_hye_rim.display_name": "신차장"
+        "world.members.member.shin_hye_rim.compendium_summary": "The People Operations lead who handles HR policy and grievances by checking records and procedural scope first.",
+        "world.members.member.shin_hye_rim.display_name": "신차장",
+        "world.members.member.yoon_seo_a.compendium_summary": "A Sales Planning coordinator responsible for project materials, meeting notes, and product specification sheets."
       }
     },
     "coverage": {
       "ko": {
-        "direct": 757,
-        "resolved": 757,
-        "translated": 757,
-        "total": 757,
+        "direct": 807,
+        "resolved": 807,
+        "translated": 807,
+        "total": 807,
         "ratio": 1.0,
         "fallback_used": [],
         "missing": [],
@@ -17989,16 +19197,16 @@
         "invalid_placeholders": [],
         "by_domain": {
           "ui": {
-            "direct": 165,
-            "total": 165
+            "direct": 180,
+            "total": 180
           },
           "campaign": {
             "direct": 14,
             "total": 14
           },
           "character": {
-            "direct": 43,
-            "total": 43
+            "direct": 67,
+            "total": 67
           },
           "event": {
             "direct": 90,
@@ -18033,17 +19241,17 @@
             "total": 12
           },
           "world": {
-            "direct": 7,
-            "total": 7
+            "direct": 18,
+            "total": 18
           }
         }
       },
       "en": {
-        "direct": 225,
-        "resolved": 757,
-        "translated": 225,
-        "total": 757,
-        "ratio": 0.2972,
+        "direct": 275,
+        "resolved": 807,
+        "translated": 275,
+        "total": 807,
+        "ratio": 0.3408,
         "fallback_used": [
           "campaign.main.acts.collisions.purpose",
           "campaign.main.acts.crisis.purpose",
@@ -19117,16 +20325,16 @@
         "invalid_placeholders": [],
         "by_domain": {
           "ui": {
-            "direct": 165,
-            "total": 165
+            "direct": 180,
+            "total": 180
           },
           "campaign": {
             "direct": 4,
             "total": 14
           },
           "character": {
-            "direct": 5,
-            "total": 43
+            "direct": 29,
+            "total": 67
           },
           "event": {
             "direct": 1,
@@ -19161,8 +20369,8 @@
             "total": 12
           },
           "world": {
-            "direct": 0,
-            "total": 7
+            "direct": 11,
+            "total": 18
           }
         }
       }
@@ -19278,6 +20486,44 @@
       "role": "브랜드마케팅팀 대리 겸 프로젝트 실무 책임자",
       "narrative_role": "main_heroine",
       "summary": "직접 선을 긋고 후배를 보호하지만 과거 회사의 신고 축소를 목격해 기록을 우선하는 인물.",
+      "player_profile": {
+        "order": 2,
+        "portrait_unlock_memory": "profile.cha_min_kyung.name",
+        "fields": {
+          "name": {
+            "value": "차민경",
+            "unlock_memory": "profile.cha_min_kyung.name"
+          },
+          "affiliation": {
+            "value": "브랜드마케팅팀 · 대리 · 프로젝트 실무 리드",
+            "unlock_memory": "profile.cha_min_kyung.affiliation"
+          },
+          "mbti": {
+            "value": "ESTJ",
+            "unlock_memory": "profile.cha_min_kyung.mbti"
+          },
+          "hobby": {
+            "value": "러닝 · 필라테스 · 외국어 공부 · 직무 공부",
+            "unlock_memory": "profile.cha_min_kyung.hobby"
+          },
+          "likes": {
+            "value": "일정이 정확한 약속 · 드라이한 와인 · 잘 정리된 문서",
+            "unlock_memory": "profile.cha_min_kyung.likes"
+          },
+          "ideal_type": {
+            "value": "자기관리 잘하는 사람",
+            "unlock_memory": "profile.cha_min_kyung.ideal_type"
+          },
+          "residence": {
+            "value": "회사 근처 오피스텔 · 새 입주민",
+            "unlock_memory": "profile.cha_min_kyung.residence"
+          },
+          "tmi": {
+            "value": "회의용 금속 볼펜은 같은 모델만 여러 자루 쓴다.",
+            "unlock_memory": "profile.cha_min_kyung.tmi"
+          }
+        }
+      },
       "immutable_facts": [
         "한도윤의 접근을 고난도 밀당으로 즐기지 않는다.",
         "도전적인 표정은 유혹이 아니라 불쾌함과 사실 확인이다.",
@@ -19564,6 +20810,44 @@
       "role": "브랜드마케팅팀 경력직 대리",
       "narrative_role": "supporting_witness_candidate",
       "summary": "스토리 모드에서 반복 등장하지만 공략할 수 없으며, 사실관계를 확인하고 이상 징후를 알아차리는 조연. 기본 결말의 해결사나 구원자는 아니며 생존 모드의 세부 역할은 미확정이다.",
+      "player_profile": {
+        "order": 3,
+        "portrait_unlock_memory": "profile.kang_yoo_jin.name",
+        "fields": {
+          "name": {
+            "value": "강유진",
+            "unlock_memory": "profile.kang_yoo_jin.name"
+          },
+          "affiliation": {
+            "value": "브랜드마케팅팀 · 경력직 대리",
+            "unlock_memory": "profile.kang_yoo_jin.affiliation"
+          },
+          "mbti": {
+            "value": "ENFP",
+            "unlock_memory": "profile.kang_yoo_jin.mbti"
+          },
+          "hobby": {
+            "value": "맛집 탐방 · 요리 · 등산",
+            "unlock_memory": "profile.kang_yoo_jin.hobby"
+          },
+          "likes": {
+            "value": "맛있는 음식 먹기",
+            "unlock_memory": "profile.kang_yoo_jin.likes"
+          },
+          "ideal_type": {
+            "value": "유머러스한 사람",
+            "unlock_memory": "profile.kang_yoo_jin.ideal_type"
+          },
+          "residence": {
+            "value": "회사와 분리된 외부 생활권",
+            "unlock_memory": "profile.kang_yoo_jin.residence"
+          },
+          "tmi": {
+            "value": "파일명에 날짜와 버전을 빠뜨린 적이 거의 없다.",
+            "unlock_memory": "profile.kang_yoo_jin.tmi"
+          }
+        }
+      },
       "immutable_facts": [
         "스토리 모드에 반복 등장하지만 공략 루트는 없다.",
         "스토리 모드의 기본 결말에서 증거를 완성하거나 피해자를 구조해 파국을 막는 해결사로 등장하지 않는다.",
@@ -19685,6 +20969,44 @@
       "role": "영업기획팀 계약직 사원",
       "narrative_role": "main_heroine",
       "summary": "갈등 상황에서 얼어붙지만 안전한 관계에서는 유머가 많고 기획자로서의 꿈이 뚜렷한 인물.",
+      "player_profile": {
+        "order": 1,
+        "portrait_unlock_memory": "profile.yoon_seo_a.name",
+        "fields": {
+          "name": {
+            "value": "윤서아",
+            "unlock_memory": "profile.yoon_seo_a.name"
+          },
+          "affiliation": {
+            "value": "영업기획팀 · 계약직 사원",
+            "unlock_memory": "profile.yoon_seo_a.affiliation"
+          },
+          "mbti": {
+            "value": "INFP",
+            "unlock_memory": "profile.yoon_seo_a.mbti"
+          },
+          "hobby": {
+            "value": "고양이 문구 수집 · 전국 고양이 카페 탐방",
+            "unlock_memory": "profile.yoon_seo_a.hobby"
+          },
+          "likes": {
+            "value": "말차 디저트 · 예쁜 문구 · 퇴근 후 산책",
+            "unlock_memory": "profile.yoon_seo_a.likes"
+          },
+          "ideal_type": {
+            "value": "곰같은 사람 · 다정한 사람",
+            "unlock_memory": "profile.yoon_seo_a.ideal_type"
+          },
+          "residence": {
+            "value": "회사 근처 오피스텔 · 기존 입주민",
+            "unlock_memory": "profile.yoon_seo_a.residence"
+          },
+          "tmi": {
+            "value": "텀블러의 고양이 스티커를 계절마다 바꾼다.",
+            "unlock_memory": "profile.yoon_seo_a.tmi"
+          }
+        }
+      },
       "immutable_facts": [
         "한도윤에게 연애 감정을 느끼지 않는다.",
         "사회적 미소와 짧은 대답은 동결 반응이지 호감 신호가 아니다.",
@@ -19865,7 +21187,38 @@
         "conditions": []
       },
       "on_seen": {
-        "effects": []
+        "effects": [
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.yoon_seo_a.name"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.yoon_seo_a.affiliation"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.cha_min_kyung.name"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.cha_min_kyung.affiliation"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.kang_yoo_jin.name"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.kang_yoo_jin.affiliation"
+          }
+        ]
       },
       "on_missed": {
         "effects": []
@@ -19909,7 +21262,13 @@
         "conditions": []
       },
       "on_seen": {
-        "effects": []
+        "effects": [
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.yoon_seo_a.residence"
+          }
+        ]
       },
       "on_missed": {
         "effects": []
@@ -19998,7 +21357,23 @@
         "conditions": []
       },
       "on_seen": {
-        "effects": []
+        "effects": [
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.yoon_seo_a.mbti"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.cha_min_kyung.mbti"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.kang_yoo_jin.mbti"
+          }
+        ]
       },
       "on_missed": {
         "effects": []
@@ -20042,7 +21417,23 @@
         "conditions": []
       },
       "on_seen": {
-        "effects": []
+        "effects": [
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.yoon_seo_a.likes"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.cha_min_kyung.likes"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.kang_yoo_jin.likes"
+          }
+        ]
       },
       "on_missed": {
         "effects": []
@@ -20087,7 +21478,18 @@
         "conditions": []
       },
       "on_seen": {
-        "effects": []
+        "effects": [
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.yoon_seo_a.hobby"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.cha_min_kyung.hobby"
+          }
+        ]
       },
       "on_missed": {
         "effects": []
@@ -20131,7 +21533,13 @@
         "conditions": []
       },
       "on_seen": {
-        "effects": []
+        "effects": [
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.cha_min_kyung.residence"
+          }
+        ]
       },
       "on_missed": {
         "effects": []
@@ -20339,7 +21747,23 @@
         "conditions": []
       },
       "on_seen": {
-        "effects": []
+        "effects": [
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.kang_yoo_jin.hobby"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.kang_yoo_jin.ideal_type"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.kang_yoo_jin.residence"
+          }
+        ]
       },
       "on_missed": {
         "effects": []
@@ -20515,6 +21939,11 @@
             "path": "progress.memories",
             "op": "append_unique",
             "value": "cg.stat.appearance.yoo_jin"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.kang_yoo_jin.tmi"
           }
         ]
       },
@@ -20572,6 +22001,11 @@
             "path": "progress.memories",
             "op": "append_unique",
             "value": "cg.stat.health.min_kyung"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.cha_min_kyung.tmi"
           }
         ]
       },
@@ -20629,6 +22063,11 @@
             "path": "progress.memories",
             "op": "append_unique",
             "value": "cg.stat.humor.seo_a"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.yoon_seo_a.tmi"
           }
         ]
       },
@@ -20967,7 +22406,13 @@
         "conditions": []
       },
       "on_seen": {
-        "effects": []
+        "effects": [
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.cha_min_kyung.ideal_type"
+          }
+        ]
       },
       "on_missed": {
         "effects": []
@@ -21122,6 +22567,11 @@
             "path": "progress.flags.story_mode.target",
             "op": "set",
             "value": "yoon_seo_a"
+          },
+          {
+            "path": "progress.memories",
+            "op": "append_unique",
+            "value": "profile.yoon_seo_a.ideal_type"
           }
         ]
       },
@@ -27249,6 +28699,7 @@
         "team": "team.marketing",
         "role": "role.senior_associate",
         "title": "대리·프로젝트 실무 리드",
+        "compendium_summary": "마스터 일정과 마케팅 전략을 조율하는 프로젝트 실무 리드.",
         "manager": "member.lee_su_hyeon",
         "employment": "permanent",
         "presentation": "illustrated",
@@ -27271,6 +28722,7 @@
         "team": "team.sales_planning",
         "role": "role.manager",
         "title": "과장",
+        "compendium_summary": "영업기획팀의 핵심 거래처와 상업 조건을 맡은 과장. 이번 프로젝트에서 거래처 승인 일정을 관리한다.",
         "manager": "member.oh_se_jin",
         "employment": "permanent",
         "presentation": "illustrated",
@@ -27292,6 +28744,7 @@
         "team": "team.marketing",
         "role": "role.assistant_manager",
         "title": "주임",
+        "compendium_summary": "캠페인 일정표와 회의 기록을 맡은 주임. 마감과 담당자 누락을 그냥 지나치지 않는다.",
         "manager": "member.lee_su_hyeon",
         "employment": "permanent",
         "presentation": "text_only",
@@ -27313,6 +28766,7 @@
         "team": "team.marketing",
         "role": "role.senior_associate",
         "title": "경력직 대리",
+        "compendium_summary": "디자인 제작과 자산 버전, 제품 문구의 사실 확인을 맡은 경력직 대리.",
         "manager": "member.lee_su_hyeon",
         "employment": "permanent",
         "presentation": "illustrated",
@@ -27335,6 +28789,7 @@
         "team": "team.sales_planning",
         "role": "role.assistant_manager",
         "title": "주임",
+        "compendium_summary": "영업 자료와 거래처 문서를 관리하는 주임. 필요한 수치와 파일 위치를 빠르게 찾아낸다.",
         "manager": "member.han_do_yoon",
         "employment": "permanent",
         "presentation": "text_only",
@@ -27355,6 +28810,7 @@
         "team": "team.marketing",
         "role": "role.deputy_general_manager",
         "title": "차장",
+        "compendium_summary": "브랜드마케팅팀의 예산과 실행 승인을 맡은 차장. 실무 판단은 담당 리드에게 명확히 위임한다.",
         "manager": "member.moon_ji_hye",
         "employment": "permanent",
         "presentation": "text_only",
@@ -27376,6 +28832,7 @@
         "team": "team.marketing",
         "role": "role.department_head",
         "title": "부장·팀장",
+        "compendium_summary": "브랜드마케팅팀을 이끄는 부장. 최종 시안과 브랜드 일관성을 책임진다.",
         "manager": null,
         "employment": "permanent",
         "presentation": "text_only",
@@ -27397,6 +28854,7 @@
         "team": "team.sales_planning",
         "role": "role.deputy_general_manager",
         "title": "차장",
+        "compendium_summary": "영업기획팀의 제품 요건과 승인 범위를 확정하는 차장. 실무가 움직이기 전 결정선을 분명히 한다.",
         "manager": "member.park_jae_hyun",
         "employment": "permanent",
         "presentation": "text_only",
@@ -27418,6 +28876,7 @@
         "team": "team.sales_planning",
         "role": "role.department_head",
         "title": "부장·팀장",
+        "compendium_summary": "영업기획팀을 이끄는 부장. 영업 승인과 주요 거래처 이슈의 최종 책임을 맡는다.",
         "manager": null,
         "employment": "permanent",
         "presentation": "text_only",
@@ -27439,6 +28898,7 @@
         "team": "team.people_operations",
         "role": "role.deputy_general_manager",
         "title": "차장·인사운영 책임자",
+        "compendium_summary": "인사 정책과 고충 접수 절차를 담당하는 차장. 확인된 기록과 절차 범위를 먼저 짚는다.",
         "manager": null,
         "employment": "permanent",
         "presentation": "text_only",
@@ -27460,6 +28920,7 @@
         "team": "team.sales_planning",
         "role": "role.coordinator",
         "title": "계약직 사원",
+        "compendium_summary": "프로젝트 자료와 회의록, 제품 사양표를 챙기는 영업기획팀 사원.",
         "manager": "member.han_do_yoon",
         "employment": "fixed_term",
         "presentation": "illustrated",

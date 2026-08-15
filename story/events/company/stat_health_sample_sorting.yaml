@@ -19,6 +19,7 @@ requires:
 on_seen:
   effects:
   - {path: progress.memories, op: append_unique, value: cg.stat.health.min_kyung}
+  - {path: progress.memories, op: append_unique, value: profile.cha_min_kyung.tmi}
 on_missed: {effects: []}
 presentation:
   title: 샘플 검수 역할 분담

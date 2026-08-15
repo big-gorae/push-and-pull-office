@@ -12,6 +12,30 @@
     "role": {"type": "string"},
     "narrative_role": {"type": "string"},
     "summary": {"type": "string"},
+    "player_profile": {
+      "type": "object",
+      "required": ["order", "portrait_unlock_memory", "fields"],
+      "properties": {
+        "order": {"type": "integer", "minimum": 1},
+        "portrait_unlock_memory": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"},
+        "fields": {
+          "type": "object",
+          "required": ["name", "affiliation", "mbti", "hobby", "likes", "ideal_type", "residence", "tmi"],
+          "properties": {
+            "name": {"$ref": "#/$defs/profileField"},
+            "affiliation": {"$ref": "#/$defs/profileField"},
+            "mbti": {"$ref": "#/$defs/profileField"},
+            "hobby": {"$ref": "#/$defs/profileField"},
+            "likes": {"$ref": "#/$defs/profileField"},
+            "ideal_type": {"$ref": "#/$defs/profileField"},
+            "residence": {"$ref": "#/$defs/profileField"},
+            "tmi": {"$ref": "#/$defs/profileField"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "immutable_facts": {"type": "array", "items": {"type": "string"}},
     "voice": {"type": "object"},
     "visual": {"type": "object"},
@@ -57,6 +81,17 @@
     "emotion_rules": {"type": "array"},
     "reporting_rules": {"type": "array"},
     "relationships": {"type": "object"}
+  },
+  "$defs": {
+    "profileField": {
+      "type": "object",
+      "required": ["value", "unlock_memory"],
+      "properties": {
+        "value": {"type": "string", "minLength": 1},
+        "unlock_memory": {"type": "string", "pattern": "^[a-z][a-z0-9_.]*$"}
+      },
+      "additionalProperties": false
+    }
   },
   "additionalProperties": false
 }

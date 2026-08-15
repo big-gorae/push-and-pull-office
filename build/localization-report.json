@@ -1,20 +1,20 @@
 {
   "schema_version": 2,
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "87e45ca102264bd59ff199085430950929b06bb4db145395d99f7301f0dd2c45",
+  "source_sha256": "2ce4df5cd58ad028c5f9ae39c3bbf987509fc27257bc0ad4e76e3612a2edba33",
   "profile": "development",
   "default_locale": "ko",
   "supported_locales": [
     "ko",
     "en"
   ],
-  "total_entries": 757,
+  "total_entries": 807,
   "coverage": {
     "ko": {
-      "direct": 757,
-      "resolved": 757,
-      "translated": 757,
-      "total": 757,
+      "direct": 807,
+      "resolved": 807,
+      "translated": 807,
+      "total": 807,
       "ratio": 1.0,
       "fallback_used": [],
       "missing": [],
@@ -23,16 +23,16 @@
       "invalid_placeholders": [],
       "by_domain": {
         "ui": {
-          "direct": 165,
-          "total": 165
+          "direct": 180,
+          "total": 180
         },
         "campaign": {
           "direct": 14,
           "total": 14
         },
         "character": {
-          "direct": 43,
-          "total": 43
+          "direct": 67,
+          "total": 67
         },
         "event": {
           "direct": 90,
@@ -67,17 +67,17 @@
           "total": 12
         },
         "world": {
-          "direct": 7,
-          "total": 7
+          "direct": 18,
+          "total": 18
         }
       }
     },
     "en": {
-      "direct": 225,
-      "resolved": 757,
-      "translated": 225,
-      "total": 757,
-      "ratio": 0.2972,
+      "direct": 275,
+      "resolved": 807,
+      "translated": 275,
+      "total": 807,
+      "ratio": 0.3408,
       "fallback_used": [
         "campaign.main.acts.collisions.purpose",
         "campaign.main.acts.crisis.purpose",
@@ -1151,16 +1151,16 @@
       "invalid_placeholders": [],
       "by_domain": {
         "ui": {
-          "direct": 165,
-          "total": 165
+          "direct": 180,
+          "total": 180
         },
         "campaign": {
           "direct": 4,
           "total": 14
         },
         "character": {
-          "direct": 5,
-          "total": 43
+          "direct": 29,
+          "total": 67
         },
         "event": {
           "direct": 1,
@@ -1195,8 +1195,8 @@
           "total": 12
         },
         "world": {
-          "direct": 0,
-          "total": 7
+          "direct": 11,
+          "total": 18
         }
       }
     }

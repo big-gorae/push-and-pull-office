@@ -5,6 +5,18 @@ age: 28
 role: 브랜드마케팅팀 대리 겸 프로젝트 실무 책임자
 narrative_role: main_heroine
 summary: 직접 선을 긋고 후배를 보호하지만 과거 회사의 신고 축소를 목격해 기록을 우선하는 인물.
+player_profile:
+  order: 2
+  portrait_unlock_memory: profile.cha_min_kyung.name
+  fields:
+    name: {value: 차민경, unlock_memory: profile.cha_min_kyung.name}
+    affiliation: {value: 브랜드마케팅팀 · 대리 · 프로젝트 실무 리드, unlock_memory: profile.cha_min_kyung.affiliation}
+    mbti: {value: ESTJ, unlock_memory: profile.cha_min_kyung.mbti}
+    hobby: {value: 러닝 · 필라테스 · 외국어 공부 · 직무 공부, unlock_memory: profile.cha_min_kyung.hobby}
+    likes: {value: 일정이 정확한 약속 · 드라이한 와인 · 잘 정리된 문서, unlock_memory: profile.cha_min_kyung.likes}
+    ideal_type: {value: 자기관리 잘하는 사람, unlock_memory: profile.cha_min_kyung.ideal_type}
+    residence: {value: 회사 근처 오피스텔 · 새 입주민, unlock_memory: profile.cha_min_kyung.residence}
+    tmi: {value: 회의용 금속 볼펜은 같은 모델만 여러 자루 쓴다., unlock_memory: profile.cha_min_kyung.tmi}
 immutable_facts:
   - 한도윤의 접근을 고난도 밀당으로 즐기지 않는다.
   - 도전적인 표정은 유혹이 아니라 불쾌함과 사실 확인이다.

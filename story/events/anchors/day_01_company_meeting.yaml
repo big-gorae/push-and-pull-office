@@ -13,7 +13,14 @@ participants: [han_do_yoon, yoon_seo_a, cha_min_kyung, kang_yoo_jin]
 location: meeting_room
 scene: common.day_01_company_meeting
 requires: {events: [], conditions: []}
-on_seen: {effects: []}
+on_seen:
+  effects:
+  - {path: progress.memories, op: append_unique, value: profile.yoon_seo_a.name}
+  - {path: progress.memories, op: append_unique, value: profile.yoon_seo_a.affiliation}
+  - {path: progress.memories, op: append_unique, value: profile.cha_min_kyung.name}
+  - {path: progress.memories, op: append_unique, value: profile.cha_min_kyung.affiliation}
+  - {path: progress.memories, op: append_unique, value: profile.kang_yoo_jin.name}
+  - {path: progress.memories, op: append_unique, value: profile.kang_yoo_jin.affiliation}
 on_missed: {effects: []}
 presentation:
   title: 수요일 프로젝트 킥오프

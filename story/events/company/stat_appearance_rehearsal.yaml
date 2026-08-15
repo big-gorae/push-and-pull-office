@@ -19,6 +19,7 @@ requires:
 on_seen:
   effects:
   - {path: progress.memories, op: append_unique, value: cg.stat.appearance.yoo_jin}
+  - {path: progress.memories, op: append_unique, value: profile.kang_yoo_jin.tmi}
 on_missed: {effects: []}
 presentation:
   title: 라이브커머스 흰색 균형 점검

@@ -25,6 +25,52 @@ strings:
   characters.kang_yoo_jin.display_name: Kang Yoo-jin
   characters.han_do_yoon.display_name: Han Do-yoon
   characters.im_soo_yeon.display_name: Im Soo-yeon
+  characters.yoon_seo_a.player_profile.fields.name.value: Yoon Seo-a
+  characters.yoon_seo_a.player_profile.fields.affiliation.value: Sales Planning · Fixed-term Coordinator
+  characters.yoon_seo_a.player_profile.fields.mbti.value: INFP
+  characters.yoon_seo_a.player_profile.fields.hobby.value: Collecting cat stationery · visiting cat cafés across the country
+  characters.yoon_seo_a.player_profile.fields.likes.value: Matcha desserts · pretty stationery · walks after work
+  characters.yoon_seo_a.player_profile.fields.ideal_type.value: Someone bear-like and affectionate
+  characters.yoon_seo_a.player_profile.fields.residence.value: An officetel near work · long-time resident
+  characters.yoon_seo_a.player_profile.fields.tmi.value: She changes the cat stickers on her tumbler every season.
+  characters.cha_min_kyung.player_profile.fields.name.value: Cha Min-kyung
+  characters.cha_min_kyung.player_profile.fields.affiliation.value: Brand Marketing · Senior Associate · Project Lead
+  characters.cha_min_kyung.player_profile.fields.mbti.value: ESTJ
+  characters.cha_min_kyung.player_profile.fields.hobby.value: Running · Pilates · studying foreign languages · professional development
+  characters.cha_min_kyung.player_profile.fields.likes.value: Punctual plans · dry wine · well-organized documents
+  characters.cha_min_kyung.player_profile.fields.ideal_type.value: Someone who takes good care of themselves
+  characters.cha_min_kyung.player_profile.fields.residence.value: An officetel near work · new resident
+  characters.cha_min_kyung.player_profile.fields.tmi.value: She owns several copies of the same metal pen for meetings.
+  characters.kang_yoo_jin.player_profile.fields.name.value: Kang Yoo-jin
+  characters.kang_yoo_jin.player_profile.fields.affiliation.value: Brand Marketing · Experienced Senior Associate
+  characters.kang_yoo_jin.player_profile.fields.mbti.value: ENFP
+  characters.kang_yoo_jin.player_profile.fields.hobby.value: Exploring restaurants · cooking · hiking
+  characters.kang_yoo_jin.player_profile.fields.likes.value: Eating delicious food
+  characters.kang_yoo_jin.player_profile.fields.ideal_type.value: Someone with a good sense of humor
+  characters.kang_yoo_jin.player_profile.fields.residence.value: A neighborhood separate from the office area
+  characters.kang_yoo_jin.player_profile.fields.tmi.value: She almost never forgets the date and version in a filename.
+  world.members.member.han_do_yoon.compendium_summary: A Sales Planning manager handling key accounts, commercial terms,
+    and the project's client approval calendar.
+  world.members.member.oh_se_jin.compendium_summary: A Sales Planning deputy manager who defines product requirements
+    and approval boundaries before work begins.
+  world.members.member.park_jae_hyun.compendium_summary: The Sales Planning department head responsible for sales
+    approvals and major account escalations.
+  world.members.member.lee_hyeon_woo.compendium_summary: An assistant manager who maintains sales data and account
+    documents and quickly finds the right figures and files.
+  world.members.member.jeong_da_eun.compendium_summary: An assistant manager responsible for campaign calendars and
+    meeting records who catches missing owners and deadlines.
+  world.members.member.lee_su_hyeon.compendium_summary: A Brand Marketing deputy manager who approves budgets and
+    execution while clearly delegating hands-on decisions.
+  world.members.member.moon_ji_hye.compendium_summary: The Brand Marketing department head responsible for final
+    creative approval and brand consistency.
+  world.members.member.shin_hye_rim.compendium_summary: The People Operations lead who handles HR policy and grievances
+    by checking records and procedural scope first.
+  world.members.member.yoon_seo_a.compendium_summary: A Sales Planning coordinator responsible for project materials,
+    meeting notes, and product specification sheets.
+  world.members.member.cha_min_kyung.compendium_summary: The project lead coordinating the master schedule and marketing
+    strategy.
+  world.members.member.kang_yoo_jin.compendium_summary: An experienced designer responsible for production, asset
+    versions, and factual review of product copy.
   events.seo_a.email_request.presentation.title: Restricting How Work Is Delivered
   scenes.seo_a.email_request.title: Send It by Email
   scenes.seo_a.email_request.nodes.appearance_observation.line: "Manager Han, I need to tell you something."
@@ -70,6 +116,8 @@ strings:
   "menu.loadHint": "Open your memory album"
   "menu.gallery": "Gallery"
   "menu.galleryHint": "View collected artwork"
+  "menu.characters": "Characters"
+  "menu.charactersHint": "Profiles you have discovered"
   "menu.settings": "Settings"
   "menu.settingsHint": "Language and effects"
   "menu.backlog": "Backlog"
@@ -97,6 +145,19 @@ strings:
   "gallery.entry.humor_seo_a.description": "Yoon Seo-a artwork collected from a Humor stat bonus event."
   "gallery.entry.intelligence_min_kyung.title": "Cha Min-kyung — Evidence in Three Timestamps"
   "gallery.entry.intelligence_min_kyung.description": "Cha Min-kyung artwork collected from an Intelligence stat bonus event."
+  "character.title": "Characters"
+  "character.others": "Others"
+  "character.main": "Main Cast"
+  "character.progress": "Info {{unlocked}} / {{total}}"
+  "character.locked": "Not discovered yet"
+  "character.field.name": "Name"
+  "character.field.affiliation": "Team · Title"
+  "character.field.mbti": "MBTI"
+  "character.field.hobby": "Hobbies"
+  "character.field.likes": "Likes"
+  "character.field.ideal_type": "Ideal Type"
+  "character.field.residence": "Lives In"
+  "character.field.tmi": "Fun Fact"
   "locale.label": "Language"
   "locale.ko": "한국어"
   "locale.en": "English"

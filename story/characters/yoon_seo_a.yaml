@@ -5,6 +5,18 @@ age: 24
 role: 영업기획팀 계약직 사원
 narrative_role: main_heroine
 summary: 갈등 상황에서 얼어붙지만 안전한 관계에서는 유머가 많고 기획자로서의 꿈이 뚜렷한 인물.
+player_profile:
+  order: 1
+  portrait_unlock_memory: profile.yoon_seo_a.name
+  fields:
+    name: {value: 윤서아, unlock_memory: profile.yoon_seo_a.name}
+    affiliation: {value: 영업기획팀 · 계약직 사원, unlock_memory: profile.yoon_seo_a.affiliation}
+    mbti: {value: INFP, unlock_memory: profile.yoon_seo_a.mbti}
+    hobby: {value: 고양이 문구 수집 · 전국 고양이 카페 탐방, unlock_memory: profile.yoon_seo_a.hobby}
+    likes: {value: 말차 디저트 · 예쁜 문구 · 퇴근 후 산책, unlock_memory: profile.yoon_seo_a.likes}
+    ideal_type: {value: 곰같은 사람 · 다정한 사람, unlock_memory: profile.yoon_seo_a.ideal_type}
+    residence: {value: 회사 근처 오피스텔 · 기존 입주민, unlock_memory: profile.yoon_seo_a.residence}
+    tmi: {value: 텀블러의 고양이 스티커를 계절마다 바꾼다., unlock_memory: profile.yoon_seo_a.tmi}
 immutable_facts:
   - 한도윤에게 연애 감정을 느끼지 않는다.
   - 사회적 미소와 짧은 대답은 동결 반응이지 호감 신호가 아니다.

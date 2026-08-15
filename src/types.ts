@@ -318,6 +318,14 @@ export type Character = {
   role: string;
   narrative_role: string;
   summary: string;
+  player_profile?: {
+    order: number;
+    portrait_unlock_memory: string;
+    fields: Record<string, {
+      value: string;
+      unlock_memory: string;
+    }>;
+  };
   immutable_facts: string[];
   voice: {
     register: string;

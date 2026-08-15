@@ -3515,6 +3515,18 @@ def collect_localizable_entries(project: StoryProject) -> Dict[str, Dict[str, An
         source = character.get("_source", character_id)
         for field in ("display_name", "role", "summary"):
             add(f"{base}.{field}", character.get(field), domain="character", kind="character", item_id=character_id, source=source, field_path=field, context={"characterId": character_id}, max_length=240)
+        for field_id, field in character.get("player_profile", {}).get("fields", {}).items():
+            add(
+                f"{base}.player_profile.fields.{field_id}.value",
+                field.get("value"),
+                domain="character",
+                kind="character",
+                item_id=character_id,
+                source=source,
+                field_path=f"player_profile.fields.{field_id}.value",
+                context={"characterId": character_id, "profileFieldId": field_id},
+                max_length=160,
+            )
         for expression_id, expression in character.get("expressions", {}).items():
             add(f"{base}.expressions.{expression_id}.description", expression.get("description"), domain="character", kind="character", item_id=character_id, source=source, field_path=f"expressions.{expression_id}.description", context={"characterId": character_id}, max_length=240)
     for member_id, member in project.world.items():
@@ -3532,6 +3544,17 @@ def collect_localizable_entries(project: StoryProject) -> Dict[str, Dict[str, An
                 context={"memberId": member_id, "presentation": "text_only"},
                 max_length=80,
             )
+        add(
+            f"world.members.{member_id}.compendium_summary",
+            member.get("compendium_summary"),
+            domain="world",
+            kind="member",
+            item_id=member_id,
+            source=member.get("_source", member_id),
+            field_path="compendium_summary",
+            context={"memberId": member_id, "presentation": member.get("presentation")},
+            max_length=180,
+        )
     for event_id, event in project.events.items():
         base = f"events.{event_id}"
         source = event.get("_source", event_id)

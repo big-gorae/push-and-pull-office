@@ -15,7 +15,11 @@ scene: common.day_02_practical_meeting
 requires:
   events: [anchor.day_01_officetel_seo_a_reveal]
   conditions: []
-on_seen: {effects: []}
+on_seen:
+  effects:
+  - {path: progress.memories, op: append_unique, value: profile.yoon_seo_a.mbti}
+  - {path: progress.memories, op: append_unique, value: profile.cha_min_kyung.mbti}
+  - {path: progress.memories, op: append_unique, value: profile.kang_yoo_jin.mbti}
 on_missed: {effects: []}
 presentation:
   title: 발표 파일 실수를 수습한 회의

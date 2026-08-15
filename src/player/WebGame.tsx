@@ -134,7 +134,7 @@ const assetModules = import.meta.glob([
 }) as Record<string, string>;
 
 type Screen = "title" | "new-game" | "game";
-type Overlay = "backlog" | "save" | "load" | "gallery" | "settings" | "menu" | "text-edit" | null;
+type Overlay = "backlog" | "save" | "load" | "gallery" | "characters" | "settings" | "menu" | "text-edit" | null;
 
 function assetUrl(path?: string): string | undefined {
   if (!path) return undefined;
@@ -649,12 +649,117 @@ function GalleryPanel({ profile, i18n }: { profile: PlayerProfile; i18n: GameLoc
   </div>;
 }
 
+const CHARACTER_PROFILE_FIELD_IDS = [
+  "name",
+  "affiliation",
+  "mbti",
+  "hobby",
+  "likes",
+  "ideal_type",
+  "residence",
+  "tmi",
+] as const;
+
+type CharacterProfileFieldId = typeof CHARACTER_PROFILE_FIELD_IDS[number];
+
+export function characterProfileFieldUnlocked(unlockMemory: string, profile: PlayerProfile): boolean {
+  return profile.memories.includes(unlockMemory);
+}
+
+export function primaryCharacterProfileIds(): string[] {
+  return Object.values(runtime.characters)
+    .filter((character) => character.player_profile)
+    .sort((left, right) => left.player_profile!.order - right.player_profile!.order)
+    .map((character) => character.id);
+}
+
+function CharacterPanel({ profile, i18n }: { profile: PlayerProfile; i18n: GameLocalizer }) {
+  const profiles = Object.values(runtime.characters)
+    .filter((character) => character.player_profile)
+    .sort((left, right) => left.player_profile!.order - right.player_profile!.order);
+  const [showOthers, setShowOthers] = useState(false);
+  const [selectedId, setSelectedId] = useState(() => profiles[0]?.id || "");
+  const selected = profiles.find((character) => character.id === selectedId) || profiles[0];
+  const otherMembers = (runtime.world?.by_kind.member || [])
+    .map((memberId) => runtime.world?.entities[memberId])
+    .filter((member): member is NonNullable<typeof member> => Boolean(
+      member && !profiles.some((character) => character.id === member.story_character),
+    ))
+    .sort((left, right) => {
+      if (left.story_character === "han_do_yoon") return -1;
+      if (right.story_character === "han_do_yoon") return 1;
+      return String(left.display_name || left.id).localeCompare(String(right.display_name || right.id), i18n.locale);
+    });
+
+  return <div className="vn-characters">
+    <nav className="vn-character-switch" aria-label={i18n.ui("character.title")}>
+      <button type="button" className={!showOthers ? "active" : ""} onClick={() => setShowOthers(false)}>{i18n.ui("character.main")}</button>
+      <button type="button" className={showOthers ? "active" : ""} onClick={() => setShowOthers(true)}>{i18n.ui("character.others")}</button>
+    </nav>
+    {showOthers ? <div className="vn-coworker-grid">
+      {otherMembers.map((member) => {
+        const sourceName = String(member.display_name || member.id);
+        const name = member.story_character
+          ? i18n.characterName(member.story_character)
+          : i18n.story(`world.members.${member.id}.display_name`, sourceName);
+        const summarySource = typeof member.compendium_summary === "string" ? member.compendium_summary : "";
+        const summary = i18n.story(`world.members.${member.id}.compendium_summary`, summarySource);
+        return <article key={member.id}>
+          <i aria-hidden="true">{name.slice(0, 1)}</i>
+          <div><h3>{name}</h3><strong>{String(member.title || "")}</strong><p>{summary}</p></div>
+        </article>;
+      })}
+    </div> : selected && <>
+      <div className="vn-character-lineup">
+        {profiles.map((character) => {
+          const characterProfile = character.player_profile!;
+          const portraitUnlocked = profile.memories.includes(characterProfile.portrait_unlock_memory);
+          const unlocked = Object.values(characterProfile.fields)
+            .filter((field) => characterProfileFieldUnlocked(field.unlock_memory, profile)).length;
+          return <button
+            type="button"
+            className={selected.id === character.id ? "active" : ""}
+            onClick={() => setSelectedId(character.id)}
+            key={character.id}
+          >
+            <span className={`vn-character-lineup-art ${portraitUnlocked ? "revealed" : "silhouette"}`}>
+              <img src={assetUrl(character.visual.concept_art)} alt="" />
+            </span>
+            <strong>{i18n.characterName(character.id)}</strong>
+            <small>{i18n.ui("character.progress", { unlocked, total: CHARACTER_PROFILE_FIELD_IDS.length })}</small>
+          </button>;
+        })}
+      </div>
+      <section className="vn-character-profile">
+        <div className={`vn-character-portrait ${profile.memories.includes(selected.player_profile!.portrait_unlock_memory) ? "revealed" : "silhouette"}`}>
+          <img src={assetUrl(selected.visual.concept_art)} alt="" />
+          <span>{String(selected.player_profile!.order).padStart(2, "0")}</span>
+        </div>
+        <dl>
+          {CHARACTER_PROFILE_FIELD_IDS.map((fieldId) => {
+            const field = selected.player_profile!.fields[fieldId];
+            const unlocked = characterProfileFieldUnlocked(field.unlock_memory, profile);
+            const value = unlocked
+              ? i18n.story(`characters.${selected.id}.player_profile.fields.${fieldId}.value`, field.value)
+              : i18n.ui("character.locked");
+            return <div className={unlocked ? "unlocked" : "locked"} key={fieldId}>
+              <dt>{i18n.ui(`character.field.${fieldId}` as `character.field.${CharacterProfileFieldId}`)}</dt>
+              <dd>{value}</dd>
+            </div>;
+          })}
+        </dl>
+      </section>
+    </>}
+  </div>;
+}
+
 function TitleScreen({
   autosave,
   onContinue,
   onNewGame,
   onLoad,
   onGallery,
+  onCharacters,
   onSettings,
   i18n,
   onLocale,
@@ -664,6 +769,7 @@ function TitleScreen({
   onNewGame: () => void;
   onLoad: () => void;
   onGallery: () => void;
+  onCharacters: () => void;
   onSettings: () => void;
   i18n: GameLocalizer;
   onLocale: (locale: GameLocale) => void;
@@ -694,6 +800,7 @@ function TitleScreen({
         <button type="button" data-icon="✦" className={!autosave ? "primary" : ""} onClick={onNewGame}><span>{i18n.ui("menu.newGame")}</span></button>
         <button type="button" data-icon="♡" onClick={onLoad}><span>{i18n.ui("menu.load")}</span></button>
         <button type="button" data-icon="▣" onClick={onGallery}><span>{i18n.ui("menu.gallery")}</span><small>{i18n.ui("menu.galleryHint")}</small></button>
+        <button type="button" data-icon="♟" onClick={onCharacters}><span>{i18n.ui("menu.characters")}</span><small>{i18n.ui("menu.charactersHint")}</small></button>
         <button type="button" data-icon="⚙" onClick={onSettings}><span>{i18n.ui("menu.settings")}</span></button>
       </nav>
       <footer><span>{i18n.ui("app.brand")}</span><span>{i18n.ui("app.webPlayer")}</span></footer>
@@ -1675,6 +1782,7 @@ export default function WebGame() {
     {overlay === "save" && <Modal title={i18n.ui("save.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><SaveGrid mode="save" session={session} onLoad={loadSession} onSaved={() => notify(i18n.ui("save.done"))} i18n={i18n} /></Modal>}
     {overlay === "load" && <Modal title={i18n.ui("load.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><SaveGrid mode="load" onLoad={loadSession} onSaved={() => undefined} i18n={i18n} /></Modal>}
     {overlay === "gallery" && <Modal title={i18n.ui("gallery.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><GalleryPanel profile={readProfile()} i18n={i18n} /></Modal>}
+    {overlay === "characters" && <Modal title={i18n.ui("character.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><CharacterPanel profile={readProfile()} i18n={i18n} /></Modal>}
     {overlay === "settings" && <Modal title={i18n.ui("settings.title")} onClose={() => setOverlay(null)} i18n={i18n}><SettingsPanel value={settings} onChange={setSettings} i18n={i18n} refreshingApp={refreshingApp} onForceRefresh={projectRoot ? undefined : forceRefreshApp} /></Modal>}
     {overlay === "menu" && <Modal title={i18n.ui("menu.game")} onClose={() => setOverlay(null)} i18n={i18n}>
       <div className="vn-pause-menu">
@@ -1683,6 +1791,7 @@ export default function WebGame() {
         <button type="button" onClick={() => setOverlay("save")}>{i18n.ui("save.title")}</button>
         <button type="button" onClick={() => setOverlay("load")}>{i18n.ui("load.title")}</button>
         <button type="button" onClick={() => setOverlay("gallery")}>{i18n.ui("menu.gallery")}</button>
+        <button type="button" onClick={() => setOverlay("characters")}>{i18n.ui("menu.characters")}</button>
         <button type="button" onClick={() => setOverlay("settings")}>{i18n.ui("settings.title")}</button>
         <button type="button" className="danger" onClick={() => { setOverlay(null); setScreen("title"); setSession(undefined); }}>{i18n.ui("menu.title")}</button>
       </div>
@@ -1705,9 +1814,10 @@ export default function WebGame() {
 
   if (screen === "title") {
     return <div className={settings.reducedMotion ? "vn-reduced-motion" : ""}>
-      <TitleScreen autosave={autosave} onContinue={() => autosave && loadSession(autosave.session)} onNewGame={() => setScreen("new-game")} onLoad={() => setOverlay("load")} onGallery={() => setOverlay("gallery")} onSettings={() => setOverlay("settings")} i18n={i18n} onLocale={(locale) => setSettings((value) => ({ ...value, locale }))} />
+      <TitleScreen autosave={autosave} onContinue={() => autosave && loadSession(autosave.session)} onNewGame={() => setScreen("new-game")} onLoad={() => setOverlay("load")} onGallery={() => setOverlay("gallery")} onCharacters={() => setOverlay("characters")} onSettings={() => setOverlay("settings")} i18n={i18n} onLocale={(locale) => setSettings((value) => ({ ...value, locale }))} />
       {overlay === "load" && <Modal title={i18n.ui("load.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><SaveGrid mode="load" onLoad={loadSession} onSaved={() => undefined} i18n={i18n} /></Modal>}
       {overlay === "gallery" && <Modal title={i18n.ui("gallery.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><GalleryPanel profile={readProfile()} i18n={i18n} /></Modal>}
+      {overlay === "characters" && <Modal title={i18n.ui("character.title")} onClose={() => setOverlay(null)} i18n={i18n} wide><CharacterPanel profile={readProfile()} i18n={i18n} /></Modal>}
       {overlay === "settings" && <Modal title={i18n.ui("settings.title")} onClose={() => setOverlay(null)} i18n={i18n}><SettingsPanel value={settings} onChange={setSettings} i18n={i18n} refreshingApp={refreshingApp} onForceRefresh={projectRoot ? undefined : forceRefreshApp} /></Modal>}
       {toast && <div className="vn-toast">{toast}</div>}
     </div>;
@@ -1717,7 +1827,7 @@ export default function WebGame() {
     <NewGameScreen onStart={startCampaign} onBack={() => setScreen("title")} i18n={i18n} />
     {toast && <div className="vn-toast">{toast}</div>}
   </div>;
-  if (!session) return <TitleScreen autosave={autosave} onContinue={() => autosave && loadSession(autosave.session)} onNewGame={() => setScreen("new-game")} onLoad={() => setOverlay("load")} onGallery={() => setOverlay("gallery")} onSettings={() => setOverlay("settings")} i18n={i18n} onLocale={(locale) => setSettings((value) => ({ ...value, locale }))} />;
+  if (!session) return <TitleScreen autosave={autosave} onContinue={() => autosave && loadSession(autosave.session)} onNewGame={() => setScreen("new-game")} onLoad={() => setOverlay("load")} onGallery={() => setOverlay("gallery")} onCharacters={() => setOverlay("characters")} onSettings={() => setOverlay("settings")} i18n={i18n} onLocale={(locale) => setSettings((value) => ({ ...value, locale }))} />;
 
   if (dayTransition) {
     return <div className={settings.reducedMotion ? "vn-reduced-motion" : ""}>

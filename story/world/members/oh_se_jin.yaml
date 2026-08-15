@@ -7,6 +7,7 @@ display_name: 오차장
 team: team.sales_planning
 role: role.deputy_general_manager
 title: 차장
+compendium_summary: 영업기획팀의 제품 요건과 승인 범위를 확정하는 차장. 실무가 움직이기 전 결정선을 분명히 한다.
 manager: member.park_jae_hyun
 employment: permanent
 presentation: text_only

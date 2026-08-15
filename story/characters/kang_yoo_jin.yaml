@@ -5,6 +5,18 @@ age: 29
 role: 브랜드마케팅팀 경력직 대리
 narrative_role: supporting_witness_candidate
 summary: 스토리 모드에서 반복 등장하지만 공략할 수 없으며, 사실관계를 확인하고 이상 징후를 알아차리는 조연. 기본 결말의 해결사나 구원자는 아니며 생존 모드의 세부 역할은 미확정이다.
+player_profile:
+  order: 3
+  portrait_unlock_memory: profile.kang_yoo_jin.name
+  fields:
+    name: {value: 강유진, unlock_memory: profile.kang_yoo_jin.name}
+    affiliation: {value: 브랜드마케팅팀 · 경력직 대리, unlock_memory: profile.kang_yoo_jin.affiliation}
+    mbti: {value: ENFP, unlock_memory: profile.kang_yoo_jin.mbti}
+    hobby: {value: 맛집 탐방 · 요리 · 등산, unlock_memory: profile.kang_yoo_jin.hobby}
+    likes: {value: 맛있는 음식 먹기, unlock_memory: profile.kang_yoo_jin.likes}
+    ideal_type: {value: 유머러스한 사람, unlock_memory: profile.kang_yoo_jin.ideal_type}
+    residence: {value: 회사와 분리된 외부 생활권, unlock_memory: profile.kang_yoo_jin.residence}
+    tmi: {value: 파일명에 날짜와 버전을 빠뜨린 적이 거의 없다., unlock_memory: profile.kang_yoo_jin.tmi}
 immutable_facts:
   - 스토리 모드에 반복 등장하지만 공략 루트는 없다.
   - 스토리 모드의 기본 결말에서 증거를 완성하거나 피해자를 구조해 파국을 막는 해결사로 등장하지 않는다.

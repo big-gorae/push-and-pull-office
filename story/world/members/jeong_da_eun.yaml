@@ -7,6 +7,7 @@ display_name: 정주임
 team: team.marketing
 role: role.assistant_manager
 title: 주임
+compendium_summary: 캠페인 일정표와 회의 기록을 맡은 주임. 마감과 담당자 누락을 그냥 지나치지 않는다.
 manager: member.lee_su_hyeon
 employment: permanent
 presentation: text_only

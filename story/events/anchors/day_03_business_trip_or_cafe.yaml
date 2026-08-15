@@ -15,7 +15,10 @@ scene: common.day_03_business_trip_or_cafe
 requires:
   events: [anchor.day_02_project_dinner]
   conditions: []
-on_seen: {effects: []}
+on_seen:
+  effects:
+  - {path: progress.memories, op: append_unique, value: profile.yoon_seo_a.hobby}
+  - {path: progress.memories, op: append_unique, value: profile.cha_min_kyung.hobby}
 on_missed: {effects: []}
 presentation:
   title: 업무 외출과 짧은 휴식

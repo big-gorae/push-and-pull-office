@@ -19,6 +19,7 @@ requires:
 on_seen:
   effects:
   - {path: progress.memories, op: append_unique, value: cg.stat.humor.seo_a}
+  - {path: progress.memories, op: append_unique, value: profile.yoon_seo_a.tmi}
 on_missed: {effects: []}
 presentation:
   title: 홈카페 샘플 시음표 작성

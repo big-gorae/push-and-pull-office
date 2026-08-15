@@ -20,6 +20,7 @@ requires:
 on_seen:
   effects:
   - {path: progress.flags.story_mode.target, op: set, value: yoon_seo_a}
+  - {path: progress.memories, op: append_unique, value: profile.yoon_seo_a.ideal_type}
 on_missed: {effects: []}
 presentation:
   title: 잠시 경계를 푼 인사

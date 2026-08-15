@@ -15,7 +15,9 @@ scene: common.day_01_officetel_seo_a_reveal
 requires:
   events: [anchor.day_01_parent_pressure]
   conditions: []
-on_seen: {effects: []}
+on_seen:
+  effects:
+  - {path: progress.memories, op: append_unique, value: profile.yoon_seo_a.residence}
 on_missed: {effects: []}
 presentation:
   title: 같은 건물의 직장 동료

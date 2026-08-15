@@ -7,6 +7,7 @@ display_name: 이주임
 team: team.sales_planning
 role: role.assistant_manager
 title: 주임
+compendium_summary: 영업 자료와 거래처 문서를 관리하는 주임. 필요한 수치와 파일 위치를 빠르게 찾아낸다.
 manager: member.han_do_yoon
 employment: permanent
 presentation: text_only
