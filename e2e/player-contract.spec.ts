@@ -163,7 +163,7 @@ test("game flow hides authoring UI and debug restores controlled inspection", as
   const persistedLayer = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) || "null")?.session?.viewLayer, AUTOSAVE_KEY);
   expect(persistedLayer).toBeUndefined();
 
-  await expect(page.locator(".vn-nameplate")).toHaveCount(0);
+  await expect(page.locator(".vn-nameplate")).toHaveText("한도윤");
   await expect(page.locator(".vn-character")).toHaveCount(0);
 
   let seoAReached = false;

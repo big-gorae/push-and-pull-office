@@ -83,12 +83,13 @@
 77. 스탯 조건 추가 사건은 `availability: player`인 `heroine` 또는 `company` 사건으로 작성하며, `on_seen.effects`에서 등록된 갤러리 원화의 `unlock_memory`를 `progress.memories`에 `append_unique`한다. 놓쳐도 효과나 대체 사건을 발생시키지 않으며, 스탯이 낮다는 이유로 본편 사건·엔딩·경계 존중 선택에 손해를 주지 않는다.
 78. 수집 원화는 `manifest.gallery.entries`에 안정 ID, UI 제목·설명 키, 실제 `assets/` 경로와 고유 `unlock_memory`를 등록한다. 스탯 사건 원화는 사건 조건과 같은 `source_stat`을 선언하고 프로필의 `memories`를 통해 회차를 넘어 해금 상태를 유지한다.
 79. 런타임은 `cast`나 화자만으로 인물 원화를 자동 배치하지 않는다. 화면에 보이는 모든 인물은 단일 `stage`에 명시하며, 새 대사에서 한도윤이 아닌 일러스트 화자를 선택하면 편집기가 중앙 cue를 기본으로 기록한다. 한도윤 원화는 `ending.*`의 `narration` 노드가 `protagonist_art_reveal`을 선언하면서 `stage`에 직접 배치한 경우에만 공개한다.
+80. 캐릭터의 `voice.baseline_reference`가 선언되어 있으면 대사를 쓰기 전에 해당 기준본을 읽는다. `voice.reference_lines`는 어휘·문장 길이·반응 순서의 골든 샘플로 사용하되, 회사·직급·일정 같은 사실은 항상 `story/world/`를 우선한다.
 
 ## 장면 작성 절차
 
 1. `python3 tools/story_harness.py context --scene <ID> --from-route <ROUTE> --choose <PREVIOUS_SCENE>=<OPTION>`으로 해당 분기 상태가 반영된 컨텍스트를 생성한다. 진입 장면이라 이전 선택이 없을 때만 `--from-route`를 생략한다.
 2. 회사 장면이면 컨텍스트의 `world_context` 안에 포함된 참여자·소속·권한을 먼저 확인한다.
-3. 장면의 목적을 한 문장으로 정한다.
+3. 등장인물의 `voice.baseline_reference`와 `voice.reference_lines`를 확인하고 장면의 목적을 한 문장으로 정한다.
 4. 반응 상대의 `interaction_preferences`, 현재 상황 예외와 명시적 요청·거절을 확인하고, 반응 대상과 밀당 계산 인물을 각각 정한다.
 5. 필요한 상태 읽기·쓰기를 먼저 선언한다.
 6. 실제 사건, 발화, 감정과 연출을 단일 노드에 작성한다.

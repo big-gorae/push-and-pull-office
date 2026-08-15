@@ -25,7 +25,9 @@ const runtime = runtimeJson as unknown as Runtime;
 
 function finishCurrentScene(value: PlayerSession): PlayerSession {
   let session = value;
-  for (let index = 0; index < 100 && session.phase === "scene"; index += 1) {
+  const scene = session.sceneId ? runtime.scenes[session.sceneId] : undefined;
+  const maxSteps = scene ? Object.keys(scene.nodes).length + 1 : 1;
+  for (let index = 0; index < maxSteps && session.phase === "scene"; index += 1) {
     const node = currentNode(runtime, session) as StoryNode | undefined;
     if (!node) throw new Error(`Missing node at ${session.sceneId}:${session.nodeId}`);
     if (node.kind === "choice") {
@@ -36,6 +38,7 @@ function finishCurrentScene(value: PlayerSession): PlayerSession {
       session = advanceSession(runtime, session);
     }
   }
+  if (session.phase === "scene") throw new Error(`Scene did not finish within ${maxSteps} steps: ${session.sceneId}`);
   return session;
 }
 

@@ -37,7 +37,30 @@
       "additionalProperties": false
     },
     "immutable_facts": {"type": "array", "items": {"type": "string"}},
-    "voice": {"type": "object"},
+    "voice": {
+      "type": "object",
+      "required": ["register", "habits"],
+      "properties": {
+        "register": {"type": "string", "minLength": 1},
+        "habits": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "forbidden": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "safe_context": {"type": "string", "minLength": 1},
+        "baseline_reference": {"type": "string", "pattern": "^docs/[a-z0-9_./-]+\\.md$"},
+        "reference_lines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["context", "line"],
+            "properties": {
+              "context": {"type": "string", "minLength": 1},
+              "line": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": true
+    },
     "visual": {"type": "object"},
     "interaction_preferences": {
       "type": "object",

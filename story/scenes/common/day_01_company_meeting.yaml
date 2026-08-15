@@ -8,204 +8,950 @@ location: meeting_room
 time: morning
 purpose: 프로젝트 킥오프에서 서아·민경·유진의 업무 태도와 한도윤의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.
 cast:
-  - han_do_yoon
-  - yoon_seo_a
-  - cha_min_kyung
-  - kang_yoo_jin
+- han_do_yoon
+- yoon_seo_a
+- cha_min_kyung
+- kang_yoo_jin
 world_context:
   company: company.dawon_living
   project: project.harudam_spring_campaign
   interaction: meeting.cross_function_kickoff
   participants:
-    - member.han_do_yoon
-    - member.yoon_seo_a
-    - member.cha_min_kyung
-    - member.kang_yoo_jin
-    - member.oh_se_jin
-    - member.jeong_da_eun
-    - member.moon_ji_hye
+  - member.han_do_yoon
+  - member.yoon_seo_a
+  - member.cha_min_kyung
+  - member.kang_yoo_jin
+  - member.oh_se_jin
+  - member.jeong_da_eun
+  - member.moon_ji_hye
 entry_conditions: []
 state_contract:
   reads: []
   writes: []
-start_node: arrival
+start_node: do_yoon_project_day
 nodes:
-  - id: arrival
-    kind: narration
-    line: "(수요일 오전, 새 프로젝트의 첫 회의가 시작됐다. 과연 어떤 사람들과 일하게 될까나..)"
-    next: jeong_da_eun_opening
+- id: do_yoon_project_day
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: []
+  line: (드디어 새로운 프로젝트 시작 날이다.)
+  next: do_yoon_promotion_goal
 
-  - id: jeong_da_eun_opening
-    kind: dialogue
-    speaker: member.jeong_da_eun
-    stage: []
-    line: "오 차장님과 문 부장님까지 오셨으니, 시작하겠습니다"
-    next: oh_se_jin_scope
+- id: do_yoon_promotion_goal
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: []
+  line: (이번에는 정말 잘해서 부장님께 사랑받고 말 거야!!)
+  next: seo_a_calls
 
-  - id: oh_se_jin_scope
-    kind: dialogue
-    speaker: member.jeong_da_eun
-    stage: []
-    line: "오전에 공유드린 “봄 맞이 홈카페 라인\" 문서 5 페이지 부터 보시면 됩니다"
-    next: seo_a_materials
-  - id: seo_a_materials
-    kind: dialogue
-    speaker: yoon_seo_a
-    stage:
-      - artwork: default
-        character: yoon_seo_a
-        position: center
-        visual_id: character.yoon_seo_a
-    expression: actual_social_smile
-    line: "과장님, 이걸로 먼저 보세요. 저는 화면으로 봐도 돼요."
-    next: do_yoon_thanks
+- id: seo_a_calls
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  expression: actual_social_smile
+  line: 저기.. 한 과장님?
+  next: do_yoon_startled
 
-  - id: do_yoon_thanks
-    kind: dialogue
-    speaker: han_do_yoon
-    stage: []
-    expression: actual_waiting_smile
-    line: "고마워요, 윤서아 씨. 한 부가 부족한 걸 바로 챙겨 줬네요. 저는 이걸로 보고, 추가 출력은 회의 끝나고 해도 됩니다."
-    next: seo_a_introduction
+- id: do_yoon_startled
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (깜짝이야! 누구지?)
+  next: seo_a_greeting
 
-  - id: seo_a_introduction
-    kind: dialogue
-    speaker: yoon_seo_a
-    stage:
-      - artwork: default
-        character: yoon_seo_a
-        position: center
-        visual_id: character.yoon_seo_a
-    expression: actual_social_smile
-    line: "아, 네. 감사합니다. 지금은 회의에 집중하고, 빠진 자료는 끝나고 제가 확인할게요."
-    next: min_kyung_question
+- id: seo_a_greeting
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  expression: actual_social_smile
+  line: 안녕하세요! 저는 윤서아 사원입니다!!
+  next: do_yoon_heard
 
-  - id: min_kyung_question
-    kind: dialogue
-    speaker: cha_min_kyung
-    stage:
-      - artwork: default
-        character: cha_min_kyung
-        position: center
-        visual_id: character.cha_min_kyung
-    expression: actual_skeptical
-    line: "한 과장님, 백화점 바이어 1차 승인까지 사흘로 잡혀 있습니다. 지난 분기 기준으로 가능한 일정입니까?"
-    next: do_yoon_answer
+- id: do_yoon_heard
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: 아! 말씀 들었습니다..
+  next: do_yoon_contract_intro
 
-  - id: do_yoon_answer
-    kind: dialogue
-    speaker: han_do_yoon
-    stage: []
-    expression: actual_waiting_smile
-    line: "이번에는 사전 검토를 먼저 받았습니다. 회신 기한도 어제 메일로 확인했고요."
-    next: min_kyung_accepts
+- id: do_yoon_contract_intro
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: 아주 꼼꼼한 계약직 사원이 들어왔다고..
+  next: seo_a_humble
 
-  - id: min_kyung_accepts
-    kind: dialogue
-    speaker: cha_min_kyung
-    stage:
-      - artwork: default
-        character: cha_min_kyung
-        position: center
-        visual_id: character.cha_min_kyung
-    expression: actual_skeptical
-    line: "그 조건까지 확인하셨다면 괜찮겠네요. 계속하시죠."
-    next: yoo_jin_correction
+- id: seo_a_humble
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  expression: actual_social_smile
+  line: 과찬이십니다..!
+  next: do_yoon_newcomer_impression
 
-  - id: yoo_jin_correction
-    kind: dialogue
-    speaker: kang_yoo_jin
-    stage:
-      - artwork: default
-        character: kang_yoo_jin
-        position: center
-        visual_id: character.kang_yoo_jin
-    expression: actual_fact_check
-    line: "한 과장님, 홈카페 키 비주얼은 네 종이 아니라 세 종입니다. 최종안 한 종과 팝업·인플루언서용 변형 두 종입니다."
-    next: do_yoon_accepts_correction
+- id: do_yoon_newcomer_impression
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (사회 초년생의 열정과 조심스러움이 느껴진다.)
+  next: do_yoon_competition
 
-  - id: do_yoon_accepts_correction
-    kind: dialogue
-    speaker: han_do_yoon
-    stage: []
-    expression: actual_waiting_smile
-    line: "확인했습니다. 회의록에는 세 종으로 정리하죠. 수정된 시각도 같이 남겨 주세요."
-    next: yoo_jin_timestamp
+- id: do_yoon_competition
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (높은 경쟁률을 뚫고 새로 들어온 신입 계약직!)
+  next: do_yoon_seo_a_beauty
 
-  - id: yoo_jin_timestamp
-    kind: dialogue
-    speaker: kang_yoo_jin
-    stage:
-      - artwork: default
-        character: kang_yoo_jin
-        position: center
-        visual_id: character.kang_yoo_jin
-    expression: actual_procedural
-    line: "오늘 오전 8시 42분에 수정했습니다. 공유 문서에도 같은 내용으로 반영했습니다."
-    next: moon_ji_hye_capacity
+- id: do_yoon_seo_a_beauty
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (그나저나.. 이렇게까지 미녀라고는 못 들었는데..!)
+  next: do_yoon_face_hire
 
-  - id: moon_ji_hye_capacity
-    kind: dialogue
-    speaker: member.moon_ji_hye
-    stage: []
-    line: "브랜드마케팅팀은 세 종 기준으로 제작 시간을 확보했습니다. 제품 사양과 문구가 확정되면 강유진 대리에게 넘겨 주세요."
-    next: assignments
-  - id: assignments
-    kind: narration
-    line: "참석자들은 바이어 승인, 제품 자료, 캠페인 일정과 제작 파일을 담당별로 나눴다."
-    next: seo_a_closing
+- id: do_yoon_face_hire
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (얼굴로 뽑힌 거 아니야..?)
+  next: do_yoon_idol
 
-  - id: seo_a_closing
-    kind: dialogue
-    speaker: yoon_seo_a
-    stage:
-      - artwork: default
-        character: yoon_seo_a
-        position: center
-        visual_id: character.yoon_seo_a
-    expression: actual_social_smile
-    line: "회의록 초안은 점심 전까지 공유하겠습니다. 빠진 자료도 같이 올려둘게요."
-    next: min_kyung_closing
+- id: do_yoon_idol
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (이 정도면 아이돌 카루나짱보다도 예쁘잖아!)
+  next: seo_a_revised_material
 
-  - id: min_kyung_closing
-    kind: dialogue
-    speaker: cha_min_kyung
-    stage:
-      - artwork: default
-        character: cha_min_kyung
-        position: center
-        visual_id: character.cha_min_kyung
-    expression: actual_skeptical
-    line: "승인 회신이 오면 일정표부터 다시 맞추겠습니다. 확인 메일은 저도 참조해 주세요."
-    next: yoo_jin_closing
+- id: seo_a_revised_material
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  expression: actual_social_smile
+  line: 다름이 아니라 보고 계신 자료는 수정본이 한 번 더 왔습니다.. 페이지 순서도 조금 바뀌었고요..
+  next: do_yoon_reading
 
-  - id: yoo_jin_closing
-    kind: dialogue
-    speaker: kang_yoo_jin
-    stage:
-      - artwork: default
-        character: kang_yoo_jin
-        position: center
-        visual_id: character.kang_yoo_jin
-    expression: actual_procedural
-    line: "수치가 바뀌면 브랜드마케팅팀 제작 파일에도 같은 버전으로 반영해 주세요. 이전 파일은 사용하지 않겠습니다."
-    next: do_yoon_closing
+- id: do_yoon_reading
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: 정말요? 열심히 읽고 있었는데..
+  next: seo_a_offers_copy
 
-  - id: do_yoon_closing
-    kind: dialogue
-    speaker: han_do_yoon
-    stage: []
-    expression: actual_waiting_smile
-    line: "좋습니다. 첫 주는 일정부터 맞추죠. 불편한 건 부담 갖지 말고 바로 말해요."
-    next: after_meeting
+- id: seo_a_offers_copy
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  expression: actual_social_smile
+  line: 일단 제 출력본으로 보시겠어요? 저는 화면으로 봐도 괜찮아서……
+  next: do_yoon_thanks
 
-  - id: after_meeting
-    kind: narration
-    line: "회의가 끝나자 세 사람은 각자 맡은 업무로 돌아갔다. 누구도 한도윤에게 사적인 관심을 표현하지 않았다."
-    next: leave
+- id: do_yoon_thanks
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: 그래도 돼요? 고마워요, 서아 씨!
+  next: do_yoon_saved
 
-  - id: leave
-    kind: exit
-    transitions:
-      - default: true
-        scene: common.day_01_parent_pressure
+- id: do_yoon_saved
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (서아 씨 덕분에 살았다!)
+  next: do_yoon_kind_heart
+
+- id: do_yoon_kind_heart
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (마음씨까지 다정하잖아!)
+  next: seo_a_priority
+
+- id: seo_a_priority
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  expression: actual_social_smile
+  line: 아니에요. 저보다는 과장님이 회의에서 더 중요한 역할이니까요..!
+  next: do_yoon_no_rank
+
+- id: do_yoon_no_rank
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: 아뇨. 회의에서 누가 중요하고 중요하지 않고는 없어요!
+  next: do_yoon_young_opinion
+
+- id: do_yoon_young_opinion
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: 저희에겐 서아 씨 같은 젊은 사람들의 의견도 중요하거든요!
+  next: do_yoon_speak_freely
+
+- id: do_yoon_speak_freely
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: 의견이 있다면 언제든 편하게 말해 주세요.
+  next: seo_a_relief
+
+- id: seo_a_relief
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  expression: actual_grateful
+  line: 감사합니다! 덕분에 편하게 말할 수 있을 것 같아요!
+  next: do_yoon_good_senior
+
+- id: do_yoon_good_senior
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (조금 멋진 선배였으려나?)
+  next: do_yoon_cute_smile
+
+- id: do_yoon_cute_smile
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (웃는 것도 미친 듯이 귀엽잖아?)
+  next: do_yoon_focus
+
+- id: do_yoon_focus
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (아니, 첫 회의부터 무슨 생각을 하는 거야. 정신 차리자.)
+  next: min_kyung_minutes
+
+- id: min_kyung_minutes
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_skeptical
+  line: 윤서아 사원, 회의록 양식은 준비됐나요?
+  next: seo_a_minutes_ready
+
+- id: seo_a_minutes_ready
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  expression: actual_social_smile
+  line: 네. 참석자와 안건까지 먼저 적어뒀어요.
+  next: min_kyung_confirm
+
+- id: min_kyung_confirm
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_skeptical
+  line: 확인했습니다. 그대로 진행해 주세요.
+  next: do_yoon_ice_queen
+
+- id: do_yoon_ice_queen
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: (이런... 유명한 얼음 여왕 차민경이다!)
+  next: do_yoon_beauty_work
+
+- id: do_yoon_beauty_work
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: (저렇게 아름다운 여성과 일하는 것은 좋지만..)
+  next: do_yoon_afraid_again
+
+- id: do_yoon_afraid_again
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: (또 프로젝트를 같이 하게 되다니.. 무서워..)
+  next: min_kyung_review
+
+- id: min_kyung_review
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_skeptical
+  line: 한 과장님, 자료는 전부 검토해 주셨나요?
+  next: do_yoon_revision
+
+- id: do_yoon_revision
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: 앗..! 제가 오늘 오전에 수정본을 보지 못해 다시 읽어보고 있습니다.
+  next: do_yoon_apology
+
+- id: do_yoon_apology
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: 미안합니다. 빠르게 확인하겠습니다.
+  next: min_kyung_pre_meeting
+
+- id: min_kyung_pre_meeting
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_skeptical
+  line: 괜찮습니다. 회의 전에 발견했으니 아직 실수는 아닙니다.
+  next: do_yoon_cold
+
+- id: do_yoon_cold
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: (에엣…… 민경 씨…… 차가워!)
+  next: do_yoon_safe
+
+- id: do_yoon_safe
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: 그럼 아직은 세이프라는 거네요? 하하.
+  next: min_kyung_mistake
+
+- id: min_kyung_mistake
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_skeptical
+  line: 회의에서 잘못된 내용을 말하면 그때부터 실수고요.
+  next: do_yoon_damage
+
+- id: do_yoon_damage
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: (틀린 말은 하나도 없는데, 왜 이렇게 데미지가 크지?)
+  next: do_yoon_scared
+
+- id: do_yoon_scared
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: (역시 무서워..)
+  next: min_kyung_start
+
+- id: min_kyung_start
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_focused
+  line: 강유진 대리는 오늘도 늦는군요. 먼저 시작하겠습니다.
+  next: min_kyung_kickoff
+
+- id: min_kyung_kickoff
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_focused
+  line: 오늘은 ‘하루담 봄 홈카페 캠페인’의 킥오프 회의입니다. 처음 함께 일하는 분들이 있으니 역할부터 짧게 소개하겠습니다.
+  next: jeong_da_eun_opening
+
+- id: jeong_da_eun_opening
+  kind: dialogue
+  speaker: member.jeong_da_eun
+  stage: []
+  line: 그럼 참석자 순서대로 자기소개를 이어가겠습니다.
+  next: do_yoon_capable
+
+- id: do_yoon_capable
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: []
+  line: (다 잘하는 사람들이구나..)
+  next: do_yoon_project_success
+
+- id: do_yoon_project_success
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: []
+  line: (이번 프로젝트는 잘되겠어.)
+  next: min_kyung_introduction
+
+- id: min_kyung_introduction
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_focused
+  line: 저는 브랜드마케팅팀 차민경 대리입니다.
+  next: min_kyung_role
+
+- id: min_kyung_role
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_focused
+  line: 프로젝트 실무 리드와 마스터 일정을 맡습니다.
+  next: min_kyung_rule
+
+- id: min_kyung_rule
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_focused
+  line: 변경 사항은 구두로 끝내지 말고 공유 문서에 반영하고, 메신저로 공유해 주세요.
+  next: do_yoon_promising
+
+- id: do_yoon_promising
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: (차민경 씨는 가장 촉망받는 능력자.)
+  next: do_yoon_peer
+
+- id: do_yoon_peer
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: (다른 대리급 동기들보다도 훨씬 일을 잘하기로 유명해..)
+  next: do_yoon_promotion
+
+- id: do_yoon_promotion
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: (조기 승진할 거라는 얘기도 있어.)
+  next: do_yoon_min_kyung_beauty
+
+- id: do_yoon_min_kyung_beauty
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: (그나저나 엄청난 미인……)
+  next: do_yoon_boyfriend_kind
+
+- id: do_yoon_boyfriend_kind
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: (남자친구에게는 다정할까나? 부럽다~)
+  next: do_yoon_boyfriend_certain
+
+- id: do_yoon_boyfriend_certain
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: (100,000% 남자친구 있겠지?)
+  next: min_kyung_calls
+
+- id: min_kyung_calls
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_skeptical
+  line: 과장님?
+  next: do_yoon_intro_apology
+
+- id: do_yoon_intro_apology
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: 악! 죄송합니다! 잠시 딴생각을..
+  next: do_yoon_introduction
+
+- id: do_yoon_introduction
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: []
+  line: 저, 저는.. 영업기획팀 한도윤 과장입니다. 백화점과 편집숍 바이어 사전 검토, 입점 승인 일정을 맡았습니다. 잘 부탁드립니다.
+  next: seo_a_introduction
+
+- id: seo_a_introduction
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  expression: actual_social_smile
+  line: 안녕하십니까! 영업기획팀 윤서아 사원입니다.
+  next: seo_a_role
+
+- id: seo_a_role
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  expression: actual_social_smile
+  line: 이번 프로젝트에서 한 과장님과 차 대리님 보조를 맡게 되었습니다. 잘 부탁드립니다.
+  next: do_yoon_nervous
+
+- id: do_yoon_nervous
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (말할 때마다 조금 긴장하는구나. 귀여워!)
+  next: do_yoon_prepared
+
+- id: do_yoon_prepared
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (준비는 제일 꼼꼼하게 한 것 같은데.)
+  next: yoo_jin_late
+
+- id: yoo_jin_late
+  kind: dialogue
+  speaker: kang_yoo_jin
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  expression: actual_fact_check
+  line: 죄송합니다! 바보 프린터가 저한테 결투를 신청했지 말입니다!!
+  next: min_kyung_late_time
+
+- id: min_kyung_late_time
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_focused
+  line: 강 대리, 5분 42초 늦었습니다.
+  next: yoo_jin_won
+
+- id: yoo_jin_won
+  kind: dialogue
+  speaker: kang_yoo_jin
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  expression: actual_fact_check
+  line: 죄송합니닷!! 하지만 이기고 왔지 말입니다!
+  next: min_kyung_clock
+
+- id: min_kyung_clock
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_skeptical
+  line: 시계와의 싸움도 이겼으면 좋았을 텐데요.
+  next: yoo_jin_next_time
+
+- id: yoo_jin_next_time
+  kind: dialogue
+  speaker: kang_yoo_jin
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  expression: actual_fact_check
+  line: 다음부터는 미리미리 하겠습니닷!!
+  next: oh_se_jin_comments
+
+- id: oh_se_jin_comments
+  kind: dialogue
+  speaker: member.oh_se_jin
+  stage: []
+  line: 요즘 젊은 사람들은 활달해서 좋구먼. 허허.
+  next: do_yoon_energy
+
+- id: do_yoon_energy
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  line: (뭐야, 이 사람.. 회사에서 너무 활기차잖아.)
+  next: do_yoon_famous
+
+- id: do_yoon_famous
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  line: (차 대리의 동기랬지? 회사에서 유명한 발랄 초미녀!)
+  next: yoo_jin_introduction
+
+- id: yoo_jin_introduction
+  kind: dialogue
+  speaker: kang_yoo_jin
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  expression: actual_fact_check
+  line: 브랜드마케팅팀 강유진 대리입니다. 제품 디자인을 맡았습니다!!
+  next: yoo_jin_revisions
+
+- id: yoo_jin_revisions
+  kind: dialogue
+  speaker: kang_yoo_jin
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  expression: actual_fact_check
+  line: 수정 요청은 10번까지만! 그 이후엔 제가 직접 찾아갑니다! 잘 부탁드려요!
+  next: do_yoon_scary_visit
+
+- id: do_yoon_scary_visit
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  line: 직접 찾아오는 건 조금 무서운데요...
+  next: yoo_jin_smile
+
+- id: yoo_jin_smile
+  kind: dialogue
+  speaker: kang_yoo_jin
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  expression: actual_fact_check
+  line: 10번 이내는 웃으며 친절하게 찾아갑니다!
+  next: min_kyung_schedule
+
+- id: min_kyung_schedule
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_focused
+  line: 소개가 끝났으니 일정부터 확인하겠습니다. 한 과장님, 바이어 1차 검토일이 언제죠?
+  next: do_yoon_eighteenth
+
+- id: do_yoon_eighteenth
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: 18일입니다. 그 전에 제품별 사양과 진열 자료를 전달하면-
+  next: seo_a_calls_again
+
+- id: seo_a_calls_again
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  expression: actual_social_smile
+  line: 저기, 과장님……
+  next: do_yoon_answers_seo_a
+
+- id: do_yoon_answers_seo_a
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: 네?
+  next: seo_a_twentieth
+
+- id: seo_a_twentieth
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  expression: actual_social_smile
+  line: 수정본에는 20일로 바뀌었어요. 바이어 쪽 요청 메일도 뒷장에 붙여뒀고요.
+  next: do_yoon_realizes
+
+- id: do_yoon_realizes
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: 아, 맞다. 잠깐만요!
+  next: do_yoon_corrects_date
+
+- id: do_yoon_corrects_date
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: 바이어 1차 검토는 20일입니다. 방금 말한 날짜는 취소하겠습니다.
+  next: oh_se_jin_recalculate
+
+- id: oh_se_jin_recalculate
+  kind: dialogue
+  speaker: member.oh_se_jin
+  stage: []
+  line: 그러면 20일 기준으로 역산해서 다시 잡아 줘.
+  next: do_yoon_today
+
+- id: do_yoon_today
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: []
+  line: 네. 오늘 안에 정리해 두겠습니다.
+  next: do_yoon_saved_again
+
+- id: do_yoon_saved_again
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (서아 씨…… 덕분에 살았다!)
+  next: do_yoon_kind_again
+
+- id: do_yoon_kind_again
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (역시 다정해!!)
+  next: seo_a_apology
+
+- id: seo_a_apology
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  expression: actual_social_smile
+  line: 죄송해요. 제가 오전 중에 한 번 더 말씀드렸어야 했는데..
+  next: do_yoon_reassures
+
+- id: do_yoon_reassures
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: 하하, 아니에요. 확인 안 한 제 잘못이죠. 정말 고마워요.
+  next: seo_a_glad
+
+- id: seo_a_glad
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  expression: actual_grateful
+  line: 아…… 네. 도움이 됐다면 다행이에요.
+  next: do_yoon_more_grateful
+
+- id: do_yoon_more_grateful
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (이렇게 조심스럽게 말하면 괜히 더 고맙잖아.)
+  next: meeting_continues
+
+- id: meeting_continues
+  kind: narration
+  line: 차민경 대리의 주도로 회의가 이어졌다.
+  next: min_kyung_four_pm
+
+- id: min_kyung_four_pm
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_focused
+  line: 결정된 내용은 오후 4시까지 공유 문서에 반영하겠습니다.
+  next: min_kyung_other_opinions
+
+- id: min_kyung_other_opinions
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_skeptical
+  line: 다른 의견 있습니까?
+  next: yoo_jin_question
+
+- id: yoo_jin_question
+  kind: dialogue
+  speaker: kang_yoo_jin
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  expression: actual_fact_check
+  line: 질문 있습니닷!
+  next: min_kyung_speak
+
+- id: min_kyung_speak
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_skeptical
+  line: 말씀하세요.
+  next: yoo_jin_coffee
+
+- id: yoo_jin_coffee
+  kind: dialogue
+  speaker: kang_yoo_jin
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  expression: actual_fact_check
+  line: 첫 회의가 끝났으니 다 같이 커피 한 잔 어떻습니까!
+  next: min_kyung_irrelevant
+
+- id: min_kyung_irrelevant
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_skeptical
+  line: 프로젝트와 관계없는 질문입니다.
+  next: yoo_jin_team
+
+- id: yoo_jin_team
+  kind: dialogue
+  speaker: kang_yoo_jin
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  expression: actual_fact_check
+  line: 팀원끼리 친해지는 것도 프로젝트의 일부지 말입니다!
+  next: do_yoon_good
+
+- id: do_yoon_good
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  line: 좋지요..
+  next: do_yoon_buys
+
+- id: do_yoon_buys
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  line: 그럼 제가 살게요. 앞으로 계속 같이 일할 사람들인데 첫날 정도는 괜찮잖아요.
+  next: yoo_jin_cool_boss
+
+- id: yoo_jin_cool_boss
+  kind: dialogue
+  speaker: kang_yoo_jin
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  expression: actual_fact_check
+  line: 역시 한 과장님! 멋진 상사입니다!
+  next: do_yoon_coffee_only
+
+- id: do_yoon_coffee_only
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  line: 하하, 커피 한 잔 가지고 뭘 그렇게까지……
+  next: min_kyung_tasks_first
+
+- id: min_kyung_tasks_first
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_skeptical
+  line: 각자 맡은 업무를 먼저 확인하시죠.
+  next: min_kyung_lunch_condition
+
+- id: min_kyung_lunch_condition
+  kind: dialogue
+  speaker: cha_min_kyung
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  expression: actual_skeptical
+  line: 점심시간 전에 끝난다면 저도 참여하겠습니다.
+  next: yoo_jin_heard
+
+- id: yoo_jin_heard
+  kind: dialogue
+  speaker: kang_yoo_jin
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  expression: actual_fact_check
+  line: 들으셨죠, 과장님? 차 대리님까지 데려가려면 빨리 끝내야 합니닷!
+  next: do_yoon_responsibility
+
+- id: do_yoon_responsibility
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  line: 어느새 제 책임이 된 건가요?
+  next: yoo_jin_moment
+
+- id: yoo_jin_moment
+  kind: dialogue
+  speaker: kang_yoo_jin
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  expression: actual_fact_check
+  line: 커피를 사겠다고 말한 순간부터입니다!
+  next: meeting_ends
+
+- id: meeting_ends
+  kind: narration
+  line: 회의가 끝나고 사람들이 자리에서 일어났다.
+  next: do_yoon_chaotic
+
+- id: do_yoon_chaotic
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: []
+  line: (정신없는 회의였다.)
+  next: do_yoon_beauties
+
+- id: do_yoon_beauties
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: left, visual_id: character.yoon_seo_a}
+  - {artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}
+  - {artwork: default, character: kang_yoo_jin, position: right, visual_id: character.kang_yoo_jin}
+  line: (그나저나 이번 프로젝트.. 이렇게까지 미인들과 일하게 되다니.)
+  next: do_yoon_final_seo_a
+
+- id: do_yoon_final_seo_a
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
+  line: (꼼꼼하고 귀여운 서아 씨.)
+  next: do_yoon_final_min_kyung
+
+- id: do_yoon_final_min_kyung
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
+  line: (차갑지만 누구보다 정확한 민경 씨.)
+  next: do_yoon_final_yoo_jin
+
+- id: do_yoon_final_yoo_jin
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
+  line: (그리고 에너지가 넘치는 유진 씨까지.)
+  next: do_yoon_final_all
+
+- id: do_yoon_final_all
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: left, visual_id: character.yoon_seo_a}
+  - {artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}
+  - {artwork: default, character: kang_yoo_jin, position: right, visual_id: character.kang_yoo_jin}
+  line: (굉장한 미인들과 프로젝트를 시작하게 됐구나.)
+  next: do_yoon_success
+
+- id: do_yoon_success
+  kind: dialogue
+  speaker: han_do_yoon
+  expression: actual_waiting_smile
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: left, visual_id: character.yoon_seo_a}
+  - {artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}
+  - {artwork: default, character: kang_yoo_jin, position: right, visual_id: character.kang_yoo_jin}
+  line: (좋아! 이번 프로젝트는 반드시 성공시킨다!)
+  next: leave
+
+- id: leave
+  kind: exit
+  transitions:
+  - default: true
+    scene: common.day_01_parent_pressure

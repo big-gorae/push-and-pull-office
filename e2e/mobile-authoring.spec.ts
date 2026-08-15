@@ -1,4 +1,7 @@
 import { expect, test } from "@playwright/test";
+import runtimeFixture from "../build/story-runtime.json" with { type: "json" };
+
+const dayOneMeetingNodeCount = runtimeFixture.scenes["common.day_01_company_meeting"].node_order.length;
 
 test("Mac mobile sync window returns to authoring after authentication resets the URL", async ({ page }) => {
   await page.addInitScript(() => {
@@ -19,7 +22,7 @@ test("mobile scene authoring edits a scene and reopens its draft offline", async
   await expect(page).toHaveTitle("office");
   await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "수요일의 첫 회의" })).toBeVisible();
-  await expect(page.locator(".mobile-node-card")).toHaveCount(20);
+  await expect(page.locator(".mobile-node-card")).toHaveCount(dayOneMeetingNodeCount);
 
   await page.locator(".node-card-main").first().click();
   const editor = page.getByRole("textbox", { name: "대사" });
