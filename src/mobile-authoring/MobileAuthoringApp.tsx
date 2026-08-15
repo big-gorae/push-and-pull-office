@@ -11,7 +11,7 @@ import {
   writeCatalog,
   writeSceneDraft,
 } from "./storage";
-import { bundledCatalog, isMacSyncBridge, MOBILE_PROJECT_ID, sceneHash, synchronize } from "./sync";
+import { bundledCatalog, isMacSyncBridge, MOBILE_PROJECT_ID, newestCatalog, sceneHash, synchronize } from "./sync";
 import {
   addNodeAfter,
   allowsProtagonistArtwork,
@@ -174,16 +174,30 @@ export default function MobileAuthoringApp() {
   const [picker, setPicker] = useState<Picker>();
   const [addKind, setAddKind] = useState<"dialogue" | "narration">("dialogue");
   const [clipboard, setClipboard] = useState<StoryNode>();
+  const [showOutdatedDraft, setShowOutdatedDraft] = useState(false);
   const syncingRef = useRef(false);
+  const bundledCatalogRef = useRef<MobileCatalogSnapshot | undefined>(undefined);
   const persistChains = useRef<PersistChain>(new Map());
   const listScrollPosition = useRef(0);
   const editorWasOpen = useRef(false);
 
   const workspace = catalog?.workspace;
   const draftMap = useMemo(() => new Map(drafts.map((draft) => [draft.sceneId, draft])), [drafts]);
+  const outdatedDraftIds = useMemo(() => new Set(drafts.filter((draft) => {
+    const record = workspace?.scenes[draft.sceneId];
+    const currentHash = draft.currentSceneHash || record?.sceneHash;
+    return Boolean(currentHash && draft.baseSceneHash !== currentHash);
+  }).map((draft) => draft.sceneId)), [drafts, workspace]);
   const selectedRecord = selectedSceneId ? workspace?.scenes[selectedSceneId] : undefined;
   const selectedDraft = selectedSceneId ? draftMap.get(selectedSceneId) : undefined;
-  const scene = selectedDraft?.nextScene || selectedRecord?.scene;
+  const selectedDraftOutdated = Boolean(selectedDraft && outdatedDraftIds.has(selectedDraft.sceneId));
+  const displayDraft = selectedDraftOutdated && selectedDraft ? {
+    ...selectedDraft,
+    status: "conflict" as const,
+    reason: selectedDraft.reason || "새 원문이 배포되어 휴대폰 초안과 기준 장면이 달라졌습니다.",
+  } : selectedDraft;
+  const canonicalScene = selectedDraft?.currentScene || selectedRecord?.scene;
+  const scene = selectedDraft && (!selectedDraftOutdated || showOutdatedDraft) ? selectedDraft.nextScene : canonicalScene;
   const node = selectedNodeId && scene ? scene.nodes[selectedNodeId] : undefined;
 
   const refreshLocal = useCallback(async (nextCatalog?: MobileCatalogSnapshot) => {
@@ -199,7 +213,7 @@ export default function MobileAuthoringApp() {
     setSyncing(true);
     if (!quiet) setStatus(macBridge ? "Mac 원문과 휴대폰 장면을 맞추는 중…" : "변경 내용을 안전하게 동기화하는 중…");
     try {
-      const next = await synchronize();
+      const next = await synchronize(MOBILE_PROJECT_ID, bundledCatalogRef.current);
       await refreshLocal(next);
       setOnline(true);
       setLastSyncedAt(new Date());
@@ -264,11 +278,10 @@ export default function MobileAuthoringApp() {
   useEffect(() => {
     let cancelled = false;
     void (async () => {
-      let snapshot = await readCatalog(MOBILE_PROJECT_ID);
-      if (!snapshot?.workspace) {
-        snapshot = await bundledCatalog();
-        await writeCatalog(snapshot);
-      }
+      const [stored, bundled] = await Promise.all([readCatalog(MOBILE_PROJECT_ID), bundledCatalog()]);
+      bundledCatalogRef.current = bundled;
+      const snapshot = newestCatalog(bundled, stored) || bundled;
+      await writeCatalog(snapshot);
       if (cancelled) return;
       await refreshLocal(snapshot);
       setStatus(navigator.onLine ? "온라인 · 최신 장면을 확인합니다." : "오프라인 · 이 폰에 안전하게 저장합니다.");
@@ -282,6 +295,10 @@ export default function MobileAuthoringApp() {
     const first = workspace.days.flatMap((day) => day.scenes)[0]?.sceneId || Object.keys(workspace.scenes)[0];
     setSelectedSceneId(first);
   }, [selectedSceneId, workspace]);
+
+  useEffect(() => {
+    setShowOutdatedDraft(false);
+  }, [catalog?.generation, selectedSceneId]);
 
   useEffect(() => {
     if (!scene) return;
@@ -378,12 +395,13 @@ export default function MobileAuthoringApp() {
   const commitScene = useCallback((nextScene: Scene) => {
     if (!selectedSceneId || !selectedRecord) return;
     const previous = draftMap.get(selectedSceneId);
+    const keepPreviousBase = previous && (!selectedDraftOutdated || showOutdatedDraft);
     const draft: StoredSceneDraft = {
       id: sceneDraftId(MOBILE_PROJECT_ID, selectedSceneId),
       projectId: MOBILE_PROJECT_ID,
       sceneId: selectedSceneId,
-      baseSceneHash: previous?.baseSceneHash || selectedRecord.sceneHash,
-      baseScene: previous?.baseScene || cloneScene(selectedRecord.scene),
+      baseSceneHash: keepPreviousBase ? previous.baseSceneHash : selectedRecord.sceneHash,
+      baseScene: keepPreviousBase ? previous.baseScene : cloneScene(selectedRecord.scene),
       nextScene,
       status: "editing",
       updatedAt: new Date().toISOString(),
@@ -391,7 +409,7 @@ export default function MobileAuthoringApp() {
     setDrafts((current) => [...current.filter((item) => item.sceneId !== selectedSceneId), draft]);
     persistDraft(draft, previous);
     setStatus("입력 내용이 이 폰에 자동 저장되었습니다.");
-  }, [draftMap, persistDraft, selectedRecord, selectedSceneId]);
+  }, [draftMap, persistDraft, selectedDraftOutdated, selectedRecord, selectedSceneId, showOutdatedDraft]);
 
   const mutateScene = useCallback((mutate: (next: Scene) => void) => {
     if (!scene) return;
@@ -403,7 +421,7 @@ export default function MobileAuthoringApp() {
   const updateNode = (nextNode: StoryNode) => mutateScene((next) => { next.nodes[nextNode.id] = nextNode; });
 
   const queueSelectedScene = async () => {
-    if (!selectedDraft) return;
+    if (!selectedDraft || selectedDraftOutdated) return;
     await (persistChains.current.get(selectedDraft.sceneId) || Promise.resolve());
     const createdAt = new Date().toISOString();
     await queueSceneChange({
@@ -438,8 +456,8 @@ export default function MobileAuthoringApp() {
     }),
   })).filter((day) => day.scenes.length) || [];
   const visibleNodeIds = scene?.node_order.filter((id) => !nodeQuery.trim() || nodePreview(scene.nodes[id]).toLocaleLowerCase().includes(nodeQuery.trim().toLocaleLowerCase())) || [];
-  const pendingCount = drafts.filter((draft) => ["queued", "pending"].includes(draft.status)).length + legacyDraftCount;
-  const attentionCount = drafts.filter((draft) => ["conflict", "rejected"].includes(draft.status)).length;
+  const pendingCount = drafts.filter((draft) => !outdatedDraftIds.has(draft.sceneId) && ["queued", "pending"].includes(draft.status)).length + legacyDraftCount;
+  const attentionCount = drafts.filter((draft) => outdatedDraftIds.has(draft.sceneId) || ["conflict", "rejected"].includes(draft.status)).length;
   const updateAvailable = Boolean(latestBuildId && latestBuildId !== CURRENT_BUILD_ID);
 
   if (!catalog || !workspace) return <main className="mobile-authoring-loading"><span /><p>장면 편집기를 여는 중…</p></main>;
@@ -511,7 +529,7 @@ export default function MobileAuthoringApp() {
         {scene && selectedRecord ? <>
           <header className="scene-heading">
             <div><button type="button" className="mobile-scene-shortcut" onClick={() => setNavOpen(true)}>{scheduled.find((entry) => entry.sceneId === scene.id)?.day || "–"}일차 · 장면 바꾸기</button><h2>{scene.title}</h2><p>{scene.purpose}</p></div>
-            <SceneStatus draft={selectedDraft} />
+            <SceneStatus draft={displayDraft} />
           </header>
           <div className="scene-toolbar">
             <button type="button" onClick={() => setPicker({ kind: "background" })}><span>씬 배경</span><strong>{scene.default_background ? workspace.backgrounds.find((item) => item.visualId === scene.default_background?.visual_id && item.variantId === scene.default_background?.variant_id)?.title || "직접 선택" : "자동 선택"}</strong></button>
@@ -535,7 +553,7 @@ export default function MobileAuthoringApp() {
             <section className={mobileEditorOpen ? "mobile-node-editor open" : "mobile-node-editor"}>{node ? <>
               <header>
                 <button type="button" className="node-editor-back" onClick={() => { setMobileEditorOpen(false); setEditorMenuOpen(false); }} aria-label="대사 목록으로 돌아가기">←</button>
-                <div className="node-editor-title"><small>{scene.node_order.indexOf(node.id) + 1} / {scene.node_order.length}</small><h3>{nodePreview(node)}</h3><SceneStatus draft={selectedDraft} /></div>
+                <div className="node-editor-title"><small>{scene.node_order.indexOf(node.id) + 1} / {scene.node_order.length}</small><h3>{nodePreview(node)}</h3><SceneStatus draft={displayDraft} /></div>
                 <div className="node-editor-actions"><button type="button" disabled={scene.node_order.indexOf(node.id) === 0} onClick={() => setSelectedNodeId(scene.node_order[scene.node_order.indexOf(node.id) - 1])} aria-label="이전 대사">‹</button><button type="button" disabled={scene.node_order.indexOf(node.id) === scene.node_order.length - 1} onClick={() => setSelectedNodeId(scene.node_order[scene.node_order.indexOf(node.id) + 1])} aria-label="다음 대사">›</button><button type="button" onClick={() => setEditorMenuOpen((value) => !value)} aria-label="현재 대사 편집 메뉴">•••</button></div>
                 {editorMenuOpen && <div className="editor-node-popover"><button type="button" onClick={() => { setClipboard(structuredClone(node)); setEditorMenuOpen(false); setStatus("대사를 복사했습니다."); }}>복사</button><button type="button" disabled={!clipboard} onClick={() => { if (!clipboard) return; mutateScene((next) => { const copied = copyNodeAfter(next, clipboard, node.id); setSelectedNodeId(copied); }); setEditorMenuOpen(false); }}>다음에 붙여넣기</button><button type="button" className="danger" onClick={() => { if (!window.confirm("이 대사를 삭제하고 연결을 다음 화면으로 복구할까요?")) return; mutateScene((next) => { const replacement = removeNode(next, node.id); if (replacement) setSelectedNodeId(replacement); }); setEditorMenuOpen(false); }}>삭제</button></div>}
               </header>
@@ -570,11 +588,11 @@ export default function MobileAuthoringApp() {
             </> : <p className="node-empty">왼쪽에서 대사를 선택하세요.</p>}</section>
           </div>
           <footer className="mobile-save-bar">
-            <div>{selectedDraft ? <><strong>{STATUS_COPY[selectedDraft.status]}</strong><small>{selectedDraft.status === "editing" ? "저장 버튼을 누르면 반영 대기열에 들어갑니다." : "인터넷 연결 후 Mac에서 검증하여 반영합니다."}</small></> : <><strong>변경 없음</strong><small>대사, 순서, 원화 또는 배경을 수정해 보세요.</small></>}</div>
+            <div>{displayDraft ? <><strong>{STATUS_COPY[displayDraft.status]}</strong><small>{selectedDraftOutdated ? "최신 원문과 휴대폰 초안을 따로 보관합니다." : displayDraft.status === "editing" ? "저장 버튼을 누르면 반영 대기열에 들어갑니다." : "인터넷 연결 후 Mac에서 검증하여 반영합니다."}</small></> : <><strong>변경 없음</strong><small>대사, 순서, 원화 또는 배경을 수정해 보세요.</small></>}</div>
             {selectedDraft && <button type="button" className="discard" onClick={() => void discardScene()}>초안 버리기</button>}
-            <button type="button" className="save" disabled={!selectedDraft || ["queued", "pending"].includes(selectedDraft.status)} onClick={() => void queueSelectedScene()}>{online ? "장면 저장·동기화" : "폰에 장면 저장"}</button>
+            <button type="button" className="save" disabled={!selectedDraft || selectedDraftOutdated || ["queued", "pending", "conflict", "rejected"].includes(selectedDraft.status)} onClick={() => void queueSelectedScene()}>{online ? "장면 저장·동기화" : "폰에 장면 저장"}</button>
           </footer>
-          {selectedDraft?.status === "conflict" && <section className="scene-conflict"><strong>Mac에서도 같은 부분이 수정되었습니다.</strong><p>{selectedDraft.reason || "겹친 필드를 확인해 주세요."}</p><button type="button" onClick={() => void discardScene()}>Mac 최신 장면으로 돌아가기</button></section>}
+          {displayDraft?.status === "conflict" && <section className="scene-conflict"><strong>{selectedDraftOutdated ? "최신 원문과 휴대폰 초안이 다릅니다." : "Mac에서도 같은 부분이 수정되었습니다."}</strong><p>{selectedDraftOutdated ? (showOutdatedDraft ? "휴대폰 초안을 표시 중입니다. 최신 원문은 그대로 보관되어 있습니다." : "최신 원문을 표시 중입니다. 휴대폰 초안은 삭제하지 않았습니다.") : displayDraft.reason || "겹친 필드를 확인해 주세요."}</p>{selectedDraftOutdated && <button type="button" onClick={() => setShowOutdatedDraft((value) => !value)}>{showOutdatedDraft ? "최신 원문 보기" : "휴대폰 초안 보기"}</button>}<button type="button" onClick={() => void discardScene()}>{selectedDraftOutdated ? "휴대폰 초안 버리기" : "Mac 최신 장면으로 돌아가기"}</button></section>}
           {selectedDraft?.status === "rejected" && <section className="scene-conflict rejected"><strong>스토리 검증을 통과하지 못했습니다.</strong><p>{selectedDraft.reason}</p></section>}
         </> : <div className="scene-empty"><strong>장면을 선택하세요.</strong><button type="button" onClick={() => setNavOpen(true)}>날짜별 장면 열기</button></div>}
       </section>

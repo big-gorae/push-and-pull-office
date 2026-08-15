@@ -9,9 +9,10 @@ const APP_BUILD_ID = (
   || process.env.VITE_APP_BUILD_ID
   || new Date().toISOString().replace(/\D/g, "").slice(0, 14)
 ).slice(0, 40);
+const APP_BUILD_TIME = process.env.VITE_APP_BUILD_TIME || new Date().toISOString();
 
 function appVersionPlugin(): Plugin {
-  const developmentBody = `${JSON.stringify({ buildId: APP_BUILD_ID, assets: [] })}\n`;
+  const developmentBody = `${JSON.stringify({ buildId: APP_BUILD_ID, builtAt: APP_BUILD_TIME, assets: [] })}\n`;
   return {
     name: "love-office-app-version",
     configureServer(server) {
@@ -27,7 +28,7 @@ function appVersionPlugin(): Plugin {
         .filter((fileName) => /\.(?:css|js)$/.test(fileName))
         .map((fileName) => `/${fileName}`)
         .sort();
-      const source = `${JSON.stringify({ buildId: APP_BUILD_ID, assets })}\n`;
+      const source = `${JSON.stringify({ buildId: APP_BUILD_ID, builtAt: APP_BUILD_TIME, assets })}\n`;
       this.emitFile({ type: "asset", fileName: "app-version.json", source });
     },
   };
@@ -75,6 +76,7 @@ export default defineConfig(async () => {
     plugins,
     define: {
       __LOVE_OFFICE_BUILD_ID__: JSON.stringify(APP_BUILD_ID),
+      __LOVE_OFFICE_BUILD_TIME__: JSON.stringify(APP_BUILD_TIME),
     },
     server: {
       strictPort: true,

@@ -3,6 +3,7 @@ import type { LocalizationEntry, Runtime } from "../types";
 import {
   markEventsUploaded,
   markSceneEventsUploaded,
+  readCatalog,
   readQueuedEvents,
   readQueuedSceneEvents,
   reconcileServerChanges,
@@ -191,9 +192,25 @@ export async function bundledCatalog(): Promise<MobileCatalogSnapshot> {
     projectTitle: runtime.project.title,
     defaultLocale: runtime.localization.default_locale,
     generation,
+    updatedAt: __LOVE_OFFICE_BUILD_TIME__,
     entries,
     workspace,
   };
+}
+
+function catalogTime(snapshot: MobileCatalogSnapshot): number {
+  const value = Date.parse(snapshot.updatedAt || "");
+  return Number.isFinite(value) ? value : 0;
+}
+
+export function newestCatalog(
+  ...snapshots: Array<MobileCatalogSnapshot | undefined>
+): MobileCatalogSnapshot | undefined {
+  return snapshots.filter((snapshot): snapshot is MobileCatalogSnapshot => Boolean(snapshot?.workspace))
+    .reduce<MobileCatalogSnapshot | undefined>((current, candidate) => {
+      if (!current) return candidate;
+      return catalogTime(candidate) > catalogTime(current) ? candidate : current;
+    }, undefined);
 }
 
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
@@ -209,11 +226,12 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
   return body as T;
 }
 
-async function uploadCatalog(snapshot: MobileCatalogSnapshot): Promise<void> {
-  await api("/api/authoring/v1/catalog", {
+async function uploadCatalog(snapshot: MobileCatalogSnapshot): Promise<string | undefined> {
+  const result = await api<{ catalog: { updatedAt?: string } }>("/api/authoring/v1/catalog", {
     method: "POST",
     body: JSON.stringify(snapshot),
   });
+  return result.catalog.updatedAt;
 }
 
 async function downloadCatalog(projectId: string): Promise<MobileCatalogSnapshot | undefined> {
@@ -269,13 +287,16 @@ async function syncMac(projectId: string): Promise<MobileCatalogSnapshot | undef
       body: JSON.stringify({ projectId, receipts: result.sceneReceipts satisfies MobileSceneSyncReceipt[] }),
     });
   }
-  await uploadCatalog(result.snapshot);
-  return result.snapshot;
+  const updatedAt = await uploadCatalog(result.snapshot);
+  return { ...result.snapshot, updatedAt };
 }
 
 let inFlight: Promise<MobileCatalogSnapshot | undefined> | undefined;
 
-export function synchronize(projectId = MOBILE_PROJECT_ID): Promise<MobileCatalogSnapshot | undefined> {
+export function synchronize(
+  projectId = MOBILE_PROJECT_ID,
+  bundledSnapshot?: MobileCatalogSnapshot,
+): Promise<MobileCatalogSnapshot | undefined> {
   if (inFlight) return inFlight;
   inFlight = (async () => {
     const macSnapshot = await syncMac(projectId);
@@ -297,11 +318,13 @@ export function synchronize(projectId = MOBILE_PROJECT_ID): Promise<MobileCatalo
       });
       await markSceneEventsUploaded(queuedScenes.map((event) => event.eventId));
     }
-    const [catalog, changes, sceneChanges] = await Promise.all([
+    const localCatalog = await readCatalog(projectId);
+    const [downloadedCatalog, changes, sceneChanges] = await Promise.all([
       macSnapshot ? Promise.resolve(macSnapshot) : downloadCatalog(projectId),
       serverChanges(projectId),
       serverSceneChanges(projectId),
     ]);
+    const catalog = macSnapshot || newestCatalog(bundledSnapshot, localCatalog, downloadedCatalog);
     if (catalog) await writeCatalog(catalog);
     await reconcileServerChanges(projectId, changes);
     await reconcileServerSceneChanges(projectId, sceneChanges);

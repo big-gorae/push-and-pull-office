@@ -2,6 +2,8 @@ import { expect, test } from "@playwright/test";
 import runtimeFixture from "../build/story-runtime.json" with { type: "json" };
 
 const dayOneMeetingNodeCount = runtimeFixture.scenes["common.day_01_company_meeting"].node_order.length;
+const dayOneMeeting = runtimeFixture.scenes["common.day_01_company_meeting"];
+const dayOneOpeningLine = dayOneMeeting.nodes[dayOneMeeting.start_node].line;
 
 test("Mac mobile sync window returns to authoring after authentication resets the URL", async ({ page }) => {
   await page.addInitScript(() => {
@@ -54,6 +56,85 @@ test("mobile scene authoring edits a scene and reopens its draft offline", async
   } finally {
     await context.setOffline(false);
   }
+});
+
+test("mobile scene authoring prefers the newly deployed dialogue over a stale local and server catalog", async ({ page }) => {
+  await page.setViewportSize({ width: 430, height: 932 });
+  await page.goto("/#/author");
+  await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
+
+  const staleCatalog = await page.evaluate(async ({ sceneId }) => {
+    const db = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open("love-office-mobile-authoring", 2);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const snapshot = await new Promise<any>((resolve, reject) => {
+      const request = db.transaction("catalog", "readonly").objectStore("catalog").get("love_office_story_1");
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    snapshot.generation = "a".repeat(64);
+    snapshot.updatedAt = "2026-08-14T00:00:00.000Z";
+    const scene = snapshot.workspace.scenes[sceneId].scene;
+    scene.nodes[scene.start_node].line = "배포 전 오래된 대사";
+    await new Promise<void>((resolve, reject) => {
+      const transaction = db.transaction("catalog", "readwrite");
+      transaction.objectStore("catalog").put(snapshot);
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+    });
+    db.close();
+    return snapshot;
+  }, { sceneId: dayOneMeeting.id });
+  await page.route("**/api/authoring/v1/catalog?**", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ ok: true, catalog: staleCatalog }),
+  }));
+
+  await page.reload();
+  await expect(page.locator(".node-card-main").first()).toContainText(dayOneOpeningLine);
+  await expect(page.getByText("배포 전 오래된 대사", { exact: true })).toHaveCount(0);
+});
+
+test("mobile scene authoring shows new canonical dialogue while preserving an outdated phone draft", async ({ page }) => {
+  await page.setViewportSize({ width: 430, height: 932 });
+  await page.goto("/#/author");
+  await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
+
+  await page.locator(".node-card-main").first().click();
+  const editor = page.getByRole("textbox", { name: "대사" });
+  await editor.fill("휴대폰에 남은 예전 초안");
+  await expect(page.locator(".mobile-node-editor .scene-status", { hasText: "이 폰에 초안 저장" })).toBeVisible();
+  await page.evaluate(async () => {
+    const db = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open("love-office-mobile-authoring", 2);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const drafts = await new Promise<any[]>((resolve, reject) => {
+      const request = db.transaction("sceneDrafts", "readonly").objectStore("sceneDrafts").getAll();
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    drafts[0].baseSceneHash = "0".repeat(64);
+    await new Promise<void>((resolve, reject) => {
+      const transaction = db.transaction("sceneDrafts", "readwrite");
+      transaction.objectStore("sceneDrafts").put(drafts[0]);
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+    });
+    db.close();
+  });
+
+  await page.reload();
+  await expect(page.locator(".node-card-main").first()).toContainText(dayOneOpeningLine);
+  await expect(page.locator(".scene-heading .scene-status", { hasText: "겹친 수정 확인" })).toBeVisible();
+  await page.getByRole("button", { name: "휴대폰 초안 보기" }).click();
+  await expect(page.locator(".node-card-main").first()).toContainText("휴대폰에 남은 예전 초안");
+  await page.getByRole("button", { name: "최신 원문 보기" }).click();
+  await expect(page.locator(".node-card-main").first()).toContainText(dayOneOpeningLine);
 });
 
 test("mobile scene authoring detects a new app version without touching drafts", async ({ page }) => {

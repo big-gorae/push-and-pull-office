@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bundledCatalog, sceneHash, sha256, stableStringify } from "./sync";
+import { bundledCatalog, newestCatalog, sceneHash, sha256, stableStringify } from "./sync";
 
 describe("mobile authoring catalog", () => {
   it("creates a path-free, content-addressed catalog", async () => {
@@ -41,5 +41,14 @@ describe("mobile authoring catalog", () => {
       nodes: { a: { line: "안녕" }, b: { locked: true } },
     };
     expect(await sha256(stableStringify(fixture))).toBe("14b38d06fa4be07a96d216959e360fa7e1f05cd4aac68cd21961fa2e85f45f3b");
+  });
+
+  it("keeps the newest canonical catalog without letting an older server snapshot downgrade it", async () => {
+    const bundled = await bundledCatalog();
+    const staleServer = { ...bundled, generation: "a".repeat(64), updatedAt: "2026-08-14T00:00:00.000Z" };
+    const newerMac = { ...bundled, generation: "b".repeat(64), updatedAt: "2026-08-16T00:00:00.000Z" };
+
+    expect(newestCatalog(bundled, staleServer)?.generation).toBe(bundled.generation);
+    expect(newestCatalog(bundled, newerMac)?.generation).toBe(newerMac.generation);
   });
 });
