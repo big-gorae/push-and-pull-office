@@ -8,6 +8,7 @@ describe("NovelAI prompt catalog", () => {
     const catalog = loadPromptCatalog();
     const seoA = catalog.characters.find((character) => character.id === "yoon_seo_a");
     const minKyung = catalog.characters.find((character) => character.id === "cha_min_kyung");
+    const yooJin = catalog.characters.find((character) => character.id === "kang_yoo_jin");
 
     expect(catalog.characters).toHaveLength(5);
     expect(catalog.styleTags).toEqual([
@@ -35,10 +36,27 @@ describe("NovelAI prompt catalog", () => {
     expect(seoA?.variants[0].identityTags).toContain("long hair");
     expect(seoA?.variants[0].identityInstructions.join(" ")).toContain("dark-brown hair");
     expect(seoA?.variants[0].identityTags).toContain("1.2::large breasts::");
-    expect(minKyung?.referenceImages).toEqual([{
-      id: "mole-placement-reference",
-      label: "점 위치 보강 원화",
-      path: "assets/concept-art/cha-min-kyung-reference-2.png",
+    expect(seoA?.referenceImages).toEqual([{
+      id: "sd-paper-face",
+      label: "확정 SD 종이 얼굴",
+      path: "assets/hud/yoon-seo-a-avatar.png",
+    }]);
+    expect(minKyung?.referenceImages).toEqual([
+      {
+        id: "sd-paper-face",
+        label: "확정 SD 종이 얼굴",
+        path: "assets/hud/cha-min-kyung-avatar.png",
+      },
+      {
+        id: "mole-placement-reference",
+        label: "점 위치 보강 원화",
+        path: "assets/concept-art/cha-min-kyung-reference-2.png",
+      },
+    ]);
+    expect(yooJin?.referenceImages).toEqual([{
+      id: "sd-paper-face",
+      label: "확정 SD 종이 얼굴 · Seed N/A",
+      path: "assets/concept-art/kang-yoo-jin-sd.png",
     }]);
     expect(catalog.tagRegistry.sources.map(({ id }) => id)).toEqual([
       "novelai_official",
@@ -86,6 +104,8 @@ describe("NovelAI prompt catalog", () => {
         label: "default",
         identityTags: ["long hair"],
         identityInstructions: [],
+        faceOnlyIdentityTags: ["long hair"],
+        faceOnlyIdentityInstructions: [],
         outfitTags: ["shirt"],
         outfitInstructions: [],
         fullBodyOnlyTags: [],
@@ -242,8 +262,9 @@ describe("NovelAI prompt composition", () => {
       ],
     };
 
-    expect(catalog.commonSituations.map(({ id }) => id)).toEqual(commonIds);
-    for (const common of catalog.commonSituations) {
+    const expressionSituations = catalog.commonSituations.filter(({ id }) => id !== "common_sd_paper_face");
+    expect(expressionSituations.map(({ id }) => id)).toEqual(commonIds);
+    for (const common of expressionSituations) {
       expect(common.source).toBe("prompt-config/novelai-v45/defaults.json");
       expect(common.basePresetId).toBe("character_upper_body");
       expect(common.instructions).toContain(
@@ -255,7 +276,7 @@ describe("NovelAI prompt composition", () => {
     for (const character of catalog.characters) {
       for (const variant of character.variants) {
         const variantCommonIds = variant.situations
-          .filter(({ id }) => id.startsWith("common_"))
+          .filter(({ id }) => commonIds.includes(id))
           .map(({ id }) => id);
         expect(variantCommonIds).toEqual(commonIds);
         for (const commonId of commonIds) {
@@ -303,7 +324,180 @@ describe("NovelAI prompt composition", () => {
     expect(anger.audit.undesiredTagItems).not.toContain("v-shaped eyebrows");
   });
 
-  it("preserves every accepted identity, outfit, and art-style anchor in every situation", () => {
+  it("creates a face-only chibi paper cutout prompt for every character look", () => {
+    const catalog = loadPromptCatalog();
+    const paperTags = [
+      "chibi",
+      "head only",
+      "papercraft (medium)",
+      "paper texture",
+      "outline",
+      "white outline",
+      "faux traditional media",
+    ];
+    const common = catalog.commonSituations.find(({ id }) => id === "common_sd_paper_face");
+
+    expect(common).toMatchObject({
+      label: "공통 · 데포르메 SD 종이 얼굴",
+      basePresetId: "sd_paper_face",
+      identityMode: "face_only",
+      includeOutfit: false,
+      useSharedStyle: false,
+    });
+    expect(common?.tags).toEqual(expect.arrayContaining(["smile", "closed mouth"]));
+    expect(common?.instructions.join(" ")).toContain("gentle closed-mouth smile");
+    expect(common?.instructions.join(" ")).toContain("Use a cute super-deformed face");
+    expect(common?.instructions.join(" ")).toContain("continuous unprinted white margin");
+    expect(common?.instructions.join(" ")).toContain("cut with scissors along its outside edge");
+    expect(common?.instructions.join(" ")).toContain("no neck, shoulders, torso, body, clothing");
+
+    for (const character of catalog.characters) {
+      for (const variant of character.variants) {
+        expect(variant.faceOnlyIdentityTags.length).toBeGreaterThan(0);
+        expect(variant.faceOnlyIdentityInstructions.length).toBeGreaterThan(0);
+        const situation = variant.situations.find(({ id }) => id === "common_sd_paper_face");
+        expect(situation).toMatchObject({
+          identityMode: "face_only",
+          includeOutfit: false,
+          useSharedStyle: false,
+        });
+        const prompt = composePrompt(catalog, {
+          characterId: character.id,
+          variantId: variant.id,
+          situationId: "common_sd_paper_face",
+        });
+
+        expect(prompt.audit.positiveTagItems).toEqual(expect.arrayContaining(paperTags));
+        expect(prompt.base).not.toContain("upper body");
+        expect(prompt.base).not.toContain("visual novel");
+        expect(prompt.character.startsWith(character.subject === "female" ? "girl, " : "boy, ")).toBe(true);
+        for (const tag of variant.faceOnlyIdentityTags) {
+          expect(prompt.audit.positiveTagItems).toContain(tag);
+        }
+        for (const instruction of variant.faceOnlyIdentityInstructions) {
+          expect(prompt.audit.positiveInstructions).toContain(instruction);
+        }
+        if (character.id === "cha_min_kyung") {
+          expect(prompt.audit.positiveTagItems).toContain("1.35::floating head::");
+          expect(prompt.audit.positiveTagItems).not.toContain("short hair");
+          expect(prompt.combined).toContain("never widen or puff her cheeks or jaw");
+          expect(prompt.combined).toContain("Render 1.4::a wide white outline around the black-hair silhouette::");
+          expect(prompt.combined).toContain("Cut 1.6::at the chin, background directly below, no neck::");
+        }
+        if (character.id === "yoon_seo_a") {
+          expect(prompt.combined).toContain("1.4::a white paper outline around the entire hair silhouette::");
+        }
+        if (character.id === "kang_yoo_jin") {
+          expect(prompt.audit.positiveTagItems).toContain("1.2::high ponytail::");
+          expect(prompt.audit.positiveTagItems).toContain("1.25::pink eyes::");
+          expect(prompt.combined).toContain("youthful 29-year-old Korean woman");
+          expect(prompt.combined).toContain("long upturned rose-pink eyes");
+          expect(prompt.combined).toContain("dark pupils, clear sclera and catchlights");
+          expect(prompt.combined).toContain("narrow tapered oval face");
+          expect(prompt.combined).toContain("healthy warm peach-beige complexion");
+          expect(prompt.combined).toContain("lower face slim and its original adult length");
+          expect(prompt.combined).toContain("moderate SD deformation");
+          expect(prompt.combined).toContain("never widen or puff her cheeks or jaw");
+          expect(prompt.combined).toContain("Cut 1.6::at the chin, background directly below, no neck::");
+          expect(prompt.combined).not.toContain("smooth cheeks");
+          expect(prompt.combined).toContain("high ponytail and curved side locks");
+          expect(prompt.audit.positiveTagItems).toContain("1.25::pink eyes::");
+          expect(prompt.audit.undesiredTagItems).toEqual(expect.arrayContaining(["blush", "blush stickers", "black eyes", "neck"]));
+          expect(prompt.audit.undesiredTagItems).not.toContain("pale skin");
+          expect(prompt.uc).toContain("a round or wide face, or circular cheek marks");
+          expect(prompt.uc).not.toContain("baby fat");
+          expect(prompt.uc).not.toContain("shortened lower face");
+          expect(prompt.uc).not.toContain("Breasts larger than her head");
+          expect(prompt.uc.length).toBeLessThan(1300);
+        }
+        for (const outfit of variant.outfits) {
+          for (const tag of outfit.tags) {
+            expect(prompt.audit.positiveTagItems).not.toContain(tag);
+          }
+        }
+        expect(prompt.audit.undesiredTagItems).toEqual(expect.arrayContaining([
+          "neck",
+          "upper body",
+          "full body",
+          "cowboy shot",
+          "wide-eyed",
+          "open mouth",
+          "pout",
+          "serious",
+          "raised eyebrow",
+        ]));
+        expect(prompt.uc).toContain("Biological severed head, gore");
+        expect(prompt.combined).toContain("white contour must be bare paper");
+        expect(prompt.combined.length).toBeLessThan(1800);
+      }
+    }
+  });
+
+  it("adds happy, pouty, and awkward SD paper-face expressions to the three confirmed heroines", () => {
+    const catalog = loadPromptCatalog();
+    const characterIds = ["yoon_seo_a", "cha_min_kyung", "kang_yoo_jin"];
+    const situationIds = ["sd_happy", "sd_pout", "sd_awkward"];
+
+    for (const characterId of characterIds) {
+      const character = catalog.characters.find(({ id }) => id === characterId);
+      const variant = character?.variants[0];
+
+      for (const situationId of situationIds) {
+        const situation = variant?.situations.find(({ id }) => id === situationId);
+        expect(situation).toMatchObject({
+          basePresetId: "sd_paper_face",
+          identityMode: "face_only",
+          includeOutfit: false,
+          useSharedStyle: false,
+        });
+
+        const prompt = composePrompt(catalog, {
+          characterId,
+          variantId: variant?.id,
+          situationId,
+        });
+        expect(prompt.combined).toContain("continuous unprinted white margin");
+        expect(prompt.combined).toContain("no neck, shoulders, torso, body, clothing");
+        expect(prompt.combined.length).toBeLessThan(1800);
+        expect(prompt.uc.length).toBeLessThan(1600);
+      }
+
+      const happy = composePrompt(catalog, { characterId, situationId: "sd_happy" });
+      expect(happy.audit.positiveTagItems).toEqual(expect.arrayContaining(["smile", "blush"]));
+      expect(happy.audit.undesiredTagItems).not.toContain("blush");
+
+      if (characterId === "kang_yoo_jin") {
+        expect(happy.audit.positiveTagItems).toContain("open mouth");
+        expect(happy.audit.positiveTagItems).not.toContain("closed mouth");
+        expect(happy.combined).toContain("bright innocent joyful expression");
+      } else {
+        expect(happy.audit.positiveTagItems).toContain("closed mouth");
+        expect(happy.audit.positiveTagItems).not.toContain("open mouth");
+        expect(happy.audit.undesiredTagItems).toContain("open mouth");
+        expect(happy.combined).toContain("do not show the inside of the mouth");
+      }
+
+      const pout = composePrompt(catalog, { characterId, situationId: "sd_pout" });
+      expect(pout.audit.positiveTagItems).toEqual(expect.arrayContaining(["pout", "closed mouth", "sideways glance"]));
+      expect(pout.combined).toContain("Puff both cheeks evenly");
+      expect(pout.audit.undesiredTagItems).toEqual(expect.arrayContaining(["smile", "open mouth", "angry", "scowl", "crying"]));
+
+      const awkward = composePrompt(catalog, { characterId, situationId: "sd_awkward" });
+      expect(awkward.audit.positiveTagItems).toEqual(expect.arrayContaining(["worried", "closed mouth", "sweatdrop"]));
+      expect(awkward.combined).toContain("exactly one large symbolic sweatdrop");
+      expect(awkward.combined).toContain("image's upper-right");
+      expect(awkward.uc).toContain("Multiple sweatdrops");
+    }
+
+    for (const characterId of ["im_soo_yeon", "han_do_yoon"]) {
+      const character = catalog.characters.find(({ id }) => id === characterId);
+      for (const situationId of situationIds) {
+        expect(character?.variants[0]?.situations.some(({ id }) => id === situationId)).toBe(false);
+      }
+    }
+  });
+
+  it("preserves full anchors normally and uses only face anchors for face-only situations", () => {
     const catalog = loadPromptCatalog();
 
     for (const character of catalog.characters) {
@@ -316,15 +510,38 @@ describe("NovelAI prompt composition", () => {
             variantId: variant.id,
             situationId: situation.id,
           });
-          for (const tag of [...catalog.styleTags, ...variant.identityTags, ...(outfit?.tags ?? [])]) {
+          const expectedTags = situation.identityMode === "face_only"
+            ? variant.faceOnlyIdentityTags
+            : [
+                ...(situation.useSharedStyle ? catalog.styleTags : []),
+                ...variant.identityTags,
+                ...(situation.includeOutfit ? outfit?.tags ?? [] : []),
+              ];
+          const expectedInstructions = situation.identityMode === "face_only"
+            ? variant.faceOnlyIdentityInstructions
+            : [
+                ...(situation.useSharedStyle ? catalog.styleInstructions : []),
+                ...variant.identityInstructions,
+                ...(situation.includeOutfit ? outfit?.instructions ?? [] : []),
+              ];
+          for (const tag of expectedTags) {
             expect(prompt.audit.positiveTagItems).toContain(tag);
           }
-          for (const instruction of [
-            ...catalog.styleInstructions,
-            ...variant.identityInstructions,
-            ...(outfit?.instructions ?? []),
-          ]) {
+          for (const instruction of expectedInstructions) {
             expect(prompt.audit.positiveInstructions).toContain(instruction);
+          }
+          if (situation.identityMode === "face_only") {
+            for (const tag of variant.identityTags.filter((tag) => (
+              !variant.faceOnlyIdentityTags.includes(tag)
+            ))) {
+              expect(prompt.audit.positiveTagItems).not.toContain(tag);
+            }
+            for (const tag of outfit?.tags ?? []) {
+              expect(prompt.audit.positiveTagItems).not.toContain(tag);
+            }
+            for (const tag of catalog.styleTags) {
+              expect(prompt.audit.positiveTagItems).not.toContain(tag);
+            }
           }
         }
       }
@@ -561,7 +778,9 @@ describe("NovelAI prompt composition", () => {
           const characterItems = splitPromptText(prompt.character);
           const ucItems = splitPromptText(prompt.uc);
           for (const tag of expectedTags) {
-            expect(exactCount(characterItems, tag)).toBe(1);
+            expect(exactCount(characterItems, tag)).toBe(
+              situation.identityMode === "face_only" ? 0 : 1,
+            );
             expect(exactCount(ucItems, tag)).toBe(0);
           }
         }
@@ -792,9 +1011,15 @@ describe("NovelAI prompt composition", () => {
             variantId: variant.id,
             situationId: situation.id,
           });
-          expect(prompt.base).toContain("visual novel, year 2024");
-          expect(prompt.base).toContain("commercial game CG");
-          expect(prompt.base).toContain("soft cel shading");
+          if (situation.useSharedStyle) {
+            expect(prompt.base).toContain("visual novel, year 2024");
+            expect(prompt.base).toContain("commercial game CG");
+            expect(prompt.base).toContain("soft cel shading");
+          } else {
+            expect(prompt.base).not.toContain("visual novel, year 2024");
+            expect(prompt.base).not.toContain("commercial game CG");
+            expect(prompt.base).not.toContain("soft cel shading");
+          }
           for (const forbidden of forbiddenContent) {
             expect(prompt.combined).not.toContain(forbidden);
           }

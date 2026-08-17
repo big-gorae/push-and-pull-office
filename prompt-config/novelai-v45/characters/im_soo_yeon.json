@@ -26,6 +26,19 @@
         "Give her large calm amber-brown eyes, a soft oval face, a small nose, soft full lips, and subtle smile lines at the outer corners of her eyes.",
         "Keep her build naturally curvy, healthy, and elegant."
       ],
+      "faceOnlyIdentityTags": [
+        "brown hair",
+        "short hair",
+        "wavy hair",
+        "glasses",
+        "round eyewear",
+        "brown eyes",
+        "long eyelashes"
+      ],
+      "faceOnlyIdentityInstructions": [
+        "She is an adult Korean woman with short softly wavy brown hair and thin round glasses.",
+        "Give her large calm amber-brown eyes, a soft oval face, a small nose, soft full lips, and subtle smile lines at the outer corners of her eyes."
+      ],
       "outfitTags": ["green cardigan", "blouse", "long skirt", "brown skirt", "book"],
       "outfitInstructions": [
         "Dress her in a long olive-green cardigan, a faded cream cotton blouse, and a long brown A-line skirt.",
@@ -105,6 +118,17 @@
         "She is an adult Korean woman with naturally wavy shoulder-length brown hair and no eyewear.",
         "Give her large calm amber-brown eyes, a soft oval face, a small nose, soft full lips, and subtle smile lines at the outer corners of her eyes.",
         "Keep her build naturally curvy, healthy, and elegant."
+      ],
+      "faceOnlyIdentityTags": [
+        "brown hair",
+        "medium hair",
+        "wavy hair",
+        "brown eyes",
+        "long eyelashes"
+      ],
+      "faceOnlyIdentityInstructions": [
+        "She is an adult Korean woman with naturally wavy shoulder-length brown hair and no eyewear.",
+        "Give her large calm amber-brown eyes, a soft oval face, a small nose, soft full lips, and subtle smile lines at the outer corners of her eyes."
       ],
       "outfitTags": ["cardigan", "blouse", "long skirt", "brown skirt", "book"],
       "outfitInstructions": [

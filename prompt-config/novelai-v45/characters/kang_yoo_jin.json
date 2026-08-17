@@ -4,6 +4,13 @@
   "order": 30,
   "subject": "female",
   "accent": "#3979c5",
+  "referenceImages": [
+    {
+      "id": "sd-paper-face",
+      "label": "확정 SD 종이 얼굴 · Seed N/A",
+      "path": "assets/concept-art/kang-yoo-jin-sd.png"
+    }
+  ],
   "defaultLookId": "office",
   "looks": [
     {
@@ -28,6 +35,31 @@
         "Use large upturned eyes with vivid clear rose-pink irises, dark pupils, catchlights, and white sclera; add a tapered oval face, small nose, soft full lips, small chin, and expressive brows.",
         "Use a balanced curvy hourglass with a narrow waist, full hips, long slim legs, and a medium-full proportionate bust; keep shoulders, ribcage, torso, spine, and joints anatomical.",
         "Use crisp dark lines, soft cel shading, luminous skin, restrained highlights, and clean contemporary visual-novel character rendering."
+      ],
+      "faceOnlyIdentityTags": [
+        "brown hair",
+        "long hair",
+        "1.2::high ponytail::",
+        "1.25::pink eyes::",
+        "long eyelashes"
+      ],
+      "faceOnlyIdentityInstructions": [
+        "She is a youthful 29-year-old Korean woman with long upturned rose-pink eyes, dark pupils, clear sclera and catchlights, a narrow tapered oval face, small nose and mouth, soft full lips, small chin, fine expressive brows, and a healthy warm peach-beige complexion.",
+        "Keep her lower face slim and its original adult length; use moderate SD deformation and never widen or puff her cheeks or jaw.",
+        "Render 1.3::her high ponytail and curved side locks:: as the defining silhouette around the paper cutout.",
+        "Cut 1.6::at the chin, background directly below, no neck::."
+      ],
+      "faceOnlyUndesiredTags": [
+        "old woman",
+        "blush",
+        "blush stickers",
+        "bob cut",
+        "low ponytail",
+        "aqua eyes",
+        "black eyes"
+      ],
+      "faceOnlyUndesiredInstructions": [
+        "Wrinkles, eye bags, heavy makeup, a round or wide face, or circular cheek marks."
       ],
       "outfitTags": [
         "shirt",
@@ -54,6 +86,7 @@
         "slouching",
         "shy",
         "blush",
+        "blush stickers",
         "flat chest",
         "small breasts",
         "bob cut",
@@ -66,7 +99,7 @@
         "black eyes"
       ],
       "characterUndesiredInstructions": [
-        "Childlike or middle-aged facial traits, wrinkles, eye bags, a square jaw, heavy makeup, or a dull expression.",
+        "Childlike or middle-aged facial traits, wrinkles, eye bags, a square jaw, heavy makeup, a dull expression, red circular cheek marks, blush stickers, or painted cheek circles.",
         "Breasts larger than her head, a fused bust, an impossible waist, a broken spine, fragile anatomy, distorted joints, or a sexualized pose.",
         "Blue, gray, cream, beige, off-white, or tinted shirt fabric; a black business suit; a low ponytail; timid posing; or glossy 3D and photorealistic skin."
       ],
@@ -88,6 +121,66 @@
       ],
       "defaultSituationId": "reference_fact_check",
       "situations": [
+        {
+          "id": "sd_happy",
+          "label": "SD · 볼 홍조 해맑은 웃음",
+          "description": "입을 열고 해맑게 웃으며 옅은 볼 홍조가 드러나는 SD 종이 얼굴입니다.",
+          "basePresetId": "sd_paper_face",
+          "identityMode": "face_only",
+          "includeOutfit": false,
+          "useSharedStyle": false,
+          "tags": ["smile", "blush", "open mouth", "looking at viewer"],
+          "instructions": [
+            "Use a bright innocent joyful expression with softly curved happy eyes, lightly blushed cheeks, and a cheerful open-mouth smile.",
+            "Use a cute super-deformed face with large simplified eyes, a tiny nose, and a tiny mouth while preserving every recognizable signature facial feature.",
+            "Draw face and hair on matte white paper. Leave a continuous unprinted white margin around all hair, ears, cheeks, and chin, cut by scissors along its outside edge.",
+            "The white contour is bare paper, not ink, glow, or adhesive. Show a thin slightly irregular scissor-cut edge; keep it flat, centered, and without a rectangular sheet.",
+            "Show only the paper face-and-hair silhouette with no neck, shoulders, torso, body, clothing, hands, or separate props."
+          ],
+          "undesiredTags": ["pout", "serious"],
+          "undesiredInstructions": ["Exaggerated red cheek circles, crying, a grimace, or a strained grin."],
+          "omitCharacterUndesiredTags": ["blush", "blush stickers"]
+        },
+        {
+          "id": "sd_pout",
+          "label": "SD · 볼 빵빵 삐짐",
+          "description": "양 볼을 귀엽게 부풀리고 살짝 서운해하는 SD 종이 얼굴입니다.",
+          "basePresetId": "sd_paper_face",
+          "identityMode": "face_only",
+          "includeOutfit": false,
+          "useSharedStyle": false,
+          "tags": ["pout", "closed mouth", "sideways glance"],
+          "instructions": [
+            "Puff both cheeks evenly into a cute sulky expression, with slightly lowered inner eyebrows and a tiny closed pout; preserve her original adult face length and slim jaw.",
+            "Use a cute super-deformed face with large simplified eyes, a tiny nose, and a tiny mouth while preserving every recognizable signature facial feature.",
+            "Draw face and hair on matte white paper. Leave a continuous unprinted white margin around all hair, ears, cheeks, and chin, cut by scissors along its outside edge.",
+            "The white contour is bare paper, not ink, glow, or adhesive. Show a thin slightly irregular scissor-cut edge; keep it flat, centered, and without a rectangular sheet.",
+            "Show only the paper face-and-hair silhouette with no neck, shoulders, torso, body, clothing, hands, or separate props."
+          ],
+          "undesiredTags": ["smile", "open mouth", "angry", "scowl", "crying"],
+          "undesiredInstructions": ["A hostile glare, deep frown, tears, asymmetrically inflated cheeks, a widened jaw, or an open mouth."],
+          "omitCharacterUndesiredTags": []
+        },
+        {
+          "id": "sd_awkward",
+          "label": "SD · 만화식 난감",
+          "description": "난감한 표정과 화면 오른쪽 위의 만화식 큰 땀방울을 사용합니다.",
+          "basePresetId": "sd_paper_face",
+          "identityMode": "face_only",
+          "includeOutfit": false,
+          "useSharedStyle": false,
+          "tags": ["worried", "closed mouth", "sweatdrop", "looking at viewer"],
+          "instructions": [
+            "Use an awkward troubled expression with slightly raised inner eyebrows and a small uneven closed mouth. Draw exactly one large symbolic sweatdrop in the empty space at the image's upper-right, beside and above the hair.",
+            "Use a cute super-deformed face with large simplified eyes, a tiny nose, and a tiny mouth while preserving every recognizable signature facial feature.",
+            "Draw face and hair on matte white paper. Leave a continuous unprinted white margin around all hair, ears, cheeks, and chin, cut by scissors along its outside edge.",
+            "The white contour is bare paper, not ink, glow, or adhesive. Show a thin slightly irregular scissor-cut edge; keep it flat, centered, and without a rectangular sheet.",
+            "Show only the paper face-and-hair silhouette with no neck, shoulders, torso, body, clothing, hands, or separate props."
+          ],
+          "undesiredTags": ["smile", "open mouth", "crying", "wide-eyed"],
+          "undesiredInstructions": ["Multiple sweatdrops, sweat on the skin, tears, panic, or a sweatdrop anywhere except the image's upper-right."],
+          "omitCharacterUndesiredTags": []
+        },
         {
           "id": "reference_fact_check",
           "label": "기본 로비 자신감",

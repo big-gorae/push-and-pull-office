@@ -110,6 +110,29 @@
       "undesiredTags": ["smile", "angry"],
       "undesiredInstructions": ["Happy tears, pretty posing, closed dry eyes, comedic waterfall tears, or calm sadness."],
       "omitCharacterUndesiredTags": []
+    },
+    {
+      "id": "common_sd_paper_face",
+      "label": "공통 · 데포르메 SD 종이 얼굴",
+      "description": "캐릭터의 얼굴과 머리카락만 종이에 그린 뒤 외곽선을 따라 오린 듯한 SD 페이퍼크래프트입니다.",
+      "basePresetId": "sd_paper_face",
+      "identityMode": "face_only",
+      "includeOutfit": false,
+      "useSharedStyle": false,
+      "tags": ["smile", "closed mouth", "looking at viewer"],
+      "instructions": [
+        "Give a gentle closed-mouth smile: slightly raised lip corners, relaxed level eyebrows, and softly open eyes. Keep it warm and natural, never blank, pouty, tense, wide-eyed, or startled.",
+        "Use a cute super-deformed face with large simplified eyes, a tiny nose, and a tiny mouth while preserving every recognizable signature facial feature.",
+        "Draw the colored face and hair on matte white paper. Leave a narrow continuous unprinted white margin around the entire hair, ears, cheeks, and chin, then cut with scissors along its outside edge.",
+        "The white contour must be bare paper, not ink, glow, or adhesive. Show a thin paper edge and slight scissor irregularity; keep it flat, clean, centered, and free of any rectangular sheet.",
+        "Show only the paper face-and-hair silhouette with no neck, shoulders, torso, body, clothing, hands, or separate props."
+      ],
+      "undesiredTags": ["neck", "upper body", "full body", "cowboy shot", "wide-eyed", "open mouth", "pout", "serious", "raised eyebrow"],
+      "undesiredInstructions": [
+        "Biological severed head, gore, neck stump, body, clothing, hands, rectangular paper sheet, image-frame border, drawn or glowing white outline, sticker backing or gloss, thick cardboard, standing doll, or 3D figurine.",
+        "Blank, vacant, sullen, surprised, alarmed, pouty, tense, asymmetric, or open-mouth expression; staring eyes, raised eyebrows, or flat or downturned mouth."
+      ],
+      "omitCharacterUndesiredTags": []
     }
   ],
   "basePresets": [
@@ -120,6 +143,14 @@
       "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
       "tags": ["full body", "simple background", "grey background", "facing viewer"],
       "instructions": ["Use a neutral eye-level camera with a slight three-quarter turn."]
+    },
+    {
+      "id": "sd_paper_face",
+      "label": "SD 종이 얼굴 오리기",
+      "description": "얼굴과 머리카락만 남긴 SD 손그림 종이 오리기 구도입니다.",
+      "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
+      "tags": ["chibi", "head only", "papercraft (medium)", "paper texture", "outline", "white outline", "faux traditional media", "simple background", "grey background", "facing viewer"],
+      "instructions": ["Center exactly one flat paper face-and-hair cutout at eye level on a plain neutral background."]
     },
     {
       "id": "character_upper_body",

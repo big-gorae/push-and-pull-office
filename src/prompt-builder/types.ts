@@ -76,6 +76,9 @@ export type PromptSituation = {
   undesiredTags: PromptItem[];
   undesiredInstructions: PromptInstruction[];
   omitCharacterUndesiredTags: PromptItem[];
+  identityMode: "full" | "face_only";
+  includeOutfit: boolean;
+  useSharedStyle: boolean;
   source: string;
 };
 
@@ -86,6 +89,10 @@ export type PromptVariant = {
   layer?: PromptLayer;
   identityTags: PromptItem[];
   identityInstructions: PromptInstruction[];
+  faceOnlyIdentityTags: PromptItem[];
+  faceOnlyIdentityInstructions: PromptInstruction[];
+  faceOnlyUndesiredTags: PromptItem[];
+  faceOnlyUndesiredInstructions: PromptInstruction[];
   defaultOutfitId: string;
   outfits: PromptOutfit[];
   fullBodyOnlyTags: PromptItem[];

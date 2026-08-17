@@ -610,6 +610,103 @@ body {
   gap: 11px;
 }
 
+.prompt-sd-inpaint-workflow {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(222, 161, 92, 0.52);
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(222, 161, 92, 0.1), rgba(13, 16, 21, 0.7));
+}
+
+.prompt-sd-inpaint-workflow > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.prompt-sd-inpaint-workflow h3 {
+  margin: 2px 0 0;
+  font-size: 0.92rem;
+}
+
+.prompt-sd-inpaint-workflow > header > span {
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: rgba(202, 102, 102, 0.12);
+  color: var(--prompt-danger);
+  font-size: 0.62rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.prompt-sd-inpaint-reference {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--prompt-line);
+  border-radius: 10px;
+  background: var(--prompt-panel-2);
+}
+
+.prompt-sd-inpaint-reference img {
+  width: 90px;
+  height: 112px;
+  border-radius: 9px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.prompt-sd-inpaint-reference > div {
+  display: grid;
+  gap: 5px;
+}
+
+.prompt-sd-inpaint-reference strong,
+.prompt-sd-inpaint-steps b,
+.prompt-sd-inpaint-warning strong {
+  color: var(--prompt-text);
+}
+
+.prompt-sd-inpaint-reference p,
+.prompt-sd-inpaint-steps,
+.prompt-sd-inpaint-warning {
+  color: var(--prompt-muted);
+  font-size: 0.68rem;
+  line-height: 1.55;
+}
+
+.prompt-sd-inpaint-reference p {
+  margin: 0;
+}
+
+.prompt-sd-inpaint-reference a {
+  width: fit-content;
+  color: var(--prompt-accent-strong);
+  font-size: 0.66rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.prompt-sd-inpaint-steps {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.prompt-sd-inpaint-warning {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 8px;
+  padding: 9px 10px;
+  border-left: 3px solid var(--prompt-accent);
+  background: rgba(222, 161, 92, 0.06);
+}
+
 .prompt-provenance-card {
   display: grid;
   gap: 7px;
@@ -884,9 +981,23 @@ body {
   }
 
   .prompt-provenance-card > div:first-child,
-  .prompt-comparison-card > header {
+  .prompt-comparison-card > header,
+  .prompt-sd-inpaint-workflow > header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .prompt-sd-inpaint-reference {
+    grid-template-columns: 74px minmax(0, 1fr);
+  }
+
+  .prompt-sd-inpaint-reference img {
+    width: 74px;
+    height: 96px;
+  }
+
+  .prompt-sd-inpaint-warning {
+    grid-template-columns: 1fr;
   }
 
   .prompt-output-card > header {
