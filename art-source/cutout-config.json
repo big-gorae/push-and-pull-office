@@ -91,7 +91,7 @@
       "id": "yoon-seo-a-sd",
       "kind": "sd",
       "source": "art-source/references/characters/yoon-seo-a/sd.png",
-      "expectedSha256": "340265791670c7f3daecc568e8e4acbd7e11ed5ac79b62c28f18ed3a3234e6e5",
+      "expectedSha256": "a1dd2d1867ae5258928a03bce122d619d8b00175236d57cec383f95e44c22f8c",
       "preserveRgbOutput": "art-source/derived/characters/yoon-seo-a/sd/original-cutout-preserve-rgb.png",
       "runtimeOutput": "assets/characters/yoon-seo-a/sd/original-cutout.png",
       "maskOutput": "art-source/masks/characters/yoon-seo-a/sd/original-alpha.png",
@@ -100,7 +100,7 @@
       "driftTolerance": 0.045,
       "featherHigh": 0.026,
       "preservePaperOutline": true,
-      "paperOutlineProbes": [{"x": 416, "y": 200}]
+      "paperOutlineProbes": [{"x": 416, "y": 235}]
     },
     {
       "id": "cha-min-kyung-sd",

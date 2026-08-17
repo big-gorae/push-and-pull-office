@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-13T01:18:35.940Z",
+  "generatedAt": "2026-08-17T15:23:29.812Z",
   "generator": "tools/image_cutout.mjs",
   "config": "art-source/cutout-config.json",
   "originalsPolicy": "immutable-byte-for-byte",
@@ -81,7 +81,7 @@
       "id": "yoon-seo-a-sd",
       "kind": "sd",
       "source": "art-source/references/characters/yoon-seo-a/sd.png",
-      "sourceSha256": "340265791670c7f3daecc568e8e4acbd7e11ed5ac79b62c28f18ed3a3234e6e5",
+      "sourceSha256": "a1dd2d1867ae5258928a03bce122d619d8b00175236d57cec383f95e44c22f8c",
       "sourceUnchanged": true,
       "width": 832,
       "height": 1216,
@@ -90,15 +90,15 @@
       "maskOutput": "art-source/masks/characters/yoon-seo-a/sd/original-alpha.png",
       "qaSheet": "output/cutout-qa/yoon-seo-a-sd.png",
       "preservePaperOutline": true,
-      "transparentPixels": 555789,
-      "partiallyTransparentPixels": 4245,
-      "opaquePixels": 451678,
-      "foregroundRatio": 0.45064504523026316,
+      "transparentPixels": 650230,
+      "partiallyTransparentPixels": 0,
+      "opaquePixels": 361482,
+      "foregroundRatio": 0.3572973336285425,
       "foregroundBounds": {
-        "x": 26,
-        "y": 194,
-        "width": 742,
-        "height": 866
+        "x": 65,
+        "y": 224,
+        "width": 690,
+        "height": 724
       }
     },
     {
