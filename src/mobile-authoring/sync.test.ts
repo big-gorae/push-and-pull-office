@@ -45,8 +45,9 @@ describe("mobile authoring catalog", () => {
 
   it("keeps the newest canonical catalog without letting an older server snapshot downgrade it", async () => {
     const bundled = await bundledCatalog();
-    const staleServer = { ...bundled, generation: "a".repeat(64), updatedAt: "2026-08-14T00:00:00.000Z" };
-    const newerMac = { ...bundled, generation: "b".repeat(64), updatedAt: "2026-08-16T00:00:00.000Z" };
+    const bundledAt = Date.parse(bundled.updatedAt || "");
+    const staleServer = { ...bundled, generation: "a".repeat(64), updatedAt: new Date(bundledAt - 60_000).toISOString() };
+    const newerMac = { ...bundled, generation: "b".repeat(64), updatedAt: new Date(bundledAt + 60_000).toISOString() };
 
     expect(newestCatalog(bundled, staleServer)?.generation).toBe(bundled.generation);
     expect(newestCatalog(bundled, newerMac)?.generation).toBe(newerMac.generation);
