@@ -10,7 +10,7 @@
     ]
   },
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "6cf4329ffdef7b01db0dd682a5678f30d2c1e7911b372ff2e04736ef92821aa4",
+  "source_sha256": "285307f0784f56f72a2777ef4bee850ab1ac37ff92c43b41242c7e741cda8518",
   "enums": {
     "time_slot": [
       "morning",
@@ -23083,7 +23083,7 @@
       },
       "visual": {
         "concept_art": "assets/characters/cha-min-kyung/office-default/base-cutout.png",
-        "hud_portrait": "assets/hud/cha-min-kyung-avatar.png",
+        "hud_portrait": "assets/characters/cha-min-kyung/sd/original-cutout.png",
         "palette": [
           "burgundy",
           "charcoal",
@@ -23636,7 +23636,7 @@
       },
       "visual": {
         "concept_art": "assets/characters/yoon-seo-a/office-default/base-cutout.png",
-        "hud_portrait": "assets/hud/yoon-seo-a-avatar.png",
+        "hud_portrait": "assets/characters/yoon-seo-a/sd/original-cutout.png",
         "palette": [
           "ivory",
           "pale_blue",

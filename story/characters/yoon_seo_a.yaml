@@ -59,7 +59,7 @@ interaction_preferences:
     - 마감이 임박했거나 피해가 커지는 중이면 복구 행동을 먼저 요청할 수 있다.
 visual:
   concept_art: assets/characters/yoon-seo-a/office-default/base-cutout.png
-  hud_portrait: assets/hud/yoon-seo-a-avatar.png
+  hud_portrait: assets/characters/yoon-seo-a/sd/original-cutout.png
   palette: [ivory, pale_blue, navy]
   silhouette: 160cm의 작고 가벼운 성인 체형, 긴 흑갈색 머리와 부드러운 눈매.
   props: [고양이 스티커 수첩, 휴대전화, 텀블러]
