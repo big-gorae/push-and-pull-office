@@ -162,21 +162,22 @@ describe("locale-independent save schema", () => {
     });
   });
 
-  it("drops retired affection and perceived-state fields from legacy saves", () => {
+  it("migrates retired initiative and drops perceived-state fields from legacy saves", () => {
     const legacy = structuredClone(sessionAtTranslatedScene()) as unknown as PlayerSession & {
       state: PlayerSession["state"] & {
         visible: PlayerSession["state"]["visible"] & {
-          heroines: Record<string, { initiative: number; affection?: number; perceived_state?: string }>;
+          heroines: Record<string, { affection?: number; initiative?: number; perceived_state?: string }>;
         };
       };
     };
-    legacy.state.visible.heroines.yoon_seo_a.affection = 99;
+    delete (legacy.state.visible.heroines.yoon_seo_a as { affection?: number }).affection;
+    legacy.state.visible.heroines.yoon_seo_a.initiative = 77;
     legacy.state.visible.heroines.yoon_seo_a.perceived_state = "pull";
 
     const migrated = normalizeSaveSlot({ schema_version: 6, savedAt: 789, session: legacy }, runtime);
-    expect(migrated?.session.state.visible.heroines.yoon_seo_a).toEqual({ initiative: 50 });
+    expect(migrated?.session.state.visible.heroines.yoon_seo_a).toEqual({ affection: 77 });
     expect(JSON.stringify(migrated)).not.toContain("perceived_state");
-    expect(JSON.stringify(migrated)).not.toContain("affection");
+    expect(JSON.stringify(migrated)).not.toContain("initiative");
   });
 
   it("keeps pre-v4 saves compatible by assigning the only historical main campaign", () => {

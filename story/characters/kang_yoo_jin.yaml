@@ -3,8 +3,8 @@ id: kang_yoo_jin
 display_name: 강유진
 age: 29
 role: 브랜드마케팅팀 경력직 대리
-narrative_role: supporting_witness_candidate
-summary: 스토리 모드에서 반복 등장하지만 공략할 수 없으며, 사실관계를 확인하고 이상 징후를 알아차리는 조연. 기본 결말의 해결사나 구원자는 아니며 생존 모드의 세부 역할은 미확정이다.
+narrative_role: main_heroine
+summary: 세 공략 후보 중 실제 최종 선택이 가능한 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니며, 전용 사건·고백·엔딩은 아직 작성되지 않았다.
 player_profile:
   order: 3
   portrait_unlock_memory: profile.kang_yoo_jin.name
@@ -18,46 +18,47 @@ player_profile:
     residence: {value: 회사와 분리된 외부 생활권, unlock_memory: profile.kang_yoo_jin.residence}
     tmi: {value: 파일명에 날짜와 버전을 빠뜨린 적이 거의 없다., unlock_memory: profile.kang_yoo_jin.tmi}
 immutable_facts:
-  - 스토리 모드에 반복 등장하지만 공략 루트는 없다.
-  - 스토리 모드의 기본 결말에서 증거를 완성하거나 피해자를 구조해 파국을 막는 해결사로 등장하지 않는다.
-  - 생존 모드 안에서의 플레이어·조력자·조연 역할은 후속 검토한다.
-  - 한도윤을 특별한 연애 상대가 아니라 중단시켜야 할 반복 행동의 주체로 본다.
-  - 신고가 묵살되어도 자신의 거절이 잘못이었다고 생각하지 않는다.
+- 스토리 모드의 세 공략 후보 중 하나이며 최종 핵심 선택의 실제 후보다.
+- 현재 전용 라우트·고백·엔딩은 미작성 상태다.
+- 스토리 모드의 기본 결말에서 증거를 완성하거나 피해자를 구조해 파국을 막는 해결사로 등장하지 않는다.
+- 생존 모드 안에서의 플레이어·조력자·조연 역할은 후속 검토한다.
+- 한도윤을 특별한 연애 상대가 아니라 중단시켜야 할 반복 행동의 주체로 본다.
+- 신고가 묵살되어도 자신의 거절이 잘못이었다고 생각하지 않는다.
 voice:
   register: 쾌활하고 장난기 많은 존댓말. 평소에는 말괄량이처럼 과장된 군대식 어미를 섞지만 업무 사실은 분명하게 전달한다.
   baseline_reference: docs/dialogue-voice-baseline-day01-meeting.md
   habits:
-    - 분위기가 가벼울 때 ~지 말입니다, 합니닷 같은 어미와 느낌표를 사용한다.
-    - 프린터, 시계, 수정 횟수 같은 업무 문제를 결투나 승부로 과장해 농담한다.
-    - 상대의 농담을 빠르게 받아치고 회의 분위기를 움직인다.
-    - 일정, 담당과 원문 확인이 필요한 순간에는 장난을 줄이고 정확하게 말한다.
+  - 분위기가 가벼울 때 ~지 말입니다, 합니닷 같은 어미와 느낌표를 사용한다.
+  - 프린터, 시계, 수정 횟수 같은 업무 문제를 결투나 승부로 과장해 농담한다.
+  - 상대의 농담을 빠르게 받아치고 회의 분위기를 움직인다.
+  - 일정, 담당과 원문 확인이 필요한 순간에는 장난을 줄이고 정확하게 말한다.
   forbidden:
-    - 모든 문장에 같은 군대식 어미를 붙여 의미 전달을 방해하기
-    - 활발함을 이유로 동료를 모욕하거나 업무 책임을 회피하기
-    - 명시적인 말을 감정 추측으로 바꾸어 설명하기
+  - 모든 문장에 같은 군대식 어미를 붙여 의미 전달을 방해하기
+  - 활발함을 이유로 동료를 모욕하거나 업무 책임을 회피하기
+  - 명시적인 말을 감정 추측으로 바꾸어 설명하기
   reference_lines:
-    - context: 지각하며 회의실에 들어올 때
-      line: 죄송합니다! 바보 프린터가 저한테 결투를 신청했지 말입니다!!
-    - context: 지각을 인정하면서 농담할 때
-      line: 죄송합니닷!! 하지만 이기고 왔지 말입니다!
-    - context: 자신의 업무 규칙을 소개할 때
-      line: 수정 요청은 10번까지만! 그 이후엔 제가 직접 찾아갑니다! 잘 부탁드려요!
-    - context: 동료들을 커피 자리에 끌어들일 때
-      line: 팀원끼리 친해지는 것도 프로젝트의 일부지 말입니다!
+  - context: 지각하며 회의실에 들어올 때
+    line: 죄송합니다! 바보 프린터가 저한테 결투를 신청했지 말입니다!!
+  - context: 지각을 인정하면서 농담할 때
+    line: 죄송합니닷!! 하지만 이기고 왔지 말입니다!
+  - context: 자신의 업무 규칙을 소개할 때
+    line: 수정 요청은 10번까지만! 그 이후엔 제가 직접 찾아갑니다! 잘 부탁드려요!
+  - context: 동료들을 커피 자리에 끌어들일 때
+    line: 팀원끼리 친해지는 것도 프로젝트의 일부지 말입니다!
 interaction_preferences:
   authoring_shorthand: 사실 확인과 원문 존중을 최우선으로 하는 성향.
   support_order:
-    - factual_clarification
-    - literal_respect
-    - autonomy_return
+  - factual_clarification
+  - literal_respect
+  - autonomy_return
   prefers:
-    - 날짜, 출처, 참석자를 확인한 정확한 정정
-    - 합의한 다음 절차와 담당자를 분명히 하는 대화
+  - 날짜, 출처, 참석자를 확인한 정확한 정정
+  - 합의한 다음 절차와 담당자를 분명히 하는 대화
   resists:
-    - 명시적인 말을 감정 추측으로 다시 해석하는 반응
-    - 거절을 친밀감이나 도전으로 바꾸어 설명하는 반응
+  - 명시적인 말을 감정 추측으로 다시 해석하는 반응
+  - 거절을 친밀감이나 도전으로 바꾸어 설명하는 반응
   context_overrides:
-    - 안전이 걸린 상황에서는 감정 설명보다 기록과 공식 절차를 먼저 실행한다.
+  - 안전이 걸린 상황에서는 감정 설명보다 기록과 공식 절차를 먼저 실행한다.
 visual:
   concept_art: assets/characters/kang-yoo-jin/office-default/base-cutout.png
   palette: [cobalt, emerald, light_gray]
@@ -80,28 +81,28 @@ expressions:
     emotion: exhaustion
     description: 자신감은 남아 있지만 반복된 묵살로 표정이 지쳐 있다.
 emotion_rules:
-  - id: formal_action
-    priority: 30
-    conditions:
-      - stat: suspicion
-        op: gte
-        value: 45
-    emotion: resolve
-    behavior: record_and_report
-    default_expression: actual_warning
-  - id: observe
-    priority: 0
-    conditions: []
-    emotion: skeptical
-    behavior: fact_check
-    default_expression: actual_fact_check
+- id: formal_action
+  priority: 30
+  conditions:
+  - stat: suspicion
+    op: gte
+    value: 45
+  emotion: resolve
+  behavior: record_and_report
+  default_expression: actual_warning
+- id: observe
+  priority: 0
+  conditions: []
+  emotion: skeptical
+  behavior: fact_check
+  default_expression: actual_fact_check
 reporting_rules:
-  - id: immediate_record
-    conditions:
-      - stat: evidence_count
-        op: gte
-        value: 1
-    action: formal_record
+- id: immediate_record
+  conditions:
+  - stat: evidence_count
+    op: gte
+    value: 1
+  action: formal_record
 relationships:
   han_do_yoon: 연애적 의미를 부여하지 않고 신고 대상으로 본다.
   yoon_seo_a: 진술을 재촉하지 않고 스스로 말할 때까지 기다린다.

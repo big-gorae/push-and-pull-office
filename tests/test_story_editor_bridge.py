@@ -42,13 +42,15 @@ class StoryEditorBridgeTests(unittest.TestCase):
 
     def test_load_project_includes_runtime_documents_and_revisions(self):
         result = load_project(ROOT)
-        self.assertEqual(20, len(result["runtime"]["scenes"]))
-        self.assertEqual(20, len(result["documents"]["scenes"]))
+        self.assertEqual(22, len(result["runtime"]["scenes"]))
+        self.assertEqual(22, len(result["documents"]["scenes"]))
         self.assertEqual([], result["issues"])
         self.assertEqual(64, len(result["documents"]["scenes"]["seo_a.email_request"]["revision"]))
-        self.assertEqual(30, len(result["documents"]["events"]))
+        self.assertEqual(32, len(result["documents"]["events"]))
         self.assertEqual({"system.night_activity", "system.analysis_hint"}, set(result["documents"]["system_flows"]))
         self.assertIn("common.day_01_company_meeting", result["documents"]["scenes"])
+        self.assertIn("common.day_01_dream_and_mother_call", result["documents"]["scenes"])
+        self.assertIn("common.day_01_officetel_first_encounter", result["documents"]["scenes"])
         self.assertIn("common.day_01_parent_pressure", result["documents"]["scenes"])
         self.assertIn("common.day_01_officetel_seo_a_reveal", result["documents"]["scenes"])
         self.assertIn("common.day_02_practical_meeting", result["documents"]["scenes"])
@@ -56,7 +58,9 @@ class StoryEditorBridgeTests(unittest.TestCase):
         self.assertIn("common.day_03_officetel_min_kyung_move_in", result["documents"]["scenes"])
         self.assertIn("common.day_04_weekend_encounter", result["documents"]["scenes"])
         self.assertIn("common.day_05_weekend_reflection", result["documents"]["scenes"])
+        self.assertIn("anchor.day_01_dream_and_mother_call", result["documents"]["events"])
         self.assertIn("anchor.day_01_parent_pressure", result["documents"]["events"])
+        self.assertIn("anchor.day_01_officetel_first_encounter", result["documents"]["events"])
         self.assertIn("anchor.day_01_officetel_seo_a_reveal", result["documents"]["events"])
         self.assertIn("anchor.day_03_officetel_min_kyung_move_in", result["documents"]["events"])
         self.assertIn("main", result["documents"]["campaigns"])
@@ -125,7 +129,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
         scene = {
             "state_contract": {
                 "reads": [],
-                "writes": ["visible.heroines.yoon_seo_a.initiative"],
+                "writes": ["visible.heroines.yoon_seo_a.affection"],
             },
             "entry_conditions": [],
             "nodes": [{
@@ -147,7 +151,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
             [
                 "hidden.heroines.yoon_seo_a.suspicion",
                 "progress.flags.push_pull",
-                "visible.heroines.yoon_seo_a.initiative",
+                "visible.heroines.yoon_seo_a.affection",
                 "hidden.heroines.yoon_seo_a.dislike",
                 "hidden.heroines.yoon_seo_a.evidence_count",
             ],
@@ -158,7 +162,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
         scene = {
             "state_contract": {
                 "reads": [],
-                "writes": ["visible.heroines.yoon_seo_a.initiative"],
+                "writes": ["visible.heroines.yoon_seo_a.affection"],
             },
             "entry_conditions": [],
             "nodes": [{
@@ -185,7 +189,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
         derive_state_contract(scene)
         writes = scene["state_contract"]["writes"]
         for heroine in ("yoon_seo_a", "cha_min_kyung"):
-            self.assertIn(f"visible.heroines.{heroine}.initiative", writes)
+            self.assertIn(f"visible.heroines.{heroine}.affection", writes)
             self.assertIn(f"hidden.heroines.{heroine}.suspicion", writes)
             self.assertIn(f"hidden.heroines.{heroine}.dislike", writes)
             self.assertIn(f"hidden.heroines.{heroine}.evidence_count", writes)

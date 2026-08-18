@@ -58,11 +58,11 @@ stats:
     min: 0
     max: 6
     description: 밤 활동과 고급 표현 사용을 제한하는 피로도
-  visible.initiative:
+  visible.affection:
     type: integer
     min: 0
     max: 100
-    description: 주인공이 밀당을 통제한다고 믿는 정도
+    description: 플레이어와 한도윤에게 공략 성공으로 보이는 표면 호감도
   hidden.suspicion:
     type: integer
     min: 0
@@ -98,7 +98,7 @@ state_path_patterns:
   stat_from_path: true
 - pattern: "^visible\\.protagonist\\.self_development\\.stats\\.(health|appearance|humor|intelligence)$"
   stat_from_path: true
-- pattern: "^visible\\.heroines\\.[a-z][a-z0-9_]*\\.initiative$"
+- pattern: "^visible\\.heroines\\.[a-z][a-z0-9_]*\\.affection$"
   stat_from_suffix: true
 - pattern: "^hidden\\.heroines\\.[a-z][a-z0-9_]*\\.(suspicion|dislike|evidence_count)$"
   stat_from_suffix: true
@@ -136,11 +136,11 @@ initial_state:
         fatigue: 1
     heroines:
       yoon_seo_a:
-        initiative: 50
+        affection: 50
       cha_min_kyung:
-        initiative: 50
+        affection: 50
       kang_yoo_jin:
-        initiative: 30
+        affection: 30
   hidden:
     heroines:
       yoon_seo_a:

@@ -454,8 +454,8 @@ class StoryHarnessTests(unittest.TestCase):
         )
         self.assertTrue(any("self-development state is forbidden here" in issue.message for issue in issues))
 
-    def test_general_conditions_cannot_read_display_only_initiative(self):
-        path = "visible.heroines.yoon_seo_a.initiative"
+    def test_general_conditions_cannot_read_display_only_affection(self):
+        path = "visible.heroines.yoon_seo_a.affection"
         issues = []
         self.project._validate_conditions(
             issues,
@@ -464,7 +464,7 @@ class StoryHarnessTests(unittest.TestCase):
             {path},
         )
         self.assertTrue(any(
-            "visible initiative is display-only and forbidden in general conditions" in issue.message
+            "visible affection is display-only and forbidden in general conditions" in issue.message
             for issue in issues
         ))
 
@@ -1122,21 +1122,21 @@ class StoryHarnessTests(unittest.TestCase):
             self.assertTrue(any("push_pull target is not in scene cast" in message for message in messages))
             scene["cast"].append("cha_min_kyung")
 
-            path = "visible.heroines.cha_min_kyung.initiative"
+            path = "visible.heroines.cha_min_kyung.affection"
             scene["state_contract"]["writes"].remove(path)
             messages = [issue.message for issue in self.project.validate()]
             self.assertTrue(any(path in message and "state_contract.writes" in message for message in messages))
             scene["state_contract"]["writes"].append(path)
 
             option["effects"].append({
-                "path": "visible.heroines.yoon_seo_a.initiative",
+                "path": "visible.heroines.yoon_seo_a.affection",
                 "op": "add",
                 "value": 1,
             })
             messages = [issue.message for issue in self.project.validate()]
             self.assertTrue(any(
-                "push_pull choice must not manually write initiative" in message
-                and "visible.heroines.yoon_seo_a.initiative" in message
+                "push_pull choice must not manually write affection" in message
+                and "visible.heroines.yoon_seo_a.affection" in message
                 for message in messages
             ))
             option["effects"].pop()
@@ -1144,11 +1144,11 @@ class StoryHarnessTests(unittest.TestCase):
             option["push_pull"]["target"] = original_target
             option["effects"] = [
                 effect for effect in option["effects"]
-                if effect.get("path") != "visible.heroines.yoon_seo_a.initiative"
+                if effect.get("path") != "visible.heroines.yoon_seo_a.affection"
             ]
             if "cha_min_kyung" not in scene["cast"]:
                 scene["cast"].append("cha_min_kyung")
-            path = "visible.heroines.cha_min_kyung.initiative"
+            path = "visible.heroines.cha_min_kyung.affection"
             if path not in scene["state_contract"]["writes"]:
                 scene["state_contract"]["writes"].append(path)
 
@@ -1221,8 +1221,8 @@ class StoryHarnessTests(unittest.TestCase):
         ).run(stop_before_scene="common.day_03_business_trip_or_cafe")
         self.assertEqual("common.day_03_business_trip_or_cafe", result["stopped_at"])
         final_state = result["final_state"]
-        self.assertEqual(50, final_state["visible"]["heroines"]["yoon_seo_a"]["initiative"])
-        self.assertEqual(54, final_state["visible"]["heroines"]["cha_min_kyung"]["initiative"])
+        self.assertEqual(50, final_state["visible"]["heroines"]["yoon_seo_a"]["affection"])
+        self.assertEqual(54, final_state["visible"]["heroines"]["cha_min_kyung"]["affection"])
         self.assertEqual("cha_min_kyung", push_pull_state(final_state)["heroine"])
         self.assertEqual("none", final_state["progress"]["flags"]["story_mode"]["target"])
         self.assertEqual("factual_resolution", final_state["progress"]["flags"]["story_mode"]["day_02_response"])
@@ -1297,8 +1297,8 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual("common.day_04_weekend_encounter", result["stopped_at"])
 
         final_state = result["final_state"]
-        self.assertEqual(54, final_state["visible"]["heroines"]["yoon_seo_a"]["initiative"])
-        self.assertEqual(68, final_state["visible"]["heroines"]["cha_min_kyung"]["initiative"])
+        self.assertEqual(54, final_state["visible"]["heroines"]["yoon_seo_a"]["affection"])
+        self.assertEqual(68, final_state["visible"]["heroines"]["cha_min_kyung"]["affection"])
         self.assertEqual("cha_min_kyung", push_pull_state(final_state)["heroine"])
         day_three_choices = [
             item for item in result["trace"]
@@ -1369,7 +1369,7 @@ class StoryHarnessTests(unittest.TestCase):
         }
 
         true_state = self.project.initial_state()
-        true_state["progress"]["cleared_routes"] = ["min_kyung"]
+        true_state["progress"]["cleared_routes"] = ["yoo_jin"]
         true_state["progress"]["memories"] = ["past_case.date_mismatch"]
         reached.add(Simulator(self.project, "seo_a", aggressive, "first", true_state).run()["ending"])
 
@@ -1411,24 +1411,34 @@ class StoryHarnessTests(unittest.TestCase):
             reached,
         )
 
-    def test_first_cleared_base_route_unlocks_survival_mode(self):
-        cases = {
-            "seo_a": {
+    def test_first_final_selectable_route_clear_unlocks_survival_mode(self):
+        result = Simulator(
+            self.project,
+            "seo_a",
+            {
                 "seo_a.email_request": "take_literally",
                 "seo_a.relief_smile": "stop_game",
             },
-            "min_kyung": {
+            "first",
+        ).run()
+        progress = result["final_state"]["progress"]
+        self.assertEqual(["seo_a"], progress["cleared_routes"])
+        self.assertIn("survivor_view", progress["unlocked_modes"])
+        self.assertNotIn("collapse", progress["unlocked_modes"])
+
+    def test_decoy_min_kyung_route_does_not_clear_or_unlock_survival_mode(self):
+        result = Simulator(
+            self.project,
+            "min_kyung",
+            {
                 "min_kyung.explicit_boundary": "accept_boundary",
                 "min_kyung.witness_meeting": "work_only",
             },
-        }
-        for route_id, choices in cases.items():
-            with self.subTest(route=route_id):
-                result = Simulator(self.project, route_id, choices, "first").run()
-                progress = result["final_state"]["progress"]
-                self.assertEqual([route_id], progress["cleared_routes"])
-                self.assertIn("survivor_view", progress["unlocked_modes"])
-                self.assertNotIn("collapse", progress["unlocked_modes"])
+            "first",
+        ).run()
+        progress = result["final_state"]["progress"]
+        self.assertEqual([], progress["cleared_routes"])
+        self.assertNotIn("survivor_view", progress["unlocked_modes"])
 
     def test_game_mode_registry_keeps_the_approved_post_clear_unlock(self):
         survivor_unlock = self.project.game_modes["survivor_view"]["unlock"]["any"]
@@ -1440,10 +1450,36 @@ class StoryHarnessTests(unittest.TestCase):
         finally:
             survivor_unlock.append(removed)
 
-    def test_retired_collapse_route_is_absent(self):
+    def test_future_yoo_jin_route_is_declared_but_not_implemented(self):
         self.assertNotIn("yoo_jin", self.project.routes)
+        story_mode = self.project.meta["story_mode"]
+        self.assertIn("kang_yoo_jin", story_mode["romance_candidates"])
+        self.assertIn("kang_yoo_jin", story_mode["final_selectable_heroines"])
         self.assertTrue(all(route.get("campaign_id") == "main" for route in self.project.routes.values()))
         self.assertTrue(all("mode" not in route for route in self.project.routes.values()))
+
+    def test_story_mode_rejects_a_decoy_as_final_selectable(self):
+        story_mode = self.project.meta["story_mode"]
+        original = list(story_mode["final_selectable_heroines"])
+        story_mode["final_selectable_heroines"].append("cha_min_kyung")
+        try:
+            issues = []
+            self.project._validate_meta(issues)
+            messages = [issue.message for issue in issues]
+            self.assertTrue(any("decoy_heroine must be excluded" in message for message in messages))
+        finally:
+            story_mode["final_selectable_heroines"] = original
+
+    def test_route_final_selectable_must_match_story_mode_contract(self):
+        route = self.project.routes["min_kyung"]
+        original = route["final_selectable"]
+        route["final_selectable"] = True
+        try:
+            issues = []
+            self.project._validate_meta(issues)
+            self.assertTrue(any("final_selectable must match" in issue.message for issue in issues))
+        finally:
+            route["final_selectable"] = original
 
     def test_emotion_is_derived_from_hidden_stats(self):
         state = self.project.initial_state()
@@ -1476,7 +1512,7 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual([4, 8, 18], [first["gain"], second["gain"], third["gain"]])
         self.assertTrue(third["reached_checkpoint"])
         self.assertEqual("push", third["target"])
-        self.assertEqual(80, state["visible"]["heroines"]["yoon_seo_a"]["initiative"])
+        self.assertEqual(80, state["visible"]["heroines"]["yoon_seo_a"]["affection"])
 
         reverse = resolve_push_pull(
             self.project,
@@ -1501,7 +1537,7 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual(4, scored["base_gain"])
         self.assertEqual(0, scored["bonus_gain"])
         self.assertEqual(4, scored["gain"])
-        self.assertEqual(54, state["visible"]["heroines"]["yoon_seo_a"]["initiative"])
+        self.assertEqual(54, state["visible"]["heroines"]["yoon_seo_a"]["affection"])
         self.assertEqual(
             {"suspicion": 0, "dislike": 0, "evidence_count": 0},
             scored["hidden_delta"],
@@ -1640,7 +1676,31 @@ class StoryHarnessTests(unittest.TestCase):
             "kang_yoo_jin",
             bundle["events"]["anchor.day_01_company_meeting"]["participants"],
         )
-        self.assertEqual(30, len(bundle["events"]))
+        self.assertEqual(32, len(bundle["events"]))
+        self.assertEqual(
+            "anchor.day_01_dream_and_mother_call",
+            bundle["campaigns"]["main"]["entry_event_id"],
+        )
+        dream_and_mother_call = bundle["events"]["anchor.day_01_dream_and_mother_call"]
+        self.assertEqual([1, 1], dream_and_mother_call["window"]["days"])
+        self.assertEqual(["morning"], dream_and_mother_call["window"]["slots"])
+        self.assertEqual(0, dream_and_mother_call["duration"])
+        first_encounter = bundle["events"]["anchor.day_01_officetel_first_encounter"]
+        self.assertEqual([1, 1], first_encounter["window"]["days"])
+        self.assertEqual(["morning"], first_encounter["window"]["slots"])
+        self.assertEqual(0, first_encounter["duration"])
+        self.assertEqual(
+            ["anchor.day_01_dream_and_mother_call"],
+            first_encounter["requires"]["events"],
+        )
+        self.assertEqual(
+            ["han_do_yoon", "yoon_seo_a"],
+            bundle["scenes"]["common.day_01_officetel_first_encounter"]["cast"],
+        )
+        self.assertEqual(
+            ["anchor.day_01_officetel_first_encounter"],
+            bundle["events"]["anchor.day_01_company_meeting"]["requires"]["events"],
+        )
         parent_pressure = bundle["events"]["anchor.day_01_parent_pressure"]
         self.assertEqual([1, 1], parent_pressure["window"]["days"])
         self.assertEqual(["afternoon"], parent_pressure["window"]["slots"])
@@ -1895,10 +1955,16 @@ class StoryHarnessTests(unittest.TestCase):
 
     def test_officetel_scenes_use_their_two_dedicated_backgrounds(self):
         visuals = self.project.resolve_visuals()
+        first_encounter_scene = self.project.scenes["common.day_01_officetel_first_encounter"]
         seo_a_scene = self.project.scenes["common.day_01_officetel_seo_a_reveal"]
         min_kyung_scene = self.project.scenes["common.day_03_officetel_min_kyung_move_in"]
+        first_encounter_background = resolve_scene_background(
+            visuals, first_encounter_scene, "morning_elevator"
+        )
         seo_a_background = resolve_scene_background(visuals, seo_a_scene, "home_arrival")
         min_kyung_background = resolve_scene_background(visuals, min_kyung_scene, "knock_at_door")
+        self.assertEqual("background.officetel_elevator_lobby", first_encounter_background["visual_id"])
+        self.assertEqual("morning", first_encounter_background["variant_id"])
         self.assertEqual("background.officetel_elevator_lobby", seo_a_background["visual_id"])
         self.assertEqual("evening", seo_a_background["variant_id"])
         self.assertEqual("background.officetel_unit_corridor", min_kyung_background["visual_id"])

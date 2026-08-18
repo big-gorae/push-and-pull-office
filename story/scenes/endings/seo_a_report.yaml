@@ -50,7 +50,7 @@ nodes:
   - protagonist_art_reveal
   stage:
   - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
-  line: "정식 신병 처리 뒤 촬영된 머그샷에는 166cm의 무거운 체형, 관리되지 않은 피부와 몸에 맞지 않는 정장을 입은 한도윤이 기록됐다."
+  line: "정식 신병 처리 뒤 촬영된 머그샷에는 166cm의 비대한 체형, 심하게 무너진 얼굴 비율과 성긴 머리숱, 거칠고 번들거리는 피부, 불결한 수염과 누렇게 상한 치아가 두드러지는 한도윤이 기록됐다."
   next: record_memory
 
 - id: record_memory
@@ -63,7 +63,7 @@ nodes:
   kind: state_gate
   transitions:
   - conditions:
-    - {path: progress.cleared_routes, op: contains, value: min_kyung}
+    - {path: progress.cleared_routes, op: contains, value: yoo_jin}
     - {path: progress.memories, op: contains, value: past_case.date_mismatch}
     - {path: progress.memories, op: contains, value: ending.story_mode.grooms_face}
     node: never_dated

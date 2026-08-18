@@ -29,7 +29,7 @@ describe("condition conformance", () => {
     const scene = structuredClone(runtime.scenes["common.day_02_practical_meeting"]);
     const contract = deriveStateContract(scene, "yoon_seo_a", runtime);
     for (const heroine of ["yoon_seo_a", "cha_min_kyung"]) {
-      expect(contract.writes).toContain(`visible.heroines.${heroine}.initiative`);
+      expect(contract.writes).toContain(`visible.heroines.${heroine}.affection`);
       expect(contract.writes).toContain(`hidden.heroines.${heroine}.suspicion`);
       expect(contract.writes).toContain(`hidden.heroines.${heroine}.dislike`);
       expect(contract.writes).toContain(`hidden.heroines.${heroine}.evidence_count`);

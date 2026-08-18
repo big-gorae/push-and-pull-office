@@ -1,93 +1,93 @@
 schema_version: 1
 id: common.day_01_parent_pressure
-title: 올해는 사람 좀 만나
+title: 아침 전화가 남긴 말
 route: seo_a
 chapter: 0
-sequence: 2
+sequence: 3
 location: office_exit
 time: late_afternoon
-purpose: 부모의 결혼 재촉을 계기로 한도윤이 오전에 만난 서아와 민경의 업무상 첫인상을 결혼 후보 평가로 다시 분류하기 시작한다.
+purpose: 아침에 어머니와 한 약속을 떠올린 한도윤이 새 프로젝트에서 만난 서아·민경·유진 세 사람의 실제 업무상 첫인상을 이성적인 가능성으로 다시 분류하기 시작한다.
 cast: [han_do_yoon]
 entry_conditions: []
 state_contract:
   reads: []
   writes: []
-start_node: phone_rings
+start_node: leaving_office
 nodes:
-- id: phone_rings
+- id: leaving_office
   kind: narration
-  line: "수요일 늦은 오후, 사무실을 나서던 한도윤에게 어머니의 전화가 걸려 왔다."
-  next: mother_opening
+  stage: []
+  line: 수요일 늦은 오후, 사무실을 나서던 한도윤은 아침에 어머니와 나눈 통화를 떠올렸다.
+  next: remember_promise
 
-- id: mother_opening
-  kind: narration
-  line: "어머니는 먼저 칭찬을 붙인 뒤 물었다. ‘너처럼 멀쩡한 애가 왜 아직 혼자니. 회사에 괜찮은 사람 없어?’"
-  next: do_yoon_deflects
-
-- id: do_yoon_deflects
+- id: remember_promise
   kind: dialogue
   speaker: han_do_yoon
   stage: []
   expression: actual_waiting_smile
-  line: "오늘 새 프로젝트 시작했어요. 첫날부터 그런 얘기예요?"
-  next: father_pressure
-
-- id: father_pressure
-  kind: narration
-  line: "아버지는 짧게 말을 보탰다. ‘언제까지 일만 할 거냐. 올해는 사람이라도 좀 만나봐.’"
-  next: do_yoon_answers
-
-- id: do_yoon_answers
-  kind: dialogue
-  speaker: han_do_yoon
-  stage: []
-  expression: actual_waiting_smile
-  line: "알겠어요. 올해도 일만 하겠다는 말은 안 할게요. 그래도 회사 사람 얘기는 천천히 해야죠."
-  next: mother_softens
-
-- id: mother_softens
-  kind: narration
-  line: "어머니는 더 밀어붙이지 않았다. ‘서두르라는 건 아니야. 괜찮은 사람이 있으면 너도 마음을 좀 열어 보라는 거지.’"
-  next: end_call
-
-- id: end_call
-  kind: dialogue
-  speaker: han_do_yoon
-  stage: []
-  expression: actual_waiting_smile
-  line: "네. 주말에 다시 전화드릴게요. 두 분도 들어가세요."
-  next: reframe_morning
-
-- id: reframe_morning
-  kind: narration
-  line: "한도윤은 오전에 본 서아의 자료 대응과 민경의 일정 검증을 개인적인 궁합을 판단할 재료로 다시 분류하기 시작했다."
+  line: (괜찮은 사람이 있으면 알아서 만나 보겠다고 했지…….)
   next: remember_seo_a
 
 - id: remember_seo_a
   kind: narration
-  line: "서아는 배포 자료가 부족해지자 준비 담당자로서 자신의 여분을 건넸다."
-  next: remember_min_kyung
+  stage: []
+  line: 서아는 배포 자료가 부족해지자 준비 담당자로서 자신의 여분을 건넸다.
+  next: do_yoon_seo_a
 
-- id: remember_min_kyung
-  kind: narration
-  line: "민경은 일정 근거를 확인한 뒤 해당 안건을 닫고 회의를 계속했다."
-  next: decision
-
-- id: decision
+- id: do_yoon_seo_a
   kind: dialogue
   speaker: han_do_yoon
   stage: []
   expression: actual_waiting_smile
-  line: "결혼을 생각한다면 회사에도 괜찮은 사람은 있겠지. 서아 씨와 차 대리가 어떤 사람인지는 천천히 보면 되겠어."
-  next: night_close
+  line: (꼼꼼하고 다정한 서아 씨.)
+  next: remember_min_kyung
 
-- id: night_close
+- id: remember_min_kyung
   kind: narration
-  line: "첫날 밤, 한도윤은 두 동료의 이름을 자신의 결혼 가능성 목록에 올렸다."
+  stage: []
+  line: 민경은 일정 근거를 확인한 뒤 잘못된 안건을 정확하게 바로잡고 회의를 계속했다.
+  next: do_yoon_min_kyung
+
+- id: do_yoon_min_kyung
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (차갑지만 누구보다 정확한 차 대리.)
+  next: remember_yoo_jin
+
+- id: remember_yoo_jin
+  kind: narration
+  stage: []
+  line: 유진은 지각마저 농담으로 넘기면서도 맡은 파일과 제품 정보는 분명하게 확인했다.
+  next: do_yoon_yoo_jin
+
+- id: do_yoon_yoo_jin
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (밝고 거침없는 유진 씨까지.)
+  next: do_yoon_considers
+
+- id: do_yoon_considers
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (아직은 첫날이지만…… 세 사람 모두 조금 더 알아보고 싶네.)
+  next: do_yoon_restrains
+
+- id: do_yoon_restrains
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (아니, 첫날부터 무슨 생각이야. 프로젝트부터 잘하자.)
   next: leave
 
 - id: leave
   kind: exit
   transitions:
   - default: true
-    scene: seo_a.email_request
+    scene: common.day_01_officetel_seo_a_reveal

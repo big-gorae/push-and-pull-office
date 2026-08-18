@@ -41,7 +41,7 @@ const NARRATIVE_ROLE_LABELS: Record<string, string> = {
 };
 
 const STAT_LABELS: Record<string, string> = {
-  initiative: "밀당 주도권",
+  affection: "호감도",
   suspicion: "의심도",
   dislike: "비호감",
   evidence_count: "물리적 증거",

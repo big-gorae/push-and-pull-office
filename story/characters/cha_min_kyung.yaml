@@ -4,7 +4,7 @@ display_name: 차민경
 age: 28
 role: 브랜드마케팅팀 대리 겸 프로젝트 실무 책임자
 narrative_role: main_heroine
-summary: 직접 선을 긋고 후배를 보호하지만 과거 회사의 신고 축소를 목격해 기록을 우선하는 인물.
+summary: 세 공략 후보 중 하나처럼 밀당과 개별 사건이 진행되지만 결정적인 선택에서는 제외되는 위장 공략. 직접 선을 긋고 후배를 보호하며 기록을 우선한다.
 player_profile:
   order: 2
   portrait_unlock_memory: profile.cha_min_kyung.name
@@ -18,47 +18,48 @@ player_profile:
     residence: {value: 회사 근처 오피스텔 · 새 입주민, unlock_memory: profile.cha_min_kyung.residence}
     tmi: {value: 회의용 금속 볼펜은 같은 모델만 여러 자루 쓴다., unlock_memory: profile.cha_min_kyung.tmi}
 immutable_facts:
-  - 한도윤의 접근을 고난도 밀당으로 즐기지 않는다.
-  - 도전적인 표정은 유혹이 아니라 불쾌함과 사실 확인이다.
-  - 섹시한 외형과 피해 사이에는 인과관계가 없다.
-  - 하루담 홈카페 프로젝트에서 인플루언서·크리에이터 협업의 실무 연락과 공개 일정 조율을 맡는다.
+- 플레이 중 공략 후보로 제시되고 호감도와 밀당 수치를 가지지만 최종 공략과 결정적 선택은 불가능하다.
+- 한도윤의 접근을 고난도 밀당으로 즐기지 않는다.
+- 도전적인 표정은 유혹이 아니라 불쾌함과 사실 확인이다.
+- 섹시한 외형과 피해 사이에는 인과관계가 없다.
+- 하루담 홈카페 프로젝트에서 인플루언서·크리에이터 협업의 실무 연락과 공개 일정 조율을 맡는다.
 voice:
   register: 짧고 정확한 존댓말. 감정 평가보다 사실, 시간, 책임과 다음 행동을 먼저 말해 로봇처럼 느껴질 정도로 건조하다.
   baseline_reference: docs/dialogue-voice-baseline-day01-meeting.md
   habits:
-    - 직급과 이름을 정확히 부른다.
-    - 시간과 지연을 숫자로 정확히 말한다.
-    - 오류를 지적할 때 사실과 발생 조건을 함께 말한다.
-    - 상대의 반박에 근거가 있으면 감정 섞인 변명 없이 즉시 수용한다.
-    - 감정이 높아질수록 목소리보다 단어가 더 정확해진다.
+  - 직급과 이름을 정확히 부른다.
+  - 시간과 지연을 숫자로 정확히 말한다.
+  - 오류를 지적할 때 사실과 발생 조건을 함께 말한다.
+  - 상대의 반박에 근거가 있으면 감정 섞인 변명 없이 즉시 수용한다.
+  - 감정이 높아질수록 목소리보다 단어가 더 정확해진다.
   forbidden:
-    - 근거 없이 상대의 성격이나 능력을 공격하기
-    - 반박이 맞다는 사실을 알면서 자존심 때문에 우기기
-    - 명확한 거절 뒤 장난처럼 웃어 넘기기
+  - 근거 없이 상대의 성격이나 능력을 공격하기
+  - 반박이 맞다는 사실을 알면서 자존심 때문에 우기기
+  - 명확한 거절 뒤 장난처럼 웃어 넘기기
   reference_lines:
-    - context: 준비 상태를 확인할 때
-      line: 괜찮습니다. 회의 전에 발견했으니 아직 실수는 아닙니다.
-    - context: 지각 시간을 알릴 때
-      line: 강 대리, 5분 42초 늦었습니다.
-    - context: 프로젝트와 무관한 질문을 분류할 때
-      line: 프로젝트와 관계없는 질문입니다.
-    - context: 조건을 확인한 뒤 제안을 수용할 때
-      line: 점심시간 전에 끝난다면 저도 참여하겠습니다.
+  - context: 준비 상태를 확인할 때
+    line: 괜찮습니다. 회의 전에 발견했으니 아직 실수는 아닙니다.
+  - context: 지각 시간을 알릴 때
+    line: 강 대리, 5분 42초 늦었습니다.
+  - context: 프로젝트와 무관한 질문을 분류할 때
+    line: 프로젝트와 관계없는 질문입니다.
+  - context: 조건을 확인한 뒤 제안을 수용할 때
+    line: 점심시간 전에 끝난다면 저도 참여하겠습니다.
 interaction_preferences:
   authoring_shorthand: T 성향을 떠올리되 사실과 실행 가능성을 먼저 확인하는 지원 순서로만 사용한다.
   support_order:
-    - factual_clarification
-    - practical_resolution
-    - autonomy_return
-    - concise_reassurance
+  - factual_clarification
+  - practical_resolution
+  - autonomy_return
+  - concise_reassurance
   prefers:
-    - 영향 범위와 근거가 분명한 설명
-    - 실행 가능한 대안을 준비하되 최종 결정권을 돌려주는 제안
+  - 영향 범위와 근거가 분명한 설명
+  - 실행 가능한 대안을 준비하되 최종 결정권을 돌려주는 제안
   resists:
-    - 조치 없이 걱정하지 말라는 막연한 안심
-    - 승인 없이 일을 대신 처리하고 완료 사실만 통보하는 행동
+  - 조치 없이 걱정하지 말라는 막연한 안심
+  - 승인 없이 일을 대신 처리하고 완료 사실만 통보하는 행동
   context_overrides:
-    - 문제를 수습한 뒤에는 감정과 부담을 짧고 정확하게 인정받아야 대화를 이어 갈 수 있다.
+  - 문제를 수습한 뒤에는 감정과 부담을 짧고 정확하게 인정받아야 대화를 이어 갈 수 있다.
 visual:
   concept_art: assets/characters/cha-min-kyung/office-default/base-cutout.png
   hud_portrait: assets/characters/cha-min-kyung/sd/original-cutout.png
@@ -88,40 +89,40 @@ expressions:
     emotion: exhaustion
     description: 혼자 남은 뒤에만 굳은 어깨와 피로가 드러난다.
 emotion_rules:
-  - id: confrontation
-    priority: 30
-    conditions:
-      - stat: suspicion
-        op: gte
-        value: 60
-    emotion: anger
-    behavior: document_with_witness
-    default_expression: actual_disgust
-  - id: guarded
-    priority: 20
-    conditions:
-      - stat: suspicion
-        op: gte
-        value: 30
-    emotion: disgust
-    behavior: set_explicit_boundary
-    default_expression: actual_skeptical
-  - id: baseline
-    priority: 0
-    conditions: []
-    emotion: professional
-    behavior: work_only
-    default_expression: actual_skeptical
+- id: confrontation
+  priority: 30
+  conditions:
+  - stat: suspicion
+    op: gte
+    value: 60
+  emotion: anger
+  behavior: document_with_witness
+  default_expression: actual_disgust
+- id: guarded
+  priority: 20
+  conditions:
+  - stat: suspicion
+    op: gte
+    value: 30
+  emotion: disgust
+  behavior: set_explicit_boundary
+  default_expression: actual_skeptical
+- id: baseline
+  priority: 0
+  conditions: []
+  emotion: professional
+  behavior: work_only
+  default_expression: actual_skeptical
 reporting_rules:
-  - id: documented_report
-    conditions:
-      - stat: evidence_count
-        op: gte
-        value: 3
-      - stat: dislike
-        op: gte
-        value: 60
-    action: internal_report
+- id: documented_report
+  conditions:
+  - stat: evidence_count
+    op: gte
+    value: 3
+  - stat: dislike
+    op: gte
+    value: 60
+  action: internal_report
 relationships:
   han_do_yoon: 업무 관계를 유지하되 사적 접근은 명확히 거절한다.
   yoon_seo_a: 이상 징후를 발견한 뒤 단둘이 남지 않도록 돕는다.

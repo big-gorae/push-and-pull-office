@@ -1,9 +1,14 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import runtimeFixture from "../build/story-runtime.json" with { type: "json" };
 
-const dayOneMeetingNodeCount = runtimeFixture.scenes["common.day_01_company_meeting"].node_order.length;
-const dayOneMeeting = runtimeFixture.scenes["common.day_01_company_meeting"];
-const dayOneOpeningLine = dayOneMeeting.nodes[dayOneMeeting.start_node].line;
+const dayOneOpening = runtimeFixture.scenes["common.day_01_dream_and_mother_call"];
+const dayOneOpeningLine = dayOneOpening.nodes[dayOneOpening.start_node].line;
+const dayOneOpeningNodeCount = dayOneOpening.node_order.length;
+
+async function selectScene(page: Page, title: string) {
+  await page.getByRole("button", { name: "날짜별 장면 열기" }).click();
+  await page.getByRole("button", { name: new RegExp(title) }).click();
+}
 
 test("Mac mobile sync window returns to authoring after authentication resets the URL", async ({ page }) => {
   await page.addInitScript(() => {
@@ -23,8 +28,8 @@ test("mobile scene authoring edits a scene and reopens its draft offline", async
 
   await expect(page).toHaveTitle("office");
   await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "수요일의 첫 회의" })).toBeVisible();
-  await expect(page.locator(".mobile-node-card")).toHaveCount(dayOneMeetingNodeCount);
+  await expect(page.getByRole("heading", { name: "꿈을 끊은 전화" })).toBeVisible();
+  await expect(page.locator(".mobile-node-card")).toHaveCount(dayOneOpeningNodeCount);
 
   await page.locator(".node-card-main").first().click();
   const editor = page.getByRole("textbox", { name: "대사" });
@@ -86,7 +91,7 @@ test("mobile scene authoring prefers the newly deployed dialogue over a stale lo
     });
     db.close();
     return snapshot;
-  }, { sceneId: dayOneMeeting.id });
+  }, { sceneId: dayOneOpening.id });
   await page.route("**/api/authoring/v1/catalog?**", (route) => route.fulfill({
     status: 200,
     contentType: "application/json",
@@ -190,6 +195,7 @@ test("mobile scene authoring exposes structure, artwork and background controls"
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/#/author");
   await expect(page.getByRole("heading", { name: "대사 장면 편집기" })).toBeVisible();
+  await selectScene(page, "고양이 슬리퍼");
 
   await page.getByRole("button", { name: "씬 배경 자동 선택" }).click();
   await expect(page.getByRole("dialog", { name: "씬 기본 배경 선택" })).toBeVisible();

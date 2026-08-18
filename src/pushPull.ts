@@ -24,8 +24,8 @@ export type PushPullResult = {
   action: PushPullConfig["action"];
   previousPosition: number;
   position: number;
-  previousInitiative: number;
-  initiative: number;
+  previousAffection: number;
+  affection: number;
   combo: number;
   baseGain: number;
   bonusGain: number;
@@ -124,7 +124,7 @@ export function resolvePushPull(
   const current = readPushPullState(state);
   const heroineChanged = Boolean(current.heroine && current.heroine !== heroine);
   const previousPosition = current.position;
-  const previousInitiative = state.visible.heroines[heroine]?.initiative ?? 0;
+  const previousAffection = state.visible.heroines[heroine]?.affection ?? 0;
   const intensity = numberInRange(config.intensity, 12, 8, 16);
   const baseScore = numberInRange(config.base_score, 4, 2, 5);
   let combo = heroineChanged ? 0 : current.combo;
@@ -166,7 +166,7 @@ export function resolvePushPull(
       bonusGain = numberInRange(modifier.visibleScoreBonus, 0, 0, 3);
       gain = baseGain + bonusGain;
       const visible = state.visible.heroines[heroine];
-      if (visible) visible.initiative = Math.min(100, visible.initiative + gain);
+      if (visible) visible.affection = Math.min(100, visible.affection + gain);
     } else {
       combo = 0;
       kind = inside ? "wrong" : "outside";
@@ -191,8 +191,8 @@ export function resolvePushPull(
     action: config.action,
     previousPosition,
     position,
-    previousInitiative,
-    initiative: state.visible.heroines[heroine]?.initiative ?? previousInitiative,
+    previousAffection,
+    affection: state.visible.heroines[heroine]?.affection ?? previousAffection,
     combo,
     baseGain,
     bonusGain,

@@ -121,7 +121,8 @@ function finishEnding(runtime: Runtime, session: PlayerSession, endingId: string
   session.phase = "complete";
   session.endingId = endingId;
   session.currentEventId = undefined;
-  if (grantRouteClear && session.routeId && !session.state.progress.cleared_routes.includes(session.routeId)) {
+  const route = session.routeId ? runtime.routes[session.routeId] : undefined;
+  if (grantRouteClear && route?.final_selectable && !session.state.progress.cleared_routes.includes(session.routeId)) {
     session.state.progress.cleared_routes.push(session.routeId);
   }
   refreshUnlockedModes(runtime, session.state);
@@ -191,6 +192,7 @@ export function settleSession(runtime: Runtime, value: PlayerSession): PlayerSes
         session.phase = "timeline";
         session.currentEventId = undefined;
         session.lastFeedback = undefined;
+        if (event.duration === 0) session.preparedTimeKey = undefined;
         break;
       }
     }
@@ -298,7 +300,7 @@ export function normalizePlayerSession(value: unknown, runtime?: Runtime): Playe
     routeId: legacy.routeId || "",
     sceneId: legacy.sceneId || "",
     nodeId: legacy.nodeId || "",
-    state: removeRetiredVisibleHeroineFields(legacy.state),
+    state: migrateVisibleHeroineFields(legacy.state),
     choices: legacy.choices || [],
     readNodes: legacy.readNodes || [],
     timelineLog: legacy.timelineLog || [],
@@ -563,6 +565,11 @@ export function advanceToNextMoment(runtime: Runtime, value: PlayerSession): Pla
   const campaign = requireCampaign(runtime, session.campaignId);
   const safetyLimit = Math.max(1, campaign.total_days * campaign.slots.length + 1);
   let previousLogCount = session.timelineLog.length;
+  if (session.phase === "timeline" && session.preparedTimeKey === undefined) {
+    session = prepareTimeSlot(runtime, session);
+    if (session.phase !== "timeline") return session;
+    if (availableTimelineEvents(runtime, session).length > 0) return session;
+  }
   for (let index = 0; index < safetyLimit; index += 1) {
     session = advanceTimeline(runtime, session);
     if (session.phase !== "timeline") return session;
@@ -580,13 +587,21 @@ export function currentNode(runtime: Runtime, session: PlayerSession): StoryNode
   return runtime.scenes[session.sceneId]?.nodes[session.nodeId];
 }
 
-function removeRetiredVisibleHeroineFields(state: RuntimeState): RuntimeState {
+function migrateVisibleHeroineFields(state: RuntimeState): RuntimeState {
   Object.values(state.visible?.heroines || {}).forEach((heroine) => {
     const legacyHeroine = heroine as typeof heroine & {
       affection?: unknown;
+      initiative?: unknown;
       perceived_state?: unknown;
     };
-    delete legacyHeroine.affection;
+    const currentAffection = Number(legacyHeroine.affection);
+    const legacyInitiative = Number(legacyHeroine.initiative);
+    legacyHeroine.affection = Number.isFinite(currentAffection)
+      ? Math.max(0, Math.min(100, currentAffection))
+      : Number.isFinite(legacyInitiative)
+        ? Math.max(0, Math.min(100, legacyInitiative))
+        : 0;
+    delete legacyHeroine.initiative;
     delete legacyHeroine.perceived_state;
   });
   return state;

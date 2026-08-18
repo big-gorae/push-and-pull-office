@@ -84,8 +84,8 @@ FORBIDDEN_CHOICE_DIRECTION_TERMS = (
     "당기자",
 )
 FORBIDDEN_CHOICE_DIRECTION_ENGLISH = re.compile(r"\b(?:push|pull)\b", re.IGNORECASE)
-VISIBLE_INITIATIVE_CONDITION_PATTERN = re.compile(
-    r"^visible\.heroines\.[a-z][a-z0-9_]*\.initiative$"
+VISIBLE_AFFECTION_CONDITION_PATTERN = re.compile(
+    r"^visible\.heroines\.[a-z][a-z0-9_]*\.affection$"
 )
 APPROVED_UI_STRINGS = {
     "mode.survivor.title": "어나더 스토리",
@@ -467,7 +467,7 @@ class StoryProject:
         approved_post_clear_unlock = {
             "any": [
                 {"conditions": [{"path": "progress.cleared_routes", "op": "contains", "value": "seo_a"}]},
-                {"conditions": [{"path": "progress.cleared_routes", "op": "contains", "value": "min_kyung"}]},
+                {"conditions": [{"path": "progress.cleared_routes", "op": "contains", "value": "yoo_jin"}]},
             ]
         }
         if base.get("unlock") != {"always": True}:
@@ -1103,6 +1103,65 @@ class StoryProject:
                             self._error(issues, teaser_location, "each teaser reveal requires mode, title and teaser")
                         elif reveal.get("mode") not in self.game_modes:
                             self._error(issues, teaser_location, f"teaser references unknown game mode: {reveal.get('mode')}")
+
+        story_mode = self.meta.get("story_mode")
+        if not isinstance(story_mode, dict):
+            self._error(issues, "story/meta/story_mode.yaml", "story_mode metadata is required")
+            return
+        location = relative_source(story_mode.get("_source", "story/meta/story_mode.yaml"))
+
+        candidate_fields = ("romance_candidates", "implemented_route_heroines", "final_selectable_heroines")
+        candidate_lists: Dict[str, List[str]] = {}
+        for field in candidate_fields:
+            values = story_mode.get(field)
+            if not isinstance(values, list) or not values or not all(isinstance(value, str) for value in values):
+                self._error(issues, location, f"{field} must be a non-empty character id list")
+                candidate_lists[field] = []
+                continue
+            if len(values) != len(set(values)):
+                self._error(issues, location, f"{field} must not contain duplicates")
+            unknown = sorted(set(values) - set(self.characters))
+            for character_id in unknown:
+                self._error(issues, location, f"{field} references unknown character: {character_id}")
+            candidate_lists[field] = values
+
+        candidates = set(candidate_lists.get("romance_candidates", []))
+        implemented = set(candidate_lists.get("implemented_route_heroines", []))
+        final_selectable = set(candidate_lists.get("final_selectable_heroines", []))
+        decoy = story_mode.get("decoy_heroine")
+        if not isinstance(decoy, str) or decoy not in candidates:
+            self._error(issues, location, "decoy_heroine must reference a romance candidate")
+        if not final_selectable <= candidates:
+            self._error(issues, location, "final_selectable_heroines must be a subset of romance_candidates")
+        if decoy in final_selectable:
+            self._error(issues, location, "decoy_heroine must be excluded from final_selectable_heroines")
+        if isinstance(decoy, str) and candidates != final_selectable | {decoy}:
+            self._error(issues, location, "romance_candidates must consist of final-selectable heroines plus the decoy heroine")
+
+        route_heroines = {route.get("heroine") for route in self.routes.values() if isinstance(route.get("heroine"), str)}
+        if implemented != route_heroines:
+            self._error(
+                issues,
+                location,
+                f"implemented_route_heroines must match current route heroines: expected {sorted(route_heroines)}",
+            )
+        if not implemented <= candidates:
+            self._error(issues, location, "implemented_route_heroines must be a subset of romance_candidates")
+        for route_id, route in self.routes.items():
+            heroine = route.get("heroine")
+            expected = heroine in final_selectable
+            if route.get("final_selectable") is not expected:
+                route_location = relative_source(route.get("_source", route_id))
+                self._error(issues, route_location, f"final_selectable must match story_mode final candidate contract for {heroine}")
+
+        visible = self.manifest.get("initial_state", {}).get("visible", {}).get("heroines", {})
+        hidden = self.manifest.get("initial_state", {}).get("hidden", {}).get("heroines", {})
+        for character_id in sorted(candidates):
+            if character_id not in visible or not isinstance(visible.get(character_id, {}).get("affection"), int):
+                self._error(issues, location, f"romance candidate requires visible affection state: {character_id}")
+            if character_id not in hidden:
+                self._error(issues, location, f"romance candidate requires hidden heroine state: {character_id}")
+
     def _validate_characters(self, issues: List[Issue]) -> None:
         for character_id, character in self.characters.items():
             location = relative_source(character.get("_source", character_id))
@@ -1943,9 +2002,11 @@ class StoryProject:
             location = relative_source(route.get("_source", route_id))
             if not self.id_is_valid(route_id):
                 self._error(issues, location, f"invalid route id: {route_id}")
-            for key in ("title", "heroine", "campaign_id", "entry_scene", "scene_order", "endings"):
+            for key in ("title", "heroine", "campaign_id", "final_selectable", "entry_scene", "scene_order", "endings"):
                 if key not in route:
                     self._error(issues, location, f"required key is missing: {key}")
+            if not isinstance(route.get("final_selectable"), bool):
+                self._error(issues, location, "final_selectable must be boolean")
             campaign_id = route.get("campaign_id")
             if campaign_id not in self.campaigns:
                 self._error(issues, location, f"unknown route campaign: {campaign_id}")
@@ -2247,7 +2308,7 @@ class StoryProject:
                                         self._error(issues, option_location, "interaction support_styles must be unique")
                     system_paths = [
                         "progress.flags.push_pull",
-                        f"visible.heroines.{heroine}.initiative",
+                        f"visible.heroines.{heroine}.affection",
                         f"hidden.heroines.{heroine}.suspicion",
                         f"hidden.heroines.{heroine}.dislike",
                         f"hidden.heroines.{heroine}.evidence_count",
@@ -2258,12 +2319,12 @@ class StoryProject:
                         if path not in writes:
                             self._error(issues, option_location, f"push_pull system path is not declared in state_contract.writes: {path}")
                     forbidden = {
-                        f"visible.heroines.{character_id}.initiative"
+                        f"visible.heroines.{character_id}.affection"
                         for character_id in self.manifest.get("initial_state", {}).get("visible", {}).get("heroines", {})
                     }
                     for effect in option.get("effects", []):
                         if effect.get("path") in forbidden:
-                            self._error(issues, option_location, f"push_pull choice must not manually write initiative: {effect.get('path')}")
+                            self._error(issues, option_location, f"push_pull choice must not manually write affection: {effect.get('path')}")
                 if "self_development" in option:
                     self._validate_self_development_use(
                         issues,
@@ -2844,11 +2905,11 @@ class StoryProject:
                     item_location,
                     "self-development state is forbidden here; only named stats may gate additive player events, and interactions use self_development.expression metadata",
                 )
-            if isinstance(path, str) and VISIBLE_INITIATIVE_CONDITION_PATTERN.fullmatch(path):
+            if isinstance(path, str) and VISIBLE_AFFECTION_CONDITION_PATTERN.fullmatch(path):
                 self._error(
                     issues,
                     item_location,
-                    "visible initiative is display-only and forbidden in general conditions",
+                    "visible affection is display-only and forbidden in general conditions",
                 )
             if self.path_spec(path) is None:
                 self._error(issues, item_location, f"unknown state path: {path}")
@@ -4424,8 +4485,8 @@ def resolve_push_pull(
     intensity = _bounded_number(config.get("intensity"), 12, 8, 16)
     base_score = _bounded_number(config.get("base_score"), 4, 2, 5)
     previous_position = current["position"]
-    initiative_path = f"visible.heroines.{heroine}.initiative"
-    previous_initiative = int(get_path(state, initiative_path, 0))
+    affection_path = f"visible.heroines.{heroine}.affection"
+    previous_affection = int(get_path(state, affection_path, 0))
     combo = 0 if heroine_changed else current["combo"]
     target = "none" if heroine_changed else current["target"]
     position = previous_position
@@ -4471,7 +4532,7 @@ def resolve_push_pull(
                 SELF_DEVELOPMENT_MAX_SCORE_BONUS,
             )
             gain = base_gain + bonus_gain
-            apply_effect(project, state, {"path": initiative_path, "op": "add", "value": gain})
+            apply_effect(project, state, {"path": affection_path, "op": "add", "value": gain})
         else:
             combo = 0
             kind = "wrong" if inside else "outside"
@@ -4496,8 +4557,8 @@ def resolve_push_pull(
         "action": action,
         "previous_position": previous_position,
         "position": position,
-        "previous_initiative": previous_initiative,
-        "initiative": int(get_path(state, initiative_path, previous_initiative)),
+        "previous_affection": previous_affection,
+        "affection": int(get_path(state, affection_path, previous_affection)),
         "combo": combo,
         "base_gain": base_gain,
         "bonus_gain": bonus_gain,

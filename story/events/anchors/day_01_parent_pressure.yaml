@@ -1,7 +1,7 @@
 schema_version: 1
 campaign_id: main
 id: anchor.day_01_parent_pressure
-title: 올해는 사람 좀 만나
+title: 아침 전화가 남긴 말
 type: anchor
 lane: personal
 window: {days: [1, 1], slots: [afternoon], deadline_day: 1}
@@ -18,5 +18,5 @@ requires:
 on_seen: {effects: []}
 on_missed: {effects: []}
 presentation:
-  title: 퇴근길에 걸려 온 가족 전화
-  summary: 부모는 한도윤의 자존심을 다치지 않으려 외모와 조건을 칭찬하며 사람을 만나보라고 권한다.
+  title: 세 사람을 다시 떠올리다
+  summary: 한도윤은 아침에 어머니와 한 약속을 떠올리며 프로젝트에서 만난 서아·민경·유진을 이성적인 가능성으로 다시 바라본다.

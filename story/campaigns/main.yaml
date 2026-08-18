@@ -1,7 +1,7 @@
 schema_version: 1
 id: main
 title: 오피스의 신호들
-entry_event_id: anchor.day_01_company_meeting
+entry_event_id: anchor.day_01_dream_and_mother_call
 initial_state_patch: {}
 systems:
   self_development: true
@@ -16,7 +16,7 @@ acts:
     id: romantic_surface
     title: 첫인상과 업무의 거리
     days: [1, 5]
-    purpose: 수요일부터 금요일까지 정석적인 오피스 라포를 쌓는 사이 서아가 같은 오피스텔의 기존 입주민임을 알고 민경도 새로 이사 오며, 토·일요일에는 두 사람을 한 명씩 교차해 만나 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.
+    purpose: 수연의 꿈과 어머니의 아침 전화로 다시 사람을 만나 보겠다는 결심을 만든 뒤, 출근길에 이름 모를 이웃으로 서아와 먼저 마주치고 회사에서 세 여성 동료를 만난다. 저녁에는 서아가 같은 오피스텔의 기존 입주민임을 확인하고, 금요일에는 민경도 새로 이사 오며, 토·일요일에는 두 사람을 한 명씩 교차해 만나 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.
   - number: 2
     id: collisions
     title: 시간 충돌과 의심

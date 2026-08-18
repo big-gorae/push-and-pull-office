@@ -1,20 +1,20 @@
 {
   "schema_version": 2,
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "285307f0784f56f72a2777ef4bee850ab1ac37ff92c43b41242c7e741cda8518",
+  "source_sha256": "fd91e6466a5aa427634f7f0404ffeac869116ea8612d3da9123bb00d1fa4d1ea",
   "profile": "development",
   "default_locale": "ko",
   "supported_locales": [
     "ko",
     "en"
   ],
-  "total_entries": 903,
+  "total_entries": 960,
   "coverage": {
     "ko": {
-      "direct": 903,
-      "resolved": 903,
-      "translated": 903,
-      "total": 903,
+      "direct": 960,
+      "resolved": 960,
+      "translated": 960,
+      "total": 960,
       "ratio": 1.0,
       "fallback_used": [],
       "missing": [],
@@ -35,8 +35,8 @@
           "total": 67
         },
         "event": {
-          "direct": 90,
-          "total": 90
+          "direct": 96,
+          "total": 96
         },
         "locale": {
           "direct": 4,
@@ -51,8 +51,8 @@
           "total": 8
         },
         "scene": {
-          "direct": 483,
-          "total": 483
+          "direct": 533,
+          "total": 533
         },
         "system_flow": {
           "direct": 23,
@@ -63,8 +63,8 @@
           "total": 2
         },
         "visual": {
-          "direct": 12,
-          "total": 12
+          "direct": 13,
+          "total": 13
         },
         "world": {
           "direct": 18,
@@ -74,10 +74,10 @@
     },
     "en": {
       "direct": 275,
-      "resolved": 903,
+      "resolved": 960,
       "translated": 275,
-      "total": 903,
-      "ratio": 0.3045,
+      "total": 960,
+      "ratio": 0.2865,
       "fallback_used": [
         "campaign.main.acts.collisions.purpose",
         "campaign.main.acts.crisis.purpose",
@@ -130,6 +130,12 @@
         "events.anchor.day_01_company_meeting.presentation.summary",
         "events.anchor.day_01_company_meeting.presentation.title",
         "events.anchor.day_01_company_meeting.title",
+        "events.anchor.day_01_dream_and_mother_call.presentation.summary",
+        "events.anchor.day_01_dream_and_mother_call.presentation.title",
+        "events.anchor.day_01_dream_and_mother_call.title",
+        "events.anchor.day_01_officetel_first_encounter.presentation.summary",
+        "events.anchor.day_01_officetel_first_encounter.presentation.title",
+        "events.anchor.day_01_officetel_first_encounter.title",
         "events.anchor.day_01_officetel_seo_a_reveal.presentation.summary",
         "events.anchor.day_01_officetel_seo_a_reveal.presentation.title",
         "events.anchor.day_01_officetel_seo_a_reveal.title",
@@ -373,26 +379,76 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_won.line",
         "scenes.common.day_01_company_meeting.purpose",
         "scenes.common.day_01_company_meeting.title",
+        "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_accepts_time.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_answers_phone.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_avoids_soo_yeon.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_calls_soo_yeon.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_downplays.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_morning_reaction.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_promises.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_protests.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_remembers.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_resolves.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_woken.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.dream_of_soo_yeon.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.morning_begins.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.mother_celebrates.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.mother_greets.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.mother_matchmaking.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.mother_mentions_soo_yeon.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.mother_praises_face.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.mother_pushes_once_more.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.mother_urges_romance.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.phone_screen.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.ringtone_breaks_dream.line",
+        "scenes.common.day_01_dream_and_mother_call.purpose",
+        "scenes.common.day_01_dream_and_mother_call.title",
+        "scenes.common.day_01_officetel_first_encounter.nodes.arrives_ground_floor.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_apologizes.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_blurts.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_checks_phone.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_guesses.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_leaves.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_looks_up.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_notices_outfit.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_panics.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_realizes.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_scolds_himself.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_sees_her.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_stares.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.doors_close.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.morning_elevator.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.seo_a_checks_feet.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.seo_a_explains.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.seo_a_goes_back.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.seo_a_reacts.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.seo_a_realizes.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.seo_a_sends_him_ahead.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.slippers_enter_view.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.slippers_revealed.line",
+        "scenes.common.day_01_officetel_first_encounter.purpose",
+        "scenes.common.day_01_officetel_first_encounter.title",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_agrees.line",
         "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.line",
         "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.line",
         "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.line",
         "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.line",
         "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_relaxes.line",
         "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.line",
         "scenes.common.day_01_officetel_seo_a_reveal.purpose",
         "scenes.common.day_01_officetel_seo_a_reveal.title",
-        "scenes.common.day_01_parent_pressure.nodes.decision.line",
-        "scenes.common.day_01_parent_pressure.nodes.do_yoon_answers.line",
-        "scenes.common.day_01_parent_pressure.nodes.do_yoon_deflects.line",
-        "scenes.common.day_01_parent_pressure.nodes.end_call.line",
-        "scenes.common.day_01_parent_pressure.nodes.father_pressure.line",
-        "scenes.common.day_01_parent_pressure.nodes.mother_opening.line",
-        "scenes.common.day_01_parent_pressure.nodes.mother_softens.line",
-        "scenes.common.day_01_parent_pressure.nodes.night_close.line",
-        "scenes.common.day_01_parent_pressure.nodes.phone_rings.line",
-        "scenes.common.day_01_parent_pressure.nodes.reframe_morning.line",
+        "scenes.common.day_01_parent_pressure.nodes.do_yoon_considers.line",
+        "scenes.common.day_01_parent_pressure.nodes.do_yoon_min_kyung.line",
+        "scenes.common.day_01_parent_pressure.nodes.do_yoon_restrains.line",
+        "scenes.common.day_01_parent_pressure.nodes.do_yoon_seo_a.line",
+        "scenes.common.day_01_parent_pressure.nodes.do_yoon_yoo_jin.line",
+        "scenes.common.day_01_parent_pressure.nodes.leaving_office.line",
         "scenes.common.day_01_parent_pressure.nodes.remember_min_kyung.line",
+        "scenes.common.day_01_parent_pressure.nodes.remember_promise.line",
         "scenes.common.day_01_parent_pressure.nodes.remember_seo_a.line",
+        "scenes.common.day_01_parent_pressure.nodes.remember_yoo_jin.line",
         "scenes.common.day_01_parent_pressure.purpose",
         "scenes.common.day_01_parent_pressure.title",
         "scenes.common.day_02_practical_meeting.nodes.agenda.line",
@@ -698,6 +754,7 @@
         "scenes.seo_a.relief_smile.title",
         "threads.min_kyung.title",
         "threads.seo_a.title",
+        "visual.background.officetel_bedroom.title",
         "visual.background.officetel_elevator_lobby.title",
         "visual.background.officetel_unit_corridor.title",
         "world.members.member.jeong_da_eun.display_name",
@@ -760,6 +817,12 @@
         "events.anchor.day_01_company_meeting.presentation.summary",
         "events.anchor.day_01_company_meeting.presentation.title",
         "events.anchor.day_01_company_meeting.title",
+        "events.anchor.day_01_dream_and_mother_call.presentation.summary",
+        "events.anchor.day_01_dream_and_mother_call.presentation.title",
+        "events.anchor.day_01_dream_and_mother_call.title",
+        "events.anchor.day_01_officetel_first_encounter.presentation.summary",
+        "events.anchor.day_01_officetel_first_encounter.presentation.title",
+        "events.anchor.day_01_officetel_first_encounter.title",
         "events.anchor.day_01_officetel_seo_a_reveal.presentation.summary",
         "events.anchor.day_01_officetel_seo_a_reveal.presentation.title",
         "events.anchor.day_01_officetel_seo_a_reveal.title",
@@ -1003,26 +1066,76 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_won.line",
         "scenes.common.day_01_company_meeting.purpose",
         "scenes.common.day_01_company_meeting.title",
+        "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_accepts_time.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_answers_phone.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_avoids_soo_yeon.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_calls_soo_yeon.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_downplays.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_morning_reaction.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_promises.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_protests.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_remembers.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_resolves.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_woken.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.dream_of_soo_yeon.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.morning_begins.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.mother_celebrates.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.mother_greets.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.mother_matchmaking.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.mother_mentions_soo_yeon.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.mother_praises_face.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.mother_pushes_once_more.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.mother_urges_romance.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.phone_screen.line",
+        "scenes.common.day_01_dream_and_mother_call.nodes.ringtone_breaks_dream.line",
+        "scenes.common.day_01_dream_and_mother_call.purpose",
+        "scenes.common.day_01_dream_and_mother_call.title",
+        "scenes.common.day_01_officetel_first_encounter.nodes.arrives_ground_floor.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_apologizes.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_blurts.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_checks_phone.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_guesses.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_leaves.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_looks_up.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_notices_outfit.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_panics.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_realizes.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_scolds_himself.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_sees_her.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.do_yoon_stares.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.doors_close.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.morning_elevator.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.seo_a_checks_feet.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.seo_a_explains.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.seo_a_goes_back.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.seo_a_reacts.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.seo_a_realizes.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.seo_a_sends_him_ahead.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.slippers_enter_view.line",
+        "scenes.common.day_01_officetel_first_encounter.nodes.slippers_revealed.line",
+        "scenes.common.day_01_officetel_first_encounter.purpose",
+        "scenes.common.day_01_officetel_first_encounter.title",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_agrees.line",
         "scenes.common.day_01_officetel_seo_a_reveal.nodes.do_yoon_answers.line",
         "scenes.common.day_01_officetel_seo_a_reveal.nodes.doors_open.line",
         "scenes.common.day_01_officetel_seo_a_reveal.nodes.elevator_courtesy.line",
         "scenes.common.day_01_officetel_seo_a_reveal.nodes.home_arrival.line",
         "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_explains.line",
+        "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_relaxes.line",
         "scenes.common.day_01_officetel_seo_a_reveal.nodes.seo_a_surprised.line",
         "scenes.common.day_01_officetel_seo_a_reveal.purpose",
         "scenes.common.day_01_officetel_seo_a_reveal.title",
-        "scenes.common.day_01_parent_pressure.nodes.decision.line",
-        "scenes.common.day_01_parent_pressure.nodes.do_yoon_answers.line",
-        "scenes.common.day_01_parent_pressure.nodes.do_yoon_deflects.line",
-        "scenes.common.day_01_parent_pressure.nodes.end_call.line",
-        "scenes.common.day_01_parent_pressure.nodes.father_pressure.line",
-        "scenes.common.day_01_parent_pressure.nodes.mother_opening.line",
-        "scenes.common.day_01_parent_pressure.nodes.mother_softens.line",
-        "scenes.common.day_01_parent_pressure.nodes.night_close.line",
-        "scenes.common.day_01_parent_pressure.nodes.phone_rings.line",
-        "scenes.common.day_01_parent_pressure.nodes.reframe_morning.line",
+        "scenes.common.day_01_parent_pressure.nodes.do_yoon_considers.line",
+        "scenes.common.day_01_parent_pressure.nodes.do_yoon_min_kyung.line",
+        "scenes.common.day_01_parent_pressure.nodes.do_yoon_restrains.line",
+        "scenes.common.day_01_parent_pressure.nodes.do_yoon_seo_a.line",
+        "scenes.common.day_01_parent_pressure.nodes.do_yoon_yoo_jin.line",
+        "scenes.common.day_01_parent_pressure.nodes.leaving_office.line",
         "scenes.common.day_01_parent_pressure.nodes.remember_min_kyung.line",
+        "scenes.common.day_01_parent_pressure.nodes.remember_promise.line",
         "scenes.common.day_01_parent_pressure.nodes.remember_seo_a.line",
+        "scenes.common.day_01_parent_pressure.nodes.remember_yoo_jin.line",
         "scenes.common.day_01_parent_pressure.purpose",
         "scenes.common.day_01_parent_pressure.title",
         "scenes.common.day_02_practical_meeting.nodes.agenda.line",
@@ -1328,6 +1441,7 @@
         "scenes.seo_a.relief_smile.title",
         "threads.min_kyung.title",
         "threads.seo_a.title",
+        "visual.background.officetel_bedroom.title",
         "visual.background.officetel_elevator_lobby.title",
         "visual.background.officetel_unit_corridor.title",
         "world.members.member.jeong_da_eun.display_name",
@@ -1356,7 +1470,7 @@
         },
         "event": {
           "direct": 1,
-          "total": 90
+          "total": 96
         },
         "locale": {
           "direct": 2,
@@ -1372,7 +1486,7 @@
         },
         "scene": {
           "direct": 15,
-          "total": 483
+          "total": 533
         },
         "system_flow": {
           "direct": 23,
@@ -1384,7 +1498,7 @@
         },
         "visual": {
           "direct": 10,
-          "total": 12
+          "total": 13
         },
         "world": {
           "direct": 11,
@@ -1464,31 +1578,59 @@
         "missing": 0
       }
     },
-    "common.day_01_officetel_seo_a_reveal": {
+    "common.day_01_dream_and_mother_call": {
       "ko": {
-        "total": 11,
-        "direct": 11,
+        "total": 28,
+        "direct": 28,
         "fallback": 0,
         "missing": 0
       },
       "en": {
-        "total": 11,
+        "total": 28,
         "direct": 0,
-        "fallback": 11,
+        "fallback": 28,
+        "missing": 0
+      }
+    },
+    "common.day_01_officetel_first_encounter": {
+      "ko": {
+        "total": 28,
+        "direct": 28,
+        "fallback": 0,
+        "missing": 0
+      },
+      "en": {
+        "total": 28,
+        "direct": 0,
+        "fallback": 28,
+        "missing": 0
+      }
+    },
+    "common.day_01_officetel_seo_a_reveal": {
+      "ko": {
+        "total": 13,
+        "direct": 13,
+        "fallback": 0,
+        "missing": 0
+      },
+      "en": {
+        "total": 13,
+        "direct": 0,
+        "fallback": 13,
         "missing": 0
       }
     },
     "common.day_01_parent_pressure": {
       "ko": {
-        "total": 17,
-        "direct": 17,
+        "total": 15,
+        "direct": 15,
         "fallback": 0,
         "missing": 0
       },
       "en": {
-        "total": 17,
+        "total": 15,
         "direct": 0,
-        "fallback": 17,
+        "fallback": 15,
         "missing": 0
       }
     },
@@ -1676,8 +1818,8 @@
     }
   },
   "authoring_coverage": {
-    "narrative_text_units": 466,
-    "editable_units": 466,
+    "narrative_text_units": 512,
+    "editable_units": 512,
     "missing_editor_target": [],
     "generated_only": 0,
     "multiple_source_owners": 0,

@@ -59,7 +59,7 @@ nodes:
   speaker: han_do_yoon
   expression: actual_waiting_smile
   stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
-  line: (깜짝이야! 누구지?)
+  line: (깜짝이야! 아침에 그 사람이다!)
   next: seo_a_greeting
 
 - id: seo_a_greeting
@@ -67,7 +67,7 @@ nodes:
   speaker: yoon_seo_a
   stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
   expression: actual_social_smile
-  line: 안녕하세요! 저는 윤서아 사원입니다!!
+  line: 안녕하세요! 영업기획팀 윤서아 사원입니다!!
   next: do_yoon_heard
 
 - id: do_yoon_heard
@@ -75,7 +75,7 @@ nodes:
   speaker: han_do_yoon
   expression: actual_waiting_smile
   stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
-  line: 아! 말씀 들었습니다..
+  line: 아! 아침에는 서로 인사도 못 했네요..
   next: do_yoon_contract_intro
 
 - id: do_yoon_contract_intro
@@ -83,7 +83,7 @@ nodes:
   speaker: han_do_yoon
   expression: actual_waiting_smile
   stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
-  line: 아주 꼼꼼한 계약직 사원이 들어왔다고..
+  line: 말씀 들었습니다. 아주 꼼꼼한 계약직 사원이 들어왔다고..
   next: seo_a_humble
 
 - id: seo_a_humble

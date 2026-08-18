@@ -1,0 +1,4 @@
+interface:
+  display_name: "러브오피스 대사 작성"
+  short_description: "확정된 말투 기준으로 장면 대사를 작성·검수·적용합니다"
+  default_prompt: "$love-office-dialogue를 사용해 확정된 말투 기준으로 다음 장면 대사를 작성해줘."

@@ -34,7 +34,7 @@ import type {
   TimeSlot,
 } from "../types";
 import {
-  advanceTimeline,
+  advanceToNextMoment,
   advanceSession,
   availableTimelineEvents,
   availableOptions,
@@ -1136,7 +1136,7 @@ function RhythmGauge({
   const heroineId = value.heroine || routeHeroine || "";
   const heroineName = heroineId ? i18n.characterName(heroineId) : i18n.ui("rhythm.status");
   const heroine = heroineId ? session.state.visible.heroines[heroineId] : undefined;
-  const score = heroine?.initiative ?? 0;
+  const score = heroine?.affection ?? 0;
   const portrait = heroineId ? assetUrl(runtime.characters[heroineId]?.visual.hud_portrait) : undefined;
   const feedback = animationId ? session.lastFeedback : undefined;
   const motion = rhythmGaugeMotion(feedback);
@@ -1195,7 +1195,7 @@ function GameHud({ session, debugMode, onMenu, i18n }: { session: PlayerSession;
       <small>{scene ? sceneTitle(i18n, scene.id) : ""}</small>
     </div>
     {debugMode && showPushPull && <div className="vn-stats">
-      <div><span>{i18n.ui("hud.initiative")}</span><strong>{heroine?.initiative ?? 0}</strong><small>/ 100</small><i className="vn-initiative-line"><b style={{ width: `${heroine?.initiative ?? 0}%` }} /></i></div>
+      <div><span>{i18n.ui("hud.affection")}</span><strong>{heroine?.affection ?? 0}</strong><small>/ 100</small><i className="vn-affection-line"><b style={{ width: `${heroine?.affection ?? 0}%` }} /></i></div>
       {rhythm.combo > 0 && <div className={rhythm.combo >= 3 ? "hot" : ""}><span>{i18n.ui("hud.combo")}</span><strong>×{rhythm.combo}</strong></div>}
     </div>}
     <button type="button" className="vn-menu-button" onClick={onMenu} aria-label={i18n.ui("hud.gameMenu")}>☰</button>
@@ -1630,7 +1630,7 @@ export default function WebGame() {
 
   const moveToNextMoment = (remember = true) => {
     if (!session) return;
-    moveSession(advanceTimeline(runtime, session), remember);
+    moveSession(advanceToNextMoment(runtime, session), remember);
   };
 
   useEffect(() => {
@@ -1706,7 +1706,7 @@ export default function WebGame() {
     const pending = visibleTimelineLogs(logs, acknowledgedLogs, false);
     if (pending.length || availableTimelineEvents(runtime, session).length) return;
     const timer = window.setTimeout(() => {
-      moveSession(advanceTimeline(runtime, session));
+      moveSession(advanceToNextMoment(runtime, session));
     }, settings.reducedMotion ? 0 : 90);
     return () => window.clearTimeout(timer);
   }, [acknowledgedLogs, dayTransition, moveSession, overlay, session, settings.reducedMotion]);

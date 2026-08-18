@@ -1,0 +1,184 @@
+schema_version: 1
+id: common.day_01_dream_and_mother_call
+title: 꿈을 끊은 전화
+route: seo_a
+chapter: 0
+sequence: 0
+location: officetel_bedroom
+time: dawn
+default_background:
+  visual_id: background.officetel_bedroom
+  variant_id: dawn
+purpose: 수연을 사별한 첫 연인으로 믿는 한도윤의 상처와 가족의 과도한 외모 칭찬을 첫 장면에 심고, 어머니의 결혼 재촉을 계기로 그가 다시 사람을 만나 보겠다고 마음먹게 한다.
+cast: [han_do_yoon]
+entry_conditions: []
+state_contract:
+  reads: []
+  writes: []
+start_node: dream_of_soo_yeon
+nodes:
+- id: dream_of_soo_yeon
+  kind: narration
+  stage: []
+  line: 꿈속에서 수연은 몇 걸음 앞을 걷고 있었다. 얼굴은 끝내 보이지 않았다.
+  next: do_yoon_calls_soo_yeon
+
+- id: do_yoon_calls_soo_yeon
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 수연아…… 잠깐만.
+  next: ringtone_breaks_dream
+
+- id: ringtone_breaks_dream
+  kind: narration
+  stage: []
+  line: 수연이 돌아보기 직전, 전화 벨소리가 꿈을 잘라냈다.
+  next: phone_screen
+
+- id: phone_screen
+  kind: narration
+  stage: []
+  line: 도윤은 어두운 방에서 눈을 떴다. 휴대전화 화면에는 ‘엄마’가 떠 있었다.
+  next: do_yoon_morning_reaction
+
+- id: do_yoon_morning_reaction
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (아침부터 엄마네…….)
+  next: do_yoon_answers_phone
+
+- id: do_yoon_answers_phone
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 네, 엄마.
+  next: mother_greets
+
+- id: mother_greets
+  kind: narration
+  stage: []
+  line: “자알~생긴 우리 아들~~ 잘 일어났니?” 수화기 너머로 어머니의 들뜬 목소리가 쏟아졌다.
+  next: do_yoon_woken
+
+- id: do_yoon_woken
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 네. 벨소리 덕분에 아주 잘 일어났어요. 무슨 일이에요?
+  next: mother_matchmaking
+
+- id: mother_matchmaking
+  kind: narration
+  stage: []
+  line: “엄마랑 매일 새벽 기도하는 아줌마 있지? 그 집 딸이 참 괜찮대. 한번 만나 볼래?”
+  next: do_yoon_protests
+
+- id: do_yoon_protests
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 아, 엄마! 알아서 한다고 했잖아요.
+  next: mother_mentions_soo_yeon
+
+- id: mother_mentions_soo_yeon
+  kind: narration
+  stage: []
+  line: “너 아직도 수연이 때문에 그러니?”
+  next: do_yoon_avoids_soo_yeon
+
+- id: do_yoon_avoids_soo_yeon
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 아침부터 왜 그 얘기예요.
+  next: mother_urges_romance
+
+- id: mother_urges_romance
+  kind: narration
+  stage: []
+  line: “너도 슬슬 다시 연애도 하고 그래야 결혼도 하지. 언제까지 혼자 살 거야.”
+  next: mother_praises_face
+
+- id: mother_praises_face
+  kind: narration
+  stage: []
+  line: “잘생긴 얼굴 썩히는 것도 죄다, 죄야. 엄마가 얼마나 아까운 줄 아니?”
+  next: do_yoon_downplays
+
+- id: do_yoon_downplays
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 엄마 눈에나 그렇죠.
+  next: mother_pushes_once_more
+
+- id: mother_pushes_once_more
+  kind: narration
+  stage: []
+  line: “엄마 눈만 그런 줄 아니? 네가 마음을 안 여니까 그렇지. 오늘 새 프로젝트 시작이라며. 사람들도 새로 만날 거 아니야.”
+  next: do_yoon_promises
+
+- id: do_yoon_promises
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 소개팅은 됐고요. 이번에는…… 괜찮은 사람이 있으면 저도 알아서 만나 볼게요.
+  next: mother_celebrates
+
+- id: mother_celebrates
+  kind: narration
+  stage: []
+  line: “그래, 우리 아들! 그 말이면 됐어. 아침 꼭 먹고 가. 엄마가 기도할게.”
+  next: call_ends
+
+- id: call_ends
+  kind: narration
+  stage: []
+  line: 통화가 끝나자 방 안이 다시 조용해졌다.
+  next: do_yoon_remembers
+
+- id: do_yoon_remembers
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (수연이 이후로는 생각도 안 했는데…….)
+  next: do_yoon_accepts_time
+
+- id: do_yoon_accepts_time
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (언제까지 이럴 수는 없지.)
+  next: do_yoon_resolves
+
+- id: do_yoon_resolves
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (새 프로젝트도 시작하는 날이니까. 나도 다시 한번…….)
+  next: morning_begins
+
+- id: morning_begins
+  kind: narration
+  stage: []
+  line: 한도윤은 알람을 끄고 침대에서 일어났다.
+  next: leave
+
+- id: leave
+  kind: exit
+  transitions:
+  - default: true
+    scene: common.day_01_officetel_first_encounter

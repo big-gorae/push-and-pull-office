@@ -228,6 +228,7 @@ export type Route = {
   title: string;
   heroine: string;
   campaign_id: string;
+  final_selectable: boolean;
   summary: string;
   unlock_conditions: Condition[];
   entry_scene: string;
@@ -509,7 +510,7 @@ export type ResolvedStage = {
 
 export type RuntimeState = {
   visible: {
-    heroines: Record<string, { initiative: number }>;
+    heroines: Record<string, { affection: number }>;
     protagonist: { self_development: SelfDevelopmentState };
   };
   hidden: { heroines: Record<string, { suspicion: number; dislike: number; evidence_count: number }> };

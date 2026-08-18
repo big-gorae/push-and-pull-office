@@ -13,8 +13,8 @@
 
 ## Browser identity
 
-- Use only the Chrome profile `big.gorea.king` for NovelAI and every other Chrome automation performed for this repository. The Chrome extension reports this profile's exact metadata name as `big.gorea.king@gmail.com`.
-- Before claiming or interacting with any Chrome tab, verify that the connected browser metadata reports the exact profile name `big.gorea.king@gmail.com`.
+- Use only the Chrome profile `big.gorae.king` for NovelAI and every other Chrome automation performed for this repository. The Chrome extension reports this profile's exact metadata name as `big.gorae.king@gmail.com`.
+- Before claiming or interacting with any Chrome tab, verify that the connected browser metadata reports the exact profile name `big.gorae.king@gmail.com`.
 - If any other Chrome profile is connected, stop immediately. Never navigate, click, type, upload, generate, or otherwise interact with that profile.
 
 ## Local launch command mapping
@@ -61,6 +61,8 @@ Keep the distinction explicit in status messages: **Play Build / 플레이 버�
 
 ## Story source of truth
 
+- `docs/story-planning-overview.md` is the highest-level narrative SSOT for the work's premise, logline, theme, and synopsis. When lower narrative documents or machine-readable story data conflict with it, preserve the overview's intent and record or resolve the mismatch explicitly.
+- `docs/master-checklist.md` is the highest-priority work backlog. When the user says `체크 리스트` or `체크리스트`, read that file and show its current contents before doing anything else.
 - Narrative intent and reviews live in `docs/`.
 - Machine-readable story truth lives in `story/`.
 - Company, team, role, employee, project, and meeting truth lives in `story/world/`. Never invent an office fact in a scene that conflicts with this world bible.
@@ -94,7 +96,7 @@ Keep the distinction explicit in status messages: **Play Build / 플레이 버�
 - Narration has no visible speaker label. An explicit null layer speaker is narration, not a character named “나레이션”.
 - State reads and writes must be declared in `state_contract`.
 - State changes belong only in `effects`.
-- Visible initiative is Han Do-yoon's confidence, not a heroine's love.
+- Visible affection is the player-facing romance score produced by Han Do-yoon's reading of events; it is not proof of a heroine's consent or objective love.
 - A decrease in suspicion never implies an automatic decrease in dislike.
 - Expressions must be declared on the speaking character before use.
 - New scenes must be connected to a route and reachable from its entry.

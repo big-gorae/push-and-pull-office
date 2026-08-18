@@ -1,0 +1,199 @@
+schema_version: 1
+id: common.day_01_officetel_first_encounter
+title: 고양이 슬리퍼
+route: seo_a
+chapter: 0
+sequence: 0
+location: officetel_elevator_lobby
+time: morning
+purpose: 서로의 이름과 직장을 모르는 한도윤과 윤서아가 출근길 엘리베이터에서 처음 마주치고, 고양이 슬리퍼를 잘못 신고 나온 서아의 의외로 덜렁거리는 모습을 짧고 인상적으로 보여 준다.
+cast: [han_do_yoon, yoon_seo_a]
+entry_conditions: []
+state_contract:
+  reads: []
+  writes: []
+start_node: morning_elevator
+nodes:
+- id: morning_elevator
+  kind: narration
+  line: 평일 아침, 한도윤은 휴대전화를 보며 오피스텔 엘리베이터에 탔다.
+  next: do_yoon_checks_phone
+
+- id: do_yoon_checks_phone
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (아침부터 메일이 왜 이렇게 많아…….)
+  next: slippers_enter_view
+
+- id: slippers_enter_view
+  kind: narration
+  line: 화면을 내리던 도윤의 시야 한쪽에 고양이 귀가 달린 슬리퍼가 들어왔다.
+  next: do_yoon_stares
+
+- id: do_yoon_stares
+  kind: narration
+  line: 도윤의 시선이 슬리퍼에 머물렀다.
+  next: do_yoon_blurts
+
+- id: do_yoon_blurts
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 귀엽다…….
+  next: seo_a_reacts
+
+- id: seo_a_reacts
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
+  expression: actual_flustered
+  line: 네……?
+  next: do_yoon_looks_up
+
+- id: do_yoon_looks_up
+  kind: narration
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
+  line: 도윤이 고개를 들었다. 긴 흑갈색 머리의 여자가 놀란 눈으로 그를 바라보고 있었다.
+  next: do_yoon_sees_her
+
+- id: do_yoon_sees_her
+  kind: dialogue
+  speaker: han_do_yoon
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
+  expression: actual_waiting_smile
+  line: (엣…… 이런 미인이 타고 있었어?)
+  next: seo_a_checks_feet
+
+- id: seo_a_checks_feet
+  kind: narration
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
+  line: 여자는 도윤의 시선을 따라 천천히 자기 발을 내려다봤다.
+  next: seo_a_realizes
+
+- id: seo_a_realizes
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
+  expression: actual_flustered
+  line: 아…….
+  next: slippers_revealed
+
+- id: slippers_revealed
+  kind: narration
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
+  line: 아이보리 카디건과 단정한 남색 치마 아래, 고양이 슬리퍼가 놓여 있었다. 여자의 얼굴이 순식간에 붉어졌다.
+  next: do_yoon_notices_outfit
+
+- id: do_yoon_notices_outfit
+  kind: dialogue
+  speaker: han_do_yoon
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
+  expression: actual_waiting_smile
+  line: (엣…… 출근 복장인데 슬리퍼라니…….)
+  next: do_yoon_guesses
+
+- id: do_yoon_guesses
+  kind: dialogue
+  speaker: han_do_yoon
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
+  expression: actual_waiting_smile
+  line: (잘못 신고 나온 건가? 의외로 덜렁거리는 스타일?)
+  next: do_yoon_apologizes
+
+- id: do_yoon_apologizes
+  kind: dialogue
+  speaker: han_do_yoon
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
+  expression: actual_waiting_smile
+  line: 아, 죄송합니다. 저도 모르게 소리가…….
+  next: seo_a_explains
+
+- id: seo_a_explains
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
+  expression: actual_flustered
+  line: 아, 아니에요…… 제가 잘못 신고 나와서…….
+  next: arrives_ground_floor
+
+- id: arrives_ground_floor
+  kind: narration
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
+  line: 엘리베이터가 1층에 도착했다. 도윤이 내리려다 여자를 돌아봤지만, 그녀는 버튼 앞에 그대로 서 있었다.
+  next: seo_a_sends_him_ahead
+
+- id: seo_a_sends_him_ahead
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
+  expression: actual_flustered
+  line: 저기…… 먼저 가세요.
+  next: seo_a_goes_back
+
+- id: seo_a_goes_back
+  kind: dialogue
+  speaker: yoon_seo_a
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
+  expression: actual_flustered
+  line: 저는 다시 올라갔다 와야 해서요…….
+  next: do_yoon_leaves
+
+- id: do_yoon_leaves
+  kind: dialogue
+  speaker: han_do_yoon
+  stage:
+  - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
+  expression: actual_waiting_smile
+  line: 아, 네. 그럼…….
+  next: doors_close
+
+- id: doors_close
+  kind: narration
+  line: 도윤이 내리고 문이 닫혔다. 여자는 두 발을 얌전히 모은 채 고개를 숙였다.
+  next: do_yoon_realizes
+
+- id: do_yoon_realizes
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (아니, 그보다…….)
+  next: do_yoon_panics
+
+- id: do_yoon_panics
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (나 방금 ‘귀엽다’고 입 밖으로 말했어?!)
+  next: do_yoon_scolds_himself
+
+- id: do_yoon_scolds_himself
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (처음 보는 사람 앞에서! 아침부터 무슨 짓이야, 한도윤!)
+  next: leave
+
+- id: leave
+  kind: exit
+  transitions:
+  - default: true
+    scene: common.day_01_company_meeting

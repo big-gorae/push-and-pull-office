@@ -14,7 +14,7 @@ state_contract:
     - hidden.heroines.heroine_id.suspicion
     - progress.flags.push_pull
   writes:
-    - visible.heroines.heroine_id.initiative
+    - visible.heroines.heroine_id.affection
     - hidden.heroines.heroine_id.suspicion
     - hidden.heroines.heroine_id.dislike
     - hidden.heroines.heroine_id.evidence_count

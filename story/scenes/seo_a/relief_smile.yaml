@@ -19,7 +19,7 @@ state_contract:
   - visible.protagonist.self_development.stats.humor
   - visible.protagonist.self_development.fatigue
   writes:
-  - visible.heroines.yoon_seo_a.initiative
+  - visible.heroines.yoon_seo_a.affection
   - hidden.heroines.yoon_seo_a.suspicion
   - hidden.heroines.yoon_seo_a.dislike
   - hidden.heroines.yoon_seo_a.evidence_count

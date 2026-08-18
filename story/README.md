@@ -1,6 +1,6 @@
 # 스토리 제작 시스템
 
-`story/`는 서술형 기획 문서와 실제 게임 구현 사이의 구조화 원본이다. Markdown 문서는 콘셉트와 의도를 설명하고, 이 디렉터리의 YAML은 분기·수치·단일 대사·표정·런타임 진행을 정의한다.
+`story/`는 서술형 기획 문서와 실제 게임 구현 사이의 구조화 원본이다. 작품의 전제·로그라인·주제·시놉시스는 [`docs/story-planning-overview.md`](../docs/story-planning-overview.md)가 최상위 서사 SSOT이며, 이 디렉터리의 YAML은 그 의도를 분기·수치·단일 대사·표정·런타임 진행으로 구현한다.
 
 현재 게임에 실제로 들어간 사건과 장면의 박제 목록은 [`docs/story-implemented-baseline.md`](../docs/story-implemented-baseline.md)를 따른다. 문서에만 있고 `story/`의 이벤트·장면 YAML에 연결되지 않은 사건은 구현된 스토리로 간주하지 않는다.
 
@@ -86,7 +86,7 @@ python3 tools/story_harness.py context \
 
 ## 원본 우선순위
 
-충돌이 생기면 다음 순서를 따른다.
+시스템 구현끼리 충돌이 생기면 다음 순서를 따른다. 단, 작품의 전제·로그라인·주제·시놉시스와 충돌하는 경우에는 언제나 `docs/story-planning-overview.md`를 우선하고 차이를 정합화 기록에 남긴다.
 
 1. `manifest.yaml`과 `SPEC.md`의 시스템 규칙
 2. `world/**/*.yaml`의 회사·소속·권한·회의 사실과 `characters/*.yaml`의 인물 불변 조건
@@ -94,6 +94,6 @@ python3 tools/story_harness.py context \
 4. `visuals/**/*.yaml`의 연출 객체와 `locales/*.yaml`의 번역 오버라이드
 5. `routes/*.yaml`의 해금·엔딩 규칙
 6. `scenes/**/*.yaml`의 장면 내용
-7. `docs/*.md`의 설명 문서
+7. 그 밖의 `docs/*.md` 설명 문서
 
 설명 문서를 바꾸어도 게임 데이터는 자동으로 바뀌지 않는다. 실제 구현에 반영하려면 YAML을 수정하고 하네스를 통과시켜야 한다.

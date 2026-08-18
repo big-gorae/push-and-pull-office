@@ -12,7 +12,9 @@ completion: return_to_timeline
 participants: [han_do_yoon, yoon_seo_a, cha_min_kyung, kang_yoo_jin]
 location: meeting_room
 scene: common.day_01_company_meeting
-requires: {events: [], conditions: []}
+requires:
+  events: [anchor.day_01_officetel_first_encounter]
+  conditions: []
 on_seen:
   effects:
   - {path: progress.memories, op: append_unique, value: profile.yoon_seo_a.name}

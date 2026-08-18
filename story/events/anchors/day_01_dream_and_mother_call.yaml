@@ -1,0 +1,20 @@
+schema_version: 1
+campaign_id: main
+id: anchor.day_01_dream_and_mother_call
+title: 수연의 꿈과 아침 전화
+type: anchor
+lane: personal
+window: {days: [1, 1], slots: [morning], deadline_day: 1}
+duration: 0
+priority: 120
+availability: automatic
+completion: return_to_timeline
+participants: [han_do_yoon]
+location: officetel_bedroom
+scene: common.day_01_dream_and_mother_call
+requires: {events: [], conditions: []}
+on_seen: {effects: []}
+on_missed: {effects: []}
+presentation:
+  title: 꿈을 끊은 전화
+  summary: 수연의 꿈을 꾸던 한도윤은 어머니의 전화에 잠에서 깨고, 결혼 재촉 끝에 다시 사람을 만나 보겠다고 마음먹는다.

@@ -3,7 +3,8 @@ id: min_kyung
 title: 명확한 선
 heroine: cha_min_kyung
 campaign_id: main
-summary: 분명한 거절조차 도전적인 밀당으로 번역되는 두 번째 루트.
+final_selectable: false
+summary: 분명한 거절조차 도전적인 밀당으로 번역되며, 공략 가능한 것처럼 진행되지만 최종 선택에서는 제외되는 위장 루트.
 unlock_conditions: []
 entry_scene: min_kyung.explicit_boundary
 scene_order:

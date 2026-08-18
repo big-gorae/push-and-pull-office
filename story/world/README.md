@@ -21,7 +21,7 @@
 - `world_context.participants`: 실제로 그 자리에 있는 모든 `member.*` ID를 적는다.
 - 비일러스트 팀원을 대사 화자로 쓸 때는 런타임이 텍스트 전용 화자를 지원하는지 확인한다. 지원하지 않는 단계에서는 그의 발언을 서술로 바꾸되 참석 사실은 지우지 않는다.
 
-`route_eligible: true`는 `illustrated` 멤버이며 연결된 스토리 캐릭터가 `main_heroine`일 때만 허용한다. 라우트의 `heroine`은 반드시 그 조건을 만족하는 멤버와 연결돼야 한다.
+`route_eligible: true`는 현재 구현된 전용 라우트를 가진 `illustrated` 멤버이며 연결된 스토리 캐릭터가 `main_heroine`일 때만 허용한다. 라우트의 `heroine`은 반드시 그 조건을 만족하는 멤버와 연결돼야 한다. 표면 공략 후보라도 전용 라우트가 아직 없으면 `route_eligible: false`로 두고 `story/meta/story_mode.yaml`에 후보로 선언한다.
 
 ## 사업 도메인과 사건 후보
 

@@ -1,0 +1,22 @@
+schema_version: 1
+campaign_id: main
+id: anchor.day_01_officetel_first_encounter
+title: 고양이 슬리퍼
+type: heroine
+lane: yoon_seo_a
+window: {days: [1, 1], slots: [morning], deadline_day: 1}
+duration: 0
+priority: 110
+availability: automatic
+completion: return_to_timeline
+participants: [han_do_yoon, yoon_seo_a]
+location: officetel_elevator_lobby
+scene: common.day_01_officetel_first_encounter
+requires:
+  events: [anchor.day_01_dream_and_mother_call]
+  conditions: []
+on_seen: {effects: []}
+on_missed: {effects: []}
+presentation:
+  title: 출근길의 고양이 슬리퍼
+  summary: 서로의 이름과 직장을 모르는 두 사람이 오피스텔 엘리베이터에서 처음 마주치고, 한도윤은 윤서아의 고양이 슬리퍼를 보고 무심코 귀엽다고 말한다.

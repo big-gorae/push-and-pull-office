@@ -453,8 +453,8 @@ button { color: inherit; }
 .vn-stats strong { color: var(--vn-accent); font-size: 1.1rem; font-variant-numeric: tabular-nums; }
 .vn-stats small { color: var(--vn-muted); font-size: .58rem; }
 .vn-stats .hot strong { text-shadow: 0 3px 14px var(--vn-accent-soft); }
-.vn-initiative-line { position: relative; grid-column: 1 / -1; display: block; width: 96px; height: 4px; overflow: hidden; border-radius: 999px; background: rgba(220,143,180,.18); }
-.vn-initiative-line b { position: absolute; inset: 0 auto 0 0; border-radius: inherit; background: linear-gradient(90deg, var(--vn-peach), var(--vn-accent)); }
+.vn-affection-line { position: relative; grid-column: 1 / -1; display: block; width: 96px; height: 4px; overflow: hidden; border-radius: 999px; background: rgba(220,143,180,.18); }
+.vn-affection-line b { position: absolute; inset: 0 auto 0 0; border-radius: inherit; background: linear-gradient(90deg, var(--vn-peach), var(--vn-accent)); }
 .vn-mode-button, .vn-menu-button { min-height: var(--vn-control-height); border: 1px solid var(--vn-line); border-radius: var(--vn-radius-sm); background: rgba(255,255,255,.84); box-shadow: 0 5px 14px rgba(163,95,129,.08); cursor: pointer; }
 .vn-mode-button { display: grid; min-width: 112px; align-content: center; padding: var(--vn-space-1) var(--vn-space-3); text-align: left; }
 .vn-mode-button span { color: var(--vn-accent); font-size: .54rem; font-weight: 900; letter-spacing: .1em; }
@@ -486,7 +486,7 @@ button { color: inherit; }
 .vn-rhythm-score.changed strong { animation: vn-rhythm-score-glow 720ms 260ms ease-out both; }
 .vn-rhythm-meter { display: grid; grid-template-columns: var(--vn-rhythm-avatar-size) minmax(0,1fr); align-items: center; gap: var(--vn-space-3); }
 .vn-rhythm-avatar { position: relative; z-index: 9; display: grid; width: var(--vn-rhythm-avatar-size); height: var(--vn-rhythm-avatar-size); overflow: visible; place-items: center; transform: translateY(var(--vn-rhythm-avatar-offset-y)); }
-.vn-rhythm-avatar > img { width: 100%; height: 100%; object-fit: contain; object-position: center; filter: drop-shadow(0 8px 12px rgba(25,15,31,.35)); transform: scale(1.2); }
+.vn-rhythm-avatar > img { width: 100%; height: 100%; object-fit: contain; object-position: center; filter: drop-shadow(0 8px 10px rgba(25,15,31,.38)); transform: scale(1.2); transform-origin: center; }
 .vn-rhythm-avatar > i { position: relative; display: block; width: 68%; height: 72%; }
 .vn-rhythm-avatar > i::before { position: absolute; top: 4%; left: 50%; width: 38%; aspect-ratio: 1; border-radius: 50%; background: #2d2332; content: ""; transform: translateX(-50%); }
 .vn-rhythm-avatar > i b { position: absolute; right: 3%; bottom: 0; left: 3%; height: 52%; border-radius: 50% 50% 24% 24%; background: #2d2332; }

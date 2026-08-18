@@ -171,7 +171,7 @@ export function eventsForDay(events: Record<string, TimelineEvent>, day: number)
 
 function statDefinition(runtime: Runtime, path: string) {
   if (runtime.stats[path]) return runtime.stats[path];
-  if (path.includes(".initiative")) return runtime.stats["visible.initiative"];
+  if (path.includes(".affection")) return runtime.stats["visible.affection"];
   if (path.includes(".suspicion")) return runtime.stats["hidden.suspicion"];
   if (path.includes(".dislike")) return runtime.stats["hidden.dislike"];
   if (path.includes(".evidence_count")) return runtime.stats["hidden.evidence_count"];
@@ -361,7 +361,7 @@ export function resolveDialogueNode(
 
 export function statePaths(runtime: Runtime): Array<{ value: string; label: string; type: "number" | "enum" | "array" }> {
   const names: Record<string, string> = {
-    initiative: "밀당 주도권",
+    affection: "호감도",
     suspicion: "의심도",
     dislike: "비호감",
     evidence_count: "물리적 증거",
@@ -475,7 +475,7 @@ export function deriveStateContract(
       });
     });
     targets.forEach((target) => [
-      `visible.heroines.${target}.initiative`,
+      `visible.heroines.${target}.affection`,
       `hidden.heroines.${target}.suspicion`,
       `hidden.heroines.${target}.dislike`,
       `hidden.heroines.${target}.evidence_count`,

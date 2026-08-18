@@ -138,7 +138,7 @@ exit
 
 - `expression`
 - `line`
-- 관계 HUD는 밀당 주도권, 현재 콤보 배수와 밀기·당기기 리듬 게이지만 표시
+- 관계 HUD는 호감도, 현재 콤보 배수와 밀기·당기기 리듬 게이지만 표시
 - 날짜와 사건 마감은 별도 타임라인이 아니라 날짜 전환과 장면의 대사·선택지로 전달
 
 ### 생존 모드 (`survivor_view`)
@@ -146,7 +146,7 @@ exit
 - 단일 대사와 연출을 렌더링
 - 스토리 모드의 진실 보기나 후일담이 아닌 평행세계 캠페인으로 로드하며, 스토리 모드 세이브의 사건 결과를 덮어쓰지 않음
 - 스토리 모드의 출발 상황과 날짜 모티프는 재사용할 수 있지만 동일한 핵심 사건과 결말을 강제하지 않음
-- 강유진은 스토리 모드에도 비공략 조연으로 로드하며, 기본 엔딩에서 파국을 취소하는 해결사 플래그로 사용하지 않음
+- 강유진은 최종 선택 가능한 표면 공략 후보로 로드하되 전용 라우트는 아직 미작성 상태이며, 기본 엔딩에서 파국을 취소하는 해결사 플래그로 사용하지 않음
 - 한도윤의 행동·말투·접촉 빈도를 숨은 위험 축의 단서로 표시하되 정확한 수치는 노출하지 않음
 - 선택지의 `action`은 피해자 관점의 구체적인 대화·기록·연결 행동으로 작성하고 `밀기/당기기`라는 판정을 노출하지 않음
 - 증거 인벤토리는 표시하되 엔딩 합격선은 숨김
@@ -156,7 +156,7 @@ exit
 ## UI 바인딩
 
 ```text
-visible.heroines.<id>.initiative      → 밀당 주도권
+visible.heroines.<id>.affection      → 호감도
 progress.flags.push_pull.combo        → 현재 콤보 배수
 progress.flags.push_pull.position     → 당기기↔밀기 연속 위치
 progress.flags.push_pull.target       → 현재 활성 득점선
@@ -175,10 +175,10 @@ hidden.heroines.<id>.suspicion        → 의심도
 hidden.heroines.<id>.dislike          → 비호감도
 hidden.heroines.<id>.evidence_count   → 증거 개수
 
-progress.flags.story_mode.target               → none | yoon_seo_a | cha_min_kyung
+progress.flags.story_mode.target               → none | yoon_seo_a | cha_min_kyung | kang_yoo_jin
 progress.flags.story_mode.final_interpretation → betrayal | romance
 progress.flags.story_mode.home_incident        → none | reported | crossed_line | caught | escaped
-progress.flags.story_mode.yoo_jin_intervention → 공략 불가 특수 엔딩 진입 여부
+progress.flags.story_mode.yoo_jin_intervention → 강유진이 직접 사건 당사자가 되는 임시 특수 엔딩 진입 여부
 ```
 
 제16일에는 공식 절차를 실행하지 않는다. 제17일 `anchor.day_17_home_surprise`가 발생하고 공략 대상이 명백히 퇴거를 요구한 뒤 엔딩 장면에서 현장 신고를 기록한다. 증거가 충분하면 경찰의 정식 신병 처리 뒤 `story_mode.grooms_face`로, 부족하면 최종 해석과 현장 행동에 따라 네 파국으로 갈라진다. 회사 처분은 경찰 대응 후일담 노드에서만 렌더링한다.
@@ -198,7 +198,7 @@ interaction:
   support_styles: [factual_clarification, practical_resolution]
 ```
 
-`interaction_context`는 선택 노드에, `push_pull`과 `interaction`은 각 선택지에 보존되지만 일반 플레이 화면에는 표시하지 않는다. `support`·`coordination`은 모든 옵션의 반응 대상과 화법 순서를 검증하고, `boundary`는 `literal_respect` 선택을 보장하며, `not_applicable`은 인물 화법을 판정하지 않는다. 런타임은 `push_pull.target`만 밀당 계산 인물로 사용하며, 생략된 경우에만 장면 루트의 히로인을 사용한다. 계산 인물은 현재 장면 `cast` 안에 있어야 한다. `interaction.target`은 실제 화법을 받아 반응하는 인물이고 `support_styles`는 발화·행동 순서대로 보존하는 반응 저작·검수용 메타데이터다. 비공략 조연도 반응 대상이 될 수 있지만, 런타임은 `interaction.target`을 점수 대상의 대체값으로 사용하거나 그 인물의 히로인 상태를 생성하지 않는다. 지원 화법 메타데이터 자체는 주도권·호감·숨은 수치에 아무 효과도 주지 않는다.
+`interaction_context`는 선택 노드에, `push_pull`과 `interaction`은 각 선택지에 보존되지만 일반 플레이 화면에는 표시하지 않는다. `support`·`coordination`은 모든 옵션의 반응 대상과 화법 순서를 검증하고, `boundary`는 `literal_respect` 선택을 보장하며, `not_applicable`은 인물 화법을 판정하지 않는다. 런타임은 `push_pull.target`만 밀당 계산 인물로 사용하며, 생략된 경우에만 장면 루트의 히로인을 사용한다. 계산 인물은 현재 장면 `cast` 안에 있어야 한다. `interaction.target`은 실제 화법을 받아 반응하는 인물이고 `support_styles`는 발화·행동 순서대로 보존하는 반응 저작·검수용 메타데이터다. 전용 라우트가 없는 후보나 조연도 반응 대상이 될 수 있지만, 런타임은 `interaction.target`을 점수 대상의 대체값으로 사용하거나 그 인물의 히로인 상태를 임의 생성하지 않는다. 지원 화법 메타데이터 자체는 호감도·숨은 수치에 아무 효과도 주지 않는다.
 
 명시적인 요청·거절·접촉 중단이 나온 선택에서는 인물의 평상시 순서보다 `literal_respect`를 우선한다. 이 화법은 요청을 그대로 지킨다는 저작 계약이지 점수 보너스가 아니며, `literal` 계산으로 한도윤의 흐름이 끊겨도 현실의 경계 존중에 숨은 악영향을 자동 생성하지 않는다.
 
@@ -206,7 +206,7 @@ interaction:
 
 이름이 비슷하지만 `option.push_pull.target`은 계산할 **인물 ID**이고, `progress.flags.push_pull.target`은 현재 향하는 **득점선 방향**(`pull`, `push`, `none`)이다. 현재 콤보 인물은 `progress.flags.push_pull.heroine`에 저장한다.
 
-자기계발 해금 선택지는 `self_development.expression`, 같은 선택 노드의 `equivalent_to`, 합류 노드 `converges_at`을 선언한다. 요구 수치와 최근 활동 ID는 `manifest.self_development.expressions`가 소유하고 `score_bonus`는 항상 `0`이다. 해금 선택지는 기준 선택지와 `push_pull` 및 `effects`가 같아야 하며 고유 대사·행동·짧은 반응만 추가한다. 능력치의 주된 보상은 `event.requires.conditions`가 `visible.protagonist.self_development.stats.<stat>`을 읽어 여는 추가 `player` 사건이다. 매력도·피로도·최근 활동·힌트 횟수, 보이는 주도권과 자기계발 상태는 그 밖의 일반 조건과 엔딩에서 읽지 않는다.
+자기계발 해금 선택지는 `self_development.expression`, 같은 선택 노드의 `equivalent_to`, 합류 노드 `converges_at`을 선언한다. 요구 수치와 최근 활동 ID는 `manifest.self_development.expressions`가 소유하고 `score_bonus`는 항상 `0`이다. 해금 선택지는 기준 선택지와 `push_pull` 및 `effects`가 같아야 하며 고유 대사·행동·짧은 반응만 추가한다. 능력치의 주된 보상은 `event.requires.conditions`가 `visible.protagonist.self_development.stats.<stat>`을 읽어 여는 추가 `player` 사건이다. 매력도·피로도·최근 활동·힌트 횟수, 보이는 호감도와 자기계발 상태는 그 밖의 일반 조건과 엔딩에서 읽지 않는다.
 
 스탯 조건 사건은 `on_seen.effects`로 등록된 갤러리 `unlock_memory`를 `progress.memories`에 추가한다. 자동·수동 저장이 이를 플레이어 프로필의 `memories`에 합치며, 타이틀과 게임 메뉴의 갤러리는 `runtime.gallery.entries`와 프로필 메모리를 비교해 잠금 상태를 복원한다.
 
@@ -214,7 +214,7 @@ interaction:
 
 리듬 막대는 대사창 바로 위 오른쪽에 충분한 폭과 대비로 배치한다. 적정 구간은 기존보다 넓은 시각 영역으로 표현하되 `중앙 적정 범위 안` 같은 설명 문구를 화면에 반복하지 않는다. 선택지별 `approach`/`space`/`literal`, 강도, 수치 합산과 숨은 효과는 디버깅 모드를 명시적으로 켰을 때만 표시한다.
 
-구버전 세이브에 남은 폐기 상태 필드는 로드 정규화 과정에서 제거한다. 히로인의 보이는 상태에는 `visible.heroines.<id>.initiative`만 사용한다.
+구버전 세이브에 남은 폐기 상태 필드는 로드 정규화 과정에서 제거한다. 히로인의 보이는 상태에는 `visible.heroines.<id>.affection`만 사용한다.
 
 hidden 값은 일반 UI나 게임 로그에 노출하지 않는다.
 

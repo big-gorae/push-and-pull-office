@@ -1110,7 +1110,7 @@ function Preview({
   const showPreviewImage = Boolean(character && speaker === heroine && image);
   const expression = layer?.expression || emotion?.default_expression || "narration";
   const truthLabels = false;
-  const scoreLabel = "밀당 주도권";
+  const scoreLabel = "호감도";
   const comboLabel = "COMBO";
   const markerPosition = `${(rhythmState.position + 100) / 2}%`;
   const targetPosition = rhythmState.target === "pull" ? "34%" : rhythmState.target === "push" ? "66%" : "50%";
@@ -1133,7 +1133,7 @@ function Preview({
         <div className="push-pull-hud">
           <div className="push-pull-score">
             <span>{scoreLabel}</span>
-            <strong>{visible.initiative}</strong>
+            <strong>{visible.affection}</strong>
             {rhythmState.combo > 0 && <em>{comboLabel} x{rhythmState.combo}</em>}
           </div>
           <div
@@ -1191,7 +1191,7 @@ function Preview({
 
     <div className="test-state">
       <div className="state-section-heading"><div className="state-section-label">테스트 상태 · {runtime.characters[heroine].display_name}</div><button type="button" onClick={() => { setPushPullResult(null); onState(clone(initialState)); }}>수치 초기화</button></div>
-      <StateSlider label={scoreLabel} value={visible.initiative} onChange={(value) => updateHeroine("visible", "initiative", value)} />
+      <StateSlider label={scoreLabel} value={visible.affection} onChange={(value) => updateHeroine("visible", "affection", value)} />
       <StateSlider label="리듬 위치" value={rhythmState.position} min={-100} onChange={(value) => updateRhythm({ position: value })} />
       <StateSlider label="콤보" value={rhythmState.combo} max={5} onChange={(value) => updateRhythm({ combo: value })} />
       <label className="state-select"><span>활성 득점선</span><select value={rhythmState.target} onChange={(event) => updateRhythm({ target: event.target.value as PushPullTarget })}><option value="pull">당기기</option><option value="push">밀기</option><option value="none">첫 방향 대기</option></select></label>
@@ -1220,6 +1220,7 @@ export default function App() {
   const mobileSyncStartedRoot = useRef<string | undefined>(undefined);
   const mobileRefreshPending = useRef<{ appliedText: number; appliedScenes: number } | undefined>(undefined);
   const mobileRefreshInFlight = useRef(false);
+  const diskRefreshInFlight = useRef(false);
   const [payload, setPayload] = useState<ProjectPayload | null>(null);
   const [selectedSceneId, setSelectedSceneId] = useState("");
   const [selectedNodeId, setSelectedNodeId] = useState("");
@@ -1389,6 +1390,34 @@ export default function App() {
       setBusy(false);
     }
   }, [loadScene]);
+
+  const reloadProjectFromDisk = useCallback(async () => {
+    if (!root || diskRefreshInFlight.current) return;
+    diskRefreshInFlight.current = true;
+    setBusy(true);
+    setStatus("최신 편집 내용을 저장한 뒤 디스크에서 다시 읽는 중…");
+    try {
+      await editorSaveCoordinator.barrier(root);
+      const project = await invoke<ProjectPayload>("load_project", { root });
+      const fallbackScene = storyRoutes(project.runtime)[0]?.entry_scene;
+      const sceneId = project.runtime.scenes[selectedSceneId] ? selectedSceneId : fallbackScene;
+      const nodeId = selectedNodeId;
+      setWorkspaceActivities({});
+      setPayload(project);
+      setLocale(project.runtime.localization.default_locale);
+      setIssues(project.issues);
+      if (sceneId) {
+        loadScene(project, sceneId, true);
+        if (nodeId && project.runtime.scenes[sceneId]?.nodes[nodeId]) setSelectedNodeId(nodeId);
+      }
+      setStatus("프로젝트를 디스크에서 다시 읽었습니다.");
+    } catch (error) {
+      setStatus(`디스크에서 다시 읽을 수 없습니다: ${String(error)}`);
+    } finally {
+      diskRefreshInFlight.current = false;
+      setBusy(false);
+    }
+  }, [loadScene, root, selectedNodeId, selectedSceneId]);
 
   useEffect(() => {
     if (bootStarted.current) return;
@@ -1783,6 +1812,11 @@ export default function App() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (!(event.metaKey || event.ctrlKey)) return;
       const key = event.key.toLocaleLowerCase();
+      if (key === "r" && !event.altKey) {
+        event.preventDefault();
+        void reloadProjectFromDisk();
+        return;
+      }
       if (key === "p") {
         event.preventDefault();
         setQuickOpenVisible(true);
@@ -1810,7 +1844,7 @@ export default function App() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [copyDialogueNode, dirty, editorTab, history, pasteDialogueNode, save, selectedNodeId, workspace]);
+  }, [copyDialogueNode, dirty, editorTab, history, pasteDialogueNode, reloadProjectFromDisk, save, selectedNodeId, workspace]);
 
   const quickOpenItems = useMemo<QuickOpenItem[]>(() => {
     if (!payload || !runtime) return [];
@@ -2188,6 +2222,7 @@ export default function App() {
       <div className="project-status"><strong>{runtime.project.title}</strong><span className={documentActivity.phase}>{documentActivity.phase === "saved" ? "✓" : "●"} {saveStateLabel}</span><span className={errorCount ? "error" : ""}>{errorCount} 오류</span></div>
       <div className="top-actions">
         <button type="button" className="quick-open-button" onClick={() => setQuickOpenVisible(true)} title="모든 스토리 문서 빠른 열기 (⌘P)">⌕ 빠른 열기 <kbd>⌘P</kbd></button>
+        <button type="button" onClick={() => void reloadProjectFromDisk()} disabled={busy} aria-label="디스크에서 다시 읽기" title="저장 대기 중인 편집을 반영한 뒤 프로젝트를 디스크에서 다시 읽습니다 (⌘/Ctrl+R)">↻ 다시 읽기 <kbd>⌘R</kbd></button>
         <button type="button" onClick={launchAuthoringPlay} disabled={busy || dirty || hasPendingDocument} title="실제 게임 화면에서 원본 대사를 편집합니다">▶ 게임에서 대사 편집</button>
         <button type="button" onClick={() => void launchMobileSync()} disabled={busy || dirty || hasPendingDocument} title="휴대폰의 오프라인 대사 변경을 안전하게 가져옵니다">☁ 모바일 동기화</button>
         <button type="button" onClick={selectProject} disabled={busy}>프로젝트 열기</button>

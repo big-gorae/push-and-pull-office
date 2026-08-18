@@ -14,7 +14,7 @@ state_contract:
   - progress.flags.push_pull
   - progress.flags.story_mode.yoo_jin_intervention
   writes:
-  - visible.heroines.yoon_seo_a.initiative
+  - visible.heroines.yoon_seo_a.affection
   - hidden.heroines.yoon_seo_a.suspicion
   - hidden.heroines.yoon_seo_a.dislike
   - hidden.heroines.yoon_seo_a.evidence_count
@@ -71,7 +71,7 @@ nodes:
   - protagonist_art_reveal
   stage:
   - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
-  line: "강유진 루트 해금 조건을 확인합니다. 오류: 해당 인물은 공략 대상이 아닙니다."
+  line: "강유진은 중재자가 아니었다. 한도윤이 그녀까지 사건에 끌어들이자, 유진은 직접 당사자로서 자신이 확인한 기록을 제출했다."
   next: unrouteable_end
 
 - id: immediate_choice

@@ -29,7 +29,7 @@ export function nodePreview(node: StoryNode | undefined): string {
   const compatible = node as CompatibleStoryNode;
   const variants = (node.variants || []) as CompatibleVariant[];
   const texts = [
-    compatible.line,
+    node.line,
     compatible.perceived?.line,
     compatible.reality?.line,
     ...variants.flatMap((variant) => [variant.line, variant.perceived?.line, variant.reality?.line]),

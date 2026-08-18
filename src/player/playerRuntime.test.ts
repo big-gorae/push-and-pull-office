@@ -91,6 +91,22 @@ describe("web player campaign runtime", () => {
     const initialHidden = structuredClone(session.state.hidden);
     const initialVisible = structuredClone(session.state.visible);
     expect(session.phase).toBe("scene");
+    expect(session.sceneId).toBe("common.day_01_dream_and_mother_call");
+    expect(session.state.progress.time).toMatchObject({ day: 1, slot: "morning" });
+    expect(session.state.progress.events.seen).toContain("anchor.day_01_dream_and_mother_call");
+
+    session = finishCurrentScene(session);
+    expect(session.phase).toBe("timeline");
+    session = advanceToNextMoment(runtime, session);
+    expect(session.phase).toBe("scene");
+    expect(session.sceneId).toBe("common.day_01_officetel_first_encounter");
+    expect(session.state.progress.time).toMatchObject({ day: 1, slot: "morning" });
+    expect(session.state.progress.events.seen).toContain("anchor.day_01_officetel_first_encounter");
+
+    session = finishCurrentScene(session);
+    expect(session.phase).toBe("timeline");
+    session = advanceToNextMoment(runtime, session);
+    expect(session.phase).toBe("scene");
     expect(session.sceneId).toBe("common.day_01_company_meeting");
     expect(session.state.progress.time).toMatchObject({ day: 1, slot: "morning" });
     expect(session.state.progress.events.seen).toContain("anchor.day_01_company_meeting");
@@ -244,13 +260,13 @@ describe("web player campaign runtime", () => {
     session.sceneId = "common.day_02_practical_meeting";
     session.nodeId = "recovery_choice";
     session.routeId = "seo_a";
-    const seoAInitiative = session.state.visible.heroines.yoon_seo_a.initiative;
-    const minKyungInitiative = session.state.visible.heroines.cha_min_kyung.initiative;
+    const seoAAffection = session.state.visible.heroines.yoon_seo_a.affection;
+    const minKyungAffection = session.state.visible.heroines.cha_min_kyung.affection;
 
     const selected = selectOption(runtime, session, "define_and_fix");
 
-    expect(selected.state.visible.heroines.yoon_seo_a.initiative).toBe(seoAInitiative);
-    expect(selected.state.visible.heroines.cha_min_kyung.initiative).toBeGreaterThan(minKyungInitiative);
+    expect(selected.state.visible.heroines.yoon_seo_a.affection).toBe(seoAAffection);
+    expect(selected.state.visible.heroines.cha_min_kyung.affection).toBeGreaterThan(minKyungAffection);
     expect(readPushPullState(selected.state)).toMatchObject({
       heroine: "cha_min_kyung",
       combo: 1,
@@ -310,6 +326,8 @@ describe("web player campaign runtime", () => {
     session.preparedTimeKey = undefined;
     session.state.progress.time = { day: 2, act: 1, slot: "morning" };
     session.state.progress.events.seen = [
+      "anchor.day_01_dream_and_mother_call",
+      "anchor.day_01_officetel_first_encounter",
       "anchor.day_01_company_meeting",
       "anchor.day_01_parent_pressure",
       "anchor.day_01_officetel_seo_a_reveal",
@@ -461,6 +479,29 @@ describe("web player campaign runtime", () => {
     expect(completed.phase).toBe("complete");
     expect(completed.state.progress.cleared_routes).toContain("seo_a");
     expect(completed.state.progress.unlocked_modes).toContain("survivor_view");
+  });
+
+  it("does not clear the decoy Min-kyung route or unlock another story", () => {
+    const session = createCampaignSession(runtime, "base");
+    session.phase = "timeline";
+    session.preparedTimeKey = undefined;
+    session.state.progress.time = { day: 17, act: 3, slot: "after_work" };
+    session.state.progress.events.seen = ["min_kyung.witness_meeting", "anchor.day_17_home_surprise"];
+    session.state.progress.flags.story_mode = {
+      target: "cha_min_kyung",
+      final_interpretation: "undecided",
+      home_incident: "none",
+      yoo_jin_intervention: false,
+    };
+    session.state.hidden.heroines.cha_min_kyung.evidence_count = 2;
+    session.state.hidden.heroines.cha_min_kyung.dislike = 40;
+
+    const ending = prepareTimeSlot(runtime, session);
+    expect(ending.sceneId).toBe("ending.min_kyung.report");
+    const completed = finishCurrentScene(ending);
+    expect(completed.phase).toBe("complete");
+    expect(completed.state.progress.cleared_routes).not.toContain("min_kyung");
+    expect(completed.state.progress.unlocked_modes).not.toContain("survivor_view");
   });
 
   it("does not award a route clear when the calendar ends without a narrative ending", () => {

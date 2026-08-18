@@ -18,9 +18,9 @@
         "stubble"
       ],
       "identityInstructions": [
-        "He is a forty-two-year-old Korean man with a round face, a receding hairline, and visibly thinning short black hair.",
-        "Give him dark-brown eyes, faint uneven stubble, and a slightly oily forehead.",
-        "Keep him short with a stocky heavy build and a protruding belly."
+        "He is a forty-two-year-old Korean man whose present-day appearance is strikingly and unmistakably unattractive, substantially uglier than the current temporary artwork.",
+        "Give him severely unbalanced facial proportions, a collapsed soft jawline, a receding hairline with visibly sparse short black hair, small tired dark-brown eyes, coarse oily skin, patchy unclean stubble, and visibly yellowed damaged teeth.",
+        "Keep him short with a stocky heavy build, a protruding belly, poor grooming, and a forward-leaning posture, while retaining realistic human anatomy rather than turning him into a creature."
       ],
       "faceOnlyIdentityTags": [
         "black hair",
@@ -30,8 +30,8 @@
         "stubble"
       ],
       "faceOnlyIdentityInstructions": [
-        "He is a forty-two-year-old Korean man with a round face, a receding hairline, and visibly thinning short black hair.",
-        "Give him dark-brown eyes, faint uneven stubble, and a slightly oily forehead."
+        "He is a forty-two-year-old Korean man whose present-day face is strikingly and unmistakably unattractive, substantially uglier than the current temporary artwork.",
+        "Give him severely unbalanced facial proportions, a collapsed soft jawline, a receding hairline with visibly sparse short black hair, small tired dark-brown eyes, coarse oily skin, patchy unclean stubble, and visibly yellowed damaged teeth, while retaining realistic human anatomy."
       ],
       "outfitTags": ["jacket", "shirt", "necktie", "briefcase", "phone"],
       "outfitInstructions": [
@@ -49,8 +49,8 @@
         "monster"
       ],
       "characterUndesiredInstructions": [
-        "A youthful handsome face, a sharp jawline, full hair, a clean-shaven face, a tall slim frame, broad heroic shoulders, glamorous grooming, or a heroic pose.",
-        "Grotesque or horror-like features."
+        "Any beautification: a youthful or conventionally handsome face, balanced facial proportions, a sharp jawline, full hair, clear smooth skin, clean white teeth, a clean-shaven face, a tall slim frame, broad heroic shoulders, glamorous grooming, or a heroic pose.",
+        "A non-human monster, creature anatomy, fantasy mutation, gore, or supernatural horror effects."
       ],
       "inpaintTasks": [],
       "defaultSituationId": "reference_waiting_smile",

@@ -3,6 +3,7 @@ id: seo_a
 title: 말하지 못한 거절
 heroine: yoon_seo_a
 campaign_id: main
+final_selectable: true
 summary: 사회적 미소와 동결 반응을 수줍은 밀당으로 오해하는 첫 번째 루트.
 unlock_conditions: []
 entry_scene: common.day_02_practical_meeting

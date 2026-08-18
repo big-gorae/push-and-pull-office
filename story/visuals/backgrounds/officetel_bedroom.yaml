@@ -1,0 +1,14 @@
+schema_version: 1
+id: background.officetel_bedroom
+kind: background
+extends: archetype.background
+title_key: visual.background.officetel_bedroom.title
+title: 한도윤의 오피스텔 침실
+variants:
+  dawn:
+    asset: assets/backgrounds/officetel/bedroom-dawn-placeholder.svg
+    match:
+      locations: [officetel_bedroom]
+      times: [dawn, morning]
+    priority: 120
+tags: [officetel, residential, bedroom, dawn, temporary]

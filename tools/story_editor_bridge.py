@@ -364,7 +364,7 @@ def derive_state_contract(
         for heroine in heroines:
             writes = unique([
                 *writes,
-                f"visible.heroines.{heroine}.initiative",
+                f"visible.heroines.{heroine}.affection",
                 f"hidden.heroines.{heroine}.suspicion",
                 f"hidden.heroines.{heroine}.dislike",
                 f"hidden.heroines.{heroine}.evidence_count",

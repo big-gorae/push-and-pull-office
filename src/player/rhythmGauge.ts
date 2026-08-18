@@ -26,8 +26,8 @@ export function rhythmGaugeMotion(
     to,
     trailLeft: Math.min(from, to),
     trailWidth: Math.abs(to - from),
-    scoreFrom: feedback.previousInitiative,
-    scoreTo: feedback.initiative,
+    scoreFrom: feedback.previousAffection,
+    scoreTo: feedback.affection,
     gain: feedback.gain,
   };
 }

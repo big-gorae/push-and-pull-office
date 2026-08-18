@@ -163,21 +163,43 @@ test("game flow hides authoring UI and debug restores controlled inspection", as
   const persistedLayer = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) || "null")?.session?.viewLayer, AUTOSAVE_KEY);
   expect(persistedLayer).toBeUndefined();
 
-  await expect(page.locator(".vn-nameplate")).toHaveText("한도윤");
+  await expect(page.locator(".vn-nameplate")).toHaveCount(0);
+  await expect(page.getByText("꿈속에서 수연은 몇 걸음 앞을 걷고 있었다. 얼굴은 끝내 보이지 않았다.", { exact: true })).toBeVisible();
   await expect(page.locator(".vn-character")).toHaveCount(0);
 
-  let seoAReached = false;
-  for (let step = 0; step < 60; step += 1) {
+  let doYoonReached = false;
+  for (let step = 0; step < 10; step += 1) {
     const nameplate = page.locator(".vn-nameplate");
     const name = await nameplate.count() ? await nameplate.textContent() : null;
-    if (name?.trim() === "윤서아") {
-      seoAReached = true;
+    if (name?.trim() === "한도윤") {
+      doYoonReached = true;
       break;
     }
     await page.keyboard.press("Enter");
     await page.waitForTimeout(20);
   }
+  expect(doYoonReached).toBe(true);
+  await expect(page.locator(".vn-character")).toHaveCount(0);
+
+  let seoAReached = false;
+  for (let step = 0; step < 120; step += 1) {
+    if (await page.locator('.vn-character img[alt="윤서아"]').count()) {
+      seoAReached = true;
+      break;
+    }
+    if (await page.locator(".vn-dialogue").isVisible()) {
+      await page.keyboard.press("Enter");
+    } else {
+      const pending = page.locator(".vn-flow-dialogue button");
+      const event = page.locator(".vn-flow-option-list button:not(.pass)").first();
+      if (await pending.count()) await pending.click();
+      else if (await event.count()) await event.click();
+      else await page.keyboard.press("Enter");
+    }
+    await page.waitForTimeout(100);
+  }
   expect(seoAReached).toBe(true);
+  await expect(page.locator(".vn-nameplate")).toHaveText("윤서아");
   await expect(page.locator(".vn-character")).toHaveCount(1);
   await expect(page.locator(".vn-character img")).toHaveAttribute("alt", "윤서아");
   await expect(page.getByRole("button", { name: "← 이전 대화" }).first()).toBeEnabled();
@@ -211,38 +233,20 @@ test("authoring preview opens an exact psychology-instructor direction in contex
 
 test("officetel dialogue keeps Han Do-yoon off screen and centers the other character", async ({ page }) => {
   test.setTimeout(60_000);
-  await page.goto("/");
-  await enterFirstScene(page);
-
-  let reached = false;
-  for (let step = 0; step < 240; step += 1) {
-    const title = await page.locator(".vn-day small").textContent().catch(() => null);
-    if (title?.trim() === "엘리베이터 문이 열리자" && await page.locator('.vn-character img[alt="윤서아"]').count() === 1) {
-      reached = true;
-      break;
-    }
-    const pending = page.locator(".vn-flow-dialogue button").first();
-    if (await pending.count()) await pending.click();
-    else await page.keyboard.press("Enter");
-    await page.waitForTimeout(15);
-  }
-  expect(reached).toBe(true);
+  await setAuthoringPreviewTarget(page, {
+    kind: "scene",
+    sceneId: "common.day_01_officetel_seo_a_reveal",
+    nodeId: "seo_a_surprised",
+  });
+  await page.goto("/#/play?authoring=1");
 
   await expect(page.locator(".vn-stage-bg")).toHaveAttribute("src", /elevator-lobby-evening/);
   await expect(page.locator('.vn-character img[alt="한도윤"]')).toHaveCount(0);
   await expect(page.locator(".vn-character.center img")).toHaveAttribute("alt", "윤서아");
   await expect(page.locator(".vn-character.speaking")).toHaveCount(1);
 
-  let doYoonSpeaking = false;
-  for (let step = 0; step < 12; step += 1) {
-    if ((await page.locator(".vn-nameplate").textContent().catch(() => null))?.trim() === "한도윤") {
-      doYoonSpeaking = true;
-      break;
-    }
-    await page.keyboard.press("Enter");
-    await page.waitForTimeout(15);
-  }
-  expect(doYoonSpeaking).toBe(true);
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".vn-nameplate")).toHaveText("한도윤");
   await expect(page.locator('.vn-character img[alt="한도윤"]')).toHaveCount(0);
   await expect(page.locator(".vn-character")).toHaveCount(0);
 });

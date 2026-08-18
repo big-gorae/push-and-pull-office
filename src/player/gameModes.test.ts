@@ -13,6 +13,16 @@ describe("game mode and campaign separation", () => {
     expect(resolveModeAccess(runtime, "base", fresh)).toBe("ready");
     expect(resolveModeAccess(runtime, "survivor_view", fresh)).toBe("locked");
     expect(resolveModeAccess(runtime, "survivor_view", cleared)).toBe("coming_soon");
+    expect(resolveModeAccess(runtime, "survivor_view", {
+      clearedRoutes: ["yoo_jin"],
+      unlockedModes: ["base"],
+      memories: [],
+    })).toBe("coming_soon");
+    expect(resolveModeAccess(runtime, "survivor_view", {
+      clearedRoutes: ["min_kyung"],
+      unlockedModes: ["base"],
+      memories: [],
+    })).toBe("locked");
   });
 
   it("selects main from the mode registry even when another campaign is ordered first", () => {

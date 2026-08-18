@@ -473,7 +473,7 @@ export default function TimelineEditor({
       <div className="inspector-section heroine-state">
         <div className="inspector-heading"><div><p className="eyebrow">STATE</p><h3>인물 수치</h3></div></div>
         <select value={heroineId} onChange={(event) => setHeroineId(event.target.value)}>{Object.keys(runtime.initial_state.visible.heroines).map((id) => <option value={id} key={id}>{runtime.characters[id]?.display_name || id}</option>)}</select>
-        <label><span>밀당 주도권 <strong>{visible.initiative}</strong></span><input type="range" min="0" max="100" value={visible.initiative} onChange={(event) => updateHeroine("visible", "initiative", Number(event.target.value))} /></label>
+        <label><span>호감도 <strong>{visible.affection}</strong></span><input type="range" min="0" max="100" value={visible.affection} onChange={(event) => updateHeroine("visible", "affection", Number(event.target.value))} /></label>
         <label><span>리듬 위치 <strong>{rhythmState.position}</strong></span><input type="range" min="-100" max="100" value={rhythmState.position} onChange={(event) => updateRhythm({ position: Number(event.target.value) })} /></label>
         <label><span>콤보 <strong>x{rhythmState.combo}</strong></span><input type="range" min="0" max="5" value={rhythmState.combo} onChange={(event) => updateRhythm({ combo: Number(event.target.value) })} /></label>
         <label><span>활성 득점선</span><select value={rhythmState.target} onChange={(event) => updateRhythm({ target: event.target.value as PushPullTarget })}><option value="pull">당기기</option><option value="push">밀기</option><option value="none">첫 방향 대기</option></select></label>

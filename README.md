@@ -1,5 +1,7 @@
 # push-and-pull-office
 
+작품의 메인 소재·로그라인·주제·시놉시스는 [`docs/story-planning-overview.md`](docs/story-planning-overview.md), 최상위 미결 작업은 [`docs/master-checklist.md`](docs/master-checklist.md)에서 관리합니다.
+
 ## 웹 플레이어 실행
 
 최초 한 번 의존성을 설치한 뒤 개발 서버를 실행합니다.
