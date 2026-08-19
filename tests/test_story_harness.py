@@ -348,6 +348,7 @@ class StoryHarnessTests(unittest.TestCase):
             "reading": "after_reading",
             "ott": "after_ott",
             "sleep": "after_sleep",
+            "dark_psychology": "after_dark_psychology",
             "solo_drinking": "after_solo_drinking",
         }
         callback_nodes = (
@@ -386,6 +387,68 @@ class StoryHarnessTests(unittest.TestCase):
                 if item["id"] == node_id
             )
             self.assertEqual("default", resolve_dialogue_variant(self.project, empty_state, node)[0])
+
+    def test_week_one_dark_psychology_lessons_open_the_next_day_callbacks(self):
+        expected_lessons = {
+            1: (
+                "anchor.day_01_dark_psychology_lesson",
+                "common.day_01_dark_psychology_lesson",
+                "progress.flags.dark_psychology.chapter_2_read",
+                "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
+            ),
+            2: (
+                "anchor.day_02_dark_psychology_lesson",
+                "common.day_02_dark_psychology_lesson",
+                "progress.flags.dark_psychology.chapter_4_2_read",
+                "4.2 MBTI로 여성 심리 장악하기",
+            ),
+            5: (
+                "anchor.day_05_dark_psychology_lesson",
+                "common.day_05_dark_psychology_lesson",
+                "progress.flags.dark_psychology.chapter_1_2_read",
+                "1.2 당신에게 호감이 있는 여성이 절대 숨길 수 없는 시그널",
+            ),
+        }
+
+        for day, (event_id, scene_id, flag_path, chapter_title) in expected_lessons.items():
+            event = self.project.events[event_id]
+            scene = self.project.scenes[scene_id]
+            self.assertEqual([day, day], event["window"]["days"])
+            self.assertEqual(["after_work"], event["window"]["slots"])
+            self.assertEqual(scene_id, event["scene"])
+            self.assertIn("dark_psychology_instructor", scene["cast"])
+            self.assertIn(flag_path, scene["state_contract"]["writes"])
+            spoken_lines = [
+                node.get("line", "")
+                for node in scene["nodes"]
+                if node.get("kind") == "dialogue"
+            ]
+            self.assertTrue(any(chapter_title in line for line in spoken_lines))
+            self.assertTrue(any("이 장을 읽어 보시라~!" in line for line in spoken_lines))
+            self.assertGreaterEqual(
+                sum(node.get("speaker") == "dark_psychology_instructor" for node in scene["nodes"]),
+                2,
+            )
+
+        day_two = self.project.scenes["common.day_02_practical_meeting"]
+        day_three = self.project.scenes["common.day_03_business_trip_or_cafe"]
+        day_two_nodes = {node["id"]: node for node in day_two["nodes"]}
+        day_three_nodes = {node["id"]: node for node in day_three["nodes"]}
+        self.assertEqual("first_lesson_gate", day_two_nodes["seo_a_freezes"]["next"])
+        self.assertEqual("instructor_starts_game", day_two_nodes["do_yoon_recalls_first_lesson"]["next"])
+        self.assertEqual("mbti_lesson_gate", day_three_nodes["activity_response"]["next"])
+        self.assertIn("바로 이겁니다!", day_three_nodes["instructor_confirms_st"]["line"])
+        self.assertIn("ST", day_three_nodes["structure_success"]["line"])
+
+        for scene_id, node_id in (
+            ("common.day_02_practical_meeting", "day_one_activity_reaction"),
+            ("common.day_03_business_trip_or_cafe", "activity_callback"),
+            ("common.day_04_weekend_encounter", "activity_callback"),
+            ("common.day_05_weekend_reflection", "activity_callback"),
+        ):
+            node = next(item for item in self.project.scenes[scene_id]["nodes"] if item["id"] == node_id)
+            variant = next(item for item in node["variants"] if item["id"] == "after_dark_psychology")
+            self.assertNotIn("여성의 마음을 지배하는 어둠의 심리학", variant["line"])
 
     def test_self_development_last_activity_requires_state_contract_read(self):
         path = "progress.self_development.last_activity"
@@ -1676,7 +1739,7 @@ class StoryHarnessTests(unittest.TestCase):
             "kang_yoo_jin",
             bundle["events"]["anchor.day_01_company_meeting"]["participants"],
         )
-        self.assertEqual(32, len(bundle["events"]))
+        self.assertEqual(35, len(bundle["events"]))
         self.assertEqual(
             "anchor.day_01_dream_and_mother_call",
             bundle["campaigns"]["main"]["entry_event_id"],
@@ -1715,6 +1778,7 @@ class StoryHarnessTests(unittest.TestCase):
             ["anchor.day_01_parent_pressure"],
             seo_a_neighbor["requires"]["events"],
         )
+        self.assertEqual(0, seo_a_neighbor["duration"])
         self.assertEqual(
             ["han_do_yoon", "yoon_seo_a"],
             bundle["scenes"]["common.day_01_officetel_seo_a_reveal"]["cast"],
@@ -1731,8 +1795,12 @@ class StoryHarnessTests(unittest.TestCase):
             bundle["scenes"]["common.day_03_officetel_min_kyung_move_in"]["cast"],
         )
         self.assertEqual(
-            ["anchor.day_01_officetel_seo_a_reveal"],
+            ["anchor.day_01_dark_psychology_lesson"],
             bundle["events"]["anchor.day_02_practical_meeting"]["requires"]["events"],
+        )
+        self.assertEqual(
+            ["anchor.day_02_dark_psychology_lesson"],
+            bundle["events"]["anchor.day_03_business_trip_or_cafe"]["requires"]["events"],
         )
         self.assertEqual(
             ["anchor.day_03_officetel_min_kyung_move_in"],

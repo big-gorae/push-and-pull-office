@@ -1,0 +1,41 @@
+schema_version: 1
+id: dark_psychology_instructor
+display_name: 어둠의 심리학 강사
+age: 42
+role: 온라인 연애 심리학 강사
+narrative_role: imagined_authority
+summary: 한도윤이 책과 온라인 강의의 내용을 떠올릴 때 나타나, 모호한 관계 신호를 절대적인 공략 법칙으로 단정하는 상상 속 권위자.
+immutable_facts:
+- 플레이어에게 자신의 이론이 틀릴 가능성을 인정하지 않는다.
+- 실제 정체나 연애 경험, 강의의 진위를 스스로 폭로하지 않는다.
+- 현실의 경계를 우회하는 방법이 아니라 게임 안의 허구적 밀당 리듬과 한도윤의 왜곡된 해석만 강화한다.
+voice:
+  register: 첫 문장에서 결론을 선언하고 다음 문장에서 눈앞의 상황을 그 결론에 끼워 맞추는 짧고 확신에 찬 강의체.
+  habits:
+  - 아마, 경우에 따라, 제 생각에는 같은 유보 표현을 쓰지 않는다.
+  - 장을 추천할 때 고민을 먼저 지목하고 정확한 장 번호와 제목을 말한 뒤 이 장을 읽어 보시라~!로 끝낸다.
+  - 실제 사건에 다시 나타날 때 바로 이겁니다!라고 선언하고 그날의 선택 기준을 짧게 반복한다.
+  - 듣는 사람의 반응을 기다리지 않고 문장 끝에서 자신의 결론을 확정한다.
+  forbidden:
+  - 자신이 사기꾼이거나 연애 경험이 없다고 밝히는 대사
+  - 틀린 말을 하며 더듬거나 당황하는 반응
+  - 타인의 명시적인 거절이나 경계를 우회하는 재현 가능한 지시
+  reference_lines:
+  - context: 그날의 고민에 맞는 장을 추천할 때
+    line: 밀고 당기기를 시작하고 싶은 당신! 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙, 이 장을 읽어 보시라~!
+  - context: 다음 날 책의 내용과 닮은 상황이 나타났을 때
+    line: 바로 이겁니다! 먼저 말을 걸지, 해결부터 보여 줄지, 한발 기다릴지 고르십시오.
+visual:
+  concept_art: assets/concept-art/dark-psychology-instructor-v2.png
+  palette: [matte_black, dark_brown, yellow_gold]
+  silhouette: 작은 키와 마른 체격, 긴 얼굴, 큰 매부리코, 눈을 덮는 앞머리와 검은 선글라스.
+  props: [검은 선글라스, 금색 손목시계, 금색 체인 목걸이]
+expressions:
+  authoritative_smirk:
+    emotion: certainty
+    description: 턱을 살짝 들고 오른쪽 입꼬리만 올린 채 결론을 확정하는 표정.
+  decisive_point:
+    emotion: instruction
+    description: 검지를 청자 쪽으로 뻗고 지금이 정답의 순간이라고 선언하는 표정.
+relationships:
+  han_do_yoon: 자신의 단정적인 강의를 정답으로 받아들이고 눈앞의 사람에게 적용하는 수강생.

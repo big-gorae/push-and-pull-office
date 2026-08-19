@@ -1,0 +1,77 @@
+schema_version: 1
+id: common.day_01_dark_psychology_lesson
+title: 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙
+route: seo_a
+chapter: 1
+sequence: 0
+location: officetel_bedroom
+time: night
+default_background:
+  visual_id: background.officetel_bedroom
+  variant_id: night
+purpose: 첫날 밤 한도윤이 책을 줄줄 읽는 대신 어둠의 심리학 강사와 대화하며 첫 장을 추천받고, 다음 날부터 윤서아와 차민경에게 밀고 당기기를 해 보기로 결심한다.
+cast: [han_do_yoon, dark_psychology_instructor]
+entry_conditions: []
+state_contract:
+  reads: []
+  writes:
+  - progress.flags.dark_psychology.chapter_2_read
+start_node: opens_book
+nodes:
+- id: opens_book
+  kind: narration
+  stage: []
+  line: 수요일 밤, 씻고 나온 한도윤은 침대 곁에 놓아 둔 《여성의 마음을 지배하는 어둠의 심리학》을 펼쳤다. 몇 줄을 읽자 온라인 강의에서 본 남자의 목소리가 머릿속에 또렷하게 들렸다.
+  next: do_yoon_wonders
+
+- id: do_yoon_wonders
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (서아 씨와 민경 씨…… 조금 더 알아보고 싶은데, 어디서부터 시작해야 하지?)
+  next: instructor_recommends
+
+- id: instructor_recommends
+  kind: dialogue
+  speaker: dark_psychology_instructor
+  stage:
+  - position: center
+    character: dark_psychology_instructor
+    visual_id: character.dark_psychology_instructor
+    artwork: default
+  expression: decisive_point
+  line: 밀고 당기기를 시작하고 싶은 당신! 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙, 이 장을 읽어 보시라~!
+  next: instructor_summarizes
+
+- id: instructor_summarizes
+  kind: dialogue
+  speaker: dark_psychology_instructor
+  stage:
+  - position: center
+    character: dark_psychology_instructor
+    visual_id: character.dark_psychology_instructor
+    artwork: default
+  expression: authoritative_smirk
+  line: 외모를 칭찬하고 먼저 연락하는 것은 당기기. 답장을 늦추고 갑자기 차갑게 대하는 것은 밀기입니다. 전부 쓸 필요는 없습니다. 상황에 맞는 한 수만 고르십시오.
+  next: do_yoon_commits
+
+- id: do_yoon_commits
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (좋아. 내일부터 시작해 보자. 먼저 다가갈지, 한발 물러날지 내가 정하는 거야.)
+  next: remember_chapter
+
+- id: remember_chapter
+  kind: effect
+  effects:
+  - {path: progress.flags.dark_psychology.chapter_2_read, op: set, value: true}
+  next: leave
+
+- id: leave
+  kind: exit
+  transitions:
+  - default: true
+    scene: common.day_02_practical_meeting

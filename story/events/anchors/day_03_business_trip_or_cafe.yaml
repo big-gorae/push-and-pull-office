@@ -13,7 +13,7 @@ participants: [han_do_yoon, yoon_seo_a, cha_min_kyung]
 location: office_break_room
 scene: common.day_03_business_trip_or_cafe
 requires:
-  events: [anchor.day_02_project_dinner]
+  events: [anchor.day_02_dark_psychology_lesson]
   conditions: []
 on_seen:
   effects:

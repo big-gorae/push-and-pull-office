@@ -1,20 +1,20 @@
 {
   "schema_version": 2,
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "fd91e6466a5aa427634f7f0404ffeac869116ea8612d3da9123bb00d1fa4d1ea",
+  "source_sha256": "5bd6054fcd1c77ac8f8294a493003a46d6b1278e6f6ef053b2eafa4672b53d5e",
   "profile": "development",
   "default_locale": "ko",
   "supported_locales": [
     "ko",
     "en"
   ],
-  "total_entries": 960,
+  "total_entries": 1008,
   "coverage": {
     "ko": {
-      "direct": 960,
-      "resolved": 960,
-      "translated": 960,
-      "total": 960,
+      "direct": 1008,
+      "resolved": 1008,
+      "translated": 1008,
+      "total": 1008,
       "ratio": 1.0,
       "fallback_used": [],
       "missing": [],
@@ -31,12 +31,12 @@
           "total": 14
         },
         "character": {
-          "direct": 67,
-          "total": 67
+          "direct": 72,
+          "total": 72
         },
         "event": {
-          "direct": 96,
-          "total": 96
+          "direct": 105,
+          "total": 105
         },
         "locale": {
           "direct": 4,
@@ -51,8 +51,8 @@
           "total": 8
         },
         "scene": {
-          "direct": 533,
-          "total": 533
+          "direct": 566,
+          "total": 566
         },
         "system_flow": {
           "direct": 23,
@@ -63,8 +63,8 @@
           "total": 2
         },
         "visual": {
-          "direct": 13,
-          "total": 13
+          "direct": 14,
+          "total": 14
         },
         "world": {
           "direct": 18,
@@ -74,10 +74,10 @@
     },
     "en": {
       "direct": 275,
-      "resolved": 960,
+      "resolved": 1008,
       "translated": 275,
-      "total": 960,
-      "ratio": 0.2865,
+      "total": 1008,
+      "ratio": 0.2728,
       "fallback_used": [
         "campaign.main.acts.collisions.purpose",
         "campaign.main.acts.crisis.purpose",
@@ -98,6 +98,11 @@
         "characters.cha_min_kyung.expressions.subjective_jealous.description",
         "characters.cha_min_kyung.role",
         "characters.cha_min_kyung.summary",
+        "characters.dark_psychology_instructor.display_name",
+        "characters.dark_psychology_instructor.expressions.authoritative_smirk.description",
+        "characters.dark_psychology_instructor.expressions.decisive_point.description",
+        "characters.dark_psychology_instructor.role",
+        "characters.dark_psychology_instructor.summary",
         "characters.han_do_yoon.expressions.actual_irritated.description",
         "characters.han_do_yoon.expressions.actual_waiting_smile.description",
         "characters.han_do_yoon.expressions.subjective_confident.description",
@@ -130,6 +135,9 @@
         "events.anchor.day_01_company_meeting.presentation.summary",
         "events.anchor.day_01_company_meeting.presentation.title",
         "events.anchor.day_01_company_meeting.title",
+        "events.anchor.day_01_dark_psychology_lesson.presentation.summary",
+        "events.anchor.day_01_dark_psychology_lesson.presentation.title",
+        "events.anchor.day_01_dark_psychology_lesson.title",
         "events.anchor.day_01_dream_and_mother_call.presentation.summary",
         "events.anchor.day_01_dream_and_mother_call.presentation.title",
         "events.anchor.day_01_dream_and_mother_call.title",
@@ -142,6 +150,9 @@
         "events.anchor.day_01_parent_pressure.presentation.summary",
         "events.anchor.day_01_parent_pressure.presentation.title",
         "events.anchor.day_01_parent_pressure.title",
+        "events.anchor.day_02_dark_psychology_lesson.presentation.summary",
+        "events.anchor.day_02_dark_psychology_lesson.presentation.title",
+        "events.anchor.day_02_dark_psychology_lesson.title",
         "events.anchor.day_02_practical_meeting.presentation.summary",
         "events.anchor.day_02_practical_meeting.presentation.title",
         "events.anchor.day_02_practical_meeting.title",
@@ -157,6 +168,9 @@
         "events.anchor.day_04_weekend_encounter.presentation.summary",
         "events.anchor.day_04_weekend_encounter.presentation.title",
         "events.anchor.day_04_weekend_encounter.title",
+        "events.anchor.day_05_dark_psychology_lesson.presentation.summary",
+        "events.anchor.day_05_dark_psychology_lesson.presentation.title",
+        "events.anchor.day_05_dark_psychology_lesson.title",
         "events.anchor.day_05_weekend_reflection.presentation.summary",
         "events.anchor.day_05_weekend_reflection.presentation.title",
         "events.anchor.day_05_weekend_reflection.title",
@@ -379,6 +393,13 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_won.line",
         "scenes.common.day_01_company_meeting.purpose",
         "scenes.common.day_01_company_meeting.title",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line",
+        "scenes.common.day_01_dark_psychology_lesson.purpose",
+        "scenes.common.day_01_dark_psychology_lesson.title",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line",
         "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_accepts_time.line",
         "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_answers_phone.line",
@@ -451,6 +472,13 @@
         "scenes.common.day_01_parent_pressure.nodes.remember_yoo_jin.line",
         "scenes.common.day_01_parent_pressure.purpose",
         "scenes.common.day_01_parent_pressure.title",
+        "scenes.common.day_02_dark_psychology_lesson.nodes.do_yoon_checks.line",
+        "scenes.common.day_02_dark_psychology_lesson.nodes.do_yoon_compares.line",
+        "scenes.common.day_02_dark_psychology_lesson.nodes.instructor_recommends.line",
+        "scenes.common.day_02_dark_psychology_lesson.nodes.instructor_summarizes.line",
+        "scenes.common.day_02_dark_psychology_lesson.nodes.returns_home.line",
+        "scenes.common.day_02_dark_psychology_lesson.purpose",
+        "scenes.common.day_02_dark_psychology_lesson.title",
         "scenes.common.day_02_practical_meeting.nodes.agenda.line",
         "scenes.common.day_02_practical_meeting.nodes.closing.line",
         "scenes.common.day_02_practical_meeting.nodes.day_one_activity_reaction.variants.after_dark_psychology.line",
@@ -467,6 +495,7 @@
         "scenes.common.day_02_practical_meeting.nodes.day_one_activity_response.variants.after_solo_drinking.line",
         "scenes.common.day_02_practical_meeting.nodes.day_one_activity_response.variants.after_workout.line",
         "scenes.common.day_02_practical_meeting.nodes.day_one_activity_response.variants.default.line",
+        "scenes.common.day_02_practical_meeting.nodes.do_yoon_recalls_first_lesson.line",
         "scenes.common.day_02_practical_meeting.nodes.empathy_do_yoon.line",
         "scenes.common.day_02_practical_meeting.nodes.empathy_min_kyung.line",
         "scenes.common.day_02_practical_meeting.nodes.empathy_seo_a.line",
@@ -477,6 +506,7 @@
         "scenes.common.day_02_practical_meeting.nodes.gratitude_facts.line",
         "scenes.common.day_02_practical_meeting.nodes.gratitude_roles.line",
         "scenes.common.day_02_practical_meeting.nodes.gratitude_takeover.line",
+        "scenes.common.day_02_practical_meeting.nodes.instructor_starts_game.line",
         "scenes.common.day_02_practical_meeting.nodes.meeting_ends.line",
         "scenes.common.day_02_practical_meeting.nodes.opening.line",
         "scenes.common.day_02_practical_meeting.nodes.presentation_resumes.line",
@@ -502,6 +532,10 @@
         "scenes.common.day_02_practical_meeting.nodes.roles_seo_a.line",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.line",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes.line",
+        "scenes.common.day_02_practical_meeting.nodes.success_empathy.line",
+        "scenes.common.day_02_practical_meeting.nodes.success_facts.line",
+        "scenes.common.day_02_practical_meeting.nodes.success_roles.line",
+        "scenes.common.day_02_practical_meeting.nodes.success_takeover.line",
         "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.line",
         "scenes.common.day_02_practical_meeting.nodes.takeover_min_kyung.line",
         "scenes.common.day_02_practical_meeting.nodes.takeover_seo_a.line",
@@ -526,7 +560,10 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.do_yoon_identifies_st.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_lesson.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.instructor_confirms_st.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.analysis_hints.none",
         "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.analysis_hints.pull",
         "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.analysis_hints.push",
@@ -558,6 +595,8 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.stimulus",
         "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.structure_response.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.structure_success.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.takeover_lesson.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.takeover_response.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.line",
         "scenes.common.day_03_business_trip_or_cafe.purpose",
@@ -590,6 +629,14 @@
         "scenes.common.day_04_weekend_encounter.nodes.goodbye.line",
         "scenes.common.day_04_weekend_encounter.purpose",
         "scenes.common.day_04_weekend_encounter.title",
+        "scenes.common.day_05_dark_psychology_lesson.nodes.do_yoon_decides.line",
+        "scenes.common.day_05_dark_psychology_lesson.nodes.do_yoon_wonders.line",
+        "scenes.common.day_05_dark_psychology_lesson.nodes.instructor_lists_signals_one.line",
+        "scenes.common.day_05_dark_psychology_lesson.nodes.instructor_lists_signals_two.line",
+        "scenes.common.day_05_dark_psychology_lesson.nodes.instructor_recommends.line",
+        "scenes.common.day_05_dark_psychology_lesson.nodes.opens_signals_chapter.line",
+        "scenes.common.day_05_dark_psychology_lesson.purpose",
+        "scenes.common.day_05_dark_psychology_lesson.title",
         "scenes.common.day_05_weekend_reflection.nodes.activity_callback.variants.after_dark_psychology.line",
         "scenes.common.day_05_weekend_reflection.nodes.activity_callback.variants.after_ott.line",
         "scenes.common.day_05_weekend_reflection.nodes.activity_callback.variants.after_reading.line",
@@ -757,6 +804,7 @@
         "visual.background.officetel_bedroom.title",
         "visual.background.officetel_elevator_lobby.title",
         "visual.background.officetel_unit_corridor.title",
+        "visual.character.dark_psychology_instructor.title",
         "world.members.member.jeong_da_eun.display_name",
         "world.members.member.lee_hyeon_woo.display_name",
         "world.members.member.lee_su_hyeon.display_name",
@@ -785,6 +833,11 @@
         "characters.cha_min_kyung.expressions.subjective_jealous.description",
         "characters.cha_min_kyung.role",
         "characters.cha_min_kyung.summary",
+        "characters.dark_psychology_instructor.display_name",
+        "characters.dark_psychology_instructor.expressions.authoritative_smirk.description",
+        "characters.dark_psychology_instructor.expressions.decisive_point.description",
+        "characters.dark_psychology_instructor.role",
+        "characters.dark_psychology_instructor.summary",
         "characters.han_do_yoon.expressions.actual_irritated.description",
         "characters.han_do_yoon.expressions.actual_waiting_smile.description",
         "characters.han_do_yoon.expressions.subjective_confident.description",
@@ -817,6 +870,9 @@
         "events.anchor.day_01_company_meeting.presentation.summary",
         "events.anchor.day_01_company_meeting.presentation.title",
         "events.anchor.day_01_company_meeting.title",
+        "events.anchor.day_01_dark_psychology_lesson.presentation.summary",
+        "events.anchor.day_01_dark_psychology_lesson.presentation.title",
+        "events.anchor.day_01_dark_psychology_lesson.title",
         "events.anchor.day_01_dream_and_mother_call.presentation.summary",
         "events.anchor.day_01_dream_and_mother_call.presentation.title",
         "events.anchor.day_01_dream_and_mother_call.title",
@@ -829,6 +885,9 @@
         "events.anchor.day_01_parent_pressure.presentation.summary",
         "events.anchor.day_01_parent_pressure.presentation.title",
         "events.anchor.day_01_parent_pressure.title",
+        "events.anchor.day_02_dark_psychology_lesson.presentation.summary",
+        "events.anchor.day_02_dark_psychology_lesson.presentation.title",
+        "events.anchor.day_02_dark_psychology_lesson.title",
         "events.anchor.day_02_practical_meeting.presentation.summary",
         "events.anchor.day_02_practical_meeting.presentation.title",
         "events.anchor.day_02_practical_meeting.title",
@@ -844,6 +903,9 @@
         "events.anchor.day_04_weekend_encounter.presentation.summary",
         "events.anchor.day_04_weekend_encounter.presentation.title",
         "events.anchor.day_04_weekend_encounter.title",
+        "events.anchor.day_05_dark_psychology_lesson.presentation.summary",
+        "events.anchor.day_05_dark_psychology_lesson.presentation.title",
+        "events.anchor.day_05_dark_psychology_lesson.title",
         "events.anchor.day_05_weekend_reflection.presentation.summary",
         "events.anchor.day_05_weekend_reflection.presentation.title",
         "events.anchor.day_05_weekend_reflection.title",
@@ -1066,6 +1128,13 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_won.line",
         "scenes.common.day_01_company_meeting.purpose",
         "scenes.common.day_01_company_meeting.title",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line",
+        "scenes.common.day_01_dark_psychology_lesson.purpose",
+        "scenes.common.day_01_dark_psychology_lesson.title",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line",
         "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_accepts_time.line",
         "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_answers_phone.line",
@@ -1138,6 +1207,13 @@
         "scenes.common.day_01_parent_pressure.nodes.remember_yoo_jin.line",
         "scenes.common.day_01_parent_pressure.purpose",
         "scenes.common.day_01_parent_pressure.title",
+        "scenes.common.day_02_dark_psychology_lesson.nodes.do_yoon_checks.line",
+        "scenes.common.day_02_dark_psychology_lesson.nodes.do_yoon_compares.line",
+        "scenes.common.day_02_dark_psychology_lesson.nodes.instructor_recommends.line",
+        "scenes.common.day_02_dark_psychology_lesson.nodes.instructor_summarizes.line",
+        "scenes.common.day_02_dark_psychology_lesson.nodes.returns_home.line",
+        "scenes.common.day_02_dark_psychology_lesson.purpose",
+        "scenes.common.day_02_dark_psychology_lesson.title",
         "scenes.common.day_02_practical_meeting.nodes.agenda.line",
         "scenes.common.day_02_practical_meeting.nodes.closing.line",
         "scenes.common.day_02_practical_meeting.nodes.day_one_activity_reaction.variants.after_dark_psychology.line",
@@ -1154,6 +1230,7 @@
         "scenes.common.day_02_practical_meeting.nodes.day_one_activity_response.variants.after_solo_drinking.line",
         "scenes.common.day_02_practical_meeting.nodes.day_one_activity_response.variants.after_workout.line",
         "scenes.common.day_02_practical_meeting.nodes.day_one_activity_response.variants.default.line",
+        "scenes.common.day_02_practical_meeting.nodes.do_yoon_recalls_first_lesson.line",
         "scenes.common.day_02_practical_meeting.nodes.empathy_do_yoon.line",
         "scenes.common.day_02_practical_meeting.nodes.empathy_min_kyung.line",
         "scenes.common.day_02_practical_meeting.nodes.empathy_seo_a.line",
@@ -1164,6 +1241,7 @@
         "scenes.common.day_02_practical_meeting.nodes.gratitude_facts.line",
         "scenes.common.day_02_practical_meeting.nodes.gratitude_roles.line",
         "scenes.common.day_02_practical_meeting.nodes.gratitude_takeover.line",
+        "scenes.common.day_02_practical_meeting.nodes.instructor_starts_game.line",
         "scenes.common.day_02_practical_meeting.nodes.meeting_ends.line",
         "scenes.common.day_02_practical_meeting.nodes.opening.line",
         "scenes.common.day_02_practical_meeting.nodes.presentation_resumes.line",
@@ -1189,6 +1267,10 @@
         "scenes.common.day_02_practical_meeting.nodes.roles_seo_a.line",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_begins.line",
         "scenes.common.day_02_practical_meeting.nodes.seo_a_freezes.line",
+        "scenes.common.day_02_practical_meeting.nodes.success_empathy.line",
+        "scenes.common.day_02_practical_meeting.nodes.success_facts.line",
+        "scenes.common.day_02_practical_meeting.nodes.success_roles.line",
+        "scenes.common.day_02_practical_meeting.nodes.success_takeover.line",
         "scenes.common.day_02_practical_meeting.nodes.takeover_do_yoon.line",
         "scenes.common.day_02_practical_meeting.nodes.takeover_min_kyung.line",
         "scenes.common.day_02_practical_meeting.nodes.takeover_seo_a.line",
@@ -1213,7 +1295,10 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_close_response.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_empathy_response.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.after_resolution_overwork_response.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.do_yoon_identifies_st.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_lesson.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.fatigue_response.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.instructor_confirms_st.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.analysis_hints.none",
         "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.analysis_hints.pull",
         "scenes.common.day_03_business_trip_or_cafe.nodes.post_resolution_choice.analysis_hints.push",
@@ -1245,6 +1330,8 @@
         "scenes.common.day_03_business_trip_or_cafe.nodes.response_choice.stimulus",
         "scenes.common.day_03_business_trip_or_cafe.nodes.return_to_office.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.structure_response.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.structure_success.line",
+        "scenes.common.day_03_business_trip_or_cafe.nodes.takeover_lesson.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.takeover_response.line",
         "scenes.common.day_03_business_trip_or_cafe.nodes.weekend_clues.line",
         "scenes.common.day_03_business_trip_or_cafe.purpose",
@@ -1277,6 +1364,14 @@
         "scenes.common.day_04_weekend_encounter.nodes.goodbye.line",
         "scenes.common.day_04_weekend_encounter.purpose",
         "scenes.common.day_04_weekend_encounter.title",
+        "scenes.common.day_05_dark_psychology_lesson.nodes.do_yoon_decides.line",
+        "scenes.common.day_05_dark_psychology_lesson.nodes.do_yoon_wonders.line",
+        "scenes.common.day_05_dark_psychology_lesson.nodes.instructor_lists_signals_one.line",
+        "scenes.common.day_05_dark_psychology_lesson.nodes.instructor_lists_signals_two.line",
+        "scenes.common.day_05_dark_psychology_lesson.nodes.instructor_recommends.line",
+        "scenes.common.day_05_dark_psychology_lesson.nodes.opens_signals_chapter.line",
+        "scenes.common.day_05_dark_psychology_lesson.purpose",
+        "scenes.common.day_05_dark_psychology_lesson.title",
         "scenes.common.day_05_weekend_reflection.nodes.activity_callback.variants.after_dark_psychology.line",
         "scenes.common.day_05_weekend_reflection.nodes.activity_callback.variants.after_ott.line",
         "scenes.common.day_05_weekend_reflection.nodes.activity_callback.variants.after_reading.line",
@@ -1444,6 +1539,7 @@
         "visual.background.officetel_bedroom.title",
         "visual.background.officetel_elevator_lobby.title",
         "visual.background.officetel_unit_corridor.title",
+        "visual.character.dark_psychology_instructor.title",
         "world.members.member.jeong_da_eun.display_name",
         "world.members.member.lee_hyeon_woo.display_name",
         "world.members.member.lee_su_hyeon.display_name",
@@ -1466,11 +1562,11 @@
         },
         "character": {
           "direct": 29,
-          "total": 67
+          "total": 72
         },
         "event": {
           "direct": 1,
-          "total": 96
+          "total": 105
         },
         "locale": {
           "direct": 2,
@@ -1486,7 +1582,7 @@
         },
         "scene": {
           "direct": 15,
-          "total": 533
+          "total": 566
         },
         "system_flow": {
           "direct": 23,
@@ -1498,7 +1594,7 @@
         },
         "visual": {
           "direct": 10,
-          "total": 13
+          "total": 14
         },
         "world": {
           "direct": 11,
@@ -1578,6 +1674,20 @@
         "missing": 0
       }
     },
+    "common.day_01_dark_psychology_lesson": {
+      "ko": {
+        "total": 10,
+        "direct": 10,
+        "fallback": 0,
+        "missing": 0
+      },
+      "en": {
+        "total": 10,
+        "direct": 0,
+        "fallback": 10,
+        "missing": 0
+      }
+    },
     "common.day_01_dream_and_mother_call": {
       "ko": {
         "total": 28,
@@ -1634,7 +1744,35 @@
         "missing": 0
       }
     },
+    "common.day_02_dark_psychology_lesson": {
+      "ko": {
+        "total": 10,
+        "direct": 10,
+        "fallback": 0,
+        "missing": 0
+      },
+      "en": {
+        "total": 10,
+        "direct": 0,
+        "fallback": 10,
+        "missing": 0
+      }
+    },
     "common.day_02_practical_meeting": {
+      "ko": {
+        "total": 67,
+        "direct": 67,
+        "fallback": 0,
+        "missing": 0
+      },
+      "en": {
+        "total": 67,
+        "direct": 0,
+        "fallback": 67,
+        "missing": 0
+      }
+    },
+    "common.day_03_business_trip_or_cafe": {
       "ko": {
         "total": 61,
         "direct": 61,
@@ -1645,20 +1783,6 @@
         "total": 61,
         "direct": 0,
         "fallback": 61,
-        "missing": 0
-      }
-    },
-    "common.day_03_business_trip_or_cafe": {
-      "ko": {
-        "total": 56,
-        "direct": 56,
-        "fallback": 0,
-        "missing": 0
-      },
-      "en": {
-        "total": 56,
-        "direct": 0,
-        "fallback": 56,
         "missing": 0
       }
     },
@@ -1687,6 +1811,20 @@
         "total": 21,
         "direct": 0,
         "fallback": 21,
+        "missing": 0
+      }
+    },
+    "common.day_05_dark_psychology_lesson": {
+      "ko": {
+        "total": 11,
+        "direct": 11,
+        "fallback": 0,
+        "missing": 0
+      },
+      "en": {
+        "total": 11,
+        "direct": 0,
+        "fallback": 11,
         "missing": 0
       }
     },
@@ -1818,8 +1956,8 @@
     }
   },
   "authoring_coverage": {
-    "narrative_text_units": 512,
-    "editable_units": 512,
+    "narrative_text_units": 539,
+    "editable_units": 539,
     "missing_editor_target": [],
     "generated_only": 0,
     "multiple_source_owners": 0,

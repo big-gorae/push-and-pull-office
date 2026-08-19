@@ -133,6 +133,14 @@ describe("web player campaign runtime", () => {
     expect(readPushPullState(session.state)).toMatchObject({ combo: 0, position: 0, target: "none", heroine: "" });
 
     session = advanceToNextMoment(runtime, session);
+    expect(session.phase).toBe("scene");
+    expect(session.sceneId).toBe("common.day_01_dark_psychology_lesson");
+    expect(session.state.progress.events.seen).toContain("anchor.day_01_dark_psychology_lesson");
+    session = finishCurrentScene(session);
+    expect(session.state.progress.flags.dark_psychology).toMatchObject({ chapter_2_read: true });
+    expect(session.phase).toBe("timeline");
+
+    session = advanceToNextMoment(runtime, session);
     expect(session.phase).toBe("self_development");
     expect(session.nightPhase?.status).toBe("intro");
     session = beginSelfDevelopmentNight(runtime, session);
@@ -169,11 +177,18 @@ describe("web player campaign runtime", () => {
       }
     }
     expect(weekOneCallbackScenes).toEqual([
+      "common.day_02_dark_psychology_lesson",
       "common.day_03_business_trip_or_cafe",
       "common.day_03_officetel_min_kyung_move_in",
       "common.day_04_weekend_encounter",
       "common.day_05_weekend_reflection",
+      "common.day_05_dark_psychology_lesson",
     ]);
+    expect(session.state.progress.flags.dark_psychology).toMatchObject({
+      chapter_2_read: true,
+      chapter_4_2_read: true,
+      chapter_1_2_read: true,
+    });
     expect(session.state.progress.time).toMatchObject({ day: 7, slot: "lunch" });
     expect(availableTimelineEvents(runtime, session).map((event) => event.id)).toContain("seo_a.email_request");
   });
@@ -331,7 +346,13 @@ describe("web player campaign runtime", () => {
       "anchor.day_01_company_meeting",
       "anchor.day_01_parent_pressure",
       "anchor.day_01_officetel_seo_a_reveal",
+      "anchor.day_01_dark_psychology_lesson",
     ];
+    session.state.progress.flags.dark_psychology = {
+      chapter_2_read: true,
+      chapter_4_2_read: false,
+      chapter_1_2_read: false,
+    };
     session.state.progress.flags.push_pull = {
       combo: 2,
       position: -24,
@@ -355,6 +376,39 @@ describe("web player campaign runtime", () => {
       heroine: "cha_min_kyung",
       combo: 3,
       position: -36,
+    });
+  });
+
+  it("keeps the current rhythm when an imagined instructor lesson has no heroine present", () => {
+    const session = createCampaignSession(runtime, "base");
+    session.phase = "timeline";
+    session.preparedTimeKey = undefined;
+    session.state.progress.time = { day: 2, act: 1, slot: "after_work" };
+    session.state.progress.events.seen = [
+      "anchor.day_01_dream_and_mother_call",
+      "anchor.day_01_officetel_first_encounter",
+      "anchor.day_01_company_meeting",
+      "anchor.day_01_parent_pressure",
+      "anchor.day_01_officetel_seo_a_reveal",
+      "anchor.day_01_dark_psychology_lesson",
+      "anchor.day_02_practical_meeting",
+      "anchor.day_02_project_dinner",
+    ];
+    session.state.progress.flags.push_pull = {
+      combo: 2,
+      position: -24,
+      target: "pull",
+      last_action: "approach",
+      heroine: "cha_min_kyung",
+    };
+
+    const entered = prepareTimeSlot(runtime, session);
+    expect(entered.phase).toBe("scene");
+    expect(entered.sceneId).toBe("common.day_02_dark_psychology_lesson");
+    expect(readPushPullState(entered.state)).toMatchObject({
+      heroine: "cha_min_kyung",
+      combo: 2,
+      position: -24,
     });
   });
 

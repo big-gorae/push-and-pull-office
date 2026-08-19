@@ -1,0 +1,16 @@
+schema_version: 1
+id: character.dark_psychology_instructor
+kind: character
+extends: archetype.character_bust
+title_key: visual.character.dark_psychology_instructor.title
+title: 어둠의 심리학 강사 기본 바스트
+character: dark_psychology_instructor
+fallback_asset: assets/concept-art/dark-psychology-instructor-v2.png
+default_outfit: office
+default_pose: neutral
+poses:
+  neutral: {offset_x: 0, offset_y: 0, scale: 1.0}
+  lecturing: {offset_x: 0, offset_y: -8, scale: 1.04}
+expression_assets: {}
+tags: [instructor, imagined_authority, dark_psychology]
+default_expression: authoritative_smirk

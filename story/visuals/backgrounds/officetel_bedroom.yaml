@@ -11,4 +11,10 @@ variants:
       locations: [officetel_bedroom]
       times: [dawn, morning]
     priority: 120
-tags: [officetel, residential, bedroom, dawn, temporary]
+  night:
+    asset: assets/backgrounds/officetel/bedroom-dawn-placeholder.svg
+    match:
+      locations: [officetel_bedroom]
+      times: [evening, night]
+    priority: 120
+tags: [officetel, residential, bedroom, dawn, night, temporary]

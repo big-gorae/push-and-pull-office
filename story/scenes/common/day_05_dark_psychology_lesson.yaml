@@ -1,0 +1,89 @@
+schema_version: 1
+id: common.day_05_dark_psychology_lesson
+title: 1.2 당신에게 호감이 있는 여성이 절대 숨길 수 없는 시그널
+route: seo_a
+chapter: 1
+sequence: 7
+location: officetel_bedroom
+time: night
+default_background:
+  visual_id: background.officetel_bedroom
+  variant_id: night
+purpose: 첫 주 마지막 밤 한도윤이 두 번의 주말 조우를 호감 가능성과 연결하자 강사가 호감 시그널 장의 전체 목록을 짧은 대화로 제시해 다음 주의 연속 오독을 준비한다.
+cast: [han_do_yoon, dark_psychology_instructor]
+entry_conditions: []
+state_contract:
+  reads: []
+  writes:
+  - progress.flags.dark_psychology.chapter_1_2_read
+start_node: opens_signals_chapter
+nodes:
+- id: opens_signals_chapter
+  kind: narration
+  stage: []
+  line: 일요일 밤, 이틀 연속 회사 동료와 마주친 일을 떠올리며 한도윤이 책장을 넘겼다. 익숙한 강사의 목소리가 먼저 끼어들었다.
+  next: do_yoon_wonders
+
+- id: do_yoon_wonders
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (둘 다 평범한 우연이라고 생각했는데…… 혹시 내가 놓친 게 있나?)
+  next: instructor_recommends
+
+- id: instructor_recommends
+  kind: dialogue
+  speaker: dark_psychology_instructor
+  stage:
+  - position: center
+    character: dark_psychology_instructor
+    visual_id: character.dark_psychology_instructor
+    artwork: default
+  expression: decisive_point
+  line: 호감인지 우연인지 헷갈리는 당신! 1.2 당신에게 호감이 있는 여성이 절대 숨길 수 없는 시그널, 이 장을 읽어 보시라~!
+  next: instructor_lists_signals_one
+
+- id: instructor_lists_signals_one
+  kind: dialogue
+  speaker: dark_psychology_instructor
+  stage:
+  - position: center
+    character: dark_psychology_instructor
+    visual_id: character.dark_psychology_instructor
+    artwork: default
+  expression: authoritative_smirk
+  line: 머리를 자주 묶고, 선물을 지니고 다니고, 당신의 작은 개인사나 사소한 말을 기억한다면 호감 시그널입니다.
+  next: instructor_lists_signals_two
+
+- id: instructor_lists_signals_two
+  kind: dialogue
+  speaker: dark_psychology_instructor
+  stage:
+  - position: center
+    character: dark_psychology_instructor
+    visual_id: character.dark_psychology_instructor
+    artwork: default
+  expression: decisive_point
+  line: 장난을 치거나 다른 남자 이야기로 질투를 유발하고, 일상을 공유하고, 굳이 가까이 앉고, 작은 접촉을 만드는 것도 절대 숨길 수 없는 시그널입니다.
+  next: do_yoon_decides
+
+- id: do_yoon_decides
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (주말에 두 번이나 마주친 것도 일상을 공유하려는 시그널인가? 다음부터 하나씩 확인해 보자.)
+  next: remember_chapter
+
+- id: remember_chapter
+  kind: effect
+  effects:
+  - {path: progress.flags.dark_psychology.chapter_1_2_read, op: set, value: true}
+  next: leave
+
+- id: leave
+  kind: exit
+  transitions:
+  - default: true
+    scene: seo_a.email_request

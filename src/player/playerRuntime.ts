@@ -365,7 +365,7 @@ function eventHeroine(runtime: Runtime, event: TimelineEvent): string | undefine
     }
     if (choiceTargets.size > 1) return undefined;
     if (choiceTargets.size === 1) return [...choiceTargets][0];
-    if (routeHeroine) return routeHeroine;
+    if (routeHeroine && scene?.cast.includes(routeHeroine)) return routeHeroine;
   }
   return (event.participants || []).find((id) => Boolean(runtime.initial_state.visible.heroines[id]));
 }

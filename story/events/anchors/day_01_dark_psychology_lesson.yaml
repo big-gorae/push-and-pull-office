@@ -1,0 +1,22 @@
+schema_version: 1
+campaign_id: main
+id: anchor.day_01_dark_psychology_lesson
+title: 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙
+type: anchor
+lane: personal
+window: {days: [1, 1], slots: [after_work], deadline_day: 1}
+duration: 1
+priority: 80
+availability: automatic
+completion: return_to_timeline
+participants: [han_do_yoon, dark_psychology_instructor]
+location: officetel_bedroom
+scene: common.day_01_dark_psychology_lesson
+requires:
+  events: [anchor.day_01_officetel_seo_a_reveal]
+  conditions: []
+on_seen: {effects: []}
+on_missed: {effects: []}
+presentation:
+  title: 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙
+  summary: 한도윤은 첫날 밤 강사에게 첫 장을 추천받고, 다음 날부터 상황에 따라 먼저 다가가거나 한발 물러나는 밀고 당기기를 시작하기로 한다.

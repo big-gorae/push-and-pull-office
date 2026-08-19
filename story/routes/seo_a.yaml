@@ -9,6 +9,7 @@ unlock_conditions: []
 entry_scene: common.day_02_practical_meeting
 scene_order:
   - common.day_02_practical_meeting
+  - common.day_02_dark_psychology_lesson
   - common.day_03_business_trip_or_cafe
   - bonus.stat_health_sample_sorting
   - bonus.stat_intelligence_version_check
@@ -16,6 +17,7 @@ scene_order:
   - bonus.stat_appearance_rehearsal
   - common.day_04_weekend_encounter
   - common.day_05_weekend_reflection
+  - common.day_05_dark_psychology_lesson
   - seo_a.email_request
   - seo_a.relief_smile
 endings:

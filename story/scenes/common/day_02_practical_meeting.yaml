@@ -6,8 +6,8 @@ chapter: 1
 sequence: 3
 location: meeting_room
 time: morning
-purpose: 전날 준비한 소재를 한도윤이 먼저 꺼낸 뒤, 서아의 발표 실수에서 감정 인정과 사실 해결이라는 인물별 대화 순서를 첫 선택으로 가르친다.
-cast: [han_do_yoon, yoon_seo_a, cha_min_kyung, kang_yoo_jin]
+purpose: 전날 강사에게 배운 밀고 당기기를 한도윤이 서아의 발표 실수에 처음 적용하고, 감정 인정·사실 해결·한발 기다리기 중 하나를 고른 뒤 성공했다고 받아들인다.
+cast: [han_do_yoon, yoon_seo_a, cha_min_kyung, kang_yoo_jin, dark_psychology_instructor]
 world_context:
   company: company.dawon_living
   project: project.harudam_spring_campaign
@@ -23,6 +23,7 @@ world_context:
 entry_conditions: []
 state_contract:
   reads:
+  - progress.flags.dark_psychology.chapter_2_read
   - progress.flags.push_pull
   - progress.flags.story_mode.day_02_response
   - progress.self_development.last_activity
@@ -80,7 +81,7 @@ nodes:
     self_development:
       expression: feedback.last_dark_psychology
     expression: actual_waiting_smile
-    line: 오늘도 잘 부탁합니다. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 말보다 타이밍을 먼저 읽으라는 대목이 기억에 남더군요. 그럼 참석자표부터 볼까요?
+    line: 오늘도 잘 부탁합니다. 어제는 오늘 대화를 어떻게 시작할지 좀 생각해 봤습니다. 그럼 참석자표부터 볼까요?
   - id: after_solo_drinking
     priority: 50
     self_development:
@@ -131,7 +132,7 @@ nodes:
     self_development:
       expression: feedback.last_dark_psychology
     expression: actual_social_smile
-    line: 아, 요즘 관계 심리 강의를 보고 계시는군요. 참석자표는 여기 있습니다.
+    line: 아, 네. 참석자표는 여기 있습니다.
   - id: after_solo_drinking
     priority: 50
     self_development:
@@ -183,6 +184,35 @@ nodes:
     artwork: default
   expression: actual_flustered
   line: "죄송합니다. 제가 파일을 잘못 열어서…… 잠시만요."
+  next: first_lesson_gate
+
+- id: first_lesson_gate
+  kind: state_gate
+  transitions:
+  - conditions:
+    - {path: progress.flags.dark_psychology.chapter_2_read, op: eq, value: true}
+    node: do_yoon_recalls_first_lesson
+  - default: true
+    node: recovery_choice
+
+- id: do_yoon_recalls_first_lesson
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (이럴 때야. 어젯밤 강사는 먼저 다가가는 행동도, 한발 기다리는 행동도 상황을 보고 고르라고 했지.)
+  next: instructor_starts_game
+
+- id: instructor_starts_game
+  kind: dialogue
+  speaker: dark_psychology_instructor
+  stage:
+  - position: center
+    character: dark_psychology_instructor
+    visual_id: character.dark_psychology_instructor
+    artwork: default
+  expression: decisive_point
+  line: 바로 지금입니다! 먼저 말을 걸지, 해결부터 보여 줄지, 한발 기다릴지 고르십시오. 선택한 순간부터 밀고 당기기 게임이 시작됩니다.
   next: recovery_choice
 
 - id: recovery_choice
@@ -287,7 +317,7 @@ nodes:
     artwork: default
   expression: actual_grateful
   line: "아까 정말 감사했습니다. 과장님이 계셔서 다행이었어요."
-  next: closing
+  next: success_empathy
 
 - id: facts_do_yoon
   kind: dialogue
@@ -331,7 +361,7 @@ nodes:
     artwork: default
   expression: actual_grateful
   line: "아까 정말 감사했습니다. 과장님이 계셔서 다행이었어요. 파일이 바뀌니까 다시 설명할 수 있었습니다."
-  next: closing
+  next: success_facts
 
 - id: roles_do_yoon
   kind: dialogue
@@ -375,7 +405,7 @@ nodes:
     artwork: default
   expression: actual_grateful
   line: "아까 정말 감사했습니다. 과장님이 계셔서 다행이었어요. 제가 끝까지 말할 수 있게 해 주셔서요."
-  next: closing
+  next: success_roles
 
 - id: takeover_do_yoon
   kind: dialogue
@@ -419,6 +449,38 @@ nodes:
     artwork: default
   expression: actual_social_smile
   line: "파일을 바꿔 주신 건 감사합니다. 다음에는 제가 계속할지 먼저 물어봐 주세요."
+  next: success_takeover
+
+- id: success_empathy
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (먼저 다가가길 잘했어. 과장님이 있어서 다행이었다니, 첫 수부터 제대로 통했네!)
+  next: closing
+
+- id: success_facts
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (민경 씨가 바로 내 정리를 받았어. 일로 당기는 방법도 통하는군.)
+  next: closing
+
+- id: success_roles
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (한발 물러나니까 서아 씨가 직접 부탁했어. 이것도 제대로 먹힌 거야.)
+  next: closing
+
+- id: success_takeover
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (다음에는 먼저 물어봐 달라…… 다음을 벌써 생각했다는 뜻일까? 시작은 나쁘지 않아.)
   next: closing
 
 - id: presentation_resumes

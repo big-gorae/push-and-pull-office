@@ -56,7 +56,7 @@ nodes:
     self_development:
       expression: feedback.last_dark_psychology
     expression: actual_waiting_smile
-    line: 주말에도 뵙네요. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 사람 사이의 거리를 관찰해 보라는 내용이 있더군요.
+    line: 주말에도 뵙네요. 여기서 마주칠 줄은 몰랐습니다.
   - id: after_solo_drinking
     priority: 50
     self_development:
@@ -96,7 +96,7 @@ nodes:
     priority: 60
     self_development:
       expression: feedback.last_dark_psychology
-    line: 동료는 ‘그런 내용은 사람마다 다르게 받아들일 것 같아요.’라고 짧게 답한 뒤 먼저 둘러보겠다고 말했다.
+    line: 동료는 ‘여기서 뵐 줄은 몰랐네요.’라고 인사한 뒤 먼저 둘러보겠다고 말했다.
   - id: after_solo_drinking
     priority: 50
     self_development:

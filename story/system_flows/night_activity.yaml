@@ -4,11 +4,11 @@ title: 밤 활동
 nodes:
 - id: intro
   kind: dialogue
-  line: 밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?
+  line: 집에 돌아와 씻고 나왔다. 이제 뭘 할까?
   speaker: han_do_yoon
 - id: forced_intro
   kind: dialogue
-  line: 《여성의 마음을 지배하는 어둠의 심리학》을 몇 줄 읽었지만 눈에 들어오지 않는다. 오늘은 뭘 고를 기운도 없네.
+  line: 집에 돌아오긴 했는데, 오늘은 뭘 고를 기운도 없네.
   speaker: han_do_yoon
 - id: activity_result
   kind: dialogue
@@ -22,7 +22,7 @@ nodes:
   - id: sleep
     line: 오늘은 욕심내지 말고 자자. 내일 생각은 내일 하고.
   - id: dark_psychology
-    line: 오늘 배운 강의는 결정적인 순간에 한 번 써먹을 수 있겠군.
+    line: 강사의 목소리를 다시 들으니 확실히 기억나네. 결정적인 순간에 한 번 더 떠올릴 수 있겠어.
   - id: solo_drinking
     line: 한 잔만 마시려 했는데… 빈 캔이 세 개네. 불부터 끄자.
 options:

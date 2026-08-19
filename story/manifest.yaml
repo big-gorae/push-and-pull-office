@@ -173,6 +173,10 @@ initial_state:
       last_activity: ""
       hint_charges: 0
     flags:
+      dark_psychology:
+        chapter_2_read: false
+        chapter_4_2_read: false
+        chapter_1_2_read: false
       push_pull:
         combo: 0
         position: 0

@@ -245,10 +245,8 @@ strings:
   "analysisHint.recall": "Replay the lecture in my head"
   "analysisHint.instructor": "Dark psychology instructor"
   "analysisHint.observation": "Evidence observed so far"
-  "system_flows.system.night_activity.nodes.intro.line": I read a few pages of Dark Psychology for Dominating Women's
-    Hearts over dinner. What should I do now?
-  "system_flows.system.night_activity.nodes.forced_intro.line": I read a few lines of Dark Psychology for Dominating
-    Women's Hearts, but none of it registered. I cannot even choose tonight.
+  "system_flows.system.night_activity.nodes.intro.line": I came home and washed up. What should I do now?
+  "system_flows.system.night_activity.nodes.forced_intro.line": I made it home, but I do not even have the energy to choose tonight.
   "system_flows.system.night_activity.nodes.activity_result.variants.workout.line": I am winded, but it was worth
     moving. That is enough for tonight.
   "system_flows.system.night_activity.nodes.activity_result.variants.reading.line": This is easier to read than I
@@ -257,8 +255,8 @@ strings:
     is three. At least I understand the jokes.
   "system_flows.system.night_activity.nodes.activity_result.variants.sleep.line": No need to push it tonight. Tomorrow
     can wait until tomorrow.
-  "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.line": I can use tonight's lesson
-    once when the decisive moment comes.
+  "system_flows.system.night_activity.nodes.activity_result.variants.dark_psychology.line": Hearing the instructor again
+    fixed it in my memory. I can recall it once more at the decisive moment.
   "system_flows.system.night_activity.nodes.activity_result.variants.solo_drinking.line": I meant to have one drink...
     There are three empty cans. Time to turn off the light.
   "system_flows.system.night_activity.options.workout.label": "Go to the gym"

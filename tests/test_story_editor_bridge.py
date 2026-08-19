@@ -42,11 +42,11 @@ class StoryEditorBridgeTests(unittest.TestCase):
 
     def test_load_project_includes_runtime_documents_and_revisions(self):
         result = load_project(ROOT)
-        self.assertEqual(22, len(result["runtime"]["scenes"]))
-        self.assertEqual(22, len(result["documents"]["scenes"]))
+        self.assertEqual(25, len(result["runtime"]["scenes"]))
+        self.assertEqual(25, len(result["documents"]["scenes"]))
         self.assertEqual([], result["issues"])
         self.assertEqual(64, len(result["documents"]["scenes"]["seo_a.email_request"]["revision"]))
-        self.assertEqual(32, len(result["documents"]["events"]))
+        self.assertEqual(35, len(result["documents"]["events"]))
         self.assertEqual({"system.night_activity", "system.analysis_hint"}, set(result["documents"]["system_flows"]))
         self.assertIn("common.day_01_company_meeting", result["documents"]["scenes"])
         self.assertIn("common.day_01_dream_and_mother_call", result["documents"]["scenes"])
@@ -54,10 +54,12 @@ class StoryEditorBridgeTests(unittest.TestCase):
         self.assertIn("common.day_01_parent_pressure", result["documents"]["scenes"])
         self.assertIn("common.day_01_officetel_seo_a_reveal", result["documents"]["scenes"])
         self.assertIn("common.day_02_practical_meeting", result["documents"]["scenes"])
+        self.assertIn("common.day_02_dark_psychology_lesson", result["documents"]["scenes"])
         self.assertIn("common.day_03_business_trip_or_cafe", result["documents"]["scenes"])
         self.assertIn("common.day_03_officetel_min_kyung_move_in", result["documents"]["scenes"])
         self.assertIn("common.day_04_weekend_encounter", result["documents"]["scenes"])
         self.assertIn("common.day_05_weekend_reflection", result["documents"]["scenes"])
+        self.assertIn("common.day_05_dark_psychology_lesson", result["documents"]["scenes"])
         self.assertIn("anchor.day_01_dream_and_mother_call", result["documents"]["events"])
         self.assertIn("anchor.day_01_parent_pressure", result["documents"]["events"])
         self.assertIn("anchor.day_01_officetel_first_encounter", result["documents"]["events"])
@@ -951,6 +953,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
             self.assertEqual(
                 [
                     "common.day_02_practical_meeting",
+                    "common.day_02_dark_psychology_lesson",
                     "common.day_03_business_trip_or_cafe",
                     "bonus.stat_health_sample_sorting",
                     "bonus.stat_intelligence_version_check",
@@ -958,6 +961,7 @@ class StoryEditorBridgeTests(unittest.TestCase):
                     "bonus.stat_appearance_rehearsal",
                     "common.day_04_weekend_encounter",
                     "common.day_05_weekend_reflection",
+                    "common.day_05_dark_psychology_lesson",
                     "seo_a.email_request",
                     "seo_a.email_request_copy",
                     "seo_a.relief_smile",

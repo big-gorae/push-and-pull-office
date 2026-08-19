@@ -98,7 +98,7 @@ describe("locale-independent save schema", () => {
     const english = savePreview(slot, new GameLocalizer(runtime, "en"));
     expect(korean.title).toBe("밤");
     expect(english.title).toBe("Night");
-    expect(korean.line).toBe("밥을 먹으며 《여성의 마음을 지배하는 어둠의 심리학》을 몇 쪽 읽었다. 이제 뭘 할까?");
+    expect(korean.line).toBe("집에 돌아와 씻고 나왔다. 이제 뭘 할까?");
     expect(korean.line).not.toBe(english.line);
   });
 

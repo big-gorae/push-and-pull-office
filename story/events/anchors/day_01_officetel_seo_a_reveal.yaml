@@ -5,7 +5,7 @@ title: 엘리베이터 문이 열리자
 type: heroine
 lane: yoon_seo_a
 window: {days: [1, 1], slots: [after_work], deadline_day: 1}
-duration: 1
+duration: 0
 priority: 90
 availability: automatic
 completion: return_to_timeline

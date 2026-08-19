@@ -6,12 +6,12 @@ chapter: 1
 sequence: 4
 location: office_break_room
 time: afternoon
-purpose: 한도윤이 전날 밤에 준비한 소재를 민경에게 자기어필한 뒤, 업무를 수습하는 동안에는 사실과 실행 가능성을 먼저 확인하고 해결 뒤에는 구체적인 부담 인정을 받아들이는 민경의 상황별 대화 순서를
-  재확인한다.
-cast: [han_do_yoon, yoon_seo_a, cha_min_kyung]
+purpose: 전날 밤 읽은 MBTI 장을 떠올린 한도윤이 민경을 ST로 판단하고, 사실과 해결 순서를 먼저 제시하는 선택을 실제 대사로 확인한 뒤 공략 정답을 찾았다고 받아들인다.
+cast: [han_do_yoon, yoon_seo_a, cha_min_kyung, dark_psychology_instructor]
 entry_conditions: []
 state_contract:
   reads:
+  - progress.flags.dark_psychology.chapter_4_2_read
   - progress.self_development.last_activity
   - progress.flags.push_pull
   writes:
@@ -63,8 +63,7 @@ nodes:
     self_development:
       expression: feedback.last_dark_psychology
     expression: actual_waiting_smile
-    line: 돌아왔으니 정리하기 전에 하나만. 요즘 《여성의 마음을 지배하는 어둠의 심리학》이라는 책과 강의를 같이 보고 있습니다. 말보다 타이밍을 먼저 읽으라는 대목이 기억에 남더군요. 그럼 오늘 남은
-      쟁점부터 보죠.
+    line: 돌아왔으니 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠.
   - id: after_solo_drinking
     priority: 50
     self_development:
@@ -83,7 +82,7 @@ nodes:
     character: cha_min_kyung
     visual_id: character.cha_min_kyung
     artwork: default
-  next: response_choice
+  next: mbti_lesson_gate
 
   variants:
   - id: after_workout
@@ -115,7 +114,7 @@ nodes:
     self_development:
       expression: feedback.last_dark_psychology
     expression: actual_focused
-    line: 네, 요즘 관계 심리 강의를 보고 계시는군요. 지금은 오늘 남은 쟁점 세 개부터 보죠.
+    line: 네. 지금은 오늘 남은 쟁점 세 개부터 보죠.
   - id: after_solo_drinking
     priority: 50
     self_development:
@@ -126,6 +125,35 @@ nodes:
     default: true
     expression: actual_focused
     line: "돌아왔으면 오늘 확인한 입점·공개 일정 쟁점부터 정리하죠."
+
+- id: mbti_lesson_gate
+  kind: state_gate
+  transitions:
+  - conditions:
+    - {path: progress.flags.dark_psychology.chapter_4_2_read, op: eq, value: true}
+    node: do_yoon_identifies_st
+  - default: true
+    node: response_choice
+
+- id: do_yoon_identifies_st
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (민경 씨 차가워…… 책의 내용대로라면 민경 씨는 ST인 건가?)
+  next: instructor_confirms_st
+
+- id: instructor_confirms_st
+  kind: dialogue
+  speaker: dark_psychology_instructor
+  stage:
+  - position: center
+    character: dark_psychology_instructor
+    visual_id: character.dark_psychology_instructor
+    artwork: default
+  expression: decisive_point
+  line: 바로 이겁니다! ST인 여성에게는 공감부터 요구하지 마십시오. 확인된 사실과 해결 순서를 먼저 제시하는 겁니다.
+  next: response_choice
 - id: response_choice
   kind: choice
   prompt: 민경이 남은 쟁점 세 가지부터 정리하자고 한 말에 어떻게 답할까?
@@ -181,7 +209,7 @@ nodes:
     artwork: default
   expression: actual_focused
   line: "좋습니다. 그 순서면 같은 설명을 두 번 확인할 필요가 없겠네요. 수정 범위와 공개 일정은 제가 정리하겠습니다."
-  next: resolution_complete
+  next: structure_success
 
 - id: fatigue_response
   kind: dialogue
@@ -193,7 +221,7 @@ nodes:
     artwork: default
   expression: actual_focused
   line: "피곤한 건 맞습니다. 다만 지금은 세 쟁점을 끝내는 편이 더 편합니다. 승인 회신부터 말씀해 주세요."
-  next: resolution_complete
+  next: fatigue_lesson
 
 - id: takeover_response
   kind: dialogue
@@ -205,6 +233,30 @@ nodes:
     artwork: default
   expression: actual_focused
   line: "세 가지를 전부 맡으시면 승인 범위와 제 담당이 섞입니다. 확인한 범위만 말씀해 주세요. 나머지는 제가 정리하겠습니다."
+  next: takeover_lesson
+
+- id: structure_success
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (역시. 민경 씨는 해결법부터 제시해야 하는 ST였어!)
+  next: resolution_complete
+
+- id: fatigue_lesson
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (지금은 일부터 끝내고 싶다는 거군. 이것도 ST라는 확인이야.)
+  next: resolution_complete
+
+- id: takeover_lesson
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (범위를 나눠 달라…… 해결법도 정확해야 통한다는 뜻이군.)
   next: resolution_complete
 
 - id: resolution_complete
