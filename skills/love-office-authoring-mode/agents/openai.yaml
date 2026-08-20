@@ -1,0 +1,4 @@
+interface:
+  display_name: "러브오피스 작가모드"
+  short_description: "Authoring Build와 제작 플레이를 빠르게 엽니다"
+  default_prompt: "$love-office-authoring-mode를 사용해 러브오피스 작가모드를 켜줘."
