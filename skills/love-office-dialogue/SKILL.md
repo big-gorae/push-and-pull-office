@@ -24,6 +24,7 @@ Always read:
 
 - every participating character's story/characters/<id>.yaml;
 - every declared voice.baseline_reference in those profiles;
+- the participating characters' entries in docs/dialogue-voice-rejections.md when that file exists;
 - the target scene when it already exists;
 - the relevant company, team, role, member, project, and meeting facts exposed by story/world/.
 
@@ -50,16 +51,23 @@ Use this precedence:
 
 ## Compose without voice drift
 
-Plan the scene privately as beats: entrance, information change, reaction, relationship beat, exit. Then write only what the user requested.
+Plan the scene privately as beats: entrance, information change, reaction, relationship beat, exit. Then run the following cycle separately for every speaking character before writing the final script.
+
+1. **Generate**: when available, select two to four functionally similar user-approved golden lines and make a provisional semantic version that contains only what the character must notice, feel, say, or do. Do not copy the golden wording. If fewer than two approved lines exist, use every available approved line plus the user's current explicit direction; do not invent missing evidence or treat the new draft as an approved voice standard.
+2. **Delete**: remove expressions that conflict with the character profile, the selected golden samples, or that character's recorded rejection cases. Delete outline language, system explanations, balanced summary sentences, generic relationship abstractions, and prose that merely restates the scene purpose when those patterns are not supported by the character's approved voice.
+3. **Rewrite**: rebuild the line in the character's approved vocabulary, rhythm, sentence endings, hesitation, reaction order, and current emotional state. The rewritten line must sound character-specific even without its speaker label.
+4. **Score**: read references/voice-quality-rubric.md and score the rewritten result. A line that fails a hard gate is discarded regardless of score. Rewrite until every speaking main character passes the required score.
+
+Keep provisional semantic versions, deletion notes, comparison samples, and scores private unless the user explicitly asks to see them. Return or apply only the rewritten dialogue.
 
 - Reproduce rhythm, vocabulary, sentence length, hesitation, reaction order, and humor mechanisms from golden samples.
 - Do not copy signature lines merely to sound consistent. Reuse a line only for an intentional callback.
 - Make lines attributable without speaker names. If two characters could swap lines without changing the scene, strengthen their distinct response logic.
 - Let character knowledge, role, confidence, and emotional safety determine what they say before adding verbal tics.
-- Keep Han Do-yoon's spoken dialogue natural and his parenthesized self-talk more reactive and manga-like. Avoid turning every interaction into a romantic certainty.
+- Keep Han Do-yoon's spoken dialogue natural and his parenthesized self-talk like the innocent boy protagonist of a Japanese anime: concrete stimulus, immediate emotion, naive evaluation, and an optional quick self-correction. Do not make him calmly summarize relationship strategy, scene design, or control over another person unless a future user-approved golden explicitly establishes that wording.
 - Store Han Do-yoon's parenthesized self-talk as ordinary dialogue, never as a removed thought field.
 - Keep text-only coworkers factual and present when the meeting policy requires them.
-- Read references/voice-quality-rubric.md and run its checks internally before presenting or applying a scene. Show the evaluation only when asked.
+- Treat every model-authored line as provisional. Never promote a line to a golden sample or voice.reference_lines in the same task that generated it unless the user explicitly approves that exact line.
 
 ## Draft mode
 
@@ -95,12 +103,14 @@ Return a clean script by default:
 Treat user-edited or explicitly approved dialogue as new evidence, not as an automatic replacement for every prior rule.
 
 1. Preserve the approved wording except for confirmed typos, broken markup, and world-bible corrections.
-2. Add full approved scene samples to an appropriate docs/dialogue-voice-baseline-*.md file.
-3. Update character voice.register, habits, and forbidden only when the correction demonstrates a reusable pattern.
-4. Keep voice.reference_lines small and representative. Prefer 3–8 lines per character, each with a distinct context.
-5. Point voice.baseline_reference at repository documents; never duplicate full golden scripts inside this skill.
-6. Change this skill only when the authoring process or evaluation method changes. Change repository voice files when a character's style changes.
-7. Validate schemas and run the story validation required by AGENTS.md.
-8. Summarize which reusable rule changed so the user can confirm or revise it later.
+2. Add full approved scene samples to an appropriate docs/dialogue-voice-baseline-*.md file. Only user-authored lines or exact lines explicitly approved by the user qualify as golden samples.
+3. When the user rejects a line, record its original wording, context, rejection reason, and reusable failure pattern in docs/dialogue-voice-rejections.md. Do not turn one rejection into a universal ban for unrelated characters or contexts.
+4. Update character voice.register, habits, and forbidden only when the correction demonstrates a reusable pattern.
+5. Keep voice.reference_lines small and representative. Prefer 3–8 lines per character, each with a distinct context.
+6. Never promote a Codex-authored line to a golden sample or voice.reference_lines in the same task that created it without explicit approval of that exact wording.
+7. Point voice.baseline_reference at repository documents; never duplicate full golden scripts inside this skill.
+8. Change this skill only when the authoring process or evaluation method changes. Change repository voice files when a character's style changes.
+9. Validate schemas and run the story validation required by AGENTS.md.
+10. Summarize which reusable rule changed so the user can confirm or revise it later.
 
 This separation is the extension mechanism: approved content evolves in docs/ and story/characters/, evaluation evolves in references/voice-quality-rubric.md, and the reusable workflow evolves in this file.

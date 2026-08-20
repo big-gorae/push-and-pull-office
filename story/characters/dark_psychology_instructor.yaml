@@ -20,11 +20,7 @@ voice:
   - 자신이 사기꾼이거나 연애 경험이 없다고 밝히는 대사
   - 틀린 말을 하며 더듬거나 당황하는 반응
   - 타인의 명시적인 거절이나 경계를 우회하는 재현 가능한 지시
-  reference_lines:
-  - context: 그날의 고민에 맞는 장을 추천할 때
-    line: 밀고 당기기를 시작하고 싶은 당신! 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙, 이 장을 읽어 보시라~!
-  - context: 다음 날 책의 내용과 닮은 상황이 나타났을 때
-    line: 바로 이겁니다! 먼저 말을 걸지, 해결부터 보여 줄지, 한발 기다릴지 고르십시오.
+  reference_lines: []
 visual:
   concept_art: assets/concept-art/dark-psychology-instructor-v2.png
   palette: [matte_black, dark_brown, yellow_gold]

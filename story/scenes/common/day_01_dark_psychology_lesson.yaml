@@ -9,7 +9,7 @@ time: night
 default_background:
   visual_id: background.officetel_bedroom
   variant_id: night
-purpose: 첫날 밤 한도윤이 책을 줄줄 읽는 대신 어둠의 심리학 강사와 대화하며 첫 장을 추천받고, 다음 날부터 윤서아와 차민경에게 밀고 당기기를 해 보기로 결심한다.
+purpose: 첫날 밤 한도윤이 두 사람을 떠올리다 책을 펼치고, 어둠의 심리학 강사의 첫 장을 그대로 믿어 다음 날 윤서아와 차민경에게 밀당을 시작하기로 한다.
 cast: [han_do_yoon, dark_psychology_instructor]
 entry_conditions: []
 state_contract:
@@ -21,7 +21,7 @@ nodes:
 - id: opens_book
   kind: narration
   stage: []
-  line: 수요일 밤, 씻고 나온 한도윤은 침대 곁에 놓아 둔 《여성의 마음을 지배하는 어둠의 심리학》을 펼쳤다. 몇 줄을 읽자 온라인 강의에서 본 남자의 목소리가 머릿속에 또렷하게 들렸다.
+  line: 수요일 밤, 한도윤은 씻고 나와 침대 끝에 앉았다. 불을 끄고 누웠지만 오늘 본 윤서아와 차민경의 얼굴이 번갈아 떠올랐다.
   next: do_yoon_wonders
 
 - id: do_yoon_wonders
@@ -29,7 +29,47 @@ nodes:
   speaker: han_do_yoon
   stage: []
   expression: actual_waiting_smile
-  line: (서아 씨와 민경 씨…… 조금 더 알아보고 싶은데, 어디서부터 시작해야 하지?)
+  line: (서아 씨는 웃는 모습이 정말 귀여웠지…….)
+  next: do_yoon_catches_himself
+
+- id: do_yoon_catches_himself
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (민경 씨는 무서웠지만, 그렇게 예쁜 사람이 내 말을 인정해 줬고…… 에엣, 난 왜 아직도 그 생각을 하고 있는 거야?)
+  next: reaches_for_book
+
+- id: reaches_for_book
+  kind: narration
+  stage: []
+  line: 한도윤은 다시 몸을 일으켜 머리맡에 놓인 《여성의 마음을 지배하는 어둠의 심리학》을 집어 들었다.
+  next: do_yoon_hopes
+
+- id: do_yoon_hopes
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (혹시…… 나한테도 다시 기회가 오는 걸까?)
+  next: instructor_appears
+
+- id: instructor_appears
+  kind: narration
+  stage: []
+  line: 책장을 넘기자, 전에 본 온라인 강의 속 남자가 책 위로 불쑥 떠오른 듯했다.
+  next: instructor_calls_out
+
+- id: instructor_calls_out
+  kind: dialogue
+  speaker: dark_psychology_instructor
+  stage:
+  - position: center
+    character: dark_psychology_instructor
+    visual_id: character.dark_psychology_instructor
+    artwork: default
+  expression: decisive_point
+  line: 두 사람의 얼굴이 번갈아 떠올라 잠도 못 드는 당신!
   next: instructor_recommends
 
 - id: instructor_recommends
@@ -41,7 +81,15 @@ nodes:
     visual_id: character.dark_psychology_instructor
     artwork: default
   expression: decisive_point
-  line: 밀고 당기기를 시작하고 싶은 당신! 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙, 이 장을 읽어 보시라~!
+  line: 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙! 오늘 밤은 이 장을 읽어 보시라~!
+  next: do_yoon_amazed
+
+- id: do_yoon_amazed
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (두 사람인 것까지 맞혔어……! 이 강사, 진짜 대단한 사람일지도 몰라!)
   next: instructor_summarizes
 
 - id: instructor_summarizes
@@ -53,7 +101,35 @@ nodes:
     visual_id: character.dark_psychology_instructor
     artwork: default
   expression: authoritative_smirk
-  line: 외모를 칭찬하고 먼저 연락하는 것은 당기기. 답장을 늦추고 갑자기 차갑게 대하는 것은 밀기입니다. 전부 쓸 필요는 없습니다. 상황에 맞는 한 수만 고르십시오.
+  line: 계속 다정하기만 해서는 여자의 마음을 흔들 수 없습니다. 한 번 당겼다면, 다음에는 미십시오!
+  next: do_yoon_hesitates
+
+- id: do_yoon_hesitates
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (미, 밀라고……? 서아 씨한테 차갑게 구는 건 좀 미안한데…….)
+  next: instructor_pushes
+
+- id: instructor_pushes
+  kind: dialogue
+  speaker: dark_psychology_instructor
+  stage:
+  - position: center
+    character: dark_psychology_instructor
+    visual_id: character.dark_psychology_instructor
+    artwork: default
+  expression: decisive_point
+  line: 그 망설임이 당신을 평범한 남자로 만듭니다! 내일부터 밀고 당기십시오. 여자의 반응은 바로 달라질 겁니다!
+  next: do_yoon_echoes
+
+- id: do_yoon_echoes
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: (반응이…… 달라진다고?)
   next: do_yoon_commits
 
 - id: do_yoon_commits
@@ -61,7 +137,7 @@ nodes:
   speaker: han_do_yoon
   stage: []
   expression: actual_waiting_smile
-  line: (좋아. 내일부터 시작해 보자. 먼저 다가갈지, 한발 물러날지 내가 정하는 거야.)
+  line: (좋아! 내일부터 나도 밀당을 해 보는 거야!)
   next: remember_chapter
 
 - id: remember_chapter

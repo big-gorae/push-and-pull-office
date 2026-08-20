@@ -430,6 +430,23 @@ class StoryHarnessTests(unittest.TestCase):
                 2,
             )
 
+        day_one_lines = [
+            node.get("line", "")
+            for node in self.project.scenes["common.day_01_dark_psychology_lesson"]["nodes"]
+            if node.get("kind") == "dialogue"
+        ]
+        for rejected_line in (
+            "(서아 씨와 민경 씨…… 조금 더 알아보고 싶은데, 어디서부터 시작해야 하지?)",
+            "밀고 당기기를 시작하고 싶은 당신! 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙, 이 장을 읽어 보시라~!",
+            "외모를 칭찬하고 먼저 연락하는 것은 당기기. 답장을 늦추고 갑자기 차갑게 대하는 것은 밀기입니다. 전부 쓸 필요는 없습니다. 상황에 맞는 한 수만 고르십시오.",
+            "(좋아. 내일부터 시작해 보자. 먼저 다가갈지, 한발 물러날지 내가 정하는 거야.)",
+        ):
+            self.assertNotIn(rejected_line, day_one_lines)
+        self.assertEqual(
+            [],
+            self.project.characters["dark_psychology_instructor"]["voice"]["reference_lines"],
+        )
+
         day_two = self.project.scenes["common.day_02_practical_meeting"]
         day_three = self.project.scenes["common.day_03_business_trip_or_cafe"]
         day_two_nodes = {node["id"]: node for node in day_two["nodes"]}

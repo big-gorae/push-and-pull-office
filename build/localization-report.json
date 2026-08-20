@@ -1,20 +1,20 @@
 {
   "schema_version": 2,
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "b9d1bca713bcf4458479d98301ea4695692f19411805df6267a31e122a652849",
+  "source_sha256": "ff2649364819cd5cb747637bf21424a5b1bd8a83bbee1792e8961b4c2a66763d",
   "profile": "development",
   "default_locale": "ko",
   "supported_locales": [
     "ko",
     "en"
   ],
-  "total_entries": 1008,
+  "total_entries": 1017,
   "coverage": {
     "ko": {
-      "direct": 1008,
-      "resolved": 1008,
-      "translated": 1008,
-      "total": 1008,
+      "direct": 1017,
+      "resolved": 1017,
+      "translated": 1017,
+      "total": 1017,
       "ratio": 1.0,
       "fallback_used": [],
       "missing": [],
@@ -51,8 +51,8 @@
           "total": 8
         },
         "scene": {
-          "direct": 566,
-          "total": 566
+          "direct": 575,
+          "total": 575
         },
         "system_flow": {
           "direct": 23,
@@ -74,10 +74,10 @@
     },
     "en": {
       "direct": 275,
-      "resolved": 1008,
+      "resolved": 1017,
       "translated": 275,
-      "total": 1008,
-      "ratio": 0.2728,
+      "total": 1017,
+      "ratio": 0.2704,
       "fallback_used": [
         "campaign.main.acts.collisions.purpose",
         "campaign.main.acts.crisis.purpose",
@@ -393,11 +393,20 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_won.line",
         "scenes.common.day_01_company_meeting.purpose",
         "scenes.common.day_01_company_meeting.title",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_amazed.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_catches_himself.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_echoes.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hesitates.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hopes.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_appears.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_calls_out.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_pushes.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.reaches_for_book.line",
         "scenes.common.day_01_dark_psychology_lesson.purpose",
         "scenes.common.day_01_dark_psychology_lesson.title",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line",
@@ -1128,11 +1137,20 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_won.line",
         "scenes.common.day_01_company_meeting.purpose",
         "scenes.common.day_01_company_meeting.title",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_amazed.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_catches_himself.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_echoes.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hesitates.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hopes.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_appears.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_calls_out.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_pushes.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.reaches_for_book.line",
         "scenes.common.day_01_dark_psychology_lesson.purpose",
         "scenes.common.day_01_dark_psychology_lesson.title",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line",
@@ -1582,7 +1600,7 @@
         },
         "scene": {
           "direct": 15,
-          "total": 566
+          "total": 575
         },
         "system_flow": {
           "direct": 23,
@@ -1676,15 +1694,15 @@
     },
     "common.day_01_dark_psychology_lesson": {
       "ko": {
-        "total": 10,
-        "direct": 10,
+        "total": 19,
+        "direct": 19,
         "fallback": 0,
         "missing": 0
       },
       "en": {
-        "total": 10,
+        "total": 19,
         "direct": 0,
-        "fallback": 10,
+        "fallback": 19,
         "missing": 0
       }
     },
@@ -1956,8 +1974,8 @@
     }
   },
   "authoring_coverage": {
-    "narrative_text_units": 539,
-    "editable_units": 539,
+    "narrative_text_units": 548,
+    "editable_units": 548,
     "missing_editor_target": [],
     "generated_only": 0,
     "multiple_source_owners": 0,

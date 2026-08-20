@@ -10,7 +10,7 @@
     ]
   },
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "b9d1bca713bcf4458479d98301ea4695692f19411805df6267a31e122a652849",
+  "source_sha256": "ff2649364819cd5cb747637bf21424a5b1bd8a83bbee1792e8961b4c2a66763d",
   "enums": {
     "time_slot": [
       "morning",
@@ -3136,7 +3136,7 @@
       },
       "events.anchor.day_01_dark_psychology_lesson.presentation.summary": {
         "key": "events.anchor.day_01_dark_psychology_lesson.presentation.summary",
-        "source": "한도윤은 첫날 밤 강사에게 첫 장을 추천받고, 다음 날부터 상황에 따라 먼저 다가가거나 한발 물러나는 밀고 당기기를 시작하기로 한다.",
+        "source": "한도윤은 첫 장의 과장된 말을 그대로 믿고, 다음 날부터 윤서아와 차민경에게 밀당을 해 보기로 한다.",
         "domain": "event",
         "sourceDocument": {
           "kind": "event",
@@ -9258,9 +9258,47 @@
         "multiline": false,
         "maxLength": 100
       },
+      "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_amazed.line": {
+        "key": "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_amazed.line",
+        "source": "(두 사람인 것까지 맞혔어……! 이 강사, 진짜 대단한 사람일지도 몰라!)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_dark_psychology_lesson",
+          "path": "story/scenes/common/day_01_dark_psychology_lesson.yaml",
+          "fieldPath": "nodes.do_yoon_amazed.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_dark_psychology_lesson",
+          "nodeId": "do_yoon_amazed",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_catches_himself.line": {
+        "key": "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_catches_himself.line",
+        "source": "(민경 씨는 무서웠지만, 그렇게 예쁜 사람이 내 말을 인정해 줬고…… 에엣, 난 왜 아직도 그 생각을 하고 있는 거야?)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_dark_psychology_lesson",
+          "path": "story/scenes/common/day_01_dark_psychology_lesson.yaml",
+          "fieldPath": "nodes.do_yoon_catches_himself.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_dark_psychology_lesson",
+          "nodeId": "do_yoon_catches_himself",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
       "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line": {
         "key": "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line",
-        "source": "(좋아. 내일부터 시작해 보자. 먼저 다가갈지, 한발 물러날지 내가 정하는 거야.)",
+        "source": "(좋아! 내일부터 나도 밀당을 해 보는 거야!)",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -9277,9 +9315,66 @@
         "multiline": false,
         "maxLength": 320
       },
+      "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_echoes.line": {
+        "key": "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_echoes.line",
+        "source": "(반응이…… 달라진다고?)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_dark_psychology_lesson",
+          "path": "story/scenes/common/day_01_dark_psychology_lesson.yaml",
+          "fieldPath": "nodes.do_yoon_echoes.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_dark_psychology_lesson",
+          "nodeId": "do_yoon_echoes",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hesitates.line": {
+        "key": "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hesitates.line",
+        "source": "(미, 밀라고……? 서아 씨한테 차갑게 구는 건 좀 미안한데…….)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_dark_psychology_lesson",
+          "path": "story/scenes/common/day_01_dark_psychology_lesson.yaml",
+          "fieldPath": "nodes.do_yoon_hesitates.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_dark_psychology_lesson",
+          "nodeId": "do_yoon_hesitates",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hopes.line": {
+        "key": "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hopes.line",
+        "source": "(혹시…… 나한테도 다시 기회가 오는 걸까?)",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_dark_psychology_lesson",
+          "path": "story/scenes/common/day_01_dark_psychology_lesson.yaml",
+          "fieldPath": "nodes.do_yoon_hopes.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_dark_psychology_lesson",
+          "nodeId": "do_yoon_hopes",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
       "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line": {
         "key": "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line",
-        "source": "(서아 씨와 민경 씨…… 조금 더 알아보고 싶은데, 어디서부터 시작해야 하지?)",
+        "source": "(서아 씨는 웃는 모습이 정말 귀여웠지…….)",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -9296,9 +9391,65 @@
         "multiline": false,
         "maxLength": 320
       },
+      "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_appears.line": {
+        "key": "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_appears.line",
+        "source": "책장을 넘기자, 전에 본 온라인 강의 속 남자가 책 위로 불쑥 떠오른 듯했다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_dark_psychology_lesson",
+          "path": "story/scenes/common/day_01_dark_psychology_lesson.yaml",
+          "fieldPath": "nodes.instructor_appears.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_dark_psychology_lesson",
+          "nodeId": "instructor_appears"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_calls_out.line": {
+        "key": "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_calls_out.line",
+        "source": "두 사람의 얼굴이 번갈아 떠올라 잠도 못 드는 당신!",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_dark_psychology_lesson",
+          "path": "story/scenes/common/day_01_dark_psychology_lesson.yaml",
+          "fieldPath": "nodes.instructor_calls_out.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_dark_psychology_lesson",
+          "nodeId": "instructor_calls_out",
+          "speakerId": "dark_psychology_instructor"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_pushes.line": {
+        "key": "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_pushes.line",
+        "source": "그 망설임이 당신을 평범한 남자로 만듭니다! 내일부터 밀고 당기십시오. 여자의 반응은 바로 달라질 겁니다!",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_dark_psychology_lesson",
+          "path": "story/scenes/common/day_01_dark_psychology_lesson.yaml",
+          "fieldPath": "nodes.instructor_pushes.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_dark_psychology_lesson",
+          "nodeId": "instructor_pushes",
+          "speakerId": "dark_psychology_instructor"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
       "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line": {
         "key": "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line",
-        "source": "밀고 당기기를 시작하고 싶은 당신! 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙, 이 장을 읽어 보시라~!",
+        "source": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙! 오늘 밤은 이 장을 읽어 보시라~!",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -9317,7 +9468,7 @@
       },
       "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line": {
         "key": "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line",
-        "source": "외모를 칭찬하고 먼저 연락하는 것은 당기기. 답장을 늦추고 갑자기 차갑게 대하는 것은 밀기입니다. 전부 쓸 필요는 없습니다. 상황에 맞는 한 수만 고르십시오.",
+        "source": "계속 다정하기만 해서는 여자의 마음을 흔들 수 없습니다. 한 번 당겼다면, 다음에는 미십시오!",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -9336,7 +9487,7 @@
       },
       "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line": {
         "key": "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line",
-        "source": "수요일 밤, 씻고 나온 한도윤은 침대 곁에 놓아 둔 《여성의 마음을 지배하는 어둠의 심리학》을 펼쳤다. 몇 줄을 읽자 온라인 강의에서 본 남자의 목소리가 머릿속에 또렷하게 들렸다.",
+        "source": "수요일 밤, 한도윤은 씻고 나와 침대 끝에 앉았다. 불을 끄고 누웠지만 오늘 본 윤서아와 차민경의 얼굴이 번갈아 떠올랐다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -9352,9 +9503,27 @@
         "multiline": false,
         "maxLength": 320
       },
+      "scenes.common.day_01_dark_psychology_lesson.nodes.reaches_for_book.line": {
+        "key": "scenes.common.day_01_dark_psychology_lesson.nodes.reaches_for_book.line",
+        "source": "한도윤은 다시 몸을 일으켜 머리맡에 놓인 《여성의 마음을 지배하는 어둠의 심리학》을 집어 들었다.",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_dark_psychology_lesson",
+          "path": "story/scenes/common/day_01_dark_psychology_lesson.yaml",
+          "fieldPath": "nodes.reaches_for_book.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_dark_psychology_lesson",
+          "nodeId": "reaches_for_book"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
       "scenes.common.day_01_dark_psychology_lesson.purpose": {
         "key": "scenes.common.day_01_dark_psychology_lesson.purpose",
-        "source": "첫날 밤 한도윤이 책을 줄줄 읽는 대신 어둠의 심리학 강사와 대화하며 첫 장을 추천받고, 다음 날부터 윤서아와 차민경에게 밀고 당기기를 해 보기로 결심한다.",
+        "source": "첫날 밤 한도윤이 두 사람을 떠올리다 책을 펼치고, 어둠의 심리학 강사의 첫 장을 그대로 믿어 다음 날 윤서아와 차민경에게 밀당을 시작하기로 한다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -18751,7 +18920,7 @@
       "events.anchor.day_01_company_meeting.presentation.summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.",
       "events.anchor.day_01_company_meeting.presentation.title": "수요일 프로젝트 킥오프",
       "events.anchor.day_01_company_meeting.title": "신규 프로젝트 킥오프",
-      "events.anchor.day_01_dark_psychology_lesson.presentation.summary": "한도윤은 첫날 밤 강사에게 첫 장을 추천받고, 다음 날부터 상황에 따라 먼저 다가가거나 한발 물러나는 밀고 당기기를 시작하기로 한다.",
+      "events.anchor.day_01_dark_psychology_lesson.presentation.summary": "한도윤은 첫 장의 과장된 말을 그대로 믿고, 다음 날부터 윤서아와 차민경에게 밀당을 해 보기로 한다.",
       "events.anchor.day_01_dark_psychology_lesson.presentation.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
       "events.anchor.day_01_dark_psychology_lesson.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
       "events.anchor.day_01_dream_and_mother_call.presentation.summary": "수연의 꿈을 꾸던 한도윤은 어머니의 전화에 잠에서 깨고, 결혼 재촉 끝에 다시 사람을 만나 보겠다고 마음먹는다.",
@@ -19103,12 +19272,21 @@
       "scenes.common.day_01_company_meeting.nodes.yoo_jin_won.line": "죄송합니닷!! 하지만 이기고 왔지 말입니다!",
       "scenes.common.day_01_company_meeting.purpose": "프로젝트 킥오프에서 서아·민경·유진의 업무 태도와 한도윤의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.",
       "scenes.common.day_01_company_meeting.title": "수요일의 첫 회의",
-      "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line": "(좋아. 내일부터 시작해 보자. 먼저 다가갈지, 한발 물러날지 내가 정하는 거야.)",
-      "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line": "(서아 씨와 민경 씨…… 조금 더 알아보고 싶은데, 어디서부터 시작해야 하지?)",
-      "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line": "밀고 당기기를 시작하고 싶은 당신! 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙, 이 장을 읽어 보시라~!",
-      "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line": "외모를 칭찬하고 먼저 연락하는 것은 당기기. 답장을 늦추고 갑자기 차갑게 대하는 것은 밀기입니다. 전부 쓸 필요는 없습니다. 상황에 맞는 한 수만 고르십시오.",
-      "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line": "수요일 밤, 씻고 나온 한도윤은 침대 곁에 놓아 둔 《여성의 마음을 지배하는 어둠의 심리학》을 펼쳤다. 몇 줄을 읽자 온라인 강의에서 본 남자의 목소리가 머릿속에 또렷하게 들렸다.",
-      "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 책을 줄줄 읽는 대신 어둠의 심리학 강사와 대화하며 첫 장을 추천받고, 다음 날부터 윤서아와 차민경에게 밀고 당기기를 해 보기로 결심한다.",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_amazed.line": "(두 사람인 것까지 맞혔어……! 이 강사, 진짜 대단한 사람일지도 몰라!)",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_catches_himself.line": "(민경 씨는 무서웠지만, 그렇게 예쁜 사람이 내 말을 인정해 줬고…… 에엣, 난 왜 아직도 그 생각을 하고 있는 거야?)",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line": "(좋아! 내일부터 나도 밀당을 해 보는 거야!)",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_echoes.line": "(반응이…… 달라진다고?)",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hesitates.line": "(미, 밀라고……? 서아 씨한테 차갑게 구는 건 좀 미안한데…….)",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hopes.line": "(혹시…… 나한테도 다시 기회가 오는 걸까?)",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line": "(서아 씨는 웃는 모습이 정말 귀여웠지…….)",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_appears.line": "책장을 넘기자, 전에 본 온라인 강의 속 남자가 책 위로 불쑥 떠오른 듯했다.",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_calls_out.line": "두 사람의 얼굴이 번갈아 떠올라 잠도 못 드는 당신!",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_pushes.line": "그 망설임이 당신을 평범한 남자로 만듭니다! 내일부터 밀고 당기십시오. 여자의 반응은 바로 달라질 겁니다!",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙! 오늘 밤은 이 장을 읽어 보시라~!",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line": "계속 다정하기만 해서는 여자의 마음을 흔들 수 없습니다. 한 번 당겼다면, 다음에는 미십시오!",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line": "수요일 밤, 한도윤은 씻고 나와 침대 끝에 앉았다. 불을 끄고 누웠지만 오늘 본 윤서아와 차민경의 얼굴이 번갈아 떠올랐다.",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.reaches_for_book.line": "한도윤은 다시 몸을 일으켜 머리맡에 놓인 《여성의 마음을 지배하는 어둠의 심리학》을 집어 들었다.",
+      "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 두 사람을 떠올리다 책을 펼치고, 어둠의 심리학 강사의 첫 장을 그대로 믿어 다음 날 윤서아와 차민경에게 밀당을 시작하기로 한다.",
       "scenes.common.day_01_dark_psychology_lesson.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
       "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line": "통화가 끝나자 방 안이 다시 조용해졌다.",
       "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_accepts_time.line": "(언제까지 이럴 수는 없지.)",
@@ -19762,7 +19940,7 @@
         "events.anchor.day_01_company_meeting.presentation.summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.",
         "events.anchor.day_01_company_meeting.presentation.title": "수요일 프로젝트 킥오프",
         "events.anchor.day_01_company_meeting.title": "신규 프로젝트 킥오프",
-        "events.anchor.day_01_dark_psychology_lesson.presentation.summary": "한도윤은 첫날 밤 강사에게 첫 장을 추천받고, 다음 날부터 상황에 따라 먼저 다가가거나 한발 물러나는 밀고 당기기를 시작하기로 한다.",
+        "events.anchor.day_01_dark_psychology_lesson.presentation.summary": "한도윤은 첫 장의 과장된 말을 그대로 믿고, 다음 날부터 윤서아와 차민경에게 밀당을 해 보기로 한다.",
         "events.anchor.day_01_dark_psychology_lesson.presentation.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "events.anchor.day_01_dark_psychology_lesson.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "events.anchor.day_01_dream_and_mother_call.presentation.summary": "수연의 꿈을 꾸던 한도윤은 어머니의 전화에 잠에서 깨고, 결혼 재촉 끝에 다시 사람을 만나 보겠다고 마음먹는다.",
@@ -20114,12 +20292,21 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_won.line": "죄송합니닷!! 하지만 이기고 왔지 말입니다!",
         "scenes.common.day_01_company_meeting.purpose": "프로젝트 킥오프에서 서아·민경·유진의 업무 태도와 한도윤의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.",
         "scenes.common.day_01_company_meeting.title": "수요일의 첫 회의",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line": "(좋아. 내일부터 시작해 보자. 먼저 다가갈지, 한발 물러날지 내가 정하는 거야.)",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line": "(서아 씨와 민경 씨…… 조금 더 알아보고 싶은데, 어디서부터 시작해야 하지?)",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line": "밀고 당기기를 시작하고 싶은 당신! 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙, 이 장을 읽어 보시라~!",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line": "외모를 칭찬하고 먼저 연락하는 것은 당기기. 답장을 늦추고 갑자기 차갑게 대하는 것은 밀기입니다. 전부 쓸 필요는 없습니다. 상황에 맞는 한 수만 고르십시오.",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line": "수요일 밤, 씻고 나온 한도윤은 침대 곁에 놓아 둔 《여성의 마음을 지배하는 어둠의 심리학》을 펼쳤다. 몇 줄을 읽자 온라인 강의에서 본 남자의 목소리가 머릿속에 또렷하게 들렸다.",
-        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 책을 줄줄 읽는 대신 어둠의 심리학 강사와 대화하며 첫 장을 추천받고, 다음 날부터 윤서아와 차민경에게 밀고 당기기를 해 보기로 결심한다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_amazed.line": "(두 사람인 것까지 맞혔어……! 이 강사, 진짜 대단한 사람일지도 몰라!)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_catches_himself.line": "(민경 씨는 무서웠지만, 그렇게 예쁜 사람이 내 말을 인정해 줬고…… 에엣, 난 왜 아직도 그 생각을 하고 있는 거야?)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line": "(좋아! 내일부터 나도 밀당을 해 보는 거야!)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_echoes.line": "(반응이…… 달라진다고?)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hesitates.line": "(미, 밀라고……? 서아 씨한테 차갑게 구는 건 좀 미안한데…….)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hopes.line": "(혹시…… 나한테도 다시 기회가 오는 걸까?)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line": "(서아 씨는 웃는 모습이 정말 귀여웠지…….)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_appears.line": "책장을 넘기자, 전에 본 온라인 강의 속 남자가 책 위로 불쑥 떠오른 듯했다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_calls_out.line": "두 사람의 얼굴이 번갈아 떠올라 잠도 못 드는 당신!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_pushes.line": "그 망설임이 당신을 평범한 남자로 만듭니다! 내일부터 밀고 당기십시오. 여자의 반응은 바로 달라질 겁니다!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙! 오늘 밤은 이 장을 읽어 보시라~!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line": "계속 다정하기만 해서는 여자의 마음을 흔들 수 없습니다. 한 번 당겼다면, 다음에는 미십시오!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line": "수요일 밤, 한도윤은 씻고 나와 침대 끝에 앉았다. 불을 끄고 누웠지만 오늘 본 윤서아와 차민경의 얼굴이 번갈아 떠올랐다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.reaches_for_book.line": "한도윤은 다시 몸을 일으켜 머리맡에 놓인 《여성의 마음을 지배하는 어둠의 심리학》을 집어 들었다.",
+        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 두 사람을 떠올리다 책을 펼치고, 어둠의 심리학 강사의 첫 장을 그대로 믿어 다음 날 윤서아와 차민경에게 밀당을 시작하기로 한다.",
         "scenes.common.day_01_dark_psychology_lesson.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line": "통화가 끝나자 방 안이 다시 조용해졌다.",
         "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_accepts_time.line": "(언제까지 이럴 수는 없지.)",
@@ -20772,7 +20959,7 @@
         "events.anchor.day_01_company_meeting.presentation.summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.",
         "events.anchor.day_01_company_meeting.presentation.title": "수요일 프로젝트 킥오프",
         "events.anchor.day_01_company_meeting.title": "신규 프로젝트 킥오프",
-        "events.anchor.day_01_dark_psychology_lesson.presentation.summary": "한도윤은 첫날 밤 강사에게 첫 장을 추천받고, 다음 날부터 상황에 따라 먼저 다가가거나 한발 물러나는 밀고 당기기를 시작하기로 한다.",
+        "events.anchor.day_01_dark_psychology_lesson.presentation.summary": "한도윤은 첫 장의 과장된 말을 그대로 믿고, 다음 날부터 윤서아와 차민경에게 밀당을 해 보기로 한다.",
         "events.anchor.day_01_dark_psychology_lesson.presentation.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "events.anchor.day_01_dark_psychology_lesson.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "events.anchor.day_01_dream_and_mother_call.presentation.summary": "수연의 꿈을 꾸던 한도윤은 어머니의 전화에 잠에서 깨고, 결혼 재촉 끝에 다시 사람을 만나 보겠다고 마음먹는다.",
@@ -21124,12 +21311,21 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_won.line": "죄송합니닷!! 하지만 이기고 왔지 말입니다!",
         "scenes.common.day_01_company_meeting.purpose": "프로젝트 킥오프에서 서아·민경·유진의 업무 태도와 한도윤의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.",
         "scenes.common.day_01_company_meeting.title": "수요일의 첫 회의",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line": "(좋아. 내일부터 시작해 보자. 먼저 다가갈지, 한발 물러날지 내가 정하는 거야.)",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line": "(서아 씨와 민경 씨…… 조금 더 알아보고 싶은데, 어디서부터 시작해야 하지?)",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line": "밀고 당기기를 시작하고 싶은 당신! 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙, 이 장을 읽어 보시라~!",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line": "외모를 칭찬하고 먼저 연락하는 것은 당기기. 답장을 늦추고 갑자기 차갑게 대하는 것은 밀기입니다. 전부 쓸 필요는 없습니다. 상황에 맞는 한 수만 고르십시오.",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line": "수요일 밤, 씻고 나온 한도윤은 침대 곁에 놓아 둔 《여성의 마음을 지배하는 어둠의 심리학》을 펼쳤다. 몇 줄을 읽자 온라인 강의에서 본 남자의 목소리가 머릿속에 또렷하게 들렸다.",
-        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 책을 줄줄 읽는 대신 어둠의 심리학 강사와 대화하며 첫 장을 추천받고, 다음 날부터 윤서아와 차민경에게 밀고 당기기를 해 보기로 결심한다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_amazed.line": "(두 사람인 것까지 맞혔어……! 이 강사, 진짜 대단한 사람일지도 몰라!)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_catches_himself.line": "(민경 씨는 무서웠지만, 그렇게 예쁜 사람이 내 말을 인정해 줬고…… 에엣, 난 왜 아직도 그 생각을 하고 있는 거야?)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line": "(좋아! 내일부터 나도 밀당을 해 보는 거야!)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_echoes.line": "(반응이…… 달라진다고?)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hesitates.line": "(미, 밀라고……? 서아 씨한테 차갑게 구는 건 좀 미안한데…….)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hopes.line": "(혹시…… 나한테도 다시 기회가 오는 걸까?)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line": "(서아 씨는 웃는 모습이 정말 귀여웠지…….)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_appears.line": "책장을 넘기자, 전에 본 온라인 강의 속 남자가 책 위로 불쑥 떠오른 듯했다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_calls_out.line": "두 사람의 얼굴이 번갈아 떠올라 잠도 못 드는 당신!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_pushes.line": "그 망설임이 당신을 평범한 남자로 만듭니다! 내일부터 밀고 당기십시오. 여자의 반응은 바로 달라질 겁니다!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙! 오늘 밤은 이 장을 읽어 보시라~!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line": "계속 다정하기만 해서는 여자의 마음을 흔들 수 없습니다. 한 번 당겼다면, 다음에는 미십시오!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line": "수요일 밤, 한도윤은 씻고 나와 침대 끝에 앉았다. 불을 끄고 누웠지만 오늘 본 윤서아와 차민경의 얼굴이 번갈아 떠올랐다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.reaches_for_book.line": "한도윤은 다시 몸을 일으켜 머리맡에 놓인 《여성의 마음을 지배하는 어둠의 심리학》을 집어 들었다.",
+        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 두 사람을 떠올리다 책을 펼치고, 어둠의 심리학 강사의 첫 장을 그대로 믿어 다음 날 윤서아와 차민경에게 밀당을 시작하기로 한다.",
         "scenes.common.day_01_dark_psychology_lesson.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line": "통화가 끝나자 방 안이 다시 조용해졌다.",
         "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_accepts_time.line": "(언제까지 이럴 수는 없지.)",
@@ -22066,7 +22262,7 @@
         "events.anchor.day_01_company_meeting.presentation.summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.",
         "events.anchor.day_01_company_meeting.presentation.title": "수요일 프로젝트 킥오프",
         "events.anchor.day_01_company_meeting.title": "신규 프로젝트 킥오프",
-        "events.anchor.day_01_dark_psychology_lesson.presentation.summary": "한도윤은 첫날 밤 강사에게 첫 장을 추천받고, 다음 날부터 상황에 따라 먼저 다가가거나 한발 물러나는 밀고 당기기를 시작하기로 한다.",
+        "events.anchor.day_01_dark_psychology_lesson.presentation.summary": "한도윤은 첫 장의 과장된 말을 그대로 믿고, 다음 날부터 윤서아와 차민경에게 밀당을 해 보기로 한다.",
         "events.anchor.day_01_dark_psychology_lesson.presentation.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "events.anchor.day_01_dark_psychology_lesson.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "events.anchor.day_01_dream_and_mother_call.presentation.summary": "수연의 꿈을 꾸던 한도윤은 어머니의 전화에 잠에서 깨고, 결혼 재촉 끝에 다시 사람을 만나 보겠다고 마음먹는다.",
@@ -22418,12 +22614,21 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_won.line": "죄송합니닷!! 하지만 이기고 왔지 말입니다!",
         "scenes.common.day_01_company_meeting.purpose": "프로젝트 킥오프에서 서아·민경·유진의 업무 태도와 한도윤의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.",
         "scenes.common.day_01_company_meeting.title": "수요일의 첫 회의",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line": "(좋아. 내일부터 시작해 보자. 먼저 다가갈지, 한발 물러날지 내가 정하는 거야.)",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line": "(서아 씨와 민경 씨…… 조금 더 알아보고 싶은데, 어디서부터 시작해야 하지?)",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line": "밀고 당기기를 시작하고 싶은 당신! 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙, 이 장을 읽어 보시라~!",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line": "외모를 칭찬하고 먼저 연락하는 것은 당기기. 답장을 늦추고 갑자기 차갑게 대하는 것은 밀기입니다. 전부 쓸 필요는 없습니다. 상황에 맞는 한 수만 고르십시오.",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line": "수요일 밤, 씻고 나온 한도윤은 침대 곁에 놓아 둔 《여성의 마음을 지배하는 어둠의 심리학》을 펼쳤다. 몇 줄을 읽자 온라인 강의에서 본 남자의 목소리가 머릿속에 또렷하게 들렸다.",
-        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 책을 줄줄 읽는 대신 어둠의 심리학 강사와 대화하며 첫 장을 추천받고, 다음 날부터 윤서아와 차민경에게 밀고 당기기를 해 보기로 결심한다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_amazed.line": "(두 사람인 것까지 맞혔어……! 이 강사, 진짜 대단한 사람일지도 몰라!)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_catches_himself.line": "(민경 씨는 무서웠지만, 그렇게 예쁜 사람이 내 말을 인정해 줬고…… 에엣, 난 왜 아직도 그 생각을 하고 있는 거야?)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line": "(좋아! 내일부터 나도 밀당을 해 보는 거야!)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_echoes.line": "(반응이…… 달라진다고?)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hesitates.line": "(미, 밀라고……? 서아 씨한테 차갑게 구는 건 좀 미안한데…….)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hopes.line": "(혹시…… 나한테도 다시 기회가 오는 걸까?)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line": "(서아 씨는 웃는 모습이 정말 귀여웠지…….)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_appears.line": "책장을 넘기자, 전에 본 온라인 강의 속 남자가 책 위로 불쑥 떠오른 듯했다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_calls_out.line": "두 사람의 얼굴이 번갈아 떠올라 잠도 못 드는 당신!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_pushes.line": "그 망설임이 당신을 평범한 남자로 만듭니다! 내일부터 밀고 당기십시오. 여자의 반응은 바로 달라질 겁니다!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙! 오늘 밤은 이 장을 읽어 보시라~!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line": "계속 다정하기만 해서는 여자의 마음을 흔들 수 없습니다. 한 번 당겼다면, 다음에는 미십시오!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line": "수요일 밤, 한도윤은 씻고 나와 침대 끝에 앉았다. 불을 끄고 누웠지만 오늘 본 윤서아와 차민경의 얼굴이 번갈아 떠올랐다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.reaches_for_book.line": "한도윤은 다시 몸을 일으켜 머리맡에 놓인 《여성의 마음을 지배하는 어둠의 심리학》을 집어 들었다.",
+        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 두 사람을 떠올리다 책을 펼치고, 어둠의 심리학 강사의 첫 장을 그대로 믿어 다음 날 윤서아와 차민경에게 밀당을 시작하기로 한다.",
         "scenes.common.day_01_dark_psychology_lesson.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line": "통화가 끝나자 방 안이 다시 조용해졌다.",
         "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_accepts_time.line": "(언제까지 이럴 수는 없지.)",
@@ -23076,7 +23281,7 @@
         "events.anchor.day_01_company_meeting.presentation.summary": "서아는 준비 담당자로서 자료를 건네고, 민경은 일정과 거래처 조건을 검토하며, 유진은 디자인 자료의 사실관계를 확인한다.",
         "events.anchor.day_01_company_meeting.presentation.title": "수요일 프로젝트 킥오프",
         "events.anchor.day_01_company_meeting.title": "신규 프로젝트 킥오프",
-        "events.anchor.day_01_dark_psychology_lesson.presentation.summary": "한도윤은 첫날 밤 강사에게 첫 장을 추천받고, 다음 날부터 상황에 따라 먼저 다가가거나 한발 물러나는 밀고 당기기를 시작하기로 한다.",
+        "events.anchor.day_01_dark_psychology_lesson.presentation.summary": "한도윤은 첫 장의 과장된 말을 그대로 믿고, 다음 날부터 윤서아와 차민경에게 밀당을 해 보기로 한다.",
         "events.anchor.day_01_dark_psychology_lesson.presentation.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "events.anchor.day_01_dark_psychology_lesson.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "events.anchor.day_01_dream_and_mother_call.presentation.summary": "수연의 꿈을 꾸던 한도윤은 어머니의 전화에 잠에서 깨고, 결혼 재촉 끝에 다시 사람을 만나 보겠다고 마음먹는다.",
@@ -23428,12 +23633,21 @@
         "scenes.common.day_01_company_meeting.nodes.yoo_jin_won.line": "죄송합니닷!! 하지만 이기고 왔지 말입니다!",
         "scenes.common.day_01_company_meeting.purpose": "프로젝트 킥오프에서 서아·민경·유진의 업무 태도와 한도윤의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.",
         "scenes.common.day_01_company_meeting.title": "수요일의 첫 회의",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line": "(좋아. 내일부터 시작해 보자. 먼저 다가갈지, 한발 물러날지 내가 정하는 거야.)",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line": "(서아 씨와 민경 씨…… 조금 더 알아보고 싶은데, 어디서부터 시작해야 하지?)",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line": "밀고 당기기를 시작하고 싶은 당신! 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙, 이 장을 읽어 보시라~!",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line": "외모를 칭찬하고 먼저 연락하는 것은 당기기. 답장을 늦추고 갑자기 차갑게 대하는 것은 밀기입니다. 전부 쓸 필요는 없습니다. 상황에 맞는 한 수만 고르십시오.",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line": "수요일 밤, 씻고 나온 한도윤은 침대 곁에 놓아 둔 《여성의 마음을 지배하는 어둠의 심리학》을 펼쳤다. 몇 줄을 읽자 온라인 강의에서 본 남자의 목소리가 머릿속에 또렷하게 들렸다.",
-        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 책을 줄줄 읽는 대신 어둠의 심리학 강사와 대화하며 첫 장을 추천받고, 다음 날부터 윤서아와 차민경에게 밀고 당기기를 해 보기로 결심한다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_amazed.line": "(두 사람인 것까지 맞혔어……! 이 강사, 진짜 대단한 사람일지도 몰라!)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_catches_himself.line": "(민경 씨는 무서웠지만, 그렇게 예쁜 사람이 내 말을 인정해 줬고…… 에엣, 난 왜 아직도 그 생각을 하고 있는 거야?)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line": "(좋아! 내일부터 나도 밀당을 해 보는 거야!)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_echoes.line": "(반응이…… 달라진다고?)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hesitates.line": "(미, 밀라고……? 서아 씨한테 차갑게 구는 건 좀 미안한데…….)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hopes.line": "(혹시…… 나한테도 다시 기회가 오는 걸까?)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line": "(서아 씨는 웃는 모습이 정말 귀여웠지…….)",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_appears.line": "책장을 넘기자, 전에 본 온라인 강의 속 남자가 책 위로 불쑥 떠오른 듯했다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_calls_out.line": "두 사람의 얼굴이 번갈아 떠올라 잠도 못 드는 당신!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_pushes.line": "그 망설임이 당신을 평범한 남자로 만듭니다! 내일부터 밀고 당기십시오. 여자의 반응은 바로 달라질 겁니다!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙! 오늘 밤은 이 장을 읽어 보시라~!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line": "계속 다정하기만 해서는 여자의 마음을 흔들 수 없습니다. 한 번 당겼다면, 다음에는 미십시오!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line": "수요일 밤, 한도윤은 씻고 나와 침대 끝에 앉았다. 불을 끄고 누웠지만 오늘 본 윤서아와 차민경의 얼굴이 번갈아 떠올랐다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.reaches_for_book.line": "한도윤은 다시 몸을 일으켜 머리맡에 놓인 《여성의 마음을 지배하는 어둠의 심리학》을 집어 들었다.",
+        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 두 사람을 떠올리다 책을 펼치고, 어둠의 심리학 강사의 첫 장을 그대로 믿어 다음 날 윤서아와 차민경에게 밀당을 시작하기로 한다.",
         "scenes.common.day_01_dark_psychology_lesson.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line": "통화가 끝나자 방 안이 다시 조용해졌다.",
         "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_accepts_time.line": "(언제까지 이럴 수는 없지.)",
@@ -23943,10 +24157,10 @@
     },
     "coverage": {
       "ko": {
-        "direct": 1008,
-        "resolved": 1008,
-        "translated": 1008,
-        "total": 1008,
+        "direct": 1017,
+        "resolved": 1017,
+        "translated": 1017,
+        "total": 1017,
         "ratio": 1.0,
         "fallback_used": [],
         "missing": [],
@@ -23983,8 +24197,8 @@
             "total": 8
           },
           "scene": {
-            "direct": 566,
-            "total": 566
+            "direct": 575,
+            "total": 575
           },
           "system_flow": {
             "direct": 23,
@@ -24006,10 +24220,10 @@
       },
       "en": {
         "direct": 275,
-        "resolved": 1008,
+        "resolved": 1017,
         "translated": 275,
-        "total": 1008,
-        "ratio": 0.2728,
+        "total": 1017,
+        "ratio": 0.2704,
         "fallback_used": [
           "campaign.main.acts.collisions.purpose",
           "campaign.main.acts.crisis.purpose",
@@ -24325,11 +24539,20 @@
           "scenes.common.day_01_company_meeting.nodes.yoo_jin_won.line",
           "scenes.common.day_01_company_meeting.purpose",
           "scenes.common.day_01_company_meeting.title",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_amazed.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_catches_himself.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_echoes.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hesitates.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hopes.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_appears.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_calls_out.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_pushes.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.reaches_for_book.line",
           "scenes.common.day_01_dark_psychology_lesson.purpose",
           "scenes.common.day_01_dark_psychology_lesson.title",
           "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line",
@@ -25060,11 +25283,20 @@
           "scenes.common.day_01_company_meeting.nodes.yoo_jin_won.line",
           "scenes.common.day_01_company_meeting.purpose",
           "scenes.common.day_01_company_meeting.title",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_amazed.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_catches_himself.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_commits.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_echoes.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hesitates.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_hopes.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.do_yoon_wonders.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_appears.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_calls_out.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_pushes.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_recommends.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.instructor_summarizes.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.opens_book.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.reaches_for_book.line",
           "scenes.common.day_01_dark_psychology_lesson.purpose",
           "scenes.common.day_01_dark_psychology_lesson.title",
           "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line",
@@ -25514,7 +25746,7 @@
           },
           "scene": {
             "direct": 15,
-            "total": 566
+            "total": 575
           },
           "system_flow": {
             "direct": 23,
@@ -25878,16 +26110,7 @@
           "틀린 말을 하며 더듬거나 당황하는 반응",
           "타인의 명시적인 거절이나 경계를 우회하는 재현 가능한 지시"
         ],
-        "reference_lines": [
-          {
-            "context": "그날의 고민에 맞는 장을 추천할 때",
-            "line": "밀고 당기기를 시작하고 싶은 당신! 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙, 이 장을 읽어 보시라~!"
-          },
-          {
-            "context": "다음 날 책의 내용과 닮은 상황이 나타났을 때",
-            "line": "바로 이겁니다! 먼저 말을 걸지, 해결부터 보여 줄지, 한발 기다릴지 고르십시오."
-          }
-        ]
+        "reference_lines": []
       },
       "visual": {
         "concept_art": "assets/concept-art/dark-psychology-instructor-v2.png",
@@ -26600,7 +26823,7 @@
       },
       "presentation": {
         "title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
-        "summary": "한도윤은 첫날 밤 강사에게 첫 장을 추천받고, 다음 날부터 상황에 따라 먼저 다가가거나 한발 물러나는 밀고 당기기를 시작하기로 한다."
+        "summary": "한도윤은 첫 장의 과장된 말을 그대로 믿고, 다음 날부터 윤서아와 차민경에게 밀당을 해 보기로 한다."
       }
     },
     "anchor.day_01_dream_and_mother_call": {
@@ -31696,7 +31919,7 @@
         "visual_id": "background.officetel_bedroom",
         "variant_id": "night"
       },
-      "purpose": "첫날 밤 한도윤이 책을 줄줄 읽는 대신 어둠의 심리학 강사와 대화하며 첫 장을 추천받고, 다음 날부터 윤서아와 차민경에게 밀고 당기기를 해 보기로 결심한다.",
+      "purpose": "첫날 밤 한도윤이 두 사람을 떠올리다 책을 펼치고, 어둠의 심리학 강사의 첫 장을 그대로 믿어 다음 날 윤서아와 차민경에게 밀당을 시작하기로 한다.",
       "cast": [
         "han_do_yoon",
         "dark_psychology_instructor"
@@ -31712,8 +31935,17 @@
       "node_order": [
         "opens_book",
         "do_yoon_wonders",
+        "do_yoon_catches_himself",
+        "reaches_for_book",
+        "do_yoon_hopes",
+        "instructor_appears",
+        "instructor_calls_out",
         "instructor_recommends",
+        "do_yoon_amazed",
         "instructor_summarizes",
+        "do_yoon_hesitates",
+        "instructor_pushes",
+        "do_yoon_echoes",
         "do_yoon_commits",
         "remember_chapter",
         "leave"
@@ -31723,7 +31955,7 @@
           "id": "opens_book",
           "kind": "narration",
           "stage": [],
-          "line": "수요일 밤, 씻고 나온 한도윤은 침대 곁에 놓아 둔 《여성의 마음을 지배하는 어둠의 심리학》을 펼쳤다. 몇 줄을 읽자 온라인 강의에서 본 남자의 목소리가 머릿속에 또렷하게 들렸다.",
+          "line": "수요일 밤, 한도윤은 씻고 나와 침대 끝에 앉았다. 불을 끄고 누웠지만 오늘 본 윤서아와 차민경의 얼굴이 번갈아 떠올랐다.",
           "next": "do_yoon_wonders"
         },
         "do_yoon_wonders": {
@@ -31732,7 +31964,55 @@
           "speaker": "han_do_yoon",
           "stage": [],
           "expression": "actual_waiting_smile",
-          "line": "(서아 씨와 민경 씨…… 조금 더 알아보고 싶은데, 어디서부터 시작해야 하지?)",
+          "line": "(서아 씨는 웃는 모습이 정말 귀여웠지…….)",
+          "next": "do_yoon_catches_himself"
+        },
+        "do_yoon_catches_himself": {
+          "id": "do_yoon_catches_himself",
+          "kind": "dialogue",
+          "speaker": "han_do_yoon",
+          "stage": [],
+          "expression": "actual_waiting_smile",
+          "line": "(민경 씨는 무서웠지만, 그렇게 예쁜 사람이 내 말을 인정해 줬고…… 에엣, 난 왜 아직도 그 생각을 하고 있는 거야?)",
+          "next": "reaches_for_book"
+        },
+        "reaches_for_book": {
+          "id": "reaches_for_book",
+          "kind": "narration",
+          "stage": [],
+          "line": "한도윤은 다시 몸을 일으켜 머리맡에 놓인 《여성의 마음을 지배하는 어둠의 심리학》을 집어 들었다.",
+          "next": "do_yoon_hopes"
+        },
+        "do_yoon_hopes": {
+          "id": "do_yoon_hopes",
+          "kind": "dialogue",
+          "speaker": "han_do_yoon",
+          "stage": [],
+          "expression": "actual_waiting_smile",
+          "line": "(혹시…… 나한테도 다시 기회가 오는 걸까?)",
+          "next": "instructor_appears"
+        },
+        "instructor_appears": {
+          "id": "instructor_appears",
+          "kind": "narration",
+          "stage": [],
+          "line": "책장을 넘기자, 전에 본 온라인 강의 속 남자가 책 위로 불쑥 떠오른 듯했다.",
+          "next": "instructor_calls_out"
+        },
+        "instructor_calls_out": {
+          "id": "instructor_calls_out",
+          "kind": "dialogue",
+          "speaker": "dark_psychology_instructor",
+          "stage": [
+            {
+              "position": "center",
+              "character": "dark_psychology_instructor",
+              "visual_id": "character.dark_psychology_instructor",
+              "artwork": "default"
+            }
+          ],
+          "expression": "decisive_point",
+          "line": "두 사람의 얼굴이 번갈아 떠올라 잠도 못 드는 당신!",
           "next": "instructor_recommends"
         },
         "instructor_recommends": {
@@ -31748,7 +32028,16 @@
             }
           ],
           "expression": "decisive_point",
-          "line": "밀고 당기기를 시작하고 싶은 당신! 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙, 이 장을 읽어 보시라~!",
+          "line": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙! 오늘 밤은 이 장을 읽어 보시라~!",
+          "next": "do_yoon_amazed"
+        },
+        "do_yoon_amazed": {
+          "id": "do_yoon_amazed",
+          "kind": "dialogue",
+          "speaker": "han_do_yoon",
+          "stage": [],
+          "expression": "actual_waiting_smile",
+          "line": "(두 사람인 것까지 맞혔어……! 이 강사, 진짜 대단한 사람일지도 몰라!)",
           "next": "instructor_summarizes"
         },
         "instructor_summarizes": {
@@ -31764,7 +32053,41 @@
             }
           ],
           "expression": "authoritative_smirk",
-          "line": "외모를 칭찬하고 먼저 연락하는 것은 당기기. 답장을 늦추고 갑자기 차갑게 대하는 것은 밀기입니다. 전부 쓸 필요는 없습니다. 상황에 맞는 한 수만 고르십시오.",
+          "line": "계속 다정하기만 해서는 여자의 마음을 흔들 수 없습니다. 한 번 당겼다면, 다음에는 미십시오!",
+          "next": "do_yoon_hesitates"
+        },
+        "do_yoon_hesitates": {
+          "id": "do_yoon_hesitates",
+          "kind": "dialogue",
+          "speaker": "han_do_yoon",
+          "stage": [],
+          "expression": "actual_waiting_smile",
+          "line": "(미, 밀라고……? 서아 씨한테 차갑게 구는 건 좀 미안한데…….)",
+          "next": "instructor_pushes"
+        },
+        "instructor_pushes": {
+          "id": "instructor_pushes",
+          "kind": "dialogue",
+          "speaker": "dark_psychology_instructor",
+          "stage": [
+            {
+              "position": "center",
+              "character": "dark_psychology_instructor",
+              "visual_id": "character.dark_psychology_instructor",
+              "artwork": "default"
+            }
+          ],
+          "expression": "decisive_point",
+          "line": "그 망설임이 당신을 평범한 남자로 만듭니다! 내일부터 밀고 당기십시오. 여자의 반응은 바로 달라질 겁니다!",
+          "next": "do_yoon_echoes"
+        },
+        "do_yoon_echoes": {
+          "id": "do_yoon_echoes",
+          "kind": "dialogue",
+          "speaker": "han_do_yoon",
+          "stage": [],
+          "expression": "actual_waiting_smile",
+          "line": "(반응이…… 달라진다고?)",
           "next": "do_yoon_commits"
         },
         "do_yoon_commits": {
@@ -31773,7 +32096,7 @@
           "speaker": "han_do_yoon",
           "stage": [],
           "expression": "actual_waiting_smile",
-          "line": "(좋아. 내일부터 시작해 보자. 먼저 다가갈지, 한발 물러날지 내가 정하는 거야.)",
+          "line": "(좋아! 내일부터 나도 밀당을 해 보는 거야!)",
           "next": "remember_chapter"
         },
         "remember_chapter": {
