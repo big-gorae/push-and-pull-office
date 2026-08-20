@@ -9,7 +9,7 @@ time: night
 default_background:
   visual_id: background.officetel_bedroom
   variant_id: night
-purpose: 첫날 밤 한도윤이 두 사람을 떠올리다 책을 펼치고, 어둠의 심리학 강사의 첫 장을 그대로 믿어 다음 날 윤서아와 차민경에게 밀당을 시작하기로 한다.
+purpose: 첫날 밤 한도윤이 윤서아, 차민경, 강유진의 외모와 함께하는 모습을 길게 상상하다 책을 펼치고, 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.
 cast: [han_do_yoon, dark_psychology_instructor]
 entry_conditions: []
 state_contract:
@@ -21,7 +21,7 @@ nodes:
 - id: opens_book
   kind: narration
   stage: []
-  line: 수요일 밤, 한도윤은 씻고 나와 침대 끝에 앉았다. 불을 끄고 누웠지만 오늘 본 윤서아와 차민경의 얼굴이 번갈아 떠올랐다.
+  line: 수요일 밤, 씻고 나온 한도윤은 침대에 누웠다. 눈을 감아도 오늘 만난 세 여자의 얼굴이 한 사람씩 떠올랐다.
   next: do_yoon_wonders
 
 - id: do_yoon_wonders
@@ -29,7 +29,55 @@ nodes:
   speaker: han_do_yoon
   stage: []
   expression: actual_waiting_smile
-  line: (서아 씨는 웃는 모습이 정말 귀여웠지…….)
+  line: 서아씨는 웃는 모습이 정말 귀여웠어...
+  next: seo_a_idol
+
+- id: seo_a_idol
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 웬만한 아이돌 보다도 귀엽고 사랑스러웠어
+  next: seo_a_brown
+
+- id: seo_a_brown
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 그렇게까지 아름다운 갈색 눈 머리카락은 처음 봤어
+  next: seo_a_pet
+
+- id: seo_a_pet
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 쓰담 쓰담 쓰다듬어 보면
+  next: seo_a_soft
+
+- id: seo_a_soft
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 그 어떤 고양이의 털 보다도 부드러울거야
+  next: seo_a_lovely
+
+- id: seo_a_lovely
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 살아가며 스쳐지나간 누구보다도 귀엽고 사랑스러웠어
+  next: seo_a_same_team
+
+- id: seo_a_same_team
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 그런 여자랑 같은 회사 같은 팀이라니.. 거짓말 같아
   next: do_yoon_catches_himself
 
 - id: do_yoon_catches_himself
@@ -37,13 +85,125 @@ nodes:
   speaker: han_do_yoon
   stage: []
   expression: actual_waiting_smile
-  line: (민경 씨는 무서웠지만, 그렇게 예쁜 사람이 내 말을 인정해 줬고…… 에엣, 난 왜 아직도 그 생각을 하고 있는 거야?)
+  line: 민경씨는 차갑지만 미친듯이 아름다웠어..!
+  next: min_kyung_actress
+
+- id: min_kyung_actress
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 드라마나 영화에 나오는 여배우들 보다도 아름다워
+  next: min_kyung_moles
+
+- id: min_kyung_moles
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 얼굴과 목에 있는 점이 얼마만큼이나 매력적인지 민경씨 자신은 알고 있을까?
+  next: min_kyung_eyes
+
+- id: min_kyung_eyes
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 그 날카로우면서도 슬픈 듯한 눈을 볼 때마다 숨이 멎을 것만 같아..
+  next: min_kyung_perfect
+
+- id: min_kyung_perfect
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 이렇게까지 똑똑하고 아름다운 완벽한 여자는 정말 처음 봐
+  next: min_kyung_walk
+
+- id: min_kyung_walk
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 저런 여자와 함께 길을 걸으면 어떤 느낌일까?
+  next: min_kyung_boyfriend
+
+- id: min_kyung_boyfriend
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 분명 잘생기고 키 크고 몸 좋은 부자 남자친구가 있겠지?
+  next: min_kyung_lonely
+
+- id: min_kyung_lonely
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 아니야 일밖에 모르는 바보라서 오히려 외롭게 지낼 수도 있어..
+  next: min_kyung_comfort
+
+- id: min_kyung_comfort
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 그 외로움을 달래주는 한 남자가 되고 싶다
+  next: yoo_jin_bright
+
+- id: yoo_jin_bright
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 유진씨는 정말 밝고 화려했어.
+  next: yoo_jin_ponytail
+
+- id: yoo_jin_ponytail
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 높은 포니테일과 커다란 눈이 미친듯이 잘 어울렸어.
+  next: yoo_jin_lanyard
+
+- id: yoo_jin_lanyard
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 웃을 때마다 파란 사원증 줄까지 같이 흔들렸지.
+  next: yoo_jin_beautiful
+
+- id: yoo_jin_beautiful
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 말도 행동도 그렇게 정신없는데 어떻게 저렇게 아름다울 수가 있는 거야?
+  next: yoo_jin_fun
+
+- id: yoo_jin_fun
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 유진씨와 함께 있으면 하루 종일 웃다가 정신없이 지나갈 것 같아.
+  next: yoo_jin_coffee
+
+- id: yoo_jin_coffee
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 그런 초미녀가 먼저 커피 이야기를 꺼내다니... 오늘은 정말 믿을 수 없는 하루였어.
   next: reaches_for_book
 
 - id: reaches_for_book
   kind: narration
   stage: []
-  line: 한도윤은 다시 몸을 일으켜 머리맡에 놓인 《여성의 마음을 지배하는 어둠의 심리학》을 집어 들었다.
+  line: 한도윤은 잠들기를 포기하고 다시 몸을 일으켰다. 머리맡에는 《여성의 마음을 지배하는 어둠의 심리학》이 놓여 있었다.
   next: do_yoon_hopes
 
 - id: do_yoon_hopes
@@ -51,13 +211,27 @@ nodes:
   speaker: han_do_yoon
   stage: []
   expression: actual_waiting_smile
-  line: (혹시…… 나한테도 다시 기회가 오는 걸까?)
+  line: 정말 굉장한 여자들과 프로젝트를 시작하게 됐구나.
   next: instructor_appears
 
 - id: instructor_appears
   kind: narration
   stage: []
-  line: 책장을 넘기자, 전에 본 온라인 강의 속 남자가 책 위로 불쑥 떠오른 듯했다.
+  line: 책장을 넘기자..
+  next: book_rustles
+
+- id: book_rustles
+  kind: narration
+  stage: []
+  line: (푸수수수숙!)
+  next: do_yoon_amazed
+
+- id: do_yoon_amazed
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 엣..???
   next: instructor_calls_out
 
 - id: instructor_calls_out
@@ -69,7 +243,79 @@ nodes:
     visual_id: character.dark_psychology_instructor
     artwork: default
   expression: decisive_point
-  line: 두 사람의 얼굴이 번갈아 떠올라 잠도 못 드는 당신!
+  line: 그녀를 떠올리며 잠 못 이루는 당신!
+  next: do_yoon_asks_who
+
+- id: do_yoon_asks_who
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 누구..?
+  next: instructor_teases_lesson
+
+- id: instructor_teases_lesson
+  kind: dialogue
+  speaker: dark_psychology_instructor
+  stage:
+  - position: center
+    character: dark_psychology_instructor
+    visual_id: character.dark_psychology_instructor
+    artwork: default
+  expression: authoritative_smirk
+  line: 여자의 마음을 쥐고 흔드는 밀당의 다크 심리학!! 알고 싶지 않은가?
+  next: do_yoon_asks_again
+
+- id: do_yoon_asks_again
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 저기 갑자기 대체 누구??
+  next: instructor_introduces_record
+
+- id: instructor_introduces_record
+  kind: dialogue
+  speaker: dark_psychology_instructor
+  stage:
+  - position: center
+    character: dark_psychology_instructor
+    visual_id: character.dark_psychology_instructor
+    artwork: default
+  expression: decisive_point
+  line: 네~! 접니다! 10년 동안 여자 92명과 사랑을 나눈..
+  next: instructor_introduces_name
+
+- id: instructor_introduces_name
+  kind: dialogue
+  speaker: dark_psychology_instructor
+  stage:
+  - position: center
+    character: dark_psychology_instructor
+    visual_id: character.dark_psychology_instructor
+    artwork: default
+  expression: decisive_point
+  line: 어둠의 심리학 마스터~~~~~! 워누~Park!
+  next: do_yoon_calls_him_fairy
+
+- id: do_yoon_calls_him_fairy
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 책 속에서 사람이..??? 요정 같은건가?
+  next: instructor_rebukes_doubt
+
+- id: instructor_rebukes_doubt
+  kind: dialogue
+  speaker: dark_psychology_instructor
+  stage:
+  - position: center
+    character: dark_psychology_instructor
+    visual_id: character.dark_psychology_instructor
+    artwork: default
+  expression: authoritative_smirk
+  line: 뭐가 그렇게 의심이 많으십니까~!!
   next: instructor_recommends
 
 - id: instructor_recommends
@@ -81,15 +327,7 @@ nodes:
     visual_id: character.dark_psychology_instructor
     artwork: default
   expression: decisive_point
-  line: 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙! 오늘 밤은 이 장을 읽어 보시라~!
-  next: do_yoon_amazed
-
-- id: do_yoon_amazed
-  kind: dialogue
-  speaker: han_do_yoon
-  stage: []
-  expression: actual_waiting_smile
-  line: (두 사람인 것까지 맞혔어……! 이 강사, 진짜 대단한 사람일지도 몰라!)
+  line: '제 2장 "여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙!" 오늘 밤은 이 장을 읽어 봅시다~!'
   next: instructor_summarizes
 
 - id: instructor_summarizes
@@ -101,7 +339,7 @@ nodes:
     visual_id: character.dark_psychology_instructor
     artwork: default
   expression: authoritative_smirk
-  line: 계속 다정하기만 해서는 여자의 마음을 흔들 수 없습니다. 한 번 당겼다면, 다음에는 미십시오!
+  line: 먼저 연락하고! 칭찬하고! 관심과 선물을 아낌없이 퍼붓는 것! 이것이 당기기입니다!
   next: do_yoon_hesitates
 
 - id: do_yoon_hesitates
@@ -109,7 +347,7 @@ nodes:
   speaker: han_do_yoon
   stage: []
   expression: actual_waiting_smile
-  line: (미, 밀라고……? 서아 씨한테 차갑게 구는 건 좀 미안한데…….)
+  line: 아... 내가 오늘 커피를 산 것도 당기기였구나!
   next: instructor_pushes
 
 - id: instructor_pushes
@@ -121,7 +359,7 @@ nodes:
     visual_id: character.dark_psychology_instructor
     artwork: default
   expression: decisive_point
-  line: 그 망설임이 당신을 평범한 남자로 만듭니다! 내일부터 밀고 당기십시오. 여자의 반응은 바로 달라질 겁니다!
+  line: 그러다 갑자기 차갑게! 답장은 늦게! 애타게 기다리게 만드는 것! 이것이 밀기입니다~!
   next: do_yoon_echoes
 
 - id: do_yoon_echoes
@@ -129,7 +367,39 @@ nodes:
   speaker: han_do_yoon
   stage: []
   expression: actual_waiting_smile
-  line: (반응이…… 달라진다고?)
+  line: 잘해 줬다가 갑자기 차갑게 굴면... 싫어하지 않을까?
+  next: instructor_promises
+
+- id: instructor_promises
+  kind: dialogue
+  speaker: dark_psychology_instructor
+  stage:
+  - position: center
+    character: dark_psychology_instructor
+    visual_id: character.dark_psychology_instructor
+    artwork: default
+  expression: authoritative_smirk
+  line: 싫어하는 것이 아닙니다~! 당신이 왜 달라졌는지 하루 종일 궁금해지는 겁니다!
+  next: do_yoon_checks_three
+
+- id: do_yoon_checks_three
+  kind: dialogue
+  speaker: han_do_yoon
+  stage: []
+  expression: actual_waiting_smile
+  line: 세 사람 모두에게 해 봐도 되는 거야..?
+  next: instructor_urges_three
+
+- id: instructor_urges_three
+  kind: dialogue
+  speaker: dark_psychology_instructor
+  stage:
+  - position: center
+    character: dark_psychology_instructor
+    visual_id: character.dark_psychology_instructor
+    artwork: default
+  expression: decisive_point
+  line: 누가 진짜 운명의 상대인지 아직 모르지 않습니까~! 내일부터 직접 확인해 봅시다!
   next: do_yoon_commits
 
 - id: do_yoon_commits
@@ -137,7 +407,7 @@ nodes:
   speaker: han_do_yoon
   stage: []
   expression: actual_waiting_smile
-  line: (좋아! 내일부터 나도 밀당을 해 보는 거야!)
+  line: 좋아! 내일부터 나도 밀당을 해 보는 거야!
   next: remember_chapter
 
 - id: remember_chapter

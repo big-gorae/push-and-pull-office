@@ -66,6 +66,9 @@ Keep provisional semantic versions, deletion notes, comparison samples, and scor
 - Let character knowledge, role, confidence, and emotional safety determine what they say before adding verbal tics.
 - Keep Han Do-yoon's spoken dialogue natural and his parenthesized self-talk like the innocent boy protagonist of a Japanese anime: concrete stimulus, immediate emotion, naive evaluation, and an optional quick self-correction. Do not make him calmly summarize relationship strategy, scene design, or control over another person unless a future user-approved golden explicitly establishes that wording.
 - Store Han Do-yoon's parenthesized self-talk as ordinary dialogue, never as a removed thought field.
+- When Han Do-yoon is home alone at night, treat his monologue as words he actually says aloud: store it as ordinary dialogue without parentheses. Parentheses remain for unspoken reactions in shared scenes or when another person is present.
+- In those nightly monologues, do not compress the women he remembers into a short relationship summary. Let him dwell for several lines on concrete visible details, exaggerated comparisons, and naive fantasies of touching, walking with, or spending time with them, following the approved first-night samples. This is a recurring nightly voice rule, not permission to invent new physical facts that contradict character profiles.
+- When the dark psychology instructor appears, ground every new line in the approved `강사님 첫 등장 골든`. Preserve his advertising-style callout, self-answering showmanship, elongated tildes and exclamations, inflated credentials, and abrupt certainty; delete calm manual prose before scoring.
 - Keep text-only coworkers factual and present when the meeting policy requires them.
 - Treat every model-authored line as provisional. Never promote a line to a golden sample or voice.reference_lines in the same task that generated it unless the user explicitly approves that exact line.
 

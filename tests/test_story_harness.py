@@ -395,22 +395,25 @@ class StoryHarnessTests(unittest.TestCase):
                 "common.day_01_dark_psychology_lesson",
                 "progress.flags.dark_psychology.chapter_2_read",
                 "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
+                "오늘 밤은 이 장을 읽어 봅시다~!",
             ),
             2: (
                 "anchor.day_02_dark_psychology_lesson",
                 "common.day_02_dark_psychology_lesson",
                 "progress.flags.dark_psychology.chapter_4_2_read",
                 "4.2 MBTI로 여성 심리 장악하기",
+                "이 장을 읽어 보시라~!",
             ),
             5: (
                 "anchor.day_05_dark_psychology_lesson",
                 "common.day_05_dark_psychology_lesson",
                 "progress.flags.dark_psychology.chapter_1_2_read",
                 "1.2 당신에게 호감이 있는 여성이 절대 숨길 수 없는 시그널",
+                "이 장을 읽어 보시라~!",
             ),
         }
 
-        for day, (event_id, scene_id, flag_path, chapter_title) in expected_lessons.items():
+        for day, (event_id, scene_id, flag_path, chapter_title, recommendation) in expected_lessons.items():
             event = self.project.events[event_id]
             scene = self.project.scenes[scene_id]
             self.assertEqual([day, day], event["window"]["days"])
@@ -423,8 +426,10 @@ class StoryHarnessTests(unittest.TestCase):
                 for node in scene["nodes"]
                 if node.get("kind") == "dialogue"
             ]
-            self.assertTrue(any(chapter_title in line for line in spoken_lines))
-            self.assertTrue(any("이 장을 읽어 보시라~!" in line for line in spoken_lines))
+            self.assertEqual(chapter_title, scene["title"])
+            chapter_name = chapter_title.split(" ", 1)[1]
+            self.assertTrue(any(chapter_name in line for line in spoken_lines))
+            self.assertTrue(any(recommendation in line for line in spoken_lines))
             self.assertGreaterEqual(
                 sum(node.get("speaker") == "dark_psychology_instructor" for node in scene["nodes"]),
                 2,
@@ -442,10 +447,35 @@ class StoryHarnessTests(unittest.TestCase):
             "(좋아. 내일부터 시작해 보자. 먼저 다가갈지, 한발 물러날지 내가 정하는 거야.)",
         ):
             self.assertNotIn(rejected_line, day_one_lines)
-        self.assertEqual(
-            [],
-            self.project.characters["dark_psychology_instructor"]["voice"]["reference_lines"],
-        )
+        day_one = self.project.scenes["common.day_01_dark_psychology_lesson"]
+        day_one_nodes = {node["id"]: node for node in day_one["nodes"]}
+        for heroine_line in (
+            "서아씨는 웃는 모습이 정말 귀여웠어...",
+            "민경씨는 차갑지만 미친듯이 아름다웠어..!",
+            "유진씨는 정말 밝고 화려했어.",
+        ):
+            self.assertIn(heroine_line, day_one_lines)
+        for golden_line in (
+            "그녀를 떠올리며 잠 못 이루는 당신!",
+            "여자의 마음을 쥐고 흔드는 밀당의 다크 심리학!! 알고 싶지 않은가?",
+            "네~! 접니다! 10년 동안 여자 92명과 사랑을 나눈..",
+            "어둠의 심리학 마스터~~~~~! 워누~Park!",
+            "뭐가 그렇게 의심이 많으십니까~!!",
+            '제 2장 "여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙!" 오늘 밤은 이 장을 읽어 봅시다~!',
+        ):
+            self.assertIn(golden_line, day_one_lines)
+        self.assertEqual("(푸수수수숙!)", day_one_nodes["book_rustles"]["line"])
+        for node in day_one["nodes"]:
+            if node.get("speaker") == "han_do_yoon":
+                self.assertFalse(node["line"].startswith("("), node["id"])
+
+        instructor = self.project.characters["dark_psychology_instructor"]
+        self.assertEqual("강사님", instructor["display_name"])
+        instructor_reference_lines = {
+            item["line"] for item in instructor["voice"]["reference_lines"]
+        }
+        self.assertIn("그녀를 떠올리며 잠 못 이루는 당신!", instructor_reference_lines)
+        self.assertIn("어둠의 심리학 마스터~~~~~! 워누~Park!", instructor_reference_lines)
 
         day_two = self.project.scenes["common.day_02_practical_meeting"]
         day_three = self.project.scenes["common.day_03_business_trip_or_cafe"]
