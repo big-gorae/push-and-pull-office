@@ -10,7 +10,7 @@
     ]
   },
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "5bd6054fcd1c77ac8f8294a493003a46d6b1278e6f6ef053b2eafa4672b53d5e",
+  "source_sha256": "b9d1bca713bcf4458479d98301ea4695692f19411805df6267a31e122a652849",
   "enums": {
     "time_slot": [
       "morning",
@@ -449,7 +449,7 @@
               {
                 "path": "progress.cleared_routes",
                 "op": "contains",
-                "value": "yoo_jin"
+                "value": "min_kyung"
               }
             ]
           }
@@ -2306,7 +2306,7 @@
       },
       "characters.kang_yoo_jin.summary": {
         "key": "characters.kang_yoo_jin.summary",
-        "source": "세 공략 후보 중 실제 최종 선택이 가능한 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니며, 전용 사건·고백·엔딩은 아직 작성되지 않았다.",
+        "source": "공략 대상처럼 제시되지만 결정적인 최종 선택에서는 제외되는 위장 공략 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니다.",
         "domain": "character",
         "sourceDocument": {
           "kind": "character",
@@ -6348,7 +6348,7 @@
       },
       "routes.min_kyung.summary": {
         "key": "routes.min_kyung.summary",
-        "source": "분명한 거절조차 도전적인 밀당으로 번역되며, 공략 가능한 것처럼 진행되지만 최종 선택에서는 제외되는 위장 루트.",
+        "source": "분명한 거절조차 도전적인 밀당으로 번역되는 실제 최종 선택 루트.",
         "domain": "route",
         "sourceDocument": {
           "kind": "route",
@@ -18700,7 +18700,7 @@
       "characters.kang_yoo_jin.player_profile.fields.residence.value": "회사와 분리된 외부 생활권",
       "characters.kang_yoo_jin.player_profile.fields.tmi.value": "파일명에 날짜와 버전을 빠뜨린 적이 거의 없다.",
       "characters.kang_yoo_jin.role": "브랜드마케팅팀 경력직 대리",
-      "characters.kang_yoo_jin.summary": "세 공략 후보 중 실제 최종 선택이 가능한 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니며, 전용 사건·고백·엔딩은 아직 작성되지 않았다.",
+      "characters.kang_yoo_jin.summary": "공략 대상처럼 제시되지만 결정적인 최종 선택에서는 제외되는 위장 공략 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니다.",
       "characters.yoon_seo_a.display_name": "윤서아",
       "characters.yoon_seo_a.expressions.actual_exhausted.description": "수면 부족과 반복되는 주변 확인으로 눈빛이 흐려진다.",
       "characters.yoon_seo_a.expressions.actual_flustered.description": "발표 자료 오류를 알아차리고 호흡이 짧아졌지만 자리를 피하지는 않는 표정.",
@@ -18946,7 +18946,7 @@
       "rhythm.status": "대화 리듬",
       "routes.min_kyung.endings.ending.min_kyung.coverup.outcome": "multiple_catastrophe",
       "routes.min_kyung.endings.ending.min_kyung.report.outcome": "evidence_booking",
-      "routes.min_kyung.summary": "분명한 거절조차 도전적인 밀당으로 번역되며, 공략 가능한 것처럼 진행되지만 최종 선택에서는 제외되는 위장 루트.",
+      "routes.min_kyung.summary": "분명한 거절조차 도전적인 밀당으로 번역되는 실제 최종 선택 루트.",
       "routes.min_kyung.title": "명확한 선",
       "routes.seo_a.endings.ending.seo_a.ambiguous.outcome": "multiple_catastrophe",
       "routes.seo_a.endings.ending.seo_a.report.outcome": "evidence_booking",
@@ -19711,7 +19711,7 @@
         "characters.kang_yoo_jin.player_profile.fields.residence.value": "회사와 분리된 외부 생활권",
         "characters.kang_yoo_jin.player_profile.fields.tmi.value": "파일명에 날짜와 버전을 빠뜨린 적이 거의 없다.",
         "characters.kang_yoo_jin.role": "브랜드마케팅팀 경력직 대리",
-        "characters.kang_yoo_jin.summary": "세 공략 후보 중 실제 최종 선택이 가능한 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니며, 전용 사건·고백·엔딩은 아직 작성되지 않았다.",
+        "characters.kang_yoo_jin.summary": "공략 대상처럼 제시되지만 결정적인 최종 선택에서는 제외되는 위장 공략 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니다.",
         "characters.yoon_seo_a.display_name": "윤서아",
         "characters.yoon_seo_a.expressions.actual_exhausted.description": "수면 부족과 반복되는 주변 확인으로 눈빛이 흐려진다.",
         "characters.yoon_seo_a.expressions.actual_flustered.description": "발표 자료 오류를 알아차리고 호흡이 짧아졌지만 자리를 피하지는 않는 표정.",
@@ -19957,7 +19957,7 @@
         "rhythm.status": "대화 리듬",
         "routes.min_kyung.endings.ending.min_kyung.coverup.outcome": "multiple_catastrophe",
         "routes.min_kyung.endings.ending.min_kyung.report.outcome": "evidence_booking",
-        "routes.min_kyung.summary": "분명한 거절조차 도전적인 밀당으로 번역되며, 공략 가능한 것처럼 진행되지만 최종 선택에서는 제외되는 위장 루트.",
+        "routes.min_kyung.summary": "분명한 거절조차 도전적인 밀당으로 번역되는 실제 최종 선택 루트.",
         "routes.min_kyung.title": "명확한 선",
         "routes.seo_a.endings.ending.seo_a.ambiguous.outcome": "multiple_catastrophe",
         "routes.seo_a.endings.ending.seo_a.report.outcome": "evidence_booking",
@@ -20721,7 +20721,7 @@
         "characters.kang_yoo_jin.player_profile.fields.residence.value": "A neighborhood separate from the office area",
         "characters.kang_yoo_jin.player_profile.fields.tmi.value": "She almost never forgets the date and version in a filename.",
         "characters.kang_yoo_jin.role": "브랜드마케팅팀 경력직 대리",
-        "characters.kang_yoo_jin.summary": "세 공략 후보 중 실제 최종 선택이 가능한 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니며, 전용 사건·고백·엔딩은 아직 작성되지 않았다.",
+        "characters.kang_yoo_jin.summary": "공략 대상처럼 제시되지만 결정적인 최종 선택에서는 제외되는 위장 공략 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니다.",
         "characters.yoon_seo_a.display_name": "Yoon Seo-a",
         "characters.yoon_seo_a.expressions.actual_exhausted.description": "수면 부족과 반복되는 주변 확인으로 눈빛이 흐려진다.",
         "characters.yoon_seo_a.expressions.actual_flustered.description": "발표 자료 오류를 알아차리고 호흡이 짧아졌지만 자리를 피하지는 않는 표정.",
@@ -20967,7 +20967,7 @@
         "rhythm.status": "Conversation rhythm",
         "routes.min_kyung.endings.ending.min_kyung.coverup.outcome": "multiple_catastrophe",
         "routes.min_kyung.endings.ending.min_kyung.report.outcome": "evidence_booking",
-        "routes.min_kyung.summary": "분명한 거절조차 도전적인 밀당으로 번역되며, 공략 가능한 것처럼 진행되지만 최종 선택에서는 제외되는 위장 루트.",
+        "routes.min_kyung.summary": "분명한 거절조차 도전적인 밀당으로 번역되는 실제 최종 선택 루트.",
         "routes.min_kyung.title": "명확한 선",
         "routes.seo_a.endings.ending.seo_a.ambiguous.outcome": "multiple_catastrophe",
         "routes.seo_a.endings.ending.seo_a.report.outcome": "evidence_booking",
@@ -22015,7 +22015,7 @@
         "characters.kang_yoo_jin.player_profile.fields.residence.value": "회사와 분리된 외부 생활권",
         "characters.kang_yoo_jin.player_profile.fields.tmi.value": "파일명에 날짜와 버전을 빠뜨린 적이 거의 없다.",
         "characters.kang_yoo_jin.role": "브랜드마케팅팀 경력직 대리",
-        "characters.kang_yoo_jin.summary": "세 공략 후보 중 실제 최종 선택이 가능한 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니며, 전용 사건·고백·엔딩은 아직 작성되지 않았다.",
+        "characters.kang_yoo_jin.summary": "공략 대상처럼 제시되지만 결정적인 최종 선택에서는 제외되는 위장 공략 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니다.",
         "characters.yoon_seo_a.display_name": "윤서아",
         "characters.yoon_seo_a.expressions.actual_exhausted.description": "수면 부족과 반복되는 주변 확인으로 눈빛이 흐려진다.",
         "characters.yoon_seo_a.expressions.actual_flustered.description": "발표 자료 오류를 알아차리고 호흡이 짧아졌지만 자리를 피하지는 않는 표정.",
@@ -22261,7 +22261,7 @@
         "rhythm.status": "대화 리듬",
         "routes.min_kyung.endings.ending.min_kyung.coverup.outcome": "multiple_catastrophe",
         "routes.min_kyung.endings.ending.min_kyung.report.outcome": "evidence_booking",
-        "routes.min_kyung.summary": "분명한 거절조차 도전적인 밀당으로 번역되며, 공략 가능한 것처럼 진행되지만 최종 선택에서는 제외되는 위장 루트.",
+        "routes.min_kyung.summary": "분명한 거절조차 도전적인 밀당으로 번역되는 실제 최종 선택 루트.",
         "routes.min_kyung.title": "명확한 선",
         "routes.seo_a.endings.ending.seo_a.ambiguous.outcome": "multiple_catastrophe",
         "routes.seo_a.endings.ending.seo_a.report.outcome": "evidence_booking",
@@ -23025,7 +23025,7 @@
         "characters.kang_yoo_jin.player_profile.fields.residence.value": "A neighborhood separate from the office area",
         "characters.kang_yoo_jin.player_profile.fields.tmi.value": "She almost never forgets the date and version in a filename.",
         "characters.kang_yoo_jin.role": "브랜드마케팅팀 경력직 대리",
-        "characters.kang_yoo_jin.summary": "세 공략 후보 중 실제 최종 선택이 가능한 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니며, 전용 사건·고백·엔딩은 아직 작성되지 않았다.",
+        "characters.kang_yoo_jin.summary": "공략 대상처럼 제시되지만 결정적인 최종 선택에서는 제외되는 위장 공략 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니다.",
         "characters.yoon_seo_a.display_name": "Yoon Seo-a",
         "characters.yoon_seo_a.expressions.actual_exhausted.description": "수면 부족과 반복되는 주변 확인으로 눈빛이 흐려진다.",
         "characters.yoon_seo_a.expressions.actual_flustered.description": "발표 자료 오류를 알아차리고 호흡이 짧아졌지만 자리를 피하지는 않는 표정.",
@@ -23271,7 +23271,7 @@
         "rhythm.status": "Conversation rhythm",
         "routes.min_kyung.endings.ending.min_kyung.coverup.outcome": "multiple_catastrophe",
         "routes.min_kyung.endings.ending.min_kyung.report.outcome": "evidence_booking",
-        "routes.min_kyung.summary": "분명한 거절조차 도전적인 밀당으로 번역되며, 공략 가능한 것처럼 진행되지만 최종 선택에서는 제외되는 위장 루트.",
+        "routes.min_kyung.summary": "분명한 거절조차 도전적인 밀당으로 번역되는 실제 최종 선택 루트.",
         "routes.min_kyung.title": "명확한 선",
         "routes.seo_a.endings.ending.seo_a.ambiguous.outcome": "multiple_catastrophe",
         "routes.seo_a.endings.ending.seo_a.report.outcome": "evidence_booking",
@@ -26086,7 +26086,7 @@
       "age": 29,
       "role": "브랜드마케팅팀 경력직 대리",
       "narrative_role": "main_heroine",
-      "summary": "세 공략 후보 중 실제 최종 선택이 가능한 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니며, 전용 사건·고백·엔딩은 아직 작성되지 않았다.",
+      "summary": "공략 대상처럼 제시되지만 결정적인 최종 선택에서는 제외되는 위장 공략 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니다.",
       "player_profile": {
         "order": 3,
         "portrait_unlock_memory": "profile.kang_yoo_jin.name",
@@ -26126,8 +26126,9 @@
         }
       },
       "immutable_facts": [
-        "스토리 모드의 세 공략 후보 중 하나이며 최종 핵심 선택의 실제 후보다.",
-        "현재 전용 라우트·고백·엔딩은 미작성 상태다.",
+        "스토리 모드의 세 표면 공략 후보 중 하나지만 최종 핵심 선택의 실제 후보는 아니다.",
+        "개별 사건과 밀당·호감도 축적은 제공하되 최종 선택에서는 제외한다.",
+        "호감도는 전용 상한 80까지만 오른다. 상한 이후에도 밀당 콤보와 숨은 현실 상태는 계속 누적된다.",
         "스토리 모드의 기본 결말에서 증거를 완성하거나 피해자를 구조해 파국을 막는 해결사로 등장하지 않는다.",
         "생존 모드 안에서의 플레이어·조력자·조연 역할은 후속 검토한다.",
         "한도윤을 특별한 연애 상대가 아니라 중단시켜야 할 반복 행동의 주체로 본다.",
@@ -29031,13 +29032,17 @@
       ],
       "final_selectable_heroines": [
         "yoon_seo_a",
-        "kang_yoo_jin"
+        "cha_min_kyung"
       ],
-      "decoy_heroine": "cha_min_kyung",
+      "decoy_heroine": "kang_yoo_jin",
+      "affection_caps": {
+        "kang_yoo_jin": 80
+      },
       "candidate_rules": [
         "세 사람 모두 호감도와 밀당 수치를 가질 수 있으며 플레이 중에는 공략 후보로 제시한다.",
-        "차민경은 개별 사건과 밀당이 가능하지만 결정적인 최종 선택지에서는 제외한다.",
-        "강유진은 실제 최종 후보지만 전용 사건·고백·엔딩은 아직 작성되지 않았다."
+        "윤서아와 차민경은 실제 최종 선택 후보다.",
+        "강유진은 개별 사건과 밀당이 가능한 위장 공략이지만 결정적인 최종 선택지에서는 제외한다.",
+        "강유진의 호감도는 80까지만 오른다. 상한 이후에도 밀당 콤보와 숨은 현실 상태는 계속 계산하지만 보이는 호감도는 증가하지 않는다."
       ],
       "week_three": [
         {
@@ -29154,8 +29159,10 @@
         }
       ],
       "rules": [
-        "윤서아·차민경·강유진은 모두 표면 공략 후보지만 차민경은 최종 선택에서 제외한다.",
-        "강유진은 최종 선택 가능 후보이지만 기본 결말의 해결사나 구원자로 개입하지 않는다.",
+        "윤서아·차민경·강유진은 모두 표면 공략 후보지만 강유진은 최종 선택에서 제외한다.",
+        "강유진의 호감도 상한 80은 공략 불가를 위장하는 별도 연출 장치이며, 최종 선택 가능 여부를 결정하는 조건으로 사용하지 않는다.",
+        "상한 도달 시 별도의 `MAX`·잠금·공략 불가 문구를 노출하지 않고 실제 증가분만 표시한다.",
+        "강유진은 기본 결말의 해결사나 구원자로 개입하지 않는다.",
         "현재 고백과 세 여성의 최종 반응, 도주 사망·체포·자살을 포함한 한도윤 결말 구성은 임시 골격이며 최상위 체크리스트에서 확정한다.",
         "신고는 고백 준비가 아니라 실제 주거지 방문과 명백한 퇴거 요구 뒤 발생한다.",
         "단순 조사에서는 머그샷을 사용하지 않고 정식 신병 처리 뒤 촬영한다.",
@@ -29281,8 +29288,8 @@
       "title": "명확한 선",
       "heroine": "cha_min_kyung",
       "campaign_id": "main",
-      "final_selectable": false,
-      "summary": "분명한 거절조차 도전적인 밀당으로 번역되며, 공략 가능한 것처럼 진행되지만 최종 선택에서는 제외되는 위장 루트.",
+      "final_selectable": true,
+      "summary": "분명한 거절조차 도전적인 밀당으로 번역되는 실제 최종 선택 루트.",
       "unlock_conditions": [],
       "entry_scene": "min_kyung.explicit_boundary",
       "scene_order": [
@@ -34810,7 +34817,8 @@
           "hidden.heroines.cha_min_kyung.evidence_count",
           "progress.flags.push_pull",
           "progress.flags.story_mode.final_interpretation",
-          "progress.flags.story_mode.home_incident"
+          "progress.flags.story_mode.home_incident",
+          "progress.cleared_routes"
         ]
       },
       "start_node": "complete",
@@ -34838,7 +34846,13 @@
         "complete": {
           "id": "complete",
           "kind": "effect",
-          "effects": [],
+          "effects": [
+            {
+              "path": "progress.cleared_routes",
+              "op": "append_unique",
+              "value": "min_kyung"
+            }
+          ],
           "next": "leave_request"
         },
         "leave_request": {
@@ -35227,6 +35241,7 @@
           "progress.memories"
         ],
         "writes": [
+          "progress.cleared_routes",
           "progress.memories",
           "progress.flags.story_mode.home_incident"
         ]
@@ -35249,6 +35264,11 @@
           "id": "complete",
           "kind": "effect",
           "effects": [
+            {
+              "path": "progress.cleared_routes",
+              "op": "append_unique",
+              "value": "min_kyung"
+            },
             {
               "path": "progress.flags.story_mode.home_incident",
               "op": "set",
@@ -35323,7 +35343,7 @@
                 {
                   "path": "progress.cleared_routes",
                   "op": "contains",
-                  "value": "yoo_jin"
+                  "value": "min_kyung"
                 },
                 {
                   "path": "progress.memories",
@@ -35932,7 +35952,7 @@
                 {
                   "path": "progress.cleared_routes",
                   "op": "contains",
-                  "value": "yoo_jin"
+                  "value": "min_kyung"
                 },
                 {
                   "path": "progress.memories",

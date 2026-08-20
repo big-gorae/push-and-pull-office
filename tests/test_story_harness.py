@@ -1519,8 +1519,25 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertIn("kang_yoo_jin", story_mode["romance_candidates"])
         self.assertNotIn("kang_yoo_jin", story_mode["final_selectable_heroines"])
         self.assertEqual("kang_yoo_jin", story_mode["decoy_heroine"])
+        self.assertEqual({"kang_yoo_jin": 80}, story_mode["affection_caps"])
         self.assertTrue(all(route.get("campaign_id") == "main" for route in self.project.routes.values()))
         self.assertTrue(all("mode" not in route for route in self.project.routes.values()))
+
+    def test_story_mode_requires_one_submaximal_affection_cap_for_the_decoy(self):
+        story_mode = self.project.meta["story_mode"]
+        original = copy.deepcopy(story_mode["affection_caps"])
+        try:
+            story_mode["affection_caps"] = {"cha_min_kyung": 80}
+            issues = []
+            self.project._validate_meta(issues)
+            self.assertTrue(any("exactly the decoy heroine" in issue.message for issue in issues))
+
+            story_mode["affection_caps"] = {"kang_yoo_jin": 100}
+            issues = []
+            self.project._validate_meta(issues)
+            self.assertTrue(any("integer from 0 to 99" in issue.message for issue in issues))
+        finally:
+            story_mode["affection_caps"] = original
 
     def test_story_mode_rejects_a_decoy_as_final_selectable(self):
         story_mode = self.project.meta["story_mode"]
@@ -1587,6 +1604,33 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual(-24, reverse["position"])
         self.assertEqual(4, reverse["combo"])
         self.assertEqual(16, reverse["gain"])
+
+    def test_yoo_jin_affection_stops_at_eighty_while_hidden_consequences_continue(self):
+        state = self.project.initial_state()
+        state["visible"]["heroines"]["kang_yoo_jin"]["affection"] = 78
+        config = {"action": "approach", "intensity": 12, "base_score": 5}
+
+        capped = resolve_push_pull(self.project, state, "kang_yoo_jin", config)
+        self.assertEqual(80, capped["affection"])
+        self.assertEqual(5, capped["attempted_gain"])
+        self.assertEqual(2, capped["gain"])
+        self.assertEqual(80, capped["affection_cap"])
+        self.assertTrue(capped["capped"])
+
+        state["progress"]["flags"]["push_pull"].update({
+            "combo": 4,
+            "position": -24,
+            "target": "pull",
+            "last_action": "approach",
+            "heroine": "kang_yoo_jin",
+        })
+        still_capped = resolve_push_pull(self.project, state, "kang_yoo_jin", config)
+        self.assertEqual(80, still_capped["affection"])
+        self.assertEqual(0, still_capped["gain"])
+        self.assertEqual(
+            {"suspicion": 7, "dislike": 4, "evidence_count": 1},
+            still_capped["hidden_delta"],
+        )
 
     def test_push_pull_ignores_self_development_score_modifiers(self):
         state = self.project.initial_state()

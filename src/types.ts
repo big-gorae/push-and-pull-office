@@ -292,6 +292,7 @@ export type MetaDocument = {
   schema_version: number;
   id: string;
   unlock_rules: Array<{ id: string; mode: string; reward: string; conditions: Condition[] }>;
+  affection_caps?: Record<string, number>;
   mode_teasers?: Array<{
     id: string;
     conditions: Condition[];

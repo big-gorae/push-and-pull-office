@@ -1,4 +1,4 @@
-import type { JsonValue, PushPullConfig, RuntimeState } from "./types";
+import type { JsonValue, PushPullConfig, Runtime, RuntimeState } from "./types";
 
 export const PUSH_PULL_LIMIT = 100;
 export const PUSH_PULL_OPTIMAL_LIMIT = 56;
@@ -29,7 +29,10 @@ export type PushPullResult = {
   combo: number;
   baseGain: number;
   bonusGain: number;
+  attemptedGain: number;
   gain: number;
+  affectionCap: number;
+  capped: boolean;
   target: PushPullTarget;
   reachedCheckpoint: boolean;
   insideOptimalRange: boolean;
@@ -52,6 +55,10 @@ const DEFAULT_STATE: PushPullState = {
 function numberInRange(value: unknown, fallback: number, min: number, max: number): number {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? Math.max(min, Math.min(max, parsed)) : fallback;
+}
+
+export function affectionCapFor(runtime: Pick<Runtime, "meta">, heroine: string): number {
+  return numberInRange(runtime.meta.story_mode?.affection_caps?.[heroine], 100, 0, 100);
 }
 
 export function readPushPullState(state: RuntimeState): PushPullState {
@@ -119,12 +126,17 @@ export function resolvePushPull(
   state: RuntimeState,
   heroine: string,
   config: PushPullConfig,
-  modifier: { visibleScoreBonus?: number } = {},
+  modifier: { visibleScoreBonus?: number; affectionCap?: number } = {},
 ): PushPullResult {
   const current = readPushPullState(state);
   const heroineChanged = Boolean(current.heroine && current.heroine !== heroine);
   const previousPosition = current.position;
-  const previousAffection = state.visible.heroines[heroine]?.affection ?? 0;
+  const affectionCap = numberInRange(modifier.affectionCap, 100, 0, 100);
+  const visibleHeroine = state.visible.heroines[heroine];
+  if (visibleHeroine) {
+    visibleHeroine.affection = numberInRange(visibleHeroine.affection, 0, 0, affectionCap);
+  }
+  const previousAffection = visibleHeroine?.affection ?? 0;
   const intensity = numberInRange(config.intensity, 12, 8, 16);
   const baseScore = numberInRange(config.base_score, 4, 2, 5);
   let combo = heroineChanged ? 0 : current.combo;
@@ -132,6 +144,7 @@ export function resolvePushPull(
   let position = current.position;
   let baseGain = 0;
   let bonusGain = 0;
+  let attemptedGain = 0;
   let gain = 0;
   let reachedCheckpoint = false;
   let kind: PushPullResultKind;
@@ -164,9 +177,11 @@ export function resolvePushPull(
         kind = "turn";
       }
       bonusGain = numberInRange(modifier.visibleScoreBonus, 0, 0, 3);
-      gain = baseGain + bonusGain;
-      const visible = state.visible.heroines[heroine];
-      if (visible) visible.affection = Math.min(100, visible.affection + gain);
+      attemptedGain = baseGain + bonusGain;
+      if (visibleHeroine) {
+        visibleHeroine.affection = Math.min(affectionCap, visibleHeroine.affection + attemptedGain);
+        gain = visibleHeroine.affection - previousAffection;
+      }
     } else {
       combo = 0;
       kind = inside ? "wrong" : "outside";
@@ -196,7 +211,10 @@ export function resolvePushPull(
     combo,
     baseGain,
     bonusGain,
+    attemptedGain,
     gain,
+    affectionCap,
+    capped: attemptedGain > gain,
     target,
     reachedCheckpoint,
     insideOptimalRange: Math.abs(position) <= PUSH_PULL_OPTIMAL_LIMIT,

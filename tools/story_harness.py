@@ -1138,6 +1138,16 @@ class StoryProject:
         if isinstance(decoy, str) and candidates != final_selectable | {decoy}:
             self._error(issues, location, "romance_candidates must consist of final-selectable heroines plus the decoy heroine")
 
+        affection_caps = story_mode.get("affection_caps")
+        if not isinstance(affection_caps, dict):
+            self._error(issues, location, "affection_caps must map the decoy heroine to a visible score cap")
+            affection_caps = {}
+        elif isinstance(decoy, str) and set(affection_caps) != {decoy}:
+            self._error(issues, location, "affection_caps must contain exactly the decoy heroine")
+        for character_id, cap in affection_caps.items():
+            if isinstance(cap, bool) or not isinstance(cap, int) or not 0 <= cap < 100:
+                self._error(issues, location, f"affection cap must be an integer from 0 to 99: {character_id}")
+
         route_heroines = {route.get("heroine") for route in self.routes.values() if isinstance(route.get("heroine"), str)}
         if implemented != route_heroines:
             self._error(
@@ -1161,6 +1171,10 @@ class StoryProject:
                 self._error(issues, location, f"romance candidate requires visible affection state: {character_id}")
             if character_id not in hidden:
                 self._error(issues, location, f"romance candidate requires hidden heroine state: {character_id}")
+            cap = affection_caps.get(character_id)
+            initial_affection = visible.get(character_id, {}).get("affection")
+            if isinstance(cap, int) and isinstance(initial_affection, int) and initial_affection > cap:
+                self._error(issues, location, f"initial affection exceeds configured cap: {character_id}")
 
     def _validate_characters(self, issues: List[Issue]) -> None:
         for character_id, character in self.characters.items():
@@ -4486,12 +4500,18 @@ def resolve_push_pull(
     base_score = _bounded_number(config.get("base_score"), 4, 2, 5)
     previous_position = current["position"]
     affection_path = f"visible.heroines.{heroine}.affection"
-    previous_affection = int(get_path(state, affection_path, 0))
+    story_mode = project.meta.get("story_mode", {})
+    affection_caps = story_mode.get("affection_caps", {}) if isinstance(story_mode, Mapping) else {}
+    raw_affection_cap = affection_caps.get(heroine, 100) if isinstance(affection_caps, Mapping) else 100
+    affection_cap = int(_bounded_number(raw_affection_cap, 100, 0, 100))
+    previous_affection = max(0, min(affection_cap, int(get_path(state, affection_path, 0))))
+    set_path(state, affection_path, previous_affection)
     combo = 0 if heroine_changed else current["combo"]
     target = "none" if heroine_changed else current["target"]
     position = previous_position
     base_gain = 0
     bonus_gain = 0
+    attempted_gain = 0
     gain = 0
     reached_checkpoint = False
 
@@ -4531,8 +4551,10 @@ def resolve_push_pull(
                 0,
                 SELF_DEVELOPMENT_MAX_SCORE_BONUS,
             )
-            gain = base_gain + bonus_gain
-            apply_effect(project, state, {"path": affection_path, "op": "add", "value": gain})
+            attempted_gain = base_gain + bonus_gain
+            next_affection = min(affection_cap, previous_affection + attempted_gain)
+            gain = next_affection - previous_affection
+            set_path(state, affection_path, next_affection)
         else:
             combo = 0
             kind = "wrong" if inside else "outside"
@@ -4562,7 +4584,10 @@ def resolve_push_pull(
         "combo": combo,
         "base_gain": base_gain,
         "bonus_gain": bonus_gain,
+        "attempted_gain": attempted_gain,
         "gain": gain,
+        "affection_cap": affection_cap,
+        "capped": attempted_gain > gain,
         "target": target,
         "reached_checkpoint": reached_checkpoint,
         "inside_optimal_range": abs(position) <= PUSH_PULL_OPTIMAL_LIMIT,

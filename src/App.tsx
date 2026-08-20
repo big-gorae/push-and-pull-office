@@ -30,6 +30,7 @@ import {
   type SystemFlowAuthoringTarget,
 } from "./player/storyAuthoring";
 import {
+  affectionCapFor,
   pushPullPositionLabel,
   pushPullTargetLabel,
   readPushPullState,
@@ -1093,7 +1094,11 @@ function Preview({
       ? selfDevelopmentSystem(runtime).eligibility.scoreBonus(state, option.self_development.expression)
       : 0;
     option.effects.forEach((effect) => applyEffect(runtime, next, effect));
-    const result = resolvePushPull(next, option.push_pull?.target || baseHeroine, option.push_pull, { visibleScoreBonus });
+    const targetHeroine = option.push_pull?.target || baseHeroine;
+    const result = resolvePushPull(next, targetHeroine, option.push_pull, {
+      visibleScoreBonus,
+      affectionCap: affectionCapFor(runtime, targetHeroine),
+    });
     setPushPullResult(result);
     onState(next);
   };

@@ -11,6 +11,7 @@ import {
   resolveDialogueNode,
 } from "../storyLogic";
 import {
+  affectionCapFor,
   breakPushPullFlow,
   readPushPullState,
   resolvePushPull,
@@ -300,7 +301,7 @@ export function normalizePlayerSession(value: unknown, runtime?: Runtime): Playe
     routeId: legacy.routeId || "",
     sceneId: legacy.sceneId || "",
     nodeId: legacy.nodeId || "",
-    state: migrateVisibleHeroineFields(legacy.state),
+    state: migrateVisibleHeroineFields(legacy.state, runtime),
     choices: legacy.choices || [],
     readNodes: legacy.readNodes || [],
     timelineLog: legacy.timelineLog || [],
@@ -587,8 +588,8 @@ export function currentNode(runtime: Runtime, session: PlayerSession): StoryNode
   return runtime.scenes[session.sceneId]?.nodes[session.nodeId];
 }
 
-function migrateVisibleHeroineFields(state: RuntimeState): RuntimeState {
-  Object.values(state.visible?.heroines || {}).forEach((heroine) => {
+function migrateVisibleHeroineFields(state: RuntimeState, runtime?: Runtime): RuntimeState {
+  Object.entries(state.visible?.heroines || {}).forEach(([heroineId, heroine]) => {
     const legacyHeroine = heroine as typeof heroine & {
       affection?: unknown;
       initiative?: unknown;
@@ -596,10 +597,11 @@ function migrateVisibleHeroineFields(state: RuntimeState): RuntimeState {
     };
     const currentAffection = Number(legacyHeroine.affection);
     const legacyInitiative = Number(legacyHeroine.initiative);
+    const affectionCap = runtime ? affectionCapFor(runtime, heroineId) : 100;
     legacyHeroine.affection = Number.isFinite(currentAffection)
-      ? Math.max(0, Math.min(100, currentAffection))
+      ? Math.max(0, Math.min(affectionCap, currentAffection))
       : Number.isFinite(legacyInitiative)
-        ? Math.max(0, Math.min(100, legacyInitiative))
+        ? Math.max(0, Math.min(affectionCap, legacyInitiative))
         : 0;
     delete legacyHeroine.initiative;
     delete legacyHeroine.perceived_state;
@@ -681,7 +683,10 @@ export function selectOption(runtime: Runtime, value: PlayerSession, optionId: s
   const route = runtime.routes[sceneRoute || session.routeId];
   const heroine = option.push_pull?.target || route?.heroine;
   if (heroine && session.state.visible.heroines[heroine] && option.push_pull) {
-    session.lastFeedback = resolvePushPull(session.state, heroine, option.push_pull, { visibleScoreBonus });
+    session.lastFeedback = resolvePushPull(session.state, heroine, option.push_pull, {
+      visibleScoreBonus,
+      affectionCap: affectionCapFor(runtime, heroine),
+    });
   }
   session.backlog.push({
     id: `${readId(session.sceneId, node.id)}:${session.backlog.length}`,
