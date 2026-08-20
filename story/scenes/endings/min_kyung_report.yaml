@@ -14,6 +14,7 @@ state_contract:
   - progress.cleared_routes
   - progress.memories
   writes:
+  - progress.cleared_routes
   - progress.memories
   - progress.flags.story_mode.home_incident
 start_node: complete
@@ -21,6 +22,7 @@ nodes:
 - id: complete
   kind: effect
   effects:
+  - {path: progress.cleared_routes, op: append_unique, value: min_kyung}
   - {path: progress.flags.story_mode.home_incident, op: set, value: reported}
   next: leave_request
 
@@ -62,7 +64,7 @@ nodes:
   transitions:
   - conditions:
     - {path: progress.cleared_routes, op: contains, value: seo_a}
-    - {path: progress.cleared_routes, op: contains, value: yoo_jin}
+    - {path: progress.cleared_routes, op: contains, value: min_kyung}
     - {path: progress.memories, op: contains, value: past_case.date_mismatch}
     - {path: progress.memories, op: contains, value: ending.story_mode.grooms_face}
     node: never_dated

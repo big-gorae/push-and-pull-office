@@ -467,7 +467,7 @@ class StoryProject:
         approved_post_clear_unlock = {
             "any": [
                 {"conditions": [{"path": "progress.cleared_routes", "op": "contains", "value": "seo_a"}]},
-                {"conditions": [{"path": "progress.cleared_routes", "op": "contains", "value": "yoo_jin"}]},
+                {"conditions": [{"path": "progress.cleared_routes", "op": "contains", "value": "min_kyung"}]},
             ]
         }
         if base.get("unlock") != {"always": True}:

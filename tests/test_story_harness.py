@@ -1432,7 +1432,7 @@ class StoryHarnessTests(unittest.TestCase):
         }
 
         true_state = self.project.initial_state()
-        true_state["progress"]["cleared_routes"] = ["yoo_jin"]
+        true_state["progress"]["cleared_routes"] = ["min_kyung"]
         true_state["progress"]["memories"] = ["past_case.date_mismatch"]
         reached.add(Simulator(self.project, "seo_a", aggressive, "first", true_state).run()["ending"])
 
@@ -1489,7 +1489,7 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertIn("survivor_view", progress["unlocked_modes"])
         self.assertNotIn("collapse", progress["unlocked_modes"])
 
-    def test_decoy_min_kyung_route_does_not_clear_or_unlock_survival_mode(self):
+    def test_min_kyung_route_clears_and_unlocks_survival_mode(self):
         result = Simulator(
             self.project,
             "min_kyung",
@@ -1500,8 +1500,8 @@ class StoryHarnessTests(unittest.TestCase):
             "first",
         ).run()
         progress = result["final_state"]["progress"]
-        self.assertEqual([], progress["cleared_routes"])
-        self.assertNotIn("survivor_view", progress["unlocked_modes"])
+        self.assertEqual(["min_kyung"], progress["cleared_routes"])
+        self.assertIn("survivor_view", progress["unlocked_modes"])
 
     def test_game_mode_registry_keeps_the_approved_post_clear_unlock(self):
         survivor_unlock = self.project.game_modes["survivor_view"]["unlock"]["any"]
@@ -1513,18 +1513,19 @@ class StoryHarnessTests(unittest.TestCase):
         finally:
             survivor_unlock.append(removed)
 
-    def test_future_yoo_jin_route_is_declared_but_not_implemented(self):
+    def test_yoo_jin_is_declared_as_a_decoy_without_an_implemented_route(self):
         self.assertNotIn("yoo_jin", self.project.routes)
         story_mode = self.project.meta["story_mode"]
         self.assertIn("kang_yoo_jin", story_mode["romance_candidates"])
-        self.assertIn("kang_yoo_jin", story_mode["final_selectable_heroines"])
+        self.assertNotIn("kang_yoo_jin", story_mode["final_selectable_heroines"])
+        self.assertEqual("kang_yoo_jin", story_mode["decoy_heroine"])
         self.assertTrue(all(route.get("campaign_id") == "main" for route in self.project.routes.values()))
         self.assertTrue(all("mode" not in route for route in self.project.routes.values()))
 
     def test_story_mode_rejects_a_decoy_as_final_selectable(self):
         story_mode = self.project.meta["story_mode"]
         original = list(story_mode["final_selectable_heroines"])
-        story_mode["final_selectable_heroines"].append("cha_min_kyung")
+        story_mode["final_selectable_heroines"].append("kang_yoo_jin")
         try:
             issues = []
             self.project._validate_meta(issues)
@@ -1536,7 +1537,7 @@ class StoryHarnessTests(unittest.TestCase):
     def test_route_final_selectable_must_match_story_mode_contract(self):
         route = self.project.routes["min_kyung"]
         original = route["final_selectable"]
-        route["final_selectable"] = True
+        route["final_selectable"] = False
         try:
             issues = []
             self.project._validate_meta(issues)

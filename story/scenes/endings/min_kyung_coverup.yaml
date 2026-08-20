@@ -21,11 +21,13 @@ state_contract:
   - progress.flags.push_pull
   - progress.flags.story_mode.final_interpretation
   - progress.flags.story_mode.home_incident
+  - progress.cleared_routes
 start_node: complete
 nodes:
 - id: complete
   kind: effect
-  effects: []
+  effects:
+  - {path: progress.cleared_routes, op: append_unique, value: min_kyung}
   next: leave_request
 
 - id: leave_request

@@ -535,7 +535,7 @@ describe("web player campaign runtime", () => {
     expect(completed.state.progress.unlocked_modes).toContain("survivor_view");
   });
 
-  it("does not clear the decoy Min-kyung route or unlock another story", () => {
+  it("clears the final-selectable Min-kyung route and unlocks another story", () => {
     const session = createCampaignSession(runtime, "base");
     session.phase = "timeline";
     session.preparedTimeKey = undefined;
@@ -554,8 +554,8 @@ describe("web player campaign runtime", () => {
     expect(ending.sceneId).toBe("ending.min_kyung.report");
     const completed = finishCurrentScene(ending);
     expect(completed.phase).toBe("complete");
-    expect(completed.state.progress.cleared_routes).not.toContain("min_kyung");
-    expect(completed.state.progress.unlocked_modes).not.toContain("survivor_view");
+    expect(completed.state.progress.cleared_routes).toContain("min_kyung");
+    expect(completed.state.progress.unlocked_modes).toContain("survivor_view");
   });
 
   it("does not award a route clear when the calendar ends without a narrative ending", () => {

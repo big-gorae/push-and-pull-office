@@ -17,12 +17,12 @@ describe("game mode and campaign separation", () => {
       clearedRoutes: ["yoo_jin"],
       unlockedModes: ["base"],
       memories: [],
-    })).toBe("coming_soon");
+    })).toBe("locked");
     expect(resolveModeAccess(runtime, "survivor_view", {
       clearedRoutes: ["min_kyung"],
       unlockedModes: ["base"],
       memories: [],
-    })).toBe("locked");
+    })).toBe("coming_soon");
   });
 
   it("selects main from the mode registry even when another campaign is ordered first", () => {

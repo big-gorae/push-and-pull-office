@@ -4,7 +4,7 @@ display_name: 강유진
 age: 29
 role: 브랜드마케팅팀 경력직 대리
 narrative_role: main_heroine
-summary: 세 공략 후보 중 실제 최종 선택이 가능한 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니며, 전용 사건·고백·엔딩은 아직 작성되지 않았다.
+summary: 공략 대상처럼 제시되지만 결정적인 최종 선택에서는 제외되는 위장 공략 인물. 사실관계를 확인하고 이상 징후를 알아차리지만 기본 결말의 해결사나 구원자는 아니다.
 player_profile:
   order: 3
   portrait_unlock_memory: profile.kang_yoo_jin.name
@@ -18,8 +18,9 @@ player_profile:
     residence: {value: 회사와 분리된 외부 생활권, unlock_memory: profile.kang_yoo_jin.residence}
     tmi: {value: 파일명에 날짜와 버전을 빠뜨린 적이 거의 없다., unlock_memory: profile.kang_yoo_jin.tmi}
 immutable_facts:
-- 스토리 모드의 세 공략 후보 중 하나이며 최종 핵심 선택의 실제 후보다.
-- 현재 전용 라우트·고백·엔딩은 미작성 상태다.
+- 스토리 모드의 세 표면 공략 후보 중 하나지만 최종 핵심 선택의 실제 후보는 아니다.
+- 개별 사건과 밀당·호감도 축적은 제공하되 최종 선택에서는 제외한다.
+- 호감도는 추후 확정할 전용 상한까지만 오르게 하며, 정확한 수치와 도달 연출은 후속 설계한다.
 - 스토리 모드의 기본 결말에서 증거를 완성하거나 피해자를 구조해 파국을 막는 해결사로 등장하지 않는다.
 - 생존 모드 안에서의 플레이어·조력자·조연 역할은 후속 검토한다.
 - 한도윤을 특별한 연애 상대가 아니라 중단시켜야 할 반복 행동의 주체로 본다.

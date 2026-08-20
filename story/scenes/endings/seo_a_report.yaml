@@ -63,7 +63,7 @@ nodes:
   kind: state_gate
   transitions:
   - conditions:
-    - {path: progress.cleared_routes, op: contains, value: yoo_jin}
+    - {path: progress.cleared_routes, op: contains, value: min_kyung}
     - {path: progress.memories, op: contains, value: past_case.date_mismatch}
     - {path: progress.memories, op: contains, value: ending.story_mode.grooms_face}
     node: never_dated
