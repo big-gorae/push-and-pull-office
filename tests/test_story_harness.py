@@ -449,12 +449,80 @@ class StoryHarnessTests(unittest.TestCase):
             self.assertNotIn(rejected_line, day_one_lines)
         day_one = self.project.scenes["common.day_01_dark_psychology_lesson"]
         day_one_nodes = {node["id"]: node for node in day_one["nodes"]}
+        for heroine_id in ("yoon_seo_a", "cha_min_kyung", "kang_yoo_jin"):
+            self.assertIn(heroine_id, day_one["cast"])
         for heroine_line in (
             "서아씨는 웃는 모습이 정말 귀여웠어...",
             "민경씨는 차갑지만 미친듯이 아름다웠어..!",
-            "유진씨는 정말 밝고 화려했어.",
+            "차 대리의 동기랬지? 회사에서 유명한 발랄 초미녀!",
+            "그리고 에너지가 넘치는 유진 씨까지.",
         ):
             self.assertIn(heroine_line, day_one_lines)
+        for rejected_line in (
+            "웃을 때마다 파란 사원증 줄까지 같이 흔들렸지.",
+            "말도 행동도 그렇게 정신없는데 어떻게 저렇게 아름다울 수가 있는 거야?",
+            "그런 초미녀가 먼저 커피 이야기를 꺼내다니... 오늘은 정말 믿을 수 없는 하루였어.",
+        ):
+            self.assertNotIn(rejected_line, day_one_lines)
+
+        recall_nodes = {
+            "yoon_seo_a": (
+                "do_yoon_wonders",
+                "seo_a_idol",
+                "seo_a_brown",
+                "seo_a_pet",
+                "seo_a_soft",
+                "seo_a_lovely",
+                "seo_a_same_team",
+            ),
+            "cha_min_kyung": (
+                "do_yoon_catches_himself",
+                "min_kyung_actress",
+                "min_kyung_moles",
+                "min_kyung_eyes",
+                "min_kyung_perfect",
+                "min_kyung_walk",
+                "min_kyung_boyfriend",
+                "min_kyung_lonely",
+                "min_kyung_comfort",
+            ),
+            "kang_yoo_jin": ("yoo_jin_bright", "yoo_jin_fun"),
+        }
+        for heroine_id, node_ids in recall_nodes.items():
+            for node_id in node_ids:
+                self.assertEqual(
+                    [{
+                        "position": "center",
+                        "character": heroine_id,
+                        "visual_id": f"character.{heroine_id}",
+                        "artwork": "default",
+                    }],
+                    day_one_nodes[node_id]["stage"],
+                )
+
+        self.assertEqual(
+            [
+                {
+                    "position": "left",
+                    "character": "yoon_seo_a",
+                    "visual_id": "character.yoon_seo_a",
+                    "artwork": "default",
+                },
+                {
+                    "position": "center",
+                    "character": "cha_min_kyung",
+                    "visual_id": "character.cha_min_kyung",
+                    "artwork": "default",
+                },
+                {
+                    "position": "right",
+                    "character": "kang_yoo_jin",
+                    "visual_id": "character.kang_yoo_jin",
+                    "artwork": "default",
+                },
+            ],
+            day_one_nodes["do_yoon_hopes"]["stage"],
+        )
         for golden_line in (
             "그녀를 떠올리며 잠 못 이루는 당신!",
             "여자의 마음을 쥐고 흔드는 밀당의 다크 심리학!! 알고 싶지 않은가?",

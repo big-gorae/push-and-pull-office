@@ -9,8 +9,8 @@ time: night
 default_background:
   visual_id: background.officetel_bedroom
   variant_id: night
-purpose: 첫날 밤 한도윤이 윤서아, 차민경, 강유진의 외모와 함께하는 모습을 길게 상상하다 책을 펼치고, 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.
-cast: [han_do_yoon, dark_psychology_instructor]
+purpose: 첫날 밤 한도윤이 윤서아와 차민경의 외모와 함께하는 모습을 길게 상상하고 강유진까지 떠올린 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.
+cast: [han_do_yoon, yoon_seo_a, cha_min_kyung, kang_yoo_jin, dark_psychology_instructor]
 entry_conditions: []
 state_contract:
   reads: []
@@ -27,7 +27,11 @@ nodes:
 - id: do_yoon_wonders
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: default
   expression: actual_waiting_smile
   line: 서아씨는 웃는 모습이 정말 귀여웠어...
   next: seo_a_idol
@@ -35,7 +39,11 @@ nodes:
 - id: seo_a_idol
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: default
   expression: actual_waiting_smile
   line: 웬만한 아이돌 보다도 귀엽고 사랑스러웠어
   next: seo_a_brown
@@ -43,7 +51,11 @@ nodes:
 - id: seo_a_brown
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: default
   expression: actual_waiting_smile
   line: 그렇게까지 아름다운 갈색 눈 머리카락은 처음 봤어
   next: seo_a_pet
@@ -51,7 +63,11 @@ nodes:
 - id: seo_a_pet
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: default
   expression: actual_waiting_smile
   line: 쓰담 쓰담 쓰다듬어 보면
   next: seo_a_soft
@@ -59,7 +75,11 @@ nodes:
 - id: seo_a_soft
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: default
   expression: actual_waiting_smile
   line: 그 어떤 고양이의 털 보다도 부드러울거야
   next: seo_a_lovely
@@ -67,7 +87,11 @@ nodes:
 - id: seo_a_lovely
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: default
   expression: actual_waiting_smile
   line: 살아가며 스쳐지나간 누구보다도 귀엽고 사랑스러웠어
   next: seo_a_same_team
@@ -75,7 +99,11 @@ nodes:
 - id: seo_a_same_team
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: default
   expression: actual_waiting_smile
   line: 그런 여자랑 같은 회사 같은 팀이라니.. 거짓말 같아
   next: do_yoon_catches_himself
@@ -83,7 +111,11 @@ nodes:
 - id: do_yoon_catches_himself
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
   expression: actual_waiting_smile
   line: 민경씨는 차갑지만 미친듯이 아름다웠어..!
   next: min_kyung_actress
@@ -91,7 +123,11 @@ nodes:
 - id: min_kyung_actress
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
   expression: actual_waiting_smile
   line: 드라마나 영화에 나오는 여배우들 보다도 아름다워
   next: min_kyung_moles
@@ -99,7 +135,11 @@ nodes:
 - id: min_kyung_moles
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
   expression: actual_waiting_smile
   line: 얼굴과 목에 있는 점이 얼마만큼이나 매력적인지 민경씨 자신은 알고 있을까?
   next: min_kyung_eyes
@@ -107,7 +147,11 @@ nodes:
 - id: min_kyung_eyes
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
   expression: actual_waiting_smile
   line: 그 날카로우면서도 슬픈 듯한 눈을 볼 때마다 숨이 멎을 것만 같아..
   next: min_kyung_perfect
@@ -115,7 +159,11 @@ nodes:
 - id: min_kyung_perfect
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
   expression: actual_waiting_smile
   line: 이렇게까지 똑똑하고 아름다운 완벽한 여자는 정말 처음 봐
   next: min_kyung_walk
@@ -123,7 +171,11 @@ nodes:
 - id: min_kyung_walk
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
   expression: actual_waiting_smile
   line: 저런 여자와 함께 길을 걸으면 어떤 느낌일까?
   next: min_kyung_boyfriend
@@ -131,7 +183,11 @@ nodes:
 - id: min_kyung_boyfriend
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
   expression: actual_waiting_smile
   line: 분명 잘생기고 키 크고 몸 좋은 부자 남자친구가 있겠지?
   next: min_kyung_lonely
@@ -139,7 +195,11 @@ nodes:
 - id: min_kyung_lonely
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
   expression: actual_waiting_smile
   line: 아니야 일밖에 모르는 바보라서 오히려 외롭게 지낼 수도 있어..
   next: min_kyung_comfort
@@ -147,7 +207,11 @@ nodes:
 - id: min_kyung_comfort
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
   expression: actual_waiting_smile
   line: 그 외로움을 달래주는 한 남자가 되고 싶다
   next: yoo_jin_bright
@@ -155,49 +219,25 @@ nodes:
 - id: yoo_jin_bright
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: kang_yoo_jin
+    visual_id: character.kang_yoo_jin
+    artwork: default
   expression: actual_waiting_smile
-  line: 유진씨는 정말 밝고 화려했어.
-  next: yoo_jin_ponytail
-
-- id: yoo_jin_ponytail
-  kind: dialogue
-  speaker: han_do_yoon
-  stage: []
-  expression: actual_waiting_smile
-  line: 높은 포니테일과 커다란 눈이 미친듯이 잘 어울렸어.
-  next: yoo_jin_lanyard
-
-- id: yoo_jin_lanyard
-  kind: dialogue
-  speaker: han_do_yoon
-  stage: []
-  expression: actual_waiting_smile
-  line: 웃을 때마다 파란 사원증 줄까지 같이 흔들렸지.
-  next: yoo_jin_beautiful
-
-- id: yoo_jin_beautiful
-  kind: dialogue
-  speaker: han_do_yoon
-  stage: []
-  expression: actual_waiting_smile
-  line: 말도 행동도 그렇게 정신없는데 어떻게 저렇게 아름다울 수가 있는 거야?
+  line: 차 대리의 동기랬지? 회사에서 유명한 발랄 초미녀!
   next: yoo_jin_fun
 
 - id: yoo_jin_fun
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: center
+    character: kang_yoo_jin
+    visual_id: character.kang_yoo_jin
+    artwork: default
   expression: actual_waiting_smile
-  line: 유진씨와 함께 있으면 하루 종일 웃다가 정신없이 지나갈 것 같아.
-  next: yoo_jin_coffee
-
-- id: yoo_jin_coffee
-  kind: dialogue
-  speaker: han_do_yoon
-  stage: []
-  expression: actual_waiting_smile
-  line: 그런 초미녀가 먼저 커피 이야기를 꺼내다니... 오늘은 정말 믿을 수 없는 하루였어.
+  line: 그리고 에너지가 넘치는 유진 씨까지.
   next: reaches_for_book
 
 - id: reaches_for_book
@@ -209,7 +249,19 @@ nodes:
 - id: do_yoon_hopes
   kind: dialogue
   speaker: han_do_yoon
-  stage: []
+  stage:
+  - position: left
+    character: yoon_seo_a
+    visual_id: character.yoon_seo_a
+    artwork: default
+  - position: center
+    character: cha_min_kyung
+    visual_id: character.cha_min_kyung
+    artwork: default
+  - position: right
+    character: kang_yoo_jin
+    visual_id: character.kang_yoo_jin
+    artwork: default
   expression: actual_waiting_smile
   line: 정말 굉장한 여자들과 프로젝트를 시작하게 됐구나.
   next: instructor_appears

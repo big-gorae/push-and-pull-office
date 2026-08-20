@@ -1,20 +1,20 @@
 {
   "schema_version": 2,
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "7fbdd0c3cd993290b3282581f784827c84be97b097282bdf60f0082d35ee4013",
+  "source_sha256": "dc5c4415f5ba53445c0bc0303bbbab91fe887f1cf96cac57415d3540f23ca03e",
   "profile": "development",
   "default_locale": "ko",
   "supported_locales": [
     "ko",
     "en"
   ],
-  "total_entries": 1048,
+  "total_entries": 1044,
   "coverage": {
     "ko": {
-      "direct": 1048,
-      "resolved": 1048,
-      "translated": 1048,
-      "total": 1048,
+      "direct": 1044,
+      "resolved": 1044,
+      "translated": 1044,
+      "total": 1044,
       "ratio": 1.0,
       "fallback_used": [],
       "missing": [],
@@ -51,8 +51,8 @@
           "total": 8
         },
         "scene": {
-          "direct": 606,
-          "total": 606
+          "direct": 602,
+          "total": 602
         },
         "system_flow": {
           "direct": 23,
@@ -74,10 +74,10 @@
     },
     "en": {
       "direct": 275,
-      "resolved": 1048,
+      "resolved": 1044,
       "translated": 275,
-      "total": 1048,
-      "ratio": 0.2624,
+      "total": 1044,
+      "ratio": 0.2634,
       "fallback_used": [
         "campaign.main.acts.collisions.purpose",
         "campaign.main.acts.crisis.purpose",
@@ -432,12 +432,8 @@
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_pet.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_same_team.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_soft.line",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_beautiful.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_coffee.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_lanyard.line",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_ponytail.line",
         "scenes.common.day_01_dark_psychology_lesson.purpose",
         "scenes.common.day_01_dark_psychology_lesson.title",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line",
@@ -1207,12 +1203,8 @@
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_pet.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_same_team.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_soft.line",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_beautiful.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_coffee.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_lanyard.line",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_ponytail.line",
         "scenes.common.day_01_dark_psychology_lesson.purpose",
         "scenes.common.day_01_dark_psychology_lesson.title",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line",
@@ -1662,7 +1654,7 @@
         },
         "scene": {
           "direct": 15,
-          "total": 606
+          "total": 602
         },
         "system_flow": {
           "direct": 23,
@@ -1756,15 +1748,15 @@
     },
     "common.day_01_dark_psychology_lesson": {
       "ko": {
-        "total": 50,
-        "direct": 50,
+        "total": 46,
+        "direct": 46,
         "fallback": 0,
         "missing": 0
       },
       "en": {
-        "total": 50,
+        "total": 46,
         "direct": 0,
-        "fallback": 50,
+        "fallback": 46,
         "missing": 0
       }
     },
@@ -2036,8 +2028,8 @@
     }
   },
   "authoring_coverage": {
-    "narrative_text_units": 579,
-    "editable_units": 579,
+    "narrative_text_units": 575,
+    "editable_units": 575,
     "missing_editor_target": [],
     "generated_only": 0,
     "multiple_source_owners": 0,

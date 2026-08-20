@@ -53,7 +53,7 @@ Use this precedence:
 
 Plan the scene privately as beats: entrance, information change, reaction, relationship beat, exit. Then run the following cycle separately for every speaking character before writing the final script.
 
-1. **Generate**: when available, select two to four functionally similar user-approved golden lines and make a provisional semantic version that contains only what the character must notice, feel, say, or do. Do not copy the golden wording. If fewer than two approved lines exist, use every available approved line plus the user's current explicit direction; do not invent missing evidence or treat the new draft as an approved voice standard.
+1. **Generate**: when available, select two to four functionally similar user-approved golden lines and make a provisional semantic version that contains only what the character must notice, feel, say, or do. Do not copy the golden wording. If fewer than two functionally similar approved lines exist, treat that dialogue function as evidence-poor even when the character has many unrelated goldens. Draft mode may offer clearly labeled provisional candidates for user approval. Apply and Evolve modes must not save a newly model-authored line for that function as final dialogue: use the user's exact wording, make an intentional callback to an existing approved line, or omit the unsupported expansion and report which function-specific golden is missing.
 2. **Delete**: remove expressions that conflict with the character profile, the selected golden samples, or that character's recorded rejection cases. Delete outline language, system explanations, balanced summary sentences, generic relationship abstractions, and prose that merely restates the scene purpose when those patterns are not supported by the character's approved voice.
 3. **Rewrite**: rebuild the line in the character's approved vocabulary, rhythm, sentence endings, hesitation, reaction order, and current emotional state. The rewritten line must sound character-specific even without its speaker label.
 4. **Score**: read references/voice-quality-rubric.md and score the rewritten result. A line that fails a hard gate is discarded regardless of score. Rewrite until every speaking main character passes the required score.
@@ -71,6 +71,7 @@ Keep provisional semantic versions, deletion notes, comparison samples, and scor
 - When the dark psychology instructor appears, ground every new line in the approved `강사님 첫 등장 골든`. Preserve his advertising-style callout, self-answering showmanship, elongated tildes and exclamations, inflated credentials, and abrupt certainty; delete calm manual prose before scoring.
 - Keep text-only coworkers factual and present when the meeting policy requires them.
 - Treat every model-authored line as provisional. Never promote a line to a golden sample or voice.reference_lines in the same task that generated it unless the user explicitly approves that exact line.
+- Preserve every user-authored desired line in the full baseline corpus with its speaker, scene context, dialogue function, and emotional state. Do not copy the whole corpus into `voice.reference_lines`; keep that field curated to the most representative 3–8 lines.
 
 ## Draft mode
 
@@ -106,7 +107,7 @@ Return a clean script by default:
 Treat user-edited or explicitly approved dialogue as new evidence, not as an automatic replacement for every prior rule.
 
 1. Preserve the approved wording except for confirmed typos, broken markup, and world-bible corrections.
-2. Add full approved scene samples to an appropriate docs/dialogue-voice-baseline-*.md file. Only user-authored lines or exact lines explicitly approved by the user qualify as golden samples.
+2. Add every user-authored desired line and every exact line explicitly approved by the user to an appropriate docs/dialogue-voice-baseline-*.md file. Preserve its speaker, scene context, dialogue function, and emotional state so later generation can retrieve functionally similar evidence.
 3. When the user rejects a line, record its original wording, context, rejection reason, and reusable failure pattern in docs/dialogue-voice-rejections.md. Do not turn one rejection into a universal ban for unrelated characters or contexts.
 4. Update character voice.register, habits, and forbidden only when the correction demonstrates a reusable pattern.
 5. Keep voice.reference_lines small and representative. Prefer 3–8 lines per character, each with a distinct context.

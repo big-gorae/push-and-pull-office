@@ -10,6 +10,7 @@ Fail the scene until all conditions pass:
 - Company, team, role, schedule, project, and meeting claims match story/world/.
 - No character violates a declared voice.forbidden rule without an explicit story reason.
 - Every speaking character was checked against functionally similar user-approved golden samples and that character's relevant entries in docs/dialogue-voice-rejections.md when the registry exists.
+- In Apply or Evolve mode, no newly model-authored line is saved as final dialogue when its speaker has fewer than two functionally similar approved goldens and the user has not approved that exact wording. Only exact user wording, an intentional approved callback, or omission of the unsupported beat may pass.
 - No dialogue line merely restates the scene purpose, game system, choice structure, relationship strategy, or authorial intent unless that form is supported by an approved golden sample for the speaker.
 - No rejected line or reusable failure pattern returns with superficial synonym changes.
 - No line authored by Codex in the current task is treated as a golden sample or voice.reference_lines without explicit user approval of that exact wording.
@@ -40,7 +41,7 @@ Score each speaking main character from 0 to 2 on each axis:
 
 Require at least 8/10 for each main character, with no axis scored 0. Hard-gate failures cannot be offset by a higher total. Rewrite the weakest lines before returning or applying the scene.
 
-When a speaker has fewer than two approved golden lines, a draft may pass using the user's current explicit direction as limited evidence, but it remains provisional. Do not promote it or use it as future evidence until the user approves the exact wording.
+When a speaker has fewer than two functionally similar approved golden lines, Draft mode may pass using the user's current explicit direction as limited evidence, but the result must be labeled provisional. Apply and Evolve modes may not save that model-authored candidate as final dialogue. Do not promote it or use it as future evidence until the user approves the exact wording.
 
 ## Drift tests
 
