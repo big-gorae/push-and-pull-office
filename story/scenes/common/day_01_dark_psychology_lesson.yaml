@@ -9,7 +9,7 @@ time: night
 default_background:
   visual_id: background.officetel_bedroom
   variant_id: night
-purpose: 첫날 밤 한도윤이 윤서아와 차민경의 외모와 함께하는 모습을 길게 상상하고 강유진까지 떠올린 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.
+purpose: 첫날 밤 한도윤이 윤서아, 차민경, 강유진의 외모와 함께하는 모습을 길게 상상한 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.
 cast: [han_do_yoon, yoon_seo_a, cha_min_kyung, kang_yoo_jin, dark_psychology_instructor]
 entry_conditions: []
 state_contract:
@@ -225,7 +225,67 @@ nodes:
     visual_id: character.kang_yoo_jin
     artwork: default
   expression: actual_waiting_smile
-  line: 차 대리의 동기랬지? 회사에서 유명한 발랄 초미녀!
+  line: 유진씨는 햇님처럼 이쁘게 웃었어
+  next: yoo_jin_smile_reaches_anyone
+
+- id: yoo_jin_smile_reaches_anyone
+  kind: dialogue
+  speaker: han_do_yoon
+  stage:
+  - position: center
+    character: kang_yoo_jin
+    visual_id: character.kang_yoo_jin
+    artwork: default
+  expression: actual_waiting_smile
+  line: 유진씨랑 함께한다면 우울증에 걸려 방에만 있는 사람조차 환하게 웃고 말거야
+  next: yoo_jin_loved_family
+
+- id: yoo_jin_loved_family
+  kind: dialogue
+  speaker: han_do_yoon
+  stage:
+  - position: center
+    character: kang_yoo_jin
+    visual_id: character.kang_yoo_jin
+    artwork: default
+  expression: actual_waiting_smile
+  line: 분명 가족들에게 무한한 사랑을 받고 자랐겠지?
+  next: yoo_jin_school_crushes
+
+- id: yoo_jin_school_crushes
+  kind: dialogue
+  speaker: han_do_yoon
+  stage:
+  - position: center
+    character: kang_yoo_jin
+    visual_id: character.kang_yoo_jin
+    artwork: default
+  expression: actual_waiting_smile
+  line: 모든 학교 남학생들이 몰래 유진씨를 짝사랑했을거야..
+  next: yoo_jin_boyfriend
+
+- id: yoo_jin_boyfriend
+  kind: dialogue
+  speaker: han_do_yoon
+  stage:
+  - position: center
+    character: kang_yoo_jin
+    visual_id: character.kang_yoo_jin
+    artwork: default
+  expression: actual_waiting_smile
+  line: 남자친구는.. 정말!
+  next: yoo_jin_boyfriend_happy
+
+- id: yoo_jin_boyfriend_happy
+  kind: dialogue
+  speaker: han_do_yoon
+  stage:
+  - position: center
+    character: kang_yoo_jin
+    visual_id: character.kang_yoo_jin
+    artwork: default
+  expression: actual_waiting_smile
+  line: 맨날 맨날 죽을만큼 행복할거야..
   next: yoo_jin_fun
 
 - id: yoo_jin_fun
@@ -237,7 +297,7 @@ nodes:
     visual_id: character.kang_yoo_jin
     artwork: default
   expression: actual_waiting_smile
-  line: 그리고 에너지가 넘치는 유진 씨까지.
+  line: 나쁜 놈.. 부럽다..!!!
   next: reaches_for_book
 
 - id: reaches_for_book

@@ -454,8 +454,13 @@ class StoryHarnessTests(unittest.TestCase):
         for heroine_line in (
             "서아씨는 웃는 모습이 정말 귀여웠어...",
             "민경씨는 차갑지만 미친듯이 아름다웠어..!",
-            "차 대리의 동기랬지? 회사에서 유명한 발랄 초미녀!",
-            "그리고 에너지가 넘치는 유진 씨까지.",
+            "유진씨는 햇님처럼 이쁘게 웃었어",
+            "유진씨랑 함께한다면 우울증에 걸려 방에만 있는 사람조차 환하게 웃고 말거야",
+            "분명 가족들에게 무한한 사랑을 받고 자랐겠지?",
+            "모든 학교 남학생들이 몰래 유진씨를 짝사랑했을거야..",
+            "남자친구는.. 정말!",
+            "맨날 맨날 죽을만큼 행복할거야..",
+            "나쁜 놈.. 부럽다..!!!",
         ):
             self.assertIn(heroine_line, day_one_lines)
         for rejected_line in (
@@ -486,7 +491,15 @@ class StoryHarnessTests(unittest.TestCase):
                 "min_kyung_lonely",
                 "min_kyung_comfort",
             ),
-            "kang_yoo_jin": ("yoo_jin_bright", "yoo_jin_fun"),
+            "kang_yoo_jin": (
+                "yoo_jin_bright",
+                "yoo_jin_smile_reaches_anyone",
+                "yoo_jin_loved_family",
+                "yoo_jin_school_crushes",
+                "yoo_jin_boyfriend",
+                "yoo_jin_boyfriend_happy",
+                "yoo_jin_fun",
+            ),
         }
         for heroine_id, node_ids in recall_nodes.items():
             for node_id in node_ids:

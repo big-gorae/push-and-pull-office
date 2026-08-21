@@ -1,20 +1,20 @@
 {
   "schema_version": 2,
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "465ad0688197ce1878e897bcaf4435bddcf96416dfe7325b7460abb291f17acf",
+  "source_sha256": "4fc2a7b6bdc1972e34c81c3d15ca0736e832b10a60781da1ea5f5ecfe403b8ae",
   "profile": "development",
   "default_locale": "ko",
   "supported_locales": [
     "ko",
     "en"
   ],
-  "total_entries": 1044,
+  "total_entries": 1049,
   "coverage": {
     "ko": {
-      "direct": 1044,
-      "resolved": 1044,
-      "translated": 1044,
-      "total": 1044,
+      "direct": 1049,
+      "resolved": 1049,
+      "translated": 1049,
+      "total": 1049,
       "ratio": 1.0,
       "fallback_used": [],
       "missing": [],
@@ -51,8 +51,8 @@
           "total": 8
         },
         "scene": {
-          "direct": 602,
-          "total": 602
+          "direct": 607,
+          "total": 607
         },
         "system_flow": {
           "direct": 23,
@@ -74,10 +74,10 @@
     },
     "en": {
       "direct": 275,
-      "resolved": 1044,
+      "resolved": 1049,
       "translated": 275,
-      "total": 1044,
-      "ratio": 0.2634,
+      "total": 1049,
+      "ratio": 0.2622,
       "fallback_used": [
         "campaign.main.acts.collisions.purpose",
         "campaign.main.acts.crisis.purpose",
@@ -432,8 +432,13 @@
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_pet.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_same_team.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_soft.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend_happy.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_loved_family.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_school_crushes.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_smile_reaches_anyone.line",
         "scenes.common.day_01_dark_psychology_lesson.purpose",
         "scenes.common.day_01_dark_psychology_lesson.title",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line",
@@ -1203,8 +1208,13 @@
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_pet.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_same_team.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_soft.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend_happy.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line",
         "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_loved_family.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_school_crushes.line",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_smile_reaches_anyone.line",
         "scenes.common.day_01_dark_psychology_lesson.purpose",
         "scenes.common.day_01_dark_psychology_lesson.title",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line",
@@ -1654,7 +1664,7 @@
         },
         "scene": {
           "direct": 15,
-          "total": 602
+          "total": 607
         },
         "system_flow": {
           "direct": 23,
@@ -1748,15 +1758,15 @@
     },
     "common.day_01_dark_psychology_lesson": {
       "ko": {
-        "total": 46,
-        "direct": 46,
+        "total": 51,
+        "direct": 51,
         "fallback": 0,
         "missing": 0
       },
       "en": {
-        "total": 46,
+        "total": 51,
         "direct": 0,
-        "fallback": 46,
+        "fallback": 51,
         "missing": 0
       }
     },
@@ -2028,8 +2038,8 @@
     }
   },
   "authoring_coverage": {
-    "narrative_text_units": 575,
-    "editable_units": 575,
+    "narrative_text_units": 580,
+    "editable_units": 580,
     "missing_editor_target": [],
     "generated_only": 0,
     "multiple_source_owners": 0,

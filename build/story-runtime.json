@@ -10,7 +10,7 @@
     ]
   },
   "generated_at": "1970-01-01T00:00:00+00:00",
-  "source_sha256": "465ad0688197ce1878e897bcaf4435bddcf96416dfe7325b7460abb291f17acf",
+  "source_sha256": "4fc2a7b6bdc1972e34c81c3d15ca0736e832b10a60781da1ea5f5ecfe403b8ae",
   "enums": {
     "time_slot": [
       "morning",
@@ -9995,9 +9995,47 @@
         "multiline": false,
         "maxLength": 320
       },
+      "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend.line": {
+        "key": "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend.line",
+        "source": "남자친구는.. 정말!",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_dark_psychology_lesson",
+          "path": "story/scenes/common/day_01_dark_psychology_lesson.yaml",
+          "fieldPath": "nodes.yoo_jin_boyfriend.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_dark_psychology_lesson",
+          "nodeId": "yoo_jin_boyfriend",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend_happy.line": {
+        "key": "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend_happy.line",
+        "source": "맨날 맨날 죽을만큼 행복할거야..",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_dark_psychology_lesson",
+          "path": "story/scenes/common/day_01_dark_psychology_lesson.yaml",
+          "fieldPath": "nodes.yoo_jin_boyfriend_happy.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_dark_psychology_lesson",
+          "nodeId": "yoo_jin_boyfriend_happy",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
       "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line": {
         "key": "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line",
-        "source": "차 대리의 동기랬지? 회사에서 유명한 발랄 초미녀!",
+        "source": "유진씨는 햇님처럼 이쁘게 웃었어",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -10016,7 +10054,7 @@
       },
       "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line": {
         "key": "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line",
-        "source": "그리고 에너지가 넘치는 유진 씨까지.",
+        "source": "나쁜 놈.. 부럽다..!!!",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -10033,9 +10071,66 @@
         "multiline": false,
         "maxLength": 320
       },
+      "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_loved_family.line": {
+        "key": "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_loved_family.line",
+        "source": "분명 가족들에게 무한한 사랑을 받고 자랐겠지?",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_dark_psychology_lesson",
+          "path": "story/scenes/common/day_01_dark_psychology_lesson.yaml",
+          "fieldPath": "nodes.yoo_jin_loved_family.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_dark_psychology_lesson",
+          "nodeId": "yoo_jin_loved_family",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_school_crushes.line": {
+        "key": "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_school_crushes.line",
+        "source": "모든 학교 남학생들이 몰래 유진씨를 짝사랑했을거야..",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_dark_psychology_lesson",
+          "path": "story/scenes/common/day_01_dark_psychology_lesson.yaml",
+          "fieldPath": "nodes.yoo_jin_school_crushes.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_dark_psychology_lesson",
+          "nodeId": "yoo_jin_school_crushes",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
+      "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_smile_reaches_anyone.line": {
+        "key": "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_smile_reaches_anyone.line",
+        "source": "유진씨랑 함께한다면 우울증에 걸려 방에만 있는 사람조차 환하게 웃고 말거야",
+        "domain": "scene",
+        "sourceDocument": {
+          "kind": "scene",
+          "id": "common.day_01_dark_psychology_lesson",
+          "path": "story/scenes/common/day_01_dark_psychology_lesson.yaml",
+          "fieldPath": "nodes.yoo_jin_smile_reaches_anyone.line"
+        },
+        "context": {
+          "sceneId": "common.day_01_dark_psychology_lesson",
+          "nodeId": "yoo_jin_smile_reaches_anyone",
+          "speakerId": "han_do_yoon"
+        },
+        "placeholders": [],
+        "multiline": false,
+        "maxLength": 320
+      },
       "scenes.common.day_01_dark_psychology_lesson.purpose": {
         "key": "scenes.common.day_01_dark_psychology_lesson.purpose",
-        "source": "첫날 밤 한도윤이 윤서아와 차민경의 외모와 함께하는 모습을 길게 상상하고 강유진까지 떠올린 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.",
+        "source": "첫날 밤 한도윤이 윤서아, 차민경, 강유진의 외모와 함께하는 모습을 길게 상상한 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.",
         "domain": "scene",
         "sourceDocument": {
           "kind": "scene",
@@ -19823,9 +19918,14 @@
       "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_pet.line": "쓰담 쓰담 쓰다듬어 보면",
       "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_same_team.line": "그런 여자랑 같은 회사 같은 팀이라니.. 거짓말 같아",
       "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_soft.line": "그 어떤 고양이의 털 보다도 부드러울거야",
-      "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line": "차 대리의 동기랬지? 회사에서 유명한 발랄 초미녀!",
-      "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line": "그리고 에너지가 넘치는 유진 씨까지.",
-      "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 윤서아와 차민경의 외모와 함께하는 모습을 길게 상상하고 강유진까지 떠올린 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend.line": "남자친구는.. 정말!",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend_happy.line": "맨날 맨날 죽을만큼 행복할거야..",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line": "유진씨는 햇님처럼 이쁘게 웃었어",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line": "나쁜 놈.. 부럽다..!!!",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_loved_family.line": "분명 가족들에게 무한한 사랑을 받고 자랐겠지?",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_school_crushes.line": "모든 학교 남학생들이 몰래 유진씨를 짝사랑했을거야..",
+      "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_smile_reaches_anyone.line": "유진씨랑 함께한다면 우울증에 걸려 방에만 있는 사람조차 환하게 웃고 말거야",
+      "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 윤서아, 차민경, 강유진의 외모와 함께하는 모습을 길게 상상한 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.",
       "scenes.common.day_01_dark_psychology_lesson.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
       "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line": "통화가 끝나자 방 안이 다시 조용해졌다.",
       "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_accepts_time.line": "(언제까지 이럴 수는 없지.)",
@@ -20870,9 +20970,14 @@
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_pet.line": "쓰담 쓰담 쓰다듬어 보면",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_same_team.line": "그런 여자랑 같은 회사 같은 팀이라니.. 거짓말 같아",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_soft.line": "그 어떤 고양이의 털 보다도 부드러울거야",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line": "차 대리의 동기랬지? 회사에서 유명한 발랄 초미녀!",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line": "그리고 에너지가 넘치는 유진 씨까지.",
-        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 윤서아와 차민경의 외모와 함께하는 모습을 길게 상상하고 강유진까지 떠올린 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend.line": "남자친구는.. 정말!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend_happy.line": "맨날 맨날 죽을만큼 행복할거야..",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line": "유진씨는 햇님처럼 이쁘게 웃었어",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line": "나쁜 놈.. 부럽다..!!!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_loved_family.line": "분명 가족들에게 무한한 사랑을 받고 자랐겠지?",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_school_crushes.line": "모든 학교 남학생들이 몰래 유진씨를 짝사랑했을거야..",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_smile_reaches_anyone.line": "유진씨랑 함께한다면 우울증에 걸려 방에만 있는 사람조차 환하게 웃고 말거야",
+        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 윤서아, 차민경, 강유진의 외모와 함께하는 모습을 길게 상상한 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.",
         "scenes.common.day_01_dark_psychology_lesson.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line": "통화가 끝나자 방 안이 다시 조용해졌다.",
         "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_accepts_time.line": "(언제까지 이럴 수는 없지.)",
@@ -21916,9 +22021,14 @@
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_pet.line": "쓰담 쓰담 쓰다듬어 보면",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_same_team.line": "그런 여자랑 같은 회사 같은 팀이라니.. 거짓말 같아",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_soft.line": "그 어떤 고양이의 털 보다도 부드러울거야",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line": "차 대리의 동기랬지? 회사에서 유명한 발랄 초미녀!",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line": "그리고 에너지가 넘치는 유진 씨까지.",
-        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 윤서아와 차민경의 외모와 함께하는 모습을 길게 상상하고 강유진까지 떠올린 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend.line": "남자친구는.. 정말!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend_happy.line": "맨날 맨날 죽을만큼 행복할거야..",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line": "유진씨는 햇님처럼 이쁘게 웃었어",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line": "나쁜 놈.. 부럽다..!!!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_loved_family.line": "분명 가족들에게 무한한 사랑을 받고 자랐겠지?",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_school_crushes.line": "모든 학교 남학생들이 몰래 유진씨를 짝사랑했을거야..",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_smile_reaches_anyone.line": "유진씨랑 함께한다면 우울증에 걸려 방에만 있는 사람조차 환하게 웃고 말거야",
+        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 윤서아, 차민경, 강유진의 외모와 함께하는 모습을 길게 상상한 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.",
         "scenes.common.day_01_dark_psychology_lesson.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line": "통화가 끝나자 방 안이 다시 조용해졌다.",
         "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_accepts_time.line": "(언제까지 이럴 수는 없지.)",
@@ -23246,9 +23356,14 @@
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_pet.line": "쓰담 쓰담 쓰다듬어 보면",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_same_team.line": "그런 여자랑 같은 회사 같은 팀이라니.. 거짓말 같아",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_soft.line": "그 어떤 고양이의 털 보다도 부드러울거야",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line": "차 대리의 동기랬지? 회사에서 유명한 발랄 초미녀!",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line": "그리고 에너지가 넘치는 유진 씨까지.",
-        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 윤서아와 차민경의 외모와 함께하는 모습을 길게 상상하고 강유진까지 떠올린 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend.line": "남자친구는.. 정말!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend_happy.line": "맨날 맨날 죽을만큼 행복할거야..",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line": "유진씨는 햇님처럼 이쁘게 웃었어",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line": "나쁜 놈.. 부럽다..!!!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_loved_family.line": "분명 가족들에게 무한한 사랑을 받고 자랐겠지?",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_school_crushes.line": "모든 학교 남학생들이 몰래 유진씨를 짝사랑했을거야..",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_smile_reaches_anyone.line": "유진씨랑 함께한다면 우울증에 걸려 방에만 있는 사람조차 환하게 웃고 말거야",
+        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 윤서아, 차민경, 강유진의 외모와 함께하는 모습을 길게 상상한 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.",
         "scenes.common.day_01_dark_psychology_lesson.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line": "통화가 끝나자 방 안이 다시 조용해졌다.",
         "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_accepts_time.line": "(언제까지 이럴 수는 없지.)",
@@ -24292,9 +24407,14 @@
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_pet.line": "쓰담 쓰담 쓰다듬어 보면",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_same_team.line": "그런 여자랑 같은 회사 같은 팀이라니.. 거짓말 같아",
         "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_soft.line": "그 어떤 고양이의 털 보다도 부드러울거야",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line": "차 대리의 동기랬지? 회사에서 유명한 발랄 초미녀!",
-        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line": "그리고 에너지가 넘치는 유진 씨까지.",
-        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 윤서아와 차민경의 외모와 함께하는 모습을 길게 상상하고 강유진까지 떠올린 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend.line": "남자친구는.. 정말!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend_happy.line": "맨날 맨날 죽을만큼 행복할거야..",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line": "유진씨는 햇님처럼 이쁘게 웃었어",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line": "나쁜 놈.. 부럽다..!!!",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_loved_family.line": "분명 가족들에게 무한한 사랑을 받고 자랐겠지?",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_school_crushes.line": "모든 학교 남학생들이 몰래 유진씨를 짝사랑했을거야..",
+        "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_smile_reaches_anyone.line": "유진씨랑 함께한다면 우울증에 걸려 방에만 있는 사람조차 환하게 웃고 말거야",
+        "scenes.common.day_01_dark_psychology_lesson.purpose": "첫날 밤 한도윤이 윤서아, 차민경, 강유진의 외모와 함께하는 모습을 길게 상상한 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.",
         "scenes.common.day_01_dark_psychology_lesson.title": "2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙",
         "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line": "통화가 끝나자 방 안이 다시 조용해졌다.",
         "scenes.common.day_01_dream_and_mother_call.nodes.do_yoon_accepts_time.line": "(언제까지 이럴 수는 없지.)",
@@ -24804,10 +24924,10 @@
     },
     "coverage": {
       "ko": {
-        "direct": 1044,
-        "resolved": 1044,
-        "translated": 1044,
-        "total": 1044,
+        "direct": 1049,
+        "resolved": 1049,
+        "translated": 1049,
+        "total": 1049,
         "ratio": 1.0,
         "fallback_used": [],
         "missing": [],
@@ -24844,8 +24964,8 @@
             "total": 8
           },
           "scene": {
-            "direct": 602,
-            "total": 602
+            "direct": 607,
+            "total": 607
           },
           "system_flow": {
             "direct": 23,
@@ -24867,10 +24987,10 @@
       },
       "en": {
         "direct": 275,
-        "resolved": 1044,
+        "resolved": 1049,
         "translated": 275,
-        "total": 1044,
-        "ratio": 0.2634,
+        "total": 1049,
+        "ratio": 0.2622,
         "fallback_used": [
           "campaign.main.acts.collisions.purpose",
           "campaign.main.acts.crisis.purpose",
@@ -25225,8 +25345,13 @@
           "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_pet.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_same_team.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_soft.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend_happy.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_loved_family.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_school_crushes.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_smile_reaches_anyone.line",
           "scenes.common.day_01_dark_psychology_lesson.purpose",
           "scenes.common.day_01_dark_psychology_lesson.title",
           "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line",
@@ -25996,8 +26121,13 @@
           "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_pet.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_same_team.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.seo_a_soft.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_boyfriend_happy.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_bright.line",
           "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_fun.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_loved_family.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_school_crushes.line",
+          "scenes.common.day_01_dark_psychology_lesson.nodes.yoo_jin_smile_reaches_anyone.line",
           "scenes.common.day_01_dark_psychology_lesson.purpose",
           "scenes.common.day_01_dark_psychology_lesson.title",
           "scenes.common.day_01_dream_and_mother_call.nodes.call_ends.line",
@@ -26447,7 +26577,7 @@
           },
           "scene": {
             "direct": 15,
-            "total": 602
+            "total": 607
           },
           "system_flow": {
             "direct": 23,
@@ -32675,7 +32805,7 @@
         "visual_id": "background.officetel_bedroom",
         "variant_id": "night"
       },
-      "purpose": "첫날 밤 한도윤이 윤서아와 차민경의 외모와 함께하는 모습을 길게 상상하고 강유진까지 떠올린 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.",
+      "purpose": "첫날 밤 한도윤이 윤서아, 차민경, 강유진의 외모와 함께하는 모습을 길게 상상한 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.",
       "cast": [
         "han_do_yoon",
         "yoon_seo_a",
@@ -32710,6 +32840,11 @@
         "min_kyung_lonely",
         "min_kyung_comfort",
         "yoo_jin_bright",
+        "yoo_jin_smile_reaches_anyone",
+        "yoo_jin_loved_family",
+        "yoo_jin_school_crushes",
+        "yoo_jin_boyfriend",
+        "yoo_jin_boyfriend_happy",
         "yoo_jin_fun",
         "reaches_for_book",
         "do_yoon_hopes",
@@ -33013,7 +33148,87 @@
             }
           ],
           "expression": "actual_waiting_smile",
-          "line": "차 대리의 동기랬지? 회사에서 유명한 발랄 초미녀!",
+          "line": "유진씨는 햇님처럼 이쁘게 웃었어",
+          "next": "yoo_jin_smile_reaches_anyone"
+        },
+        "yoo_jin_smile_reaches_anyone": {
+          "id": "yoo_jin_smile_reaches_anyone",
+          "kind": "dialogue",
+          "speaker": "han_do_yoon",
+          "stage": [
+            {
+              "position": "center",
+              "character": "kang_yoo_jin",
+              "visual_id": "character.kang_yoo_jin",
+              "artwork": "default"
+            }
+          ],
+          "expression": "actual_waiting_smile",
+          "line": "유진씨랑 함께한다면 우울증에 걸려 방에만 있는 사람조차 환하게 웃고 말거야",
+          "next": "yoo_jin_loved_family"
+        },
+        "yoo_jin_loved_family": {
+          "id": "yoo_jin_loved_family",
+          "kind": "dialogue",
+          "speaker": "han_do_yoon",
+          "stage": [
+            {
+              "position": "center",
+              "character": "kang_yoo_jin",
+              "visual_id": "character.kang_yoo_jin",
+              "artwork": "default"
+            }
+          ],
+          "expression": "actual_waiting_smile",
+          "line": "분명 가족들에게 무한한 사랑을 받고 자랐겠지?",
+          "next": "yoo_jin_school_crushes"
+        },
+        "yoo_jin_school_crushes": {
+          "id": "yoo_jin_school_crushes",
+          "kind": "dialogue",
+          "speaker": "han_do_yoon",
+          "stage": [
+            {
+              "position": "center",
+              "character": "kang_yoo_jin",
+              "visual_id": "character.kang_yoo_jin",
+              "artwork": "default"
+            }
+          ],
+          "expression": "actual_waiting_smile",
+          "line": "모든 학교 남학생들이 몰래 유진씨를 짝사랑했을거야..",
+          "next": "yoo_jin_boyfriend"
+        },
+        "yoo_jin_boyfriend": {
+          "id": "yoo_jin_boyfriend",
+          "kind": "dialogue",
+          "speaker": "han_do_yoon",
+          "stage": [
+            {
+              "position": "center",
+              "character": "kang_yoo_jin",
+              "visual_id": "character.kang_yoo_jin",
+              "artwork": "default"
+            }
+          ],
+          "expression": "actual_waiting_smile",
+          "line": "남자친구는.. 정말!",
+          "next": "yoo_jin_boyfriend_happy"
+        },
+        "yoo_jin_boyfriend_happy": {
+          "id": "yoo_jin_boyfriend_happy",
+          "kind": "dialogue",
+          "speaker": "han_do_yoon",
+          "stage": [
+            {
+              "position": "center",
+              "character": "kang_yoo_jin",
+              "visual_id": "character.kang_yoo_jin",
+              "artwork": "default"
+            }
+          ],
+          "expression": "actual_waiting_smile",
+          "line": "맨날 맨날 죽을만큼 행복할거야..",
           "next": "yoo_jin_fun"
         },
         "yoo_jin_fun": {
@@ -33029,7 +33244,7 @@
             }
           ],
           "expression": "actual_waiting_smile",
-          "line": "그리고 에너지가 넘치는 유진 씨까지.",
+          "line": "나쁜 놈.. 부럽다..!!!",
           "next": "reaches_for_book"
         },
         "reaches_for_book": {
