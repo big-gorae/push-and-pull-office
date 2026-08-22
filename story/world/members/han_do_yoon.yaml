@@ -2,8 +2,8 @@ schema_version: 1
 id: member.han_do_yoon
 kind: member
 company: company.dawon_living
-name: 한도윤
-display_name: 한도윤
+name: 서정우
+display_name: 서정우
 team: team.sales_planning
 role: role.manager
 title: 과장

@@ -1,7 +1,7 @@
 schema_version: 1
 campaign_id: main
 id: anchor.day_02_practical_meeting
-title: 첫 실무 회의와 서아의 발표 실수
+title: 첫 실무 회의와 은솔의 발표 실수
 type: anchor
 lane: company
 window: {days: [2, 2], slots: [morning], deadline_day: 2}
@@ -23,4 +23,4 @@ on_seen:
 on_missed: {effects: []}
 presentation:
   title: 발표 파일 실수를 수습한 회의
-  summary: 서아는 발표 실수를 도와준 한도윤에게 실제 고마움과 인간적 호감을 표현한다. 민경은 안건을 업무 문제로 돌리고, 유진은 파일 버전과 교체 시각을 기록한다.
+  summary: 은솔은 발표 실수를 도와준 서정우에게 실제 고마움과 인간적 호감을 표현한다. 민경은 안건을 업무 문제로 돌리고, 나경은 파일 버전과 교체 시각을 기록한다.

@@ -6,7 +6,7 @@ chapter: 1
 sequence: 5
 location: officetel_unit_corridor
 time: evening
-purpose: 금요일 저녁 같은 오피스텔로 이사 온 차민경이 이사떡을 돌리다 한도윤과 단둘이 마주치고, 한도윤은 업무 밖의 편한 모습과 입주민으로서의 호의를 운명적인 연결로 받아들인다.
+purpose: 금요일 저녁 같은 오피스텔로 이사 온 차민경이 이사떡을 돌리다 서정우와 단둘이 마주치고, 서정우는 업무 밖의 편한 모습과 입주민으로서의 호의를 운명적인 연결로 받아들인다.
 cast: [han_do_yoon, cha_min_kyung]
 entry_conditions: []
 state_contract:
@@ -16,12 +16,12 @@ start_node: knock_at_door
 nodes:
 - id: knock_at_door
   kind: narration
-  line: "금요일 저녁, 한도윤이 사는 오피스텔 현관문에 같은 층 새 입주자가 인사를 위해 노크했다."
+  line: "금요일 저녁, 서정우가 사는 오피스텔 현관문에 같은 층 새 입주자가 인사를 위해 노크했다."
   next: door_opens
 
 - id: door_opens
   kind: narration
-  line: "한도윤이 문을 열자, 편한 셔츠 차림의 차민경이 소포장 떡을 들고 서 있었다. 복도 한쪽에는 정리 중인 이삿짐 상자가 남아 있었다."
+  line: "서정우가 문을 열자, 편한 셔츠 차림의 차민경이 소포장 떡을 들고 서 있었다. 복도 한쪽에는 정리 중인 이삿짐 상자가 남아 있었다."
   next: min_kyung_greeting
 
 - id: min_kyung_greeting
@@ -45,7 +45,7 @@ nodes:
     visual_id: character.cha_min_kyung
     artwork: default
   expression: actual_skeptical
-  line: "한 과장님? 한 과장님도 여기 사십니까?"
+  line: "서 과장님? 서 과장님도 여기 사십니까?"
   next: do_yoon_confirms
 
 - id: do_yoon_confirms

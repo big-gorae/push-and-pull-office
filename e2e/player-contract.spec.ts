@@ -105,8 +105,8 @@ test("gallery restores a stat-event CG from the persistent profile", async ({ pa
 
   const gallery = page.getByRole("dialog", { name: "원화 갤러리" });
   await expect(gallery.getByText("수집 2 / 5", { exact: true })).toBeVisible();
-  await gallery.getByRole("button", { name: "윤서아 — 웃음이 터진 순간" }).click();
-  await expect(gallery.getByRole("img", { name: "윤서아 — 웃음이 터진 순간" })).toBeVisible();
+  await gallery.getByRole("button", { name: "유은솔 — 웃음이 터진 순간" }).click();
+  await expect(gallery.getByRole("img", { name: "유은솔 — 웃음이 터진 순간" })).toBeVisible();
 });
 
 test("first ending profile unlocks Another Story", async ({ page }) => {
@@ -171,7 +171,7 @@ test("game flow hides authoring UI and debug restores controlled inspection", as
   for (let step = 0; step < 10; step += 1) {
     const nameplate = page.locator(".vn-nameplate");
     const name = await nameplate.count() ? await nameplate.textContent() : null;
-    if (name?.trim() === "한도윤") {
+    if (name?.trim() === "서정우") {
       doYoonReached = true;
       break;
     }
@@ -183,7 +183,7 @@ test("game flow hides authoring UI and debug restores controlled inspection", as
 
   let seoAReached = false;
   for (let step = 0; step < 120; step += 1) {
-    if (await page.locator('.vn-character img[alt="윤서아"]').count()) {
+    if (await page.locator('.vn-character img[alt="유은솔"]').count()) {
       seoAReached = true;
       break;
     }
@@ -199,9 +199,9 @@ test("game flow hides authoring UI and debug restores controlled inspection", as
     await page.waitForTimeout(100);
   }
   expect(seoAReached).toBe(true);
-  await expect(page.locator(".vn-nameplate")).toHaveText("윤서아");
+  await expect(page.locator(".vn-nameplate")).toHaveText("유은솔");
   await expect(page.locator(".vn-character")).toHaveCount(1);
-  await expect(page.locator(".vn-character img")).toHaveAttribute("alt", "윤서아");
+  await expect(page.locator(".vn-character img")).toHaveAttribute("alt", "유은솔");
   await expect(page.getByRole("button", { name: "← 이전 대화" }).first()).toBeEnabled();
 });
 
@@ -231,7 +231,7 @@ test("authoring preview opens an exact psychology-instructor direction in contex
   await expect(page.locator(".vn-analysis-instructor strong")).toContainText("대화를 이어 가야 합니다");
 });
 
-test("officetel dialogue keeps Han Do-yoon off screen and centers the other character", async ({ page }) => {
+test("officetel dialogue keeps Seo Jung-woo off screen and centers the other character", async ({ page }) => {
   test.setTimeout(60_000);
   await setAuthoringPreviewTarget(page, {
     kind: "scene",
@@ -241,13 +241,13 @@ test("officetel dialogue keeps Han Do-yoon off screen and centers the other char
   await page.goto("/#/play?authoring=1");
 
   await expect(page.locator(".vn-stage-bg")).toHaveAttribute("src", /elevator-lobby-evening/);
-  await expect(page.locator('.vn-character img[alt="한도윤"]')).toHaveCount(0);
-  await expect(page.locator(".vn-character.center img")).toHaveAttribute("alt", "윤서아");
+  await expect(page.locator('.vn-character img[alt="서정우"]')).toHaveCount(0);
+  await expect(page.locator(".vn-character.center img")).toHaveAttribute("alt", "유은솔");
   await expect(page.locator(".vn-character.speaking")).toHaveCount(1);
 
   await page.keyboard.press("Enter");
-  await expect(page.locator(".vn-nameplate")).toHaveText("한도윤");
-  await expect(page.locator('.vn-character img[alt="한도윤"]')).toHaveCount(0);
+  await expect(page.locator(".vn-nameplate")).toHaveText("서정우");
+  await expect(page.locator('.vn-character img[alt="서정우"]')).toHaveCount(0);
   await expect(page.locator(".vn-character")).toHaveCount(0);
 });
 

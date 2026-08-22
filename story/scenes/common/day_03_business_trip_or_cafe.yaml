@@ -6,7 +6,7 @@ chapter: 1
 sequence: 4
 location: office_break_room
 time: afternoon
-purpose: 전날 밤 읽은 MBTI 장을 떠올린 한도윤이 민경을 ST로 판단하고, 사실과 해결 순서를 먼저 제시하는 선택을 실제 대사로 확인한 뒤 공략 정답을 찾았다고 받아들인다.
+purpose: 전날 밤 읽은 MBTI 장을 떠올린 서정우가 민경을 ST로 판단하고, 사실과 해결 순서를 먼저 제시하는 선택을 실제 대사로 확인한 뒤 공략 정답을 찾았다고 받아들인다.
 cast: [han_do_yoon, yoon_seo_a, cha_min_kyung, dark_psychology_instructor]
 entry_conditions: []
 state_contract:
@@ -24,7 +24,7 @@ start_node: return_to_office
 nodes:
 - id: return_to_office
   kind: narration
-  line: "금요일 업무 일정에 따라 한도윤은 동료 한 명과 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다."
+  line: "금요일 업무 일정에 따라 서정우는 동료 한 명과 외근이나 짧은 휴식을 마친 뒤 사무실로 돌아왔다."
   next: activity_callback
 
 - id: activity_callback
@@ -347,7 +347,7 @@ nodes:
 
 - id: weekend_clues
   kind: narration
-  line: "업무 정리 뒤 이어진 공용 대화에서 서아와 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다."
+  line: "업무 정리 뒤 이어진 공용 대화에서 은솔과 민경은 각자 주말에 들를 장소를 자연스럽게 언급했다."
   next: leave
 
 - id: leave

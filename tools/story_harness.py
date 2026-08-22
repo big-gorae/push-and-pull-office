@@ -2409,7 +2409,7 @@ class StoryProject:
                     self._error(
                         issues,
                         item_location,
-                        "Han Do-yoon artwork is reserved for an explicit ending reveal",
+                        "Seo Jung-woo artwork is reserved for an explicit ending reveal",
                     )
                 else:
                     reveal_present = True
@@ -2448,7 +2448,7 @@ class StoryProject:
             if not isinstance(expression_assets, Mapping) or artwork not in expression_assets:
                 self._error(issues, item_location, f"unknown artwork id for stage visual: {artwork}")
         if protagonist_reveal and not reveal_present:
-            self._error(issues, location, "protagonist_art_reveal must explicitly place Han Do-yoon artwork")
+            self._error(issues, location, "protagonist_art_reveal must explicitly place Seo Jung-woo artwork")
     def _validate_choice_interaction_contexts(
         self,
         issues: List[Issue],

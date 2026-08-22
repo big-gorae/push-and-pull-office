@@ -3,7 +3,7 @@ id: character.kang_yoo_jin
 kind: character
 extends: archetype.character_bust
 title_key: visual.character.kang_yoo_jin.title
-title: 강유진 기본 바스트
+title: 신나경 기본 바스트
 character: kang_yoo_jin
 fallback_asset: assets/characters/kang-yoo-jin/office-default/base-cutout.png
 default_outfit: office

@@ -6,7 +6,7 @@ chapter: 1
 sequence: 44
 location: open_office
 time: afternoon
-purpose: 외모 스탯을 쌓은 플레이어에게 라이브커머스 화면 점검의 임시 기준 모델이 되는 추가 사건과 강유진 원화를 지급하되, 디자이너의 시선을 제작 판단과 연애적 해석으로 분리한다.
+purpose: 외모 스탯을 쌓은 플레이어에게 라이브커머스 화면 점검의 임시 기준 모델이 되는 추가 사건과 신나경 원화를 지급하되, 디자이너의 시선을 제작 판단과 연애적 해석으로 분리한다.
 cast: [han_do_yoon, kang_yoo_jin]
 entry_conditions: []
 state_contract: {reads: [], writes: []}
@@ -14,7 +14,7 @@ start_node: rehearsal_screen
 nodes:
 - id: rehearsal_screen
   kind: narration
-  line: 유진은 미니오븐 촬영 화면의 흰색 균형을 확인하다가 무채색 재킷을 입은 한도윤을 발견했다.
+  line: 나경은 미니오븐 촬영 화면의 흰색 균형을 확인하다가 무채색 재킷을 입은 서정우를 발견했다.
   next: yoo_jin_request
 
 - id: yoo_jin_request
@@ -26,7 +26,7 @@ nodes:
     visual_id: character.kang_yoo_jin
     artwork: default
   expression: actual_procedural
-  line: "한 과장님, 잠깐 화면 옆에 서 주실래요? 오늘 재킷 색이 기준 잡기에 좋습니다. 소매만 제품 옆에 보이면 됩니다."
+  line: "서 과장님, 잠깐 화면 옆에 서 주실래요? 오늘 재킷 색이 기준 잡기에 좋습니다. 소매만 제품 옆에 보이면 됩니다."
   next: do_yoon_stands
 
 - id: do_yoon_stands
@@ -51,7 +51,7 @@ nodes:
 
 - id: screen_saved
   kind: narration
-  line: 유진은 화면 캡처의 색상값을 확인한 뒤 도윤에게 점검이 끝났다는 손짓을 했다.
+  line: 나경은 화면 캡처의 색상값을 확인한 뒤 정우에게 점검이 끝났다는 손짓을 했다.
   next: leave
 
 - id: leave

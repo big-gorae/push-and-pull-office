@@ -2,8 +2,8 @@ schema_version: 1
 id: member.yoon_seo_a
 kind: member
 company: company.dawon_living
-name: 윤서아
-display_name: 윤서아
+name: 유은솔
+display_name: 유은솔
 team: team.sales_planning
 role: role.coordinator
 title: 계약직 사원

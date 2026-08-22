@@ -1,6 +1,6 @@
 schema_version: 1
 id: han_do_yoon
-display_name: 한도윤
+display_name: 서정우
 age: 42
 role: 영업기획팀 과장
 narrative_role: unreliable_protagonist
@@ -31,20 +31,20 @@ voice:
   - 자신의 행동을 스토킹이라고 자발적으로 정확히 명명하기
   reference_lines:
   - context: 수정 자료를 건네받았을 때의 실제 발화
-    line: 그래도 돼요? 고마워요, 서아 씨!
-  - context: 서아의 도움을 받은 직후의 혼잣말
-    line: (서아 씨 덕분에 살았다! 마음씨까지 다정하잖아!)
+    line: 그래도 돼요? 고마워요, 은솔 씨!
+  - context: 은솔의 도움을 받은 직후의 혼잣말
+    line: (은솔 씨 덕분에 살았다! 마음씨까지 다정하잖아!)
   - context: 민경의 정확한 지적을 들은 직후의 혼잣말
     line: (틀린 말은 하나도 없는데, 왜 이렇게 데미지가 크지?)
-  - context: 첫날 밤 강유진이 사랑받고 자랐을 것이라고 상상하는 실제 혼잣말
+  - context: 첫날 밤 신나경이 사랑받고 자랐을 것이라고 상상하는 실제 혼잣말
     line: 분명 가족들에게 무한한 사랑을 받고 자랐겠지?
-  - context: 첫날 밤 윤서아의 웃는 얼굴을 떠올리는 실제 혼잣말
-    line: 서아씨는 웃는 모습이 정말 귀여웠어...
-  - context: 첫날 밤 윤서아의 눈과 머리카락을 떠올리는 실제 혼잣말
+  - context: 첫날 밤 유은솔의 웃는 얼굴을 떠올리는 실제 혼잣말
+    line: 은솔씨는 웃는 모습이 정말 귀여웠어...
+  - context: 첫날 밤 유은솔의 눈과 머리카락을 떠올리는 실제 혼잣말
     line: 그렇게까지 아름다운 갈색 눈 머리카락은 처음 봤어
   - context: 첫날 밤 차민경과 함께 걷는 모습을 상상하는 실제 혼잣말
     line: 저런 여자와 함께 길을 걸으면 어떤 느낌일까?
-  - context: 첫날 밤 강유진의 존재를 확인하지 않은 남자친구를 부러워하는 실제 혼잣말
+  - context: 첫날 밤 신나경의 존재를 확인하지 않은 남자친구를 부러워하는 실제 혼잣말
     line: 나쁜 놈.. 부럽다..!!!
 visual:
   concept_art: assets/concept-art/han-do-yoon.png

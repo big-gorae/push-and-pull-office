@@ -134,7 +134,7 @@ type NarrativeSequence = {
 
 저작 노드 구성은 다음과 같다.
 
-- `arrive_home`: 한도윤의 양 레이어 인트로 대사
+- `arrive_home`: 서정우의 양 레이어 인트로 대사
 - `forced_intro`: 고피로 강제 진행 대사
 - `choose_activity`: 운동·독서·OTT·수면 선택지
 - `activity_result`: 활동 ID별 명시적 variant 6개와 양 레이어 결과

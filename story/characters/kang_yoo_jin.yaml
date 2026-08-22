@@ -1,6 +1,6 @@
 schema_version: 1
 id: kang_yoo_jin
-display_name: 강유진
+display_name: 신나경
 age: 29
 role: 브랜드마케팅팀 경력직 대리
 narrative_role: main_heroine
@@ -9,7 +9,7 @@ player_profile:
   order: 3
   portrait_unlock_memory: profile.kang_yoo_jin.name
   fields:
-    name: {value: 강유진, unlock_memory: profile.kang_yoo_jin.name}
+    name: {value: 신나경, unlock_memory: profile.kang_yoo_jin.name}
     affiliation: {value: 브랜드마케팅팀 · 경력직 대리, unlock_memory: profile.kang_yoo_jin.affiliation}
     mbti: {value: ENFP, unlock_memory: profile.kang_yoo_jin.mbti}
     hobby: {value: 맛집 탐방 · 요리 · 등산, unlock_memory: profile.kang_yoo_jin.hobby}
@@ -23,7 +23,7 @@ immutable_facts:
 - 호감도는 전용 상한 80까지만 오른다. 상한 이후에도 밀당 콤보와 숨은 현실 상태는 계속 누적된다.
 - 스토리 모드의 기본 결말에서 증거를 완성하거나 피해자를 구조해 파국을 막는 해결사로 등장하지 않는다.
 - 생존 모드 안에서의 플레이어·조력자·조연 역할은 후속 검토한다.
-- 한도윤을 특별한 연애 상대가 아니라 중단시켜야 할 반복 행동의 주체로 본다.
+- 서정우를 특별한 연애 상대가 아니라 중단시켜야 할 반복 행동의 주체로 본다.
 - 신고가 묵살되어도 자신의 거절이 잘못이었다고 생각하지 않는다.
 voice:
   register: 쾌활하고 장난기 많은 존댓말. 평소에는 말괄량이처럼 과장된 군대식 어미를 섞지만 업무 사실은 분명하게 전달한다.

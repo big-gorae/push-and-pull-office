@@ -7,7 +7,7 @@ import { createCampaignSession, normalizePlayerSession } from "./playerRuntime";
 const runtime = runtimeJson as unknown as Runtime;
 
 describe("decoy heroine affection cap", () => {
-  it("caps Yoo-jin at 80 while combo and hidden consequences keep accumulating", () => {
+  it("caps Na-kyung at 80 while combo and hidden consequences keep accumulating", () => {
     const state = structuredClone(runtime.initial_state);
     state.visible.heroines.kang_yoo_jin.affection = 78;
     const config = { action: "approach" as const, intensity: 12, base_score: 5 };
@@ -38,7 +38,7 @@ describe("decoy heroine affection cap", () => {
     expect(stillCapped.hiddenDelta).toEqual({ suspicion: 7, dislike: 4, evidence_count: 1 });
   });
 
-  it("normalizes an older Yoo-jin score above the cap without limiting final heroines", () => {
+  it("normalizes an older Na-kyung score above the cap without limiting final heroines", () => {
     const legacy = createCampaignSession(runtime, "base");
     legacy.state.visible.heroines.kang_yoo_jin.affection = 99;
     legacy.state.visible.heroines.yoon_seo_a.affection = 99;

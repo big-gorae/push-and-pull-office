@@ -35,7 +35,7 @@ nodes:
     options:
       - id: option_id
         label: "플레이어가 보는 선택지"
-        interpretation: "한도윤이 믿는 의미"
+        interpretation: "서정우가 믿는 의미"
         action: "객관적으로 발생하는 행동"
         push_pull:
           # target: another_heroine_id # 루트 히로인과 다를 때만. 현재 cast의 히로인이어야 한다.

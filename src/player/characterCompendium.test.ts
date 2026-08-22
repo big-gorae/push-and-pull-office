@@ -13,7 +13,7 @@ describe("character compendium", () => {
     memories: [],
   };
 
-  it("keeps the three main profiles in Seo-a, Min-kyung, Yoo-jin order", () => {
+  it("keeps the three main profiles in Eun-sol, Min-kyung, Na-kyung order", () => {
     expect(primaryCharacterProfileIds()).toEqual([
       "yoon_seo_a",
       "cha_min_kyung",
@@ -40,7 +40,7 @@ describe("character compendium", () => {
     })).toBe(true);
   });
 
-  it("registers compact cards for Han Do-yoon and every non-featured coworker", () => {
+  it("registers compact cards for Seo Jung-woo and every non-featured coworker", () => {
     const featured = new Set(primaryCharacterProfileIds());
     const others = (runtime.world?.by_kind.member || [])
       .map((id) => runtime.world?.entities[id])

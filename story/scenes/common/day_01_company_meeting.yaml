@@ -6,7 +6,7 @@ chapter: 0
 sequence: 1
 location: meeting_room
 time: morning
-purpose: 프로젝트 킥오프에서 서아·민경·유진의 업무 태도와 한도윤의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.
+purpose: 프로젝트 킥오프에서 은솔·민경·나경의 업무 태도와 서정우의 첫인상을 보여 주되 아직 누구도 연애 후보로 확정하지 않는다.
 cast:
 - han_do_yoon
 - yoon_seo_a
@@ -51,7 +51,7 @@ nodes:
   speaker: yoon_seo_a
   stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
   expression: actual_social_smile
-  line: 저기.. 한 과장님?
+  line: 저기.. 서 과장님?
   next: do_yoon_startled
 
 - id: do_yoon_startled
@@ -67,7 +67,7 @@ nodes:
   speaker: yoon_seo_a
   stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
   expression: actual_social_smile
-  line: 안녕하세요! 영업기획팀 윤서아 사원입니다!!
+  line: 안녕하세요! 영업기획팀 유은솔 사원입니다!!
   next: do_yoon_heard
 
 - id: do_yoon_heard
@@ -163,7 +163,7 @@ nodes:
   speaker: han_do_yoon
   expression: actual_waiting_smile
   stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
-  line: 그래도 돼요? 고마워요, 서아 씨!
+  line: 그래도 돼요? 고마워요, 은솔 씨!
   next: do_yoon_saved
 
 - id: do_yoon_saved
@@ -171,7 +171,7 @@ nodes:
   speaker: han_do_yoon
   expression: actual_waiting_smile
   stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
-  line: (서아 씨 덕분에 살았다!)
+  line: (은솔 씨 덕분에 살았다!)
   next: do_yoon_kind_heart
 
 - id: do_yoon_kind_heart
@@ -203,7 +203,7 @@ nodes:
   speaker: han_do_yoon
   expression: actual_waiting_smile
   stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
-  line: 저희에겐 서아 씨 같은 젊은 사람들의 의견도 중요하거든요!
+  line: 저희에겐 은솔 씨 같은 젊은 사람들의 의견도 중요하거든요!
   next: do_yoon_speak_freely
 
 - id: do_yoon_speak_freely
@@ -251,7 +251,7 @@ nodes:
   speaker: cha_min_kyung
   stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
   expression: actual_skeptical
-  line: 윤서아 사원, 회의록 양식은 준비됐나요?
+  line: 유은솔 사원, 회의록 양식은 준비됐나요?
   next: seo_a_minutes_ready
 
 - id: seo_a_minutes_ready
@@ -299,7 +299,7 @@ nodes:
   speaker: cha_min_kyung
   stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
   expression: actual_skeptical
-  line: 한 과장님, 자료는 전부 검토해 주셨나요?
+  line: 서 과장님, 자료는 전부 검토해 주셨나요?
   next: do_yoon_revision
 
 - id: do_yoon_revision
@@ -371,7 +371,7 @@ nodes:
   speaker: cha_min_kyung
   stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
   expression: actual_focused
-  line: 강유진 대리는 오늘도 늦는군요. 먼저 시작하겠습니다.
+  line: 신나경 대리는 오늘도 늦는군요. 먼저 시작하겠습니다.
   next: min_kyung_kickoff
 
 - id: min_kyung_kickoff
@@ -498,7 +498,7 @@ nodes:
   speaker: han_do_yoon
   expression: actual_waiting_smile
   stage: []
-  line: 저, 저는.. 영업기획팀 한도윤 과장입니다. 백화점과 편집숍 바이어 사전 검토, 입점 승인 일정을 맡았습니다. 잘 부탁드립니다.
+  line: 저, 저는.. 영업기획팀 서정우 과장입니다. 백화점과 편집숍 바이어 사전 검토, 입점 승인 일정을 맡았습니다. 잘 부탁드립니다.
   next: seo_a_introduction
 
 - id: seo_a_introduction
@@ -506,7 +506,7 @@ nodes:
   speaker: yoon_seo_a
   stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
   expression: actual_social_smile
-  line: 안녕하십니까! 영업기획팀 윤서아 사원입니다.
+  line: 안녕하십니까! 영업기획팀 유은솔 사원입니다.
   next: seo_a_role
 
 - id: seo_a_role
@@ -514,7 +514,7 @@ nodes:
   speaker: yoon_seo_a
   stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
   expression: actual_social_smile
-  line: 이번 프로젝트에서 한 과장님과 차 대리님 보조를 맡게 되었습니다. 잘 부탁드립니다.
+  line: 이번 프로젝트에서 서 과장님과 차 대리님 보조를 맡게 되었습니다. 잘 부탁드립니다.
   next: do_yoon_nervous
 
 - id: do_yoon_nervous
@@ -546,7 +546,7 @@ nodes:
   speaker: cha_min_kyung
   stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
   expression: actual_focused
-  line: 강 대리, 5분 42초 늦었습니다.
+  line: 신 대리, 5분 42초 늦었습니다.
   next: yoo_jin_won
 
 - id: yoo_jin_won
@@ -601,7 +601,7 @@ nodes:
   speaker: kang_yoo_jin
   stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
   expression: actual_fact_check
-  line: 브랜드마케팅팀 강유진 대리입니다. 제품 디자인을 맡았습니다!!
+  line: 브랜드마케팅팀 신나경 대리입니다. 제품 디자인을 맡았습니다!!
   next: yoo_jin_revisions
 
 - id: yoo_jin_revisions
@@ -633,7 +633,7 @@ nodes:
   speaker: cha_min_kyung
   stage: [{artwork: default, character: cha_min_kyung, position: center, visual_id: character.cha_min_kyung}]
   expression: actual_focused
-  line: 소개가 끝났으니 일정부터 확인하겠습니다. 한 과장님, 바이어 1차 검토일이 언제죠?
+  line: 소개가 끝났으니 일정부터 확인하겠습니다. 서 과장님, 바이어 1차 검토일이 언제죠?
   next: do_yoon_eighteenth
 
 - id: do_yoon_eighteenth
@@ -704,7 +704,7 @@ nodes:
   speaker: han_do_yoon
   expression: actual_waiting_smile
   stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
-  line: (서아 씨…… 덕분에 살았다!)
+  line: (은솔 씨…… 덕분에 살았다!)
   next: do_yoon_kind_again
 
 - id: do_yoon_kind_again
@@ -829,7 +829,7 @@ nodes:
   speaker: kang_yoo_jin
   stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
   expression: actual_fact_check
-  line: 역시 한 과장님! 멋진 상사입니다!
+  line: 역시 서 과장님! 멋진 상사입니다!
   next: do_yoon_coffee_only
 
 - id: do_yoon_coffee_only
@@ -909,7 +909,7 @@ nodes:
   speaker: han_do_yoon
   expression: actual_waiting_smile
   stage: [{artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}]
-  line: (꼼꼼하고 귀여운 서아 씨.)
+  line: (꼼꼼하고 귀여운 은솔 씨.)
   next: do_yoon_final_min_kyung
 
 - id: do_yoon_final_min_kyung
@@ -925,7 +925,7 @@ nodes:
   speaker: han_do_yoon
   expression: actual_waiting_smile
   stage: [{artwork: default, character: kang_yoo_jin, position: center, visual_id: character.kang_yoo_jin}]
-  line: (그리고 에너지가 넘치는 유진 씨까지.)
+  line: (그리고 에너지가 넘치는 나경 씨까지.)
   next: do_yoon_final_all
 
 - id: do_yoon_final_all

@@ -16,7 +16,7 @@ acts:
     id: romantic_surface
     title: 첫인상과 업무의 거리
     days: [1, 5]
-    purpose: 수연의 꿈과 어머니의 아침 전화로 다시 사람을 만나 보겠다는 결심을 만든 뒤, 출근길에 이름 모를 이웃으로 서아와 먼저 마주치고 회사에서 세 여성 동료를 만난다. 저녁에는 서아가 같은 오피스텔의 기존 입주민임을 확인하고, 금요일에는 민경도 새로 이사 오며, 토·일요일에는 두 사람을 한 명씩 교차해 만나 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.
+    purpose: 수연의 꿈과 어머니의 아침 전화로 다시 사람을 만나 보겠다는 결심을 만든 뒤, 출근길에 이름 모를 이웃으로 은솔과 먼저 마주치고 회사에서 세 여성 동료를 만난다. 저녁에는 은솔이 같은 오피스텔의 기존 입주민임을 확인하고, 금요일에는 민경도 새로 이사 오며, 토·일요일에는 두 사람을 한 명씩 교차해 만나 회사 밖의 모습을 더 알아보고 싶은 가벼운 관심을 만든다.
   - number: 2
     id: collisions
     title: 시간 충돌과 의심
@@ -30,8 +30,8 @@ acts:
 lanes:
   - {id: company, title: 회사와 고정 사건, kind: world}
   - {id: personal, title: 가족과 사적 시간, kind: world}
-  - {id: yoon_seo_a, title: 윤서아, kind: character}
+  - {id: yoon_seo_a, title: 유은솔, kind: character}
   - {id: cha_min_kyung, title: 차민경, kind: character}
-  - {id: kang_yoo_jin, title: 강유진, kind: character}
+  - {id: kang_yoo_jin, title: 신나경, kind: character}
   - {id: offscreen, title: 보이지 않는 현재, kind: truth}
   - {id: past_case, title: 과거 피해 사건, kind: truth}

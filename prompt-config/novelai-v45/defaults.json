@@ -211,7 +211,7 @@
     {
       "id": "memory_bookstore",
       "label": "미화된 서점 기억",
-      "description": "한도윤의 주관 화면에서만 쓰는 따뜻한 기억 장면입니다.",
+      "description": "서정우의 주관 화면에서만 쓰는 따뜻한 기억 장면입니다.",
       "subjectTags": { "female": ["1girl", "solo"], "male": ["1boy", "solo"] },
       "tags": ["cowboy shot", "bookstore", "indoors", "bookshelf"],
       "instructions": ["Use warm afternoon backlight and a softly nostalgic atmosphere inside a small independent bookstore."]

@@ -6,7 +6,7 @@ chapter: 0
 sequence: 3
 location: officetel_elevator_lobby
 time: evening
-purpose: 아침에 이름 모를 이웃으로 마주치고 회사에서 동료임을 알게 된 한도윤과 윤서아가, 저녁 엘리베이터 앞에서 서로 같은 오피스텔의 기존 입주민임을 확인한다.
+purpose: 아침에 이름 모를 이웃으로 마주치고 회사에서 동료임을 알게 된 서정우와 유은솔이, 저녁 엘리베이터 앞에서 서로 같은 오피스텔의 기존 입주민임을 확인한다.
 cast: [han_do_yoon, yoon_seo_a]
 entry_conditions: []
 state_contract:
@@ -16,12 +16,12 @@ start_node: home_arrival
 nodes:
 - id: home_arrival
   kind: narration
-  line: "수요일 저녁, 한도윤은 귀가해 자신이 사는 오피스텔의 엘리베이터 앞에 섰다."
+  line: "수요일 저녁, 서정우는 귀가해 자신이 사는 오피스텔의 엘리베이터 앞에 섰다."
   next: doors_open
 
 - id: doors_open
   kind: narration
-  line: "엘리베이터 문이 열렸고, 편한 집업 차림으로 장바구니를 든 윤서아가 내리려다 아침에 마주친 한도윤을 알아봤다."
+  line: "엘리베이터 문이 열렸고, 편한 집업 차림으로 장바구니를 든 유은솔이 내리려다 아침에 마주친 서정우를 알아봤다."
   next: seo_a_surprised
 
 - id: seo_a_surprised

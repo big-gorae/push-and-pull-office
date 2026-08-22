@@ -19,7 +19,7 @@ survival_mode:
   unlock: any_final_selectable_route_ending
   playable_character:
     status: undecided
-  objective: 지속적으로 공격적인 한도윤을 최대한 자극하지 않으면서, 그가 스스로 남기는 물리적 증거를 보존·연결하고 살아남는다.
+  objective: 지속적으로 공격적인 서정우를 최대한 자극하지 않으면서, 그가 스스로 남기는 물리적 증거를 보존·연결하고 살아남는다.
   continuity:
     type: parallel_world
     reference_campaign: main

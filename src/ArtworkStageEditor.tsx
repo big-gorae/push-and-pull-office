@@ -110,7 +110,7 @@ export default function ArtworkStageEditor({
     <header>
       <div><strong>화면 원화</strong><small>화자와 별개로 한 위치에 한 명씩, 최대 3명</small></div>
     </header>
-    {!allowProtagonistArtwork && scene.cast.includes("han_do_yoon") && <p className="artwork-stage-policy-note">한도윤 원화는 후반 반전 공개 노드에서만 선택할 수 있습니다.</p>}
+    {!allowProtagonistArtwork && scene.cast.includes("han_do_yoon") && <p className="artwork-stage-policy-note">서정우 원화는 후반 반전 공개 노드에서만 선택할 수 있습니다.</p>}
     <div className="artwork-stage-toolbar">
       <span className={manual ? "manual" : "auto"}>{manual ? "명시적 배치" : "원화 미지정"}</span>
       <button type="button" onClick={() => setCues([])}>원화 모두 끄기</button>

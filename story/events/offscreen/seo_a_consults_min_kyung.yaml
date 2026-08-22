@@ -1,7 +1,7 @@
 schema_version: 1
 campaign_id: main
 id: offscreen.seo_a_consults_min_kyung
-title: 서아가 민경에게 처음 말한 날
+title: 은솔이 민경에게 처음 말한 날
 type: offscreen
 lane: offscreen
 window: {days: [9, 9], slots: [after_work], deadline_day: 9}
@@ -20,5 +20,5 @@ on_seen:
   - {path: progress.memories, op: append_unique, value: present.seo_a_first_consult}
 on_missed: {effects: []}
 presentation:
-  title: 서아가 민경에게 상황을 설명함
-  summary: 서아는 자신의 판단이 맞는지 확인하려고 처음으로 구체적인 날짜를 말한다.
+  title: 은솔이 민경에게 상황을 설명함
+  summary: 은솔은 자신의 판단이 맞는지 확인하려고 처음으로 구체적인 날짜를 말한다.

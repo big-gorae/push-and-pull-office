@@ -28,7 +28,7 @@ V4.5 Full의 자동 Quality Tags에는 `location`이 들어간다. 캐릭터 단
 1girl, solo, full body, eye-level, three-quarter view, simple warm gray background, visual novel, game cg, official art, year 2021, adult proportions, clean lineart, varied line weight, anime coloring, soft cel shading, subtle gradients, matte colors, restrained highlights, small eye catchlights, believable clothing folds, masterpiece, very aesthetic, no text
 ```
 
-한도윤:
+서정우:
 
 ```text
 1boy, solo, full body, eye-level, three-quarter view, simple warm gray background, visual novel, game cg, official art, year 2021, adult proportions, clean lineart, varied line weight, anime coloring, soft cel shading, subtle gradients, matte colors, restrained highlights, small eye catchlights, believable clothing folds, masterpiece, very aesthetic, no text
@@ -42,7 +42,7 @@ V4.5 Full의 자동 Quality Tags에는 `location`이 들어간다. 캐릭터 단
 1girl, solo, cowboy shot, eye-level, off-center composition, modern Korean office, mixed window light and fluorescent light, visual novel, game cg, official art, year 2021, adult proportions, clean lineart, varied line weight, anime coloring, soft cel shading, subtle gradients, matte colors, restrained highlights, small eye catchlights, believable clothing folds, masterpiece, very aesthetic, no text
 ```
 
-한도윤:
+서정우:
 
 ```text
 1boy, solo, cowboy shot, eye-level, off-center composition, modern Korean office, mixed window light and fluorescent light, visual novel, game cg, official art, year 2021, adult proportions, clean lineart, varied line weight, anime coloring, soft cel shading, subtle gradients, matte colors, restrained highlights, small eye catchlights, believable clothing folds, masterpiece, very aesthetic, no text
@@ -62,7 +62,7 @@ V4.5 Full의 자동 Quality Tags에는 `location`이 들어간다. 캐릭터 단
 
 아래 표정·행동 블록에서는 `# actual_...` 라벨을 복사하지 말고, 원하는 라벨 아래의 태그 한 묶음만 기존 표정·행동 부분과 교체한다. `cowboy shot`이나 `upper body`를 사용할 때는 화면에 나오지 않는 신발 태그도 Character Prompt에서 삭제한다.
 
-## 윤서아
+## 유은솔
 
 ### Character Prompt — 기본 사회적 미소
 
@@ -146,7 +146,7 @@ alone in a meeting room, holding a closed laptop, tired eyes, lowered shoulders,
 child, loli, petite, short stature, round face, long hair, ponytail, blonde hair, blue eyes, shy, timid, blushing, school uniform, miniskirt, cleavage, seductive pose
 ```
 
-## 강유진
+## 신나경
 
 ### Character Prompt — 절차 확인
 
@@ -235,7 +235,7 @@ child, loli, teenager, long hair, ponytail, office suit, employee lanyard, high 
 girl, 30-year-old Korean woman, adult, 1.1::shoulder-length naturally wavy brown hair, calm amber-brown eyes, soft oval face::, no glasses, subtle smile lines at the outer eyes, natural adult build, olive cardigan, faded cream cotton shirt, long brown skirt, practical flat shoes, old independent-bookstore name tag, holding a book with a plain bookmark, polite professional smile, glancing briefly toward the shop entrance
 ```
 
-## 한도윤 — 현실 모습
+## 서정우 — 현실 모습
 
 ### Character Prompt — 반응을 기다리는 미소
 
@@ -274,7 +274,7 @@ standing too close to the foreground person, blocking part of the doorway, leani
 bishounen, ikemen, youthful, teenager, tall man, slim man, slender, muscular, abs, sharp jawline, full hair, long hair, clean-shaven, glamorous, heroic pose, monster, grotesque, horror
 ```
 
-## 한도윤 — 자기 인식 속 모습
+## 서정우 — 자기 인식 속 모습
 
 현실형과 절대 한 프롬프트에서 섞지 않는다.
 
@@ -288,7 +288,7 @@ boy, 42-year-old Korean man, adult man, 1.1::thick neatly styled black hair, sha
 receding hairline, thinning hair, short stature, obese, protruding belly, ill-fitting suit, stubble, oily skin, looming posture
 ```
 
-## 다인물 예시 — 차민경이 윤서아 앞을 가로막는 장면
+## 다인물 예시 — 차민경이 유은솔 앞을 가로막는 장면
 
 Base Prompt:
 
@@ -302,7 +302,7 @@ Base Prompt:
 girl, 28-year-old Korean woman, adult, 1.1::sleek chin-length black bob, narrow muted reddish-brown eyes, angular face::, hair tucked behind one ear, high cheekbones, defined jawline, tall woman, athletic balanced build, charcoal tailored blazer, burgundy silk blouse, black tailored slacks, thin metal earrings, burgundy lipstick, firm protective stance, serious expression, looking toward someone off camera. She is on the left and closer to the camera.
 ```
 
-두 번째 Character Prompt — 윤서아, Position은 오른쪽/뒤쪽:
+두 번째 Character Prompt — 유은솔, Position은 오른쪽/뒤쪽:
 
 ```text
 girl, 24-year-old Korean woman, adult, 1.1::long dark brown hair, large soft brown eyes, rounded oval face::, softly wavy hair, soft side-swept bangs, thin natural eyebrows, petite adult build, short stature, ivory cardigan, pale blue collared blouse, navy knee-length flared skirt, navy employee lanyard, holding a smartphone with both hands, tense, raised shoulders, looking toward the office doorway. She is on the right and half a step behind the other woman.
@@ -323,12 +323,12 @@ girl, 24-year-old Korean woman, adult, 1.1::long dark brown hair, large soft bro
 
 ## 눈 색에 대한 임시 결정
 
-정본에 눈 색이 명시된 인물은 윤서아뿐이다. 생성 간 랜덤 드리프트를 막기 위해 나머지는 현재 콘셉트 자산을 참고하여 아래처럼 임시 고정했다.
+정본에 눈 색이 명시된 인물은 유은솔뿐이다. 생성 간 랜덤 드리프트를 막기 위해 나머지는 현재 콘셉트 자산을 참고하여 아래처럼 임시 고정했다.
 
 - 차민경: `muted reddish-brown eyes`
-- 강유진: `muted teal eyes`
+- 신나경: `muted teal eyes`
 - 임수연: `amber-brown eyes`
-- 한도윤: `dark brown eyes`
+- 서정우: `dark brown eyes`
 
 이 네 값은 캐릭터 정본이 아니다. 최종 팔레트를 결정하면 각 인물의 Identity와 Character UC에서 한 번만 일괄 교체한다.
 

@@ -192,7 +192,7 @@
         {
           "id": "perceived_shy",
           "label": "주관 화면 · 수줍음",
-          "description": "도윤이 긴장을 연애적 수줍음으로 오해한 화면입니다.",
+          "description": "정우가 긴장을 연애적 수줍음으로 오해한 화면입니다.",
           "expressionId": "subjective_shy",
           "basePresetId": "office_hallway",
           "tags": ["shy", "smile", "closed mouth", "blush", "holding", "notebook", "looking to the side"],

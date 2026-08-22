@@ -11,21 +11,21 @@ strings:
   visual.background.meeting_room.title: Glass Meeting Room
   visual.background.office_pantry.title: Office Pantry
   visual.background.empty_office.title: Empty Office
-  visual.character.han_do_yoon.title: Han Do-yoon — Default Bust
-  visual.character.yoon_seo_a.title: Yoon Seo-a — Default Bust
+  visual.character.han_do_yoon.title: Seo Jung-woo — Default Bust
+  visual.character.yoon_seo_a.title: Yoo Eun-sol — Default Bust
   visual.character.cha_min_kyung.title: Cha Min-kyung — Default Bust
-  visual.character.kang_yoo_jin.title: Kang Yoo-jin — Default Bust
+  visual.character.kang_yoo_jin.title: Shin Na-kyung — Default Bust
   visual.character.im_soo_yeon.title: Im Soo-yeon — Default Bust
   campaign.main.title: Love Office
   campaign.main.acts.romantic_surface.title: First Encounters
   campaign.main.acts.collisions.title: Cracks in the Interpretation
   campaign.main.acts.crisis.title: Records That Cannot Be Rewritten
-  characters.yoon_seo_a.display_name: Yoon Seo-a
+  characters.yoon_seo_a.display_name: Yoo Eun-sol
   characters.cha_min_kyung.display_name: Cha Min-kyung
-  characters.kang_yoo_jin.display_name: Kang Yoo-jin
-  characters.han_do_yoon.display_name: Han Do-yoon
+  characters.kang_yoo_jin.display_name: Shin Na-kyung
+  characters.han_do_yoon.display_name: Seo Jung-woo
   characters.im_soo_yeon.display_name: Im Soo-yeon
-  characters.yoon_seo_a.player_profile.fields.name.value: Yoon Seo-a
+  characters.yoon_seo_a.player_profile.fields.name.value: Yoo Eun-sol
   characters.yoon_seo_a.player_profile.fields.affiliation.value: Sales Planning · Fixed-term Coordinator
   characters.yoon_seo_a.player_profile.fields.mbti.value: INFP
   characters.yoon_seo_a.player_profile.fields.hobby.value: Collecting cat stationery · visiting cat cafés across the country
@@ -41,7 +41,7 @@ strings:
   characters.cha_min_kyung.player_profile.fields.ideal_type.value: Someone who takes good care of themselves
   characters.cha_min_kyung.player_profile.fields.residence.value: An officetel near work · new resident
   characters.cha_min_kyung.player_profile.fields.tmi.value: She owns several copies of the same metal pen for meetings.
-  characters.kang_yoo_jin.player_profile.fields.name.value: Kang Yoo-jin
+  characters.kang_yoo_jin.player_profile.fields.name.value: Shin Na-kyung
   characters.kang_yoo_jin.player_profile.fields.affiliation.value: Brand Marketing · Experienced Senior Associate
   characters.kang_yoo_jin.player_profile.fields.mbti.value: ENFP
   characters.kang_yoo_jin.player_profile.fields.hobby.value: Exploring restaurants · cooking · hiking
@@ -73,11 +73,11 @@ strings:
     versions, and factual review of product copy.
   events.seo_a.email_request.presentation.title: Restricting How Work Is Delivered
   scenes.seo_a.email_request.title: Send It by Email
-  scenes.seo_a.email_request.nodes.appearance_observation.line: "Manager Han, I need to tell you something."
+  scenes.seo_a.email_request.nodes.appearance_observation.line: "Manager Seo, I need to tell you something."
   scenes.seo_a.email_request.nodes.request.line: "Please send those materials by email. Don't come to my desk."
-  scenes.seo_a.email_request.nodes.interpret.prompt: How should he answer Seo-a after she clearly specified how to
+  scenes.seo_a.email_request.nodes.interpret.prompt: How should he answer Eun-sol after she clearly specified how to
     deliver the files?
-  scenes.seo_a.email_request.nodes.interpret.stimulus: "Seo-a said, ‘Email me the files and do not come to my desk.’"
+  scenes.seo_a.email_request.nodes.interpret.stimulus: "Eun-sol said, ‘Email me the files and do not come to my desk.’"
   scenes.seo_a.email_request.nodes.interpret.options.match_push.label: Briefly say “Understood” and keep his distance
     for a few days
   scenes.seo_a.email_request.nodes.interpret.options.mention_workout_and_step_back.label: Mention working out, then send
@@ -139,10 +139,10 @@ strings:
   "gallery.entry.office_lineup.description": "Main character artwork that opens the story."
   "gallery.entry.health_min_kyung.title": "Cha Min-kyung — Unshaken Pace"
   "gallery.entry.health_min_kyung.description": "Cha Min-kyung artwork collected from a Health stat bonus event."
-  "gallery.entry.appearance_yoo_jin.title": "Kang Yoo-jin — A Designer's Eye"
-  "gallery.entry.appearance_yoo_jin.description": "Kang Yoo-jin artwork collected from an Appearance stat bonus event."
-  "gallery.entry.humor_seo_a.title": "Yoon Seo-a — The Moment She Laughed"
-  "gallery.entry.humor_seo_a.description": "Yoon Seo-a artwork collected from a Humor stat bonus event."
+  "gallery.entry.appearance_yoo_jin.title": "Shin Na-kyung — A Designer's Eye"
+  "gallery.entry.appearance_yoo_jin.description": "Shin Na-kyung artwork collected from an Appearance stat bonus event."
+  "gallery.entry.humor_seo_a.title": "Yoo Eun-sol — The Moment She Laughed"
+  "gallery.entry.humor_seo_a.description": "Yoo Eun-sol artwork collected from a Humor stat bonus event."
   "gallery.entry.intelligence_min_kyung.title": "Cha Min-kyung — Evidence in Three Timestamps"
   "gallery.entry.intelligence_min_kyung.description": "Cha Min-kyung artwork collected from an Intelligence stat bonus event."
   "character.title": "Characters"

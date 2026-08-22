@@ -6,7 +6,7 @@ chapter: 1
 sequence: 10
 location: open_office
 time: late_afternoon
-purpose: 서아의 업무상 경계를 주인공이 첫 밀기 신호로 번역한다.
+purpose: 은솔의 업무상 경계를 주인공이 첫 밀기 신호로 번역한다.
 cast: [han_do_yoon, yoon_seo_a]
 entry_conditions: []
 state_contract:
@@ -50,8 +50,8 @@ nodes:
 
 - id: interpret
   kind: choice
-  prompt: 자료 전달 방식을 분명히 한 서아에게 어떻게 답할까?
-  stimulus: 서아가 ‘자료는 메일로 보내고 제 자리로 오지 말라’고 말했다.
+  prompt: 자료 전달 방식을 분명히 한 은솔에게 어떻게 답할까?
+  stimulus: 은솔이 ‘자료는 메일로 보내고 제 자리로 오지 말라’고 말했다.
   interaction_context:
     kind: boundary
   options:

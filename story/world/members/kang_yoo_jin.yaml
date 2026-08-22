@@ -2,8 +2,8 @@ schema_version: 1
 id: member.kang_yoo_jin
 kind: member
 company: company.dawon_living
-name: 강유진
-display_name: 강유진
+name: 신나경
+display_name: 신나경
 team: team.marketing
 role: role.senior_associate
 title: 경력직 대리

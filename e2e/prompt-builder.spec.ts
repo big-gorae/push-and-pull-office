@@ -32,7 +32,7 @@ test("prompt builder separates verified tags from prose and exposes reproducible
   await expect(page.getByRole("textbox", { name: "왼쪽 아래 목 점", exact: true })).toHaveValue(/left side of her lower neck/);
   await expect(page.getByRole("textbox", { name: "쇄골 아래 중앙 점", exact: true })).toHaveValue(/below the collarbones and above the cleavage/);
 
-  await page.getByRole("radio", { name: /강유진/ }).check();
+  await page.getByRole("radio", { name: /신나경/ }).check();
   await expect(combinedPrompt).toHaveValue(/pink eyes/);
   await expect(combinedPrompt).toHaveValue(/vivid clear rose-pink irises/);
   await expect(combinedPrompt).not.toHaveValue(/aqua eyes|black eyes/);

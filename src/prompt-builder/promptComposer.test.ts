@@ -28,7 +28,7 @@ describe("NovelAI prompt catalog", () => {
       "han_do_yoon",
     ]);
     expect(seoA).toMatchObject({
-      displayName: "윤서아",
+      displayName: "유은솔",
       age: 24,
       role: "영업기획팀 계약직 사원",
       conceptArt: "assets/characters/yoon-seo-a/office-default/base-cutout.png",
@@ -604,7 +604,7 @@ describe("NovelAI prompt composition", () => {
     }
   });
 
-  it("keeps each heroine's bust proportionate while preserving Kang Yoo-jin's curvy silhouette", () => {
+  it("keeps each heroine's bust proportionate while preserving Shin Na-kyung's curvy silhouette", () => {
     const catalog = loadPromptCatalog();
     const standardBodyTags = ["narrow waist", "1.2::large breasts::", "breasts"];
     const minKyungBodyTags = ["narrow waist", "1.25::large breasts::", "cleavage", "breasts"];
@@ -797,7 +797,7 @@ describe("NovelAI prompt composition", () => {
     expect(catalog.sharedUndesiredTags).not.toContain("galaxy eyes");
   });
 
-  it("keeps Yoon Seo-a's large eyes and applies her signature eye-smile only to smile situations", () => {
+  it("keeps Yoo Eun-sol's large eyes and applies her signature eye-smile only to smile situations", () => {
     const catalog = loadPromptCatalog();
     const seoA = catalog.characters.find(({ id }) => id === "yoon_seo_a");
     const variant = seoA?.variants[0];
@@ -1031,7 +1031,7 @@ describe("NovelAI prompt composition", () => {
     }
   });
 
-  it("keeps Han Do-yoon's reality and perceived looks isolated", () => {
+  it("keeps Seo Jung-woo's reality and perceived looks isolated", () => {
     const catalog = loadPromptCatalog();
     const reality = composePrompt(catalog, {
       characterId: "han_do_yoon",

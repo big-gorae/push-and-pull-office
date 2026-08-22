@@ -32,7 +32,7 @@ stats:
     type: integer
     min: 0
     max: 100
-    description: 한도윤이 스스로 평가하는 매력도
+    description: 서정우가 스스로 평가하는 매력도
   visible.protagonist.self_development.stats.health:
     type: integer
     min: 0
@@ -62,7 +62,7 @@ stats:
     type: integer
     min: 0
     max: 100
-    description: 플레이어와 한도윤에게 공략 성공으로 보이는 표면 호감도
+    description: 플레이어와 서정우에게 공략 성공으로 보이는 표면 호감도
   hidden.suspicion:
     type: integer
     min: 0

@@ -6,7 +6,7 @@ chapter: 1
 sequence: 43
 location: office_break_room
 time: afternoon
-purpose: 유머 스탯을 쌓은 플레이어에게 안전한 공용 맥락의 농담으로 서아와 추가 상호작용하는 사건과 윤서아 원화를 지급하며, 웃음을 연애 확정이 아닌 상황 반응으로 이중 서술한다.
+purpose: 유머 스탯을 쌓은 플레이어에게 안전한 공용 맥락의 농담으로 은솔과 추가 상호작용하는 사건과 유은솔 원화를 지급하며, 웃음을 연애 확정이 아닌 상황 반응으로 이중 서술한다.
 cast: [han_do_yoon, yoon_seo_a, kang_yoo_jin]
 entry_conditions: []
 state_contract: {reads: [], writes: []}
@@ -14,7 +14,7 @@ start_node: tasting_table
 nodes:
 - id: tasting_table
   kind: narration
-  line: 제품 사용성 의견을 모으기 위해 서아와 유진이 커피 농도와 조작 순서를 기록하고 있었다.
+  line: 제품 사용성 의견을 모으기 위해 은솔과 나경이 커피 농도와 조작 순서를 기록하고 있었다.
   next: seo_a_worry
 
 - id: seo_a_worry

@@ -14,7 +14,7 @@ start_node: sample_boxes
 nodes:
 - id: sample_boxes
   kind: narration
-  line: 오후 일정 사이에 커피메이커·전기포트·미니오븐 샘플 박스가 도착했고, 서아와 민경은 검수 순서를 확인하고 있었다.
+  line: 오후 일정 사이에 커피메이커·전기포트·미니오븐 샘플 박스가 도착했고, 은솔과 민경은 검수 순서를 확인하고 있었다.
   next: min_kyung_plan
 
 - id: min_kyung_plan
@@ -34,12 +34,12 @@ nodes:
   speaker: han_do_yoon
   stage: []
   expression: actual_waiting_smile
-  line: "제 팀 확인분은 제가 두 번에 나눠 옮기겠습니다. 서아 씨는 품번을 읽어 주시고, 차 대리는 검수 순서만 잡아 주세요."
+  line: "제 팀 확인분은 제가 두 번에 나눠 옮기겠습니다. 은솔 씨는 품번을 읽어 주시고, 차 대리는 검수 순서만 잡아 주세요."
   next: sorting_done
 
 - id: sorting_done
   kind: narration
-  line: 도윤은 무리해서 전부 들지 않고 두 번에 나눠 자기 팀 검수분을 옮겼다. 민경은 예정한 시간 안에 정리가 끝나자 타이머를 멈췄다.
+  line: 정우는 무리해서 전부 들지 않고 두 번에 나눠 자기 팀 검수분을 옮겼다. 민경은 예정한 시간 안에 정리가 끝나자 타이머를 멈췄다.
   next: min_kyung_result
 
 - id: min_kyung_result

@@ -1,7 +1,7 @@
 schema_version: 1
 campaign_id: main
 id: seo_a.ending_ambiguous
-title: 윤서아 파국 분기
+title: 유은솔 파국 분기
 type: ending
 lane: yoon_seo_a
 thread: seo_a
@@ -23,4 +23,4 @@ on_seen: {effects: []}
 on_missed: {effects: []}
 presentation:
   title: 증거가 부족한 현장 신고
-  summary: 경찰은 둘을 분리하지만 축적된 기록이 부족하고, 한도윤이 거절을 받아들이지 않아 여러 파국으로 갈라진다.
+  summary: 경찰은 둘을 분리하지만 축적된 기록이 부족하고, 서정우가 거절을 받아들이지 않아 여러 파국으로 갈라진다.

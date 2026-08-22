@@ -61,8 +61,8 @@ nodes:
 
 - id: response_choice
   kind: choice
-  prompt: 휴게실에서 다시 마주친 서아에게 어떻게 반응할까?
-  stimulus: 며칠간 사적인 접촉이 없던 뒤, 서아가 휴게실에서 ‘안녕하세요’라고 인사했다.
+  prompt: 휴게실에서 다시 마주친 은솔에게 어떻게 반응할까?
+  stimulus: 며칠간 사적인 접촉이 없던 뒤, 은솔이 휴게실에서 ‘안녕하세요’라고 인사했다.
   interaction_context:
     kind: boundary
   options:
@@ -79,7 +79,7 @@ nodes:
     next: leave
   - id: trend_dinner_invite
     label: OTT에서 본 회사 코미디를 화제로 꺼내며 퇴근 후 식사를 다시 제안한다
-    interpretation: 최신 유행을 아는 모습을 보여 주면 서아가 세대 차이 없이 통한다고 느낄 거라 믿는다.
+    interpretation: 최신 유행을 아는 모습을 보여 주면 은솔이 세대 차이 없이 통한다고 느낄 거라 믿는다.
     action: 젊은 여성이 회사 코미디를 즐겨 본다고 일반화해 말하며 퇴근 뒤 둘만의 식사를 다시 제안한다.
     push_pull: {action: approach, intensity: 16, base_score: 4}
     self_development:

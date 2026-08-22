@@ -3,7 +3,7 @@ id: character.yoon_seo_a
 kind: character
 extends: archetype.character_bust
 title_key: visual.character.yoon_seo_a.title
-title: 윤서아 기본 바스트
+title: 유은솔 기본 바스트
 character: yoon_seo_a
 fallback_asset: assets/characters/yoon-seo-a/office-default/base-cutout.png
 default_outfit: office

@@ -310,7 +310,7 @@ describe("web player campaign runtime", () => {
     const consumed = consumeChoiceAnalysisHint(runtime, session);
     expect(consumed?.hint).toMatchObject({
       direction: "pull",
-      lesson: expect.stringContaining("서아는 사과 뒤 멈췄고"),
+      lesson: expect.stringContaining("은솔은 사과 뒤 멈췄고"),
     });
     expect(consumed?.session.state.progress.self_development.hint_charges).toBe(0);
     expect(session.state.progress.self_development.hint_charges).toBe(1);

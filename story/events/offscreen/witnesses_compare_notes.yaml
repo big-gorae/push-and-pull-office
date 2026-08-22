@@ -21,5 +21,5 @@ on_seen:
   - {path: progress.memories, op: append_unique, value: present.notes_connected}
 on_missed: {effects: []}
 presentation:
-  title: 서아와 민경의 기록 대조
+  title: 은솔과 민경의 기록 대조
   summary: 두 사람은 비슷한 표현과 접근이 반복됐음을 처음 확인한다.

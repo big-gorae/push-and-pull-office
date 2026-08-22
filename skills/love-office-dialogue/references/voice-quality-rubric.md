@@ -14,9 +14,9 @@ Fail the scene until all conditions pass:
 - No dialogue line merely restates the scene purpose, game system, choice structure, relationship strategy, or authorial intent unless that form is supported by an approved golden sample for the speaker.
 - No rejected line or reusable failure pattern returns with superficial synonym changes.
 - No line authored by Codex in the current task is treated as a golden sample or voice.reference_lines without explicit user approval of that exact wording.
-- Han Do-yoon's unspoken reactions in shared scenes remain ordinary parenthesized dialogue, while his audible monologue at home alone at night remains ordinary dialogue without parentheses.
-- A nightly Han Do-yoon monologue that recalls women uses several concrete visual details, exaggerated comparisons, and naive imagined moments instead of compressing the scene into a relationship summary.
-- Ordinary scenes do not reveal Han Do-yoon's artwork.
+- Seo Jung-woo's unspoken reactions in shared scenes remain ordinary parenthesized dialogue, while his audible monologue at home alone at night remains ordinary dialogue without parentheses.
+- A nightly Seo Jung-woo monologue that recalls women uses several concrete visual details, exaggerated comparisons, and naive imagined moments instead of compressing the scene into a relationship summary.
+- Ordinary scenes do not reveal Seo Jung-woo's artwork.
 - Apply mode preserves valid graph connections, presentation fields, and registered expressions.
 
 ## Generation cycle check

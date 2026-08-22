@@ -64,9 +64,9 @@ Keep provisional semantic versions, deletion notes, comparison samples, and scor
 - Do not copy signature lines merely to sound consistent. Reuse a line only for an intentional callback.
 - Make lines attributable without speaker names. If two characters could swap lines without changing the scene, strengthen their distinct response logic.
 - Let character knowledge, role, confidence, and emotional safety determine what they say before adding verbal tics.
-- Keep Han Do-yoon's spoken dialogue natural and his parenthesized self-talk like the innocent boy protagonist of a Japanese anime: concrete stimulus, immediate emotion, naive evaluation, and an optional quick self-correction. Do not make him calmly summarize relationship strategy, scene design, or control over another person unless a future user-approved golden explicitly establishes that wording.
-- Store Han Do-yoon's parenthesized self-talk as ordinary dialogue, never as a removed thought field.
-- When Han Do-yoon is home alone at night, treat his monologue as words he actually says aloud: store it as ordinary dialogue without parentheses. Parentheses remain for unspoken reactions in shared scenes or when another person is present.
+- Keep Seo Jung-woo's spoken dialogue natural and his parenthesized self-talk like the innocent boy protagonist of a Japanese anime: concrete stimulus, immediate emotion, naive evaluation, and an optional quick self-correction. Do not make him calmly summarize relationship strategy, scene design, or control over another person unless a future user-approved golden explicitly establishes that wording.
+- Store Seo Jung-woo's parenthesized self-talk as ordinary dialogue, never as a removed thought field.
+- When Seo Jung-woo is home alone at night, treat his monologue as words he actually says aloud: store it as ordinary dialogue without parentheses. Parentheses remain for unspoken reactions in shared scenes or when another person is present.
 - In those nightly monologues, do not compress the women he remembers into a short relationship summary. Let him dwell for several lines on concrete visible details, exaggerated comparisons, and naive fantasies of touching, walking with, or spending time with them, following the approved first-night samples. This is a recurring nightly voice rule, not permission to invent new physical facts that contradict character profiles.
 - When the dark psychology instructor appears, ground every new line in the approved `강사님 첫 등장 골든`. Preserve his advertising-style callout, self-answering showmanship, elongated tildes and exclamations, inflated credentials, and abrupt certainty; delete calm manual prose before scoring.
 - Keep text-only coworkers factual and present when the meeting policy requires them.
@@ -79,9 +79,9 @@ Return a clean script by default:
 
 ~~~text
 [행동 또는 장면 전환]
-한도윤: 대사
-한도윤: (속으로 하는 말)
-윤서아: 대사
+서정우: 대사
+서정우: (속으로 하는 말)
+유은솔: 대사
 ~~~
 
 - Focus on dialogue and minimal action cues.
@@ -95,7 +95,7 @@ Return a clean script by default:
 2. Preserve stable scene, node, route, event, and localization IDs where the replacement still represents the same narrative unit.
 3. Put one authoritative line and one set of presentation fields on every beat.
 4. Use explicit stage cues for visible characters. Use registered existing artwork and valid expressions.
-5. Never place Han Do-yoon's artwork in an ordinary scene. Preserve the ending-only reveal contract.
+5. Never place Seo Jung-woo's artwork in an ordinary scene. Preserve the ending-only reveal contract.
 6. Keep formal meetings consistent with world_context and full participant policy.
 7. Rebuild generated story artifacts through the repository workflow.
 8. Run npm run verify.

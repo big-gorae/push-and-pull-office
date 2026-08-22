@@ -184,7 +184,7 @@
         {
           "id": "reference_fact_check",
           "label": "기본 로비 자신감",
-          "description": "윤서아·차민경 원화와 같은 구도에서 밝고 자신감 있는 기본 인상을 확인합니다.",
+          "description": "유은솔·차민경 원화와 같은 구도에서 밝고 자신감 있는 기본 인상을 확인합니다.",
           "expressionId": "actual_fact_check",
           "basePresetId": "character_upper_body",
           "tags": ["standing", "holding", "stylus", "smile", "closed mouth", "looking at viewer"],

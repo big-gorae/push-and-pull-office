@@ -6,7 +6,7 @@ chapter: 0
 sequence: 3
 location: office_exit
 time: late_afternoon
-purpose: 아침에 어머니와 한 약속을 떠올린 한도윤이 새 프로젝트에서 만난 서아·민경·유진 세 사람의 실제 업무상 첫인상을 이성적인 가능성으로 다시 분류하기 시작한다.
+purpose: 아침에 어머니와 한 약속을 떠올린 서정우가 새 프로젝트에서 만난 은솔·민경·나경 세 사람의 실제 업무상 첫인상을 이성적인 가능성으로 다시 분류하기 시작한다.
 cast: [han_do_yoon]
 entry_conditions: []
 state_contract:
@@ -17,7 +17,7 @@ nodes:
 - id: leaving_office
   kind: narration
   stage: []
-  line: 수요일 늦은 오후, 사무실을 나서던 한도윤은 아침에 어머니와 나눈 통화를 떠올렸다.
+  line: 수요일 늦은 오후, 사무실을 나서던 서정우는 아침에 어머니와 나눈 통화를 떠올렸다.
   next: remember_promise
 
 - id: remember_promise
@@ -31,7 +31,7 @@ nodes:
 - id: remember_seo_a
   kind: narration
   stage: []
-  line: 서아는 배포 자료가 부족해지자 준비 담당자로서 자신의 여분을 건넸다.
+  line: 은솔은 배포 자료가 부족해지자 준비 담당자로서 자신의 여분을 건넸다.
   next: do_yoon_seo_a
 
 - id: do_yoon_seo_a
@@ -39,7 +39,7 @@ nodes:
   speaker: han_do_yoon
   stage: []
   expression: actual_waiting_smile
-  line: (꼼꼼하고 다정한 서아 씨.)
+  line: (꼼꼼하고 다정한 은솔 씨.)
   next: remember_min_kyung
 
 - id: remember_min_kyung
@@ -59,7 +59,7 @@ nodes:
 - id: remember_yoo_jin
   kind: narration
   stage: []
-  line: 유진은 지각마저 농담으로 넘기면서도 맡은 파일과 제품 정보는 분명하게 확인했다.
+  line: 나경은 지각마저 농담으로 넘기면서도 맡은 파일과 제품 정보는 분명하게 확인했다.
   next: do_yoon_yoo_jin
 
 - id: do_yoon_yoo_jin
@@ -67,7 +67,7 @@ nodes:
   speaker: han_do_yoon
   stage: []
   expression: actual_waiting_smile
-  line: (밝고 거침없는 유진 씨까지.)
+  line: (밝고 거침없는 나경 씨까지.)
   next: do_yoon_considers
 
 - id: do_yoon_considers

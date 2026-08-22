@@ -14,7 +14,7 @@ start_node: three_documents
 nodes:
 - id: three_documents
   kind: narration
-  line: 한도윤은 백화점 입점 승인 회신, 디자인 변경 이력, 캠페인 일정표를 대조하다가 서로 다른 수정 시각을 발견했다.
+  line: 서정우는 백화점 입점 승인 회신, 디자인 변경 이력, 캠페인 일정표를 대조하다가 서로 다른 수정 시각을 발견했다.
   next: do_yoon_question
 
 - id: do_yoon_question

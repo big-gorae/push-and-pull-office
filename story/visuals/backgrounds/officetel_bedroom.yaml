@@ -3,7 +3,7 @@ id: background.officetel_bedroom
 kind: background
 extends: archetype.background
 title_key: visual.background.officetel_bedroom.title
-title: 한도윤의 오피스텔 침실
+title: 서정우의 오피스텔 침실
 variants:
   dawn:
     asset: assets/backgrounds/officetel/bedroom-dawn-placeholder.svg

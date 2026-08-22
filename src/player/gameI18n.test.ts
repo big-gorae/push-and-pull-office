@@ -19,7 +19,10 @@ describe("GameLocalizer", () => {
     );
     expect(i18n.ui("mode.survivor.copy")).toBe("새로운 그녀로 새로운 이야기를 만들어 보아요");
     expect(i18n.ui("app.kicker")).not.toContain("17");
-    expect(i18n.characterName("yoon_seo_a")).toBe("윤서아");
+    expect(i18n.characterName("han_do_yoon")).toBe("서정우");
+    expect(i18n.characterName("yoon_seo_a")).toBe("유은솔");
+    expect(i18n.characterName("cha_min_kyung")).toBe("차민경");
+    expect(i18n.characterName("kang_yoo_jin")).toBe("신나경");
     expect(i18n.characterName("member.jeong_da_eun")).toBe("정주임");
   });
 
@@ -27,7 +30,10 @@ describe("GameLocalizer", () => {
     const i18n = new GameLocalizer(runtime, "en");
 
     expect(i18n.ui("menu.newGame")).toBe("New Game");
+    expect(i18n.characterName("han_do_yoon")).toBe("Seo Jung-woo");
+    expect(i18n.characterName("yoon_seo_a")).toBe("Yoo Eun-sol");
     expect(i18n.characterName("cha_min_kyung")).toBe("Cha Min-kyung");
+    expect(i18n.characterName("kang_yoo_jin")).toBe("Shin Na-kyung");
     expect(i18n.ui("deadline.days", { count: 3 })).toBe("3 days left");
   });
 

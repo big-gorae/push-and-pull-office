@@ -132,7 +132,7 @@ describe("single-layer dialogue", () => {
     expect(applyDialogueSpeakerSelection(runtime, fresh, "han_do_yoon").stage).toBeUndefined();
   });
 
-  it("keeps Han Do-yoon off ordinary stages and reveals him on an explicit ending beat", () => {
+  it("keeps Seo Jung-woo off ordinary stages and reveals him on an explicit ending beat", () => {
     const resolver = new VisualResolver(runtime);
     const ordinaryScene = runtime.scenes["common.day_01_officetel_seo_a_reveal"];
     const ordinaryNode: StoryNode = {

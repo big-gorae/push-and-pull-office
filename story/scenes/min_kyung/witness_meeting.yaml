@@ -41,7 +41,7 @@ nodes:
     visual_id: character.cha_min_kyung
     artwork: default
   expression: actual_protective
-  line: "서아 씨가 회의록을 함께 작성할 겁니다."
+  line: "은솔 씨가 회의록을 함께 작성할 겁니다."
   next: choose
 
 - id: skeptical
@@ -53,18 +53,18 @@ nodes:
     visual_id: character.cha_min_kyung
     artwork: default
   expression: actual_skeptical
-  line: "회의록 담당으로 서아 씨가 배석합니다."
+  line: "회의록 담당으로 은솔 씨가 배석합니다."
   next: choose
 
 - id: choose
   kind: choice
-  prompt: 서아가 함께 있는 회의에서 민경에게 어떻게 행동할까?
-  stimulus: 민경이 서아를 회의록 담당으로 배석시키며 둘만의 회의를 피했다.
+  prompt: 은솔이 함께 있는 회의에서 민경에게 어떻게 행동할까?
+  stimulus: 민경이 은솔을 회의록 담당으로 배석시키며 둘만의 회의를 피했다.
   interaction_context:
     kind: boundary
   options:
   - id: public_tease
-    label: 서아 앞에서 민경과의 사적 연락을 암시한다
+    label: 은솔 앞에서 민경과의 사적 연락을 암시한다
     interpretation: 공개된 자리에서 은근한 관계를 확인시킨다.
     action: 두 사람 앞에서 민경과의 사적 연락을 암시한다.
     push_pull: {action: approach, intensity: 16, base_score: 4}
@@ -107,7 +107,7 @@ nodes:
     visual_id: character.cha_min_kyung
     artwork: default
   expression: actual_disgust
-  line: "사적인 관계는 없습니다. 업무 외 연락은 중단해 달라고 요청했습니다. 이 발언은 제가 별도로 기록하겠습니다. 서아 씨는 회의 안건만 기록해 주세요."
+  line: "사적인 관계는 없습니다. 업무 외 연락은 중단해 달라고 요청했습니다. 이 발언은 제가 별도로 기록하겠습니다. 은솔 씨는 회의 안건만 기록해 주세요."
   next: leave
 
 - id: retaliatory_response
@@ -139,7 +139,7 @@ nodes:
     visual_id: character.cha_min_kyung
     artwork: default
   expression: actual_focused
-  line: "좋습니다. 승인 회신, 수정 범위, 담당자 순서로 확인하겠습니다. 서아 씨는 결정 사항과 시각만 기록해 주세요."
+  line: "좋습니다. 승인 회신, 수정 범위, 담당자 순서로 확인하겠습니다. 은솔 씨는 결정 사항과 시각만 기록해 주세요."
   next: leave
 
 - id: leave

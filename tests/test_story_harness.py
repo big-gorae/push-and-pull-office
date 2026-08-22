@@ -441,7 +441,7 @@ class StoryHarnessTests(unittest.TestCase):
             if node.get("kind") == "dialogue"
         ]
         for rejected_line in (
-            "(서아 씨와 민경 씨…… 조금 더 알아보고 싶은데, 어디서부터 시작해야 하지?)",
+            "(은솔 씨와 민경 씨…… 조금 더 알아보고 싶은데, 어디서부터 시작해야 하지?)",
             "밀고 당기기를 시작하고 싶은 당신! 2. 여자의 마음을 쥐고 흔드는 밀고 당기기 다크 법칙, 이 장을 읽어 보시라~!",
             "외모를 칭찬하고 먼저 연락하는 것은 당기기. 답장을 늦추고 갑자기 차갑게 대하는 것은 밀기입니다. 전부 쓸 필요는 없습니다. 상황에 맞는 한 수만 고르십시오.",
             "(좋아. 내일부터 시작해 보자. 먼저 다가갈지, 한발 물러날지 내가 정하는 거야.)",
@@ -452,12 +452,12 @@ class StoryHarnessTests(unittest.TestCase):
         for heroine_id in ("yoon_seo_a", "cha_min_kyung", "kang_yoo_jin"):
             self.assertIn(heroine_id, day_one["cast"])
         for heroine_line in (
-            "서아씨는 웃는 모습이 정말 귀여웠어...",
+            "은솔씨는 웃는 모습이 정말 귀여웠어...",
             "민경씨는 차갑지만 미친듯이 아름다웠어..!",
-            "유진씨는 햇님처럼 이쁘게 웃었어",
-            "유진씨랑 함께한다면 우울증에 걸려 방에만 있는 사람조차 환하게 웃고 말거야",
+            "나경씨는 햇님처럼 이쁘게 웃었어",
+            "나경씨랑 함께한다면 우울증에 걸려 방에만 있는 사람조차 환하게 웃고 말거야",
             "분명 가족들에게 무한한 사랑을 받고 자랐겠지?",
-            "모든 학교 남학생들이 몰래 유진씨를 짝사랑했을거야..",
+            "모든 학교 남학생들이 몰래 나경씨를 짝사랑했을거야..",
             "남자친구는.. 정말!",
             "맨날 맨날 죽을만큼 행복할거야..",
             "나쁜 놈.. 부럽다..!!!",
@@ -2159,13 +2159,13 @@ class StoryHarnessTests(unittest.TestCase):
         self.assertEqual(["ko", "en"], localization["supported_locales"])
         self.assertEqual("Send It by Email", localization["catalogs"]["en"]["scenes.seo_a.email_request.title"])
         name_key = "characters.yoon_seo_a.display_name"
-        self.assertEqual("윤서아", localization["catalogs"]["ko"][name_key])
-        self.assertEqual("Yoon Seo-a", localization["catalogs"]["en"][name_key])
+        self.assertEqual("유은솔", localization["catalogs"]["ko"][name_key])
+        self.assertEqual("Yoo Eun-sol", localization["catalogs"]["en"][name_key])
         fallback_key = "scenes.seo_a.relief_smile.title"
         self.assertEqual(localization["source_strings"][fallback_key], localization["catalogs"]["en"][fallback_key])
         self.assertIn(fallback_key, localization["coverage"]["en"]["missing"])
         visual_key = "visual.character.yoon_seo_a.title"
-        self.assertEqual("윤서아 기본 바스트", localization["entries"][visual_key]["source"])
+        self.assertEqual("유은솔 기본 바스트", localization["entries"][visual_key]["source"])
         self.assertEqual("story/visuals/characters/yoon_seo_a.yaml", localization["entries"][visual_key]["sourceDocument"]["path"])
         self.assertEqual("한국어", localization["locale_names"]["ko"]["native_name"])
         self.assertIn("locale.ko.native_name", localization["entries"])

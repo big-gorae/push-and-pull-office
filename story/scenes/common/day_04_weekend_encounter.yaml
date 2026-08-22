@@ -6,7 +6,7 @@ chapter: 1
 sequence: 5
 location: outside_cafe
 time: afternoon
-purpose: 첫 주말 조우에서 한도윤이 전날 밤에 준비한 소재를 먼저 꺼내지만 상대는 짧은 잡담과 한 번의 우연으로 받아들인다.
+purpose: 첫 주말 조우에서 서정우가 전날 밤에 준비한 소재를 먼저 꺼내지만 상대는 짧은 잡담과 한 번의 우연으로 받아들인다.
 cast: [han_do_yoon]
 entry_conditions: []
 state_contract:
@@ -17,7 +17,7 @@ start_node: encounter
 nodes:
 - id: encounter
   kind: narration
-  line: "토요일 오후, 공공장소에서 한도윤과 동료 한 명이 우연히 마주쳤다. 상대는 직장 동료를 만난 가벼운 놀람만 보였다."
+  line: "토요일 오후, 공공장소에서 서정우와 동료 한 명이 우연히 마주쳤다. 상대는 직장 동료를 만난 가벼운 놀람만 보였다."
   next: activity_callback
 
 - id: activity_callback

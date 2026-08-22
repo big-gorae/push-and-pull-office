@@ -9,7 +9,7 @@ time: dawn
 default_background:
   visual_id: background.officetel_bedroom
   variant_id: dawn
-purpose: 수연을 사별한 첫 연인으로 믿는 한도윤의 상처와 가족의 과도한 외모 칭찬을 첫 장면에 심고, 어머니의 결혼 재촉을 계기로 그가 다시 사람을 만나 보겠다고 마음먹게 한다.
+purpose: 수연을 사별한 첫 연인으로 믿는 서정우의 상처와 가족의 과도한 외모 칭찬을 첫 장면에 심고, 어머니의 결혼 재촉을 계기로 그가 다시 사람을 만나 보겠다고 마음먹게 한다.
 cast: [han_do_yoon]
 entry_conditions: []
 state_contract:
@@ -40,7 +40,7 @@ nodes:
 - id: phone_screen
   kind: narration
   stage: []
-  line: 도윤은 어두운 방에서 눈을 떴다. 휴대전화 화면에는 ‘엄마’가 떠 있었다.
+  line: 정우는 어두운 방에서 눈을 떴다. 휴대전화 화면에는 ‘엄마’가 떠 있었다.
   next: do_yoon_morning_reaction
 
 - id: do_yoon_morning_reaction
@@ -174,7 +174,7 @@ nodes:
 - id: morning_begins
   kind: narration
   stage: []
-  line: 한도윤은 알람을 끄고 침대에서 일어났다.
+  line: 서정우는 알람을 끄고 침대에서 일어났다.
   next: leave
 
 - id: leave

@@ -6,7 +6,7 @@ chapter: 0
 sequence: 0
 location: officetel_elevator_lobby
 time: morning
-purpose: 서로의 이름과 직장을 모르는 한도윤과 윤서아가 출근길 엘리베이터에서 처음 마주치고, 고양이 슬리퍼를 잘못 신고 나온 서아의 의외로 덜렁거리는 모습을 짧고 인상적으로 보여 준다.
+purpose: 서로의 이름과 직장을 모르는 서정우와 유은솔이 출근길 엘리베이터에서 처음 마주치고, 고양이 슬리퍼를 잘못 신고 나온 은솔의 의외로 덜렁거리는 모습을 짧고 인상적으로 보여 준다.
 cast: [han_do_yoon, yoon_seo_a]
 entry_conditions: []
 state_contract:
@@ -16,7 +16,7 @@ start_node: morning_elevator
 nodes:
 - id: morning_elevator
   kind: narration
-  line: 평일 아침, 한도윤은 휴대전화를 보며 오피스텔 엘리베이터에 탔다.
+  line: 평일 아침, 서정우는 휴대전화를 보며 오피스텔 엘리베이터에 탔다.
   next: do_yoon_checks_phone
 
 - id: do_yoon_checks_phone
@@ -29,12 +29,12 @@ nodes:
 
 - id: slippers_enter_view
   kind: narration
-  line: 화면을 내리던 도윤의 시야 한쪽에 고양이 귀가 달린 슬리퍼가 들어왔다.
+  line: 화면을 내리던 정우의 시야 한쪽에 고양이 귀가 달린 슬리퍼가 들어왔다.
   next: do_yoon_stares
 
 - id: do_yoon_stares
   kind: narration
-  line: 도윤의 시선이 슬리퍼에 머물렀다.
+  line: 정우의 시선이 슬리퍼에 머물렀다.
   next: do_yoon_blurts
 
 - id: do_yoon_blurts
@@ -58,7 +58,7 @@ nodes:
   kind: narration
   stage:
   - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
-  line: 도윤이 고개를 들었다. 긴 흑갈색 머리의 여자가 놀란 눈으로 그를 바라보고 있었다.
+  line: 정우가 고개를 들었다. 긴 흑갈색 머리의 여자가 놀란 눈으로 그를 바라보고 있었다.
   next: do_yoon_sees_her
 
 - id: do_yoon_sees_her
@@ -74,7 +74,7 @@ nodes:
   kind: narration
   stage:
   - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
-  line: 여자는 도윤의 시선을 따라 천천히 자기 발을 내려다봤다.
+  line: 여자는 정우의 시선을 따라 천천히 자기 발을 내려다봤다.
   next: seo_a_realizes
 
 - id: seo_a_realizes
@@ -133,7 +133,7 @@ nodes:
   kind: narration
   stage:
   - {artwork: default, character: yoon_seo_a, position: center, visual_id: character.yoon_seo_a}
-  line: 엘리베이터가 1층에 도착했다. 도윤이 내리려다 여자를 돌아봤지만, 그녀는 버튼 앞에 그대로 서 있었다.
+  line: 엘리베이터가 1층에 도착했다. 정우가 내리려다 여자를 돌아봤지만, 그녀는 버튼 앞에 그대로 서 있었다.
   next: seo_a_sends_him_ahead
 
 - id: seo_a_sends_him_ahead
@@ -165,7 +165,7 @@ nodes:
 
 - id: doors_close
   kind: narration
-  line: 도윤이 내리고 문이 닫혔다. 여자는 두 발을 얌전히 모은 채 고개를 숙였다.
+  line: 정우가 내리고 문이 닫혔다. 여자는 두 발을 얌전히 모은 채 고개를 숙였다.
   next: do_yoon_realizes
 
 - id: do_yoon_realizes
@@ -189,7 +189,7 @@ nodes:
   speaker: han_do_yoon
   stage: []
   expression: actual_waiting_smile
-  line: (처음 보는 사람 앞에서! 아침부터 무슨 짓이야, 한도윤!)
+  line: (처음 보는 사람 앞에서! 아침부터 무슨 짓이야, 서정우!)
   next: leave
 
 - id: leave

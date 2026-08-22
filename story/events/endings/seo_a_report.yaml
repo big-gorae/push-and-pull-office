@@ -1,7 +1,7 @@
 schema_version: 1
 campaign_id: main
 id: seo_a.ending_report
-title: 윤서아 — 신랑의 얼굴
+title: 유은솔 — 신랑의 얼굴
 type: ending
 lane: yoon_seo_a
 thread: seo_a
@@ -25,4 +25,4 @@ on_seen: {effects: []}
 on_missed: {effects: []}
 presentation:
   title: 현장 신고와 정식 신병 처리
-  summary: 서아의 퇴거 요구와 신고가 기존 기록에 연결되고, 정식 처리 뒤 머그샷에서 한도윤의 실제 모습이 드러난다.
+  summary: 은솔의 퇴거 요구와 신고가 기존 기록에 연결되고, 정식 처리 뒤 머그샷에서 서정우의 실제 모습이 드러난다.

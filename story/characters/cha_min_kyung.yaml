@@ -19,7 +19,7 @@ player_profile:
     tmi: {value: 회의용 금속 볼펜은 같은 모델만 여러 자루 쓴다., unlock_memory: profile.cha_min_kyung.tmi}
 immutable_facts:
 - 플레이 중 공략 후보로 제시되고 호감도와 밀당 수치를 가지지만 최종 공략과 결정적 선택은 불가능하다.
-- 한도윤의 접근을 고난도 밀당으로 즐기지 않는다.
+- 서정우의 접근을 고난도 밀당으로 즐기지 않는다.
 - 도전적인 표정은 유혹이 아니라 불쾌함과 사실 확인이다.
 - 섹시한 외형과 피해 사이에는 인과관계가 없다.
 - 하루담 홈카페 프로젝트에서 인플루언서·크리에이터 협업의 실무 연락과 공개 일정 조율을 맡는다.
@@ -40,7 +40,7 @@ voice:
   - context: 준비 상태를 확인할 때
     line: 괜찮습니다. 회의 전에 발견했으니 아직 실수는 아닙니다.
   - context: 지각 시간을 알릴 때
-    line: 강 대리, 5분 42초 늦었습니다.
+    line: 신 대리, 5분 42초 늦었습니다.
   - context: 프로젝트와 무관한 질문을 분류할 때
     line: 프로젝트와 관계없는 질문입니다.
   - context: 조건을 확인한 뒤 제안을 수용할 때
@@ -81,7 +81,7 @@ expressions:
     description: 턱이 굳고 시선이 차가워지지만 자세는 무너지지 않는다.
   actual_protective:
     emotion: resolve
-    description: 서아와 한도윤 사이에 서서 주변 목격자를 확인한다.
+    description: 은솔과 서정우 사이에 서서 주변 목격자를 확인한다.
   actual_focused:
     emotion: focus
     description: 오류 범위와 복구 순서를 빠르게 정리하는 업무 집중 표정.

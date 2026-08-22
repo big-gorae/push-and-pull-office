@@ -6,7 +6,7 @@ chapter: 3
 sequence: 91
 location: apartment_corridor
 time: evening
-purpose: 서아의 집을 찾아간 뒤 현장 신고와 기존 기록이 연결되고, 정식 신병 처리 후 객관 기록에서 한도윤의 실제 모습과 관계의 진실이 드러난다.
+purpose: 은솔의 집을 찾아간 뒤 현장 신고와 기존 기록이 연결되고, 정식 신병 처리 후 객관 기록에서 서정우의 실제 모습과 관계의 진실이 드러난다.
 cast: [han_do_yoon, yoon_seo_a]
 entry_conditions: []
 state_contract:
@@ -40,7 +40,7 @@ nodes:
 
 - id: police_response
   kind: narration
-  line: "경찰은 두 사람을 분리하고 서아의 퇴거 요구, 현장 신고와 이전 기록을 순서대로 확인했다."
+  line: "경찰은 두 사람을 분리하고 은솔의 퇴거 요구, 현장 신고와 이전 기록을 순서대로 확인했다."
   next: mugshot
 
 - id: mugshot
@@ -50,7 +50,7 @@ nodes:
   - protagonist_art_reveal
   stage:
   - {position: center, character: han_do_yoon, visual_id: character.han_do_yoon, artwork: default}
-  line: "정식 신병 처리 뒤 촬영된 머그샷에는 166cm의 비대한 체형, 심하게 무너진 얼굴 비율과 성긴 머리숱, 거칠고 번들거리는 피부, 불결한 수염과 누렇게 상한 치아가 두드러지는 한도윤이 기록됐다."
+  line: "정식 신병 처리 뒤 촬영된 머그샷에는 166cm의 비대한 체형, 심하게 무너진 얼굴 비율과 성긴 머리숱, 거칠고 번들거리는 피부, 불결한 수염과 누렇게 상한 치아가 두드러지는 서정우가 기록됐다."
   next: record_memory
 
 - id: record_memory

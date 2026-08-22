@@ -9,7 +9,7 @@ time: night
 default_background:
   visual_id: background.officetel_bedroom
   variant_id: night
-purpose: 첫날 밤 한도윤이 윤서아, 차민경, 강유진의 외모와 함께하는 모습을 길게 상상한 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.
+purpose: 첫날 밤 서정우가 유은솔, 차민경, 신나경의 외모와 함께하는 모습을 길게 상상한 뒤 책을 펼친다. 책에서 나타난 강사님의 첫 장을 그대로 믿어 다음 날 세 사람에게 밀당을 시작하기로 한다.
 cast: [han_do_yoon, yoon_seo_a, cha_min_kyung, kang_yoo_jin, dark_psychology_instructor]
 entry_conditions: []
 state_contract:
@@ -21,7 +21,7 @@ nodes:
 - id: opens_book
   kind: narration
   stage: []
-  line: 수요일 밤, 씻고 나온 한도윤은 침대에 누웠다. 눈을 감아도 오늘 만난 세 여자의 얼굴이 한 사람씩 떠올랐다.
+  line: 수요일 밤, 씻고 나온 서정우는 침대에 누웠다. 눈을 감아도 오늘 만난 세 여자의 얼굴이 한 사람씩 떠올랐다.
   next: do_yoon_wonders
 
 - id: do_yoon_wonders
@@ -33,7 +33,7 @@ nodes:
     visual_id: character.yoon_seo_a
     artwork: default
   expression: actual_waiting_smile
-  line: 서아씨는 웃는 모습이 정말 귀여웠어...
+  line: 은솔씨는 웃는 모습이 정말 귀여웠어...
   next: seo_a_idol
 
 - id: seo_a_idol
@@ -225,7 +225,7 @@ nodes:
     visual_id: character.kang_yoo_jin
     artwork: default
   expression: actual_waiting_smile
-  line: 유진씨는 햇님처럼 이쁘게 웃었어
+  line: 나경씨는 햇님처럼 이쁘게 웃었어
   next: yoo_jin_smile_reaches_anyone
 
 - id: yoo_jin_smile_reaches_anyone
@@ -237,7 +237,7 @@ nodes:
     visual_id: character.kang_yoo_jin
     artwork: default
   expression: actual_waiting_smile
-  line: 유진씨랑 함께한다면 우울증에 걸려 방에만 있는 사람조차 환하게 웃고 말거야
+  line: 나경씨랑 함께한다면 우울증에 걸려 방에만 있는 사람조차 환하게 웃고 말거야
   next: yoo_jin_loved_family
 
 - id: yoo_jin_loved_family
@@ -261,7 +261,7 @@ nodes:
     visual_id: character.kang_yoo_jin
     artwork: default
   expression: actual_waiting_smile
-  line: 모든 학교 남학생들이 몰래 유진씨를 짝사랑했을거야..
+  line: 모든 학교 남학생들이 몰래 나경씨를 짝사랑했을거야..
   next: yoo_jin_boyfriend
 
 - id: yoo_jin_boyfriend
@@ -303,7 +303,7 @@ nodes:
 - id: reaches_for_book
   kind: narration
   stage: []
-  line: 한도윤은 잠들기를 포기하고 다시 몸을 일으켰다. 머리맡에는 《여성의 마음을 지배하는 어둠의 심리학》이 놓여 있었다.
+  line: 서정우는 잠들기를 포기하고 다시 몸을 일으켰다. 머리맡에는 《여성의 마음을 지배하는 어둠의 심리학》이 놓여 있었다.
   next: do_yoon_hopes
 
 - id: do_yoon_hopes

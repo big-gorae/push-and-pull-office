@@ -9,7 +9,7 @@ time: night
 default_background:
   visual_id: background.officetel_bedroom
   variant_id: night
-purpose: 첫 주 마지막 밤 한도윤이 두 번의 주말 조우를 호감 가능성과 연결하자 강사가 호감 시그널 장의 전체 목록을 짧은 대화로 제시해 다음 주의 연속 오독을 준비한다.
+purpose: 첫 주 마지막 밤 서정우가 두 번의 주말 조우를 호감 가능성과 연결하자 강사가 호감 시그널 장의 전체 목록을 짧은 대화로 제시해 다음 주의 연속 오독을 준비한다.
 cast: [han_do_yoon, dark_psychology_instructor]
 entry_conditions: []
 state_contract:
@@ -21,7 +21,7 @@ nodes:
 - id: opens_signals_chapter
   kind: narration
   stage: []
-  line: 일요일 밤, 이틀 연속 회사 동료와 마주친 일을 떠올리며 한도윤이 책장을 넘겼다. 익숙한 강사의 목소리가 먼저 끼어들었다.
+  line: 일요일 밤, 이틀 연속 회사 동료와 마주친 일을 떠올리며 서정우가 책장을 넘겼다. 익숙한 강사의 목소리가 먼저 끼어들었다.
   next: do_yoon_wonders
 
 - id: do_yoon_wonders
